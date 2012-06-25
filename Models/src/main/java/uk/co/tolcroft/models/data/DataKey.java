@@ -299,11 +299,10 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
                 break;
             case EDIT:
                 setBase(pSource);
-                setState(DataState.CLEAN);
                 break;
             case UPDATE:
                 setBase(pSource);
-                setState(pSource.getState());
+                // setState(pSource.getState());
                 break;
             default:
                 break;
@@ -504,9 +503,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
         setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
 
         /* Check for changes */
-        if (checkForHistory()) {
-            setState(DataState.CHANGED);
-        }
+        checkForHistory();
     }
 
     /**

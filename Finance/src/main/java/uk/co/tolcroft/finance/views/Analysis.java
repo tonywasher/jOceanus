@@ -103,10 +103,10 @@ public class Analysis implements JDataContents {
             return theAnalysisState;
         }
         if (FIELD_LIST.equals(pField)) {
-            return theList;
+            return (theList.size() > 0) ? theList : JDataFieldValue.SkipField;
         }
         if (FIELD_CHARGES.equals(pField)) {
-            return theCharges;
+            return (theCharges.size() > 0) ? theCharges : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXYEAR.equals(pField)) {
             return (theYear == null) ? JDataFieldValue.SkipField : theYear;
@@ -579,7 +579,7 @@ public class Analysis implements JDataContents {
 
         @Override
         public String formatObject() {
-            return getDataFields().getName();
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

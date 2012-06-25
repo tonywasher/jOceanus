@@ -23,9 +23,8 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.Component;
+import java.awt.FlowLayout;
 
-import javax.swing.GroupLayout;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -33,6 +32,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.views.DataControl;
@@ -41,21 +41,21 @@ import uk.co.tolcroft.models.views.DataControl;
  * Maintenance Tab panel.
  * @author Tony Washer
  */
-public class MaintenanceTab implements ChangeListener {
+public class MaintenanceTab extends JPanelWithEvents {
+    /**
+     * The serial Id.
+     */
+    private static final long serialVersionUID = 4291381331160920L;
+
     /**
      * The Data View.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * The Parent.
      */
-    private final MainTab theParent;
-
-    /**
-     * The Panel.
-     */
-    private final JPanel thePanel;
+    private final transient MainTab theParent;
 
     /**
      * The Tabs.
@@ -90,15 +90,7 @@ public class MaintenanceTab implements ChangeListener {
     /**
      * The DataEntry.
      */
-    private final JDataEntry theDataEntry;
-
-    /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    protected JPanel getPanel() {
-        return thePanel;
-    }
+    private final transient JDataEntry theDataEntry;
 
     /**
      * Obtain the view.
@@ -172,9 +164,12 @@ public class MaintenanceTab implements ChangeListener {
         theDataEntry = myDataMgr.new JDataEntry("Maintenance");
         theDataEntry.addAsChildOf(mySection);
 
+        /* Create a listener */
+        MaintenanceListener myListener = new MaintenanceListener();
+
         /* Create the Tabbed Pane */
         theTabs = new JTabbedPane();
-        theTabs.addChangeListener(this);
+        theTabs.addChangeListener(myListener);
 
         /* Create the account Tab and add it */
         theAccountTab = new MaintAccount(this);
@@ -185,37 +180,26 @@ public class MaintenanceTab implements ChangeListener {
         theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab.getPanel());
 
         /* Create the Properties Tab */
-        theProperties = new MaintProperties(this);
-        theTabs.addTab(TITLE_PROPERTIES, theProperties.getPanel());
+        theProperties = new MaintProperties();
+        theTabs.addTab(TITLE_PROPERTIES, theProperties);
+        theProperties.addChangeListener(myListener);
 
         /* Create the PatternYear Tab */
         thePatternYear = new MaintNewYear(this);
         theTabs.addTab(TITLE_NEWYEAR, thePatternYear.getPanel());
 
         /* Create the Static Tab */
-        theStatic = new MaintStatic(this);
-        theTabs.addTab(TITLE_STATIC, theStatic.getPanel());
-
-        /* Create the panel */
-        thePanel = new JPanel();
+        theStatic = new MaintStatic(theView);
+        theTabs.addTab(TITLE_STATIC, theStatic);
+        theStatic.addChangeListener(myListener);
 
         /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
+        FlowLayout myLayout = new FlowLayout();
+        myLayout.setAlignment(FlowLayout.LEADING);
+        setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                         false)
-                                                    .addComponent(theTabs, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(theTabs)));
+        add(theTabs);
     }
 
     /**
@@ -235,10 +219,8 @@ public class MaintenanceTab implements ChangeListener {
      * @return true/false
      */
     public boolean hasUpdates() {
-        boolean hasUpdates = false;
-
         /* Determine whether we have updates */
-        hasUpdates = theAccountTab.hasUpdates();
+        boolean hasUpdates = theAccountTab.hasUpdates();
         if (!hasUpdates) {
             hasUpdates = theTaxYearTab.hasUpdates();
         }
@@ -281,14 +263,11 @@ public class MaintenanceTab implements ChangeListener {
      * Set visibility.
      */
     protected void setVisibility() {
-        int iIndex;
-        boolean hasUpdates;
-
         /* Determine whether we have any updates */
-        hasUpdates = hasUpdates();
+        boolean hasUpdates = hasUpdates();
 
         /* Access the Accounts index */
-        iIndex = theTabs.indexOfTab(TITLE_ACCOUNTS);
+        int iIndex = theTabs.indexOfTab(TITLE_ACCOUNTS);
 
         /* Enable/Disable the Accounts tab */
         if (iIndex != -1) {
@@ -331,17 +310,6 @@ public class MaintenanceTab implements ChangeListener {
         theParent.setVisibility();
     }
 
-    @Override
-    public void stateChanged(final ChangeEvent e) {
-        /* Ignore if it is not the tabs */
-        if (e.getSource() != theTabs) {
-            return;
-        }
-
-        /* Determine the focus */
-        determineFocus();
-    }
-
     /**
      * Determine Focus.
      */
@@ -352,23 +320,42 @@ public class MaintenanceTab implements ChangeListener {
         /* If the selected component is Accounts */
         if (myComponent.equals(theAccountTab.getPanel())) {
             /* Set the debug focus */
-            theAccountTab.getDataEntry().setFocus();
+            // theAccountTab.getDataEntry().setFocus();
 
             /* If the selected component is TaxYear */
         } else if (myComponent.equals(theTaxYearTab.getPanel())) {
             /* Set the debug focus */
-            theTaxYearTab.getDataEntry().setFocus();
+            // theTaxYearTab.getDataEntry().setFocus();
 
             /* If the selected component is NewYear */
         } else if (myComponent.equals(thePatternYear.getPanel())) {
             /* Set the debug focus */
-            thePatternYear.getDataEntry().setFocus();
+            // thePatternYear.getDataEntry().setFocus();
             thePatternYear.requestFocusInWindow();
 
             /* If the selected component is Static */
-        } else if (myComponent.equals(theStatic.getPanel())) {
+        } else if (myComponent.equals(theStatic)) {
             /* Set the debug focus */
             theStatic.determineFocus();
+        }
+    }
+
+    /**
+     * The listener class.
+     */
+    private final class MaintenanceListener implements ChangeListener {
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+            Object o = e.getSource();
+
+            /* if it is the tabs */
+            if (theTabs.equals(o)) {
+                /* Determine the focus */
+                determineFocus();
+            } else if ((theProperties.equals(o)) || (theStatic.equals(o))) {
+                /* Set the visibility */
+                setVisibility();
+            }
         }
     }
 }

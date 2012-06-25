@@ -82,7 +82,7 @@ public enum DataState {
         /* If we are a new element */
         if (myBase.getVersion() > 0) {
             /* Return status */
-            return NEW;
+            return myCurr.isDeletion() ? DELNEW : NEW;
         }
 
         /* If we have no changes we are CLEAN */

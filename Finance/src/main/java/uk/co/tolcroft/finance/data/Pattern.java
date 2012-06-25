@@ -46,7 +46,6 @@ import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataState;
 
 /**
  * Pattern data type.
@@ -540,7 +539,6 @@ public class Pattern extends Event {
     @Override
     public boolean applyChanges(final DataItem pPattern) {
         Pattern myPattern = (Pattern) pPattern;
-        boolean bChanged = false;
 
         /* Store the current detail into history */
         pushHistory();
@@ -581,14 +579,7 @@ public class Pattern extends Event {
         }
 
         /* Check for changes */
-        if (checkForHistory()) {
-            /* Mark as changed */
-            setState(DataState.CHANGED);
-            bChanged = true;
-        }
-
-        /* Return to caller */
-        return bChanged;
+        return checkForHistory();
     }
 
     /**

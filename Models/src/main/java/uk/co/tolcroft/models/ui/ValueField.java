@@ -131,7 +131,7 @@ public class ValueField extends JTextField {
      * Set Standard display string.
      * @param pValue the value
      */
-    public void setDisplay(RendererFieldValue pValue) {
+    public void setDisplay(final RendererFieldValue pValue) {
         setDisplay(pValue.toString());
     }
 

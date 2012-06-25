@@ -36,11 +36,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.EventManager;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateButton.JDateButton;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
@@ -56,7 +55,7 @@ import uk.co.tolcroft.finance.views.View;
  * SpotPrice Date selection panel.
  * @author Tony Washer
  */
-public class SpotSelect extends JPanel {
+public class SpotSelect extends JPanelWithEvents {
     /**
      * Serial Id.
      */
@@ -113,11 +112,6 @@ public class SpotSelect extends JPanel {
     private boolean refreshingData = false;
 
     /**
-     * Event Manager.
-     */
-    private final transient EventManager theManager;
-
-    /**
      * Get the selected date.
      * @return the date
      */
@@ -142,14 +136,6 @@ public class SpotSelect extends JPanel {
     }
 
     /**
-     * Obtain the event manager.
-     * @return the event manager.
-     */
-    public EventManager getManager() {
-        return theManager;
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -159,9 +145,6 @@ public class SpotSelect extends JPanel {
 
         /* Store table and view details */
         theView = pView;
-
-        /* Create the Event Manager */
-        theManager = new EventManager(this);
 
         /* Create Labels */
         JLabel myDate = new JLabel("Date:");
@@ -391,7 +374,7 @@ public class SpotSelect extends JPanel {
         public void propertyChange(final PropertyChangeEvent evt) {
             /* if this date relates to the Date button */
             if ((theDateButton.equals(evt.getSource())) && (theState.setDate(theDateButton))) {
-                theManager.fireStateChanged();
+                fireStateChanged();
             }
         }
 
@@ -415,7 +398,7 @@ public class SpotSelect extends JPanel {
 
                 /* Select the new type */
                 if (theState.setType(myType)) {
-                    theManager.fireStateChanged();
+                    fireStateChanged();
                 }
             }
         }

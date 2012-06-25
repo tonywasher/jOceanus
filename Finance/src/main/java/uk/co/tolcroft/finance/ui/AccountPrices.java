@@ -22,14 +22,12 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui;
 
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Price;
@@ -38,7 +36,6 @@ import uk.co.tolcroft.finance.data.AccountPrice;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.finance.views.ViewPrice;
 import uk.co.tolcroft.finance.views.ViewPrice.ViewPriceList;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.CalendarEditor;
@@ -47,6 +44,7 @@ import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
+import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
@@ -75,11 +73,6 @@ public class AccountPrices extends DataTable<AccountPrice> {
     private final JPanel thePanel;
 
     /**
-     * Parent.
-     */
-    private final transient AccountTab theParent;
-
-    /**
      * DataSet range.
      */
     private transient DateDayRange theRange = null;
@@ -88,6 +81,11 @@ public class AccountPrices extends DataTable<AccountPrice> {
      * Account.
      */
     private transient Account theAccount = null;
+
+    /**
+     * The UpdateSet.
+     */
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * UpdateEntry Class.
@@ -105,11 +103,6 @@ public class AccountPrices extends DataTable<AccountPrice> {
     private final PricesColumnModel theColumns;
 
     /**
-     * Data Entry.
-     */
-    private final transient JDataEntry theDataEntry;
-
-    /**
      * Error Panel.
      */
     private final ErrorPanel theError;
@@ -125,11 +118,6 @@ public class AccountPrices extends DataTable<AccountPrice> {
     @Override
     public boolean hasHeader() {
         return false;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataEntry;
     }
 
     /**
@@ -202,19 +190,19 @@ public class AccountPrices extends DataTable<AccountPrice> {
 
     /**
      * Constructor for Prices Window.
-     * @param pParent the parent window
+     * @param pView the view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public AccountPrices(final AccountTab pParent) {
-        /* Initialise superclass */
-        super(pParent.getDataManager());
-
-        /* Declare variables */
-        GroupLayout myLayout;
-
-        /* Store details about the parent */
-        theParent = pParent;
-        theView = pParent.getView();
-        theUpdateEntry = pParent.getUpdateSet().registerClass(ViewPrice.class);
+    public AccountPrices(final View pView,
+                         final UpdateSet pUpdateSet,
+                         final ErrorPanel pError) {
+        /* Store details */
+        theView = pView;
+        theError = pError;
+        theUpdateSet = pUpdateSet;
+        theUpdateEntry = theUpdateSet.registerClass(ViewPrice.class);
+        setUpdateSet(theUpdateSet);
 
         /* Create the model and declare it to our superclass */
         PricesModel myModel = new PricesModel();
@@ -228,44 +216,16 @@ public class AccountPrices extends DataTable<AccountPrice> {
         getTableHeader().setReorderingAllowed(false);
         setAutoResizeMode(AUTO_RESIZE_OFF);
 
-        /* Create the debug entry, attach to AccountDebug entry and hide it */
-        JDataManager myDataMgr = theView.getDataMgr();
-        theDataEntry = myDataMgr.new JDataEntry("Prices");
-        theDataEntry.addAsChildOf(pParent.getDataEntry());
-        theDataEntry.hideEntry();
-
         /* Add the mouse listener */
-        PricesMouse myMouse = new PricesMouse();
+        PricesMouse myMouse = new PricesMouse(this);
         addMouseListener(myMouse);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
 
         /* Create the panel */
         thePanel = new JPanel();
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                         false)
-                                                    .addComponent(theError, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(getScrollPane(),
-                                                                  GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(theError)
-                                  .addComponent(getScrollPane()).addContainerGap()));
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(getScrollPane());
     }
 
     /**
@@ -274,33 +234,6 @@ public class AccountPrices extends DataTable<AccountPrice> {
     public void refreshData() {
         theRange = theView.getRange();
         theColumns.setDateEditorRange(theRange);
-    }
-
-    /**
-     * Update Debug view.
-     */
-    @Override
-    public void updateDebug() {
-        theDataEntry.setObject(thePrices);
-    }
-
-    /**
-     * Save changes from the view into the underlying data.
-     */
-    @Override
-    public void saveData() {
-        /* Just update the debug, save has already been done */
-        updateDebug();
-    }
-
-    /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Lock scroll-able area */
-        getScrollPane().setEnabled(!isError);
     }
 
     /**
@@ -313,8 +246,8 @@ public class AccountPrices extends DataTable<AccountPrice> {
             thePrices.findEditState();
         }
 
-        /* Update the parent panel */
-        theParent.notifyChanges();
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**
@@ -471,11 +404,9 @@ public class AccountPrices extends DataTable<AccountPrice> {
         @Override
         public Object getValueAt(final int row,
                                  final int col) {
-            ViewPrice myPrice;
-            Object o;
-
             /* Access the price */
-            myPrice = (ViewPrice) thePrices.get(row);
+            ViewPrice myPrice = (ViewPrice) thePrices.get(row);
+            Object o;
 
             /* Return the appropriate value */
             switch (col) {
@@ -515,10 +446,8 @@ public class AccountPrices extends DataTable<AccountPrice> {
         public void setValueAt(final Object obj,
                                final int row,
                                final int col) {
-            ViewPrice myPrice;
-
             /* Access the price */
-            myPrice = (ViewPrice) thePrices.get(row);
+            ViewPrice myPrice = (ViewPrice) thePrices.get(row);
 
             /* Push history */
             myPrice.pushHistory();
@@ -538,7 +467,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 myPrice.popHistory();
                 myPrice.pushHistory();
@@ -553,14 +482,6 @@ public class AccountPrices extends DataTable<AccountPrice> {
 
             /* If we have changes */
             if (myPrice.checkForHistory()) {
-                /* Set new state */
-                myPrice.clearErrors();
-                myPrice.setState(DataState.CHANGED);
-
-                /* Validate the item and update the edit state */
-                myPrice.validate();
-                thePrices.findEditState();
-
                 /* Switch on the updated column */
                 switch (col) {
                     case COLUMN_DATE:
@@ -573,22 +494,19 @@ public class AccountPrices extends DataTable<AccountPrice> {
                         /* If the row # has changed */
                         if (myNewRowNo != row) {
                             /* Report the move of the row */
-                            fireMoveRowEvents(row, myNewRowNo);
                             selectRowWithScroll(myNewRowNo);
                             break;
                         }
-
-                        /* else fall through */
-
-                        /* else note that we have updated this row */
                     default:
-                        fireTableRowsUpdated(row, row);
                         break;
                 }
 
+                /* Increment data version */
+                theUpdateSet.incrementVersion();
+
                 /* Update components to reflect changes */
+                fireTableDataChanged();
                 notifyChanges();
-                updateDebug();
             }
         }
     }
@@ -596,13 +514,14 @@ public class AccountPrices extends DataTable<AccountPrice> {
     /**
      * Prices mouse listener.
      */
-    private final class PricesMouse extends DataMouse<AccountPrice> {
+    private static final class PricesMouse extends DataMouse<AccountPrice> {
         /**
          * Constructor.
+         * @param pTable the table
          */
-        private PricesMouse() {
+        private PricesMouse(final AccountPrices pTable) {
             /* Call super-constructor */
-            super(theTable);
+            super(pTable);
         }
     }
 

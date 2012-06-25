@@ -297,7 +297,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
                 break;
             case UPDATE:
                 setBase(pPrice);
-                setState(pPrice.getState());
+                // setState(pPrice.getState());
                 break;
             default:
                 break;
@@ -583,8 +583,6 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @return whether changes have been made
      */
     private boolean applyChanges(final AccountPrice pPrice) {
-        boolean bChanged = false;
-
         /* Store the current detail into history */
         pushHistory();
 
@@ -599,14 +597,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         }
 
         /* Check for changes */
-        if (checkForHistory()) {
-            /* Mark as changed */
-            setState(DataState.CHANGED);
-            bChanged = true;
-        }
-
-        /* Return to caller */
-        return bChanged;
+        return checkForHistory();
     }
 
     /**
@@ -615,33 +606,25 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @return whether changes have been made
      */
     private boolean applyChanges(final SpotPrice pPrice) {
-        boolean bChanged = false;
-
         /* If we are setting a null price */
         if (pPrice.getPrice() == null) {
             /* We are actually deleting the price */
-            setState(DataState.DELETED);
+            setDeleted(true);
+            return true;
 
             /* else we have a price to set */
-        } else {
-            /* Store the current detail into history */
-            pushHistory();
-
-            /* Update the price if required */
-            if (!Difference.isEqual(getPrice(), pPrice.getPrice())) {
-                setValuePrice(pPrice.getPriceField());
-            }
-
-            /* Check for changes */
-            if (checkForHistory()) {
-                /* Mark as changed */
-                setState(DataState.CHANGED);
-                bChanged = false;
-            }
         }
 
-        /* Return to caller */
-        return bChanged;
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Update the price if required */
+        if (!Difference.isEqual(getPrice(), pPrice.getPrice())) {
+            setValuePrice(pPrice.getPriceField());
+        }
+
+        /* Check for changes */
+        return checkForHistory();
     }
 
     /**
@@ -969,7 +952,6 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
 
                     /* Clear history and set as a clean item */
                     mySpot.clearHistory();
-                    mySpot.setState(DataState.CLEAN);
                 }
             }
         }

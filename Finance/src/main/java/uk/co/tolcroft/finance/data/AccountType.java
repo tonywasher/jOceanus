@@ -621,6 +621,14 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
 
             /* Add the Account Type to the list */
             add(myActType);
+
+            /* Validate the ActType */
+            myActType.validate();
+
+            /* Handle validation failure */
+            if (myActType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myActType, "Failed validation");
+            }
         }
 
         /**

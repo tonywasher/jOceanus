@@ -285,7 +285,7 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
 
         @Override
         public String formatObject() {
-            return getDataFields().getName();
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

@@ -59,11 +59,6 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
     private static final int PANEL_HEIGHT = 600;
 
     /**
-     * The Data Manager.
-     */
-    private final transient JDataManager theDataMgr;
-
-    /**
      * The JTree component.
      */
     private final JTree theTree;
@@ -84,14 +79,14 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
         JScrollPane myTreeScroll;
 
         /* Store the parameters */
-        theDataMgr = pManager;
-        theTree = new JTree(theDataMgr.getModel());
+        JDataManager myDataMgr = pManager;
+        theTree = new JTree(myDataMgr.getModel());
 
         /* Notify debug manager */
-        theDataMgr.declareWindow(this);
+        myDataMgr.declareWindow(this);
 
         /* Set the title */
-        setTitle(theDataMgr.getTitle());
+        setTitle(myDataMgr.getTitle());
 
         /* Make sure that we have single selection model */
         theTree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -103,7 +98,7 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
         theTree.setExpandsSelectedPaths(true);
 
         /* Access the initial id */
-        JDataEntry myEntry = theDataMgr.getFocus();
+        JDataEntry myEntry = myDataMgr.getFocus();
 
         /* Add the listener for the tree */
         theTree.addTreeSelectionListener(this);
@@ -154,7 +149,12 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
      * Display the data.
      * @param pEntry the data entry
      */
-    protected void displayData(final JDataEntry pEntry) {
+    protected final void displayData(final JDataEntry pEntry) {
+        /* Ignore null entry */
+        if (pEntry == null) {
+            return;
+        }
+
         /* Sort out the tree */
         TreePath myPath = pEntry.getPath();
         theTree.setSelectionPath(myPath);

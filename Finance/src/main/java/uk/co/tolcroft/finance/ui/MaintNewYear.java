@@ -47,7 +47,6 @@ import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
@@ -79,7 +78,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     /**
      * The parent.
      */
-    private final transient MaintenanceTab theParent;
+    private final MaintenanceTab theParent;
 
     /**
      * The panel.
@@ -132,11 +131,6 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     @Override
     public boolean hasHeader() {
         return false;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataYear;
     }
 
     /**
@@ -244,9 +238,6 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
      * @param pParent the parent window
      */
     public MaintNewYear(final MaintenanceTab pParent) {
-        /* Initialise superclass */
-        super(pParent.getDataManager());
-
         /* Declare variables */
         GroupLayout myLayout;
 
@@ -312,10 +303,6 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     }
 
     @Override
-    public void saveData() {
-    }
-
-    @Override
     public void notifyChanges() {
     }
 
@@ -332,18 +319,6 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     @Override
     public EditState getEditState() {
         return EditState.CLEAN;
-    }
-
-    @Override
-    public void performCommand(final stdCommand pCmd) {
-    }
-
-    @Override
-    public void notifySelection(final Object pObj) {
-    }
-
-    @Override
-    public void lockOnError(final boolean isError) {
     }
 
     /**

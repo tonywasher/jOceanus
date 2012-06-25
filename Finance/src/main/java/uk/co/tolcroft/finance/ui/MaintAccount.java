@@ -43,6 +43,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import uk.co.tolcroft.finance.data.Account;
@@ -59,8 +60,6 @@ import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.ItemField;
 import uk.co.tolcroft.models.ui.ItemField.FieldSet;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 import uk.co.tolcroft.models.views.UpdateSet;
@@ -70,7 +69,12 @@ import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
  * Account maintenance panel.
  * @author Tony Washer
  */
-public class MaintAccount implements StdPanel {
+public class MaintAccount extends JPanelWithEvents {
+    /**
+     * The Serial Id.
+     */
+    private static final long serialVersionUID = -1979836058846481969L;
+
     /**
      * Container gap 1.
      */
@@ -119,7 +123,7 @@ public class MaintAccount implements StdPanel {
     /**
      * The fieldSet.
      */
-    private final FieldSet theFieldSet;
+    private final transient FieldSet theFieldSet;
 
     /**
      * The name field.
@@ -234,22 +238,22 @@ public class MaintAccount implements StdPanel {
     /**
      * The Account.
      */
-    private Account theAccount = null;
+    private transient Account theAccount = null;
 
     /**
      * The Accounts List.
      */
-    private AccountList theAccounts = null;
+    private transient AccountList theAccounts = null;
 
     /**
      * The Account view.
      */
-    private AccountList theActView = null;
+    private transient AccountList theActView = null;
 
     /**
      * The data entry.
      */
-    private final JDataEntry theDataEntry;
+    private final transient JDataEntry theDataEntry;
 
     /**
      * The error panel.
@@ -269,17 +273,17 @@ public class MaintAccount implements StdPanel {
     /**
      * The data view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * The Update Set.
      */
-    private final UpdateSet theUpdateSet;
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * The view list.
      */
-    private final UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry theUpdateEntry;
 
     /**
      * Obtain the panel.
@@ -295,16 +299,6 @@ public class MaintAccount implements StdPanel {
      */
     public Account getAccount() {
         return theAccount;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataEntry;
-    }
-
-    @Override
-    public JDataManager getDataManager() {
-        return theParent.getDataManager();
     }
 
     /**
@@ -434,7 +428,8 @@ public class MaintAccount implements StdPanel {
         theSelect = new AccountSelect(theView, true);
 
         /* Create the Save buttons panel */
-        theSaveButs = new SaveButtons(this);
+        theSaveButs = new SaveButtons(theUpdateSet);
+        theSaveButs.addActionListener(myListener);
 
         /* Create the debug entry, attach to MaintenanceDebug entry */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -442,7 +437,7 @@ public class MaintAccount implements StdPanel {
         theDataEntry.addAsChildOf(pParent.getDataEntry());
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
+        theError = new ErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the buttons panel */
         theButtons = new JPanel();
@@ -727,7 +722,10 @@ public class MaintAccount implements StdPanel {
         showAccount();
     }
 
-    @Override
+    /**
+     * Does this panel have updates?
+     * @return true/false
+     */
     public boolean hasUpdates() {
         return ((theAccount != null) && (theAccount.hasChanges()));
     }
@@ -740,57 +738,52 @@ public class MaintAccount implements StdPanel {
         return ((theAccount != null) && (theAccount.hasErrors()));
     }
 
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
+    /**
+     * Obtain the edit state.
+     * @return the EditState
+     */
     public EditState getEditState() {
-        if (theAccount == null) {
-            return EditState.CLEAN;
-        }
-        return theAccount.getEditState();
+        return (theAccount == null) ? EditState.CLEAN : theAccount.getEditState();
     }
 
     /**
      * Lock on error.
      * @param isError is there an error (True/False)
      */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Hide selection panel */
-        theSelect.setVisible(!isError);
+    // @Override
+    // public void lockOnError(final boolean isError) {
+    /* Hide selection panel */
+    // theSelect.setVisible(!isError);
 
-        /* Lock data areas */
-        theDetail.setEnabled(!isError);
-        theSecure.setEnabled(!isError);
+    /* Lock data areas */
+    // theDetail.setEnabled(!isError);
+    // theSecure.setEnabled(!isError);
 
-        /* Lock row/tab buttons area */
-        theButtons.setEnabled(!isError);
-        theSaveButs.setEnabled(!isError);
-    }
+    /* Lock row/tab buttons area */
+    // theButtons.setEnabled(!isError);
+    // theSaveButs.setEnabled(!isError);
+    // }
 
-    @Override
-    public void performCommand(final stdCommand pCmd) {
+    /**
+     * Perform the requested command.
+     * @param pCmd the command
+     */
+    public void performCommand(final String pCmd) {
         /* Switch on command */
-        switch (pCmd) {
-            case OK:
-                saveData();
-                break;
-            case RESETALL:
-                resetData();
-                break;
-            default:
-                break;
+        if (SaveButtons.CMD_OK.equals(pCmd)) {
+            saveData();
+        } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
+            resetData();
         }
         notifyChanges();
     }
 
-    @Override
+    /**
+     * Notify Changes.
+     */
     public void notifyChanges() {
         /* Lock down the table buttons and the selection */
-        theSaveButs.setLockDown();
+        theSaveButs.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
 
         /* Show the account */
@@ -826,19 +819,6 @@ public class MaintAccount implements StdPanel {
 
         /* Notify changes */
         notifyChanges();
-        updateDebug();
-    }
-
-    @Override
-    public void printIt() {
-    }
-
-    /**
-     * validate.
-     */
-    public void validate() {
-        theAccount.clearErrors();
-        theAccount.validate();
         updateDebug();
     }
 
@@ -948,21 +928,21 @@ public class MaintAccount implements StdPanel {
         refreshingData = false;
     }
 
-    @Override
-    public void notifySelection(final Object obj) {
-        /* If this is a change from the account selection */
-        if (theSelect.equals(obj)) {
-            /* If we have changed the show closed option */
-            if (theSelect.doShowClosed() != doShowClosed) {
-                /* Record details and refresh parents */
-                doShowClosed = theSelect.doShowClosed();
-                refreshParents();
-            }
+    // @Override
+    // public void notifySelection(final Object obj) {
+    /* If this is a change from the account selection */
+    // if (theSelect.equals(obj)) {
+    /* If we have changed the show closed option */
+    // if (theSelect.doShowClosed() != doShowClosed) {
+    // /* Record details and refresh parents */
+    // doShowClosed = theSelect.doShowClosed();
+    // refreshParents();
+    // }
 
-            /* Set the new account */
-            setSelection(theSelect.getSelected());
-        }
-    }
+    /* Set the new account */
+    // setSelection(theSelect.getSelected());
+    // }
+    // }
 
     /**
      * Select an explicit account.
@@ -1249,12 +1229,6 @@ public class MaintAccount implements StdPanel {
             theAccount.clearErrors();
             theAccount.validate();
 
-            /* If the item is now clean */
-            if (!theAccount.hasHistory()) {
-                /* Set the new status */
-                theAccount.setState(DataState.CLEAN);
-            }
-
             /* Notify changes */
             notifyChanges();
             updateDebug();
@@ -1338,7 +1312,7 @@ public class MaintAccount implements StdPanel {
             /* Check for changes */
             if (theAccount.checkForHistory()) {
                 /* Note that the item has changed */
-                theAccount.setState(DataState.CHANGED);
+                // theAccount.setState(DataState.CHANGED);
 
                 /* validate it */
                 theAccount.clearErrors();
@@ -1354,8 +1328,14 @@ public class MaintAccount implements StdPanel {
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
-            /* If this event relates to the new button */
-            if (theInsButton.equals(o)) {
+            /* If this event relates to the save buttons */
+            if (theSaveButs.equals(o)) {
+                /* Create the new account */
+                performCommand(evt.getActionCommand());
+                return;
+
+                /* If this event relates to the new button */
+            } else if (theInsButton.equals(o)) {
                 /* Create the new account */
                 newAccount();
                 return;
@@ -1370,7 +1350,7 @@ public class MaintAccount implements StdPanel {
                     /* Else we should just delete/recover the account */
                 } else {
                     /* Set the appropriate state */
-                    theAccount.setState(theAccount.isDeleted() ? DataState.RECOVERED : DataState.DELETED);
+                    // theAccount.setState(theAccount.isDeleted() ? DataState.RECOVERED : DataState.DELETED);
 
                     /* Notify changes */
                     notifyChanges();
@@ -1416,7 +1396,7 @@ public class MaintAccount implements StdPanel {
             /* Check for changes */
             if (theAccount.checkForHistory()) {
                 /* Note that the item has changed */
-                theAccount.setState(DataState.CHANGED);
+                // theAccount.setState(DataState.CHANGED);
 
                 /* validate it */
                 theAccount.clearErrors();
@@ -1508,7 +1488,7 @@ public class MaintAccount implements StdPanel {
             /* Check for changes */
             if (theAccount.checkForHistory()) {
                 /* Note that the item has changed */
-                theAccount.setState(DataState.CHANGED);
+                // theAccount.setState(DataState.CHANGED);
 
                 /* validate it */
                 theAccount.clearErrors();

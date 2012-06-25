@@ -22,23 +22,26 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
-import java.util.ListIterator;
 
-import javax.swing.GroupLayout;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JToggleButton;
-import javax.swing.LayoutStyle;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
@@ -55,29 +58,19 @@ import net.sourceforge.JDataManager.JDataManager.JDataEntry;
  */
 public class JDataItem {
     /**
-     * Window Gap.
+     * Buffer length.
      */
-    private static final int WINDOW_GAP = 100;
+    private static final int BUFFER_LEN = 1000;
+
+    /**
+     * Strut width.
+     */
+    private static final int STRUT_WIDTH = 5;
 
     /**
      * Shift one.
      */
     private static final int SHIFT_ONE = 1;
-
-    /**
-     * Shift ten.
-     */
-    private static final int SHIFT_TEN = 10;
-
-    /**
-     * Shift hundred.
-     */
-    private static final int SHIFT_HUNDRED = 100;
-
-    /**
-     * Shift thousand.
-     */
-    private static final int SHIFT_THOU = 1000;
 
     /**
      * The panel.
@@ -90,32 +83,12 @@ public class JDataItem {
     private final JPanel theListPanel;
 
     /**
-     * The list.
-     */
-    private List<?> theList = null;
-
-    /**
-     * The report item.
-     */
-    private Object theItem = null;
-
-    /**
-     * The iterator.
-     */
-    private ListIterator<?> theIterator = null;
-
-    /**
-     * The entry.
+     * The root entry.
      */
     private JDataEntry theEntry = null;
 
     /**
-     * The object.
-     */
-    private Object theObject = null;
-
-    /**
-     * The detail.
+     * The active detail.
      */
     private JDataDetail theDetail = null;
 
@@ -125,44 +98,19 @@ public class JDataItem {
     private final JButton theNext;
 
     /**
-     * The Next ten button.
-     */
-    private final JButton theNextTen;
-
-    /**
-     * The Next hundred button.
-     */
-    private final JButton theNextHun;
-
-    /**
-     * The Next thousand button.
-     */
-    private final JButton theNextThou;
-
-    /**
      * The Previous button.
      */
     private final JButton thePrev;
 
     /**
-     * The Previous ten button.
-     */
-    private final JButton thePrevTen;
-
-    /**
-     * The Previous hundred button.
-     */
-    private final JButton thePrevHun;
-
-    /**
-     * The Previous thousand button.
-     */
-    private final JButton thePrevThou;
-
-    /**
      * The Toggle button.
      */
     private final JToggleButton theToggle;
+
+    /**
+     * The Slider.
+     */
+    private final JSlider theSlider;
 
     /**
      * The Label.
@@ -173,11 +121,6 @@ public class JDataItem {
      * The editor.
      */
     private final JEditorPane theEditor;
-
-    /**
-     * Are we in list mode.
-     */
-    private boolean isListMode = false;
 
     /**
      * Get the panel.
@@ -196,15 +139,13 @@ public class JDataItem {
         StyleSheet myStyle;
         Document myDoc;
 
+        /* Create the slider */
+        theSlider = new JSlider(SwingConstants.HORIZONTAL);
+        theSlider.setMinimum(0);
+
         /* Create the Buttons */
         theNext = new JButton("+" + SHIFT_ONE);
-        theNextTen = new JButton("+" + SHIFT_TEN);
-        theNextHun = new JButton("+" + SHIFT_HUNDRED);
-        theNextThou = new JButton("+" + SHIFT_THOU);
         thePrev = new JButton("-" + SHIFT_ONE);
-        thePrevTen = new JButton("-" + SHIFT_TEN);
-        thePrevHun = new JButton("-" + SHIFT_HUNDRED);
-        thePrevThou = new JButton("-" + SHIFT_THOU);
 
         /* Create the toggle button */
         theToggle = new JToggleButton("Show items");
@@ -225,9 +166,8 @@ public class JDataItem {
 
         /* Create the style-sheet for the window */
         myStyle = myKit.getStyleSheet();
-        myStyle.addRule("body { color:#000; font-family:times; margins; 4px; }");
-        myStyle.addRule("h1 { color: black; }");
-        myStyle.addRule("h2 { color: black; }");
+        myStyle.addRule("body { color:#000; font-family:times; margins; 4px; }\n" + "h1 { color: black; }\n"
+                + "h2 { color: black; }");
 
         /* Create the document for the window */
         myDoc = myKit.createDefaultDocument();
@@ -235,53 +175,24 @@ public class JDataItem {
 
         /* Create the list panel */
         theListPanel = new JPanel();
+        theListPanel.setLayout(new BoxLayout(theListPanel, BoxLayout.X_AXIS));
         theListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("List Control"));
 
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(theListPanel);
-        theListPanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(theToggle)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, WINDOW_GAP,
-                                                   Short.MAX_VALUE).addComponent(thePrevThou)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(thePrevHun)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(thePrevTen)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(thePrev)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addComponent(theLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addComponent(theNext)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theNextTen)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theNextHun)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theNextThou).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(theToggle).addComponent(thePrevThou).addComponent(thePrevHun)
-                .addComponent(thePrevTen).addComponent(thePrev).addComponent(theLabel).addComponent(theNext)
-                .addComponent(theNextTen).addComponent(theNextHun).addComponent(theNextThou));
+        /* Add components */
+        theListPanel.add(theToggle);
+        theListPanel.add(Box.createHorizontalGlue());
+        theListPanel.add(theLabel);
+        theListPanel.add(Box.createHorizontalGlue());
+        theListPanel.add(thePrev);
+        theListPanel.add(Box.createHorizontalStrut(STRUT_WIDTH));
+        theListPanel.add(theSlider);
+        theListPanel.add(Box.createHorizontalStrut(STRUT_WIDTH));
+        theListPanel.add(theNext);
 
         /* Create the complete panel */
-        thePanel = new JPanel();
-
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(theListPanel).addComponent(myScroll));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(theListPanel)
-                                  .addContainerGap().addComponent(myScroll).addContainerGap()));
+        thePanel = new JPanel(new BorderLayout());
+        thePanel.add(theListPanel, BorderLayout.NORTH);
+        thePanel.add(myScroll, BorderLayout.CENTER);
 
         /* Create listener */
         DataListener myListener = new DataListener();
@@ -292,15 +203,12 @@ public class JDataItem {
         /* Add action Listeners */
         theNext.addActionListener(myListener);
         thePrev.addActionListener(myListener);
-        theNextTen.addActionListener(myListener);
-        thePrevTen.addActionListener(myListener);
-        theNextHun.addActionListener(myListener);
-        thePrevHun.addActionListener(myListener);
-        theNextThou.addActionListener(myListener);
-        thePrevThou.addActionListener(myListener);
 
         /* Add item Listener */
         theToggle.addItemListener(myListener);
+
+        /* Add slider listener */
+        theSlider.addChangeListener(myListener);
     }
 
     /**
@@ -310,42 +218,9 @@ public class JDataItem {
     protected void displayData(final JDataEntry pEntry) {
         /* Record the object */
         theEntry = pEntry;
-        theObject = pEntry.getObject();
 
-        /* If we should use the ReportList window */
-        if (isEntryList(pEntry)) {
-            /* Show the list window */
-            theListPanel.setVisible(true);
-
-            /* Declare the list to the list window */
-            List<?> myList = (List<?>) theObject;
-            setList(myList);
-
-            /* Else hide the list window */
-        } else {
-            /* Hide the list window */
-            theListPanel.setVisible(false);
-
-            /* Display the object */
-            displayDetail(new JDataDetail(theObject));
-        }
-    }
-
-    /**
-     * Is the entry a list.
-     * @param pEntry the entry
-     * @return true/false
-     */
-    private static boolean isEntryList(final JDataEntry pEntry) {
-        Object myObject = pEntry.getObject();
-
-        /* If we should use the ReportList window */
-        if ((myObject != null) && (myObject instanceof List) && (!pEntry.hasChildren())) {
-            return true;
-        }
-
-        /* else standard entry */
-        return false;
+        /* Display the object */
+        displayDetail(new JDataDetail(pEntry.getObject()));
     }
 
     /**
@@ -353,19 +228,10 @@ public class JDataItem {
      * @param pEntry the entry
      */
     protected void updateData(final JDataEntry pEntry) {
-        /* Access the object */
-        theObject = pEntry.getObject();
-
         /* If we are updating the active object */
-        if (theEntry == pEntry) {
-            /* If this not a list window */
-            if (!isEntryList(pEntry)) {
-                /* Hide the list window */
-                theListPanel.setVisible(false);
-
-                /* Display the object */
-                displayDetail(new JDataDetail(theObject));
-            }
+        if (theEntry.getIndex() == pEntry.getIndex()) {
+            /* Display the object */
+            displayDetail(new JDataDetail(pEntry.getObject()));
         }
     }
 
@@ -380,60 +246,50 @@ public class JDataItem {
         /* Store the detail */
         theDetail = pDetail;
 
-        /* If we have a JDataDetail */
-        if (pDetail != null) {
-            /* Access Data Detail */
-            myValue = pDetail.getJDataDetail();
+        /* If this is a list */
+        if (theDetail.isList()) {
+            /* Show the list window */
+            theListPanel.setVisible(true);
 
-            /* Access history links */
-            myLinks = pDetail.getHistoryLinks();
-        }
+            /* If the detail is a child */
+            if (theDetail.isChild()) {
+                /* Display item details */
+                displayItem();
 
-        /* Build the HTML page */
-        String myText = "<html><body>";
+                /* else display header details */
+            } else {
+                displayHeader();
+            }
 
-        /* Add the value to the output */
-        if (myLinks != null) {
-            myText += myLinks;
-        }
-        if (myValue != null) {
-            myText += myValue;
-        }
-        myText += "</body></html>";
-
-        /* Set the report text */
-        theEditor.setText(myText);
-        theEditor.setCaretPosition(0);
-        theEditor.requestFocusInWindow();
-    }
-
-    /**
-     * Set List.
-     * @param pList the list that we are using
-     */
-    private void setList(final List<?> pList) {
-        /* Record list */
-        theList = pList;
-
-        /* If the list has items */
-        if (theList.size() > 0) {
-            /* Create iterator and obtain first item */
-            theIterator = theList.listIterator();
-            theItem = theIterator.next();
-
-            /* Display header initially */
-            theToggle.setSelected(false);
-
-            /* else hide the list control */
+            /* else hide the list */
         } else {
+            /* Hide the list panel */
             theListPanel.setVisible(false);
         }
 
-        /* Note that we are not in list mode */
-        isListMode = false;
+        /* Access Data Detail */
+        myValue = pDetail.getJDataDetail();
 
-        /* display the header */
-        displayHeader();
+        /* Access history links */
+        myLinks = pDetail.getHistoryLinks();
+
+        /* Build the HTML page */
+        StringBuilder myText = new StringBuilder(BUFFER_LEN);
+        myText.append("<html><body>");
+
+        /* Add the value to the output */
+        if (myLinks != null) {
+            myText.append(myLinks);
+        }
+        if (myValue != null) {
+            myText.append(myValue);
+        }
+        myText.append("</body></html>");
+
+        /* Set the report text */
+        theEditor.setText(myText.toString());
+        theEditor.setCaretPosition(0);
+        theEditor.requestFocusInWindow();
     }
 
     /**
@@ -441,38 +297,31 @@ public class JDataItem {
      */
     private void displayItem() {
         /* Access the list size */
-        int mySize = theList.size();
-        int myPos = theList.indexOf(theItem);
+        int mySize = theDetail.getList().size();
+
+        /* Access position */
+        int myPos = theDetail.getIndex();
 
         /* Show/hide movement buttons */
-        theNextThou.setVisible(mySize >= SHIFT_THOU);
-        thePrevThou.setVisible(mySize >= SHIFT_THOU);
-        theNextHun.setVisible(mySize >= SHIFT_HUNDRED);
-        thePrevHun.setVisible(mySize >= SHIFT_HUNDRED);
-        theNextTen.setVisible(mySize >= SHIFT_TEN);
-        thePrevTen.setVisible(mySize >= SHIFT_TEN);
         theNext.setVisible(true);
         thePrev.setVisible(true);
+        theSlider.setVisible(true);
         theLabel.setVisible(true);
 
         /* Enable movement buttons */
-        theNextThou.setEnabled(myPos < mySize - SHIFT_THOU);
-        thePrevThou.setEnabled(myPos >= SHIFT_THOU);
-        theNextHun.setEnabled(myPos < mySize - SHIFT_HUNDRED);
-        thePrevHun.setEnabled(myPos >= SHIFT_HUNDRED);
-        theNextTen.setEnabled(myPos < mySize - SHIFT_TEN);
-        thePrevTen.setEnabled(myPos >= SHIFT_TEN);
         theNext.setEnabled(myPos < mySize - SHIFT_ONE);
         thePrev.setEnabled(myPos >= SHIFT_ONE);
 
         /* Set the text detail */
         theLabel.setText("Item " + (myPos + 1) + " of " + mySize);
+        theSlider.setValue(myPos);
+        theSlider.setMaximum(mySize - 1);
+        theSlider.setMajorTickSpacing(10);
+        theSlider.setMinorTickSpacing(1);
+        theSlider.setPaintTicks(true);
 
         /* Set the text detail */
         theToggle.setText("Show header");
-
-        /* Display the item */
-        displayDetail(new JDataDetail(theItem));
     }
 
     /**
@@ -480,82 +329,19 @@ public class JDataItem {
      */
     private void displayHeader() {
         /* Hide movement buttons */
-        theNextThou.setVisible(false);
-        thePrevThou.setVisible(false);
-        theNextHun.setVisible(false);
-        thePrevHun.setVisible(false);
-        theNextTen.setVisible(false);
-        thePrevTen.setVisible(false);
         theNext.setVisible(false);
         thePrev.setVisible(false);
+        theSlider.setVisible(false);
         theLabel.setVisible(false);
 
         /* Set the text detail */
         theToggle.setText("Show items");
-
-        /* Display the header */
-        displayDetail(new JDataDetail(theObject));
-    }
-
-    /**
-     * Shift the iterator a number of steps.
-     * @param iNumSteps the number of steps to shift (positive or negative)
-     */
-    private void shiftIterator(final int iNumSteps) {
-        Object myNext = null;
-        int myNumSteps = iNumSteps;
-
-        /* If we are stepping forwards */
-        if (myNumSteps > 0) {
-            /* Loop through the steps */
-            while (myNumSteps-- > 0) {
-                /* Shift to next element */
-                myNext = theIterator.next();
-
-                /* If we have reached the end of the list (should never happen) */
-                if (myNext == null) {
-                    /* Set next element to the last in the list and break loop */
-                    myNext = null;
-                    break;
-                }
-            }
-
-            /* Record the next entry */
-            theItem = myNext;
-
-            /* else we are stepping backwards */
-        } else if (myNumSteps < 0) {
-            /* Shift back one step */
-            theIterator.previous();
-
-            /* Loop through the steps */
-            while (myNumSteps++ < 0) {
-                /* Shift to previous element */
-                myNext = theIterator.previous();
-
-                /* If we have reached the end of the list (should never happen) */
-                if (myNext == null) {
-                    /* Set next element to the last in the list and break loop */
-                    myNext = null;
-                    break;
-                }
-            }
-
-            /* Shift forward one step */
-            theIterator.next();
-
-            /* Record the next entry */
-            theItem = myNext;
-        }
-
-        /* display the item */
-        displayItem();
     }
 
     /**
      * Data Listener class.
      */
-    private class DataListener implements HyperlinkListener, ActionListener, ItemListener {
+    private class DataListener implements HyperlinkListener, ActionListener, ItemListener, ChangeListener {
         @Override
         public void hyperlinkUpdate(final HyperlinkEvent pEvent) {
             /* If this is an activated event */
@@ -591,21 +377,14 @@ public class JDataItem {
             Object o = pEvent.getSource();
             /* If we asked for the next item */
             if (theNext.equals(o)) {
-                shiftIterator(SHIFT_ONE);
-            } else if (theNextTen.equals(o)) {
-                shiftIterator(SHIFT_TEN);
-            } else if (theNextHun.equals(o)) {
-                shiftIterator(SHIFT_HUNDRED);
-            } else if (theNextThou.equals(o)) {
-                shiftIterator(SHIFT_THOU);
+                JDataDetail myList = theDetail.getPartnerDetail();
+                myList.shiftIterator(SHIFT_ONE);
+                displayDetail(myList.getPartnerDetail());
+                /* If we asked for the previous item */
             } else if (thePrev.equals(o)) {
-                shiftIterator(-SHIFT_ONE);
-            } else if (thePrevTen.equals(o)) {
-                shiftIterator(-SHIFT_TEN);
-            } else if (thePrevHun.equals(o)) {
-                shiftIterator(-SHIFT_HUNDRED);
-            } else if (thePrevThou.equals(o)) {
-                shiftIterator(-SHIFT_THOU);
+                JDataDetail myList = theDetail.getPartnerDetail();
+                myList.shiftIterator(-SHIFT_ONE);
+                displayDetail(myList.getPartnerDetail());
             }
         }
 
@@ -613,24 +392,27 @@ public class JDataItem {
         public void itemStateChanged(final ItemEvent pEvent) {
             /* If the event was the toggle button */
             if (theToggle.equals(pEvent.getSource())) {
-                /* If we are selecting list view */
-                if (pEvent.getStateChange() == ItemEvent.SELECTED) {
-                    /* If we need to switch to item view */
-                    if (!isListMode) {
-                        /* Set list mode and display item */
-                        isListMode = true;
-                        displayItem();
-                    }
+                /* Toggle the item that we are displaying */
+                displayDetail(theDetail.getPartnerDetail());
+            }
+        }
 
-                    /* else if we are deselecting list view */
-                } else if (pEvent.getStateChange() == ItemEvent.DESELECTED) {
-                    /* If we need to switch to header view */
-                    if (isListMode) {
-                        /* Clear list mode and display header */
-                        isListMode = false;
-                        displayHeader();
-                    }
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+            if ((theSlider.equals(e.getSource())) && (!theSlider.getValueIsAdjusting())) {
+                /* Access value and current position */
+                int myPos = theSlider.getValue();
+                int myCurr = theDetail.getIndex();
+
+                /* Ignore if there is no change */
+                if (myPos == myCurr) {
+                    return;
                 }
+
+                /* Shift to the correct item */
+                JDataDetail myList = theDetail.getPartnerDetail();
+                myList.shiftIterator(myPos - myCurr);
+                displayDetail(myList.getPartnerDetail());
             }
         }
     }

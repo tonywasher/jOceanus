@@ -34,11 +34,10 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.EventManager;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateButton.JDateButton;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
@@ -55,7 +54,7 @@ import uk.co.tolcroft.finance.views.View;
  * Report selection panel.
  * @author Tony Washer
  */
-public class ReportSelect extends JPanel {
+public class ReportSelect extends JPanelWithEvents {
     /**
      * Serial Id.
      */
@@ -117,11 +116,6 @@ public class ReportSelect extends JPanel {
     private boolean refreshingData = false;
 
     /**
-     * Event Manager.
-     */
-    private final transient EventManager theManager;
-
-    /**
      * Obtain the report type.
      * @return the report type
      */
@@ -146,14 +140,6 @@ public class ReportSelect extends JPanel {
     }
 
     /**
-     * Obtain the event manager.
-     * @return the event manager.
-     */
-    public EventManager getManager() {
-        return theManager;
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -162,9 +148,6 @@ public class ReportSelect extends JPanel {
 
         /* Store table and view details */
         theView = pView;
-
-        /* Create the Event Manager */
-        theManager = new EventManager(this);
 
         /* Create the boxes */
         theReportBox = new JComboBox();
@@ -371,7 +354,7 @@ public class ReportSelect extends JPanel {
             /* If this event relates to the Print button */
             if (thePrintButton.equals(o)) {
                 /* Request a print operation */
-                theManager.fireActionPerformed(ACTION_PRINT);
+                fireActionPerformed(ACTION_PRINT);
             }
         }
 
@@ -380,7 +363,7 @@ public class ReportSelect extends JPanel {
             /* if this date relates to the Date button */
             if ((theDateButton.equals(evt.getSource())) && (theState.setDate(theDateButton))) {
                 /* Notify that the state has changed */
-                theManager.fireStateChanged();
+                fireStateChanged();
             }
         }
 
@@ -397,7 +380,7 @@ public class ReportSelect extends JPanel {
             if ((theYearsBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 TaxYear myYear = (TaxYear) evt.getItem();
                 if (theState.setYear(myYear)) {
-                    theManager.fireStateChanged();
+                    fireStateChanged();
                 }
 
                 /* If this event relates to the report box */
@@ -405,7 +388,7 @@ public class ReportSelect extends JPanel {
                 /* Determine the new report */
                 ReportType myType = (ReportType) evt.getItem();
                 if (theState.setType(myType)) {
-                    theManager.fireStateChanged();
+                    fireStateChanged();
                 }
             }
         }

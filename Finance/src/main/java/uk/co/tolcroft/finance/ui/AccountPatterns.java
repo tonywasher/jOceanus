@@ -25,18 +25,15 @@ package uk.co.tolcroft.finance.ui;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Money;
 import uk.co.tolcroft.finance.data.Account;
@@ -51,7 +48,6 @@ import uk.co.tolcroft.finance.ui.controls.ComboSelect;
 import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.CalendarEditor;
@@ -63,6 +59,7 @@ import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
+import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
@@ -111,14 +108,14 @@ public class AccountPatterns extends DataTable<Event> {
     private final PatternColumnModel theColumns;
 
     /**
-     * The parent.
-     */
-    private final transient AccountTab theParent;
-
-    /**
      * The account.
      */
     private transient Account theAccount = null;
+
+    /**
+     * The UpdateSet.
+     */
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * Update Entry.
@@ -129,11 +126,6 @@ public class AccountPatterns extends DataTable<Event> {
      * ComboList.
      */
     private transient ComboSelect theComboList = null;
-
-    /**
-     * Data Entry.
-     */
-    private final transient JDataEntry theDataEntry;
 
     /**
      * Error Panel.
@@ -151,11 +143,6 @@ public class AccountPatterns extends DataTable<Event> {
     @Override
     public boolean hasHeader() {
         return false;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataEntry;
     }
 
     /**
@@ -266,23 +253,23 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * Panel width.
      */
-    private static final int WIDTH_PANEL = 900;
+    // private static final int WIDTH_PANEL = 900;
 
     /**
      * Constructor for Patterns Window.
-     * @param pParent the parent window
+     * @param pView the view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public AccountPatterns(final AccountTab pParent) {
-        /* Initialise superclass */
-        super(pParent.getDataManager());
-
-        /* Declare variables */
-        GroupLayout myLayout;
-
-        /* Store details about the parent */
-        theParent = pParent;
-        theView = pParent.getView();
-        theUpdateEntry = pParent.getUpdateSet().registerClass(Pattern.class);
+    public AccountPatterns(final View pView,
+                           final UpdateSet pUpdateSet,
+                           final ErrorPanel pError) {
+        /* Store details */
+        theView = pView;
+        theError = pError;
+        theUpdateSet = pUpdateSet;
+        theUpdateEntry = theUpdateSet.registerClass(Pattern.class);
+        setUpdateSet(theUpdateSet);
 
         /* Create the model and declare it to our superclass */
         theModel = new PatternsModel();
@@ -298,49 +285,23 @@ public class AccountPatterns extends DataTable<Event> {
         /* Build the combo box */
         theFreqBox = new JComboBox();
 
-        /* Create the debug entry, attach to AccountDebug entry and hide it */
-        JDataManager myDataMgr = theView.getDataMgr();
-        theDataEntry = myDataMgr.new JDataEntry("Patterns");
-        theDataEntry.addAsChildOf(pParent.getDataEntry());
-        theDataEntry.hideEntry();
-
         /* Add the mouse listener */
         PatternMouse myMouse = new PatternMouse();
         addMouseListener(myMouse);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
 
         /* Create the panel */
         thePanel = new JPanel();
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                         false)
-                                                    .addComponent(theError, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(getScrollPane(),
-                                                                  GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
-                                                                  Short.MAX_VALUE)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(theError)
-                                  .addComponent(getScrollPane())));
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(getScrollPane());
     }
 
     /**
      * Refresh views/controls after a load/update of underlying data.
+     * @param pCombo the combo select.
      */
-    public void refreshData() {
+    public void refreshData(final ComboSelect pCombo) {
         /* Access the data */
         FinanceData myData = theView.getData();
 
@@ -348,7 +309,7 @@ public class AccountPatterns extends DataTable<Event> {
         FrequencyList myFreqs = myData.getFrequencys();
 
         /* Access the combo list from parent */
-        theComboList = theParent.getComboList();
+        theComboList = pCombo;
 
         /* If we have frequencies already populated */
         if (theFreqBox.getItemCount() > 0) {
@@ -374,33 +335,6 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Update Debug view.
-     */
-    @Override
-    public void updateDebug() {
-        theDataEntry.setObject(thePatterns);
-    }
-
-    /**
-     * Save changes from the view into the underlying data.
-     */
-    @Override
-    public void saveData() {
-        /* Just update the debug, save has already been done */
-        updateDebug();
-    }
-
-    /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Lock scroll-able area */
-        getScrollPane().setEnabled(!isError);
-    }
-
-    /**
      * Call underlying controls to take notice of changes in view/selection.
      */
     @Override
@@ -410,8 +344,8 @@ public class AccountPatterns extends DataTable<Event> {
             thePatterns.findEditState();
         }
 
-        /* Update the parent panel */
-        theParent.notifyChanges();
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**
@@ -655,11 +589,9 @@ public class AccountPatterns extends DataTable<Event> {
         @Override
         public Object getValueAt(final int row,
                                  final int col) {
-            Pattern myPattern;
-            Object o;
-
             /* Access the pattern */
-            myPattern = (Pattern) thePatterns.get(row);
+            Pattern myPattern = (Pattern) thePatterns.get(row);
+            Object o;
 
             /* Return the appropriate value */
             switch (col) {
@@ -744,7 +676,7 @@ public class AccountPatterns extends DataTable<Event> {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 myPattern.popHistory();
                 myPattern.pushHistory();
@@ -759,14 +691,6 @@ public class AccountPatterns extends DataTable<Event> {
 
             /* Check for changes */
             if (myPattern.checkForHistory()) {
-                /* Note that the item has changed */
-                myPattern.setState(DataState.CHANGED);
-
-                /* Validate the item and update the edit state */
-                myPattern.clearErrors();
-                myPattern.validate();
-                thePatterns.findEditState();
-
                 /* Switch on the updated column */
                 switch (col) {
                 /* if we have updated a sort col */
@@ -782,22 +706,19 @@ public class AccountPatterns extends DataTable<Event> {
                         /* If the row # has changed */
                         if (myNewRowNo != row) {
                             /* Report the move of the row */
-                            fireMoveRowEvents(row, myNewRowNo);
                             selectRowWithScroll(myNewRowNo);
-                            break;
                         }
-
-                        /* else fall through */
-
-                        /* else note that we have updated this cell */
+                        break;
                     default:
-                        fireTableRowsUpdated(row, row);
                         break;
                 }
 
+                /* Increment data version */
+                theUpdateSet.incrementVersion();
+
                 /* Update components to reflect changes */
+                fireTableDataChanged();
                 notifyChanges();
-                updateDebug();
             }
         }
     }
@@ -890,13 +811,6 @@ public class AccountPatterns extends DataTable<Event> {
          * @param isCredit set to Credit or else Debit
          */
         protected void setIsCredit(final boolean isCredit) {
-            AbstractTableModel myModel;
-            Pattern myPattern;
-            int row;
-
-            /* Access the table model */
-            myModel = theTable.getTableModel();
-
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
@@ -905,8 +819,7 @@ public class AccountPatterns extends DataTable<Event> {
                 }
 
                 /* Determine row */
-                row = myRow.indexOf();
-                myPattern = (Pattern) myRow;
+                Pattern myPattern = Pattern.class.cast(myRow);
 
                 /* Ignore rows that are already correct */
                 if (myPattern.isCredit() == isCredit) {
@@ -916,21 +829,10 @@ public class AccountPatterns extends DataTable<Event> {
                 /* set the credit value */
                 myPattern.pushHistory();
                 myPattern.setIsCredit(isCredit);
-                if (myPattern.checkForHistory()) {
-                    /* Note that the item has changed */
-                    myPattern.clearErrors();
-                    myPattern.setState(DataState.CHANGED);
-
-                    /* Validate the item */
-                    myPattern.validate();
-
-                    /* Notify that the row has changed */
-                    myModel.fireTableRowsUpdated(row, row);
-                }
             }
 
-            /* Determine the edit state */
-            thePatterns.findEditState();
+            /* Increment version */
+            theUpdateSet.incrementVersion();
         }
 
         /**
@@ -962,8 +864,8 @@ public class AccountPatterns extends DataTable<Event> {
             }
 
             /* Notify of any changes */
+            theModel.fireTableDataChanged();
             notifyChanges();
-            updateDebug();
         }
     }
 

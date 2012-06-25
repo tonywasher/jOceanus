@@ -101,13 +101,13 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
             return theSecurity;
         }
         if (FIELD_CONTROLKEYS.equals(pField)) {
-            return theControlKeys;
+            return (theControlKeys.size() > 0) ? theControlKeys : JDataFieldValue.SkipField;
         }
         if (FIELD_DATAKEYS.equals(pField)) {
-            return theDataKeys;
+            return (theDataKeys.size() > 0) ? theDataKeys : JDataFieldValue.SkipField;
         }
         if (FIELD_CONTROLDATA.equals(pField)) {
-            return theDataKeys;
+            return (theControlData.size() > 0) ? theControlData : JDataFieldValue.SkipField;
         }
         return JDataFieldValue.UnknownField;
     }

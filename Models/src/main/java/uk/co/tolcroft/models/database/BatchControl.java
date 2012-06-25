@@ -207,13 +207,12 @@ public class BatchControl {
 
                     /* else we are handling new/changed items */
                 } else {
-                    /* Set the item to clean and clear history */
-                    myBase.setState(DataState.CLEAN);
+                    /* Clear the history */
                     myBase.clearHistory();
                 }
 
                 /* Mark this item as clean */
-                myCurr.setState(DataState.CLEAN);
+                myCurr.clearHistory();
 
                 /* If we have to worry about batch space */
                 /* Adjust batch and break if we are finished */

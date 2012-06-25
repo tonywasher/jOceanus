@@ -29,17 +29,16 @@ import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
-import net.sourceforge.JDataManager.EventManager;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import uk.co.tolcroft.finance.data.Account;
 
 /**
  * Statement type selection panel.
  * @author Tony Washer
  */
-public class StatementSelect extends JPanel {
+public class StatementSelect extends JPanelWithEvents {
     /**
      * Serial Id.
      */
@@ -66,11 +65,6 @@ public class StatementSelect extends JPanel {
     private boolean refreshingData = false;
 
     /**
-     * Event Manager.
-     */
-    private final transient EventManager theManager;
-
-    /**
      * Get the selected statement type.
      * @return the statement type
      */
@@ -82,9 +76,6 @@ public class StatementSelect extends JPanel {
      * Constructor.
      */
     public StatementSelect() {
-        /* Create the Event Manager */
-        theManager = new EventManager(this);
-
         /* Create the boxes */
         theStateBox = new JComboBox();
 
@@ -206,7 +197,7 @@ public class StatementSelect extends JPanel {
                 if (!theType.equals(myType)) {
                     /* Record it and alert listeners */
                     theType = myType;
-                    theManager.fireStateChanged();
+                    fireStateChanged();
                 }
             }
         }

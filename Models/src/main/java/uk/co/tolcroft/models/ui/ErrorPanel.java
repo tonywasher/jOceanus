@@ -23,34 +23,40 @@
 package uk.co.tolcroft.models.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.GroupLayout;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 
 /**
  * Error panel.
  * @author Tony Washer
  */
-public class ErrorPanel extends JPanel {
+public class ErrorPanel extends JPanelWithEvents {
     /**
      * Serial Id.
      */
     private static final long serialVersionUID = -1868069138054965874L;
 
     /**
+     * Strut width.
+     */
+    private static final int STRUT_WIDTH = 10;
+
+    /**
      * The parent panel.
      */
-    private final StdPanel theParent;
+    // private final StdPanel theParent;
 
     /**
      * The error field.
@@ -73,17 +79,23 @@ public class ErrorPanel extends JPanel {
     private JDataException theError = null;
 
     /**
-     * Constructor.
-     * @param pParent the parent
+     * Do we have an error?
+     * @return true/false
      */
-    public ErrorPanel(final StdPanel pParent) {
-        /* Store parent */
-        theParent = pParent;
+    public boolean hasError() {
+        return (theError != null);
+    }
 
+    /**
+     * Constructor.
+     * @param pManager the data manager
+     * @param pParent the parent data entry
+     */
+    public ErrorPanel(final JDataManager pManager,
+                      final JDataEntry pParent) {
         /* Create the error debug entry for this view */
-        JDataManager myDataMgr = theParent.getDataManager();
-        theDataError = myDataMgr.new JDataEntry("Error");
-        theDataError.addAsChildOf(theParent.getDataEntry());
+        theDataError = pManager.new JDataEntry("Error");
+        theDataError.addAsChildOf(pParent);
         theDataError.hideEntry();
 
         /* Create the error field */
@@ -96,19 +108,14 @@ public class ErrorPanel extends JPanel {
         theClearButton.addActionListener(new ErrorListener());
 
         /* Create the error panel */
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Error"));
+        setBorder(BorderFactory.createTitledBorder("Error"));
 
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(this);
-        setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(theClearButton)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theErrorField).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(theClearButton).addComponent(theErrorField));
+        /* Define the layout */
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theClearButton);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theErrorField);
 
         /* Set the Error panel to be red and invisible */
         theErrorField.setForeground(Color.red);
@@ -133,8 +140,8 @@ public class ErrorPanel extends JPanel {
         theDataError.setObject(theError);
         theDataError.showEntry();
 
-        /* Call the parent to lock other windows */
-        theParent.lockOnError(true);
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**
@@ -152,8 +159,8 @@ public class ErrorPanel extends JPanel {
         /* Make the panel invisible */
         setVisible(false);
 
-        /* Call the parent to unlock other windows */
-        theParent.lockOnError(false);
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**

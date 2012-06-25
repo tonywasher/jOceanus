@@ -25,7 +25,7 @@ package uk.co.tolcroft.finance.ui;
 import java.awt.event.ActionEvent;
 import java.util.ListIterator;
 
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -33,8 +33,6 @@ import javax.swing.JPopupMenu;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Rate;
@@ -44,7 +42,6 @@ import uk.co.tolcroft.finance.data.AccountRate.AccountRateList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.CalendarEditor;
@@ -53,6 +50,7 @@ import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
+import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
@@ -96,24 +94,19 @@ public class AccountRates extends DataTable<AccountRate> {
     private final RatesColumnModel theColumns;
 
     /**
-     * The Parent.
-     */
-    private final transient AccountTab theParent;
-
-    /**
      * The Account.
      */
     private transient Account theAccount = null;
 
     /**
+     * The UpdateSet.
+     */
+    private final transient UpdateSet theUpdateSet;
+
+    /**
      * The Update Entry.
      */
     private final transient UpdateEntry theUpdateEntry;
-
-    /**
-     * The Data Entry.
-     */
-    private final transient JDataEntry theDataEntry;
 
     /**
      * The Error Panel.
@@ -131,11 +124,6 @@ public class AccountRates extends DataTable<AccountRate> {
     @Override
     public boolean hasHeader() {
         return false;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataEntry;
     }
 
     /**
@@ -185,19 +173,19 @@ public class AccountRates extends DataTable<AccountRate> {
 
     /**
      * Constructor for Rates Window.
-     * @param pParent the parent window
+     * @param pView the view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public AccountRates(final AccountTab pParent) {
-        /* Initialise superclass */
-        super(pParent.getDataManager());
-
-        /* Declare variables */
-        GroupLayout myLayout;
-
-        /* Store details about the parent */
-        theParent = pParent;
-        theView = pParent.getView();
-        theUpdateEntry = pParent.getUpdateSet().registerClass(AccountRate.class);
+    public AccountRates(final View pView,
+                        final UpdateSet pUpdateSet,
+                        final ErrorPanel pError) {
+        /* Store details */
+        theView = pView;
+        theError = pError;
+        theUpdateSet = pUpdateSet;
+        theUpdateEntry = theUpdateSet.registerClass(AccountRate.class);
+        setUpdateSet(theUpdateSet);
 
         /* Create the table model and declare it to our superclass */
         theModel = new RatesModel();
@@ -215,59 +203,12 @@ public class AccountRates extends DataTable<AccountRate> {
         RatesMouse myMouse = new RatesMouse();
         addMouseListener(myMouse);
 
-        /* Create the debug entry, attach to AccountDebug entry and hide it */
-        JDataManager myDataMgr = theView.getDataMgr();
-        theDataEntry = myDataMgr.new JDataEntry("Rates");
-        theDataEntry.addAsChildOf(pParent.getDataEntry());
-        theDataEntry.hideEntry();
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
-
         /* Create the panel */
         thePanel = new JPanel();
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                         false)
-                                                    .addComponent(theError, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(getScrollPane(),
-                                                                  GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(theError)
-                                  .addComponent(getScrollPane()).addContainerGap()));
-    }
-
-    /**
-     * Save changes from the view into the underlying data.
-     */
-    @Override
-    public void saveData() {
-        /* Just update the debug, save has already been done */
-        updateDebug();
-    }
-
-    /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Lock scroll-able area */
-        getScrollPane().setEnabled(!isError);
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(getScrollPane());
     }
 
     /**
@@ -280,14 +221,6 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     /**
-     * Update Debug view.
-     */
-    @Override
-    public void updateDebug() {
-        theDataEntry.setObject(theRates);
-    }
-
-    /**
      * Call underlying controls to take notice of changes in view/selection.
      */
     @Override
@@ -297,8 +230,8 @@ public class AccountRates extends DataTable<AccountRate> {
             theRates.findEditState();
         }
 
-        /* Update the parent panel */
-        theParent.notifyChanges();
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**
@@ -327,7 +260,7 @@ public class AccountRates extends DataTable<AccountRate> {
     /**
      * Perform additional validation after change.
      */
-    @Override
+    // @Override
     protected void validateAfterChange() {
         /* Access the list iterator */
         ListIterator<AccountRate> myIterator = theRates.listIterator();
@@ -520,7 +453,7 @@ public class AccountRates extends DataTable<AccountRate> {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 myRate.popHistory();
                 myRate.pushHistory();
@@ -535,10 +468,6 @@ public class AccountRates extends DataTable<AccountRate> {
 
             /* reset history if no change */
             if (myRate.checkForHistory()) {
-                /* Set changed status */
-                myRate.clearErrors();
-                myRate.setState(DataState.CHANGED);
-
                 /* Switch on the updated column */
                 switch (col) {
                 /* if we have updated a sort column */
@@ -552,26 +481,19 @@ public class AccountRates extends DataTable<AccountRate> {
                         /* If the row # has changed */
                         if (myNewRowNo != row) {
                             /* Report the move of the row */
-                            fireMoveRowEvents(row, myNewRowNo);
                             selectRowWithScroll(myNewRowNo);
                             break;
                         }
-
-                        /* else fall through */
-
-                        /* else note that we have updated this cell */
                     default:
-                        fireTableRowsUpdated(row, row);
                         break;
                 }
 
-                /* Validate the item and update the edit state */
-                myRate.validate();
-                validateAfterChange();
+                /* Increment data version */
+                theUpdateSet.incrementVersion();
 
                 /* Update components to reflect changes */
+                fireTableDataChanged();
                 notifyChanges();
-                updateDebug();
             }
         }
     }
@@ -689,8 +611,8 @@ public class AccountRates extends DataTable<AccountRate> {
             }
 
             /* Notify of any changes */
+            theModel.fireTableDataChanged();
             notifyChanges();
-            updateDebug();
         }
     }
 

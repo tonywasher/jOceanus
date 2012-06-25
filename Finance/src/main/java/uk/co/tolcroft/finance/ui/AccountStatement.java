@@ -30,14 +30,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.LayoutStyle;
-import javax.swing.table.AbstractTableModel;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDateDay.DateDayRangeSelect;
@@ -56,7 +53,6 @@ import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.finance.views.Statement.StatementLines;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.CalendarEditor;
@@ -72,6 +68,7 @@ import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
 import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
+import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
 /**
@@ -98,6 +95,11 @@ public class AccountStatement extends DataTable<Event> {
      * Account.
      */
     private transient Account theAccount = null;
+
+    /**
+     * The UpdateSet.
+     */
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * Update Entry.
@@ -130,11 +132,6 @@ public class AccountStatement extends DataTable<Event> {
     private final StatementColumnModel theColumns;
 
     /**
-     * The parent.
-     */
-    private final transient AccountTab theParent;
-
-    /**
      * The top window.
      */
     private final transient MainTab theTopWindow;
@@ -153,11 +150,6 @@ public class AccountStatement extends DataTable<Event> {
      * Statement type selection panel.
      */
     private final StatementSelect theStateBox;
-
-    /**
-     * Data Entry.
-     */
-    private final transient JDataEntry theDataEntry;
 
     /**
      * Error Panel.
@@ -185,11 +177,6 @@ public class AccountStatement extends DataTable<Event> {
      */
     public JPanel getPanel() {
         return thePanel;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataEntry;
     }
 
     /**
@@ -349,20 +336,20 @@ public class AccountStatement extends DataTable<Event> {
 
     /**
      * Constructor for Statement Window.
-     * @param pParent the parent window
+     * @param pView the view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      */
-    public AccountStatement(final AccountTab pParent) {
-        /* Initialise superclass */
-        super(pParent.getDataManager());
-
-        /* Declare variables */
-        GroupLayout myLayout;
-
+    public AccountStatement(final View pView,
+                            final UpdateSet pUpdateSet,
+                            final ErrorPanel pError) {
         /* Store passed details */
-        theParent = pParent;
-        theView = pParent.getView();
-        theUpdateEntry = pParent.getUpdateSet().registerClass(StatementLine.class);
-        theTopWindow = pParent.getTopWindow();
+        theView = pView;
+        theError = pError;
+        theUpdateSet = pUpdateSet;
+        theUpdateEntry = theUpdateSet.registerClass(StatementLine.class);
+        setUpdateSet(theUpdateSet);
+        theTopWindow = null;
 
         /* Create the model and declare it to our superclass */
         theModel = new StatementModel();
@@ -383,19 +370,11 @@ public class AccountStatement extends DataTable<Event> {
         theSelect = new DateDayRangeSelect();
         theStateBox = new StatementSelect();
 
-        /* Create the debug entry, attach to AccountDebug entry and hide it */
-        JDataManager myDataMgr = theView.getDataMgr();
-        theDataEntry = myDataMgr.new JDataEntry("Statement");
-        theDataEntry.addAsChildOf(pParent.getDataEntry());
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
-
         /* Create the panel */
         thePanel = new JPanel();
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
+        GroupLayout myLayout = new GroupLayout(thePanel);
         thePanel.setLayout(myLayout);
 
         /* Set the layout */
@@ -437,7 +416,7 @@ public class AccountStatement extends DataTable<Event> {
                                   .addComponent(getScrollPane()).addContainerGap()));
     }
 
-    @Override
+    // @Override
     public void validateAfterChange() {
         /* Reset the balance */
         if (theStatement != null) {
@@ -460,82 +439,52 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
-     * Save changes from the view into the underlying data.
-     */
-    @Override
-    public void saveData() {
-        /* Just update the debug, save has already been done */
-        updateDebug();
-    }
-
-    /**
-     * Update Debug view.
-     */
-    @Override
-    public void updateDebug() {
-        theDataEntry.setObject(theStatement);
-    }
-
-    /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Hide selection panel */
-        theSelect.setVisible(!isError);
-        theStateBox.setVisible(!isError);
-
-        /* Lock scroll-able area */
-        getScrollPane().setEnabled(!isError);
-    }
-
-    /**
      * Notify table that there has been a change in selection by an underlying control.
      * @param obj the underlying control that has changed selection
      */
-    @Override
-    public void notifySelection(final Object obj) {
-        /* if this is a change from the range */
-        if (theSelect.equals(obj)) {
-            /* Protect against exceptions */
-            try {
-                /* Set the new range */
-                setSelection(theSelect.getRange());
+    // @Override
+    // public void notifySelection(final Object obj) {
+    /* if this is a change from the range */
+    // if (theSelect.equals(obj)) {
+    /* Protect against exceptions */
+    // try {
+    /* Set the new range */
+    // setSelection(theSelect.getRange());
 
-                /* Create SavePoint */
-                theSelect.createSavePoint();
+    /* Create SavePoint */
+    // theSelect.createSavePoint();
 
-                /* Catch Exceptions */
-            } catch (JDataException e) {
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to change selection", e);
+    /* Catch Exceptions */
+    // } catch (JDataException e) {
+    /* Build the error */
+    // JDataException myError = new JDataException(ExceptionClass.DATA,
+    // "Failed to change selection", e);
 
-                /* Show the error */
-                theError.setError(myError);
+    /* Show the error */
+    // theError.setError(myError);
 
-                /* Restore SavePoint */
-                theSelect.restoreSavePoint();
-            }
+    /* Restore SavePoint */
+    // theSelect.restoreSavePoint();
+    // }
 
-            /* else if this is a change from the type */
-        } else if (theStateBox.equals(obj)) {
-            /* Reset the account */
-            try {
-                setSelection(theAccount);
-            } catch (Exception e) {
-                e = null;
-            }
-        }
-    }
+    /* else if this is a change from the type */
+    // } else if (theStateBox.equals(obj)) {
+    /* Reset the account */
+    // try {
+    // setSelection(theAccount);
+    // } catch (Exception e) {
+    // e = null;
+    // }
+    // }
+    // }
 
     /**
      * Refresh views/controls after a load/update of underlying data.
+     * @param pCombo the combo select.
      */
-    public void refreshData() {
+    public void refreshData(final ComboSelect pCombo) {
         /* Access the combo list from parent */
-        theComboList = theParent.getComboList();
+        theComboList = pCombo;
 
         /* Update the possible date range */
         DateDayRange myRange = theView.getRange();
@@ -583,8 +532,8 @@ public class AccountStatement extends DataTable<Event> {
             theLines.findEditState();
         }
 
-        /* Update the parent panel */
-        theParent.notifyChanges();
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**
@@ -860,11 +809,6 @@ public class AccountStatement extends DataTable<Event> {
         @Override
         public Object getValueAt(final int row,
                                  final int col) {
-            StatementLine myLine;
-            StatementLine myNext;
-            Object o = null;
-            boolean bShow = true;
-
             /* If this is the first row */
             if (row == 0) {
                 switch (col) {
@@ -882,8 +826,10 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Access the line */
-            myLine = (StatementLine) theLines.get(row - 1);
-            myNext = (StatementLine) theLines.peekNext(myLine);
+            StatementLine myLine = (StatementLine) theLines.get(row - 1);
+            StatementLine myNext = (StatementLine) theLines.peekNext(myLine);
+            Object o = null;
+            boolean bShow = true;
 
             /* Return the appropriate value */
             switch (col) {
@@ -1019,7 +965,7 @@ public class AccountStatement extends DataTable<Event> {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 myLine.popHistory();
                 myLine.pushHistory();
@@ -1034,14 +980,6 @@ public class AccountStatement extends DataTable<Event> {
 
             /* Check for changes */
             if (myLine.checkForHistory()) {
-                /* Note that the item has changed */
-                myLine.clearErrors();
-                myLine.setState(DataState.CHANGED);
-
-                /* Validate the item and update the edit state */
-                myLine.validate();
-                theLines.findEditState();
-
                 /* Switch on the updated column */
                 switch (col) {
                 /* redraw whole table if we have updated a sort col */
@@ -1050,7 +988,7 @@ public class AccountStatement extends DataTable<Event> {
                     case COLUMN_TRANTYP:
                         /* Re-Sort the row */
                         theLines.reSort(myLine);
-                        validateAfterChange();
+                        // validateAfterChange();
 
                         /* Determine new row # */
                         int myNewRowNo = myLine.indexOf();
@@ -1058,29 +996,28 @@ public class AccountStatement extends DataTable<Event> {
                         /* If the row # has changed */
                         if (myNewRowNo != row) {
                             /* Report the move of the row */
-                            fireMoveRowEvents(row, myNewRowNo);
                             selectRowWithScroll(myNewRowNo);
                             break;
                         }
-                        fireTableRowsUpdated(row, row);
                         break;
 
                     /* Recalculate balance if required */
-                    case COLUMN_CREDIT:
-                    case COLUMN_DEBIT:
-                        validateAfterChange();
-                        fireTableRowsUpdated(row, row);
-                        break;
+                    // case COLUMN_CREDIT:
+                    // case COLUMN_DEBIT:
+                    // validateAfterChange();
+                    // break;
 
                     /* else note that we have updated this cell */
                     default:
-                        fireTableRowsUpdated(row, row);
                         break;
                 }
 
+                /* Increment data version */
+                theUpdateSet.incrementVersion();
+
                 /* Update components to reflect changes */
+                fireTableDataChanged();
                 notifyChanges();
-                updateDebug();
             }
         }
     }
@@ -1445,12 +1382,7 @@ public class AccountStatement extends DataTable<Event> {
          * @param isCredit set to Credit or else Debit
          */
         protected void setIsCredit(final boolean isCredit) {
-            AbstractTableModel myModel;
             StatementLine myLine;
-            int row;
-
-            /* Access the table model */
-            myModel = theTable.getTableModel();
 
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
@@ -1458,9 +1390,6 @@ public class AccountStatement extends DataTable<Event> {
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
                 }
-
-                /* Determine row */
-                row = myRow.indexOf() + 1;
 
                 /* Cast to Statement Line */
                 myLine = (StatementLine) myRow;
@@ -1473,24 +1402,10 @@ public class AccountStatement extends DataTable<Event> {
                 /* set the credit value */
                 myLine.pushHistory();
                 myLine.setIsCredit(isCredit);
-                if (myLine.checkForHistory()) {
-                    /* Note that the item has changed */
-                    myLine.clearErrors();
-                    myLine.setState(DataState.CHANGED);
-
-                    /* Validate the item */
-                    myLine.validate();
-
-                    /* Notify that the row has changed */
-                    myModel.fireTableRowsUpdated(row, row);
-                }
             }
 
-            /* Determine the edit state */
-            theLines.findEditState();
-
-            /* Recalculate the table */
-            theTable.validateAfterChange();
+            /* Increment version */
+            theUpdateSet.incrementVersion();
         }
 
         /**
@@ -1560,19 +1475,14 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Notify of any changes */
+            theModel.fireTableDataChanged();
             notifyChanges();
-            updateDebug();
         }
 
         /**
          * Calculate tax credits.
          */
         private void calculateTaxCredits() {
-            StatementLine myLine;
-            TransactionType myTrans;
-            Money myTax;
-            int row;
-
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
@@ -1581,15 +1491,15 @@ public class AccountStatement extends DataTable<Event> {
                 }
 
                 /* Determine row */
-                row = myRow.indexOf();
+                int row = myRow.indexOf();
                 if (theTable.hasHeader()) {
                     row++;
                 }
 
                 /* Access the line */
-                myLine = (StatementLine) myRow;
-                myTrans = myLine.getTransType();
-                myTax = myLine.getTaxCredit();
+                StatementLine myLine = (StatementLine) myRow;
+                TransactionType myTrans = myLine.getTransType();
+                Money myTax = myLine.getTaxCredit();
 
                 /* Ignore rows with invalid transaction type */
                 if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
@@ -1606,16 +1516,16 @@ public class AccountStatement extends DataTable<Event> {
 
                 /* set the tax credit value */
                 theModel.setValueAt(myTax, row, COLUMN_TAXCREDIT);
-                theModel.fireTableCellUpdated(row, COLUMN_TAXCREDIT);
             }
+
+            /* Increment version */
+            theUpdateSet.incrementVersion();
         }
 
         /**
          * Add patterns.
          */
         private void addPatterns() {
-            StatementLine myLine;
-
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
@@ -1624,10 +1534,10 @@ public class AccountStatement extends DataTable<Event> {
                 }
 
                 /* Access the line */
-                myLine = (StatementLine) myRow;
+                StatementLine myLine = (StatementLine) myRow;
 
                 /* Add the pattern */
-                theParent.addPattern(myLine);
+                // TODO theParent.addPattern(myLine);
             }
         }
 

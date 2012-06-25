@@ -208,7 +208,7 @@ public final class EncryptedData {
          * @return the encrypted value
          */
         public byte[] getBytes() {
-            return theEncrypted;
+            return (theEncrypted == null) ? null : Arrays.copyOf(theEncrypted, theEncrypted.length);
         }
 
         /**
@@ -721,7 +721,7 @@ public final class EncryptedData {
      */
     public static final class EncryptedDate extends EncryptedField<Date> {
         /**
-         * Date Formatter
+         * Date Formatter.
          */
         private DateFormat theFormat = null;
 

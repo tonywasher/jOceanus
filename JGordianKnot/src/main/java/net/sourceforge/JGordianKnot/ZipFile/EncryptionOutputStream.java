@@ -26,9 +26,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import javax.crypto.Cipher;
+
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JGordianKnot.StreamCipher;
 import net.sourceforge.JGordianKnot.SymmetricKey;
 
 /**
@@ -100,7 +101,8 @@ public class EncryptionOutputStream extends OutputStream {
 
             /* Initialise the cipher */
             theSymKey = pKey;
-            theCipher = theSymKey.initEncryptionStream();
+            Cipher myCipher = theSymKey.initEncryptionStream();
+            theCipher = new StreamCipher(myCipher, myCipher.getIV());
 
             /* Access the initialisation vector */
             theInitVector = theCipher.getInitVector();

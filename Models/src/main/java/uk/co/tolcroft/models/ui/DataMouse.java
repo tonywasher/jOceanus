@@ -442,13 +442,8 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
 
         /* Loop through the selected rows */
         for (DataItem myRow : theTable.cacheSelectedRows()) {
-            /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
-                continue;
-            }
-
-            /* Ignore deleted rows */
-            if (myRow.isDeleted()) {
+            /* Ignore locked/deleted rows */
+            if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                 continue;
             }
 
@@ -465,7 +460,6 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
 
             /* set the null value */
             myModel.setValueAt(null, row, col);
-            myModel.fireTableCellUpdated(row, col);
         }
     }
 
@@ -523,6 +517,5 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
 
         /* Notify of any changes */
         theTable.notifyChanges();
-        theTable.updateDebug();
     }
 }

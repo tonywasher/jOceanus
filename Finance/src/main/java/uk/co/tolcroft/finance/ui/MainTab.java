@@ -200,7 +200,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 
         /* Create the Maintenance Tab */
         theMaint = new MaintenanceTab(this);
-        theTabs.addTab(TITLE_MAINT, theMaint.getPanel());
+        theTabs.addTab(TITLE_MAINT, theMaint);
 
         /* Add change listener */
         theTabs.addChangeListener(this);
@@ -442,7 +442,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         /* If the selected component is extract */
         if (myComponent.equals(theExtract.getPanel())) {
             /* Set the debug focus */
-            theExtract.getDataEntry().setFocus();
+            // theExtract.getDataEntry().setFocus();
             theExtract.requestFocusInWindow();
 
             /* If the selected component is account */
@@ -453,11 +453,11 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
             /* If the selected component is SpotView */
         } else if (myComponent.equals(theSpotView.getPanel())) {
             /* Set the debug focus */
-            theSpotView.getDataEntry().setFocus();
+            // theSpotView.getDataEntry().setFocus();
             theSpotView.requestFocusInWindow();
 
             /* If the selected component is Maintenance */
-        } else if (myComponent.equals(theMaint.getPanel())) {
+        } else if (myComponent.equals(theMaint)) {
             /* Determine focus of maintenance */
             theMaint.determineFocus();
         }

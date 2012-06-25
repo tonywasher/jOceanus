@@ -79,7 +79,7 @@ public class PasswordHash implements JDataContents {
             return theHashMode;
         }
         if (FIELD_HASH.equals(pField)) {
-            return theHashBytes;
+            return Arrays.copyOf(theHashBytes, theHashBytes.length);
         }
         if (FIELD_CIPHER.equals(pField)) {
             return theCipherSet;

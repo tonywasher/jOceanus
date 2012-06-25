@@ -36,7 +36,6 @@ import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.StaticClass.TransClass;
 import uk.co.tolcroft.finance.data.TransactionType;
-import uk.co.tolcroft.finance.views.ChargeableEvent.ChargeableEventList;
 
 /**
  * Income Breakdown analysis.
@@ -96,25 +95,25 @@ public class IncomeBreakdown implements JDataContents {
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_SALARY.equals(pField)) {
-            return theSalary;
+            return (theSalary.size() > 0) ? theSalary : JDataFieldValue.SkipField;
         }
         if (FIELD_RENTAL.equals(pField)) {
-            return theRental;
+            return (theRental.size() > 0) ? theRental : JDataFieldValue.SkipField;
         }
         if (FIELD_INTEREST.equals(pField)) {
-            return theTaxedInterest;
+            return (theTaxedInterest.size() > 0) ? theTaxedInterest : JDataFieldValue.SkipField;
         }
         if (FIELD_TFINTEREST.equals(pField)) {
-            return theTaxFreeInterest;
+            return (theTaxFreeInterest.size() > 0) ? theTaxFreeInterest : JDataFieldValue.SkipField;
         }
         if (FIELD_DIVIDEND.equals(pField)) {
-            return theTaxedDividend;
+            return (theTaxedDividend.size() > 0) ? theTaxedDividend : JDataFieldValue.SkipField;
         }
         if (FIELD_TFDIVIDEND.equals(pField)) {
-            return theTaxFreeDividend;
+            return (theTaxFreeDividend.size() > 0) ? theTaxFreeDividend : JDataFieldValue.SkipField;
         }
         if (FIELD_UTDIVIDEND.equals(pField)) {
-            return theUnitTrustDividend;
+            return (theUnitTrustDividend.size() > 0) ? theUnitTrustDividend : JDataFieldValue.SkipField;
         }
         return JDataFieldValue.UnknownField;
     }
@@ -431,10 +430,10 @@ public class IncomeBreakdown implements JDataContents {
                 return theListTotals;
             }
             if (FIELD_EVENTS.equals(pField)) {
-                return theEvents;
+                return (theEvents.size() > 0) ? theEvents : JDataFieldValue.SkipField;
             }
             if (FIELD_CHILDREN.equals(pField)) {
-                return theChildren;
+                return (theChildren.size() > 0) ? theChildren : JDataFieldValue.SkipField;
             }
 
             /* Unknown */
@@ -635,8 +634,7 @@ public class IncomeBreakdown implements JDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(
-                ChargeableEventList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(RecordList.class.getSimpleName());
 
         @Override
         public JDataFields getDataFields() {
@@ -645,7 +643,7 @@ public class IncomeBreakdown implements JDataContents {
 
         @Override
         public String formatObject() {
-            return getDataFields().getName();
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

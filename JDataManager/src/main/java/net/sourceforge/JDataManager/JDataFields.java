@@ -193,7 +193,7 @@ public class JDataFields {
          * Constructor.
          * @param pFields the fields
          */
-        private FieldIterator(JDataFields pFields) {
+        private FieldIterator(final JDataFields pFields) {
             /* Allocate iterator */
             theIterator = pFields.theFields.iterator();
 

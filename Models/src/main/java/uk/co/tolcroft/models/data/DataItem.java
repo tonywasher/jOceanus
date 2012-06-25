@@ -108,11 +108,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField("State");
 
     /**
-     * DerivedDataState Field Id.
-     */
-    public static final JDataField FIELD_DSTATE = FIELD_DEFS.declareLocalField("DerivedState");
-
-    /**
      * Edit State Field Id.
      */
     public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField("EditState");
@@ -155,14 +150,11 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
         if (FIELD_STATE.equals(pField)) {
             return getState();
         }
-        if (FIELD_DSTATE.equals(pField)) {
-            return DataState.determineState(theHistory);
-        }
         if (FIELD_EDITSTATE.equals(pField)) {
             return getEditState();
         }
         if (FIELD_DELETED.equals(pField)) {
-            return isDeleted ? isDeleted : JDataFieldValue.SkipField;
+            return isDeleted() ? Boolean.TRUE : JDataFieldValue.SkipField;
         }
         if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null) ? theValueSet.getVersion() : JDataFieldValue.SkipField;
@@ -194,19 +186,9 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     private DataItem theBase = null;
 
     /**
-     * The Change state of this item {@link DataState}.
-     */
-    private DataState theState = DataState.NOSTATE;
-
-    /**
      * The Edit state of this item {@link EditState}.
      */
     private EditState theEdit = EditState.CLEAN;
-
-    /**
-     * Is the item visible to standard searches.
-     */
-    private boolean isDeleted = false;
 
     /**
      * Is the item in the process of being changed.
@@ -288,7 +270,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * @return the State
      */
     public DataState getState() {
-        return theState;
+        return DataState.determineState(theHistory);
     }
 
     /**
@@ -311,8 +293,13 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * Determine whether the item is visible to standard searches.
      * @param bDeleted <code>true/false</code>
      */
-    private void setDeleted(final boolean bDeleted) {
-        isDeleted = bDeleted;
+    public void setDeleted(final boolean bDeleted) {
+        /* If the state has changed */
+        if (bDeleted != isDeleted()) {
+            /* Push history and set flag */
+            pushHistory();
+            theValueSet.setDeletion(bDeleted);
+        }
     }
 
     /**
@@ -332,14 +319,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
-     * Set the Data State.
-     * @param pState the Data Status
-     */
-    protected void setDataState(final DataState pState) {
-        theState = pState;
-    }
-
-    /**
      * Set the Edit State.
      * @param pState the Edit Status
      */
@@ -348,18 +327,11 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
-     * Set the item as hidden to standard searches.
-     */
-    public void setHidden() {
-        setDeleted(true);
-    }
-
-    /**
      * Determine whether the item is visible to standard searches.
      * @return <code>true/false</code>
      */
     public boolean isDeleted() {
-        return isDeleted;
+        return theValueSet.isDeletion();
     }
 
     /**
@@ -376,15 +348,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      */
     protected boolean isRestoring() {
         return isRestoring;
-    }
-
-    /**
-     * Determine whether the underlying base item is deleted.
-     * @return <code>true/false</code>
-     */
-    public boolean isCoreDeleted() {
-        DataItem myBase = getBase();
-        return (myBase != null) && (myBase.isDeleted);
     }
 
     /**
@@ -542,6 +505,9 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
             /* Pop history */
             popHistory();
         }
+
+        /* clear errors */
+        clearErrors();
     }
 
     /**
@@ -590,23 +556,13 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * Note that this item has been validated.
      */
     public void setValidEdit() {
-        switch (theList.getStyle()) {
-            case CORE:
-                if (theState == DataState.CLEAN) {
-                    theEdit = EditState.CLEAN;
-                } else {
-                    theEdit = EditState.DIRTY;
-                }
-                break;
-            default:
-                if (isCoreDeleted()) {
-                    theEdit = (isDeleted) ? EditState.CLEAN : EditState.VALID;
-                } else if (isDeleted) {
-                    theEdit = EditState.VALID;
-                } else {
-                    theEdit = ((hasHistory()) || (getBase() == null)) ? EditState.VALID : EditState.CLEAN;
-                }
-                break;
+        DataState myState = getState();
+        if (myState == DataState.CLEAN) {
+            theEdit = EditState.CLEAN;
+        } else if (theList.getStyle() == ListStyle.CORE) {
+            theEdit = EditState.DIRTY;
+        } else {
+            theEdit = EditState.VALID;
         }
     }
 
@@ -614,7 +570,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * Clear all errors for this item.
      */
     public void clearErrors() {
-        theEdit = EditState.CLEAN;
+        theEdit = (theValueSet.getVersion() > 0) ? EditState.DIRTY : EditState.CLEAN;
         theErrors.clearErrors();
     }
 
@@ -835,212 +791,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     public void validate() {
         if (getEditState() == EditState.DIRTY) {
             setEditState(EditState.VALID);
-        }
-    }
-
-    /**
-     * State Management algorithm.
-     * <p>
-     * In a Core list we generally have three states
-     * <ul>
-     * <li>NEW - Newly created but not added to DB
-     * <li>CLEAN - In sync with DB
-     * <li>CHANGED - Changed from DB
-     * </ul>
-     * <p>
-     * In addition we have the Delete States
-     * <ul>
-     * <li>DELETED - DELETED from CLEAN
-     * <li>DELNEW - DELETED from NEW
-     * <li>DELCHG - DELETED from CHANGED
-     * </ul>
-     * <p>
-     * The reason for holding the DELETE states as three separate states is
-     * <ol>
-     * <li>To allow a restore to the correct state
-     * <li>To ensure that re-synchronisation to DB does not attempt to Delete a DELNEW record which does not
-     * exist anyway
-     * </ol>
-     * <p>
-     * <ul>
-     * <li>When changes are made to a NEW record it remains NEW
-     * <li>When changes are made to a CLEAN/CHANGED record it becomes CHANGED
-     * <li>No changes can be made to a DELETED etc record
-     * </ul>
-     * <p>
-     * In an Update list we stick to the three states
-     * <ul>
-     * <li>NEW - Record needing an insert
-     * <li>CHANGED - Record needing an update
-     * <li>DELETED - Record requiring deletion
-     * </ul>
-     * <p>
-     * The underlying Delete state is held in CoreState, allowing proper handling of DELNEW records
-     * <p>
-     * In Edit views, we start off with everything in CLEAN state which means that it is unchanged with
-     * respect to the core. New additions to the Edit view become NEW, and changes and deletes are handled in
-     * the same fashion as for core
-     * <p>
-     * For restore operations deletes are handled as follows
-     * <ul>
-     * <li>DELETED -> CLEAN
-     * <li>DELNEW -> NEW
-     * <li>DELCHG -> CHANGED
-     * <li>CLEAN(Underlying delete state) -> RESTORED
-     * </ul>
-     * <p>
-     * A RESTORED record can now be handled as a special case of CLEAN. It is necessary to have this extra
-     * case to indicate that the underlying record is to be restored, whereas CLEAN would imply no change. If
-     * subsequent changes are made to a restored record, the restore is still implied since it can never
-     * return to the CLEAN state
-     * <p>
-     * Undo operations are currently simplistic with the only change points that can be recovered being the
-     * current underlying core state and the original core state. However this algorithm holds even if we
-     * implement multiple change history with NEW being treated the same as CHANGED
-     * <p>
-     * Edit Undo operations are performed on CHANGED state records only. No history is kept for NEW records in
-     * Edit view. Undo restores the record to the values in the underlying core record. The State is changed
-     * to CLEAN or RESTORED depending on whether the underlying record is deleted or not. If the current state
-     * is CLEAN and the underlying state is CHANGED then the values are reset to the original core state and
-     * the Edit status is set to CHANGED. No other CLEAN state is possible to Undo since NEW has no history,
-     * CLEAN has no changes and DELETED records are unavailable. If the current value is RESTORED then if the
-     * underlying status is DELCHG then we can restore changes as for CLEAN and set the status to CHANGED.
-     * Other underlying deleted value are invalid (DELNEW has no history, DELETED has no changes)
-     * <p>
-     * Applying Edit changes is performed as follows
-     * <ul>
-     * <li>NEW -> insert record with status of NEW into CORE
-     * <li>DELNEW -> Discard
-     * <li>CLEAN -> Discard
-     * <li>DELETED/DELCHG -
-     * <ul>
-     * <li>NEW -> DELNEW (no changes copied down)
-     * <li>CHANGED -> DELCHG (no changes copied down)
-     * <li>CLEAN -> DELETED (no changes copied down)
-     * <li>DEL* -> No change to status (no changes copied down)
-     * </ul
-     * <li>RECOVERED
-     * <ul>
-     * <li>DELNEW -> NEW
-     * <li>DELETED -> CLEAN
-     * <li>DELCHG -> CHANGED
-     * </ul>
-     * <li>CHANGED
-     * <ul>
-     * <li>NEW -> NEW (changes copied down) -
-     * <li>CHANGED -> CHANGED (changes copied down)
-     * <li>CLEAN -> CHANGED (changes copied down)
-     * <li>DELNEW -> NEW (changes copied down)
-     * <li>DELCHG -> CHANGED (changes copied down)
-     * <li>DELETED -> CHANGED (changes copied down)
-     * </ul>
-     * </ul>
-     */
-
-    /**
-     * Set the state of the item.
-     * @param newState the new state to set
-     */
-    public void setState(final DataState newState) {
-        /* Police the action */
-        switch (newState) {
-            case NEW:
-                theState = newState;
-                setDeleted(false);
-                theEdit = EditState.DIRTY;
-                break;
-            case CLEAN:
-                theState = newState;
-                theEdit = EditState.CLEAN;
-                switch (getBaseState()) {
-                    case NOSTATE:
-                        if (getStyle() == ListStyle.EDIT) {
-                            theState = DataState.NEW;
-                            theEdit = EditState.DIRTY;
-                        }
-                        setDeleted(false);
-                        break;
-                    case DELETED:
-                    case DELNEW:
-                    case DELCHG:
-                        setDeleted(true);
-                        break;
-                    default:
-                        setDeleted(false);
-                        break;
-                }
-                break;
-            case RECOVERED:
-                theEdit = EditState.DIRTY;
-                setDeleted(false);
-                switch (theState) {
-                    case DELETED:
-                        theState = DataState.CLEAN;
-                        break;
-                    case DELNEW:
-                        theState = DataState.NEW;
-                        break;
-                    case DELCHG:
-                        theState = DataState.CHANGED;
-                        break;
-                    case CLEAN:
-                        theState = newState;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case DELCHG:
-            case DELNEW:
-                theState = DataState.DELETED;
-                setDeleted(true);
-                setValidEdit();
-                break;
-            case CHANGED:
-                theList.setEditState(EditState.DIRTY);
-                theEdit = EditState.DIRTY;
-                setDeleted(false);
-                switch (theState) {
-                    case NEW:
-                    case DELNEW:
-                        theState = DataState.NEW;
-                        break;
-                    case CHANGED:
-                    case CLEAN:
-                    case RECOVERED:
-                    case DELETED:
-                    case DELCHG:
-                    case NOSTATE:
-                        theState = newState;
-                        break;
-                    default:
-                        break;
-                }
-                break;
-            case DELETED:
-                setDeleted(true);
-                setValidEdit();
-                switch (theState) {
-                    case NEW:
-                        theState = DataState.DELNEW;
-                        break;
-                    case CHANGED:
-                        theState = DataState.DELCHG;
-                        break;
-                    case CLEAN:
-                    case RECOVERED:
-                    case NOSTATE:
-                        theState = newState;
-                        break;
-                    case DELETED:
-                    case DELNEW:
-                    case DELCHG:
-                    default:
-                        break;
-                }
-                break;
-            default:
-                break;
         }
     }
 }

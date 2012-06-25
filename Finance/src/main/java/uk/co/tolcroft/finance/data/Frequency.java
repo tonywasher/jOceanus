@@ -280,6 +280,14 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
 
             /* Add the Frequency to the list */
             add(myFrequency);
+
+            /* Validate the Frequency */
+            myFrequency.validate();
+
+            /* Handle validation failure */
+            if (myFrequency.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myFrequency, "Failed validation");
+            }
         }
 
         /**

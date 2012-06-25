@@ -29,62 +29,50 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.LayoutStyle;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import uk.co.tolcroft.models.data.EditState;
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import uk.co.tolcroft.models.data.PreferenceSet;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.ui.PreferenceSetPanel;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 
 /**
  * Preference maintenance panel.
  * @author Tony Washer
  */
-public class MaintProperties implements StdPanel {
+public class MaintProperties extends JPanelWithEvents {
+    /**
+     * The serial Id.
+     */
+    private static final long serialVersionUID = -1512860688570367124L;
+
     /**
      * The panel width.
      */
-    private static final int PANEL_WIDTH = 300;
+    private static final int SELECT_WIDTH = 300;
 
     /**
      * The panel height.
      */
-    private static final int PANEL_HEIGHT = 25;
+    private static final int SELECT_HEIGHT = 25;
 
     /**
-     * The parent.
+     * Strut width.
      */
-    private final MaintenanceTab theParent;
+    private static final int STRUT_WIDTH = 5;
 
     /**
-     * The parent.
-     */
-    private final JPanel thePanel;
-
-    /**
-     * The selection panel.
-     */
-    // private final JPanel theSelection;
-
-    /**
-     * The butoons panel.
-     */
-    // private final JPanel theButtons;
-
-    /**
-     * The ok button.
+     * The OK button.
      */
     private final JButton theOKButton;
 
@@ -114,72 +102,47 @@ public class MaintProperties implements StdPanel {
     private PreferenceSetPanel theActive = null;
 
     /**
-     * Obtain panel.
-     * @return the panel
+     * The listener.
      */
-    public JPanel getPanel() {
-        return thePanel;
-    }
+    private final transient PropertyListener theListener;
 
     /**
      * Constructor.
-     * @param pParent the parent
      */
-    public MaintProperties(final MaintenanceTab pParent) {
-        /* Store parent */
-        theParent = pParent;
-
+    public MaintProperties() {
         /* Create the buttons */
         theOKButton = new JButton("OK");
         theResetButton = new JButton("Reset");
 
+        /* Create the listener */
+        theListener = new PropertyListener();
+
         /* Create the buttons panel */
         JPanel myButtons = new JPanel();
-        myButtons.setBorder(javax.swing.BorderFactory.createTitledBorder("Save Options"));
+        myButtons.setBorder(BorderFactory.createTitledBorder("Save Options"));
 
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(myButtons);
-        myButtons.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(theOKButton)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theResetButton).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(theOKButton).addComponent(theResetButton));
+        /* Create the layout for the buttons panel */
+        myButtons.setLayout(new BoxLayout(myButtons, BoxLayout.X_AXIS));
+        myButtons.add(Box.createHorizontalGlue());
+        myButtons.add(theOKButton);
+        myButtons.add(Box.createHorizontalGlue());
+        myButtons.add(theResetButton);
+        myButtons.add(Box.createHorizontalGlue());
 
         /* Create selection box and label */
         JLabel myLabel = new JLabel("PropertySet:");
         theSelect = new JComboBox();
-        theSelect.setMaximumSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+        theSelect.setMaximumSize(new Dimension(SELECT_WIDTH, SELECT_HEIGHT));
 
         /* Create the selection panel */
         JPanel mySelection = new JPanel();
-        mySelection.setBorder(javax.swing.BorderFactory.createTitledBorder("Selection"));
+        mySelection.setBorder(BorderFactory.createTitledBorder("Selection"));
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(mySelection);
-        mySelection.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(myLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                                                   GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE)
-                                  .addComponent(theSelect)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(myLabel).addComponent(theSelect));
+        /* Create the layout for the selection panel */
+        mySelection.setLayout(new BoxLayout(mySelection, BoxLayout.X_AXIS));
+        mySelection.add(myLabel);
+        mySelection.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        mySelection.add(theSelect);
 
         /* Create the properties panel */
         theProperties = new JPanel();
@@ -201,22 +164,20 @@ public class MaintProperties implements StdPanel {
         myScroll.setViewportView(theProperties);
 
         /* Now define the panel */
-        thePanel = new JPanel();
-        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
-        thePanel.add(mySelection);
-        thePanel.add(myScroll);
-        thePanel.add(Box.createVerticalGlue());
-        thePanel.add(myButtons);
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(mySelection);
+        add(myScroll);
+        add(Box.createVerticalGlue());
+        add(myButtons);
 
         /* Determine the active items */
         theActive = (PreferenceSetPanel) theSelect.getSelectedItem();
         setVisibility();
 
         /* Add Listeners */
-        PropertyListener myListener = new PropertyListener();
-        theOKButton.addActionListener(myListener);
-        theResetButton.addActionListener(myListener);
-        theSelect.addItemListener(myListener);
+        theOKButton.addActionListener(theListener);
+        theResetButton.addActionListener(theListener);
+        theSelect.addItemListener(theListener);
     }
 
     /**
@@ -225,55 +186,59 @@ public class MaintProperties implements StdPanel {
      */
     private void registerSet(final PreferenceSet pSet) {
         /* Create the underlying panel */
-        PreferenceSetPanel myPanel = new PreferenceSetPanel(this, pSet);
+        PreferenceSetPanel myPanel = new PreferenceSetPanel(pSet);
 
         /* Add the panel */
         theProperties.add(myPanel, myPanel.toString());
 
         /* Add name to the ComboBox */
         theSelect.addItem(myPanel);
+        myPanel.addChangeListener(theListener);
     }
 
-    @Override
+    /**
+     * Does the panel have unsaved updates?
+     * @return true/false
+     */
     public boolean hasUpdates() {
         return ((theActive != null) && (theActive.hasChanges()));
     }
 
-    @Override
-    public void performCommand(final stdCommand pCmd) {
-        /* Switch on command */
-        switch (pCmd) {
-            case OK:
-                try {
-                    theActive.storeChanges();
-                } catch (Exception e) {
-                    e = null;
-                }
-                break;
-            case RESETALL:
-                theActive.resetChanges();
-                break;
-            default:
-                break;
+    /**
+     * Save Updates.
+     */
+    public void saveUpdates() {
+        try {
+            theActive.storeChanges();
+        } catch (JDataException e) {
+            e = null;
         }
 
-        /* Notify Status changes */
-        notifyChanges();
-    }
-
-    @Override
-    public void notifyChanges() {
-        /* Set the visibility */
+        /* Set correct visibility */
         setVisibility();
 
-        /* Adjust visible tabs */
-        theParent.setVisibility();
+        /* Notify that state has changed */
+        fireStateChanged();
+    }
+
+    /**
+     * Reset Updates.
+     */
+    public void resetUpdates() {
+        /* Reset all changes */
+        theActive.resetChanges();
+
+        /* Set correct visibility */
+        setVisibility();
+
+        /* Notify that state has changed */
+        fireStateChanged();
     }
 
     /**
      * Set the visibility.
      */
-    public void setVisibility() {
+    protected void setVisibility() {
         /* Enable selection */
         theSelect.setEnabled((theActive != null) && !theActive.hasChanges());
 
@@ -285,7 +250,7 @@ public class MaintProperties implements StdPanel {
     /**
      * PropertyListener class.
      */
-    private final class PropertyListener implements ActionListener, ItemListener {
+    private final class PropertyListener implements ActionListener, ItemListener, ChangeListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -293,12 +258,12 @@ public class MaintProperties implements StdPanel {
             /* If this event relates to the OK button */
             if (theOKButton.equals(o)) {
                 /* Perform the command */
-                performCommand(stdCommand.OK);
+                saveUpdates();
 
                 /* If this event relates to the reset button */
             } else if (theResetButton.equals(o)) {
                 /* Perform the command */
-                performCommand(stdCommand.RESETALL);
+                resetUpdates();
             }
         }
 
@@ -311,10 +276,16 @@ public class MaintProperties implements StdPanel {
 
                 /* Show the requested set */
                 theLayout.show(theProperties, theActive.toString());
-
-                /* Notify changes */
-                notifyChanges();
             }
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+            /* Set visibility */
+            setVisibility();
+
+            /* Notify listeners */
+            fireStateChanged();
         }
     }
 
@@ -331,39 +302,8 @@ public class MaintProperties implements StdPanel {
             registerSet(mySet);
 
             /* Note that the panel should be re-displayed */
+            setVisibility();
             theProperties.invalidate();
         }
-    }
-
-    @Override
-    public void notifySelection(final Object o) {
-    }
-
-    @Override
-    public void printIt() {
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public EditState getEditState() {
-        return null;
-    }
-
-    @Override
-    public JDataManager getDataManager() {
-        return null;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return null;
-    }
-
-    @Override
-    public void lockOnError(final boolean isError) {
     }
 }

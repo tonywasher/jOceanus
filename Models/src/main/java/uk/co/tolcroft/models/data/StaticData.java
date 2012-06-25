@@ -478,7 +478,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
                 break;
             case UPDATE:
                 setBase(pSource);
-                setState(pSource.getState());
+                // setState(pSource.getState());
                 break;
             default:
                 break;
@@ -702,7 +702,6 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     @Override
     public boolean applyChanges(final DataItem pData) {
         StaticData<?, ?> myData = (StaticData<?, ?>) pData;
-        boolean bChanged = false;
 
         /* Store the current detail into history */
         pushHistory();
@@ -728,14 +727,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         }
 
         /* Check for changes */
-        if (checkForHistory()) {
-            /* Mark as changed */
-            setState(DataState.CHANGED);
-            bChanged = true;
-        }
-
-        /* Return to caller */
-        return bChanged;
+        return checkForHistory();
     }
 
     /**

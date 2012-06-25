@@ -25,9 +25,10 @@ package net.sourceforge.JGordianKnot.ZipFile;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.crypto.Cipher;
+
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JGordianKnot.StreamCipher;
 import net.sourceforge.JGordianKnot.SymmetricKey;
 
 /**
@@ -97,7 +98,8 @@ public class DecryptionInputStream extends InputStream {
             theStream = pStream;
 
             /* Initialise the decryption */
-            theCipher = pKey.initDecryptionStream(pInitVector);
+            Cipher myCipher = pKey.initDecryptionStream(pInitVector);
+            theCipher = new StreamCipher(myCipher, myCipher.getIV());
 
             /* Catch exceptions */
         } catch (JDataException e) {
@@ -165,23 +167,23 @@ public class DecryptionInputStream extends InputStream {
 
     @Override
     public boolean markSupported() {
-        /* return false */
+        /* return not supported */
         return false;
     }
 
     @Override
-    public void mark(final int readLimit) {
+    public void mark(final int pReadLimit) {
     }
 
     @Override
     public void reset() throws IOException {
-        /* If we are already closed throw IO Exception */
+        /* If we are already closed then throw IO Exception */
         if (isClosed) {
             throw new IOException(MSG_STREAM_CLOSED);
         }
 
         /* Not supported */
-        throw new IOException("Mark not supported");
+        throw new IOException("Mark is not supported");
     }
 
     @Override
@@ -229,27 +231,27 @@ public class DecryptionInputStream extends InputStream {
     }
 
     @Override
-    public int read(final byte[] pBytes) throws IOException {
-        /* Read the bytes from the stream */
-        return read(pBytes, 0, pBytes.length);
+    public int read(final byte[] pOutBytes) throws IOException {
+        /* Read the next bytes from the stream */
+        return read(pOutBytes, 0, pOutBytes.length);
     }
 
     @Override
     public int read() throws IOException {
-        int iNumRead;
+        int iNumBytesRead;
 
-        /* Loop until we get a byte or EOF */
+        /* Loop until we get a byte or EOF from the stream */
         do {
-            iNumRead = read(theByte, 0, 1);
-        } while (iNumRead == 0);
+            iNumBytesRead = read(theByte, 0, 1);
+        } while (iNumBytesRead == 0);
 
-        /* Convert the byte read into an integer */
-        if (iNumRead > 0) {
-            iNumRead = (theByte[0] & BYTE_MASK);
+        /* Convert the byte that has been read into an integer */
+        if (iNumBytesRead > 0) {
+            iNumBytesRead = (theByte[0] & BYTE_MASK);
         }
 
         /* Return to the caller */
-        return iNumRead;
+        return iNumBytesRead;
     }
 
     /**

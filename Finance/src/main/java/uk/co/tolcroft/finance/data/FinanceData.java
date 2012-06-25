@@ -25,6 +25,7 @@ package uk.co.tolcroft.finance.data;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.finance.data.Account.AccountList;
@@ -132,46 +133,46 @@ public class FinanceData extends DataSet<FinanceData> {
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ACTTYPES.equals(pField)) {
-            return theActTypes;
+            return (theActTypes.size() > 0) ? theActTypes : JDataFieldValue.SkipField;
         }
         if (FIELD_TRANTYPES.equals(pField)) {
-            return theTransTypes;
+            return (theTransTypes.size() > 0) ? theTransTypes : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXTYPES.equals(pField)) {
-            return theTaxTypes;
+            return (theTaxTypes.size() > 0) ? theTaxTypes : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXREGS.equals(pField)) {
-            return theTaxRegimes;
+            return (theTaxRegimes.size() > 0) ? theTaxRegimes : JDataFieldValue.SkipField;
         }
         if (FIELD_FREQS.equals(pField)) {
-            return theFrequencys;
+            return (theFrequencys.size() > 0) ? theFrequencys : JDataFieldValue.SkipField;
         }
         if (FIELD_INFOTYPES.equals(pField)) {
-            return theInfoTypes;
+            return (theInfoTypes.size() > 0) ? theInfoTypes : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXYEARS.equals(pField)) {
-            return theTaxYears;
+            return (theTaxYears.size() > 0) ? theTaxYears : JDataFieldValue.SkipField;
         }
         if (FIELD_ACCOUNTS.equals(pField)) {
-            return theAccounts;
+            return (theAccounts.size() > 0) ? theAccounts : JDataFieldValue.SkipField;
         }
         if (FIELD_RATES.equals(pField)) {
-            return theRates;
+            return (theRates.size() > 0) ? theRates : JDataFieldValue.SkipField;
         }
         if (FIELD_PRICES.equals(pField)) {
-            return thePrices;
+            return (thePrices.size() > 0) ? thePrices : JDataFieldValue.SkipField;
         }
         if (FIELD_PATTERNS.equals(pField)) {
-            return thePatterns;
+            return (thePatterns.size() > 0) ? thePatterns : JDataFieldValue.SkipField;
         }
         if (FIELD_EVENTS.equals(pField)) {
-            return theEvents;
+            return (theEvents.size() > 0) ? theEvents : JDataFieldValue.SkipField;
         }
         if (FIELD_EVENTVALUES.equals(pField)) {
-            return theEventValues;
+            return (theEventValues.size() > 0) ? theEventValues : JDataFieldValue.SkipField;
         }
         if (FIELD_EVENTDATA.equals(pField)) {
-            return theEventData;
+            return (theEventData.size() > 0) ? theEventData : JDataFieldValue.SkipField;
         }
         return super.getFieldValue(pField);
     }

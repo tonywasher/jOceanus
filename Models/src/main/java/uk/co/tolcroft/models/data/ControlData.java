@@ -166,11 +166,10 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
                 break;
             case EDIT:
                 setBase(pSource);
-                setState(DataState.CLEAN);
                 break;
             case UPDATE:
                 setBase(pSource);
-                setState(pSource.getState());
+                // setState(pSource.getState());
                 break;
             default:
                 break;
@@ -298,9 +297,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
         setValueControlKey(pControl);
 
         /* Check for changes */
-        if (checkForHistory()) {
-            setState(DataState.CHANGED);
-        }
+        checkForHistory();
     }
 
     /**

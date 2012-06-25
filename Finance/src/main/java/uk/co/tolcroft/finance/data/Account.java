@@ -1345,7 +1345,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                 break;
             case UPDATE:
                 setBase(pAccount);
-                setState(pAccount.getState());
+                // setState(pAccount.getState());
                 break;
             default:
                 break;
@@ -2273,7 +2273,6 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     @Override
     public boolean applyChanges(final DataItem pAccount) {
         Account myAccount = (Account) pAccount;
-        boolean bChanged = false;
 
         /* Store the current detail into history */
         pushHistory();
@@ -2344,14 +2343,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         }
 
         /* Check for changes */
-        if (checkForHistory()) {
-            /* Set changed status */
-            setState(DataState.CHANGED);
-            bChanged = true;
-        }
-
-        /* Return to caller */
-        return bChanged;
+        return checkForHistory();
     }
 
     /**

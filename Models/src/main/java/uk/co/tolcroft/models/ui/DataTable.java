@@ -25,6 +25,7 @@ package uk.co.tolcroft.models.ui;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
 
@@ -34,6 +35,7 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
@@ -42,16 +44,13 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import net.sourceforge.JDataManager.EventManager;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.ui.RenderData.PopulateRenderData;
 import uk.co.tolcroft.models.ui.Renderer.RowCell;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.views.UpdateSet;
 
 /**
@@ -59,7 +58,7 @@ import uk.co.tolcroft.models.views.UpdateSet;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTable implements StdPanel {
+public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTable {
     /**
      * Serial Id.
      */
@@ -121,9 +120,62 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
     private boolean isEnabled = false;
 
     /**
-     * The Data Manager.
+     * The Event Manager.
      */
-    private final JDataManager theDataManager;
+    private final transient EventManager theManager = new EventManager(this);
+
+    /**
+     * Add change Listener to list.
+     * @param pListener the listener to add
+     */
+    public void addChangeListener(final ChangeListener pListener) {
+        /* Add the change listener */
+        theManager.addChangeListener(pListener);
+    }
+
+    /**
+     * Add action Listener to list.
+     * @param pListener the listener to add
+     */
+    public void addActionListener(final ActionListener pListener) {
+        /* Add the action listener */
+        theManager.addActionListener(pListener);
+    }
+
+    /**
+     * Remove Change Listener.
+     * @param pListener the listener to remove
+     */
+    public void removeChangeListener(final ChangeListener pListener) {
+        /* Remove the change listener */
+        theManager.removeChangeListener(pListener);
+    }
+
+    /**
+     * Remove Action Listener.
+     * @param pListener the listener to remove
+     */
+    public void removeActionListener(final ActionListener pListener) {
+        /* Remove the action listener */
+        theManager.removeActionListener(pListener);
+    }
+
+    /**
+     * Fire State Changed Event to all registered listeners.
+     */
+    public void fireStateChanged() {
+        /* Fire the standard event */
+        theManager.fireStateChanged();
+    }
+
+    /**
+     * Fire Action Performed Event to all registered listeners.
+     * @param pCommand the action command
+     */
+    public void fireActionPerformed(final String pCommand) {
+        /* Fire standard action performed event */
+        theManager.fireActionPerformed(pCommand);
+    }
 
     /**
      * Does the table have a header row?
@@ -133,9 +185,12 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         return false;
     }
 
-    @Override
+    /**
+     * Does the table have updates?
+     * @return true/false
+     */
     public boolean hasUpdates() {
-        return (theList != null) && theList.hasUpdates();
+        return (theUpdateSet != null) && theUpdateSet.hasUpdates();
     }
 
     /**
@@ -143,7 +198,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * @return true/false
      */
     public boolean hasErrors() {
-        return (theList != null) && theList.hasErrors();
+        return (theUpdateSet != null) && theUpdateSet.hasErrors();
     }
 
     /**
@@ -152,10 +207,6 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      */
     public boolean isActive() {
         return isEnabled;
-    }
-
-    @Override
-    public void printIt() {
     }
 
     /**
@@ -190,22 +241,20 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         return theScroll;
     }
 
-    @Override
-    public void notifySelection(final Object obj) {
-    }
-
-    /**
-     * Update debug entry.
-     */
-    public void updateDebug() {
-    }
-
     /**
      * Set the active flag.
      * @param isActive true/false
      */
     public void setActive(final boolean isActive) {
         isEnabled = isActive;
+    }
+
+    /**
+     * Notify that there have been changes to this list.
+     */
+    protected void notifyChanges() {
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**
@@ -219,16 +268,6 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         return null;
     }
 
-    @Override
-    public JDataManager getDataManager() {
-        return theDataManager;
-    }
-
-    /**
-     * Save the data.
-     */
-    public abstract void saveData();
-
     /**
      * Get the RowTableModel.
      * @return the model
@@ -239,11 +278,9 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
 
     /**
      * Constructor.
-     * @param pDataManager the data manager
      */
-    public DataTable(final JDataManager pDataManager) {
+    public DataTable() {
         /* Store parameters */
-        theDataManager = pDataManager;
         theRowHdrModel = new RowTableModel(this);
 
         /* Set the selection mode */
@@ -291,12 +328,12 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
     }
 
-    @Override
+    /**
+     * Obtain the edit state of the table.
+     * @return the edit state
+     */
     public EditState getEditState() {
-        if (theUpdateSet == null) {
-            return EditState.CLEAN;
-        }
-        return theUpdateSet.getEditState();
+        return (theUpdateSet == null) ? EditState.CLEAN : theUpdateSet.getEditState();
     }
 
     /**
@@ -320,7 +357,6 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             pList.setShowDeleted(doShowDel);
             theClass = pList.getBaseClass();
         }
-        updateDebug();
 
         /* Redraw the table and row headers */
         theModel.fireNewDataEvents();
@@ -332,7 +368,10 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
     }
 
-    @Override
+    /**
+     * Is the table locked?
+     * @return true/false
+     */
     public boolean isLocked() {
         /* Store list and select correct mode */
         return ((theList == null) || theList.isLocked());
@@ -345,40 +384,6 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      */
     public T extractItemAt(final int uIndex) {
         return ((theList == null) ? null : theList.get(uIndex));
-    }
-
-    /**
-     * reset the data.
-     */
-    public void resetData() {
-        /* If we have a list */
-        if (theList != null) {
-            /* Reset all changes */
-            theList.resetChanges();
-
-            /* Recalculate edit state */
-            theList.findEditState();
-        }
-
-        /* Re-validate */
-        validateAfterChange();
-        updateDebug();
-
-        /* Notify that the entire table has changed */
-        theModel.fireNewDataEvents();
-    }
-
-    /**
-     * Validate all the items.
-     */
-    public void validateAll() {
-        /* Validate the list */
-        theList.validate();
-        theList.findEditState();
-        updateDebug();
-
-        /* Re-draw the table */
-        theModel.fireNewDataEvents();
     }
 
     /**
@@ -470,8 +475,8 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
     /**
      * Perform additional validation after change.
      */
-    protected void validateAfterChange() {
-    }
+    // protected void validateAfterChange() {
+    // }
 
     /**
      * Set the show deleted indication.
@@ -536,6 +541,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         /* Create the new Item */
         myItem = theList.addNewItem();
         myItem.setNewVersion();
+        theUpdateSet.incrementVersion();
 
         /* Determine the row # allowing for header */
         myRowNo = myItem.indexOf();
@@ -615,7 +621,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             }
 
             /* Mark the row as deleted */
-            myRow.setState(DataState.DELETED);
+            myRow.setDeleted(true);
 
             /* If we are showing deleted items */
             if (!hideDeleted) {
@@ -631,7 +637,8 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
 
         /* Re-validate after change */
-        validateAfterChange();
+        theUpdateSet.incrementVersion();
+        // validateAfterChange();
     }
 
     /**
@@ -694,7 +701,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
 
         /* Re-validate after change */
-        validateAfterChange();
+        // validateAfterChange();
     }
 
     /**
@@ -740,7 +747,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             }
 
             /* Mark the row as recovered */
-            myRow.setState(DataState.RECOVERED);
+            myRow.setDeleted(false);
             myRow.clearErrors();
             myRow.validate();
 
@@ -749,7 +756,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
 
         /* Re-validate after change */
-        validateAfterChange();
+        // validateAfterChange();
     }
 
     /**
@@ -836,9 +843,6 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
                 myRowNo++;
             }
 
-            /* Mark the row as clean */
-            myRow.setState(myRow.isCoreDeleted() ? DataState.RECOVERED : DataState.CLEAN);
-
             /* Clear errors and re-validate */
             myRow.clearErrors();
             myRow.resetHistory();
@@ -864,7 +868,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
 
         /* Re-validate after change */
-        validateAfterChange();
+        // validateAfterChange();
     }
 
     /**
@@ -913,12 +917,6 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             myRow.clearErrors();
             myRow.validate();
 
-            /* If the item is now clean */
-            if (!myRow.hasHistory()) {
-                /* Set the new status */
-                myRow.setState(myRow.isCoreDeleted() ? DataState.RECOVERED : DataState.CLEAN);
-            }
-
             /* Determine new row # */
             myNewRowNo = myRow.indexOf();
             if (hasHeader()) {
@@ -939,31 +937,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
 
         /* Re-validate after change */
-        validateAfterChange();
-    }
-
-    @Override
-    public void performCommand(final stdCommand pCmd) {
-
-        /* Cancel any editing */
-        if (isEditing()) {
-            cellEditor.cancelCellEditing();
-        }
-
-        /* Switch on command */
-        switch (pCmd) {
-            case OK:
-                saveData();
-                break;
-            case RESETALL:
-                resetData();
-                break;
-            default:
-                break;
-        }
-
-        /* Notify changes */
-        notifyChanges();
+        // validateAfterChange();
     }
 
     /**

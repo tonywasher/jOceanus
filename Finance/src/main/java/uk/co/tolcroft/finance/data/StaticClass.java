@@ -257,12 +257,12 @@ public class StaticClass {
         /**
          * Capital Gain.
          */
-        CAPITALGAIN(6, 35),
+        CAPITALGAIN(6, 36),
 
         /**
          * Capital Loss.
          */
-        CAPITALLOSS(7, 36),
+        CAPITALLOSS(7, 37),
 
         /**
          * Tax Free Interest.

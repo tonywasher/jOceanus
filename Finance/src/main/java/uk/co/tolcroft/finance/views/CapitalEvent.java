@@ -60,7 +60,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
 
     @Override
     public JDataFields getDataFields() {
-        return FIELD_DEFS;
+        return theLocalFields;
     }
 
     @Override
@@ -438,7 +438,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
 
         @Override
         public String formatObject() {
-            return getDataFields().getName();
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

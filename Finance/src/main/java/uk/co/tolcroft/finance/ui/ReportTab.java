@@ -22,7 +22,6 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui;
 
-import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.net.URL;
 
@@ -39,9 +38,9 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateDay.DateDay;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.ui.controls.ReportSelect;
@@ -50,17 +49,19 @@ import uk.co.tolcroft.finance.views.AnalysisReport;
 import uk.co.tolcroft.finance.views.EventAnalysis;
 import uk.co.tolcroft.finance.views.EventAnalysis.AnalysisYear;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.ui.ErrorPanel;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.views.DataControl;
 
 /**
  * Report Panel.
  * @author Tony Washer
  */
-public class ReportTab implements HyperlinkListener, StdPanel {
+public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
+    /**
+     * Serial Id.
+     */
+    private static final long serialVersionUID = 6499559461558661107L;
+
     /**
      * Panel width.
      */
@@ -69,12 +70,7 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     /**
      * The Data View.
      */
-    private final View theView;
-
-    /**
-     * The Parent.
-     */
-    private final MainTab theParent;
+    private final transient View theView;
 
     /**
      * The Panel.
@@ -99,17 +95,17 @@ public class ReportTab implements HyperlinkListener, StdPanel {
     /**
      * The Analysis.
      */
-    private EventAnalysis theAnalysis = null;
+    private transient EventAnalysis theAnalysis = null;
 
     /**
      * The Report entry.
      */
-    private final JDataEntry theDataReport;
+    private final transient JDataEntry theDataReport;
 
     /**
      * The Spot Analysis Entry.
      */
-    private final JDataEntry theSpotEntry;
+    private final transient JDataEntry theSpotEntry;
 
     /**
      * The Error Panel.
@@ -124,35 +120,6 @@ public class ReportTab implements HyperlinkListener, StdPanel {
         return thePanel;
     }
 
-    @Override
-    public boolean hasUpdates() {
-        return false;
-    }
-
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
-    public EditState getEditState() {
-        return EditState.CLEAN;
-    }
-
-    @Override
-    public void performCommand(final stdCommand pCmd) {
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataReport;
-    }
-
-    @Override
-    public JDataManager getDataManager() {
-        return theParent.getDataMgr();
-    }
-
     /**
      * Constructor for Report Window.
      * @param pWindow the parent window
@@ -164,7 +131,7 @@ public class ReportTab implements HyperlinkListener, StdPanel {
         JDataEntry mySection;
 
         /* Store the view and properties */
-        theParent = pWindow;
+        // theParent = pWindow;
         theView = pWindow.getView();
 
         /* Create the top level debug entry for this view */
@@ -202,7 +169,7 @@ public class ReportTab implements HyperlinkListener, StdPanel {
         theSelect = new ReportSelect(theView);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
+        theError = new ErrorPanel(myDataMgr, theDataReport);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -249,66 +216,62 @@ public class ReportTab implements HyperlinkListener, StdPanel {
         theSelect.createSavePoint();
     }
 
-    @Override
-    public void notifyChanges() {
-    }
-
     /**
      * Lock on error.
      * @param isError is there an error (True/False)
      */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Hide selection panel */
-        theSelect.setVisible(!isError);
+    // @Override
+    // public void lockOnError(final boolean isError) {
+    /* Hide selection panel */
+    // theSelect.setVisible(!isError);
 
-        /* Lock scroll-able area */
-        theScroll.setEnabled(!isError);
-    }
+    /* Lock scroll-able area */
+    // theScroll.setEnabled(!isError);
+    // }
 
     /**
      * Notify window that there has been a change in selection by an underlying control.
      * @param obj the underlying control that has changed selection
      */
-    @Override
-    public void notifySelection(final Object obj) {
-        /* If this is a change from the report selection */
-        if (theSelect.equals(obj)) {
-            /* Protect against exceptions */
-            try {
-                /* Build the report */
-                buildReport();
+    // @Override
+    // public void notifySelection(final Object obj) {
+    /* If this is a change from the report selection */
+    // if (theSelect.equals(obj)) {
+    // /* Protect against exceptions */
+    // try {
+    // /* Build the report */
+    // buildReport();
 
-                /* Create SavePoint */
-                theSelect.createSavePoint();
+    /* Create SavePoint */
+    // theSelect.createSavePoint();
 
-                /* Catch Exceptions */
-            } catch (JDataException e) {
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to change selection", e);
+    /* Catch Exceptions */
+    // } catch (JDataException e) {
+    /* Build the error */
+    // JDataException myError = new JDataException(ExceptionClass.DATA,
+    // "Failed to change selection", e);
 
-                /* Show the error */
-                theError.setError(myError);
+    /* Show the error */
+    // theError.setError(myError);
 
-                /* Restore SavePoint */
-                theSelect.restoreSavePoint();
-            }
-        }
-    }
+    /* Restore SavePoint */
+    // theSelect.restoreSavePoint();
+    // }
+    // }
+    // }
 
     /**
      * Print the report.
      */
-    @Override
-    public void printIt() {
-        /* Print the current report */
-        try {
-            theEditor.print();
-        } catch (PrinterException e) {
-            e = null;
-        }
-    }
+    // @Override
+    // public void printIt() {
+    /* Print the current report */
+    // try {
+    // theEditor.print();
+    // } catch (PrinterException e) {
+    // e = null;
+    // }
+    // }
 
     /**
      * Build the report.

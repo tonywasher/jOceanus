@@ -25,33 +25,53 @@ package uk.co.tolcroft.models.ui;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.GroupLayout;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.LayoutStyle;
 
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
+import net.sourceforge.JDataManager.JPanelWithEvents;
+import uk.co.tolcroft.models.views.UpdateSet;
 
 /**
  * Save buttons panel.
  * @author Tony Washer
  */
-public class SaveButtons extends JPanel {
+public class SaveButtons extends JPanelWithEvents {
     /**
      * Serial Id.
      */
     private static final long serialVersionUID = -6297579158428259704L;
 
     /**
-     * The parent panel.
+     * OK.
      */
-    private final StdPanel theParent;
+    public static final String CMD_OK = "OK";
+
+    /**
+     * Undo last change.
+     */
+    public static final String CMD_UNDO = "UNDO";
+
+    /**
+     * Reset all changes.
+     */
+    public static final String CMD_RESET = "RESET";
+
+    /**
+     * The update set.
+     */
+    private final UpdateSet theUpdateSet;
 
     /**
      * The OK button.
      */
     private final JButton theOKButton;
+
+    /**
+     * The Undo button.
+     */
+    private final JButton theUndoButton;
 
     /**
      * The Reset button.
@@ -60,84 +80,65 @@ public class SaveButtons extends JPanel {
 
     /**
      * Constructor.
-     * @param pParent the parent panel
+     * @param pUpdateSet the update set
      */
-    public SaveButtons(final StdPanel pParent) {
-        GroupLayout panelLayout;
-
+    public SaveButtons(final UpdateSet pUpdateSet) {
         /* Create the boxes */
         theOKButton = new JButton("OK");
+        theUndoButton = new JButton("Undo");
         theResetButton = new JButton("Reset");
-        theParent = pParent;
+
+        /* Record the update set */
+        theUpdateSet = pUpdateSet;
 
         /* Add the listener for item changes */
         SaveListener myListener = new SaveListener();
         theOKButton.addActionListener(myListener);
+        theUndoButton.addActionListener(myListener);
         theResetButton.addActionListener(myListener);
 
         /* Create the save panel */
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Save Options"));
+        setBorder(BorderFactory.createTitledBorder("Save Options"));
 
-        /* Create the layout for the save panel */
-        panelLayout = new GroupLayout(this);
-        setLayout(panelLayout);
-
-        /* Set the layout */
-        panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          panelLayout
-                                  .createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(theOKButton)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theResetButton).addContainerGap()));
-        panelLayout
-                .setVerticalGroup(panelLayout
-                        .createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(panelLayout
-                                          .createSequentialGroup()
-                                          .addGroup(panelLayout
-                                                            .createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                                 false)
-                                                            .addComponent(theOKButton,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE)
-                                                            .addComponent(theResetButton,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE))));
+        /* Define the layout */
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createHorizontalGlue());
+        add(theOKButton);
+        add(Box.createHorizontalGlue());
+        add(theUndoButton);
+        add(Box.createHorizontalGlue());
+        add(theResetButton);
+        add(Box.createHorizontalGlue());
 
         /* Initiate lock-down mode */
-        setLockDown();
+        setEnabled(true);
     }
 
-    /**
-     * Lock/Unlock the selection.
-     */
-    public void setLockDown() {
+    @Override
+    public void setEnabled(final boolean bEnabled) {
         /* If the table is locked clear the buttons */
-        if (theParent.isLocked()) {
+        if (!bEnabled) {
             theOKButton.setEnabled(false);
+            theUndoButton.setEnabled(false);
             theResetButton.setEnabled(false);
 
             /* Else look at the edit state */
         } else {
-            switch (theParent.getEditState()) {
+            switch (theUpdateSet.getEditState()) {
                 case CLEAN:
                     theOKButton.setEnabled(false);
+                    theUndoButton.setEnabled(false);
                     theResetButton.setEnabled(false);
                     break;
                 case DIRTY:
                 case ERROR:
                     theOKButton.setEnabled(false);
+                    theUndoButton.setEnabled(true);
                     theResetButton.setEnabled(true);
                     break;
                 case VALID:
                     theOKButton.setEnabled(true);
+                    theUndoButton.setEnabled(true);
                     theResetButton.setEnabled(true);
                     break;
                 default:
@@ -154,19 +155,21 @@ public class SaveButtons extends JPanel {
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
-            /* If this event relates to the OK box */
+            /* If this event relates to the OK button */
             if (theOKButton.equals(o)) {
                 /* Pass command to the table */
-                theParent.performCommand(stdCommand.OK);
+                fireActionPerformed(CMD_OK);
 
-                /* If this event relates to the Reset box */
+                /* If this event relates to the Undo button */
+            } else if (theUndoButton.equals(o)) {
+                /* Pass command to the table */
+                fireActionPerformed(CMD_UNDO);
+
+                /* If this event relates to the Reset button */
             } else if (theResetButton.equals(o)) {
                 /* Pass command to the table */
-                theParent.performCommand(stdCommand.RESETALL);
+                fireActionPerformed(CMD_RESET);
             }
-
-            /* Set the lockDown Status */
-            setLockDown();
         }
     }
 }

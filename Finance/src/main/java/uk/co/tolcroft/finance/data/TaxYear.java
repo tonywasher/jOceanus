@@ -43,7 +43,6 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataState;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.
@@ -829,7 +828,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
                 break;
             case UPDATE:
                 setBase(pTaxYear);
-                setState(pTaxYear.getState());
+                // setState(pTaxYear.getState());
                 break;
             default:
                 break;
@@ -1055,7 +1054,6 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      */
     public TaxYear(final TaxYearList pList) {
         super(pList, 0);
-        setState(DataState.NEW);
     }
 
     @Override
@@ -1464,7 +1462,6 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
     @Override
     public boolean applyChanges(final DataItem pTaxYear) {
         TaxYear myTaxYear = (TaxYear) pTaxYear;
-        boolean bChanged = false;
 
         /* Store the current detail into history */
         pushHistory();
@@ -1570,14 +1567,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
         }
 
         /* Check for changes */
-        if (checkForHistory()) {
-            /* Mark as changed */
-            setState(DataState.CHANGED);
-            bChanged = true;
-        }
-
-        /* Return to caller */
-        return bChanged;
+        return checkForHistory();
     }
 
     /**
@@ -1750,7 +1740,6 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             myBase = myIterator.peekLast();
             TaxYear myYear = new TaxYear(myList, myBase);
             myYear.setBase(null);
-            myYear.setState(DataState.NEW);
             myYear.setId(0);
 
             /* Adjust the year and add to list */

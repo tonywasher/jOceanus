@@ -54,7 +54,6 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
 /**
@@ -779,7 +778,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 break;
             case UPDATE:
                 setBase(pEvent);
-                setState(pEvent.getState());
+                // setState(pEvent.getState());
                 break;
             default:
                 break;
@@ -1828,8 +1827,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return whether changes have been made
      */
     private boolean applyChanges(final Event pEvent) {
-        boolean bChanged = false;
-
         /* Store the current detail into history */
         pushHistory();
 
@@ -1884,14 +1881,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         }
 
         /* Check for changes */
-        if (checkForHistory()) {
-            /* Mark as changed */
-            setState(DataState.CHANGED);
-            bChanged = true;
-        }
-
-        /* Return to caller */
-        return bChanged;
+        return checkForHistory();
     }
 
     /**

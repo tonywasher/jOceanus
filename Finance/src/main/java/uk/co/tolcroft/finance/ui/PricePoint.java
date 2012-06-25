@@ -27,7 +27,6 @@ import java.awt.Dimension;
 import javax.swing.GroupLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -42,7 +41,6 @@ import uk.co.tolcroft.finance.ui.controls.SpotSelect;
 import uk.co.tolcroft.finance.views.SpotPrices;
 import uk.co.tolcroft.finance.views.SpotPrices.SpotPrice;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.PriceEditor;
@@ -154,17 +152,6 @@ public class PricePoint extends DataTable<AccountPrice> {
         return false;
     }
 
-    /* Access the debug entry */
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataPrice;
-    }
-
-    @Override
-    public JDataManager getDataManager() {
-        return theParent.getDataMgr();
-    }
-
     /**
      * The Asset column name.
      */
@@ -225,9 +212,6 @@ public class PricePoint extends DataTable<AccountPrice> {
      * @param pParent the parent
      */
     public PricePoint(final MainTab pParent) {
-        /* Initialise superclass */
-        super(pParent.getDataMgr());
-
         /* Declare variables */
         GroupLayout myLayout;
         JDataEntry mySection;
@@ -262,15 +246,15 @@ public class PricePoint extends DataTable<AccountPrice> {
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Add the mouse listener */
-        SpotViewMouse myMouse = new SpotViewMouse();
+        SpotViewMouse myMouse = new SpotViewMouse(this);
         addMouseListener(myMouse);
 
         /* Create the sub panels */
         theSelect = new SpotSelect(theView);
-        theTabButs = new SaveButtons(this);
+        theTabButs = new SaveButtons(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
+        theError = new ErrorPanel(myDataMgr, theDataPrice);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -305,85 +289,81 @@ public class PricePoint extends DataTable<AccountPrice> {
                                   .addComponent(getScrollPane()).addComponent(theTabButs)));
     }
 
-    /**
-     * Save changes from the view into the underlying data.
-     */
-    @Override
-    public void saveData() {
-        if (theSnapshot != null) {
-            validateAll();
-            if (!theUpdateSet.hasErrors()) {
-                theUpdateSet.applyChanges();
-            }
-        }
-    }
+    // @Override
+    // public void saveData() {
+    // if (theSnapshot != null) {
+    // if (!theUpdateSet.hasErrors()) {
+    // theUpdateSet.applyChanges();
+    // }
+    // }
+    // }
 
     /**
      * Update Debug view.
      */
-    @Override
-    public void updateDebug() {
-        theDataPrice.setObject(theSnapshot);
-    }
+    // @Override
+    // public void updateDebug() {
+    // theDataPrice.setObject(theSnapshot);
+    // }
 
     /**
      * Lock on error.
      * @param isError is there an error (True/False)
      */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Hide selection panel */
-        theSelect.setVisible(!isError);
+    // @Override
+    // public void lockOnError(final boolean isError) {
+    /* Hide selection panel */
+    // theSelect.setVisible(!isError);
 
-        /* Lock scroll-able area */
-        getScrollPane().setEnabled(!isError);
+    /* Lock scroll-able area */
+    // getScrollPane().setEnabled(!isError);
 
-        /* Lock tab buttons area */
-        theTabButs.setEnabled(!isError);
-    }
+    /* Lock tab buttons area */
+    // theTabButs.setEnabled(!isError);
+    // }
 
     /**
      * Notify table that there has been a change in selection by an underlying control.
      * @param obj the underlying control that has changed selection
      */
-    @Override
-    public void notifySelection(final Object obj) {
-        /* if this is a change from the date */
-        if (theSelect.equals(obj)) {
-            /* Set the deleted option */
-            if (getList().getShowDeleted() != theSelect.getShowClosed()) {
-                setShowDeleted(theSelect.getShowClosed());
-            }
+    // @Override
+    // public void notifySelection(final Object obj) {
+    /* if this is a change from the date */
+    // if (theSelect.equals(obj)) {
+    /* Set the deleted option */
+    // if (getList().getShowDeleted() != theSelect.getShowClosed()) {
+    // setShowDeleted(theSelect.getShowClosed());
+    // }
 
-            /* Access selection */
-            AccountType myType = theSelect.getAccountType();
-            DateDay myDate = theSelect.getDate();
+    /* Access selection */
+    // AccountType myType = theSelect.getAccountType();
+    // DateDay myDate = theSelect.getDate();
 
-            /* If the selection differs */
-            if (((!Difference.isEqual(theDate, myDate))) || (!Difference.isEqual(theAccountType, myType))) {
-                /* Protect against exceptions */
-                try {
-                    /* Set selection */
-                    setSelection(myType, myDate);
+    /* If the selection differs */
+    // if (((!Difference.isEqual(theDate, myDate))) || (!Difference.isEqual(theAccountType, myType))) {
+    /* Protect against exceptions */
+    // try {
+    /* Set selection */
+    // setSelection(myType, myDate);
 
-                    /* Create SavePoint */
-                    theSelect.createSavePoint();
+    /* Create SavePoint */
+    // theSelect.createSavePoint();
 
-                    /* Catch Exceptions */
-                } catch (JDataException e) {
-                    /* Build the error */
-                    JDataException myError = new JDataException(ExceptionClass.DATA,
-                            "Failed to change selection", e);
+    /* Catch Exceptions */
+    // } catch (JDataException e) {
+    /* Build the error */
+    // JDataException myError = new JDataException(ExceptionClass.DATA,
+    // "Failed to change selection", e);
 
-                    /* Show the error */
-                    theError.setError(myError);
+    /* Show the error */
+    // theError.setError(myError);
 
-                    /* Restore SavePoint */
-                    theSelect.restoreSavePoint();
-                }
-            }
-        }
-    }
+    /* Restore SavePoint */
+    // theSelect.restoreSavePoint();
+    // }
+    // }
+    // }
+    // }
 
     /**
      * Refresh views/controls after a load/update of underlying data.
@@ -411,7 +391,7 @@ public class PricePoint extends DataTable<AccountPrice> {
         }
 
         /* Update the table buttons */
-        theTabButs.setLockDown();
+        theTabButs.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
 
         /* Update the top level tabs */
@@ -450,7 +430,7 @@ public class PricePoint extends DataTable<AccountPrice> {
         /* Update other details */
         setList(thePrices);
         theUpdateEntry.setDataList(thePrices);
-        theTabButs.setLockDown();
+        theTabButs.setEnabled(true);
         theSelect.setEnabled(true);
         theParent.setVisibility();
     }
@@ -736,7 +716,7 @@ public class PricePoint extends DataTable<AccountPrice> {
             if (mySpot.checkForHistory()) {
                 /* Note that the item has changed */
                 mySpot.clearErrors();
-                mySpot.setState(DataState.CHANGED);
+                // mySpot.setState(DataState.CHANGED);
 
                 /* Validate the item and update the edit state */
                 mySpot.validate();
@@ -747,7 +727,7 @@ public class PricePoint extends DataTable<AccountPrice> {
 
                 /* Note that changes have occurred */
                 notifyChanges();
-                updateDebug();
+                // updateDebug();
             }
         }
     }
@@ -755,13 +735,14 @@ public class PricePoint extends DataTable<AccountPrice> {
     /**
      * SpotView mouse listener.
      */
-    private final class SpotViewMouse extends DataMouse<AccountPrice> {
+    private static final class SpotViewMouse extends DataMouse<AccountPrice> {
         /**
          * Constructor.
+         * @param pTable the table
          */
-        private SpotViewMouse() {
+        private SpotViewMouse(PricePoint pTable) {
             /* Call super-constructor */
-            super(theTable);
+            super(pTable);
         }
     }
 

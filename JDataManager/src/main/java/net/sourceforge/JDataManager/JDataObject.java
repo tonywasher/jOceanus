@@ -296,7 +296,7 @@ public final class JDataObject {
             case Map:
                 return formatHTMLMap(pDetail, o);
             case StackTrace:
-                return formatHTMLStack(pDetail, o);
+                return formatHTMLStack(o);
             case None:
             default:
                 return null;
@@ -447,12 +447,10 @@ public final class JDataObject {
 
     /**
      * Build HTML table describing stack.
-     * @param pDetail linking detail
      * @param pStack the stack to describe
      * @return the HTML table
      */
-    private static StringBuilder formatHTMLStack(final JDataDetail pDetail,
-                                                 final Object pStack) {
+    private static StringBuilder formatHTMLStack(final Object pStack) {
         StackTraceElement[] myArray = StackTraceElement[].class.cast(pStack);
         StringBuilder myResults = new StringBuilder(BUFFER_LEN);
 

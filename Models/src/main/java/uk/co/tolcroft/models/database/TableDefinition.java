@@ -50,7 +50,6 @@ import uk.co.tolcroft.models.database.ColumnDefinition.MoneyColumn;
 import uk.co.tolcroft.models.database.ColumnDefinition.RateColumn;
 import uk.co.tolcroft.models.database.ColumnDefinition.ReferenceColumn;
 import uk.co.tolcroft.models.database.ColumnDefinition.StringColumn;
-import uk.co.tolcroft.models.database.Database.JDBCDriver;
 
 /**
  * Database field definition class. Maps each dataType to a database field.

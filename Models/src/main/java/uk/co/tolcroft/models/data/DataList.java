@@ -162,7 +162,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     /**
      * The base list (for extracts).
      */
-    private DataList<?, ?> theBase = null;
+    private DataList<?, ? extends DataItem> theBase = null;
 
     /**
      * The generation.
@@ -287,7 +287,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Set the base DataList.
      * @param pBase the list that this list is based upon
      */
-    protected void setBase(final DataList<?, ?> pBase) {
+    protected void setBase(final DataList<?, ? extends DataItem> pBase) {
         theBase = pBase;
     }
 
@@ -398,30 +398,27 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     protected void populateList(final ListStyle pStyle) {
         /* Make this list the correct style */
         theStyle = pStyle;
-
-        /* Note that this list should show deleted items on UPDATE */
-        if (pStyle == ListStyle.UPDATE) {
-            setShowDeleted(true);
-        }
+        boolean isUpdate = (theStyle == ListStyle.UPDATE);
 
         /* Create an iterator for all items in the source list */
-        Iterator<?> myIterator = theBase.iterator();
+        Iterator<? extends DataItem> myIterator = theBase.iterator();
 
         /* Loop through the list */
         while (myIterator.hasNext()) {
-            /* Access the item */
-            DataItem myCurr = (DataItem) myIterator.next();
+            /* Access the item and its state */
+            DataItem myCurr = myIterator.next();
+            DataState myState = myCurr.getState();
 
-            /* Ignore this item for UPDATE lists if it is clean */
-            if ((pStyle == ListStyle.UPDATE) && (myCurr.getState() == DataState.CLEAN)) {
+            /* If this is an UPDATE list, ignore clean elements */
+            if ((isUpdate) && (myState == DataState.CLEAN)) {
                 continue;
             }
 
             /* Copy the item */
             DataItem myItem = addNewItem(myCurr);
 
-            /* If the item is a changed object */
-            if ((pStyle == ListStyle.UPDATE) && (myItem.getState() == DataState.CHANGED)) {
+            /* If this is a changed object in an update list */
+            if ((isUpdate) && (myState == DataState.CHANGED)) {
                 /* Ensure that we record the correct history */
                 myItem.setHistory(myCurr);
             }
@@ -469,7 +466,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 /* Insert a new item */
                 myItem = addNewItem(myCurr);
                 myItem.setBase(null);
-                myItem.setState(DataState.NEW);
+                // myItem.setState(DataState.NEW);
 
                 /* else the item exists in the old list */
             } else {
@@ -478,7 +475,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                     /* Copy the item */
                     DataItem myNew = addNewItem(myCurr);
                     myNew.setBase(myItem);
-                    myNew.setState(DataState.CHANGED);
+                    // myNew.setState(DataState.CHANGED);
 
                     /* Ensure that we record the correct history */
                     myNew.setHistory(myCurr);
@@ -498,7 +495,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
             DataItem myCurr = myIterator.next();
             DataItem myItem = addNewItem(myCurr);
             myItem.setBase(null);
-            myItem.setState(DataState.DELETED);
+            // myItem.setState(DataState.DELETED);
         }
     }
 
@@ -526,7 +523,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
             if (myItem == null) {
                 /* Mark this as a new item */
                 myCurr.setBase(null);
-                myCurr.setState(myCurr.isDeleted() ? DataState.DELNEW : DataState.NEW);
+                // myCurr.setState(myCurr.isDeleted() ? DataState.DELNEW : DataState.NEW);
 
                 /* else the item exists in the old list */
             } else {
@@ -534,8 +531,8 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 if (!myCurr.equals(myItem)) {
                     /* Mark this as a changed item (go via CLEAN to remove NEW indication) */
                     myCurr.setBase(myItem);
-                    myCurr.setState(DataState.CLEAN);
-                    myCurr.setState(myCurr.isDeleted() ? DataState.DELCHG : DataState.CHANGED);
+                    // myCurr.setState(DataState.CLEAN);
+                    // myCurr.setState(myCurr.isDeleted() ? DataState.DELCHG : DataState.CHANGED);
 
                     /* Set correct history */
                     myCurr.setHistory(myItem);
@@ -545,7 +542,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 } else {
                     /* Mark this as a clean item */
                     myCurr.setBase(null);
-                    myCurr.setState(myCurr.isDeleted() ? DataState.DELETED : DataState.CLEAN);
+                    // myCurr.setState(myCurr.isDeleted() ? DataState.DELETED : DataState.CLEAN);
                 }
 
                 /* Unlink the old item to improve search speed */
@@ -562,7 +559,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
             T myCurr = myIterator.next();
             T myItem = addNewItem(myCurr);
             myItem.setBase(null);
-            myItem.setState(DataState.DELETED);
+            // myItem.setState(DataState.DELETED);
         }
     }
 
@@ -623,8 +620,8 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
 
             /* If the item is deleted */
             if (myCurr.isDeleted()) {
-                /* If the base element is not deleted we have a valid change */
-                if (!myCurr.isCoreDeleted()) {
+                /* If this is a clean change then we are valid */
+                if (myCurr.getState() == DataState.CLEAN) {
                     isValid = true;
                 }
 
@@ -790,6 +787,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
 
         /* Adjust list value */
         setVersion(pVersion);
+
+        /* Validate the list */
+        validate();
     }
 
     /**
@@ -826,7 +826,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 case RECOVERED:
                     /* Clear errors and mark the item as clean */
                     myCurr.clearErrors();
-                    myCurr.setState(DataState.CLEAN);
+                    // myCurr.setState(DataState.CLEAN);
                     myIterator.reSort();
                     break;
                 default:
@@ -867,14 +867,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 case DELCHG:
                     /* Access the underlying item and mark as deleted */
                     myBase = myCurr.getBase();
-                    myBase.setState(DataState.DELETED);
+                    // myBase.setState(DataState.DELETED);
                     break;
 
                 /* If this is a recovered item */
                 case RECOVERED:
                     /* Access the underlying item and mark as restored */
                     myBase = myCurr.getBase();
-                    myBase.setState(DataState.RECOVERED);
+                    // myBase.setState(DataState.RECOVERED);
                     myBase.setRestoring(true);
                     break;
 
@@ -894,7 +894,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                     }
 
                     /* Set new state */
-                    myBase.setState(DataState.CHANGED);
+                    // myBase.setState(DataState.CHANGED);
 
                     /* Re-sort the item */
                     theBase.reSort(myBase);
@@ -936,14 +936,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 case DELCHG:
                     /* Access the underlying item and mark as not deleted */
                     myBase = myCurr.getBase();
-                    myBase.setState(DataState.RECOVERED);
+                    // myBase.setState(DataState.RECOVERED);
                     break;
 
                 /* If this is a recovered item */
                 case RECOVERED:
                     /* Access the underlying item and mark as deleted */
                     myBase = myCurr.getBase();
-                    myBase.setState(DataState.DELETED);
+                    // myBase.setState(DataState.DELETED);
                     myBase.setRestoring(false);
                     break;
 
@@ -960,13 +960,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                     /* If we were restoring */
                     if (myBase.isRestoring()) {
                         /* Set the item to be deleted again */
-                        myBase.setState(DataState.DELETED);
+                        // myBase.setState(DataState.DELETED);
                         myBase.setRestoring(false);
 
-                        /* If the item is now clean */
-                    } else if (!myBase.hasHistory()) {
-                        /* Set the new status */
-                        myBase.setState(DataState.CLEAN);
                     }
 
                     /* Re-sort the item */
@@ -1010,7 +1006,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                     /* Clear history and set as a clean item */
                     myCurr.clearHistory();
                     myCurr.setRestoring(false);
-                    myCurr.setState(DataState.CLEAN);
+                    // myCurr.setState(DataState.CLEAN);
                     break;
                 default:
                     break;

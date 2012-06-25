@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -32,6 +31,11 @@ import net.sourceforge.JDataManager.JDataObject.JDataValues;
  * ValueSet class.
  */
 public class ValueSet {
+    /**
+     * The hash value for deletion flag.
+     */
+    private static final int DELETION_HASH = 3;
+
     /**
      * The item to which the valueSet belongs.
      */
@@ -111,6 +115,14 @@ public class ValueSet {
     }
 
     /**
+     * Adjust deletion flag.
+     * @param pDeletion true/false
+     */
+    public void setDeletion(final boolean pDeletion) {
+        isDeletion = pDeletion;
+    }
+
+    /**
      * Constructor.
      * @param pItem the associated item
      */
@@ -120,9 +132,6 @@ public class ValueSet {
         theFields = pItem.getDataFields();
         theNumValues = theFields.getNumValues();
         theValues = new Object[theNumValues];
-        if (theNumValues > 0) {
-            Arrays.fill(theValues, null);
-        }
     }
 
     /**
@@ -141,6 +150,9 @@ public class ValueSet {
      * @param pPrevious the previous valueSet
      */
     public void copyFrom(final ValueSet pPrevious) {
+        /* Copy deletion flag */
+        isDeletion = pPrevious.isDeletion();
+
         /* Create the values array */
         Object[] mySrc = pPrevious.theValues;
         int myCopyLen = pPrevious.theNumValues;
@@ -222,8 +234,8 @@ public class ValueSet {
         ValueSet mySet = (ValueSet) pThat;
         Object[] myObj = mySet.theValues;
 
-        /* Check for number of values */
-        if (theNumValues != mySet.theNumValues) {
+        /* Check for deletion flag and # of values */
+        if ((isDeletion != mySet.isDeletion) || (theNumValues != mySet.theNumValues)) {
             return false;
         }
 
@@ -249,7 +261,8 @@ public class ValueSet {
 
     @Override
     public int hashCode() {
-        int iHashCode = 1;
+        /* Use deletion flag in hash Code */
+        int iHashCode = isDeletion ? DELETION_HASH : 1;
 
         /* Loop through the values */
         Iterator<JDataField> myIterator = theFields.fieldIterator();
@@ -285,6 +298,11 @@ public class ValueSet {
 
         /* Access the test values */
         Object[] myObj = pOriginal.theValues;
+
+        /* Check for deletion flag and # of values */
+        if ((isDeletion != pOriginal.isDeletion) || (theNumValues != pOriginal.theNumValues)) {
+            return Difference.Different;
+        }
 
         /* Loop through the values */
         Iterator<JDataField> myIterator = theFields.fieldIterator();

@@ -25,7 +25,7 @@ package uk.co.tolcroft.finance.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -33,12 +33,9 @@ import javax.swing.JPopupMenu;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.data.StaticData.StaticList;
 import uk.co.tolcroft.models.ui.DataMouse;
@@ -48,7 +45,6 @@ import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.Renderer.IntegerRenderer;
 import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
-import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
@@ -73,11 +69,6 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
      * The Panel.
      */
     private final JPanel thePanel;
-
-    /**
-     * The Parent.
-     */
-    private final transient MaintStatic theParent;
 
     /**
      * The Data class.
@@ -113,16 +104,6 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
      * The UpdateEntry.
      */
     private final transient UpdateEntry theUpdateEntry;
-
-    /**
-     * The Data entry.
-     */
-    private final transient JDataEntry theDataEntry;
-
-    /**
-     * The Save buttons.
-     */
-    private final SaveButtons theTabButs;
 
     /**
      * The Error panel.
@@ -244,30 +225,24 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
 
     /**
      * Constructor.
-     * @param pParent the parent
+     * @param pView the view
+     * @param pUpdateSet the update set
+     * @param pError the error panel
      * @param pClass the list class
      */
-    public MaintStaticData(final MaintStatic pParent,
+    public MaintStaticData(final View pView,
+                           final UpdateSet pUpdateSet,
+                           final ErrorPanel pError,
                            final Class<L> pClass) {
-        /* Call super constructor */
-        super(pParent.getDataManager());
-
-        /* Declare variables */
-        GroupLayout myLayout;
-
         /* Record the passed details */
-        theParent = pParent;
+        theError = pError;
         theClass = pClass;
-        theView = pParent.getView();
+        theView = pView;
 
         /* Build the Update set and List */
-        theUpdateSet = theParent.getUpdateSet();
+        theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(pClass);
-
-        /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        theDataEntry = myDataMgr.new JDataEntry(pClass.getEnclosingClass().getSimpleName());
-        theDataEntry.addAsChildOf(pParent.getDataEntry());
+        setUpdateSet(theUpdateSet);
 
         /* Set the table model */
         theModel = new StaticModel();
@@ -288,59 +263,12 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         StaticMouse myMouse = new StaticMouse();
         addMouseListener(myMouse);
 
-        /* Create the sub panels */
-        theTabButs = new SaveButtons(this);
-
-        /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
-
         /* Create the panel */
         thePanel = new JPanel();
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
-                                                    .addComponent(theError, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(getScrollPane(),
-                                                                  GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
-                                                                  Short.MAX_VALUE)
-                                                    .addComponent(theTabButs, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(theError)
-                                  .addComponent(getScrollPane()).addComponent(theTabButs)));
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataEntry;
-    }
-
-    @Override
-    public void updateDebug() {
-        theDataEntry.setObject(theStatic);
-    }
-
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Lock scroll-able area */
-        getScrollPane().setEnabled(!isError);
-
-        /* Lock row/tab buttons area */
-        theTabButs.setEnabled(!isError);
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(getScrollPane());
     }
 
     @Override
@@ -350,21 +278,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             theStatic.findEditState();
         }
 
-        /* Update the table buttons */
-        theTabButs.setLockDown();
-
-        /* Update the top level tabs */
-        theParent.setVisibility();
-    }
-
-    @Override
-    public void saveData() {
-        if (theStatic != null) {
-            validateAll();
-            if (!theUpdateSet.hasErrors()) {
-                theUpdateSet.applyChanges();
-            }
-        }
+        /* Notify that there have been changes */
+        fireStateChanged();
     }
 
     /**
@@ -372,10 +287,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
      * @throws JDataException on error
      */
     public void refreshData() throws JDataException {
-        FinanceData myData;
-
         /* Access data */
-        myData = theView.getData();
+        FinanceData myData = theView.getData();
 
         /* Access edit list */
         theStatic = myData.getDataList(theClass);
@@ -384,9 +297,6 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         /* Update the Data View */
         setList(theStatic);
         theUpdateEntry.setDataList(theStatic);
-
-        /* Update the table buttons */
-        theTabButs.setLockDown();
     }
 
     /**
@@ -616,7 +526,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 myData.popHistory();
                 myData.pushHistory();
@@ -631,20 +541,12 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
 
             /* Check for changes */
             if (myData.checkForHistory()) {
-                /* Note that the item has changed */
-                myData.clearErrors();
-                myData.setState(DataState.CHANGED);
+                /* Increment the update version */
+                theUpdateSet.incrementVersion();
 
-                /* Validate the item and update the edit state */
-                myData.validate();
-                theStatic.findEditState();
-
-                /* note that we have updated this cell */
-                fireTableRowsUpdated(row, row);
-
-                /* Note that changes have occurred */
+                /* note that data has changed */
+                fireTableDataChanged();
                 notifyChanges();
-                updateDebug();
             }
         }
     }
@@ -774,8 +676,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             }
 
             /* Notify of any changes */
+            theModel.fireTableDataChanged();
             notifyChanges();
-            updateDebug();
         }
 
         /**
@@ -787,7 +689,6 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             Class<T> myClass = (theStatic != null) ? theStatic.getBaseClass() : null;
             boolean isEnabled;
             boolean isActive;
-            int row;
 
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
@@ -795,9 +696,6 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
                 if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
                     continue;
                 }
-
-                /* Determine row */
-                row = myRow.indexOf();
 
                 /* Access as data */
                 myData = myClass.cast(myRow);
@@ -816,18 +714,10 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
 
                 /* Enable/Disable the row */
                 myData.setEnabled(doEnable);
-
-                /* Note that the item has changed */
-                myData.clearErrors();
-                myData.setState(DataState.CHANGED);
-
-                /* Validate the item and update the edit state */
-                myData.validate();
-                theStatic.findEditState();
-
-                /* set the tax credit value */
-                theModel.fireTableCellUpdated(row, COLUMN_ENABLED);
             }
+
+            /* Increment the version */
+            theUpdateSet.incrementVersion();
         }
     }
 

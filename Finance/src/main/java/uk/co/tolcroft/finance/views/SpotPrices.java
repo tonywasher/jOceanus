@@ -37,7 +37,6 @@ import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 
 /**
@@ -336,7 +335,7 @@ public class SpotPrices implements JDataContents {
 
                 /* If the account is closed then hide the entry */
                 if (myAccount.isClosed()) {
-                    mySpot.setHidden();
+                    mySpot.setDeleted(true);
                 }
             }
 
@@ -374,7 +373,7 @@ public class SpotPrices implements JDataContents {
 
                     /* Link to base and re-establish state */
                     mySpot.setBase(myPrice);
-                    mySpot.setState(DataState.CLEAN);
+                    // mySpot.setState(DataState.CLEAN);
 
                     /* else we are a previous date */
                 } else {
@@ -513,7 +512,6 @@ public class SpotPrices implements JDataContents {
                     case RECOVERED:
                         /* Clear errors and mark the item as clean */
                         myCurr.clearErrors();
-                        myCurr.setState(DataState.CLEAN);
                         break;
 
                     /* If this is a clean item, just ignore */
@@ -605,9 +603,6 @@ public class SpotPrices implements JDataContents {
             setControlKey(pList.getControlKey());
             setDate(pList.theDate);
             setAccount(pAccount);
-
-            /* Set the state */
-            setState(DataState.CLEAN);
         }
 
         /**
@@ -650,60 +645,6 @@ public class SpotPrices implements JDataContents {
         /* Disable setDate */
         @Override
         public void setDate(final DateDay pDate) {
-        }
-
-        /**
-         * Set the state of the item A Spot list has some minor changes to the algorithm in that there are no
-         * NEW or DELETED states, leaving just CLEAN and CHANGED. The isDeleted flags is changed in usage to
-         * an isVisible flag
-         * @param newState the new state to set
-         */
-        @Override
-        public void setState(final DataState newState) {
-            /* Switch on new state */
-            switch (newState) {
-                case CLEAN:
-                    setDataState((getBase() == null) ? DataState.DELNEW : newState);
-                    setEditState(EditState.CLEAN);
-                    break;
-                case CHANGED:
-                    setDataState((getBase() == null) ? DataState.NEW : newState);
-                    setEditState(EditState.DIRTY);
-                    break;
-                case DELETED:
-                    switch (getState()) {
-                        case NEW:
-                            setDataState(DataState.DELNEW);
-                            break;
-                        case CHANGED:
-                            setDataState(DataState.DELCHG);
-                            break;
-                        default:
-                            setDataState(DataState.DELETED);
-                            break;
-                    }
-                    setEditState(EditState.DIRTY);
-                    break;
-                case RECOVERED:
-                    switch (getState()) {
-                        case DELNEW:
-                            setDataState(DataState.NEW);
-                            break;
-                        case DELCHG:
-                            setDataState(DataState.CHANGED);
-                            break;
-                        case DELETED:
-                            setDataState(DataState.CLEAN);
-                            break;
-                        default:
-                            setDataState(DataState.RECOVERED);
-                            break;
-                    }
-                    setEditState(EditState.DIRTY);
-                    break;
-                default:
-                    break;
-            }
         }
     }
 }

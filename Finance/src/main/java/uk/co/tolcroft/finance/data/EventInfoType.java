@@ -278,6 +278,14 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
 
             /* Add the Type to the list */
             add(myType);
+
+            /* Validate the EventInfoType */
+            myType.validate();
+
+            /* Handle validation failure */
+            if (myType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+            }
         }
 
         /**

@@ -22,10 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataValues;
 
 /**
  * Data Manager.
@@ -56,6 +63,11 @@ public class JDataManager {
      * The owning window.
      */
     private JDataWindow theWindow = null;
+
+    /**
+     * The next entry index.
+     */
+    private int theNextIndex = 0;
 
     /**
      * Get tree model.
@@ -147,6 +159,11 @@ public class JDataManager {
         private TreePath thePath = null;
 
         /**
+         * The index.
+         */
+        private final int theIndex;
+
+        /**
          * Is the entry visible.
          */
         private boolean isVisible = false;
@@ -160,7 +177,7 @@ public class JDataManager {
          * Get name.
          * @return the name
          */
-        public String getName() {
+        protected String getName() {
             return theName;
         }
 
@@ -168,7 +185,7 @@ public class JDataManager {
          * Get object.
          * @return the object
          */
-        public Object getObject() {
+        protected Object getObject() {
             return theObject;
         }
 
@@ -184,7 +201,7 @@ public class JDataManager {
          * Get path.
          * @return the path
          */
-        public TreePath getPath() {
+        protected TreePath getPath() {
             return thePath;
         }
 
@@ -192,7 +209,7 @@ public class JDataManager {
          * Is the entry visible.
          * @return true/false
          */
-        public boolean isVisible() {
+        protected boolean isVisible() {
             return isVisible;
         }
 
@@ -200,8 +217,16 @@ public class JDataManager {
          * Does the entry have children.
          * @return true/false
          */
-        public boolean hasChildren() {
+        protected boolean hasChildren() {
             return hasChildren;
+        }
+
+        /**
+         * Obtain the index.
+         * @return the index
+         */
+        protected int getIndex() {
+            return theIndex;
         }
 
         /**
@@ -214,6 +239,9 @@ public class JDataManager {
 
             /* Create node */
             theNode = new DefaultMutableTreeNode(this);
+
+            /* Determine index */
+            theIndex = theNextIndex++;
         }
 
         /**
@@ -341,9 +369,44 @@ public class JDataManager {
             /* Remove all the children */
             removeChildren();
 
-            /* Add all the new children */
-            // if (pObject != null)
-            // pObject.addChildEntries(theManager, this);
+            /* If we have contents */
+            if (JDataContents.class.isInstance(pObject)) {
+                /* Access the object */
+                JDataContents myContent = (JDataContents) pObject;
+                Object myValue;
+                ValueSet myValues = null;
+
+                /* Access valueSet if it exists */
+                if (JDataValues.class.isInstance(pObject)) {
+                    myValues = ((JDataValues) pObject).getValueSet();
+                }
+
+                /* Loop through the data fields */
+                JDataFields myFields = myContent.getDataFields();
+                Iterator<JDataField> myIterator = myFields.fieldIterator();
+                while (myIterator.hasNext()) {
+                    JDataField myField = myIterator.next();
+
+                    /* Access the value */
+                    if ((myField.isValueSetField()) && (myValues != null)) {
+                        myValue = myValues.getValue(myField);
+                    } else {
+                        myValue = myContent.getFieldValue(myField);
+                    }
+
+                    /* If the field is a List that has contents */
+                    if ((myValue instanceof List) && (myValue instanceof JDataContents)) {
+                        /* Access as list */
+                        List<?> myList = (List<?>) myValue;
+
+                        /* If the list is not empty */
+                        if (myList.size() > 0) {
+                            /* Add as a child */
+                            addChildEntry(this, myField.getName(), myValue);
+                        }
+                    }
+                }
+            }
 
             /* Note that this entry and its children have changed */
             theModel.nodeStructureChanged(theNode);

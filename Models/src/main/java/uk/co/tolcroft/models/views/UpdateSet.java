@@ -27,13 +27,60 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.ui.SaveButtons;
 
 /**
  * Provides control of a set of update-able DataLists.
  */
-public class UpdateSet {
+public class UpdateSet implements JDataContents {
+    /**
+     * Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(UpdateSet.class.getSimpleName());
+
+    /**
+     * Report fields.
+     */
+    private final JDataFields theLocalFields;
+
+    @Override
+    public JDataFields getDataFields() {
+        return theLocalFields;
+    }
+
+    @Override
+    public String formatObject() {
+        return getDataFields().getName() + "(" + theList.size() + ")";
+    }
+
+    /**
+     * Date field id.
+     */
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField("Version");
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_VERSION.equals(pField)) {
+            return theVersion;
+        }
+
+        /* If the field is an entry handle specially */
+        if (pField.getAnchor() == theLocalFields) {
+            /* Obtain the entry */
+            return findEntryValue(pField.getName());
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UnknownField;
+    }
+
     /**
      * The list.
      */
@@ -56,6 +103,9 @@ public class UpdateSet {
     public UpdateSet(final DataControl<?> pControl) {
         /* Store the Control */
         theControl = pControl;
+
+        /* Create local fields */
+        theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
 
         /* Create the list */
         theList = new ArrayList<UpdateEntry>();
@@ -87,7 +137,34 @@ public class UpdateSet {
         /* Not found , so add it */
         myList = new UpdateEntry(pClass);
         theList.add(myList);
+        theLocalFields.declareLocalField(pClass.getSimpleName());
         return myList;
+    }
+
+    /**
+     * Find the value for a field.
+     * @param pName the name of the field
+     * @return the value
+     */
+    private Object findEntryValue(final String pName) {
+        Iterator<UpdateEntry> myIterator;
+        UpdateEntry myList;
+
+        /* Loop through the items in the list */
+        myIterator = theList.iterator();
+        while (myIterator.hasNext()) {
+            /* Access list */
+            myList = myIterator.next();
+
+            /* If we have found the class */
+            if (myList.theClass.getSimpleName().equals(pName)) {
+                /* Return the value */
+                return (myList.theDataList == null) ? JDataFieldValue.SkipField : myList.theDataList;
+            }
+        }
+
+        /* Not found , so add it */
+        return JDataFieldValue.UnknownField;
     }
 
     /**
@@ -104,9 +181,12 @@ public class UpdateSet {
             UpdateEntry myList = myIterator.next();
             DataList<?, ?> myDataList = myList.theDataList;
 
-            /* Increment the version */
+            /* Increment the version if the list exists */
             if (myDataList != null) {
+                /* Set the new version and validate the list */
                 myDataList.setVersion(theVersion);
+                myDataList.validate();
+                myDataList.findEditState();
             }
         }
     }
@@ -126,17 +206,59 @@ public class UpdateSet {
             UpdateEntry myList = myIterator.next();
             DataList<?, ?> myDataList = myList.theDataList;
 
-            /* rewind to the version */
+            /* If the list exists */
             if (myDataList != null) {
+                /* Rewind the version and determine edit state */
                 myDataList.rewindToVersion(theVersion);
+                myDataList.findEditState();
             }
         }
+    }
+
+    /**
+     * Undo changes in a viewSet.
+     */
+    public void undoLastChange() {
+        /* Ignore if we have no changes */
+        if (theVersion == 0) {
+            return;
+        }
+
+        /* Decrement version */
+        theVersion--;
+
+        /* Rewind to the version */
+        rewindToVersion(theVersion);
+    }
+
+    /**
+     * Reset changes in a viewSet.
+     */
+    public void resetChanges() {
+        /* Ignore if we have no changes */
+        if (theVersion == 0) {
+            return;
+        }
+
+        /* Decrement version */
+        theVersion = 0;
+
+        /* Rewind to the version */
+        rewindToVersion(theVersion);
     }
 
     /**
      * Apply changes in a ViewSet into the core data.
      */
     public void applyChanges() {
+        /* Validate the changes */
+        validate();
+
+        /* Reject request if there are errors */
+        if (hasErrors()) {
+            return;
+        }
+
         /* Apply the changes */
         prepareChanges();
 
@@ -211,7 +333,7 @@ public class UpdateSet {
             UpdateEntry myList = myIterator.previous();
             DataList<?, ?> myDataList = myList.theDataList;
 
-            /* commit the changes */
+            /* rollback the changes */
             if (myDataList != null) {
                 myDataList.rollBackChanges();
             }
@@ -263,11 +385,30 @@ public class UpdateSet {
     }
 
     /**
+     * Validate the updateSet.
+     */
+    public void validate() {
+        /* Loop through the items in the list */
+        Iterator<UpdateEntry> myIterator = theList.listIterator();
+        while (myIterator.hasNext()) {
+            /* Access list */
+            UpdateEntry myList = myIterator.next();
+            DataList<?, ?> myDataList = myList.theDataList;
+
+            /* Combine states if list exists */
+            if (myDataList != null) {
+                /* Validate and calculate edit State */
+                myDataList.validate();
+                myDataList.findEditState();
+            }
+        }
+    }
+
+    /**
      * Get the edit state of this set of tables.
      * @return the edit state
      */
     public EditState getEditState() {
-
         /* Loop through the items in the list */
         Iterator<UpdateEntry> myIterator = theList.listIterator();
         EditState myState = EditState.CLEAN;
@@ -284,6 +425,21 @@ public class UpdateSet {
 
         /* Return the state */
         return myState;
+    }
+
+    /**
+     * Process Save command.
+     * @param pCmd the command.
+     */
+    public void processCommand(final String pCmd) {
+        /* Switch on command */
+        if (SaveButtons.CMD_OK.equals(pCmd)) {
+            applyChanges();
+        } else if (SaveButtons.CMD_UNDO.equals(pCmd)) {
+            undoLastChange();
+        } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
+            resetChanges();
+        }
     }
 
     /**

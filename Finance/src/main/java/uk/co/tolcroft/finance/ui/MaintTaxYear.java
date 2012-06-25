@@ -42,6 +42,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Rate;
 import uk.co.tolcroft.finance.data.FinanceData;
@@ -51,14 +52,11 @@ import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.ui.controls.TaxYearSelect;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.ItemField;
 import uk.co.tolcroft.models.ui.ItemField.FieldSet;
 import uk.co.tolcroft.models.ui.SaveButtons;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
-import uk.co.tolcroft.models.ui.StdInterfaces.stdCommand;
 import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 import uk.co.tolcroft.models.views.UpdateSet;
@@ -68,7 +66,12 @@ import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
  * TaxYear maintenance panel.
  * @author Tony Washer
  */
-public class MaintTaxYear implements StdPanel {
+public class MaintTaxYear extends JPanelWithEvents {
+    /**
+     * Serial Id.
+     */
+    private static final long serialVersionUID = 4527130528913817296L;
+
     /**
      * Container gap 1.
      */
@@ -162,7 +165,7 @@ public class MaintTaxYear implements StdPanel {
     /**
      * The Field Set.
      */
-    private final FieldSet theFieldSet;
+    private final transient FieldSet theFieldSet;
 
     /**
      * The Allowance field.
@@ -277,22 +280,22 @@ public class MaintTaxYear implements StdPanel {
     /**
      * The tax year.
      */
-    private TaxYear theTaxYear = null;
+    private transient TaxYear theTaxYear = null;
 
     /**
      * The tax year view.
      */
-    private TaxYearList theTaxView = null;
+    private transient TaxYearList theTaxView = null;
 
     /**
      * The tax year list.
      */
-    private TaxYearList theTaxYears = null;
+    private transient TaxYearList theTaxYears = null;
 
     /**
      * The data entry.
      */
-    private final JDataEntry theDataEntry;
+    private final transient JDataEntry theDataEntry;
 
     /**
      * The Error panel.
@@ -312,17 +315,17 @@ public class MaintTaxYear implements StdPanel {
     /**
      * The view.
      */
-    private final View theView;
+    private final transient View theView;
 
     /**
      * The Update Set.
      */
-    private final UpdateSet theUpdateSet;
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * The Update Entry.
      */
-    private final UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry theUpdateEntry;
 
     /**
      * Obtain the panel.
@@ -338,16 +341,6 @@ public class MaintTaxYear implements StdPanel {
      */
     public TaxYear getTaxYear() {
         return theTaxYear;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataEntry;
-    }
-
-    @Override
-    public JDataManager getDataManager() {
-        return theParent.getDataManager();
     }
 
     /**
@@ -481,7 +474,8 @@ public class MaintTaxYear implements StdPanel {
         theUndoButton.addActionListener(myListener);
 
         /* Create the Table buttons panel */
-        theSaveButs = new SaveButtons(this);
+        theSaveButs = new SaveButtons(theUpdateSet);
+        theSaveButs.addActionListener(myListener);
 
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -489,7 +483,7 @@ public class MaintTaxYear implements StdPanel {
         theDataEntry.addAsChildOf(pParent.getDataEntry());
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
+        theError = new ErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the buttons panel */
         theButtons = new JPanel();
@@ -769,56 +763,52 @@ public class MaintTaxYear implements StdPanel {
         showTaxYear();
     }
 
-    @Override
+    /**
+     * Does this panel have updates?
+     * @return true/false
+     */
     public boolean hasUpdates() {
         return ((theTaxYear != null) && (theTaxYear.hasChanges()));
     }
 
     /**
-     * Does the item have error?
+     * Does the panel have errors?
      * @return true/false
      */
     public boolean hasErrors() {
         return ((theTaxYear != null) && (theTaxYear.hasErrors()));
     }
 
-    @Override
-    public boolean isLocked() {
-        return false;
-    }
-
-    @Override
+    /**
+     * Obtain the EditState.
+     * @return the EditState
+     */
     public EditState getEditState() {
-        if (theTaxYear == null) {
-            return EditState.CLEAN;
-        }
-        return theTaxYear.getEditState();
+        return (theTaxYear == null) ? EditState.CLEAN : theTaxYear.getEditState();
     }
 
-    @Override
-    public void printIt() {
-    }
-
-    @Override
-    public void performCommand(final stdCommand pCmd) {
+    /**
+     * Perform the requested command.
+     * @param pCmd the command
+     */
+    public void performCommand(final String pCmd) {
         /* Switch on command */
-        switch (pCmd) {
-            case OK:
-                saveData();
-                break;
-            case RESETALL:
-                resetData();
-                break;
-            default:
-                break;
+        if (SaveButtons.CMD_OK.equals(pCmd)) {
+            saveData();
+        } else if (SaveButtons.CMD_UNDO.equals(pCmd)) {
+            resetData();
+        } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
+            resetData();
         }
         notifyChanges();
     }
 
-    @Override
+    /**
+     * Notify changes.
+     */
     public void notifyChanges() {
         /* Lock down the table buttons and the selection */
-        theSaveButs.setLockDown();
+        theSaveButs.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
 
         /* Show the Tax Year */
@@ -828,14 +818,14 @@ public class MaintTaxYear implements StdPanel {
         theParent.setVisibility();
     }
 
-    @Override
-    public void notifySelection(final Object obj) {
-        /* If this is a change from the year selection */
-        if (theSelect.equals(obj)) {
-            /* Set the new account */
-            setSelection(theSelect.getTaxYear());
-        }
-    }
+    // @Override
+    // public void notifySelection(final Object obj) {
+    /* If this is a change from the year selection */
+    // if (theSelect.equals(obj)) {
+    // /* Set the new account */
+    // setSelection(theSelect.getTaxYear());
+    // }
+    // }
 
     /**
      * Update Debug view.
@@ -861,15 +851,6 @@ public class MaintTaxYear implements StdPanel {
     }
 
     /**
-     * validate.
-     */
-    public void validate() {
-        theTaxYear.clearErrors();
-        theTaxYear.validate();
-        updateDebug();
-    }
-
-    /**
      * saveData.
      */
     public void saveData() {
@@ -885,28 +866,28 @@ public class MaintTaxYear implements StdPanel {
      * Lock on error.
      * @param isError is there an error (True/False)
      */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Hide selection panel */
-        theSelect.setVisible(!isError);
+    // @Override
+    // public void lockOnError(final boolean isError) {
+    /* Hide selection panel */
+    // theSelect.setVisible(!isError);
 
-        /* Lock regime areas */
-        theRegime.setEnabled(!isError);
+    /* Lock regime areas */
+    // theRegime.setEnabled(!isError);
 
-        /* Lock bands areas */
-        theAllows.setEnabled(!isError);
-        theLimits.setEnabled(!isError);
-        theBands.setEnabled(!isError);
+    /* Lock bands areas */
+    // theAllows.setEnabled(!isError);
+    // theLimits.setEnabled(!isError);
+    // theBands.setEnabled(!isError);
 
-        /* Lock rates areas */
-        theStdRates.setEnabled(!isError);
-        theXtraRates.setEnabled(!isError);
-        theCapRates.setEnabled(!isError);
+    /* Lock rates areas */
+    // // theStdRates.setEnabled(!isError);
+    // theXtraRates.setEnabled(!isError);
+    // theCapRates.setEnabled(!isError);
 
-        /* Lock row/tab buttons area */
-        theButtons.setEnabled(!isError);
-        theSaveButs.setEnabled(!isError);
-    }
+    /* Lock row/tab buttons area */
+    // theButtons.setEnabled(!isError);
+    // theSaveButs.setEnabled(!isError);
+    // }
 
     /**
      * RefreshData.
@@ -1165,12 +1146,6 @@ public class MaintTaxYear implements StdPanel {
             theTaxYear.clearErrors();
             theTaxYear.validate();
 
-            /* If the item is now clean */
-            if (!theTaxYear.hasHistory()) {
-                /* Set the new status */
-                theTaxYear.setState(DataState.CLEAN);
-            }
-
             /* Notify changes */
             notifyChanges();
             updateDebug();
@@ -1214,7 +1189,7 @@ public class MaintTaxYear implements StdPanel {
                 /* Check for changes */
                 if (theTaxYear.checkForHistory()) {
                     /* Note that the item has changed */
-                    theTaxYear.setState(DataState.CHANGED);
+                    // theTaxYear.setState(DataState.CHANGED);
 
                     /* validate it */
                     theTaxYear.clearErrors();
@@ -1231,8 +1206,13 @@ public class MaintTaxYear implements StdPanel {
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
 
-            /* If this event relates to the undo button */
-            if (theUndoButton.equals(o)) {
+            /* If this event relates to the save buttons */
+            if (theSaveButs.equals(o)) {
+                /* Create the new account */
+                performCommand(evt.getActionCommand());
+
+                /* If this event relates to the undo button */
+            } else if (theUndoButton.equals(o)) {
                 /* Undo the changes */
                 undoChanges();
             }
@@ -1384,7 +1364,7 @@ public class MaintTaxYear implements StdPanel {
             /* Check for changes */
             if (theTaxYear.checkForHistory()) {
                 /* Note that the item has changed */
-                theTaxYear.setState(DataState.CHANGED);
+                // theTaxYear.setState(DataState.CHANGED);
 
                 /* validate it */
                 theTaxYear.clearErrors();

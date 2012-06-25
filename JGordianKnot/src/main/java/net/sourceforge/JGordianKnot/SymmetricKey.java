@@ -266,7 +266,7 @@ public class SymmetricKey implements JDataContents {
      * @return the Stream Cipher
      * @throws JDataException on error
      */
-    public StreamCipher initEncryptionStream() throws JDataException {
+    public Cipher initEncryptionStream() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
@@ -276,7 +276,8 @@ public class SymmetricKey implements JDataContents {
             myCipher.init(Cipher.ENCRYPT_MODE, theKey, theGenerator.getRandom());
 
             /* Return the Stream Cipher */
-            return new StreamCipher(myCipher, myCipher.getIV());
+            // return new StreamCipher(myCipher, myCipher.getIV());
+            return myCipher;
 
             /* catch exceptions */
         } catch (InvalidKeyException e) {
@@ -290,7 +291,7 @@ public class SymmetricKey implements JDataContents {
      * @return the Stream Cipher
      * @throws JDataException on error
      */
-    public StreamCipher initDecryptionStream(final byte[] pInitVector) throws JDataException {
+    public Cipher initDecryptionStream(final byte[] pInitVector) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Create a new cipher */
@@ -301,7 +302,8 @@ public class SymmetricKey implements JDataContents {
             myCipher.init(Cipher.DECRYPT_MODE, theKey, myParms);
 
             /* Return the Stream Cipher */
-            return new StreamCipher(myCipher, pInitVector);
+            // return new StreamCipher(myCipher, pInitVector);
+            return myCipher;
 
             /* catch exceptions */
         } catch (InvalidAlgorithmParameterException e) {

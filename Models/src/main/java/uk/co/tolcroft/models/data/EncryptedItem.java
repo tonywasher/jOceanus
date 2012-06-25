@@ -282,9 +282,6 @@ public abstract class EncryptedItem extends DataItem {
 
         /* Update all elements */
         theValueSet.updateSecurity(theGenerator);
-
-        /* Check for changes */
-        setState(DataState.CHANGED);
     }
 
     /**

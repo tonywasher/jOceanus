@@ -577,6 +577,14 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 
             /* Add the Transaction Type to the list */
             add(myTransType);
+
+            /* Validate the TransType */
+            myTransType.validate();
+
+            /* Handle validation failure */
+            if (myTransType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myTransType, "Failed validation");
+            }
         }
 
         /**

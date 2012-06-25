@@ -50,7 +50,6 @@ import uk.co.tolcroft.finance.data.TransactionType;
 import uk.co.tolcroft.finance.ui.controls.ComboSelect;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.ui.DataMouse;
 import uk.co.tolcroft.models.ui.DataTable;
 import uk.co.tolcroft.models.ui.Editor.CalendarEditor;
@@ -167,11 +166,6 @@ public class Extract extends DataTable<Event> {
     @Override
     public boolean hasHeader() {
         return false;
-    }
-
-    @Override
-    public JDataEntry getDataEntry() {
-        return theDataExtract;
     }
 
     /**
@@ -339,9 +333,6 @@ public class Extract extends DataTable<Event> {
      * @param pParent the parent window
      */
     public Extract(final MainTab pParent) {
-        /* Initialise superclass */
-        super(pParent.getDataMgr());
-
         /* Declare variables */
         GroupLayout myLayout;
         JDataEntry mySection;
@@ -353,6 +344,7 @@ public class Extract extends DataTable<Event> {
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
         theUpdateEntry = theUpdateSet.registerClass(Event.class);
+        setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
@@ -381,10 +373,10 @@ public class Extract extends DataTable<Event> {
 
         /* Create the sub panels */
         theSelect = new DateDayRangeSelect();
-        theTabButs = new SaveButtons(this);
+        theTabButs = new SaveButtons(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(this);
+        theError = new ErrorPanel(myDataMgr, theDataExtract);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -420,72 +412,76 @@ public class Extract extends DataTable<Event> {
     }
 
     /**
-     * Save changes from the view into the underlying data.
+     * Perform a command.
+     * @param pCmd the command to perform
      */
-    @Override
-    public void saveData() {
-        if (theEvents != null) {
-            super.validateAll();
-            if (!theUpdateSet.hasErrors()) {
-                theUpdateSet.applyChanges();
-            }
+    public void performCommand(final String pCmd) {
+        /* Cancel any editing */
+        cancelEditing();
+
+        /* Switch on command */
+        if (SaveButtons.CMD_OK.equals(pCmd)) {
+            theUpdateSet.applyChanges();
+            // } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
+            // resetData();
         }
+        notifyChanges();
     }
 
     /**
-     * Update Debug view.
+     * Save changes from the view into the underlying data.
      */
-    @Override
-    public void updateDebug() {
-        theDataExtract.setObject(theEvents);
-    }
+    // @Override
+    // public void saveData() {
+    // theUpdateSet.applyChanges();
+    // }
 
     /**
      * Lock on error.
      * @param isError is there an error (True/False)
      */
-    @Override
-    public void lockOnError(final boolean isError) {
-        /* Hide selection panel */
-        theSelect.setVisible(!isError);
+    // @Override
+    // public void lockOnError(final boolean isError) {
+    /* Hide selection panel */
+    // theSelect.setVisible(!isError);
 
-        /* Lock scroll-able area */
-        getScrollPane().setEnabled(!isError);
+    /* Lock scroll-able area */
+    // getScrollPane().setEnabled(!isError);
 
-        /* Lock row/tab buttons area */
-        theTabButs.setEnabled(!isError);
-    }
+    /* Lock row/tab buttons area */
+    // theTabButs.setEnabled(!isError);
+    // }
 
     /**
      * Notify table that there has been a change in selection by an underlying control.
      * @param obj the underlying control that has changed selection
      */
-    @Override
-    public void notifySelection(final Object obj) {
-        /* if this is a change from the range */
-        if (theSelect.equals(obj)) {
-            /* Protect against exceptions */
-            try {
-                /* Set the new range */
-                setSelection(theSelect.getRange());
+    // @Override
+    // public void notifySelection(final Object obj) {
+    /* if this is a change from the range */
+    // if (theSelect.equals(obj)) {
+    /* Protect against exceptions */
+    // try {
+    /* Set the new range */
+    // setSelection(theSelect.getRange());
 
-                /* Create SavePoint */
-                theSelect.createSavePoint();
+    /* Create SavePoint */
+    // theSelect.createSavePoint();
 
-                /* Catch Exceptions */
-            } catch (JDataException e) {
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to change selection", e);
+    /* Catch Exceptions */
+    // } catch (JDataException e) {
+    /* Build the error */
+    // JDataException myError = new JDataException(ExceptionClass.DATA,
+    // "Failed to change selection", e);
 
-                /* Show the error */
-                theError.setError(myError);
+    /* Show the error */
+    // theError.setError(myError);
 
-                /* Restore SavePoint */
-                theSelect.restoreSavePoint();
-            }
-        }
-    }
+    /* Restore SavePoint */
+    // theSelect.restoreSavePoint();
+    // }
+    // }
+    // }
 
     /**
      * Refresh views/controls after a load/update of underlying data.
@@ -516,7 +512,7 @@ public class Extract extends DataTable<Event> {
         }
 
         /* Update the table buttons */
-        theTabButs.setLockDown();
+        theTabButs.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
 
         /* Update the top level tabs */
@@ -541,7 +537,7 @@ public class Extract extends DataTable<Event> {
         }
         setList(theEvents);
         theUpdateEntry.setDataList(theEvents);
-        theTabButs.setLockDown();
+        theTabButs.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
         theParent.setVisibility();
     }
@@ -923,7 +919,7 @@ public class Extract extends DataTable<Event> {
             if (myEvent.checkForHistory()) {
                 /* Note that the item has changed */
                 myEvent.clearErrors();
-                myEvent.setState(DataState.CHANGED);
+                // myEvent.setState(DataState.CHANGED);
 
                 /* Validate the item and update the edit state */
                 myEvent.validate();
@@ -959,7 +955,7 @@ public class Extract extends DataTable<Event> {
 
                 /* Note that changes have occurred */
                 notifyChanges();
-                updateDebug();
+                // updateDebug();
             }
         }
     }
@@ -1274,7 +1270,7 @@ public class Extract extends DataTable<Event> {
 
             /* Notify of any changes */
             notifyChanges();
-            updateDebug();
+            // updateDebug();
         }
 
         /**

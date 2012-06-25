@@ -45,6 +45,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import uk.co.tolcroft.models.data.PreferenceSet;
@@ -55,14 +56,13 @@ import uk.co.tolcroft.models.data.PreferenceSet.IntegerPreference;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceItem;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceType;
 import uk.co.tolcroft.models.data.PreferenceSet.StringPreference;
-import uk.co.tolcroft.models.ui.StdInterfaces.StdPanel;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
 
 /**
  * Preference Set panel.
  * @author Tony Washer
  */
-public class PreferenceSetPanel extends JPanel {
+public class PreferenceSetPanel extends JPanelWithEvents {
     /**
      * Serial Id.
      */
@@ -82,11 +82,6 @@ public class PreferenceSetPanel extends JPanel {
      * Integer width.
      */
     private static final int WIDTH_INTEGER = 10;
-
-    /**
-     * The Parent for this panel.
-     */
-    private final StdPanel theParent;
 
     /**
      * The PreferenceSet for this panel.
@@ -159,11 +154,9 @@ public class PreferenceSetPanel extends JPanel {
 
     /**
      * Constructor.
-     * @param pParent the parent
      * @param pSet the preference set
      */
-    public PreferenceSetPanel(final StdPanel pParent,
-                              final PreferenceSet pSet) {
+    public PreferenceSetPanel(final PreferenceSet pSet) {
         /* Options SubPanel */
         JPanel myOptions = null;
         int myRow = 0;
@@ -253,9 +246,6 @@ public class PreferenceSetPanel extends JPanel {
             myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
             add(myOptions, myConstraints);
         }
-
-        /* Declare the parent */
-        theParent = pParent;
     }
 
     /**
@@ -307,10 +297,8 @@ public class PreferenceSetPanel extends JPanel {
         /* Update the fields */
         updateFields();
 
-        /* Notify the parent */
-        if (theParent != null) {
-            theParent.notifyChanges();
-        }
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**

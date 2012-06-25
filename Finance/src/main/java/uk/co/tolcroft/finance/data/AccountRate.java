@@ -42,7 +42,6 @@ import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
 /**
@@ -390,7 +389,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
                 break;
             case UPDATE:
                 setBase(pPeriod);
-                setState(pPeriod.getState());
+                // setState(pPeriod.getState());
                 break;
             default:
                 break;
@@ -648,8 +647,6 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     @Override
     public boolean applyChanges(final DataItem pRate) {
         AccountRate myRate = (AccountRate) pRate;
-        boolean bChanged = false;
-
         /* Store the current detail into history */
         pushHistory();
 
@@ -669,14 +666,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
         }
 
         /* Check for changes */
-        if (checkForHistory()) {
-            /* Mark as changed */
-            setState(DataState.CHANGED);
-            bChanged = true;
-        }
-
-        /* Return to caller */
-        return bChanged;
+        return checkForHistory();
     }
 
     /**

@@ -31,11 +31,10 @@ import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.EventManager;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.AccountType;
@@ -47,7 +46,7 @@ import uk.co.tolcroft.finance.views.View;
  * Account selection panel.
  * @author Tony Washer
  */
-public class AccountSelect extends JPanel {
+public class AccountSelect extends JPanelWithEvents {
     /**
      * Serial Id.
      */
@@ -104,11 +103,6 @@ public class AccountSelect extends JPanel {
     private boolean refreshingData = false;
 
     /**
-     * Event Manager.
-     */
-    private final transient EventManager theManager;
-
-    /**
      * Get the selected account.
      * @return the account
      */
@@ -141,14 +135,6 @@ public class AccountSelect extends JPanel {
     }
 
     /**
-     * Obtain the event manager.
-     * @return the event manager.
-     */
-    public EventManager getManager() {
-        return theManager;
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      * @param showDeleted should we show deleted accounts.
@@ -159,9 +145,6 @@ public class AccountSelect extends JPanel {
 
         /* Store table and view details */
         theView = pView;
-
-        /* Create the Event Manager */
-        theManager = new EventManager(this);
 
         /* Create the boxes */
         theTypesBox = new JComboBox();
@@ -597,7 +580,7 @@ public class AccountSelect extends JPanel {
                 if (theState.setType(myType)) {
                     /* Rebuild accounts */
                     buildAccounts();
-                    theManager.fireStateChanged();
+                    fireStateChanged();
                 }
 
                 /* If this event relates to the account box */
@@ -605,7 +588,7 @@ public class AccountSelect extends JPanel {
                 /* Select the new account */
                 Account myAcct = (Account) evt.getItem();
                 if (theState.setSelected(myAcct)) {
-                    theManager.fireStateChanged();
+                    fireStateChanged();
                 }
 
                 /* If this event relates to the showClosed box */

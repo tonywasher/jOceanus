@@ -39,7 +39,6 @@ import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JDecimal.Rate;
 import net.sourceforge.JDecimal.Units;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.database.Database.JDBCDriver;
 import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
 
 /**

@@ -337,7 +337,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
                 break;
             case UPDATE:
                 setBase(pInfo);
-                setState(pInfo.getState());
+                // setState(pInfo.getState());
                 break;
             default:
                 break;

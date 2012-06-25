@@ -279,7 +279,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
         @Override
         public String formatObject() {
-            return getDataFields().getName();
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         /**

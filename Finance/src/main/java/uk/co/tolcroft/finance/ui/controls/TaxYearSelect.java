@@ -31,11 +31,10 @@ import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.EventManager;
+import net.sourceforge.JDataManager.JPanelWithEvents;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.data.TaxYear;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
@@ -45,7 +44,7 @@ import uk.co.tolcroft.finance.views.View;
  * TaxYear selection panel.
  * @author Tony Washer
  */
-public class TaxYearSelect extends JPanel {
+public class TaxYearSelect extends JPanelWithEvents {
     /**
      * Serial Id.
      */
@@ -82,11 +81,6 @@ public class TaxYearSelect extends JPanel {
     private boolean refreshingData = false;
 
     /**
-     * Event Manager.
-     */
-    private final transient EventManager theManager;
-
-    /**
      * Get the selected TaxYear.
      * @return the tax year
      */
@@ -103,14 +97,6 @@ public class TaxYearSelect extends JPanel {
     }
 
     /**
-     * Obtain the event manager.
-     * @return the event manager.
-     */
-    public EventManager getManager() {
-        return theManager;
-    }
-
-    /**
      * Constructor.
      * @param pView the data view
      */
@@ -120,9 +106,6 @@ public class TaxYearSelect extends JPanel {
 
         /* Store table and view details */
         theView = pView;
-
-        /* Create the Event Manager */
-        theManager = new EventManager(this);
 
         /* Create initial state */
         theState = new YearState();
@@ -266,7 +249,7 @@ public class TaxYearSelect extends JPanel {
                 /* Select the new year and notify the change */
                 TaxYear myYear = (TaxYear) evt.getItem();
                 if (theState.setTaxYear(myYear)) {
-                    theManager.fireStateChanged();
+                    fireStateChanged();
                 }
 
                 /* If this event relates to the showDeleted box */

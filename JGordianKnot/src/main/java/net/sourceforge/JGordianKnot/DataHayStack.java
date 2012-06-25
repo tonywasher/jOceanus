@@ -157,8 +157,9 @@ public class DataHayStack {
         }
 
         /* Allocate buffers */
-        byte[] myNeedle = new byte[iNeedleLen];
-        byte[] myHayStack = new byte[iHayStackLen];
+        NeedleResult myResult = new NeedleResult(iNeedleLen, iHayStackLen);
+        byte[] myNeedle = myResult.getNeedle();
+        byte[] myHayStack = myResult.getHayStack();
 
         /* Loop to recover the needle */
         for (int i = 0; i < iNeedleLen; i++) {
@@ -171,7 +172,7 @@ public class DataHayStack {
         System.arraycopy(pHayStack, iPos + iNeedleLen + 2, myHayStack, iPos, iHayStackLen - iPos);
 
         /* Return the results */
-        return new NeedleResult(myNeedle, myHayStack);
+        return myResult;
     }
 
     /**
@@ -206,14 +207,14 @@ public class DataHayStack {
 
         /**
          * Constructor.
-         * @param pNeedle the needle
-         * @param pHayStack the hayStack
+         * @param pNeedleLen the needle
+         * @param pHayStackLen the hayStack
          */
-        private NeedleResult(final byte[] pNeedle,
-                             final byte[] pHayStack) {
+        private NeedleResult(final int pNeedleLen,
+                             final int pHayStackLen) {
             /* Store data */
-            theNeedle = pNeedle;
-            theHayStack = pHayStack;
+            theNeedle = new byte[pNeedleLen];
+            theHayStack = new byte[pHayStackLen];
         }
     }
 
@@ -267,9 +268,9 @@ public class DataHayStack {
          */
         protected DigestNeedle(final DigestType pType,
                                final byte[] pDigest) {
-            /* Store the parameters */
-            theType = pType;
-            theDigest = pDigest;
+            /* Don't store the parameters */
+            theType = null;
+            theDigest = null;
 
             /* Create the byte array to hide */
             byte[] myDigest = new byte[1];
@@ -285,11 +286,11 @@ public class DataHayStack {
          * @throws JDataException on error
          */
         protected DigestNeedle(final byte[] pExternal) throws JDataException {
-            /* Store the parameters */
-            theExternal = pExternal;
+            /* Don't store the parameters */
+            theExternal = null;
 
             /* Find the needle in the hayStack */
-            NeedleResult myResult = findNeedle(theExternal);
+            NeedleResult myResult = findNeedle(pExternal);
 
             /* Check that we found the needle */
             if (myResult == null) {
@@ -362,9 +363,9 @@ public class DataHayStack {
          */
         protected SymKeyNeedle(final SymKeyType pType,
                                final byte[] pEncodedKey) {
-            /* Store the parameters */
-            theType = pType;
-            theEncodedKey = pEncodedKey;
+            /* Don't store the parameters */
+            theType = null;
+            theEncodedKey = null;
 
             /* Create the byte array to hide */
             byte[] myType = new byte[1];
@@ -380,11 +381,11 @@ public class DataHayStack {
          * @throws JDataException on error
          */
         protected SymKeyNeedle(final byte[] pExternal) throws JDataException {
-            /* Store the parameters */
-            theExternal = pExternal;
+            /* Don't store the parameters */
+            theExternal = null;
 
             /* Find the needle in the hayStack */
-            NeedleResult myResult = findNeedle(theExternal);
+            NeedleResult myResult = findNeedle(pExternal);
 
             /* Check that we found the needle */
             if (myResult == null) {
@@ -457,9 +458,9 @@ public class DataHayStack {
          */
         protected AsymModeNeedle(final AsymKeyMode pMode,
                                  final byte[] pPublicKey) {
-            /* Store the parameters */
-            theMode = pMode;
-            thePublicKey = pPublicKey;
+            /* Don't store the parameters */
+            theMode = null;
+            thePublicKey = null;
 
             /* Create the byte array to hide */
             byte[] myMode = pMode.getEncoded();
@@ -474,11 +475,11 @@ public class DataHayStack {
          * @throws JDataException on error
          */
         protected AsymModeNeedle(final byte[] pExternal) throws JDataException {
-            /* Store the parameters */
-            theExternal = pExternal;
+            /* Don't store the parameters */
+            theExternal = null;
 
             /* Find the needle in the hayStack */
-            NeedleResult myResult = findNeedle(theExternal);
+            NeedleResult myResult = findNeedle(pExternal);
 
             /* Check that we found the needle */
             if (myResult == null) {
@@ -561,10 +562,10 @@ public class DataHayStack {
         protected HashModeNeedle(final HashMode pMode,
                                  final byte[] pSalt,
                                  final byte[] pHash) {
-            /* Store the parameters */
-            theMode = pMode;
-            theSalt = pSalt;
-            theHash = pHash;
+            /* Don't store the parameters */
+            theMode = null;
+            theSalt = null;
+            theHash = null;
 
             /* Create the byte array to hide */
             byte[] myMode = pMode.getEncoded();
@@ -580,11 +581,11 @@ public class DataHayStack {
          * @throws JDataException on error
          */
         protected HashModeNeedle(final byte[] pExternal) throws JDataException {
-            /* Store the parameters */
-            theExternal = pExternal;
+            /* Don't store the parameters */
+            theExternal = null;
 
             /* Find the needle in the hayStack */
-            NeedleResult myResult = findNeedle(theExternal);
+            NeedleResult myResult = findNeedle(pExternal);
 
             /* Check that we found the needle */
             if (myResult == null) {
@@ -678,10 +679,10 @@ public class DataHayStack {
         protected EncryptModeNeedle(final EncryptionMode pMode,
                                     final byte[] pInitVector,
                                     final byte[] pBytes) {
-            /* Store the parameters */
-            theMode = pMode;
-            theInitVector = pInitVector;
-            theBytes = pBytes;
+            /* Don't store the parameters */
+            theMode = null;
+            theInitVector = null;
+            theBytes = null;
 
             /* Create the byte array to hide */
             byte[] myMode = pMode.getEncoded();
@@ -701,11 +702,11 @@ public class DataHayStack {
          * @throws JDataException on error
          */
         protected EncryptModeNeedle(final byte[] pExternal) throws JDataException {
-            /* Store the parameters */
-            theExternal = pExternal;
+            /* Don't store the parameters */
+            theExternal = null;
 
             /* Find the needle in the hayStack */
-            NeedleResult myResult = findNeedle(theExternal);
+            NeedleResult myResult = findNeedle(pExternal);
 
             /* Check that we found the needle */
             if (myResult == null) {

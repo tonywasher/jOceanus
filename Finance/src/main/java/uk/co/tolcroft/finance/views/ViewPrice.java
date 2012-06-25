@@ -27,6 +27,7 @@ import java.util.Iterator;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.DilutedPrice;
@@ -247,7 +248,7 @@ public class ViewPrice extends AccountPrice {
                 return theAccount;
             }
             if (FIELD_DILUTIONS.equals(pField)) {
-                return theDilutions;
+                return (theDilutions.size() > 0) ? theDilutions : JDataFieldValue.SkipField;
             }
             return super.getFieldValue(pField);
         }

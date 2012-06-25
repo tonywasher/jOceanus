@@ -321,6 +321,14 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
 
             /* Add the TaxRegime to the list */
             add(myTaxRegime);
+
+            /* Validate the TaxRegime */
+            myTaxRegime.validate();
+
+            /* Handle validation failure */
+            if (myTaxRegime.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myTaxRegime, "Failed validation");
+            }
         }
 
         /**

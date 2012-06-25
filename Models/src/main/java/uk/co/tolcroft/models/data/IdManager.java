@@ -87,7 +87,6 @@ public class IdManager<T extends DataItem & Comparable<T>> extends OrderedIdInde
             /* Increment and use the max Id */
             theMaxId++;
             pItem.setId(theMaxId);
-            pItem.setState(DataState.NEW);
 
             /* else id is already known */
         } else {
@@ -95,7 +94,6 @@ public class IdManager<T extends DataItem & Comparable<T>> extends OrderedIdInde
             if (theMaxId < myId) {
                 theMaxId = myId;
             }
-            pItem.setState(DataState.CLEAN);
         }
     }
 

@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
+import java.util.List;
+import java.util.ListIterator;
+
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 
 /**
@@ -50,6 +53,31 @@ public class JDataDetail {
     private int theNextId = 0;
 
     /**
+     * List index.
+     */
+    private final int theIndex;
+
+    /**
+     * Is this data a list?
+     */
+    private final boolean isList;
+
+    /**
+     * Is this data a list child?
+     */
+    private final boolean isChild;
+
+    /**
+     * the list item.
+     */
+    private final List<?> theList;
+
+    /**
+     * the partner detail.
+     */
+    private JDataDetail thePartnerDetail;
+
+    /**
      * The links.
      */
     private JDataLink theLinks = null;
@@ -67,10 +95,15 @@ public class JDataDetail {
     /**
      * The builder.
      */
-    private StringBuilder theBuilder = null;
+    private final StringBuilder theBuilder;
 
     /**
-     * Get the Debug Detail.
+     * The iterator.
+     */
+    private final ListIterator<?> theIterator;
+
+    /**
+     * Get the Data Detail.
      * @return the Detail
      */
     protected StringBuilder getJDataDetail() {
@@ -78,13 +111,150 @@ public class JDataDetail {
     }
 
     /**
-     * Constructor.
+     * Get the Partner Detail.
+     * @return the Partner Detail
+     */
+    protected JDataDetail getPartnerDetail() {
+        return thePartnerDetail;
+    }
+
+    /**
+     * Obtain the index.
+     * @return the Index
+     */
+    protected int getIndex() {
+        return theIndex;
+    }
+
+    /**
+     * Is the entry a list.
+     * @return true/false
+     */
+    protected final boolean isList() {
+        return isList && (theList.size() > 0);
+    }
+
+    /**
+     * Is the entry a child.
+     * @return true/false
+     */
+    protected boolean isChild() {
+        return isChild;
+    }
+
+    /**
+     * Get the list.
+     * @return the list
+     */
+    protected List<?> getList() {
+        return theList;
+    }
+
+    /**
+     * Set forward link.
+     * @param pLink the forward link
+     */
+    private void setForwardLink(final JDataDetail pLink) {
+        theForward = pLink;
+        if (thePartnerDetail != null) {
+            thePartnerDetail.theForward = pLink;
+        }
+    }
+
+    /**
+     * Set backward link.
+     * @param pLink the backward link
+     */
+    private void setBackwardLink(final JDataDetail pLink) {
+        theBackward = pLink;
+        if (thePartnerDetail != null) {
+            thePartnerDetail.theBackward = pLink;
+        }
+    }
+
+    /**
+     * Constructor for standard object.
      * @param pObject the object represented
      */
     protected JDataDetail(final Object pObject) {
+        /* Clear child fields */
+        thePartnerDetail = null;
+        isChild = false;
+        theIndex = -1;
+
         /* Obtain the detail for this object */
         if (pObject != null) {
             theBuilder = JDataObject.formatHTMLObject(this, pObject);
+            isList = (pObject instanceof List);
+        } else {
+            theBuilder = null;
+            isList = false;
+        }
+
+        /* Allocate iterator if needed */
+        theList = (isList) ? (List<?>) pObject : null;
+        theIterator = (isList()) ? theList.listIterator() : null;
+        thePartnerDetail = (isList()) ? new JDataDetail(this, theIterator.next()) : null;
+    }
+
+    /**
+     * Constructor for child object.
+     * @param pList the list to which the item belongs
+     * @param pObject the object represented
+     */
+    protected JDataDetail(final JDataDetail pList,
+                          final Object pObject) {
+        /* Obtain the detail for this object */
+        thePartnerDetail = pList;
+        theLinks = pList.theLinks;
+        theList = pList.theList;
+        theIndex = theList.indexOf(pObject);
+        theIterator = null;
+        isChild = true;
+        theBuilder = JDataObject.formatHTMLObject(this, pObject);
+        isList = true;
+    }
+
+    /**
+     * Shift the iterator a number of steps.
+     * @param iNumSteps the number of steps to shift (positive or negative)
+     */
+    protected void shiftIterator(final int iNumSteps) {
+        Object myNext = null;
+        int myNumSteps = iNumSteps;
+
+        /* Ignore if we are a child */
+        if (isChild) {
+            return;
+        }
+
+        /* If we are stepping forwards */
+        if (myNumSteps > 0) {
+            /* Loop through the steps */
+            while ((myNumSteps-- > 0) && (theIterator.hasNext())) {
+                /* Shift to next element */
+                myNext = theIterator.next();
+            }
+
+            /* Build the new partner detail */
+            thePartnerDetail = new JDataDetail(this, myNext);
+
+            /* else we are stepping backwards */
+        } else if (myNumSteps < 0) {
+            /* Shift back one step */
+            theIterator.previous();
+
+            /* Loop through the steps */
+            while ((myNumSteps++ < 0) && (theIterator.hasPrevious())) {
+                /* Shift to previous element */
+                myNext = theIterator.previous();
+            }
+
+            /* Shift forward one step */
+            theIterator.next();
+
+            /* Build the new partner detail */
+            thePartnerDetail = new JDataDetail(this, myNext);
         }
     }
 
@@ -139,10 +309,10 @@ public class JDataDetail {
         }
 
         /* Handle forward/backward links */
-        if (myName.compareTo(LINK_FORWARD) == 0) {
+        if (myName.equals(LINK_FORWARD)) {
             return theForward;
         }
-        if (myName.compareTo(LINK_BACKWARD) == 0) {
+        if (myName.equals(LINK_BACKWARD)) {
             return theBackward;
         }
 
@@ -160,8 +330,8 @@ public class JDataDetail {
         /* If we have a forward link */
         if (myLink != null) {
             /* Record and return the object */
-            theForward = new JDataDetail(myLink.theObject);
-            theForward.theBackward = this;
+            setForwardLink(new JDataDetail(myLink.theObject));
+            theForward.setBackwardLink(this);
             return theForward;
         }
 
@@ -187,7 +357,7 @@ public class JDataDetail {
             StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
             /* Create the Debug Link */
-            JDataLink myLink = new JDataLink((JDataContents) pItem);
+            JDataLink myLink = new JDataLink(this, (JDataContents) pItem);
 
             /* Add the link into the buffer */
             myBuilder.append("<a href=\"#");
@@ -209,7 +379,7 @@ public class JDataDetail {
     /**
      * Link Class.
      */
-    private final class JDataLink {
+    private static final class JDataLink {
         /**
          * The object itself.
          */
@@ -227,18 +397,20 @@ public class JDataDetail {
 
         /**
          * Create standard object link.
+         * @param pDetail the detail
          * @param pObject the object linked to
          */
-        private JDataLink(final Object pObject) {
+        private JDataLink(final JDataDetail pDetail,
+                          final Object pObject) {
             /* Store object */
             theObject = pObject;
 
             /* Assign name */
-            theName = "Object" + ++theNextId;
+            theName = "Object" + ++pDetail.theNextId;
 
             /* Add to the links */
-            theNext = theLinks;
-            theLinks = this;
+            theNext = pDetail.theLinks;
+            pDetail.theLinks = this;
         }
     }
 }

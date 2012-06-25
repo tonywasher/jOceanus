@@ -758,7 +758,7 @@ public class EventAnalysis implements JDataContents {
 
         @Override
         public String formatObject() {
-            return getDataFields().getName();
+            return getDataFields().getName() + "(" + size() + ")";
         }
 
         @Override

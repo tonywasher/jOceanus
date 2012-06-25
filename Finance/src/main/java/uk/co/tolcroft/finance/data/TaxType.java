@@ -320,6 +320,14 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
 
             /* Add the Tax Type to the list */
             add(myTaxType);
+
+            /* Validate the TaxType */
+            myTaxType.validate();
+
+            /* Handle validation failure */
+            if (myTaxType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myTaxType, "Failed validation");
+            }
         }
 
         /**

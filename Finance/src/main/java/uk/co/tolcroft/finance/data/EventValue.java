@@ -251,7 +251,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
                 break;
             case UPDATE:
                 setBase(pInfo);
-                setState(pInfo.getState());
+                // setState(pInfo.getState());
                 break;
             default:
                 break;

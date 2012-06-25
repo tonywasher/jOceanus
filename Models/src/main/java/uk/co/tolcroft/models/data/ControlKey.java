@@ -251,11 +251,10 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
                 break;
             case EDIT:
                 setBase(pSource);
-                setState(DataState.CLEAN);
                 break;
             case UPDATE:
                 setBase(pSource);
-                setState(pSource.getState());
+                // setState(pSource.getState());
                 break;
             default:
                 break;
@@ -446,12 +445,12 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
 
             /* Mark as deleted */
             if (myKey != null) {
-                myKey.setState(DataState.DELETED);
+                myKey.setDeleted(true);
             }
         }
 
         /* Mark this control key as deleted */
-        setState(DataState.DELETED);
+        setDeleted(true);
     }
 
     /**
@@ -478,9 +477,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
         }
 
         /* Check for changes */
-        if (checkForHistory()) {
-            setState(DataState.CHANGED);
-        }
+        checkForHistory();
     }
 
     /**

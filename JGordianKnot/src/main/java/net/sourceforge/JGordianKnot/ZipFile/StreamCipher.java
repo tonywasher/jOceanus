@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot;
+package net.sourceforge.JGordianKnot.ZipFile;
 
 import java.util.Arrays;
 
@@ -61,8 +61,16 @@ public class StreamCipher {
      * Obtain the output buffer.
      * @return the output buffer
      */
-    public byte[] getBuffer() {
+    protected byte[] getBuffer() {
         return theBuffer;
+    }
+
+    /**
+     * Get Initialisation vector.
+     * @return the initialisation vector
+     */
+    protected byte[] getInitVector() {
+        return theInitVector;
     }
 
     /**
@@ -75,14 +83,6 @@ public class StreamCipher {
         theCipher = pCipher;
         theInitVector = Arrays.copyOf(pVector, pVector.length);
         theBuffer = new byte[BUFSIZE];
-    }
-
-    /**
-     * Get Initialisation vector.
-     * @return the initialisation vector
-     */
-    public byte[] getInitVector() {
-        return theInitVector;
     }
 
     /**
