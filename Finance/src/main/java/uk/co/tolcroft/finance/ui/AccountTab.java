@@ -27,7 +27,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -65,16 +64,6 @@ public class AccountTab extends JPanelWithEvents {
      * Data View.
      */
     private final transient View theView;
-
-    /**
-     * The panel.
-     */
-    private final JPanel thePanel;
-
-    /**
-     * The parent.
-     */
-    private final transient MainTab theParent;
 
     /**
      * The Tabs.
@@ -145,30 +134,6 @@ public class AccountTab extends JPanelWithEvents {
     }
 
     /**
-     * Obtain top window.
-     * @return the top window
-     */
-    public MainTab getTopWindow() {
-        return theParent;
-    }
-
-    /**
-     * Obtain panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
-     * Obtain the comboList.
-     * @return the comboList
-     */
-    public ComboSelect getComboList() {
-        return theParent.getComboList();
-    }
-
-    /**
      * Obtain the updateSet.
      * @return the updateSet
      */
@@ -198,12 +163,11 @@ public class AccountTab extends JPanelWithEvents {
 
     /**
      * Constructor for Account Window.
-     * @param pParent the parent window
+     * @param pView the data view
      */
-    public AccountTab(final MainTab pParent) {
+    public AccountTab(final View pView) {
         /* Record passed details */
-        theParent = pParent;
-        theView = pParent.getView();
+        theView = pView;
 
         /* Build the Update set */
         theUpdateSet = new UpdateSet(theView);
@@ -221,24 +185,24 @@ public class AccountTab extends JPanelWithEvents {
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
 
-        /* Create the listener */
-        AccountListener myListener = new AccountListener();
-
-        /* Create the Statement table and add to tabbed pane */
-        theStatement = new AccountStatement(theView, theUpdateSet, theError);
-        theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
-        theTabs.addChangeListener(myListener);
-
         /* Create the optional tables */
         thePatterns = new AccountPatterns(theView, theUpdateSet, theError);
         theRates = new AccountRates(theView, theUpdateSet, theError);
         thePrices = new AccountPrices(theView, theUpdateSet, theError);
+
+        /* Create the Statement table and add to tabbed pane */
+        theStatement = new AccountStatement(theView, theUpdateSet, theError);
+        theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
+
+        /* Create the listener */
+        AccountListener myListener = new AccountListener();
 
         /* Add change listeners for the sub-panels */
         thePatterns.addChangeListener(myListener);
         theRates.addChangeListener(myListener);
         thePrices.addChangeListener(myListener);
         theStatement.addChangeListener(myListener);
+        theTabs.addChangeListener(myListener);
 
         /* Create the Account selection panel */
         theSelect = new AccountSelect(theView, false);
@@ -247,9 +211,6 @@ public class AccountTab extends JPanelWithEvents {
         /* Create the table buttons */
         theSaveButtons = new SaveButtons(theUpdateSet);
         theSaveButtons.addActionListener(myListener);
-
-        /* Create the panel */
-        thePanel = new JPanel();
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -292,17 +253,18 @@ public class AccountTab extends JPanelWithEvents {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
+     * @param pCombo the combo list
      * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
+    public void refreshData(final ComboSelect pCombo) throws JDataException {
         /* Refresh the account selection */
         theSelect.refreshData();
 
         /* Refresh the child tables */
         theRates.refreshData();
         thePrices.refreshData();
-        thePatterns.refreshData(getComboList());
-        theStatement.refreshData(getComboList());
+        thePatterns.refreshData(pCombo);
+        theStatement.refreshData(pCombo);
 
         /* Redraw selection */
         setSelection(theSelect.getSelected());
@@ -572,8 +534,8 @@ public class AccountTab extends JPanelWithEvents {
             theTabs.removeTabAt(iIndex);
         }
 
-        /* Update the top level tabs */
-        theParent.setVisibility();
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**

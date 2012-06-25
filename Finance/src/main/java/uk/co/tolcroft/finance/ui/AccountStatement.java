@@ -1534,7 +1534,7 @@ public class AccountStatement extends DataTable<Event> {
                 }
 
                 /* Access the line */
-                StatementLine myLine = (StatementLine) myRow;
+                // StatementLine myLine = (StatementLine) myRow;
 
                 /* Add the pattern */
                 // TODO theParent.addPattern(myLine);

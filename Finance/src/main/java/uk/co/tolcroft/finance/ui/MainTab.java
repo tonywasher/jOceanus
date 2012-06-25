@@ -187,12 +187,12 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         theTabs.addTab(TITLE_EXTRACT, theExtract.getPanel());
 
         /* Create the accounts control and add to tabbed pane */
-        theAccountCtl = new AccountTab(this);
-        theTabs.addTab(TITLE_ACCOUNT, theAccountCtl.getPanel());
+        theAccountCtl = new AccountTab(theView);
+        theTabs.addTab(TITLE_ACCOUNT, theAccountCtl);
 
         /* Create the Report Tab */
-        theReportTab = new ReportTab(this);
-        theTabs.addTab(TITLE_REPORT, theReportTab.getPanel());
+        theReportTab = new ReportTab(theView);
+        theTabs.addTab(TITLE_REPORT, theReportTab);
 
         /* Create the SpotView Tab */
         theSpotView = new PricePoint(this);
@@ -343,7 +343,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
 
         /* Refresh the windows */
         theExtract.refreshData();
-        theAccountCtl.refreshData();
+        theAccountCtl.refreshData(theComboList);
         theReportTab.refreshData();
         theSpotView.refreshData();
         theMaint.refreshData();
@@ -446,7 +446,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
             theExtract.requestFocusInWindow();
 
             /* If the selected component is account */
-        } else if (myComponent.equals(theAccountCtl.getPanel())) {
+        } else if (myComponent.equals(theAccountCtl)) {
             /* Determine focus of accounts */
             theAccountCtl.determineFocus();
 

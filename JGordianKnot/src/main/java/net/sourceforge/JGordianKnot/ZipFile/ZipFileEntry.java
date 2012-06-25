@@ -346,8 +346,9 @@ public class ZipFileEntry {
     /**
      * Set the properties of the file.
      * @return the properties
+     * @throws JDataException on error
      */
-    protected ZipFileProperties allocateProperties() {
+    protected ZipFileProperties allocateProperties() throws JDataException {
         /* Allocate the properties */
         ZipFileProperties myProperties = new ZipFileProperties();
 

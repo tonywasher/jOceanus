@@ -221,8 +221,9 @@ public class ZipFileContents {
     /**
      * Encode the contents.
      * @return the encoded string
+     * @throws JDataException on error
      */
-    protected String encodeContents() {
+    protected String encodeContents() throws JDataException {
         StringBuilder myString = new StringBuilder(BUFFER_LEN);
         ZipFileProperties myProperties;
 

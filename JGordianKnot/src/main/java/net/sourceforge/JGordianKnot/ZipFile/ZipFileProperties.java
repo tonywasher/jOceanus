@@ -102,9 +102,10 @@ public class ZipFileProperties {
      * Set the named property.
      * @param pName the name of the property
      * @param pValue the Value of the property
+     * @throws JDataException on error
      */
     protected void setProperty(final String pName,
-                               final String pValue) {
+                               final String pValue) throws JDataException {
         /* Set the new value */
         setProperty(pName, DataConverter.stringToByteArray(pValue));
     }

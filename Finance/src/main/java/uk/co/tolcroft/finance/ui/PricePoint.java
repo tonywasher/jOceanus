@@ -740,7 +740,7 @@ public class PricePoint extends DataTable<AccountPrice> {
          * Constructor.
          * @param pTable the table
          */
-        private SpotViewMouse(PricePoint pTable) {
+        private SpotViewMouse(final PricePoint pTable) {
             /* Call super-constructor */
             super(pTable);
         }

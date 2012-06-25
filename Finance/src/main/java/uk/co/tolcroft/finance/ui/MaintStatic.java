@@ -79,11 +79,6 @@ public class MaintStatic extends JPanelWithEvents {
     private static final int PANEL_HEIGHT = 25;
 
     /**
-     * The data view.
-     */
-    private final transient View theView;
-
-    /**
      * The card panel.
      */
     private final JPanel theCardPanel;
@@ -162,14 +157,14 @@ public class MaintStatic extends JPanelWithEvents {
      */
     public MaintStatic(final View pView) {
         /* Store parameters */
-        theView = pView;
+        View myView = pView;
 
         /* Build the Update set */
-        theUpdateSet = new UpdateSet(theView);
+        theUpdateSet = new UpdateSet(myView);
 
         /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        JDataManager myDataMgr = myView.getDataMgr();
+        JDataEntry mySection = myView.getDataEntry(DataControl.DATA_VIEWS);
         theDataEntry = myDataMgr.new JDataEntry("Static");
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
@@ -181,17 +176,17 @@ public class MaintStatic extends JPanelWithEvents {
         theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Build the child windows */
-        theActTypes = new MaintStaticData<AccountTypeList, AccountType>(theView, theUpdateSet, theError,
+        theActTypes = new MaintStaticData<AccountTypeList, AccountType>(myView, theUpdateSet, theError,
                 AccountTypeList.class);
-        theTranTypes = new MaintStaticData<TransTypeList, TransactionType>(theView, theUpdateSet, theError,
+        theTranTypes = new MaintStaticData<TransTypeList, TransactionType>(myView, theUpdateSet, theError,
                 TransTypeList.class);
-        theTaxTypes = new MaintStaticData<TaxTypeList, TaxType>(theView, theUpdateSet, theError,
+        theTaxTypes = new MaintStaticData<TaxTypeList, TaxType>(myView, theUpdateSet, theError,
                 TaxTypeList.class);
-        theTaxRegimes = new MaintStaticData<TaxRegimeList, TaxRegime>(theView, theUpdateSet, theError,
+        theTaxRegimes = new MaintStaticData<TaxRegimeList, TaxRegime>(myView, theUpdateSet, theError,
                 TaxRegimeList.class);
-        theFrequencys = new MaintStaticData<FrequencyList, Frequency>(theView, theUpdateSet, theError,
+        theFrequencys = new MaintStaticData<FrequencyList, Frequency>(myView, theUpdateSet, theError,
                 FrequencyList.class);
-        theInfoTypes = new MaintStaticData<EventInfoTypeList, EventInfoType>(theView, theUpdateSet, theError,
+        theInfoTypes = new MaintStaticData<EventInfoTypeList, EventInfoType>(myView, theUpdateSet, theError,
                 EventInfoTypeList.class);
 
         /* Build the Static box */

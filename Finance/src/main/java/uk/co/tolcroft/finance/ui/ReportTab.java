@@ -25,9 +25,8 @@ package uk.co.tolcroft.finance.ui;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -65,17 +64,12 @@ public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
     /**
      * Panel width.
      */
-    private static final int PANEL_WIDTH = 800;
+    // private static final int PANEL_WIDTH = 800;
 
     /**
      * The Data View.
      */
     private final transient View theView;
-
-    /**
-     * The Panel.
-     */
-    private final JPanel thePanel;
 
     /**
      * The Scroll Pane.
@@ -113,30 +107,16 @@ public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
     private final ErrorPanel theError;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
      * Constructor for Report Window.
-     * @param pWindow the parent window
+     * @param pView the data view
      */
-    public ReportTab(final MainTab pWindow) {
-        HTMLEditorKit myKit;
-        StyleSheet myStyle;
-        Document myDoc;
-        JDataEntry mySection;
-
-        /* Store the view and properties */
-        // theParent = pWindow;
-        theView = pWindow.getView();
+    public ReportTab(final View pView) {
+        /* Store the view */
+        theView = pView;
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
         theDataReport = myDataMgr.new JDataEntry("Report");
         theSpotEntry = myDataMgr.new JDataEntry("SpotAnalysis");
         theDataReport.addAsChildOf(mySection);
@@ -149,20 +129,20 @@ public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
         theEditor.addHyperlinkListener(this);
 
         /* Add an editor kit to the editor */
-        myKit = new HTMLEditorKit();
+        HTMLEditorKit myKit = new HTMLEditorKit();
         theEditor.setEditorKit(myKit);
 
         /* Create a scroll-pane for the editor */
         theScroll = new JScrollPane(theEditor);
 
         /* Create the style-sheet for the window */
-        myStyle = myKit.getStyleSheet();
+        StyleSheet myStyle = myKit.getStyleSheet();
         myStyle.addRule("body { color:#000; font-family:times; margins; 4px; }");
         myStyle.addRule("h1 { color: black; }");
         myStyle.addRule("h2 { color: black; }");
 
         /* Create the document for the window */
-        myDoc = myKit.createDefaultDocument();
+        Document myDoc = myKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
 
         /* Create the Report Selection panel */
@@ -171,32 +151,35 @@ public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataReport);
 
-        /* Create the panel */
-        thePanel = new JPanel();
+        /* Now define the panel */
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(theError);
+        add(theSelect);
+        add(theScroll);
 
         /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
+        // GroupLayout myLayout = new GroupLayout(thePanel);
+        // thePanel.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                         false)
-                                                    .addComponent(theError, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(theSelect, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(theScroll, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
-                                                                  Short.MAX_VALUE)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
-                                  .addComponent(theScroll).addContainerGap()));
+        // myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(myLayout.createSequentialGroup()
+        // .addContainerGap()
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
+        // false)
+        // .addComponent(theError, GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(theSelect, GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(theScroll, GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
+        // Short.MAX_VALUE)).addContainerGap()));
+        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(GroupLayout.Alignment.TRAILING,
+        // myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
+        // .addComponent(theScroll).addContainerGap()));
     }
 
     /**

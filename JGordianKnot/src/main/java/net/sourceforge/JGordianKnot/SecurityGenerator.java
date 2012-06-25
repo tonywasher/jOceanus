@@ -139,8 +139,9 @@ public class SecurityGenerator {
     /**
      * Access the security phrase in bytes format.
      * @return the security phrase
+     * @throws JDataException on error
      */
-    protected byte[] getSecurityBytes() {
+    protected byte[] getSecurityBytes() throws JDataException {
         String myPhrase = theSecurityPhrase;
         return DataConverter.stringToByteArray(myPhrase);
     }
