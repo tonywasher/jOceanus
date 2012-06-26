@@ -61,7 +61,7 @@ public class SaveButtons extends JPanelWithEvents {
     /**
      * The update set.
      */
-    private final UpdateSet theUpdateSet;
+    private final transient UpdateSet theUpdateSet;
 
     /**
      * The OK button.

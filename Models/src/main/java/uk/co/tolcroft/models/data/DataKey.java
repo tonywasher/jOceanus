@@ -544,7 +544,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          * @param pData the DataSet for the list
          */
         protected DataKeyList(final DataSet<?> pData) {
-            super(DataKeyList.class, DataKey.class, ListStyle.CORE);
+            super(DataKeyList.class, DataKey.class, pData.getGranularity(), ListStyle.CORE);
             theData = pData;
         }
 
@@ -555,7 +555,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          */
         protected DataKeyList(final DataSet<?> pData,
                               final ListStyle pStyle) {
-            super(DataKeyList.class, DataKey.class, pStyle);
+            super(DataKeyList.class, DataKey.class, pData.getGranularity(), pStyle);
             theData = pData;
         }
 

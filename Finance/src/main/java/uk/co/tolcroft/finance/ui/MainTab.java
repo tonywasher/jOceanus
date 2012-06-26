@@ -54,24 +54,33 @@ import uk.co.tolcroft.subversion.threads.SubversionBackup;
  */
 public class MainTab extends MainWindow<FinanceData> {
     /**
+     * Generate the true action event id.
+     * @param pId the id
+     * @return the actual id
+     */
+    private static int generateEventId(final int pId) {
+        return ActionEvent.ACTION_PERFORMED + pId;
+    }
+
+    /**
      * Add pattern action event.
      */
-    protected static final int ACTION_ADDPATTERN = ActionEvent.ACTION_PERFORMED + 1;
+    protected static final int ACTION_ADDPATTERN = generateEventId(1);
 
     /**
      * View Extract.
      */
-    protected static final int ACTION_VIEWEXTRACT = ActionEvent.ACTION_PERFORMED + 2;
+    protected static final int ACTION_VIEWEXTRACT = generateEventId(2);
 
     /**
      * View Account.
      */
-    protected static final int ACTION_VIEWACCOUNT = ActionEvent.ACTION_PERFORMED + 3;
+    protected static final int ACTION_VIEWACCOUNT = generateEventId(3);
 
     /**
      * Maintain Account.
      */
-    protected static final int ACTION_MAINTACCOUNT = ActionEvent.ACTION_PERFORMED + 4;
+    protected static final int ACTION_MAINTACCOUNT = generateEventId(4);
 
     /**
      * The data view.

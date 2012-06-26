@@ -1621,7 +1621,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @param pData the DataSet for the list
          */
         protected TaxYearList(final FinanceData pData) {
-            super(TaxYearList.class, TaxYear.class, ListStyle.CORE);
+            super(TaxYearList.class, TaxYear.class, pData.getGranularity(), ListStyle.CORE);
             theData = pData;
         }
 

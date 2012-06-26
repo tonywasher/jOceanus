@@ -329,7 +329,7 @@ public abstract class EncryptedItem extends DataItem {
         protected EncryptedList(final Class<L> pClass,
                                 final Class<T> pBaseClass,
                                 final DataSet<?> pData) {
-            super(pClass, pBaseClass, ListStyle.CORE);
+            super(pClass, pBaseClass, pData.getGranularity(), ListStyle.CORE);
             theData = pData;
         }
 
@@ -344,7 +344,7 @@ public abstract class EncryptedItem extends DataItem {
                              final Class<T> pBaseClass,
                              final DataSet<?> pData,
                              final ListStyle pStyle) {
-            super(pClass, pBaseClass, pStyle);
+            super(pClass, pBaseClass, pData.getGranularity(), pStyle);
             theData = pData;
             setGeneration(pData.getGeneration());
         }

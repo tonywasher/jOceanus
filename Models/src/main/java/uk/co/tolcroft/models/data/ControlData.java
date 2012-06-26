@@ -351,7 +351,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          * @param pData the DataSet for the list
          */
         protected ControlDataList(final DataSet<?> pData) {
-            super(ControlDataList.class, ControlData.class, ListStyle.CORE);
+            super(ControlDataList.class, ControlData.class, pData.getGranularity(), ListStyle.CORE);
             theData = pData;
         }
 
@@ -362,7 +362,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          */
         protected ControlDataList(final DataSet<?> pData,
                                   final ListStyle pStyle) {
-            super(ControlDataList.class, ControlData.class, pStyle);
+            super(ControlDataList.class, ControlData.class, pData.getGranularity(), pStyle);
             theData = pData;
         }
 

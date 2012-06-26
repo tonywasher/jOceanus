@@ -37,9 +37,10 @@ public class IdManager<T extends DataItem & Comparable<T>> extends OrderedIdInde
 
     /**
      * Constructor.
+     * @param pGranularity the index granularity
      */
-    protected IdManager() {
-        super();
+    protected IdManager(final int pGranularity) {
+        super(pGranularity);
     }
 
     /**

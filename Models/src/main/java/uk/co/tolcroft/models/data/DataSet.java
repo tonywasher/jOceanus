@@ -37,6 +37,7 @@ import uk.co.tolcroft.models.data.ControlData.ControlDataList;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataKey.DataKeyList;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
+import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -58,6 +59,11 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      * Generation Field Id.
      */
     public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField("Generation");
+
+    /**
+     * Granularity Field Id.
+     */
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField("Granularity");
 
     /**
      * Version Field Id.
@@ -93,6 +99,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_GENERATION.equals(pField)) {
             return theGeneration;
+        }
+        if (FIELD_GRANULARITY.equals(pField)) {
+            return theGranularity;
         }
         if (FIELD_VERSION.equals(pField)) {
             return theVersion;
@@ -148,6 +157,11 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     private int theGeneration = 0;
 
     /**
+     * Granularity of dataSet.
+     */
+    private final int theGranularity;
+
+    /**
      * Version of dataSet.
      */
     private int theVersion = 0;
@@ -198,6 +212,14 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     }
 
     /**
+     * Get Granularity.
+     * @return the granularity
+     */
+    public int getGranularity() {
+        return theGranularity;
+    }
+
+    /**
      * Get Version.
      * @return the version
      */
@@ -213,6 +235,10 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         /* Store the security manager and class */
         theSecurity = pSecurity;
 
+        /* Access the DataListPreferences */
+        DataListPreferences myPreferences = PreferenceManager.getPreferenceSet(DataListPreferences.class);
+        theGranularity = myPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
+
         /* Create the empty security lists */
         theControlKeys = new ControlKeyList(this);
         theDataKeys = new DataKeyList(this);
@@ -227,6 +253,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      * @param pSource the source DataSet
      */
     protected DataSet(final DataSet<T> pSource) {
+        /* Access the Granularity */
+        theGranularity = pSource.getGranularity();
+
         /* Store the security manager and class */
         theSecurity = pSource.getSecurity();
 

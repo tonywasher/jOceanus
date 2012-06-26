@@ -530,7 +530,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
          * @param pData the DataSet for the list
          */
         protected ControlKeyList(final DataSet<?> pData) {
-            super(ControlKeyList.class, ControlKey.class, ListStyle.CORE);
+            super(ControlKeyList.class, ControlKey.class, pData.getGranularity(), ListStyle.CORE);
             theData = pData;
         }
 
@@ -541,7 +541,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
          */
         protected ControlKeyList(final DataSet<?> pData,
                                  final ListStyle pStyle) {
-            super(ControlKeyList.class, ControlKey.class, pStyle);
+            super(ControlKeyList.class, ControlKey.class, pData.getGranularity(), pStyle);
             theData = pData;
         }
 

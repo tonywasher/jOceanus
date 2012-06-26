@@ -546,7 +546,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
          * @param pData the DataSet for the list
          */
         protected EventValueList(final FinanceData pData) {
-            super(EventValueList.class, EventValue.class, ListStyle.CORE);
+            super(EventValueList.class, EventValue.class, pData.getGranularity(), ListStyle.CORE);
             theData = pData;
             setGeneration(pData.getGeneration());
         }
@@ -558,7 +558,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
          */
         protected EventValueList(final FinanceData pData,
                                  final ListStyle pStyle) {
-            super(EventValueList.class, EventValue.class, pStyle);
+            super(EventValueList.class, EventValue.class, pData.getGranularity(), pStyle);
             theData = pData;
             setGeneration(pData.getGeneration());
         }

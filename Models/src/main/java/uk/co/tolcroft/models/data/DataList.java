@@ -68,6 +68,11 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
     /**
+     * Granularity Field Id.
+     */
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField("Granularity");
+
+    /**
      * ListStyle Field Id.
      */
     public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField("ListStyle");
@@ -107,6 +112,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
         if (FIELD_SIZE.equals(pField)) {
             return size();
         }
+        if (FIELD_GRANULARITY.equals(pField)) {
+            return (1 << theGranularity);
+        }
         if (FIELD_STYLE.equals(pField)) {
             return theStyle;
         }
@@ -143,6 +151,11 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * The edit state of the list.
      */
     private EditState theEdit = EditState.CLEAN;
+
+    /**
+     * The granularity of the list.
+     */
+    private final int theGranularity;
 
     /**
      * The id manager.
@@ -217,6 +230,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      */
     public int getGeneration() {
         return theGeneration;
+    }
+
+    /**
+     * Get the Granularity of the list.
+     * @return the Granularity
+     */
+    public int getGranularity() {
+        return theGranularity;
     }
 
     /**
@@ -327,15 +348,18 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Construct a new object.
      * @param pClass the class
      * @param pBaseClass the class of the underlying object
+     * @param pGranularity the index granularity
      * @param pStyle the new {@link ListStyle}
      */
     protected DataList(final Class<L> pClass,
                        final Class<T> pBaseClass,
+                       final Integer pGranularity,
                        final ListStyle pStyle) {
-        super(pBaseClass, new IdManager<T>());
+        super(pBaseClass, new IdManager<T>(pGranularity));
         theClass = pClass;
         theList = pClass.cast(this);
         theStyle = pStyle;
+        theGranularity = pGranularity;
         theMgr = (IdManager<T>) getIndex();
 
         /* Declare fields (allowing for subclasses) */
@@ -347,12 +371,13 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * @param pSource the list to clone
      */
     protected DataList(final L pSource) {
-        super(pSource.getBaseClass(), new IdManager<T>());
+        super(pSource.getBaseClass(), new IdManager<T>(pSource.getGranularity()));
         theStyle = ListStyle.VIEW;
         theClass = pSource.getListClass();
         theList = theClass.cast(this);
         theMgr = (IdManager<T>) getIndex();
         theBase = pSource;
+        theGranularity = pSource.getGranularity();
         theGeneration = pSource.getGeneration();
 
         /* Declare fields (allowing for subclasses) */

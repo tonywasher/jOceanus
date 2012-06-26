@@ -322,12 +322,17 @@ public class EventManager {
         /**
          * The first available Event SubId.
          */
+        private static final int ACTION_RANGE = 100;
+
+        /**
+         * The first available Event SubId.
+         */
         public static final int ACTION_FIRST = ACTION_PERFORMED;
 
         /**
          * The last available Event SubId.
          */
-        public static final int ACTION_LAST = ACTION_PERFORMED + 100;
+        public static final int ACTION_LAST = ACTION_PERFORMED + ACTION_RANGE - 1;
 
         /**
          * The subId of the event.
