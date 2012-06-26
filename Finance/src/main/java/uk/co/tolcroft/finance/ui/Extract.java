@@ -24,12 +24,18 @@ package uk.co.tolcroft.finance.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -106,11 +112,6 @@ public class Extract extends DataTable<Event> {
     private transient EventList theEvents = null;
 
     /**
-     * The parent.
-     */
-    private final transient MainTab theParent;
-
-    /**
      * The panel.
      */
     private final JPanel thePanel;
@@ -138,7 +139,7 @@ public class Extract extends DataTable<Event> {
     /**
      * Save Buttons.
      */
-    private final SaveButtons theTabButs;
+    private final SaveButtons theSaveButtons;
 
     /**
      * Data Entry.
@@ -330,16 +331,14 @@ public class Extract extends DataTable<Event> {
 
     /**
      * Constructor for Extract Window.
-     * @param pParent the parent window
+     * @param pView the data view
      */
-    public Extract(final MainTab pParent) {
+    public Extract(final View pView) {
         /* Declare variables */
         GroupLayout myLayout;
-        JDataEntry mySection;
 
         /* Record the passed details */
-        theParent = pParent;
-        theView = pParent.getView();
+        theView = pView;
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
@@ -348,7 +347,7 @@ public class Extract extends DataTable<Event> {
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
         theDataExtract = myDataMgr.new JDataEntry("Extract");
         theDataExtract.addAsChildOf(mySection);
 
@@ -373,10 +372,16 @@ public class Extract extends DataTable<Event> {
 
         /* Create the sub panels */
         theSelect = new DateDayRangeSelect();
-        theTabButs = new SaveButtons(theUpdateSet);
+        theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataExtract);
+
+        /* Create listener */
+        ExtractListener myListener = new ExtractListener();
+        theSelect.addPropertyChangeListener(DateDayRangeSelect.PROPERTY_RANGE, myListener);
+        theError.addChangeListener(myListener);
+        theSaveButtons.addActionListener(myListener);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -385,30 +390,36 @@ public class Extract extends DataTable<Event> {
         myLayout = new GroupLayout(thePanel);
         thePanel.setLayout(myLayout);
 
+        /* Create the layout for the panel */
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(theError);
+        thePanel.add(theSelect);
+        thePanel.add(getScrollPane());
+        thePanel.add(theSaveButtons);
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
-                                                    .addComponent(theError, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(theSelect, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(getScrollPane(),
-                                                                  GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
-                                                                  Short.MAX_VALUE)
-                                                    .addComponent(theTabButs, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
-                                  .addComponent(getScrollPane()).addComponent(theTabButs)));
+        // myLayout.setHorizontalGroup(myLayout
+        // .createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(myLayout.createSequentialGroup()
+        // .addContainerGap()
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
+        // .addComponent(theError, GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(theSelect, GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(getScrollPane(),
+        // GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
+        // Short.MAX_VALUE)
+        // .addComponent(theTabButs, GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        // .addContainerGap()));
+        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(GroupLayout.Alignment.TRAILING,
+        // myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
+        // .addComponent(getScrollPane()).addComponent(theTabButs)));
     }
 
     /**
@@ -419,22 +430,20 @@ public class Extract extends DataTable<Event> {
         /* Cancel any editing */
         cancelEditing();
 
-        /* Switch on command */
-        if (SaveButtons.CMD_OK.equals(pCmd)) {
-            theUpdateSet.applyChanges();
-            // } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
-            // resetData();
+        /* Process the command */
+        theUpdateSet.processCommand(pCmd);
+
+        /* Access any error */
+        JDataException myError = theView.getError();
+
+        /* Show the error */
+        if (myError != null) {
+            theError.setError(myError);
         }
+
+        /* Notify listeners of changes */
         notifyChanges();
     }
-
-    /**
-     * Save changes from the view into the underlying data.
-     */
-    // @Override
-    // public void saveData() {
-    // theUpdateSet.applyChanges();
-    // }
 
     /**
      * Lock on error.
@@ -485,11 +494,12 @@ public class Extract extends DataTable<Event> {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
+     * @param pCombo the combo select
      * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
+    public void refreshData(ComboSelect pCombo) throws JDataException {
         /* Access the combo list from parent */
-        theComboList = theParent.getComboList();
+        theComboList = pCombo;
 
         /* Access range */
         DateDayRange myRange = theView.getRange();
@@ -512,11 +522,11 @@ public class Extract extends DataTable<Event> {
         }
 
         /* Update the table buttons */
-        theTabButs.setEnabled(true);
+        theSaveButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
 
         /* Update the top level tabs */
-        theParent.setVisibility();
+        fireStateChanged();
     }
 
     /**
@@ -537,9 +547,9 @@ public class Extract extends DataTable<Event> {
         }
         setList(theEvents);
         theUpdateEntry.setDataList(theEvents);
-        theTabButs.setEnabled(true);
+        theSaveButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
-        theParent.setVisibility();
+        fireStateChanged();
     }
 
     /**
@@ -590,6 +600,45 @@ public class Extract extends DataTable<Event> {
                 return theComboList.getDebitAccounts(myEvent.getTransType());
             default:
                 return null;
+        }
+    }
+
+    /**
+     * Extract listener class.
+     */
+    private final class ExtractListener implements ActionListener, PropertyChangeListener, ChangeListener {
+
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+            /* If this is the error panel */
+            if (theError.equals(e.getSource())) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel on error */
+                theSelect.setVisible(!isError);
+
+                /* Lock scroll area */
+                getScrollPane().setEnabled(!isError);
+
+                /* Lock Save Buttons */
+                theSaveButtons.setEnabled(!isError);
+            }
+        }
+
+        @Override
+        public void propertyChange(final PropertyChangeEvent e) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* If this event relates to the save buttons */
+            if (theSaveButtons.equals(e.getSource())) {
+                /* Perform the save command */
+                performCommand(e.getActionCommand());
+            }
         }
     }
 
@@ -774,10 +823,9 @@ public class Extract extends DataTable<Event> {
         @Override
         public Object getValueAt(final int row,
                                  final int col) {
-            Object o;
-
             /* Access the event */
             Event myEvent = theEvents.get(row);
+            Object o;
 
             /* Return the appropriate value */
             switch (col) {
@@ -838,10 +886,8 @@ public class Extract extends DataTable<Event> {
         public void setValueAt(final Object obj,
                                final int row,
                                final int col) {
-            Event myEvent;
-
             /* Access the line */
-            myEvent = theEvents.get(row);
+            Event myEvent = theEvents.get(row);
 
             /* Push history */
             myEvent.pushHistory();
@@ -902,10 +948,9 @@ public class Extract extends DataTable<Event> {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 myEvent.popHistory();
-                myEvent.pushHistory();
 
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA,
@@ -913,18 +958,11 @@ public class Extract extends DataTable<Event> {
 
                 /* Show the error */
                 theError.setError(myError);
+                return;
             }
 
             /* Check for changes */
             if (myEvent.checkForHistory()) {
-                /* Note that the item has changed */
-                myEvent.clearErrors();
-                // myEvent.setState(DataState.CHANGED);
-
-                /* Validate the item and update the edit state */
-                myEvent.validate();
-                theEvents.findEditState();
-
                 /* Switch on the updated column */
                 switch (col) {
                 /* If we have changed a sorting column */
@@ -940,22 +978,21 @@ public class Extract extends DataTable<Event> {
                         /* If the row # has changed */
                         if (myNewRowNo != row) {
                             /* Report the move of the row */
-                            fireMoveRowEvents(row, myNewRowNo);
                             selectRowWithScroll(myNewRowNo);
                             break;
                         }
+                        break;
 
-                        /* else fall through */
-
-                        /* else note that we have updated this cell */
                     default:
-                        fireTableRowsUpdated(row, row);
                         break;
                 }
 
-                /* Note that changes have occurred */
+                /* Increment data version */
+                theUpdateSet.incrementVersion();
+
+                /* Update components to reflect changes */
+                fireTableDataChanged();
                 notifyChanges();
-                // updateDebug();
             }
         }
     }
@@ -1014,7 +1051,6 @@ public class Extract extends DataTable<Event> {
         @Override
         protected void addNullCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
-            Event myEvent;
             boolean enableNullUnits = false;
             boolean enableNullTax = false;
             boolean enableNullYears = false;
@@ -1033,7 +1069,7 @@ public class Extract extends DataTable<Event> {
                 }
 
                 /* Access as event */
-                myEvent = (Event) myRow;
+                Event myEvent = (Event) myRow;
 
                 /* Enable null Units if we have units */
                 if (myEvent.getUnits() != null) {
@@ -1057,8 +1093,9 @@ public class Extract extends DataTable<Event> {
             }
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableNullUnits || enableNullTax || enableNullYears || enableNullDilution)
-                    && (pMenu.getComponentCount() > 0)) {
+            boolean nullItem = enableNullUnits || enableNullTax;
+            nullItem = nullItem || enableNullYears || enableNullDilution;
+            if ((nullItem) && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1106,10 +1143,6 @@ public class Extract extends DataTable<Event> {
          */
         @Override
         protected void addSpecialCommands(final JPopupMenu pMenu) {
-            JMenuItem myItem;
-            Event myEvent;
-            Money myTax;
-            TransactionType myTrans;
             boolean enableCalcTax = false;
 
             /* Nothing to do if the table is locked */
@@ -1125,13 +1158,13 @@ public class Extract extends DataTable<Event> {
                 }
 
                 /* Access as event */
-                myEvent = (Event) myRow;
-                myTax = myEvent.getTaxCredit();
-                myTrans = myEvent.getTransType();
+                Event myEvent = (Event) myRow;
+                Money myTax = myEvent.getTaxCredit();
+                TransactionType myTrans = myEvent.getTransType();
 
                 /* If we have a calculable tax credit that is null/zero */
-                if ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend()))
-                        && ((myTax == null) || (!myTax.isNonZero()))) {
+                boolean isTaxable = ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend())));
+                if ((isTaxable) && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
                 }
             }
@@ -1145,7 +1178,7 @@ public class Extract extends DataTable<Event> {
             /* If we can calculate tax */
             if (enableCalcTax) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(POPUP_CALCTAX);
+                JMenuItem myItem = new JMenuItem(POPUP_CALCTAX);
                 myItem.setActionCommand(POPUP_CALCTAX);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
@@ -1158,29 +1191,23 @@ public class Extract extends DataTable<Event> {
          */
         @Override
         protected void addNavigationCommands(final JPopupMenu pMenu) {
-            JMenuItem myItem;
-            Event myEvent;
-            Account myAccount;
-            int myRow;
-            int myCol;
-            boolean enableNavigate = false;
-
             /* Nothing to do if the table is locked */
             if (theTable.isLocked()) {
                 return;
             }
 
             /* Access the popUp row/column and ignore if not valid */
-            myRow = getPopupRow();
-            myCol = getPopupCol();
+            int myRow = getPopupRow();
+            int myCol = getPopupCol();
             if (myRow < 0) {
                 return;
             }
 
             /* Access the event */
-            myEvent = theTable.extractItemAt(myRow);
+            Event myEvent = theTable.extractItemAt(myRow);
 
             /* If the column is Credit */
+            Account myAccount;
             if (myCol == COLUMN_CREDIT) {
                 myAccount = myEvent.getCredit();
             } else if (myCol == COLUMN_DEBIT) {
@@ -1190,9 +1217,7 @@ public class Extract extends DataTable<Event> {
             }
 
             /* If we have an account we can navigate */
-            if (myAccount != null) {
-                enableNavigate = true;
-            }
+            boolean enableNavigate = (myAccount != null);
 
             /* If there is something to add and there are already items in the menu */
             if ((enableNavigate) && (pMenu.getComponentCount() > 0)) {
@@ -1203,7 +1228,7 @@ public class Extract extends DataTable<Event> {
             /* If we can navigate */
             if (enableNavigate) {
                 /* Create the View account choice */
-                myItem = new JMenuItem(POPUP_VIEW + ": " + myAccount.getName());
+                JMenuItem myItem = new JMenuItem(POPUP_VIEW + ": " + myAccount.getName());
 
                 /* Set the command and add to menu */
                 myItem.setActionCommand(POPUP_VIEW + ":" + myAccount.getName());
@@ -1269,19 +1294,14 @@ public class Extract extends DataTable<Event> {
             }
 
             /* Notify of any changes */
+            theModel.fireTableDataChanged();
             notifyChanges();
-            // updateDebug();
         }
 
         /**
          * Calculate tax credits.
          */
         private void calculateTaxCredits() {
-            Event myEvent;
-            TransactionType myTrans;
-            Money myTax;
-            int row;
-
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
@@ -1290,15 +1310,15 @@ public class Extract extends DataTable<Event> {
                 }
 
                 /* Determine row */
-                row = myRow.indexOf();
+                int row = myRow.indexOf();
                 if (theTable.hasHeader()) {
                     row--;
                 }
 
                 /* Access the event */
-                myEvent = (Event) myRow;
-                myTrans = myEvent.getTransType();
-                myTax = myEvent.getTaxCredit();
+                Event myEvent = (Event) myRow;
+                TransactionType myTrans = myEvent.getTransType();
+                Money myTax = myEvent.getTaxCredit();
 
                 /* Ignore rows with invalid transaction type */
                 if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
@@ -1315,8 +1335,10 @@ public class Extract extends DataTable<Event> {
 
                 /* set the tax credit value */
                 theModel.setValueAt(myTax, row, COLUMN_TAXCRED);
-                theModel.fireTableCellUpdated(row, COLUMN_TAXCRED);
             }
+
+            /* Increment version */
+            theUpdateSet.incrementVersion();
         }
 
         /**
@@ -1324,29 +1346,26 @@ public class Extract extends DataTable<Event> {
          * @param pCmd the navigation command
          */
         private void performNavigation(final String pCmd) {
-            String[] tokens;
-            String myName = null;
-            Account myAccount;
-
             /* Access the action command */
-            tokens = pCmd.split(":");
+            String[] tokens = pCmd.split(":");
             String myCmd = tokens[0];
+            String myName = null;
             if (tokens.length > 1) {
                 myName = tokens[1];
             }
 
             /* Access the correct account */
-            myAccount = theView.getData().getAccounts().findItemByName(myName);
+            Account myAccount = theView.getData().getAccounts().findItemByName(myName);
 
             /* If this is an account view request */
             if (myCmd.compareTo(POPUP_VIEW) == 0) {
                 /* Switch view */
-                theParent.selectAccount(myAccount, theSelect);
+                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, myAccount);
 
                 /* If this is an account maintenance request */
             } else if (myCmd.compareTo(POPUP_MAINT) == 0) {
                 /* Switch view */
-                theParent.selectAccountMaint(myAccount);
+                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, myAccount);
             }
         }
     }

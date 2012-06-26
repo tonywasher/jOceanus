@@ -45,6 +45,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.JDataManager.EventManager;
+import net.sourceforge.JDataManager.EventManager.ActionDetailEvent;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
@@ -163,7 +164,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
     /**
      * Fire State Changed Event to all registered listeners.
      */
-    public void fireStateChanged() {
+    protected void fireStateChanged() {
         /* Fire the standard event */
         theManager.fireStateChanged();
     }
@@ -172,9 +173,29 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Fire Action Performed Event to all registered listeners.
      * @param pCommand the action command
      */
-    public void fireActionPerformed(final String pCommand) {
+    protected void fireActionPerformed(final String pCommand) {
         /* Fire standard action performed event */
         theManager.fireActionPerformed(pCommand);
+    }
+
+    /**
+     * Fire Action Detail Event to all registered listeners.
+     * @param pSubId the SubId of the event.
+     * @param pDetails the action details
+     */
+    protected void fireActionEvent(final int pSubId,
+                                   final Object pDetails) {
+        /* Fire action detail event */
+        theManager.fireActionEvent(this, pSubId, pDetails);
+    }
+
+    /**
+     * Cascade action event.
+     * @param pEvent the event to cascade
+     */
+    protected void cascadeActionEvent(final ActionDetailEvent pEvent) {
+        /* Fire action detail event */
+        theManager.cascadeActionEvent(this, pEvent);
     }
 
     /**

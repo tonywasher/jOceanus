@@ -193,7 +193,7 @@ public class EventManager {
             return;
         }
 
-        /* Create a new list to avoid affecting any current fire iterations */
+        /* Create a new list to avoid affecting any currently firing iterations */
         List<Registration> myNew = new ArrayList<Registration>(theRegistrations);
 
         /* Adjust the list */
@@ -249,21 +249,44 @@ public class EventManager {
      */
     public void fireActionPerformed(final String pCommand) {
         /* Fire standard action performed event */
-        fireActionPerformed(theOwner, ActionEvent.ACTION_PERFORMED, pCommand);
+        fireActionEvent(theOwner, ActionEvent.ACTION_PERFORMED, pCommand);
+    }
+
+    /**
+     * Cascade action event.
+     * @param pOwner the owner of the event
+     * @param pEvent the event to cascade
+     */
+    public void cascadeActionEvent(final Object pOwner,
+                                   final ActionDetailEvent pEvent) {
+        /* Create the action event */
+        ActionEvent myEvent = new ActionDetailEvent(pOwner, pEvent);
+
+        /* Obtain a reference to the registrations */
+        fireActionEvent(myEvent);
     }
 
     /**
      * Fire Action Performed Event to all registered listeners.
      * @param pOwner the owner of the event
-     * @param uId the id of the action
-     * @param pCommand the action command
+     * @param uSubId the id of the action
+     * @param pDetails the action details
      */
-    public void fireActionPerformed(final Object pOwner,
-                                    final int uId,
-                                    final String pCommand) {
+    public void fireActionEvent(final Object pOwner,
+                                final int uSubId,
+                                final Object pDetails) {
         /* Create the action event */
-        ActionEvent myEvent = new ActionEvent(pOwner, uId, pCommand);
+        ActionEvent myEvent = new ActionDetailEvent(pOwner, ActionEvent.ACTION_PERFORMED, uSubId, pDetails);
 
+        /* Obtain a reference to the registrations */
+        fireActionEvent(myEvent);
+    }
+
+    /**
+     * Fire Action Performed Event to all registered listeners.
+     * @param pEvent the event
+     */
+    private void fireActionEvent(final ActionEvent pEvent) {
         /* Obtain a reference to the registrations */
         List<Registration> myList = theRegistrations;
 
@@ -280,7 +303,90 @@ public class EventManager {
 
             /* Fire the event */
             ActionListener myListener = (ActionListener) myReg.theListener;
-            myListener.actionPerformed(myEvent);
+            myListener.actionPerformed(pEvent);
+        }
+    }
+
+    /**
+     * The extended action event. This allows the definition of multiple ActionIds by providing an additional
+     * subId field. The original Action Event is restricted to a single Id <b>ACTION_PERFORMED</b>. In
+     * addition, rather than using the command string, this is set to NULL and a user defined object is
+     * available to provide details about the event that do not have to be parsed from a string.
+     */
+    public static class ActionDetailEvent extends ActionEvent {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = -556484648311704973L;
+
+        /**
+         * The first available Event SubId.
+         */
+        public static final int ACTION_FIRST = ACTION_PERFORMED;
+
+        /**
+         * The last available Event SubId.
+         */
+        public static final int ACTION_LAST = ACTION_PERFORMED + 100;
+
+        /**
+         * The subId of the event.
+         */
+        private final int theSubId;
+
+        /**
+         * The details of the event.
+         */
+        private final Object theDetails;
+
+        /**
+         * Obtain the subId.
+         * @return the subId
+         */
+        public int getSubId() {
+            return theSubId;
+        }
+
+        /**
+         * Obtain the details.
+         * @return the details
+         */
+        public Object getDetails() {
+            return theDetails;
+        }
+
+        /**
+         * Constructor.
+         * @param pSource the source of the event
+         * @param pId the id of the event
+         * @param pSubId the subId for the event
+         * @param pDetails the details of the event
+         */
+        public ActionDetailEvent(final Object pSource,
+                                 final int pId,
+                                 final int pSubId,
+                                 final Object pDetails) {
+            /* Call super-constructor */
+            super(pSource, pId, null);
+
+            /* Set the details */
+            theSubId = pSubId;
+            theDetails = pDetails;
+        }
+
+        /**
+         * Constructor.
+         * @param pSource the source of the event
+         * @param pEvent the source event
+         */
+        public ActionDetailEvent(final Object pSource,
+                                 final ActionDetailEvent pEvent) {
+            /* Call super-constructor */
+            super(pSource, pEvent.getID(), null);
+
+            /* Set the details */
+            theSubId = pEvent.getSubId();
+            theDetails = pEvent.getDetails();
         }
     }
 }

@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -51,7 +52,27 @@ import uk.co.tolcroft.subversion.threads.SubversionBackup;
  * Main Window for JFinanceApp.
  * @author Tony Washer
  */
-public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
+public class MainTab extends MainWindow<FinanceData> {
+    /**
+     * Add pattern action event.
+     */
+    protected static final int ACTION_ADDPATTERN = ActionEvent.ACTION_PERFORMED + 1;
+
+    /**
+     * View Extract.
+     */
+    protected static final int ACTION_VIEWEXTRACT = ActionEvent.ACTION_PERFORMED + 2;
+
+    /**
+     * View Account.
+     */
+    protected static final int ACTION_VIEWACCOUNT = ActionEvent.ACTION_PERFORMED + 3;
+
+    /**
+     * Maintain Account.
+     */
+    protected static final int ACTION_MAINTACCOUNT = ActionEvent.ACTION_PERFORMED + 4;
+
     /**
      * The data view.
      */
@@ -183,7 +204,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         theTabs = new JTabbedPane();
 
         /* Create the extract table and add to tabbed pane */
-        theExtract = new Extract(this);
+        theExtract = new Extract(theView);
         theTabs.addTab(TITLE_EXTRACT, theExtract.getPanel());
 
         /* Create the accounts control and add to tabbed pane */
@@ -195,15 +216,23 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         theTabs.addTab(TITLE_REPORT, theReportTab);
 
         /* Create the SpotView Tab */
-        theSpotView = new PricePoint(this);
+        theSpotView = new PricePoint(theView);
         theTabs.addTab(TITLE_SPOTVIEW, theSpotView.getPanel());
 
         /* Create the Maintenance Tab */
         theMaint = new MaintenanceTab(this);
         theTabs.addTab(TITLE_MAINT, theMaint);
 
-        /* Add change listener */
-        theTabs.addChangeListener(this);
+        /* Add listeners */
+        MainListener myListener = new MainListener();
+        theTabs.addChangeListener(myListener);
+        theExtract.addChangeListener(myListener);
+        theAccountCtl.addChangeListener(myListener);
+        theSpotView.addChangeListener(myListener);
+        theMaint.addChangeListener(myListener);
+        theExtract.addActionListener(myListener);
+        theAccountCtl.addActionListener(myListener);
+        theMaint.addActionListener(myListener);
         determineFocus();
 
         /* Return the panel */
@@ -342,7 +371,7 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         theComboList = new ComboSelect(theView);
 
         /* Refresh the windows */
-        theExtract.refreshData();
+        theExtract.refreshData(theComboList);
         theAccountCtl.refreshData(theComboList);
         theReportTab.refreshData();
         theSpotView.refreshData();
@@ -418,21 +447,6 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
     }
 
     /**
-     * Change listener.
-     * @param e the event
-     */
-    @Override
-    public void stateChanged(final ChangeEvent e) {
-        /* Ignore if it is not the tabs */
-        if (!theTabs.equals(e.getSource())) {
-            return;
-        }
-
-        /* Determine the focus */
-        determineFocus();
-    }
-
-    /**
      * Determine focus.
      */
     private void determineFocus() {
@@ -460,6 +474,35 @@ public class MainTab extends MainWindow<FinanceData> implements ChangeListener {
         } else if (myComponent.equals(theMaint)) {
             /* Determine focus of maintenance */
             theMaint.determineFocus();
+        }
+    }
+
+    /**
+     * The listener class.
+     */
+    private final class MainListener implements ActionListener, ChangeListener {
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+            Object o = e.getSource();
+
+            /* If this is the tabs */
+            if (theTabs.equals(o)) {
+
+                /* Determine the focus */
+                determineFocus();
+
+                /* else if it is one of the sub-panels */
+            } else if (theExtract.equals(o) || theAccountCtl.equals(o) || theMaint.equals(o)
+                    || theSpotView.equals(o)) {
+                /* Set the visibility */
+                setVisibility();
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            // TODO Auto-generated method stub
+
         }
     }
 }

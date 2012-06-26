@@ -23,9 +23,13 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -90,11 +94,6 @@ public class PricePoint extends DataTable<AccountPrice> {
     private transient AccountPriceList thePrices = null;
 
     /**
-     * The parent.
-     */
-    private final transient MainTab theParent;
-
-    /**
      * The panel.
      */
     private final JPanel thePanel;
@@ -127,7 +126,7 @@ public class PricePoint extends DataTable<AccountPrice> {
     /**
      * The save buttons.
      */
-    private final SaveButtons theTabButs;
+    private final SaveButtons theSaveButtons;
 
     /**
      * The data entry.
@@ -209,24 +208,20 @@ public class PricePoint extends DataTable<AccountPrice> {
 
     /**
      * Constructor.
-     * @param pParent the parent
+     * @param pView the data view
      */
-    public PricePoint(final MainTab pParent) {
-        /* Declare variables */
-        GroupLayout myLayout;
-        JDataEntry mySection;
-
+    public PricePoint(final View pView) {
         /* Record the passed details */
-        theParent = pParent;
-        theView = pParent.getView();
+        theView = pView;
 
         /* Build the Update set and entry */
         theUpdateSet = new UpdateSet(theView);
         theUpdateEntry = theUpdateSet.registerClass(SpotPrice.class);
+        setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
         theDataPrice = myDataMgr.new JDataEntry("SpotPrices");
         theDataPrice.addAsChildOf(mySection);
 
@@ -251,76 +246,80 @@ public class PricePoint extends DataTable<AccountPrice> {
 
         /* Create the sub panels */
         theSelect = new SpotSelect(theView);
-        theTabButs = new SaveButtons(theUpdateSet);
+        theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataPrice);
+
+        /* Create the listener */
+        SpotViewListener myListener = new SpotViewListener();
+        theSelect.addChangeListener(myListener);
+        theError.addChangeListener(myListener);
+        theSaveButtons.addActionListener(myListener);
 
         /* Create the panel */
         thePanel = new JPanel();
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(theSelect);
+        thePanel.add(theError);
+        thePanel.add(getScrollPane());
+        thePanel.add(theSaveButtons);
+
+        /* Create the layout for the panel */
+        // myLayout = new GroupLayout(thePanel);
+        // thePanel.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
-                                                    .addComponent(theError, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(theSelect, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(getScrollPane(),
-                                                                  GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
-                                                                  Short.MAX_VALUE)
-                                                    .addComponent(theTabButs, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
-                                  .addComponent(getScrollPane()).addComponent(theTabButs)));
+        // myLayout.setHorizontalGroup(myLayout
+        // .createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(myLayout.createSequentialGroup()
+        // .addContainerGap()
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
+        // .addComponent(theError, GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(theSelect, GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(getScrollPane(),
+        // GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
+        // Short.MAX_VALUE)
+        // .addComponent(theSaveButtons,
+        // GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        // .addContainerGap()));
+        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(GroupLayout.Alignment.TRAILING,
+        // myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
+        // .addComponent(getScrollPane()).addComponent(theSaveButtons)));
     }
 
-    // @Override
-    // public void saveData() {
-    // if (theSnapshot != null) {
-    // if (!theUpdateSet.hasErrors()) {
-    // theUpdateSet.applyChanges();
-    // }
-    // }
-    // }
-
     /**
-     * Update Debug view.
+     * Perform a command.
+     * @param pCmd the command to perform
      */
-    // @Override
-    // public void updateDebug() {
-    // theDataPrice.setObject(theSnapshot);
-    // }
+    public void performCommand(final String pCmd) {
+        /* Cancel any editing */
+        cancelEditing();
 
-    /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    // @Override
-    // public void lockOnError(final boolean isError) {
-    /* Hide selection panel */
-    // theSelect.setVisible(!isError);
+        /* Process the command */
+        theUpdateSet.processCommand(pCmd);
 
-    /* Lock scroll-able area */
-    // getScrollPane().setEnabled(!isError);
+        /* Access any error */
+        JDataException myError = theView.getError();
 
-    /* Lock tab buttons area */
-    // theTabButs.setEnabled(!isError);
-    // }
+        /* Show the error */
+        if (myError != null) {
+            theError.setError(myError);
+        }
+
+        /* Notify listeners of changes */
+        notifyChanges();
+    }
 
     /**
      * Notify table that there has been a change in selection by an underlying control.
@@ -391,11 +390,11 @@ public class PricePoint extends DataTable<AccountPrice> {
         }
 
         /* Update the table buttons */
-        theTabButs.setEnabled(true);
+        theSaveButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
 
-        /* Update the top level tabs */
-        theParent.setVisibility();
+        /* Notify listeners */
+        fireStateChanged();
     }
 
     /**
@@ -430,9 +429,9 @@ public class PricePoint extends DataTable<AccountPrice> {
         /* Update other details */
         setList(thePrices);
         theUpdateEntry.setDataList(thePrices);
-        theTabButs.setEnabled(true);
+        theSaveButtons.setEnabled(true);
         theSelect.setEnabled(true);
-        theParent.setVisibility();
+        fireStateChanged();
     }
 
     /**
@@ -512,6 +511,39 @@ public class PricePoint extends DataTable<AccountPrice> {
      */
     protected boolean disableShowDeleted(final SpotPrice pRow) {
         return true;
+    }
+
+    /**
+     * Extract listener class.
+     */
+    private final class SpotViewListener implements ActionListener, ChangeListener {
+
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+            /* If this is the error panel */
+            if (theError.equals(e.getSource())) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel on error */
+                theSelect.setVisible(!isError);
+
+                /* Lock scroll area */
+                getScrollPane().setEnabled(!isError);
+
+                /* Lock Save Buttons */
+                theSaveButtons.setEnabled(!isError);
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            /* If this event relates to the save buttons */
+            if (theSaveButtons.equals(e.getSource())) {
+                /* Perform the save command */
+                performCommand(e.getActionCommand());
+            }
+        }
     }
 
     /**
@@ -635,11 +667,9 @@ public class PricePoint extends DataTable<AccountPrice> {
         @Override
         public Object getValueAt(final int row,
                                  final int col) {
-            SpotPrice mySpot;
-            Object o;
-
             /* Access the spot price */
-            mySpot = (SpotPrice) thePrices.get(row);
+            SpotPrice mySpot = (SpotPrice) thePrices.get(row);
+            Object o;
 
             /* Return the appropriate value */
             switch (col) {
@@ -679,10 +709,8 @@ public class PricePoint extends DataTable<AccountPrice> {
         public void setValueAt(final Object obj,
                                final int row,
                                final int col) {
-            SpotPrice mySpot;
-
             /* Access the line */
-            mySpot = (SpotPrice) thePrices.get(row);
+            SpotPrice mySpot = (SpotPrice) thePrices.get(row);
 
             /* Push history */
             mySpot.pushHistory();
@@ -699,7 +727,7 @@ public class PricePoint extends DataTable<AccountPrice> {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 mySpot.popHistory();
                 mySpot.pushHistory();
@@ -714,20 +742,12 @@ public class PricePoint extends DataTable<AccountPrice> {
 
             /* Check for changes */
             if (mySpot.checkForHistory()) {
-                /* Note that the item has changed */
-                mySpot.clearErrors();
-                // mySpot.setState(DataState.CHANGED);
+                /* Increment data version */
+                theUpdateSet.incrementVersion();
 
-                /* Validate the item and update the edit state */
-                mySpot.validate();
-                thePrices.findEditState();
-
-                /* note that we have updated this cell */
-                fireTableRowsUpdated(row, row);
-
-                /* Note that changes have occurred */
+                /* Update components to reflect changes */
+                fireTableDataChanged();
                 notifyChanges();
-                // updateDebug();
             }
         }
     }

@@ -132,11 +132,6 @@ public class AccountStatement extends DataTable<Event> {
     private final StatementColumnModel theColumns;
 
     /**
-     * The top window.
-     */
-    private final transient MainTab theTopWindow;
-
-    /**
      * Selected range.
      */
     private transient DateDayRange theRange = null;
@@ -349,7 +344,6 @@ public class AccountStatement extends DataTable<Event> {
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(StatementLine.class);
         setUpdateSet(theUpdateSet);
-        theTopWindow = null;
 
         /* Create the model and declare it to our superclass */
         theModel = new StatementModel();
@@ -1154,8 +1148,9 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableNullUnits || enableNullTax || enableNullYears || enableNullDilution)
-                    && (pMenu.getComponentCount() > 0)) {
+            boolean nullItem = enableNullUnits || enableNullTax;
+            nullItem = nullItem || enableNullYears || enableNullDilution;
+            if ((nullItem) && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1242,15 +1237,16 @@ public class AccountStatement extends DataTable<Event> {
                 }
 
                 /* If we have a calculable tax credit that is null/zero */
-                if ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend()))
-                        && ((myTax == null) || (!myTax.isNonZero()))) {
+                boolean isTaxable = ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend())));
+                if ((isTaxable) && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
                 }
             }
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableCalcTax || enablePattern || enableCredit || enableDebit)
-                    && (pMenu.getComponentCount() > 0)) {
+            boolean addSeparator = enableCalcTax || enablePattern;
+            addSeparator = addSeparator || enableCredit || enableDebit;
+            if ((addSeparator) && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1325,7 +1321,7 @@ public class AccountStatement extends DataTable<Event> {
                 }
             }
 
-            /* If there is something to add and there are already items in the menu */
+            /* If there are already items in the menu */
             if (pMenu.getComponentCount() > 0) {
                 /* Add a separator */
                 pMenu.addSeparator();
@@ -1419,6 +1415,12 @@ public class AccountStatement extends DataTable<Event> {
             /* Cancel any editing */
             theTable.cancelEditing();
 
+            /* Determine whether this is a navigate command */
+            boolean isNavigate = myCmd.equals(POPUP_EXTRACT) || myCmd.equals(POPUP_MAINT);
+            isNavigate = isNavigate || myCmd.equals(POPUP_PARENT) || myCmd.equals(POPUP_MAINT_PARENT);
+            isNavigate = isNavigate || myCmd.startsWith(POPUP_PARTNER)
+                    || myCmd.startsWith(POPUP_MAINT_PARTNER);
+
             /* If this is a set null units command */
             if (myCmd.equals(POPUP_NULLUNITS)) {
                 /* Set Units column to null */
@@ -1451,9 +1453,7 @@ public class AccountStatement extends DataTable<Event> {
                 addPatterns();
 
                 /* If this is a navigate command */
-            } else if ((myCmd.equals(POPUP_EXTRACT)) || (myCmd.equals(POPUP_MAINT))
-                    || (myCmd.equals(POPUP_PARENT)) || (myCmd.equals(POPUP_MAINT_PARENT))
-                    || (myCmd.startsWith(POPUP_PARTNER)) || (myCmd.startsWith(POPUP_MAINT_PARTNER))) {
+            } else if (isNavigate) {
                 /* perform the navigation */
                 performNavigation(myCmd);
 
@@ -1534,10 +1534,10 @@ public class AccountStatement extends DataTable<Event> {
                 }
 
                 /* Access the line */
-                // StatementLine myLine = (StatementLine) myRow;
+                StatementLine myLine = (StatementLine) myRow;
 
-                /* Add the pattern */
-                // TODO theParent.addPattern(myLine);
+                /* Request the action */
+                fireActionEvent(MainTab.ACTION_ADDPATTERN, myLine);
             }
         }
 
@@ -1564,17 +1564,17 @@ public class AccountStatement extends DataTable<Event> {
 
             /* Handle commands */
             if (myCmd.equals(POPUP_EXTRACT)) {
-                theTopWindow.selectPeriod(theSelect);
+                fireActionEvent(MainTab.ACTION_VIEWEXTRACT, theSelect);
             } else if (myCmd.equals(POPUP_MAINT)) {
-                theTopWindow.selectAccountMaint(theAccount);
+                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, theAccount);
             } else if (myCmd.equals(POPUP_PARENT)) {
-                theTopWindow.selectAccount(theAccount.getParent(), theSelect);
+                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, theAccount.getParent());
             } else if (myCmd.equals(POPUP_MAINT_PARENT)) {
-                theTopWindow.selectAccountMaint(theAccount.getParent());
+                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, theAccount.getParent());
             } else if (myCmd.equals(POPUP_PARTNER)) {
-                theTopWindow.selectAccount(myAccount, theSelect);
+                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, myAccount);
             } else if (myCmd.equals(POPUP_MAINT_PARTNER)) {
-                theTopWindow.selectAccountMaint(myAccount);
+                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, myAccount);
             }
         }
     }

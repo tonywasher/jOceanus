@@ -31,6 +31,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.JDataManager.EventManager.ActionDetailEvent;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
@@ -203,10 +204,12 @@ public class AccountTab extends JPanelWithEvents {
         thePrices.addChangeListener(myListener);
         theStatement.addChangeListener(myListener);
         theTabs.addChangeListener(myListener);
+        theStatement.addActionListener(myListener);
 
         /* Create the Account selection panel */
         theSelect = new AccountSelect(theView, false);
         theSelect.addChangeListener(myListener);
+        theError.addChangeListener(myListener);
 
         /* Create the table buttons */
         theSaveButtons = new SaveButtons(theUpdateSet);
@@ -637,6 +640,19 @@ public class AccountTab extends JPanelWithEvents {
             if (theTabs.equals(o)) {
                 /* Determine the focus */
                 determineFocus();
+                /* If this is the error panel reporting */
+            } else if (theError.equals(o)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel on error */
+                theSelect.setVisible(!isError);
+
+                /* Lock tabs area */
+                theTabs.setEnabled(!isError);
+
+                /* Lock Save Buttons */
+                theSaveButtons.setEnabled(!isError);
             } else if (theSelect.equals(o)) {
 
             } else if ((theRates.equals(o)) || (thePrices.equals(o)) || (thePatterns.equals(o))
@@ -654,19 +670,9 @@ public class AccountTab extends JPanelWithEvents {
                 /* Perform the save command */
                 performCommand(evt.getActionCommand());
 
-                /* If this is the error panel reporting */
-            } else if (theError.equals(o)) {
-                /* Determine whether we have an error */
-                boolean isError = theError.hasError();
-
-                /* Hide selection panel on error */
-                theSelect.setVisible(!isError);
-
-                /* Lock tabs area */
-                theTabs.setEnabled(!isError);
-
-                /* Lock Save Buttons */
-                theSaveButtons.setEnabled(!isError);
+            } else if ((theStatement.equals(o)) && (evt instanceof ActionDetailEvent)) {
+                /* Cascade the command upwards */
+                cascadeActionEvent((ActionDetailEvent) evt);
             }
         }
     }

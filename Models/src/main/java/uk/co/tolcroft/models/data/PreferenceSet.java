@@ -1074,7 +1074,7 @@ public abstract class PreferenceSet {
                     theMap.put(pClass, mySet);
 
                     /* Fire the action performed */
-                    theListeners.fireActionPerformed(mySet, ActionEvent.ACTION_PERFORMED, null);
+                    theListeners.fireActionEvent(mySet, ActionEvent.ACTION_PERFORMED, null);
                 } catch (IllegalAccessException e) {
                     mySet = null;
                 } catch (InstantiationException e) {
