@@ -28,7 +28,6 @@ import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 /**
@@ -178,65 +177,18 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private EventInfoTypeList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            EventInfoTypeList myList = new EventInfoTypeList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public EventInfoTypeList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public EventInfoTypeList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public EventInfoTypeList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public EventInfoTypeList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            EventInfoTypeList myList = new EventInfoTypeList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        protected EventInfoTypeList getDifferences(final EventInfoTypeList pOld) {
-            /* Build an empty Difference List */
-            EventInfoTypeList myList = new EventInfoTypeList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected EventInfoTypeList getEmptyList() {
+            return new EventInfoTypeList(this);
         }
 
         @Override
         public EventInfoType addNewItem(final DataItem pItem) {
+            /* Can only clone an EventInfoType */
+            if (!(pItem instanceof EventInfoType)) {
+                return null;
+            }
+
             EventInfoType myType = new EventInfoType(this, (EventInfoType) pItem);
             add(myType);
             return myType;
@@ -261,10 +213,8 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * @throws JDataException on error
          */
         public void addItem(final String pType) throws JDataException {
-            EventInfoType myType;
-
             /* Create a new InfoType */
-            myType = new EventInfoType(this, pType);
+            EventInfoType myType = new EventInfoType(this, pType);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -302,10 +252,8 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
                             final int uOrder,
                             final String pInfoType,
                             final String pDesc) throws JDataException {
-            EventInfoType myType;
-
             /* Create a new InfoType */
-            myType = new EventInfoType(this, uId, isEnabled, uOrder, pInfoType, pDesc);
+            EventInfoType myType = new EventInfoType(this, uId, isEnabled, uOrder, pInfoType, pDesc);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(myType.getId())) {
@@ -340,10 +288,9 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
                             final int uOrder,
                             final byte[] pInfoType,
                             final byte[] pDesc) throws JDataException {
-            EventInfoType myType;
-
             /* Create a new InfoType */
-            myType = new EventInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType, pDesc);
+            EventInfoType myType = new EventInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType,
+                    pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(uId)) {

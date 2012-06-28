@@ -28,7 +28,6 @@ import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.TaxRegClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 /**
@@ -212,61 +211,9 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private TaxRegimeList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            TaxRegimeList myList = new TaxRegimeList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public TaxRegimeList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public TaxRegimeList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public TaxRegimeList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public TaxRegimeList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            TaxRegimeList myList = new TaxRegimeList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        protected TaxRegimeList getDifferences(final TaxRegimeList pOld) {
-            /* Build an empty Difference List */
-            TaxRegimeList myList = new TaxRegimeList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected TaxRegimeList getEmptyList() {
+            return new TaxRegimeList(this);
         }
 
         /**
@@ -276,6 +223,11 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          */
         @Override
         public TaxRegime addNewItem(final DataItem pItem) {
+            /* Can only clone a TaxRegime */
+            if (!(pItem instanceof TaxRegime)) {
+                return null;
+            }
+
             TaxRegime myRegime = new TaxRegime(this, (TaxRegime) pItem);
             add(myRegime);
             return myRegime;
@@ -304,10 +256,8 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @throws JDataException on error
          */
         public void addItem(final String pTaxRegime) throws JDataException {
-            TaxRegime myTaxRegime;
-
             /* Create a new tax regime */
-            myTaxRegime = new TaxRegime(this, pTaxRegime);
+            TaxRegime myTaxRegime = new TaxRegime(this, pTaxRegime);
 
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(myTaxRegime.getId())) {
@@ -345,10 +295,8 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
                             final int uOrder,
                             final String pTaxRegime,
                             final String pDesc) throws JDataException {
-            TaxRegime myTaxReg;
-
             /* Create a new Tax Regime */
-            myTaxReg = new TaxRegime(this, uId, isEnabled, uOrder, pTaxRegime, pDesc);
+            TaxRegime myTaxReg = new TaxRegime(this, uId, isEnabled, uOrder, pTaxRegime, pDesc);
 
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(myTaxReg.getId())) {
@@ -383,10 +331,8 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
                             final int uOrder,
                             final byte[] pTaxRegime,
                             final byte[] pDesc) throws JDataException {
-            TaxRegime myTaxReg;
-
             /* Create a new tax regime */
-            myTaxReg = new TaxRegime(this, uId, uControlId, isEnabled, uOrder, pTaxRegime, pDesc);
+            TaxRegime myTaxReg = new TaxRegime(this, uId, uControlId, isEnabled, uOrder, pTaxRegime, pDesc);
 
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(uId)) {

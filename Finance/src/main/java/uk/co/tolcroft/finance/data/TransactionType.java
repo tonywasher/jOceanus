@@ -28,7 +28,6 @@ import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.TransClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 /**
@@ -463,66 +462,9 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private TransTypeList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            TransTypeList myList = new TransTypeList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public TransTypeList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public TransTypeList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public TransTypeList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public TransTypeList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            TransTypeList myList = new TransTypeList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        /**
-         * Construct a difference ControlData list.
-         * @param pOld the old ControlData list
-         * @return the difference list
-         */
-        @Override
-        protected TransTypeList getDifferences(final TransTypeList pOld) {
-            /* Build an empty Difference List */
-            TransTypeList myList = new TransTypeList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected TransTypeList getEmptyList() {
+            return new TransTypeList(this);
         }
 
         /**
@@ -532,6 +474,11 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          */
         @Override
         public TransactionType addNewItem(final DataItem pItem) {
+            /* Can only clone a TransactionType */
+            if (!(pItem instanceof TransactionType)) {
+                return null;
+            }
+
             TransactionType myType = new TransactionType(this, (TransactionType) pItem);
             add(myType);
             return myType;
@@ -560,10 +507,8 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @throws JDataException on error
          */
         public void addItem(final String pTransType) throws JDataException {
-            TransactionType myTransType;
-
             /* Create a new Transaction Type */
-            myTransType = new TransactionType(this, pTransType);
+            TransactionType myTransType = new TransactionType(this, pTransType);
 
             /* Check that this TransTypeId has not been previously added */
             if (!isIdUnique(myTransType.getId())) {
@@ -601,10 +546,8 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
                             final int uOrder,
                             final String pTranType,
                             final String pDesc) throws JDataException {
-            TransactionType myTransType;
-
             /* Create a new Transaction Type */
-            myTransType = new TransactionType(this, uId, isEnabled, uOrder, pTranType, pDesc);
+            TransactionType myTransType = new TransactionType(this, uId, isEnabled, uOrder, pTranType, pDesc);
 
             /* Check that this TransTypeId has not been previously added */
             if (!isIdUnique(myTransType.getId())) {
@@ -639,10 +582,9 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
                             final int uOrder,
                             final byte[] pTransType,
                             final byte[] pDesc) throws JDataException {
-            TransactionType myTransType;
-
             /* Create a new Transaction Type */
-            myTransType = new TransactionType(this, uId, uControlId, isEnabled, uOrder, pTransType, pDesc);
+            TransactionType myTransType = new TransactionType(this, uId, uControlId, isEnabled, uOrder,
+                    pTransType, pDesc);
 
             /* Check that this TransTypeId has not been previously added */
             if (!isIdUnique(uId)) {

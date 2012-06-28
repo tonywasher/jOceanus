@@ -346,8 +346,8 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         thePattern.setVisible(false);
         if (pTaxYear != null) {
             FinanceData myData = theView.getData();
-            myTaxYears = myData.getTaxYears().getNewEditList();
-            theEvents = myData.getEvents().getEditList(myTaxYears.getNewYear());
+            myTaxYears = myData.getTaxYears().deriveNewEditList();
+            theEvents = myData.getEvents().deriveEditList(myTaxYears.getNewYear());
             thePattern.setVisible(true);
             thePattern.setEnabled(!theEvents.isEmpty());
         }

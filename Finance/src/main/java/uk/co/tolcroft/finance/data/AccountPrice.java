@@ -42,8 +42,6 @@ import uk.co.tolcroft.finance.views.SpotPrices;
 import uk.co.tolcroft.finance.views.SpotPrices.SpotPrice;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
@@ -95,7 +93,9 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     @Override
     public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = (EncryptedValueSet) pValues;
+        if (pValues instanceof EncryptedValueSet) {
+            theValueSet = (EncryptedValueSet) pValues;
+        }
     }
 
     /**
@@ -251,6 +251,11 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     }
 
     @Override
+    public FinanceData getDataSet() {
+        return (FinanceData) super.getDataSet();
+    }
+
+    @Override
     public AccountPrice getBase() {
         return (AccountPrice) super.getBase();
     }
@@ -264,44 +269,6 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
                            final AccountPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice.getId());
-        ListStyle myOldStyle = pPrice.getStyle();
-
-        /* Switch on the ListStyle */
-        switch (getStyle()) {
-            case EDIT:
-                /* If this is a view creation */
-                if (myOldStyle == ListStyle.CORE) {
-                    /* Price is based on the original element */
-                    setBase(pPrice);
-                    pList.setNewId(this);
-                    break;
-                }
-
-                /* Else this is a duplication so treat as new item */
-                setId(0);
-                pList.setNewId(this);
-                break;
-            case CLONE:
-                reBuildLinks(pList.getData());
-            case COPY:
-            case CORE:
-                /* If this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT) {
-                    /* Generate new id */
-                    setId(0);
-
-                    /* Rebuild links */
-                    reBuildLinks(pList.getData());
-                }
-                pList.setNewId(this);
-                break;
-            case UPDATE:
-                setBase(pPrice);
-                // setState(pPrice.getState());
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -334,7 +301,6 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         super(pList, pAccount.getId());
         setControlKey(pList.getControlKey());
         setValueAccount(pAccount);
-        pList.setNewId(this);
     }
 
     /**
@@ -357,7 +323,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         /* Protect against exceptions */
         try {
             /* Access the DataSet */
-            FinanceData myData = pList.getData();
+            FinanceData myData = getDataSet();
 
             /* Record the Id */
             setValueAccount(uAccountId);
@@ -374,11 +340,8 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
             setValueDate(new DateDay(pDate));
             setValuePrice(pPrice);
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -412,7 +375,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
             setControlKey(uControlId);
 
             /* Access the DataSet */
-            FinanceData myData = pList.getData();
+            FinanceData myData = getDataSet();
 
             /* Look up the Account */
             AccountList myAccounts = myData.getAccounts();
@@ -426,11 +389,8 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
             setValueDate(new DateDay(pDate));
             setValuePrice(pPrice);
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -457,9 +417,6 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
 
         /* Create the pair for the values */
         setValuePrice(pPrice);
-
-        /* Allocate the id */
-        pList.setNewId(this);
     }
 
     @Override
@@ -488,16 +445,14 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         return super.compareId(pThat);
     }
 
-    /**
-     * Rebuild Links to partner data.
-     * @param pData the DataSet
-     */
-    protected void reBuildLinks(final FinanceData pData) {
+    @Override
+    protected void relinkToDataSet() {
         /* Update the Encryption details */
-        super.reBuildLinks(pData);
+        super.relinkToDataSet();
 
         /* Access Accounts */
-        AccountList myAccounts = pData.getAccounts();
+        FinanceData myData = getDataSet();
+        AccountList myAccounts = myData.getAccounts();
 
         /* Update to use the local copy of the Accounts (use name rather than id) */
         Account myAct = getAccount();
@@ -512,7 +467,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     public void validate() {
         DateDay myDate = getDate();
         AccountPriceList myList = (AccountPriceList) getList();
-        FinanceData mySet = myList.getData();
+        FinanceData mySet = getDataSet();
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -666,8 +621,8 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         }
 
         @Override
-        public FinanceData getData() {
-            return (FinanceData) super.getData();
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
         }
 
         /**
@@ -694,78 +649,19 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private AccountPriceList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            AccountPriceList myList = new AccountPriceList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public AccountPriceList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public AccountPriceList getEditList() {
-            return null;
-        }
-
-        @Override
-        public AccountPriceList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public AccountPriceList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            AccountPriceList myList = new AccountPriceList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
+        protected AccountPriceList getEmptyList() {
+            return new AccountPriceList(this);
         }
 
         /**
-         * Construct a difference Price list.
-         * @param pOld the old Price list
-         * @return the difference list
-         */
-        @Override
-        protected AccountPriceList getDifferences(final AccountPriceList pOld) {
-            /* Build an empty Difference List */
-            AccountPriceList myList = new AccountPriceList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
-        }
-
-        /**
-         * Construct an edit extract of a Pattern list.
-         * @param pAccount The account to extract patterns for
+         * Construct an edit extract of a Price list.
+         * @param pAccount The account to extract price for
          * @return the edit list
          */
-        public AccountPriceList getEditList(final Account pAccount) {
+        public AccountPriceList deriveEditList(final Account pAccount) {
             /* Build an empty Update */
-            AccountPriceList myList = new AccountPriceList(this);
-
-            /* Make this list the correct style */
+            AccountPriceList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
             myList.theAccount = pAccount;
 
@@ -969,7 +865,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
                             final String pAccount,
                             final String pPrice) throws JDataException {
             /* Access the Accounts */
-            AccountList myAccounts = getData().getAccounts();
+            AccountList myAccounts = getDataSet().getAccounts();
 
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
@@ -1061,10 +957,8 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         public AccountPrice addItem(final Account pAccount,
                                     final DateDay pDate,
                                     final Price pPrice) throws JDataException {
-            AccountPrice myPrice;
-
             /* Create the price and PricePoint */
-            myPrice = new AccountPrice(this, pAccount, pDate, pPrice);
+            AccountPrice myPrice = new AccountPrice(this, pAccount, pDate, pPrice);
 
             /* Validate the price */
             myPrice.validate();

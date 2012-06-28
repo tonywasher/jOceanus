@@ -36,7 +36,6 @@ import uk.co.tolcroft.finance.data.AccountPrice.AccountPriceList;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EditState;
 
 /**
@@ -387,30 +386,6 @@ public class SpotPrices implements JDataContents {
             }
 
         }
-
-        @Override
-        public SpotList getUpdateList() {
-            return null;
-        }
-
-        @Override
-        public SpotList getEditList() {
-            return null;
-        }
-
-        @Override
-        public SpotList getShallowCopy() {
-            return null;
-        }
-
-        @Override
-        public SpotList getDeepCopy(final DataSet<?> pData) {
-            return null;
-        }
-
-        // public SpotList getDifferences(final SpotList pOld) {
-        // return null;
-        // }
 
         /* Is this list locked */
         @Override

@@ -53,8 +53,10 @@ public abstract class EncryptedItem extends DataItem {
 
     @Override
     public void declareValues(final ValueSet pValues) {
-        theValueSet = (EncryptedValueSet) pValues;
         super.declareValues(pValues);
+        if (pValues instanceof EncryptedValueSet) {
+            theValueSet = (EncryptedValueSet) pValues;
+        }
     }
 
     @Override
@@ -153,7 +155,7 @@ public abstract class EncryptedItem extends DataItem {
         setValueControlKey(uControlId);
 
         /* Look up the Control keys */
-        DataSet<?> myData = ((EncryptedList<?, ?>) getList()).getData();
+        DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 
         /* Look up the ControlKey */
@@ -229,12 +231,10 @@ public abstract class EncryptedItem extends DataItem {
         return pCurr.differs(pNew);
     }
 
-    /**
-     * Rebuild Links to partner data.
-     * @param pData the DataSet
-     */
-    protected void reBuildLinks(final DataSet<?> pData) {
-        ControlKeyList myKeys = pData.getControlKeys();
+    @Override
+    protected void relinkToDataSet() {
+        DataSet<?> myData = getDataSet();
+        ControlKeyList myKeys = myData.getControlKeys();
 
         /* Update to use the local copy of the ControlKeys */
         ControlKey myKey = getControlKey();
@@ -292,32 +292,11 @@ public abstract class EncryptedItem extends DataItem {
     public abstract static class EncryptedList<L extends EncryptedList<L, T>, T extends EncryptedItem & Comparable<T>>
             extends DataList<L, T> {
         /**
-         * The owning data set.
-         */
-        private DataSet<?> theData = null;
-
-        /**
-         * Get the owning data set.
-         * @return the data set
-         */
-        public DataSet<?> getData() {
-            return theData;
-        }
-
-        /**
-         * Set the owning data set.
-         * @param pData the data set
-         */
-        protected void setData(final DataSet<?> pData) {
-            theData = pData;
-        }
-
-        /**
          * Get the active controlKey.
          * @return the active controlKey
          */
         public ControlKey getControlKey() {
-            return theData.getControl().getControlKey();
+            return getDataSet().getControl().getControlKey();
         }
 
         /**
@@ -329,8 +308,7 @@ public abstract class EncryptedItem extends DataItem {
         protected EncryptedList(final Class<L> pClass,
                                 final Class<T> pBaseClass,
                                 final DataSet<?> pData) {
-            super(pClass, pBaseClass, pData.getGranularity(), ListStyle.CORE);
-            theData = pData;
+            super(pClass, pBaseClass, pData, ListStyle.CORE);
         }
 
         /**
@@ -344,9 +322,7 @@ public abstract class EncryptedItem extends DataItem {
                              final Class<T> pBaseClass,
                              final DataSet<?> pData,
                              final ListStyle pStyle) {
-            super(pClass, pBaseClass, pData.getGranularity(), pStyle);
-            theData = pData;
-            setGeneration(pData.getGeneration());
+            super(pClass, pBaseClass, pData, pStyle);
         }
 
         /**
@@ -355,7 +331,6 @@ public abstract class EncryptedItem extends DataItem {
          */
         protected EncryptedList(final L pSource) {
             super(pSource);
-            theData = pSource.getData();
         }
 
         /**

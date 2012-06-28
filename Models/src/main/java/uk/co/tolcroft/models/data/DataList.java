@@ -23,6 +23,7 @@
 package uk.co.tolcroft.models.data;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -153,6 +154,11 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     private EditState theEdit = EditState.CLEAN;
 
     /**
+     * The DataSet.
+     */
+    private final DataSet<?> theDataSet;
+
+    /**
      * The granularity of the list.
      */
     private final int theGranularity;
@@ -198,6 +204,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      */
     public ListStyle getStyle() {
         return theStyle;
+    }
+
+    /**
+     * Get the dataSet.
+     * @return the dataSet
+     */
+    public DataSet<?> getDataSet() {
+        return theDataSet;
     }
 
     /**
@@ -348,18 +362,20 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Construct a new object.
      * @param pClass the class
      * @param pBaseClass the class of the underlying object
-     * @param pGranularity the index granularity
+     * @param pDataSet the owning dataSet
      * @param pStyle the new {@link ListStyle}
      */
     protected DataList(final Class<L> pClass,
                        final Class<T> pBaseClass,
-                       final Integer pGranularity,
+                       final DataSet<?> pDataSet,
                        final ListStyle pStyle) {
-        super(pBaseClass, new IdManager<T>(pGranularity));
+        super(pBaseClass, new IdManager<T>(pDataSet.getGranularity()));
         theClass = pClass;
         theList = pClass.cast(this);
         theStyle = pStyle;
-        theGranularity = pGranularity;
+        theDataSet = pDataSet;
+        theGranularity = pDataSet.getGranularity();
+        theGeneration = pDataSet.getGeneration();
         theMgr = (IdManager<T>) getIndex();
 
         /* Declare fields (allowing for subclasses) */
@@ -377,6 +393,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
         theList = theClass.cast(this);
         theMgr = (IdManager<T>) getIndex();
         theBase = pSource;
+        theDataSet = pSource.getDataSet();
         theGranularity = pSource.getGranularity();
         theGeneration = pSource.getGeneration();
 
@@ -385,48 +402,27 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     }
 
     /**
-     * Construct an update extract for a DataList.
-     * @return the update extract (or null if not core data list)
+     * Obtain an empty list based on this list.
+     * @return the list)
      */
-    protected abstract L getUpdateList();
+    protected abstract L getEmptyList();
 
     /**
-     * Construct an edit extract for a DataList.
-     * @return the edit extract (or null if not edit-able list)
-     */
-    public abstract L getEditList();
-
-    /**
-     * Obtain a clone of the list.
-     * @param pDataSet the new dataSet
-     * @return the clone of the list
-     */
-    protected abstract L getDeepCopy(final DataSet<?> pDataSet);
-
-    /**
-     * Obtain a copy of the list.
-     * @return the copy of the list
-     */
-    protected abstract L getShallowCopy();
-
-    /**
-     * Construct an difference extract for a DataList.
-     * @param pOld the old dataList
-     * @return the difference extract (or null if not differ-able list)
-     */
-    protected abstract L getDifferences(final L pOld);
-
-    /**
-     * Populate an Extract List.
+     * Derive an extract of this list.
      * @param pStyle the Style of the extract
+     * @return the derived list
      */
-    protected void populateList(final ListStyle pStyle) {
-        /* Make this list the correct style */
-        theStyle = pStyle;
-        boolean isUpdate = (theStyle == ListStyle.UPDATE);
+    public L deriveList(final ListStyle pStyle) {
+        /* Obtain an empty list of the correct style */
+        L myList = getEmptyList();
+        myList.theStyle = pStyle;
 
-        /* Create an iterator for all items in the source list */
-        Iterator<? extends DataItem> myIterator = theBase.iterator();
+        /* Determine special styles */
+        boolean isUpdate = (pStyle == ListStyle.UPDATE);
+        boolean isClone = (pStyle == ListStyle.CLONE);
+
+        /* Create an iterator for all items in the list */
+        Iterator<? extends DataItem> myIterator = iterator();
 
         /* Loop through the list */
         while (myIterator.hasNext()) {
@@ -440,19 +436,24 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
             }
 
             /* Copy the item */
-            DataItem myItem = addNewItem(myCurr);
+            DataItem myItem = myList.addNewItem(myCurr);
 
-            /* If this is a changed object in an update list */
-            if ((isUpdate) && (myState == DataState.CHANGED)) {
-                /* Ensure that we record the correct history */
-                myItem.setHistory(myCurr);
+            /* If this is a Clone list */
+            if (isClone) {
+                /* Rebuild the links */
+                myItem.relinkToDataSet();
             }
         }
 
-        /* For Clone lists remove base reference */
-        if (theStyle == ListStyle.CLONE) {
-            theBase = null;
+        /* For Clone lists */
+        if (isClone) {
+            /* Remove base reference and reset to CORE list */
+            myList.theBase = null;
+            myList.theStyle = ListStyle.CORE;
         }
+
+        /* Return the derived list */
+        return myList;
     }
 
     /**
@@ -460,68 +461,63 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * differ between the two lists. Items that are in the new list, but not in the old list will be viewed as
      * inserted. Items that are in the old list but not in the new list will be viewed as deleted. Items that
      * are in both list but differ will be viewed as changed
-     * @param pNew The new list to compare
-     * @param pOld The old list to compare
+     * @param pOld The old list to compare to
+     * @return the difference list
      */
-    protected void getDifferenceList(final L pNew,
-                                     final L pOld) {
-        /* Make this list the correct style */
-        theStyle = ListStyle.DIFFER;
+    public L deriveDifferences(final L pOld) {
+        /* Obtain an empty list of the correct style */
+        L myList = getEmptyList();
+        myList.theStyle = ListStyle.DIFFER;
 
-        /* Create a shallow copy of the old list */
-        L myOld = pOld.getShallowCopy();
+        /* Access an Id Map of the old list */
+        Map<Integer, T> myOld = pOld.getIdMap();
 
-        /* Store the New as the base */
-        theBase = pNew.getShallowCopy();
-
-        /* Note that this list should show deleted items */
-        setShowDeleted(true);
-
-        /* Create an iterator for all items in the source new list */
-        Iterator<T> myIterator = pNew.iterator();
+        /* Create an iterator for all items in the list */
+        Iterator<T> myIterator = iterator();
 
         /* Loop through the new list */
         while (myIterator.hasNext()) {
             /* Locate the item in the old list */
             DataItem myCurr = myIterator.next();
-            DataItem myItem = myOld.findItemById(myCurr.getId());
+            DataItem myItem = myOld.get(myCurr.getId());
 
             /* If the item does not exist */
             if (myItem == null) {
                 /* Insert a new item */
-                myItem = addNewItem(myCurr);
-                myItem.setBase(null);
-                // myItem.setState(DataState.NEW);
+                myItem = myList.addNewItem(myCurr);
+                myItem.getValueSet().setVersion(1);
 
                 /* else the item exists in the old list */
             } else {
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* Copy the item */
-                    DataItem myNew = addNewItem(myCurr);
+                    DataItem myNew = myList.addNewItem(myCurr);
                     myNew.setBase(myItem);
-                    // myNew.setState(DataState.CHANGED);
 
                     /* Ensure that we record the correct history */
                     myNew.setHistory(myCurr);
                 }
 
-                /* Unlink the old item to improve search speed */
-                myOld.remove(myItem);
+                /* Remove the item from the map */
+                myOld.remove(myItem.getId());
             }
         }
 
-        /* Create an iterator for all items in the source old list */
-        myIterator = myOld.iterator();
+        /* Create an iterator for all remaining items in the old list */
+        myIterator = myOld.values().iterator();
 
         /* Loop through the remaining items in the old list */
         while (myIterator.hasNext()) {
             /* Insert a new item */
             DataItem myCurr = myIterator.next();
-            DataItem myItem = addNewItem(myCurr);
+            DataItem myItem = myList.addNewItem(myCurr);
             myItem.setBase(null);
-            // myItem.setState(DataState.DELETED);
+            myItem.getValueSet().setDeletion(true);
         }
+
+        /* Return the difference list */
+        return myList;
     }
 
     /**
@@ -532,8 +528,8 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * @param pBase The base list to re-base on
      */
     public void reBase(final L pBase) {
-        /* Create a shallow copy of the base list */
-        L myBase = pBase.getShallowCopy();
+        /* Access an Id Map of the old list */
+        Map<Integer, T> myBase = pBase.getIdMap();
 
         /* Create an iterator for our new list */
         Iterator<T> myIterator = iterator();
@@ -542,23 +538,18 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
         while (myIterator.hasNext()) {
             /* Locate the item in the base list */
             T myCurr = myIterator.next();
-            T myItem = myBase.findItemById(myCurr.getId());
+            T myItem = myBase.get(myCurr.getId());
 
             /* If the underlying item does not exist */
             if (myItem == null) {
                 /* Mark this as a new item */
+                myCurr.getValueSet().setVersion(getVersion() + 1);
                 myCurr.setBase(null);
-                // myCurr.setState(myCurr.isDeleted() ? DataState.DELNEW : DataState.NEW);
 
                 /* else the item exists in the old list */
             } else {
                 /* if it has changed */
                 if (!myCurr.equals(myItem)) {
-                    /* Mark this as a changed item (go via CLEAN to remove NEW indication) */
-                    myCurr.setBase(myItem);
-                    // myCurr.setState(DataState.CLEAN);
-                    // myCurr.setState(myCurr.isDeleted() ? DataState.DELCHG : DataState.CHANGED);
-
                     /* Set correct history */
                     myCurr.setHistory(myItem);
                     myCurr.setBase(null);
@@ -566,17 +557,17 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                     /* else it is identical */
                 } else {
                     /* Mark this as a clean item */
+                    myCurr.clearHistory();
                     myCurr.setBase(null);
-                    // myCurr.setState(myCurr.isDeleted() ? DataState.DELETED : DataState.CLEAN);
                 }
 
-                /* Unlink the old item to improve search speed */
-                myBase.remove(myItem);
+                /* Remove the old item */
+                myBase.remove(myItem.getId());
             }
         }
 
         /* Create an iterator for the source base list */
-        myIterator = myBase.iterator();
+        myIterator = myBase.values().iterator();
 
         /* Loop through the remaining items in the base list */
         while (myIterator.hasNext()) {
@@ -584,7 +575,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
             T myCurr = myIterator.next();
             T myItem = addNewItem(myCurr);
             myItem.setBase(null);
-            // myItem.setState(DataState.DELETED);
+            myItem.getValueSet().setDeletion(true);
         }
     }
 
@@ -602,7 +593,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Generate/Record new id for the item.
      * @param pItem the new item
      */
-    public void setNewId(final DataItem pItem) {
+    protected void setNewId(final DataItem pItem) {
         /* Ask the Id Manager to manage the request */
         theMgr.setNewId(pItem);
     }
@@ -845,8 +836,11 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 case DELCHG:
                     /* Clear changes and fall through */
                     myCurr.resetHistory();
+                    myCurr.clearErrors();
+                    myIterator.reSort();
+                    break;
 
-                    /* If this is a deleted or recovered item */
+                /* If this is a deleted or recovered item */
                 case DELETED:
                 case RECOVERED:
                     /* Clear errors and mark the item as clean */
@@ -960,7 +954,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 case DELETED:
                 case DELCHG:
                     /* Access the underlying item and mark as not deleted */
-                    myBase = myCurr.getBase();
+                    // myBase = myCurr.getBase();
                     // myBase.setState(DataState.RECOVERED);
                     break;
 

@@ -110,8 +110,10 @@ public class SaveButtons extends JPanelWithEvents {
         add(theResetButton);
         add(Box.createHorizontalGlue());
 
-        /* Initiate lock-down mode */
-        setEnabled(true);
+        /* Buttons are initially disabled */
+        theOKButton.setEnabled(false);
+        theUndoButton.setEnabled(false);
+        theResetButton.setEnabled(false);
     }
 
     @Override

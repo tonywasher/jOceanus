@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import net.sourceforge.JDataManager.Difference;
@@ -404,7 +405,7 @@ public abstract class PreferenceSet {
      * Store preference changes.
      * @throws JDataException on error
      */
-    public void storeChanges() throws JDataException {
+    public final void storeChanges() throws JDataException {
         /* Loop through all the preferences */
         for (PreferenceItem myPref : theMap.values()) {
             /* Store any changes */
@@ -415,7 +416,7 @@ public abstract class PreferenceSet {
         try {
             /* Flush the output */
             theHandle.flush();
-        } catch (Exception e) {
+        } catch (BackingStoreException e) {
             throw new JDataException(ExceptionClass.PREFERENCE, "Failed to flush preferences to store", e);
         }
     }
@@ -917,7 +918,7 @@ public abstract class PreferenceSet {
          * @param pNewValue the new value
          * @return whether the value was valid or not
          */
-        public boolean setValue(final String pNewValue) {
+        public final boolean setValue(final String pNewValue) {
             /* Loop through the Enum constants */
             for (E myEnum : theValues) {
                 /* If we match */

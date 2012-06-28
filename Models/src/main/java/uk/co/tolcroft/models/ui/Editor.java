@@ -176,6 +176,9 @@ public class Editor {
                                                       final boolean isSelected,
                                                       final int row,
                                                       final int col) {
+            if (!(table instanceof DataTable)) {
+                return null;
+            }
             DataTable<?> myTable = (DataTable<?>) table;
             theCombo = myTable.getComboBox(row, col);
             if (value != null) {

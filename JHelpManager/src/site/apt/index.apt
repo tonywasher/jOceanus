@@ -1,5 +1,8 @@
 JHelpManager Project
 
-  JDateDay is an extension of the JDateButton project. It modifies JDateButton so that a DateDay object is returned instead of a Calendar object. This DateDay objet has no concept of time of day, merely the date. All functionality of JDateButton is provided. 
+  JHelpManager is a simple help manager that is intended as quick alternative to JavaHelp. The project is currently under construction.
   
-  In addition to the facilities provided by JDateButton, JDateDay provides a DateDayRange class which handles a contiguous range of Dates with a start and and end. A small JPanel selecto object is provided to enable selection of such ranges.
+  The help system is driven by a single xml configuration file which provides the chapter structure and the names of the html files representing each chapter. Hyperlinks are supported, enabling the reader to jump to any configured location within the help system. The chapter structure is shown in a separate window, allowing the reader to jump to specific sections.
+
+  Context sensitive help and breadcrumbs are not currently supported.
+

@@ -53,6 +53,7 @@ import uk.co.tolcroft.finance.data.AccountType.AccountTypeList;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.ui.controls.AccountSelect;
 import uk.co.tolcroft.finance.views.View;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 import uk.co.tolcroft.models.data.StaticData;
@@ -968,7 +969,7 @@ public class MaintAccount extends JPanelWithEvents {
         /* If we have a selected account */
         if (pAccount != null) {
             /* Create the view of the account */
-            theActView = theAccounts.getEditList();
+            theActView = theAccounts.deriveList(ListStyle.EDIT);
 
             /* Access the account */
             theAccount = theActView.findItemByName(pAccount.getName());
@@ -1203,7 +1204,7 @@ public class MaintAccount extends JPanelWithEvents {
      */
     private void newAccount() {
         /* Create a account View for an empty account */
-        theActView = theAccounts.getEditList(theSelect.getType());
+        theActView = theAccounts.deriveEditList(theSelect.getType());
 
         /* Access the account */
         theAccount = theActView.getAccount();

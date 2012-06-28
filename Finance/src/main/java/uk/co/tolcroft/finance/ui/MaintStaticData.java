@@ -36,6 +36,7 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.data.StaticData.StaticList;
 import uk.co.tolcroft.models.ui.DataMouse;
@@ -292,7 +293,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
 
         /* Access edit list */
         theStatic = myData.getDataList(theClass);
-        theStatic = theStatic.getEditList();
+        theStatic = theStatic.deriveList(ListStyle.EDIT);
 
         /* Update the Data View */
         setList(theStatic);

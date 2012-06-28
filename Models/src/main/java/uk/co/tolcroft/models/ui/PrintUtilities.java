@@ -78,15 +78,16 @@ public class PrintUtilities implements Printable {
                      final PageFormat pageFormat,
                      final int pageIndex) {
         if (pageIndex > 0) {
-            return (NO_SUCH_PAGE);
-        } else {
+            return NO_SUCH_PAGE;
+        } else if (g instanceof Graphics2D) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.translate(pageFormat.getImageableX(), pageFormat.getImageableY());
             disableDoubleBuffering(componentToBePrinted);
             componentToBePrinted.paint(g2d);
             enableDoubleBuffering(componentToBePrinted);
-            return (PAGE_EXISTS);
+            return PAGE_EXISTS;
         }
+        return NO_SUCH_PAGE;
     }
 
     /**

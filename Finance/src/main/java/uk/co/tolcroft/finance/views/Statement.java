@@ -42,7 +42,6 @@ import uk.co.tolcroft.finance.views.Analysis.AssetAccount;
 import uk.co.tolcroft.finance.views.Analysis.BucketType;
 import uk.co.tolcroft.finance.views.Analysis.ValueAccount;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataSet;
 
 /**
  * Extension of Event to cater for statements.
@@ -399,30 +398,6 @@ public class Statement implements JDataContents {
             setBase(theStatement.theView.getData().getEvents());
         }
 
-        @Override
-        public StatementLines getUpdateList() {
-            return null;
-        }
-
-        @Override
-        public StatementLines getEditList() {
-            return null;
-        }
-
-        @Override
-        public StatementLines getShallowCopy() {
-            return null;
-        }
-
-        @Override
-        public StatementLines getDeepCopy(final DataSet<?> pData) {
-            return null;
-        }
-
-        // public StatementLines getDifferences(StatementLines pOld) {
-        // return null;
-        // }
-
         /* Is this list locked */
         @Override
         public boolean isLocked() {
@@ -431,6 +406,11 @@ public class Statement implements JDataContents {
 
         @Override
         public StatementLine addNewItem(final DataItem pElement) {
+            /* Can only clone a StatementLine */
+            if (!(pElement instanceof StatementLine)) {
+                return null;
+            }
+
             StatementLine myLine = new StatementLine(this, (StatementLine) pElement);
             add(myLine);
             return myLine;
@@ -519,7 +499,9 @@ public class Statement implements JDataContents {
         @Override
         public void declareValues(final ValueSet pValues) {
             super.declareValues(pValues);
-            theValueSet = (EncryptedValueSet) pValues;
+            if (pValues instanceof EncryptedValueSet) {
+                theValueSet = (EncryptedValueSet) pValues;
+            }
         }
 
         /**
@@ -626,7 +608,6 @@ public class Statement implements JDataContents {
             /* Set standard values */
             super(pList, pLine);
             theStatement = pList.getStatement();
-            pList.setNewId(this);
         }
 
         /**

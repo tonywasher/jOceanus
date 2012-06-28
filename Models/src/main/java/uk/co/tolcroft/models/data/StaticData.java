@@ -32,7 +32,6 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.StaticData.StaticInterface;
 
 /**
@@ -87,7 +86,9 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     @Override
     public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = (EncryptedValueSet) pValues;
+        if (pValues instanceof EncryptedValueSet) {
+            theValueSet = (EncryptedValueSet) pValues;
+        }
     }
 
     /**
@@ -136,7 +137,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Return the name of the Static Data.
      * @return the name
      */
-    public String getName() {
+    public final String getName() {
         return getName(theValueSet);
     }
 
@@ -144,7 +145,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Return the encrypted name of the Static Data.
      * @return the encrypted name
      */
-    public byte[] getNameBytes() {
+    public final byte[] getNameBytes() {
         return getNameBytes(theValueSet);
     }
 
@@ -160,7 +161,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Return the description of the Static Data.
      * @return the description
      */
-    public String getDesc() {
+    public final String getDesc() {
         return getDesc(theValueSet);
     }
 
@@ -168,7 +169,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Return the encrypted description of the Static Data.
      * @return the encrypted description
      */
-    public byte[] getDescBytes() {
+    public final byte[] getDescBytes() {
         return getDescBytes(theValueSet);
     }
 
@@ -184,7 +185,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Return the sort order of the Static Data.
      * @return the order
      */
-    public int getOrder() {
+    public final int getOrder() {
         return getOrder(theValueSet);
     }
 
@@ -192,7 +193,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Return the Static class of the Static Data.
      * @return the class
      */
-    public E getStaticClass() {
+    public final E getStaticClass() {
         return getStaticClass(theValueSet, theEnumClass);
     }
 
@@ -200,7 +201,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Is the Static item enabled.
      * @return <code>true/false</code>
      */
-    public boolean getEnabled() {
+    public final boolean getEnabled() {
         return getEnabled(theValueSet);
     }
 
@@ -292,7 +293,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Obtain the Enum class of this Static Data.
      * @return the class
      */
-    protected Class<E> getEnumClass() {
+    protected final Class<E> getEnumClass() {
         return theEnumClass;
     }
 
@@ -447,42 +448,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     protected StaticData(final StaticList<?, T, E> pList,
                          final T pSource) {
         super(pList, pSource);
-        ListStyle myOldStyle = pSource.getStyle();
         theEnumClass = pSource.getEnumClass();
-
-        /* Switch on the ListStyle */
-        switch (getStyle()) {
-            case EDIT:
-                /* If this is a view creation */
-                if (myOldStyle == ListStyle.CORE) {
-                    /* Static is based on the original element */
-                    setBase(pSource);
-                    copyFlags(pSource.getItem());
-                    pList.setNewId(getItem());
-                    break;
-                }
-
-                /* Else this is a duplication so treat as new item */
-                setId(0);
-                pList.setNewId(getItem());
-                break;
-            case CLONE:
-                reBuildLinks(pList.getData());
-            case COPY:
-            case CORE:
-                /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT) {
-                    setId(0);
-                }
-                pList.setNewId(getItem());
-                break;
-            case UPDATE:
-                setBase(pSource);
-                // setState(pSource.getState());
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -503,9 +469,6 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         /* Record the name */
         setValueName(pValue);
         setValueEnabled(Boolean.TRUE);
-
-        /* Set the new Id */
-        pList.setNewId(getItem());
     }
 
     /**
@@ -539,11 +502,8 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             theEnumClass = pList.getEnumClass();
             parseEnumId(uId);
 
-            /* Set the new Id */
-            pList.setNewId(getItem());
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -585,11 +545,8 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             theEnumClass = pList.getEnumClass();
             parseEnumId(uId);
 
-            /* Set the new Id */
-            pList.setNewId(getItem());
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -701,6 +658,12 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
     @Override
     public boolean applyChanges(final DataItem pData) {
+        /* Can only apply changes for Static Data */
+        if (!(pData instanceof StaticData)) {
+            return false;
+        }
+
+        /* Access the data */
         StaticData<?, ?> myData = (StaticData<?, ?>) pData;
 
         /* Store the current detail into history */
@@ -765,11 +728,6 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         protected StaticList(final L pSource) {
             super(pSource);
         }
-
-        // @Override
-        // public void setNewId(final DataItem pItem) {
-        // super.setNewId(pItem);
-        // }
 
         /**
          * Search for a particular item by class.

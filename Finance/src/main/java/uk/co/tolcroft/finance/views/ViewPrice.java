@@ -38,7 +38,6 @@ import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountPrice;
 import uk.co.tolcroft.finance.views.DilutionEvent.DilutionEventList;
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.DataSet;
 
 /**
  * Extension of AccountPrice to cater for diluted prices.
@@ -88,7 +87,9 @@ public class ViewPrice extends AccountPrice {
     @Override
     public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = (EncryptedValueSet) pValues;
+        if (pValues instanceof EncryptedValueSet) {
+            theValueSet = (EncryptedValueSet) pValues;
+        }
     }
 
     /**
@@ -303,7 +304,7 @@ public class ViewPrice extends AccountPrice {
             }
 
             /* Access the base prices */
-            AccountPriceList myPrices = getData().getPrices();
+            AccountPriceList myPrices = getDataSet().getPrices();
             setBase(myPrices);
 
             /* Store dilution list and record whether we have dilutions */
@@ -329,30 +330,6 @@ public class ViewPrice extends AccountPrice {
                 add(myItem);
             }
         }
-
-        @Override
-        public ViewPriceList getUpdateList() {
-            return null;
-        }
-
-        @Override
-        public ViewPriceList getEditList() {
-            return null;
-        }
-
-        @Override
-        public ViewPriceList getShallowCopy() {
-            return null;
-        }
-
-        @Override
-        public ViewPriceList getDeepCopy(final DataSet<?> pData) {
-            return null;
-        }
-
-        // public ViewPriceList getDifferences(final ViewPriceList pOld) {
-        // return null;
-        // }
 
         /* Is this list locked */
         @Override

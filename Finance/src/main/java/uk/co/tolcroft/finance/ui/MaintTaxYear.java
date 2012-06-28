@@ -953,7 +953,7 @@ public class MaintTaxYear extends JPanelWithEvents {
             }
 
             /* Create the view of the tax year */
-            theTaxView = theTaxYears.getEditList(pTaxYear);
+            theTaxView = theTaxYears.deriveEditList(pTaxYear);
 
             /* Access the tax year */
             theTaxYear = theTaxView.findTaxYearForDate(pTaxYear.getTaxYear());

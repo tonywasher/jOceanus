@@ -288,25 +288,6 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
                       final DataKey pSource) {
         /* Set standard values */
         super(pList, pSource);
-
-        /* Switch on the LinkStyle */
-        switch (getStyle()) {
-            case CLONE:
-                isolateCopy(pList.getData());
-            case CORE:
-            case COPY:
-                pList.setNewId(this);
-                break;
-            case EDIT:
-                setBase(pSource);
-                break;
-            case UPDATE:
-                setBase(pSource);
-                // setState(pSource.getState());
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -337,7 +318,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
             setValueKeyType(SymKeyType.fromId(uKeyTypeId));
 
             /* Look up the ControlKey */
-            DataSet<?> myData = pList.theData;
+            DataSet<?> myData = getDataSet();
             ControlKeyList myKeys = myData.getControlKeys();
             ControlKey myControlKey = myKeys.findItemById(uControlId);
             if (myControlKey == null) {
@@ -360,11 +341,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
             /* Register the DataKey */
             myControlKey.registerDataKey(this);
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -406,11 +384,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
             /* Register the DataKey */
             pControlKey.registerDataKey(this);
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -447,11 +422,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
             CipherSet myCipher = myHash.getCipherSet();
             setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -471,12 +443,10 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
         return super.compareId(pThat);
     }
 
-    /**
-     * Isolate Data Copy.
-     * @param pData the DataSet
-     */
-    private void isolateCopy(final DataSet<?> pData) {
-        ControlKeyList myKeys = pData.getControlKeys();
+    @Override
+    protected void relinkToDataSet() {
+        DataSet<?> myData = getDataSet();
+        ControlKeyList myKeys = myData.getControlKeys();
 
         /* Update to use the local copy of the ControlKeys */
         ControlKey myKey = getControlKey();
@@ -521,19 +491,6 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
             return FIELD_DEFS;
         }
 
-        /**
-         * The owning data set.
-         */
-        private DataSet<?> theData = null;
-
-        /**
-         * Get the owning data set.
-         * @return the data set
-         */
-        public DataSet<?> getData() {
-            return theData;
-        }
-
         @Override
         public String listName() {
             return LIST_NAME;
@@ -544,8 +501,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          * @param pData the DataSet for the list
          */
         protected DataKeyList(final DataSet<?> pData) {
-            super(DataKeyList.class, DataKey.class, pData.getGranularity(), ListStyle.CORE);
-            theData = pData;
+            super(DataKeyList.class, DataKey.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -555,8 +511,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          */
         protected DataKeyList(final DataSet<?> pData,
                               final ListStyle pStyle) {
-            super(DataKeyList.class, DataKey.class, pData.getGranularity(), pStyle);
-            theData = pData;
+            super(DataKeyList.class, DataKey.class, pData, pStyle);
         }
 
         /**
@@ -565,68 +520,21 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          */
         private DataKeyList(final DataKeyList pSource) {
             super(pSource);
-            theData = pSource.theData;
-        }
-
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private DataKeyList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            DataKeyList myList = new DataKeyList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
         }
 
         @Override
-        public DataKeyList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public DataKeyList getEditList() {
-            return null;
-        }
-
-        @Override
-        public DataKeyList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public DataKeyList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            DataKeyList myList = new DataKeyList(this);
-            myList.theData = pDataSet;
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        protected DataKeyList getDifferences(final DataKeyList pOld) {
-            /* Build an empty Difference List */
-            DataKeyList myList = new DataKeyList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected DataKeyList getEmptyList() {
+            return new DataKeyList(this);
         }
 
         @Override
         public DataKey addNewItem(final DataItem pItem) {
+            /* Can only clone a DataKey */
+            if (!(pItem instanceof DataKey)) {
+                return null;
+            }
+
+            /* Clone the control key */
             DataKey myKey = new DataKey(this, (DataKey) pItem);
             add(myKey);
             return myKey;
@@ -650,10 +558,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
                                final int uControlId,
                                final int uKeyTypeId,
                                final byte[] pSecurityKey) throws JDataException {
-            DataKey myKey;
-
             /* Create the DataKey */
-            myKey = new DataKey(this, uId, uControlId, uKeyTypeId, pSecurityKey);
+            DataKey myKey = new DataKey(this, uId, uControlId, uKeyTypeId, pSecurityKey);
 
             /* Check that this KeyId has not been previously added */
             if (!isIdUnique(uId)) {
@@ -674,10 +580,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          */
         public DataKey addItem(final ControlKey pControlKey,
                                final SymKeyType pKeyType) throws JDataException {
-            DataKey myKey;
-
             /* Create the key */
-            myKey = new DataKey(this, pControlKey, pKeyType);
+            DataKey myKey = new DataKey(this, pControlKey, pKeyType);
 
             /* Add to the list */
             add(myKey);
@@ -693,10 +597,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          */
         public DataKey addItem(final ControlKey pControlKey,
                                final DataKey pDataKey) throws JDataException {
-            DataKey myKey;
-
             /* Create the key */
-            myKey = new DataKey(this, pControlKey, pDataKey);
+            DataKey myKey = new DataKey(this, pControlKey, pDataKey);
 
             /* Add to the list */
             add(myKey);

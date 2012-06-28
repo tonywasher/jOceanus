@@ -28,7 +28,6 @@ import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.TaxClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 /**
@@ -206,66 +205,9 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private TaxTypeList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            TaxTypeList myList = new TaxTypeList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public TaxTypeList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public TaxTypeList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public TaxTypeList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public TaxTypeList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            TaxTypeList myList = new TaxTypeList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        /**
-         * Construct a difference ControlData list.
-         * @param pOld the old ControlData list
-         * @return the difference list
-         */
-        @Override
-        protected TaxTypeList getDifferences(final TaxTypeList pOld) {
-            /* Build an empty Difference List */
-            TaxTypeList myList = new TaxTypeList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected TaxTypeList getEmptyList() {
+            return new TaxTypeList(this);
         }
 
         /**
@@ -275,6 +217,11 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          */
         @Override
         public TaxType addNewItem(final DataItem pItem) {
+            /* Can only clone a TaxType */
+            if (!(pItem instanceof TaxType)) {
+                return null;
+            }
+
             TaxType myType = new TaxType(this, (TaxType) pItem);
             add(myType);
             return myType;
@@ -303,10 +250,8 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @throws JDataException on error
          */
         public void addItem(final String pTaxType) throws JDataException {
-            TaxType myTaxType;
-
             /* Create a new Tax Type */
-            myTaxType = new TaxType(this, pTaxType);
+            TaxType myTaxType = new TaxType(this, pTaxType);
 
             /* Check that this TaxTypeId has not been previously added */
             if (!isIdUnique(myTaxType.getId())) {
@@ -344,10 +289,8 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
                             final int uOrder,
                             final String pTaxType,
                             final String pDesc) throws JDataException {
-            TaxType myTaxType;
-
             /* Create a new Tax Type */
-            myTaxType = new TaxType(this, uId, isEnabled, uOrder, pTaxType, pDesc);
+            TaxType myTaxType = new TaxType(this, uId, isEnabled, uOrder, pTaxType, pDesc);
 
             /* Check that this TaxTypeId has not been previously added */
             if (!isIdUnique(myTaxType.getId())) {
@@ -382,10 +325,8 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
                             final int uOrder,
                             final byte[] pTaxType,
                             final byte[] pDesc) throws JDataException {
-            TaxType myTaxType;
-
             /* Create a new Tax Type */
-            myTaxType = new TaxType(this, uId, uControlId, isEnabled, uOrder, pTaxType, pDesc);
+            TaxType myTaxType = new TaxType(this, uId, uControlId, isEnabled, uOrder, pTaxType, pDesc);
 
             /* Check that this TaxTypeId has not been previously added */
             if (!isIdUnique(uId)) {

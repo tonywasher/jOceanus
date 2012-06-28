@@ -33,8 +33,6 @@ import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.EventInfoType.EventInfoTypeList;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.models.data.DataSet;
 
 /**
  * EventValue data type.
@@ -209,6 +207,11 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
     }
 
     @Override
+    public FinanceData getDataSet() {
+        return (FinanceData) super.getDataSet();
+    }
+
+    @Override
     public EventValue getBase() {
         return (EventValue) super.getBase();
     }
@@ -222,40 +225,6 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
                          final EventValue pInfo) {
         /* Set standard values */
         super(pList, pInfo);
-        ListStyle myOldStyle = pInfo.getStyle();
-
-        /* Switch on the ListStyle */
-        switch (getStyle()) {
-            case EDIT:
-                /* If this is a view creation */
-                if (myOldStyle == ListStyle.CORE) {
-                    /* Rate is based on the original element */
-                    setBase(pInfo);
-                    pList.setNewId(this);
-                    break;
-                }
-
-                /* Else this is a duplication so treat as new item */
-                setId(0);
-                pList.setNewId(this);
-                break;
-            case CLONE:
-                reBuildLinks(pList.getData());
-            case COPY:
-            case CORE:
-                /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT) {
-                    setId(0);
-                }
-                pList.setNewId(this);
-                break;
-            case UPDATE:
-                setBase(pInfo);
-                // setState(pInfo.getState());
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -282,7 +251,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
             setValueEvent(uEventId);
 
             /* Look up the EventType */
-            FinanceData myData = pList.getData();
+            FinanceData myData = getDataSet();
             EventInfoTypeList myTypes = myData.getInfoTypes();
             EventInfoType myType = myTypes.findItemById(uInfoTypeId);
             if (myType == null) {
@@ -322,11 +291,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
             /* Access the EventInfoSet and register this value */
             EventInfoSet mySet = myEvent.getInfoSet();
             mySet.registerValue(this);
-
-            /* Allocate the id */
-            pList.setNewId(this);
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -347,9 +313,6 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         /* Record the Detail */
         setValueInfoType(pType);
         setValueEvent(pEvent);
-
-        /* Allocate the id */
-        pList.setNewId(this);
     }
 
     @Override
@@ -385,14 +348,12 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         return super.compareId(pThat);
     }
 
-    /**
-     * Rebuild Links to partner data.
-     * @param pData the DataSet
-     */
-    protected void reBuildLinks(final FinanceData pData) {
+    @Override
+    protected void relinkToDataSet() {
         /* Access Events and InfoTypes */
-        EventList myEvents = pData.getEvents();
-        EventInfoTypeList myTypes = pData.getInfoTypes();
+        FinanceData myData = getDataSet();
+        EventList myEvents = myData.getEvents();
+        EventInfoTypeList myTypes = myData.getInfoTypes();
 
         /* Update to use the local copy of the Types */
         EventInfoType myType = getInfoType();
@@ -533,12 +494,14 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
          */
         private FinanceData theData = null;
 
-        /**
-         * Obtain dataSet.
-         * @return the dataSet
-         */
-        public FinanceData getData() {
-            return theData;
+        @Override
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
+        }
+
+        @Override
+        protected EventValueList getEmptyList() {
+            return new EventValueList(this);
         }
 
         /**
@@ -546,9 +509,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
          * @param pData the DataSet for the list
          */
         protected EventValueList(final FinanceData pData) {
-            super(EventValueList.class, EventValue.class, pData.getGranularity(), ListStyle.CORE);
-            theData = pData;
-            setGeneration(pData.getGeneration());
+            super(EventValueList.class, EventValue.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -558,9 +519,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
          */
         protected EventValueList(final FinanceData pData,
                                  final ListStyle pStyle) {
-            super(EventValueList.class, EventValue.class, pData.getGranularity(), pStyle);
-            theData = pData;
-            setGeneration(pData.getGeneration());
+            super(EventValueList.class, EventValue.class, pData, pStyle);
         }
 
         /**
@@ -570,63 +529,6 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         private EventValueList(final EventValueList pSource) {
             super(pSource);
             theData = pSource.theData;
-        }
-
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the style
-         * @return the update Extract
-         */
-        private EventValueList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            EventValueList myList = new EventValueList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        public EventValueList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public EventValueList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public EventValueList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public EventValueList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            EventValueList myList = new EventValueList(this);
-            myList.theData = (FinanceData) pDataSet;
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        protected EventValueList getDifferences(final EventValueList pOld) {
-            /* Build an empty Difference List */
-            EventValueList myList = new EventValueList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
         }
 
         /**
@@ -650,10 +552,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
                             final int uInfoTypeId,
                             final int uEventId,
                             final Integer pValue) throws JDataException {
-            EventValue myInfo;
-
             /* Create the info */
-            myInfo = new EventValue(this, uId, uInfoTypeId, uEventId, pValue);
+            EventValue myInfo = new EventValue(this, uId, uInfoTypeId, uEventId, pValue);
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(uId)) {
@@ -690,6 +590,11 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
 
         @Override
         public EventValue addNewItem(final DataItem pElement) {
+            /* Can only clone an EventValue */
+            if (!(pElement instanceof EventValue)) {
+                return null;
+            }
+
             /* Create the new item */
             EventValue mySource = (EventValue) pElement;
             EventValue myValue = new EventValue(this, mySource);

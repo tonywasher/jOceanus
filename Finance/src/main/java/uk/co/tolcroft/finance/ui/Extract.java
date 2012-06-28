@@ -497,7 +497,7 @@ public class Extract extends DataTable<Event> {
      * @param pCombo the combo select
      * @throws JDataException on error
      */
-    public void refreshData(ComboSelect pCombo) throws JDataException {
+    public void refreshData(final ComboSelect pCombo) throws JDataException {
         /* Access the combo list from parent */
         theComboList = pCombo;
 
@@ -541,7 +541,7 @@ public class Extract extends DataTable<Event> {
             /* Get the Rates edit list */
             FinanceData myData = theView.getData();
             EventList myEvents = myData.getEvents();
-            theEvents = myEvents.getEditList(pRange);
+            theEvents = myEvents.deriveEditList(pRange);
 
             theColumns.setDateEditorRange(theRange);
         }

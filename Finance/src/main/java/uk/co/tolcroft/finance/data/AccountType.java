@@ -28,7 +28,6 @@ import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.AccountClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 /**
@@ -521,65 +520,18 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private AccountTypeList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            AccountTypeList myList = new AccountTypeList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public AccountTypeList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public AccountTypeList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public AccountTypeList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public AccountTypeList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            AccountTypeList myList = new AccountTypeList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        protected AccountTypeList getDifferences(final AccountTypeList pOld) {
-            /* Build an empty Difference List */
-            AccountTypeList myList = new AccountTypeList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected AccountTypeList getEmptyList() {
+            return new AccountTypeList(this);
         }
 
         @Override
         public AccountType addNewItem(final DataItem pItem) {
+            /* Can only clone an AccountType */
+            if (!(pItem instanceof AccountType)) {
+                return null;
+            }
+
             AccountType myType = new AccountType(this, (AccountType) pItem);
             add(myType);
             return myType;
@@ -604,10 +556,8 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * @throws JDataException on error
          */
         public void addItem(final String pActType) throws JDataException {
-            AccountType myActType;
-
             /* Create a new Account Type */
-            myActType = new AccountType(this, pActType);
+            AccountType myActType = new AccountType(this, pActType);
 
             /* Check that this AccountType has not been previously added */
             if (findItemByName(pActType) != null) {
@@ -645,10 +595,8 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
                             final int uOrder,
                             final String pActType,
                             final String pDesc) throws JDataException {
-            AccountType myActType;
-
             /* Create a new Account Type */
-            myActType = new AccountType(this, uId, isEnabled, uOrder, pActType, pDesc);
+            AccountType myActType = new AccountType(this, uId, isEnabled, uOrder, pActType, pDesc);
 
             /* Check that this AccountTypeId has not been previously added */
             if (!isIdUnique(myActType.getId())) {
@@ -683,10 +631,8 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
                             final int uOrder,
                             final byte[] pActType,
                             final byte[] pDesc) throws JDataException {
-            AccountType myActType;
-
             /* Create a new Account Type */
-            myActType = new AccountType(this, uId, uControlId, isEnabled, uOrder, pActType, pDesc);
+            AccountType myActType = new AccountType(this, uId, uControlId, isEnabled, uOrder, pActType, pDesc);
 
             /* Check that this AccountTypeId has not been previously added */
             if (!isIdUnique(uId)) {

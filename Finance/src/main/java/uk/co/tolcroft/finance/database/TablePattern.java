@@ -135,6 +135,11 @@ public class TablePattern extends TableEncrypted<Event> {
     @Override
     protected void setFieldValue(final Event pItem,
                                  final JDataField iField) throws JDataException {
+        /* Can only handle a pattern */
+        if (!(pItem instanceof Pattern)) {
+            return;
+        }
+
         Pattern myItem = (Pattern) pItem;
 
         /* Switch on field id */

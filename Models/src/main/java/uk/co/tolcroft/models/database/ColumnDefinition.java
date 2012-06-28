@@ -454,11 +454,11 @@ public abstract class ColumnDefinition {
                     myOffset++;
 
                     /* Determine new char */
-                    char myNewChar = (char) ('a' + pOffset);
+                    char myNewChar = (char) ('a' + myOffset);
 
                     /* Add the join string for the underlying table */
-                    ReferenceColumn myCol = (ReferenceColumn) myDef;
-                    pBuilder.append(myCol.theDefinition.getOrderString(myNewChar, myOffset));
+                    ReferenceColumn myX = (ReferenceColumn) myDef;
+                    pBuilder.append(myX.theDefinition.getOrderString(myNewChar, myOffset));
 
                     /* else standard column */
                 } else {

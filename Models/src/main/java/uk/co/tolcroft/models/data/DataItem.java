@@ -229,8 +229,16 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
-     * Get the list control for this item.
-     * @return the list control
+     * Obtain the dataSet.
+     * @return the dataSet
+     */
+    public DataSet<?> getDataSet() {
+        return theList.getDataSet();
+    }
+
+    /**
+     * Get the list style for this item.
+     * @return the list style
      */
     public ListStyle getStyle() {
         return theList.getStyle();
@@ -460,7 +468,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * original values of the base.
      * @param pBase the base item
      */
-    public void setHistory(final DataItem pBase) {
+    public final void setHistory(final DataItem pBase) {
         theHistory.setHistory(pBase.getOriginalValues());
     }
 
@@ -615,7 +623,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * Copy flags.
      * @param pItem the original item
      */
-    protected void copyFlags(final DataItem pItem) {
+    private void copyFlags(final DataItem pItem) {
         isActive = pItem.isActive();
     }
 
@@ -626,6 +634,12 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     public ValueSet allocateValueSet() {
         /* Allocate initial value set and declare it */
         return new ValueSet(theItem);
+    }
+
+    /**
+     * Re-link all references to current DataSet.
+     */
+    protected void relinkToDataSet() {
     }
 
     /**
@@ -653,6 +667,9 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
         ValueSet myValues = allocateValueSet();
         declareValues(myValues);
         theHistory.setValues(myValues);
+
+        /* Allocate id */
+        pList.setNewId(this);
     }
 
     /**
@@ -667,6 +684,78 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
 
         /* Initialise the valueSet */
         theValueSet.copyFrom(pBase.getValueSet());
+
+        /* Access the varying styles and the source state */
+        ListStyle myStyle = pList.getStyle();
+        ListStyle myBaseStyle = pBase.getList().getStyle();
+        DataState myState = pBase.getState();
+
+        /* Switch on the styles */
+        switch (myStyle) {
+        /* We are building an update list (from Core) */
+            case UPDATE:
+                switch (myState) {
+                /* NEW/DELNEW need to be at version 1 */
+                    case DELNEW:
+                    case NEW:
+                        theValueSet.setVersion(1);
+                        break;
+
+                    /* Changed items need to have new values at version 1 and originals at version 0 */
+                    case CHANGED:
+                        setHistory(pBase);
+                        break;
+
+                    /* No change for other states */
+                    default:
+                        break;
+                }
+
+                /* Record the base item */
+                theBase = pBase;
+                break;
+
+            /* We are building an edit item (from Core/Edit) */
+            case EDIT:
+                /* Switch on the base style */
+                switch (myBaseStyle) {
+                /* New item from core we need to link back and copy flags */
+                    case CORE:
+                        theBase = pBase;
+                        copyFlags(pBase);
+                        break;
+                    /* Duplication in edit */
+                    case EDIT:
+                        /* set as a new item */
+                        theValueSet.setVersion(pList.getVersion() + 1);
+
+                        /* Reset the Id */
+                        theId = 0;
+                        pList.setNewId(this);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
+            /* We are building a CORE item (from Edit) */
+            case CORE:
+                /* set as a new item */
+                theValueSet.setVersion(pList.getVersion() + 1);
+
+                /* Reset the Id */
+                theId = 0;
+                pList.setNewId(this);
+                break;
+
+            /* Nothing special for other styles */
+            case CLONE:
+            case DIFFER:
+            case COPY:
+            case VIEW:
+            default:
+                break;
+        }
     }
 
     @Override

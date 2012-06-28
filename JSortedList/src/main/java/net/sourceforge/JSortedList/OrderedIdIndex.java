@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.JSortedList;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Index for an Ordered Id list. This provides improved lookup from object to node.
@@ -61,6 +63,26 @@ public class OrderedIdIndex<I, T extends OrderedIdItem<I> & Comparable<T>> exten
         OrderedIndex<T> myIndex = new OrderedIdIndex<I, T>(getGranularityShift());
         myIndex.declareList(pList);
         return myIndex;
+    }
+
+    /**
+     * Obtain map of elements in the list.
+     * @return the map
+     */
+    protected Map<I, T> getElementMap() {
+        /* Create the new map */
+        Map<I, T> myMap = new NestedHashMap<I, T>();
+
+        /* Loop through the elements */
+        Iterator<Entry<I, OrderedNode<T>>> myIterator = theHashMap.entrySet().iterator();
+        while (myIterator.hasNext()) {
+            /* Access entry and place details into map */
+            Entry<I, OrderedNode<T>> myEntry = myIterator.next();
+            myMap.put(myEntry.getKey(), myEntry.getValue().getObject());
+        }
+
+        /* Return the map */
+        return myMap;
     }
 
     /**

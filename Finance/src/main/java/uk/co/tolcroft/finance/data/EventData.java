@@ -39,8 +39,6 @@ import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.EventInfoType.EventInfoTypeList;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
 /**
@@ -91,7 +89,9 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
     @Override
     public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = (EncryptedValueSet) pValues;
+        if (pValues instanceof EncryptedValueSet) {
+            theValueSet = (EncryptedValueSet) pValues;
+        }
     }
 
     /**
@@ -295,6 +295,11 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
     }
 
     @Override
+    public FinanceData getDataSet() {
+        return (FinanceData) super.getDataSet();
+    }
+
+    @Override
     public EventData getBase() {
         return (EventData) super.getBase();
     }
@@ -308,40 +313,6 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
                         final EventData pInfo) {
         /* Set standard values */
         super(pList, pInfo);
-        ListStyle myOldStyle = pInfo.getStyle();
-
-        /* Switch on the ListStyle */
-        switch (getStyle()) {
-            case EDIT:
-                /* If this is a view creation */
-                if (myOldStyle == ListStyle.CORE) {
-                    /* Rate is based on the original element */
-                    setBase(pInfo);
-                    pList.setNewId(this);
-                    break;
-                }
-
-                /* Else this is a duplication so treat as new item */
-                setId(0);
-                pList.setNewId(this);
-                break;
-            case CLONE:
-                reBuildLinks(pList.getData());
-            case COPY:
-            case CORE:
-                /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT) {
-                    setId(0);
-                }
-                pList.setNewId(this);
-                break;
-            case UPDATE:
-                setBase(pInfo);
-                // setState(pInfo.getState());
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -373,7 +344,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
             setControlKey(uControlId);
 
             /* Look up the EventType */
-            FinanceData myData = pList.getData();
+            FinanceData myData = pList.getDataSet();
             EventInfoTypeList myTypes = myData.getInfoTypes();
             EventInfoType myType = myTypes.findItemById(uInfoTypeId);
             if (myType == null) {
@@ -410,10 +381,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
             /* Access the EventInfoSet and register this data */
             EventInfoSet mySet = myEvent.getInfoSet();
             mySet.registerData(this);
-
-            /* Allocate the id */
-            pList.setNewId(this);
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -441,9 +409,6 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
         /* Record the Detail */
         setValueInfoType(pType);
         setValueEvent(pEvent);
-
-        /* Allocate the id */
-        pList.setNewId(this);
     }
 
     /**
@@ -478,17 +443,15 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
         return super.compareId(pThat);
     }
 
-    /**
-     * Rebuild Links to partner data.
-     * @param pData the DataSet
-     */
-    protected void reBuildLinks(final FinanceData pData) {
+    @Override
+    protected void relinkToDataSet() {
         /* Update the Encryption details */
-        super.reBuildLinks(pData);
+        super.relinkToDataSet();
 
         /* Access Events and InfoTypes */
-        EventList myEvents = pData.getEvents();
-        EventInfoTypeList myTypes = pData.getInfoTypes();
+        FinanceData myData = getDataSet();
+        EventList myEvents = myData.getEvents();
+        EventInfoTypeList myTypes = myData.getInfoTypes();
 
         /* Update to use the local copy of the Types */
         EventInfoType myType = getInfoType();
@@ -649,8 +612,8 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
         }
 
         @Override
-        public FinanceData getData() {
-            return (FinanceData) super.getData();
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
         }
 
         /**
@@ -681,66 +644,9 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private EventDataList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            EventDataList myList = new EventDataList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public EventDataList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public EventDataList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public EventDataList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public EventDataList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            EventDataList myList = new EventDataList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        /**
-         * Construct a difference Info list.
-         * @param pOld the old Info list
-         * @return the difference list
-         */
-        @Override
-        protected EventDataList getDifferences(final EventDataList pOld) {
-            /* Build an empty Difference List */
-            EventDataList myList = new EventDataList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected EventDataList getEmptyList() {
+            return new EventDataList(this);
         }
 
         /**
@@ -757,10 +663,8 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
                             final int uInfoTypeId,
                             final int uEventId,
                             final byte[] pValue) throws JDataException {
-            EventData myInfo;
-
             /* Create the info */
-            myInfo = new EventData(this, uId, uControlId, uInfoTypeId, uEventId, pValue);
+            EventData myInfo = new EventData(this, uId, uControlId, uInfoTypeId, uEventId, pValue);
 
             /* Check that this DataId has not been previously added */
             if (!isIdUnique(uId)) {
@@ -797,6 +701,11 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
 
         @Override
         public EventData addNewItem(final DataItem pElement) {
+            /* Can only clone an EventData */
+            if (!(pElement instanceof EventData)) {
+                return null;
+            }
+
             /* Create the new item */
             EventData mySource = (EventData) pElement;
             EventData myInfo = new EventData(this, mySource);

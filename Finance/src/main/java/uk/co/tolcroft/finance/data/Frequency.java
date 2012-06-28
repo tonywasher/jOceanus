@@ -28,7 +28,6 @@ import net.sourceforge.JDataManager.JDataFields;
 import uk.co.tolcroft.finance.data.StaticClass.FreqClass;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.StaticData;
 
 /**
@@ -171,61 +170,9 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private FrequencyList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            FrequencyList myList = new FrequencyList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public FrequencyList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public FrequencyList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public FrequencyList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public FrequencyList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            FrequencyList myList = new FrequencyList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        protected FrequencyList getDifferences(final FrequencyList pOld) {
-            /* Build an empty Difference List */
-            FrequencyList myList = new FrequencyList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected FrequencyList getEmptyList() {
+            return new FrequencyList(this);
         }
 
         /**
@@ -243,6 +190,11 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          */
         @Override
         public Frequency addNewItem(final DataItem pItem) {
+            /* Can only clone a Frequency */
+            if (!(pItem instanceof Frequency)) {
+                return null;
+            }
+
             Frequency myFreq = new Frequency(this, (Frequency) pItem);
             add(myFreq);
             return myFreq;
@@ -263,10 +215,8 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @throws JDataException on error
          */
         public void addItem(final String pFrequency) throws JDataException {
-            Frequency myFrequency;
-
             /* Create a new Frequency */
-            myFrequency = new Frequency(this, pFrequency);
+            Frequency myFrequency = new Frequency(this, pFrequency);
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFrequency.getId())) {
@@ -304,10 +254,8 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
                             final int uOrder,
                             final String pFrequency,
                             final String pDesc) throws JDataException {
-            Frequency myFreq;
-
             /* Create a new Frequency */
-            myFreq = new Frequency(this, uId, isEnabled, uOrder, pFrequency, pDesc);
+            Frequency myFreq = new Frequency(this, uId, isEnabled, uOrder, pFrequency, pDesc);
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(myFreq.getId())) {
@@ -342,10 +290,8 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
                             final int uOrder,
                             final byte[] pFrequency,
                             final byte[] pDesc) throws JDataException {
-            Frequency myFreq;
-
             /* Create a new Frequency */
-            myFreq = new Frequency(this, uId, uControlId, isEnabled, uOrder, pFrequency, pDesc);
+            Frequency myFreq = new Frequency(this, uId, uControlId, isEnabled, uOrder, pFrequency, pDesc);
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(uId)) {

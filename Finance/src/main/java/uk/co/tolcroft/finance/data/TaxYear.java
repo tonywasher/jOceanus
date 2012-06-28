@@ -41,8 +41,6 @@ import net.sourceforge.JSortedList.OrderedListIterator;
 import uk.co.tolcroft.finance.data.TaxRegime.TaxRegimeList;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.models.data.DataSet;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.
@@ -786,6 +784,11 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
     }
 
     @Override
+    public FinanceData getDataSet() {
+        return (FinanceData) super.getDataSet();
+    }
+
+    @Override
     public TaxYear getBase() {
         return (TaxYear) super.getBase();
     }
@@ -798,41 +801,6 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
     public TaxYear(final TaxYearList pList,
                    final TaxYear pTaxYear) {
         super(pList, pTaxYear);
-        ListStyle myOldStyle = pTaxYear.getStyle();
-
-        /* Switch on the ListStyle */
-        switch (getStyle()) {
-            case EDIT:
-                /* If this is a view creation */
-                if (myOldStyle == ListStyle.CORE) {
-                    /* TaxYear is based on the original element */
-                    setBase(pTaxYear);
-                    copyFlags(pTaxYear);
-                    pList.setNewId(this);
-                    break;
-                }
-
-                /* Else this is a duplication so treat as new item */
-                setId(0);
-                pList.setNewId(this);
-                break;
-            case CLONE:
-                reBuildLinks(pList.getData());
-            case COPY:
-            case CORE:
-                /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT) {
-                    setId(0);
-                }
-                pList.setNewId(this);
-                break;
-            case UPDATE:
-                setBase(pTaxYear);
-                // setState(pTaxYear.getState());
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -892,17 +860,14 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
 
         /* Protect against exceptions */
         try {
-            /* Local variable */
-            TaxRegime myRegime;
-
             /* Record the Id */
             setValueTaxRegime(uRegimeId);
             setValueTaxYear(new DateDay(pDate));
 
             /* Look up the Regime */
-            FinanceData myData = pList.theData;
+            FinanceData myData = getDataSet();
             TaxRegimeList myRegimes = myData.getTaxRegimes();
-            myRegime = myRegimes.findItemById(uRegimeId);
+            TaxRegime myRegime = myRegimes.findItemById(uRegimeId);
             if (myRegime == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Tax Regime Id");
             }
@@ -1037,10 +1002,6 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
                 }
                 setValueHiCapTaxRate(myRate);
             }
-
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
@@ -1076,12 +1037,10 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
         return super.compareId(pThat);
     }
 
-    /**
-     * Rebuild Links to partner data.
-     * @param pData the DataSet
-     */
-    private void reBuildLinks(final FinanceData pData) {
-        TaxRegimeList myRegimes = pData.getTaxRegimes();
+    @Override
+    protected void relinkToDataSet() {
+        FinanceData myData = getDataSet();
+        TaxRegimeList myRegimes = myData.getTaxRegimes();
 
         /* Update to use the local copy of the TaxRegimes */
         TaxRegime myRegime = getTaxRegime();
@@ -1461,6 +1420,11 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      */
     @Override
     public boolean applyChanges(final DataItem pTaxYear) {
+        /* Can only update from TaxYear */
+        if (!(pTaxYear instanceof TaxYear)) {
+            return false;
+        }
+
         TaxYear myTaxYear = (TaxYear) pTaxYear;
 
         /* Store the current detail into history */
@@ -1586,11 +1550,6 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
         }
 
         /**
-         * The Data.
-         */
-        private FinanceData theData = null;
-
-        /**
          * The NewYear.
          */
         private TaxYear theNewYear = null;
@@ -1600,12 +1559,9 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             return LIST_NAME;
         }
 
-        /**
-         * Obtain the data.
-         * @return the data
-         */
-        public FinanceData getData() {
-            return theData;
+        @Override
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
         }
 
         /**
@@ -1621,8 +1577,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @param pData the DataSet for the list
          */
         protected TaxYearList(final FinanceData pData) {
-            super(TaxYearList.class, TaxYear.class, pData.getGranularity(), ListStyle.CORE);
-            theData = pData;
+            super(TaxYearList.class, TaxYear.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -1631,69 +1586,11 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          */
         private TaxYearList(final TaxYearList pSource) {
             super(pSource);
-            theData = pSource.theData;
-        }
-
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private TaxYearList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            TaxYearList myList = new TaxYearList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
         }
 
         @Override
-        public TaxYearList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public TaxYearList getEditList() {
-            return null;
-        }
-
-        @Override
-        public TaxYearList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public TaxYearList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            TaxYearList myList = new TaxYearList(this);
-            myList.theData = (FinanceData) pDataSet;
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        /**
-         * Construct a difference TaxYear list.
-         * @param pOld the old TaxYear list
-         * @return the difference list
-         */
-        @Override
-        protected TaxYearList getDifferences(final TaxYearList pOld) {
-            /* Build an empty Difference List */
-            TaxYearList myList = new TaxYearList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected TaxYearList getEmptyList() {
+            return new TaxYearList(this);
         }
 
         /**
@@ -1701,11 +1598,9 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @param pTaxYear the tax year
          * @return the edit Extract
          */
-        public TaxYearList getEditList(final TaxYear pTaxYear) {
+        public TaxYearList deriveEditList(final TaxYear pTaxYear) {
             /* Build an empty List */
-            TaxYearList myList = new TaxYearList(this);
-
-            /* Make this list the correct style */
+            TaxYearList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
 
             /* Create a new tax year based on the passed tax year */
@@ -1720,24 +1615,18 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * Create a new year based on the last year.
          * @return the new list
          */
-        public TaxYearList getNewEditList() {
+        public TaxYearList deriveNewEditList() {
             /* Build an empty List */
-            TaxYearList myList = new TaxYearList(this);
-
-            /* Make this list the correct style */
+            TaxYearList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
 
-            /* Local Variables */
-            TaxYear.TaxYearList myTaxYears;
-            TaxYear myBase;
-            OrderedListIterator<TaxYear> myIterator;
-
             /* Access the existing tax years */
-            myTaxYears = theData.getTaxYears();
-            myIterator = myTaxYears.listIterator();
+            FinanceData myData = getDataSet();
+            TaxYearList myTaxYears = myData.getTaxYears();
+            OrderedListIterator<TaxYear> myIterator = myTaxYears.listIterator();
 
             /* Create a new tax year for the list */
-            myBase = myIterator.peekLast();
+            TaxYear myBase = myIterator.peekLast();
             TaxYear myYear = new TaxYear(myList, myBase);
             myYear.setBase(null);
             myYear.setId(0);
@@ -1761,6 +1650,11 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          */
         @Override
         public TaxYear addNewItem(final DataItem pTaxYear) {
+            /* Can only clone a TaxYear */
+            if (!(pTaxYear instanceof TaxYear)) {
+                return null;
+            }
+
             TaxYear myYear = new TaxYear(this, (TaxYear) pTaxYear);
             add(myYear);
             return myYear;
@@ -1923,7 +1817,9 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
                             final String pCapTaxRate,
                             final String pHiCapTaxRate) throws JDataException {
             /* Look up the Tax Regime */
-            TaxRegime myTaxRegime = theData.getTaxRegimes().findItemByName(pRegime);
+            FinanceData myData = getDataSet();
+            TaxRegimeList myList = myData.getTaxRegimes();
+            TaxRegime myTaxRegime = myList.findItemByName(pRegime);
             if (myTaxRegime == null) {
                 throw new JDataException(ExceptionClass.DATA, "TaxYear on <"
                         + JDataObject.formatField(new DateDay(pDate)) + "> has invalid TaxRegime <" + pRegime
@@ -1988,14 +1884,11 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
                             final String pAddDivTaxRate,
                             final String pCapTaxRate,
                             final String pHiCapTaxRate) throws JDataException {
-            /* Local variables */
-            TaxYear myTaxYear;
-
             /* Create the tax year */
-            myTaxYear = new TaxYear(this, uId, uRegimeId, pDate, pAllowance, pRentalAllow, pLoAgeAllow,
-                    pHiAgeAllow, pCapAllow, pAgeAllowLimit, pAddAllowLimit, pLoTaxBand, pBasicTaxBand,
-                    pAddIncBound, pLoTaxRate, pBasicTaxRate, pHiTaxRate, pIntTaxRate, pDivTaxRate,
-                    pHiDivTaxRate, pAddTaxRate, pAddDivTaxRate, pCapTaxRate, pHiCapTaxRate);
+            TaxYear myTaxYear = new TaxYear(this, uId, uRegimeId, pDate, pAllowance, pRentalAllow,
+                    pLoAgeAllow, pHiAgeAllow, pCapAllow, pAgeAllowLimit, pAddAllowLimit, pLoTaxBand,
+                    pBasicTaxBand, pAddIncBound, pLoTaxRate, pBasicTaxRate, pHiTaxRate, pIntTaxRate,
+                    pDivTaxRate, pHiDivTaxRate, pAddTaxRate, pAddDivTaxRate, pCapTaxRate, pHiCapTaxRate);
 
             /* Check that this TaxYearId has not been previously added */
             if (!isIdUnique(uId)) {

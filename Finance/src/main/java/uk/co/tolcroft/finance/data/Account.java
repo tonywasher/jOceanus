@@ -43,7 +43,6 @@ import uk.co.tolcroft.finance.data.FinanceData.LoadState;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
@@ -200,7 +199,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     @Override
     public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = (EncryptedValueSet) pValues;
+        if (pValues instanceof EncryptedValueSet) {
+            theValueSet = (EncryptedValueSet) pValues;
+        }
     }
 
     @Override
@@ -1273,6 +1274,11 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     @Override
+    public FinanceData getDataSet() {
+        return (FinanceData) super.getDataSet();
+    }
+
+    @Override
     public Account getBase() {
         return (Account) super.getBase();
     }
@@ -1286,24 +1292,18 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * Copy flags.
      * @param pItem the original item
      */
-    @Override
-    protected void copyFlags(final DataItem pItem) {
-        /* Copy Main flags */
-        super.copyFlags(pItem);
-
-        /* Copy Remaining flags */
-        Account myItem = (Account) pItem;
-        theEarliest = myItem.theEarliest;
-        theLatest = myItem.theLatest;
-        theInitPrice = myItem.theInitPrice;
-        isCloseable = myItem.isCloseable();
-        isAliasedTo = myItem.isAliasedTo();
-        isParent = myItem.isParent();
-        isPatterned = myItem.isPatterned;
-        hasPatterns = myItem.hasPatterns;
-        hasRates = myItem.hasRates;
-        hasPrices = myItem.hasPrices;
-        hasDebts = myItem.hasDebts;
+    protected void copyFlags(final Account pItem) {
+        theEarliest = pItem.theEarliest;
+        theLatest = pItem.theLatest;
+        theInitPrice = pItem.theInitPrice;
+        isCloseable = pItem.isCloseable();
+        isAliasedTo = pItem.isAliasedTo();
+        isParent = pItem.isParent();
+        isPatterned = pItem.isPatterned;
+        hasPatterns = pItem.hasPatterns;
+        hasRates = pItem.hasRates;
+        hasPrices = pItem.hasPrices;
+        hasDebts = pItem.hasDebts;
     }
 
     /**
@@ -1315,40 +1315,11 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                    final Account pAccount) {
         /* Set standard values */
         super(pList, pAccount);
-        ListStyle myOldStyle = pAccount.getStyle();
 
-        /* Switch on the ListStyle */
-        switch (getStyle()) {
-            case EDIT:
-                /* If this is a view creation */
-                if (myOldStyle == ListStyle.CORE) {
-                    /* Account is based on the original element */
-                    setBase(pAccount);
-                    copyFlags(pAccount);
-                    pList.setNewId(this);
-                    break;
-                }
-
-                /* Else this is a duplication so treat as new item */
-                setId(0);
-                pList.setNewId(this);
-                break;
-            case CLONE:
-                reBuildLinks(pList, pList.getData());
-            case COPY:
-            case CORE:
-                /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT) {
-                    setId(0);
-                }
-                pList.setNewId(this);
-                break;
-            case UPDATE:
-                setBase(pAccount);
-                // setState(pAccount.getState());
-                break;
-            default:
-                break;
+        /* If this is a build of edit from Core */
+        if ((getStyle() == ListStyle.EDIT) && (pAccount.getStyle() == ListStyle.CORE)) {
+            /* Copy the flags */
+            copyFlags(pAccount);
         }
     }
 
@@ -1393,9 +1364,6 @@ public class Account extends EncryptedItem implements Comparable<Account> {
 
         /* Protect against exceptions */
         try {
-            /* Local Variable */
-            AccountType myActType;
-
             /* Store the IDs */
             setValueType(uAcTypeId);
             setValueParent(pParentId);
@@ -1405,9 +1373,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             setControlKey(uControlId);
 
             /* Look up the Account Type */
-            FinanceData myData = pList.getData();
+            FinanceData myData = getDataSet();
             AccountTypeList myTypes = myData.getAccountTypes();
-            myActType = myTypes.findItemById(uAcTypeId);
+            AccountType myActType = myTypes.findItemById(uAcTypeId);
             if (myActType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
             }
@@ -1433,11 +1401,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             setValueAccount(pAccount);
             setValueNotes(pNotes);
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -1482,9 +1447,6 @@ public class Account extends EncryptedItem implements Comparable<Account> {
 
         /* Protect against exceptions */
         try {
-            /* Local Variable */
-            AccountType myActType;
-
             /* Store the IDs */
             setValueType(uAcTypeId);
             setValueParent(pParentId);
@@ -1501,9 +1463,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             setValueNotes(pNotes);
 
             /* Look up the Account Type */
-            FinanceData myData = pList.getData();
+            FinanceData myData = getDataSet();
             AccountTypeList myTypes = myData.getAccountTypes();
-            myActType = myTypes.findItemById(uAcTypeId);
+            AccountType myActType = myTypes.findItemById(uAcTypeId);
             if (myActType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
             }
@@ -1519,11 +1481,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                 setValueClose(new DateDay(pClose));
             }
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -1536,7 +1495,6 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     public Account(final AccountList pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
-        pList.setNewId(this);
     }
 
     @Override
@@ -1577,18 +1535,15 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         return super.compareId(pThat);
     }
 
-    /**
-     * Rebuild Links to partner data.
-     * @param pList the list
-     * @param pData the DataSet
-     */
-    protected void reBuildLinks(final AccountList pList,
-                                final FinanceData pData) {
+    @Override
+    protected void relinkToDataSet() {
         /* Update the Encryption details */
-        super.reBuildLinks(pData);
+        super.relinkToDataSet();
 
         /* Access Account types */
-        AccountTypeList myTypes = pData.getAccountTypes();
+        FinanceData myData = getDataSet();
+        AccountTypeList myTypes = myData.getAccountTypes();
+        AccountList myList = myData.getAccounts();
 
         /* Update to use the local copy of the AccountTypes */
         AccountType myType = getActType();
@@ -1599,7 +1554,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         Account myAct = getParent();
         if (myAct != null) {
             /* Update it */
-            Account myNewAct = pList.findItemById(myAct.getId());
+            Account myNewAct = myList.findItemById(myAct.getId());
             setValueParent(myNewAct);
         }
 
@@ -1607,7 +1562,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         myAct = getAlias();
         if (myAct != null) {
             /* Update it */
-            Account myNewAct = pList.findItemById(myAct.getId());
+            Account myNewAct = myList.findItemById(myAct.getId());
             setValueAlias(myNewAct);
         }
     }
@@ -1785,14 +1740,13 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      */
     @Override
     public void validate() {
-        boolean isValid;
         AccountType myType = getActType();
         String myName = getName();
         String myDesc = getDesc();
         Account myParent = getParent();
         Account myAlias = getAlias();
         AccountList myList = (AccountList) getList();
-        FinanceData mySet = myList.getData();
+        FinanceData mySet = getDataSet();
 
         /* AccountType must be non-null */
         if (myType == null) {
@@ -1965,7 +1919,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         }
 
         /* Set validation flag */
-        isValid = !hasErrors();
+        boolean isValid = !hasErrors();
         if (isValid) {
             setValidEdit();
         }
@@ -1977,24 +1931,19 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return Valuation of account
      */
     public Money getValue(final DateDay pDate) {
-        Event myCurr;
-        EventList myEvents;
-        int myResult;
-        Money myAmount;
-        AccountList myList = (AccountList) getList();
-        FinanceData mySet = myList.getData();
-
         /* Initialise money */
         Money myValue = new Money(0);
 
         /* Access the Events and create an iterator on the events */
-        myEvents = mySet.getEvents();
+        FinanceData mySet = getDataSet();
+        EventList myEvents = mySet.getEvents();
         Iterator<Event> myIterator = myEvents.iterator();
 
         /* Loop through the Events extracting relevant elements */
-        while ((myCurr = myIterator.next()) != null) {
+        while (myIterator.hasNext()) {
             /* Check the range */
-            myResult = pDate.compareTo(myCurr.getDate());
+            Event myCurr = myIterator.next();
+            int myResult = pDate.compareTo(myCurr.getDate());
 
             /* Handle out of range */
             if (myResult == -1) {
@@ -2004,7 +1953,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             /* If this Event relates to this account */
             if (myCurr.relatesTo(this)) {
                 /* Access the amount */
-                myAmount = myCurr.getAmount();
+                Money myAmount = myCurr.getAmount();
 
                 /* If this is a credit add the value */
                 if (this.compareTo(myCurr.getCredit()) == 0) {
@@ -2272,6 +2221,11 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      */
     @Override
     public boolean applyChanges(final DataItem pAccount) {
+        /* Can only update from an account */
+        if (!(pAccount instanceof Account)) {
+            return false;
+        }
+
         Account myAccount = (Account) pAccount;
 
         /* Store the current detail into history */
@@ -2385,8 +2339,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         }
 
         @Override
-        public FinanceData getData() {
-            return (FinanceData) super.getData();
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
         }
 
         /**
@@ -2413,66 +2367,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private AccountList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            AccountList myList = new AccountList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public AccountList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public AccountList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public AccountList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public AccountList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            AccountList myList = new AccountList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        /**
-         * Construct a difference Account list.
-         * @param pOld the old Account list
-         * @return the difference list
-         */
-        @Override
-        protected AccountList getDifferences(final AccountList pOld) {
-            /* Build an empty Difference List */
-            AccountList myList = new AccountList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected AccountList getEmptyList() {
+            return new AccountList(this);
         }
 
         /**
@@ -2480,11 +2377,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @param pAccount the relevant account
          * @return the edit Extract
          */
-        public AccountList getEditList(final Account pAccount) {
+        public AccountList deriveEditList(final Account pAccount) {
             /* Build an empty Extract List */
-            AccountList myList = new AccountList(this);
-
-            /* Set the correct style */
+            AccountList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
 
             /* Create a new account based on the passed account */
@@ -2500,11 +2395,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @param pType the account type
          * @return the edit Extract
          */
-        public AccountList getEditList(final AccountType pType) {
+        public AccountList deriveEditList(final AccountType pType) {
             /* Build an empty Extract List */
-            AccountList myList = new AccountList(this);
-
-            /* Set the correct style */
+            AccountList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
 
             /* Create a new account */
@@ -2523,6 +2416,11 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          */
         @Override
         public Account addNewItem(final DataItem pAccount) {
+            /* Can only clone an Account */
+            if (!(pAccount instanceof Account)) {
+                return null;
+            }
+
             Account myAccount = new Account(this, (Account) pAccount);
             add(myAccount);
             return myAccount;
@@ -2587,7 +2485,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             }
 
             /* If we are in final loading stage */
-            if (getData().getLoadState() == LoadState.FINAL) {
+            if (getDataSet().getLoadState() == LoadState.FINAL) {
                 /* Access a new iterator */
                 myIterator = listIterator();
 
@@ -2719,13 +2617,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                             final char[] pPassword,
                             final char[] pAccount,
                             final char[] pNotes) throws JDataException {
-            Account myParent;
-            Account myAlias;
-            Integer myParentId = null;
-            Integer myAliasId = null;
-
             /* Access the account types and accounts */
-            AccountTypeList myActTypes = getData().getAccountTypes();
+            FinanceData myData = getDataSet();
+            AccountTypeList myActTypes = myData.getAccountTypes();
 
             /* Look up the Account Type */
             AccountType myActType = myActTypes.findItemByName(pAcType);
@@ -2735,9 +2629,10 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             }
 
             /* If we have a parent */
+            Integer myParentId = null;
             if (pParent != null) {
                 /* Look up the Parent */
-                myParent = findItemByName(pParent);
+                Account myParent = findItemByName(pParent);
                 if (myParent == null) {
                     throw new JDataException(ExceptionClass.DATA, "Account [" + pName
                             + "] has invalid Parent [" + pParent + "]");
@@ -2746,9 +2641,10 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             }
 
             /* If we have a parent */
+            Integer myAliasId = null;
             if (pAlias != null) {
                 /* Look up the Parent */
-                myAlias = findItemByName(pAlias);
+                Account myAlias = findItemByName(pAlias);
                 if (myAlias == null) {
                     throw new JDataException(ExceptionClass.DATA, "Account [" + pName
                             + "] has invalid Alias [" + pAlias + "]");
@@ -2827,9 +2723,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @throws JDataException on error
          */
         public void validateLoadedAccounts() throws JDataException {
+            FinanceData myData = getDataSet();
             Account myCurr;
-            AccountType myType;
-            FinanceData myData = getData();
 
             /* Mark active items referenced by rates */
             myData.getRates().markActiveItems();
@@ -2862,7 +2757,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                 }
 
                 /* Mark the AccountType */
-                myType = myCurr.getActType();
+                AccountType myType = myCurr.getActType();
                 myType.touchItem(myCurr);
             }
 

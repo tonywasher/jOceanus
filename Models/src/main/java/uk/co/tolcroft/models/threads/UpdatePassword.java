@@ -74,7 +74,7 @@ public class UpdatePassword<T extends DataSet<T>> extends LoaderThread<T> {
 
         /* Access Data */
         T myData = theControl.getData();
-        myData = myData.getDeepCopy();
+        myData = myData.deriveCloneSet();
 
         /* Update password */
         myData.updatePasswordHash(theStatus, "Database");

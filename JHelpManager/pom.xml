@@ -40,6 +40,12 @@
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
   </properties>
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -115,32 +121,6 @@
           <doUpdate>false</doUpdate>
         </configuration>
       </plugin>
-      <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.7</version>
-        <executions>
-          <execution>
-            <phase>generate-sources</phase>
-            <configuration>
-              <tasks name="generatePropertiesFile">
-                <!-- ensure that the target directory has been created. -->
-                <mkdir dir="target/classes/META-INF/" />
-                <propertyfile file="target/classes/META-INF/${project.artifactId}.properties" comment="Build Details.">
-                  <entry key="name" value="${project.name}"/>
-                  <entry key="group" value="${project.groupId}"/>
-                  <entry key="artifact" value="${project.artifactId}"/>
-                  <entry key="version" value="${project.version}"/>
-                  <entry key="revision" value="${buildNumber}"/>
-                  <entry key="buildTimeStamp" value="${maven.build.timestamp}"/>
-                </propertyfile>
-              </tasks>
-            </configuration>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
   <reporting>
@@ -155,7 +135,7 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>2.9.1</version>
         <configuration>
-          <configLocation>src/main/resources/checkstyle/checks.xml</configLocation>
+          <configLocation>src/main/checkstyle/checks.xml</configLocation>
         </configuration>
       </plugin>
       <plugin>

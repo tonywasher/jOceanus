@@ -409,7 +409,7 @@ public class AccountTab extends JPanelWithEvents {
         /* If we have a selected account */
         if (pAccount != null) {
             /* Create the edit account list */
-            theAcList = myData.getAccounts().getEditList(pAccount);
+            theAcList = myData.getAccounts().deriveEditList(pAccount);
 
             /* Access the account */
             theAccount = theAcList.getAccount();

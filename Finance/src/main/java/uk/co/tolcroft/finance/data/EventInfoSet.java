@@ -35,7 +35,6 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Units;
-import uk.co.tolcroft.finance.data.Event.EventList;
 import uk.co.tolcroft.finance.data.EventData.EventDataList;
 import uk.co.tolcroft.finance.data.EventInfoType.EventInfoTypeList;
 import uk.co.tolcroft.finance.data.EventValue.EventValueList;
@@ -191,7 +190,7 @@ public class EventInfoSet implements JDataContents {
         theDataMap = new EnumMap<EventInfoClass, EventData>(EventInfoClass.class);
 
         /* Access the dataSet */
-        FinanceData myData = ((EventList) pEvent.getList()).getData();
+        FinanceData myData = pEvent.getDataSet();
 
         /* If the underlying event is EDIT */
         if (pEvent.getStyle() == ListStyle.EDIT) {

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JSortedList;
 
+import java.util.Map;
+
 /**
  * Ordered Id list. This provides improved lookup from object to node.
  * @author Tony Washer
@@ -71,5 +73,14 @@ public class OrderedIdList<I, T extends Comparable<T> & OrderedIdItem<I>> extend
     public T findItemById(final I pId) {
         /* Return results */
         return getIndex().findItemById(pId);
+    }
+
+    /**
+     * Obtain an Id Map of the list.
+     * @return the Id map.
+     */
+    public Map<I, T> getIdMap() {
+        /* Return the map */
+        return getIndex().getElementMap();
     }
 }

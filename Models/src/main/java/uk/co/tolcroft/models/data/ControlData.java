@@ -155,25 +155,6 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
                           final ControlData pSource) {
         /* Set standard values */
         super(pList, pSource);
-
-        /* Switch on the LinkStyle */
-        switch (getStyle()) {
-            case CLONE:
-                isolateCopy(pList.getData());
-            case CORE:
-            case COPY:
-                pList.setNewId(this);
-                break;
-            case EDIT:
-                setBase(pSource);
-                break;
-            case UPDATE:
-                setBase(pSource);
-                // setState(pSource.getState());
-                break;
-            default:
-                break;
-        }
     }
 
     /**
@@ -198,7 +179,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
             setValueControlKey(uControlId);
 
             /* Look up the ControlKey */
-            DataSet<?> myData = pList.theData;
+            DataSet<?> myData = getDataSet();
             ControlKeyList myKeys = myData.getControlKeys();
             ControlKey myControl = myKeys.findItemById(uControlId);
             if (myControl == null) {
@@ -206,11 +187,8 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
             }
             setValueControlKey(myControl);
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -221,27 +199,15 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
      * @param pList the owning list
      * @param uId the id
      * @param uVersion the data version
-     * @throws JDataException on error
      */
     private ControlData(final ControlDataList pList,
                         final int uId,
-                        final int uVersion) throws JDataException {
+                        final int uVersion) {
         /* Initialise the item */
         super(pList, uId);
 
-        /* Protect against exceptions */
-        try {
-            /* Record the values */
-            setValueDataVersion(uVersion);
-
-            /* Allocate the id */
-            pList.setNewId(this);
-
-            /* Catch Exceptions */
-        } catch (Exception e) {
-            /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
-        }
+        /* Record the values */
+        setValueDataVersion(uVersion);
     }
 
     @Override
@@ -264,12 +230,10 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
         return super.compareId(pThat);
     }
 
-    /**
-     * Isolate Data Copy.
-     * @param pData the DataSet
-     */
-    private void isolateCopy(final DataSet<?> pData) {
-        ControlKeyList myKeys = pData.getControlKeys();
+    @Override
+    protected void relinkToDataSet() {
+        DataSet<?> myData = getDataSet();
+        ControlKeyList myKeys = myData.getControlKeys();
 
         /* Update to use the local copy of the ControlKeys */
         ControlKey myKey = getControlKey();
@@ -315,19 +279,6 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
             return FIELD_DEFS;
         }
 
-        /**
-         * The owning data set.
-         */
-        private DataSet<?> theData = null;
-
-        /**
-         * Get the owning data set.
-         * @return the data set
-         */
-        public DataSet<?> getData() {
-            return theData;
-        }
-
         @Override
         public String listName() {
             return LIST_NAME;
@@ -351,8 +302,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          * @param pData the DataSet for the list
          */
         protected ControlDataList(final DataSet<?> pData) {
-            super(ControlDataList.class, ControlData.class, pData.getGranularity(), ListStyle.CORE);
-            theData = pData;
+            super(ControlDataList.class, ControlData.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -362,8 +312,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          */
         protected ControlDataList(final DataSet<?> pData,
                                   final ListStyle pStyle) {
-            super(ControlDataList.class, ControlData.class, pData.getGranularity(), pStyle);
-            theData = pData;
+            super(ControlDataList.class, ControlData.class, pData, pStyle);
         }
 
         /**
@@ -372,68 +321,21 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          */
         private ControlDataList(final ControlDataList pSource) {
             super(pSource);
-            theData = pSource.theData;
-        }
-
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the list style
-         * @return the update Extract
-         */
-        private ControlDataList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            ControlDataList myList = new ControlDataList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
         }
 
         @Override
-        public ControlDataList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public ControlDataList getEditList() {
-            return null;
-        }
-
-        @Override
-        public ControlDataList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public ControlDataList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            ControlDataList myList = new ControlDataList(this);
-            myList.theData = pDataSet;
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        protected ControlDataList getDifferences(final ControlDataList pOld) {
-            /* Build an empty Difference List */
-            ControlDataList myList = new ControlDataList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected ControlDataList getEmptyList() {
+            return new ControlDataList(this);
         }
 
         @Override
         public ControlData addNewItem(final DataItem pItem) {
+            /* Can only clone a ControlData */
+            if (!(pItem instanceof ControlData)) {
+                return null;
+            }
+
+            /* Clone the control key */
             ControlData myControl = new ControlData(this, (ControlData) pItem);
             add(myControl);
             theControl = myControl;

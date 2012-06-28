@@ -249,7 +249,7 @@ public class AccountRates extends DataTable<AccountRate> {
             /* Get the Rates edit list */
             FinanceData myData = theView.getData();
             AccountRate.AccountRateList myRates = myData.getRates();
-            theRates = myRates.getEditList(pAccount);
+            theRates = myRates.deriveEditList(pAccount);
         }
 
         /* Declare the list to the underlying table and ViewList */

@@ -42,6 +42,7 @@ import uk.co.tolcroft.finance.data.TaxRegime.TaxRegimeList;
 import uk.co.tolcroft.finance.data.TaxType.TaxTypeList;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.DataSet;
 
 /**
@@ -426,34 +427,31 @@ public class FinanceData extends DataSet<FinanceData> {
         super(pSource);
     }
 
-    /**
-     * Construct an update extract for a FinanceData Set.
-     * @return the extract
-     */
-    public FinanceData getUpdateSet() {
+    @Override
+    public FinanceData deriveUpdateSet() {
         /* Build an empty DataSet */
         FinanceData myExtract = new FinanceData(this);
 
         /* Obtain underlying updates */
-        myExtract.getUpdateSet(this);
+        myExtract.deriveUpdateSet(this);
 
         /* Build the static extract */
-        myExtract.theActTypes = theActTypes.getUpdateList();
-        myExtract.theTransTypes = theTransTypes.getUpdateList();
-        myExtract.theTaxTypes = theTaxTypes.getUpdateList();
-        myExtract.theTaxRegimes = theTaxRegimes.getUpdateList();
-        myExtract.theFrequencys = theFrequencys.getUpdateList();
-        myExtract.theInfoTypes = theInfoTypes.getUpdateList();
+        myExtract.theActTypes = theActTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theTransTypes = theTransTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theTaxTypes = theTaxTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theTaxRegimes = theTaxRegimes.deriveList(ListStyle.UPDATE);
+        myExtract.theFrequencys = theFrequencys.deriveList(ListStyle.UPDATE);
+        myExtract.theInfoTypes = theInfoTypes.deriveList(ListStyle.UPDATE);
 
         /* Build the data extract */
-        myExtract.theTaxYears = theTaxYears.getUpdateList();
-        myExtract.theAccounts = theAccounts.getUpdateList();
-        myExtract.theRates = theRates.getUpdateList();
-        myExtract.thePrices = thePrices.getUpdateList();
-        myExtract.thePatterns = thePatterns.getUpdateList();
-        myExtract.theEvents = theEvents.getUpdateList();
-        myExtract.theEventData = theEventData.getUpdateList();
-        myExtract.theEventValues = theEventValues.getUpdateList();
+        myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.UPDATE);
+        myExtract.theAccounts = theAccounts.deriveList(ListStyle.UPDATE);
+        myExtract.theRates = theRates.deriveList(ListStyle.UPDATE);
+        myExtract.thePrices = thePrices.deriveList(ListStyle.UPDATE);
+        myExtract.thePatterns = thePatterns.deriveList(ListStyle.UPDATE);
+        myExtract.theEvents = theEvents.deriveList(ListStyle.UPDATE);
+        myExtract.theEventData = theEventData.deriveList(ListStyle.UPDATE);
+        myExtract.theEventValues = theEventValues.deriveList(ListStyle.UPDATE);
 
         /* Declare the lists */
         myExtract.declareLists();
@@ -462,35 +460,31 @@ public class FinanceData extends DataSet<FinanceData> {
         return myExtract;
     }
 
-    /**
-     * Construct a Deep Copy for a DataSet.
-     * @return the deep copy
-     */
     @Override
-    public FinanceData getDeepCopy() {
+    public FinanceData deriveCloneSet() {
         /* Build an empty DataSet */
         FinanceData myExtract = new FinanceData(this);
 
         /* Obtain underlying updates */
-        myExtract.getDeepCopy(this);
+        myExtract.deriveCloneSet(this);
 
         /* Build the static extract */
-        myExtract.theActTypes = theActTypes.getDeepCopy(myExtract);
-        myExtract.theTransTypes = theTransTypes.getDeepCopy(myExtract);
-        myExtract.theTaxTypes = theTaxTypes.getDeepCopy(myExtract);
-        myExtract.theTaxRegimes = theTaxRegimes.getDeepCopy(myExtract);
-        myExtract.theFrequencys = theFrequencys.getDeepCopy(myExtract);
-        myExtract.theInfoTypes = theInfoTypes.getDeepCopy(myExtract);
+        myExtract.theActTypes = theActTypes.deriveList(ListStyle.CLONE);
+        myExtract.theTransTypes = theTransTypes.deriveList(ListStyle.CLONE);
+        myExtract.theTaxTypes = theTaxTypes.deriveList(ListStyle.CLONE);
+        myExtract.theTaxRegimes = theTaxRegimes.deriveList(ListStyle.CLONE);
+        myExtract.theFrequencys = theFrequencys.deriveList(ListStyle.CLONE);
+        myExtract.theInfoTypes = theInfoTypes.deriveList(ListStyle.CLONE);
 
         /* Build the data extract */
-        myExtract.theTaxYears = theTaxYears.getDeepCopy(myExtract);
-        myExtract.theAccounts = theAccounts.getDeepCopy(myExtract);
-        myExtract.theRates = theRates.getDeepCopy(myExtract);
-        myExtract.thePrices = thePrices.getDeepCopy(myExtract);
-        myExtract.thePatterns = thePatterns.getDeepCopy(myExtract);
-        myExtract.theEvents = theEvents.getDeepCopy(myExtract);
-        myExtract.theEventData = theEventData.getDeepCopy(myExtract);
-        myExtract.theEventValues = theEventValues.getDeepCopy(myExtract);
+        myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.CLONE);
+        myExtract.theAccounts = theAccounts.deriveList(ListStyle.CLONE);
+        myExtract.theRates = theRates.deriveList(ListStyle.CLONE);
+        myExtract.thePrices = thePrices.deriveList(ListStyle.CLONE);
+        myExtract.thePatterns = thePatterns.deriveList(ListStyle.CLONE);
+        myExtract.theEvents = theEvents.deriveList(ListStyle.CLONE);
+        myExtract.theEventData = theEventData.deriveList(ListStyle.CLONE);
+        myExtract.theEventValues = theEventValues.deriveList(ListStyle.CLONE);
 
         /* Declare the lists */
         myExtract.declareLists();
@@ -514,25 +508,25 @@ public class FinanceData extends DataSet<FinanceData> {
         FinanceData myDiffers = new FinanceData(this);
 
         /* Obtain underlying differences */
-        myDiffers.getDifferenceSet(this, pOld);
+        myDiffers.deriveDifferences(this, pOld);
 
         /* Build the static differences */
-        myDiffers.theActTypes = theActTypes.getDifferences(pOld.getAccountTypes());
-        myDiffers.theTransTypes = theTransTypes.getDifferences(pOld.getTransTypes());
-        myDiffers.theTaxTypes = theTaxTypes.getDifferences(pOld.getTaxTypes());
-        myDiffers.theTaxRegimes = theTaxRegimes.getDifferences(pOld.getTaxRegimes());
-        myDiffers.theFrequencys = theFrequencys.getDifferences(pOld.getFrequencys());
-        myDiffers.theInfoTypes = theInfoTypes.getDifferences(pOld.getInfoTypes());
+        myDiffers.theActTypes = theActTypes.deriveDifferences(pOld.getAccountTypes());
+        myDiffers.theTransTypes = theTransTypes.deriveDifferences(pOld.getTransTypes());
+        myDiffers.theTaxTypes = theTaxTypes.deriveDifferences(pOld.getTaxTypes());
+        myDiffers.theTaxRegimes = theTaxRegimes.deriveDifferences(pOld.getTaxRegimes());
+        myDiffers.theFrequencys = theFrequencys.deriveDifferences(pOld.getFrequencys());
+        myDiffers.theInfoTypes = theInfoTypes.deriveDifferences(pOld.getInfoTypes());
 
         /* Build the data differences */
-        myDiffers.theTaxYears = theTaxYears.getDifferences(pOld.getTaxYears());
-        myDiffers.theAccounts = theAccounts.getDifferences(pOld.getAccounts());
-        myDiffers.theRates = theRates.getDifferences(pOld.getRates());
-        myDiffers.thePrices = thePrices.getDifferences(pOld.getPrices());
-        myDiffers.thePatterns = thePatterns.getDifferences(pOld.getPatterns());
-        myDiffers.theEvents = theEvents.getDifferences(pOld.getEvents());
-        myDiffers.theEventData = theEventData.getDifferences(pOld.getEventData());
-        myDiffers.theEventValues = theEventValues.getDifferences(pOld.getEventValues());
+        myDiffers.theTaxYears = theTaxYears.deriveDifferences(pOld.getTaxYears());
+        myDiffers.theAccounts = theAccounts.deriveDifferences(pOld.getAccounts());
+        myDiffers.theRates = theRates.deriveDifferences(pOld.getRates());
+        myDiffers.thePrices = thePrices.deriveDifferences(pOld.getPrices());
+        myDiffers.thePatterns = thePatterns.deriveDifferences(pOld.getPatterns());
+        myDiffers.theEvents = theEvents.deriveDifferences(pOld.getEvents());
+        myDiffers.theEventData = theEventData.deriveDifferences(pOld.getEventData());
+        myDiffers.theEventValues = theEventValues.deriveDifferences(pOld.getEventValues());
 
         /* Declare the lists */
         myDiffers.declareLists();

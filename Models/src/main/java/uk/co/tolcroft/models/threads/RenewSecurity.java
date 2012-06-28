@@ -73,7 +73,7 @@ public class RenewSecurity<T extends DataSet<T>> extends LoaderThread<T> {
 
         /* Access Data */
         T myData = theControl.getData();
-        myData = myData.getDeepCopy();
+        myData = myData.deriveCloneSet();
 
         /* ReNew Security */
         myData.renewSecurity(theStatus);

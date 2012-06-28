@@ -36,6 +36,7 @@ import net.sourceforge.JGordianKnot.SecureManager;
 import uk.co.tolcroft.models.data.ControlData.ControlDataList;
 import uk.co.tolcroft.models.data.ControlKey.ControlKeyList;
 import uk.co.tolcroft.models.data.DataKey.DataKeyList;
+import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.EncryptedItem.EncryptedList;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 
@@ -264,31 +265,37 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     }
 
     /**
-     * Construct a Deep Copy for for a DataSet.
-     * @return the copied dataSet
+     * Construct a Clone for a DataSet.
+     * @return the extract
      */
-    public abstract T getDeepCopy();
+    public abstract T deriveCloneSet();
 
     /**
-     * Construct a Deep Copy for a DataSet.
+     * Construct a Clone for a DataSet.
      * @param pSource the source DataSet
      */
-    protected void getDeepCopy(final DataSet<T> pSource) {
-        /* Deep Copy the Security items */
-        theControlKeys = pSource.getControlKeys().getDeepCopy(this);
-        theDataKeys = pSource.getDataKeys().getDeepCopy(this);
-        theControlData = pSource.getControlData().getDeepCopy(this);
+    protected void deriveCloneSet(final DataSet<T> pSource) {
+        /* Clone the Security items */
+        theControlKeys = pSource.getControlKeys().deriveList(ListStyle.CLONE);
+        theDataKeys = pSource.getDataKeys().deriveList(ListStyle.CLONE);
+        theControlData = pSource.getControlData().deriveList(ListStyle.CLONE);
     }
+
+    /**
+     * Construct an update extract for a FinanceData Set.
+     * @return the extract
+     */
+    public abstract T deriveUpdateSet();
 
     /**
      * Construct an update extract for a DataSet.
      * @param pSource the source of the extract
      */
-    protected void getUpdateSet(final T pSource) {
+    protected void deriveUpdateSet(final T pSource) {
         /* Build the static differences */
-        theControlKeys = pSource.getControlKeys().getUpdateList();
-        theDataKeys = pSource.getDataKeys().getUpdateList();
-        theControlData = pSource.getControlData().getUpdateList();
+        theControlKeys = pSource.getControlKeys().deriveList(ListStyle.UPDATE);
+        theDataKeys = pSource.getDataKeys().deriveList(ListStyle.UPDATE);
+        theControlData = pSource.getControlData().deriveList(ListStyle.UPDATE);
     }
 
     /**
@@ -311,12 +318,12 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      * @param pOld The old list to compare
      * @throws JDataException on error
      */
-    protected void getDifferenceSet(final T pNew,
-                                    final T pOld) throws JDataException {
+    protected void deriveDifferences(final T pNew,
+                                     final T pOld) throws JDataException {
         /* Build the security differences */
-        theControlKeys = pNew.getControlKeys().getDifferences(pOld.getControlKeys());
-        theDataKeys = pNew.getDataKeys().getDifferences(pOld.getDataKeys());
-        theControlData = pNew.getControlData().getDifferences(pOld.getControlData());
+        theControlKeys = pNew.getControlKeys().deriveDifferences(pOld.getControlKeys());
+        theDataKeys = pNew.getDataKeys().deriveDifferences(pOld.getDataKeys());
+        theControlData = pNew.getControlData().deriveDifferences(pOld.getControlData());
     }
 
     /**

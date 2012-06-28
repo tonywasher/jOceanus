@@ -363,7 +363,7 @@ public class AccountPatterns extends DataTable<Event> {
             /* Get the Patterns edit list */
             FinanceData myData = theView.getData();
             PatternList myPatterns = myData.getPatterns();
-            thePatterns = myPatterns.getEditList(pAccount);
+            thePatterns = myPatterns.deriveEditList(pAccount);
         }
 
         /* Declare the list to the underlying table and view list */

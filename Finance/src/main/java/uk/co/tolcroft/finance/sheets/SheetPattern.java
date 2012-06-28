@@ -202,6 +202,11 @@ public class SheetPattern extends SheetDataItem<Event> {
 
     @Override
     protected void insertItem(final Event pItem) throws JDataException {
+        /* Can only handle a pattern */
+        if (!(pItem instanceof Pattern)) {
+            return;
+        }
+
         Pattern myItem = (Pattern) pItem;
 
         /* If we are creating a backup */

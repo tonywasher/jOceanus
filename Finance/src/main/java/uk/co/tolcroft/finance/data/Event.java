@@ -49,11 +49,9 @@ import uk.co.tolcroft.finance.data.Pattern.PatternList;
 import uk.co.tolcroft.finance.data.StaticClass.EventInfoClass;
 import uk.co.tolcroft.finance.data.TaxYear.TaxYearList;
 import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
-import uk.co.tolcroft.finance.views.Statement;
+import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataList.ListStyle;
-import uk.co.tolcroft.models.data.DataSet;
 import uk.co.tolcroft.models.data.EncryptedItem;
 
 /**
@@ -157,7 +155,9 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     @Override
     public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = (EncryptedValueSet) pValues;
+        if (pValues instanceof EncryptedValueSet) {
+            theValueSet = (EncryptedValueSet) pValues;
+        }
     }
 
     /**
@@ -708,6 +708,11 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     @Override
+    public FinanceData getDataSet() {
+        return (FinanceData) super.getDataSet();
+    }
+
+    @Override
     public Event getBase() {
         return (Event) super.getBase();
     }
@@ -735,54 +740,12 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                  final Event pEvent) {
         /* Set standard values */
         super(pList, pEvent);
-        ListStyle myOldStyle = pEvent.getStyle();
 
-        /* Determine whether infoSet is needed */
-        boolean bNeedInfoSet = requiredInfoSet();
-
-        /* Switch on the ListStyle */
-        switch (getStyle()) {
-            case EDIT:
-                /* Create a copy of the infoSet if required */
-                if (bNeedInfoSet) {
-                    theInfoSet = new EventInfoSet(this, pEvent.theInfoSet);
-                }
-
-                /* If this is a view creation */
-                if (myOldStyle == ListStyle.CORE) {
-                    /* Event is based on the original element */
-                    setBase(pEvent);
-                    pList.setNewId(this);
-                    break;
-                }
-
-                /* Else this is a duplication so treat as new item */
-                setId(0);
-                pList.setNewId(this);
-
-                break;
-            case CLONE:
-                reBuildLinks(pList.getData());
-            case COPY:
-            case CORE:
-                /* Create a new infoSet if required */
-                if (bNeedInfoSet) {
-                    theInfoSet = new EventInfoSet(this);
-                }
-
-                /* Reset Id if this is an insert from a view */
-                if (myOldStyle == ListStyle.EDIT) {
-                    setId(0);
-                }
-                pList.setNewId(this);
-                break;
-            case UPDATE:
-                setBase(pEvent);
-                // setState(pEvent.getState());
-                break;
-            default:
-                break;
+        /* Create a new infoSet if required */
+        if (requiredInfoSet()) {
+            theInfoSet = new EventInfoSet(this);
         }
+
     }
 
     /**
@@ -799,9 +762,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         if (requiredInfoSet()) {
             theInfoSet = new EventInfoSet(this);
         }
-
-        /* Allocate the id */
-        pList.setNewId(this);
     }
 
     /**
@@ -816,8 +776,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         if (requiredInfoSet()) {
             theInfoSet = new EventInfoSet(this);
         }
-
-        pList.setNewId(this);
     }
 
     /**
@@ -855,14 +813,9 @@ public class Event extends EncryptedItem implements Comparable<Event> {
 
         /* Protect against exceptions */
         try {
-            /* Local variables */
-            TransactionType myTransType;
-            Account myAccount;
-            AccountList myAccounts;
-
             /* Access account list */
-            FinanceData myData = pList.getData();
-            myAccounts = myData.getAccounts();
+            FinanceData myData = getDataSet();
+            AccountList myAccounts = myData.getAccounts();
 
             /* Create a new EventInfoSet if required */
             if (requiredInfoSet()) {
@@ -879,7 +832,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             setValueDate(new DateDay(pDate));
 
             /* Look up the Debit Account */
-            myAccount = myAccounts.findItemById(uDebit);
+            Account myAccount = myAccounts.findItemById(uDebit);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Debit Account Id");
             }
@@ -893,7 +846,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             setValueCredit(myAccount);
 
             /* Look up the Transaction Type */
-            myTransType = myData.getTransTypes().findItemById(uTransType);
+            TransactionType myTransType = myData.getTransTypes().findItemById(uTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Transaction Type Id");
             }
@@ -909,11 +862,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             setValueTaxCredit(pTaxCredit);
             setValueDilution(pDilution);
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -966,9 +916,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
 
             setValueAmount(new Money(pAmount));
 
-            /* Allocate the id */
-            pList.setNewId(this);
-
             /* If Units exist */
             if (pUnits != null) {
                 /* Create the data */
@@ -1018,7 +965,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             }
 
             /* Catch Exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
@@ -1062,17 +1009,15 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         return super.compareId(pThat);
     }
 
-    /**
-     * Rebuild Links to partner data.
-     * @param pData the DataSet
-     */
-    protected void reBuildLinks(final FinanceData pData) {
+    @Override
+    protected void relinkToDataSet() {
         /* Update the Encryption details */
-        super.reBuildLinks(pData);
+        super.relinkToDataSet();
 
         /* Access Lists */
-        AccountList myAccounts = pData.getAccounts();
-        TransTypeList myTranTypes = pData.getTransTypes();
+        FinanceData myData = getDataSet();
+        AccountList myAccounts = myData.getAccounts();
+        TransTypeList myTranTypes = myData.getTransTypes();
 
         /* Update credit to use the local copy of the Accounts */
         Account myAct = getCredit();
@@ -1688,7 +1633,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the calculated tax credit
      */
     public Money calculateTaxCredit() {
-        FinanceData myData = ((EventList) getList()).getData();
+        FinanceData myData = getDataSet();
         TaxYearList myList = myData.getTaxYears();
         TaxYear myTax;
         Rate myRate;
@@ -1885,17 +1830,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * Format an Event.
-     * @param pEvent the event to format
-     * @return the formatted event
-     */
-    public static String format(final Event pEvent) {
-        String myFormat;
-        myFormat = (pEvent != null) ? pEvent.getDesc() : "null";
-        return myFormat;
-    }
-
-    /**
      * List class for Events.
      */
     public static class EventList extends EncryptedList<EventList, Event> {
@@ -1929,8 +1863,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         private DateDayRange theRange = null;
 
         @Override
-        public FinanceData getData() {
-            return (FinanceData) super.getData();
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
         }
 
         /**
@@ -1965,62 +1899,9 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             super(pSource);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the style
-         * @return the update Extract
-         */
-        private EventList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            EventList myList = new EventList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
         @Override
-        public EventList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
-        }
-
-        @Override
-        public EventList getEditList() {
-            return getExtractList(ListStyle.EDIT);
-        }
-
-        @Override
-        public EventList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public EventList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            EventList myList = new EventList(this);
-            myList.setData(pDataSet);
-            myList.setRange(theRange);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        @Override
-        protected EventList getDifferences(final EventList pOld) {
-            /* Build an empty Difference List */
-            EventList myList = new EventList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        protected EventList getEmptyList() {
+            return new EventList(this);
         }
 
         /**
@@ -2029,9 +1910,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          */
         public EventList getViewList() {
             /* Build an empty List */
-            EventList myList = new EventList(this);
-
-            /* Make this list the correct style */
+            EventList myList = getEmptyList();
             myList.setStyle(ListStyle.VIEW);
 
             /* Return it */
@@ -2043,11 +1922,9 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @param pRange the range
          * @return the edit list
          */
-        public EventList getEditList(final DateDayRange pRange) {
+        public EventList deriveEditList(final DateDayRange pRange) {
             /* Build an empty List */
-            EventList myList = new EventList(this);
-
-            /* Make this list the correct style */
+            EventList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
             myList.theRange = pRange;
 
@@ -2081,16 +1958,14 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @return the edit list
          * @throws JDataException on error
          */
-        public EventList getEditList(final TaxYear pTaxYear) throws JDataException {
+        public EventList deriveEditList(final TaxYear pTaxYear) throws JDataException {
             /* Build an empty List */
-            EventList myList = new EventList(this);
-
-            /* Make this list the correct style */
+            EventList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
             myList.theRange = pTaxYear.getRange();
 
             /* Access the underlying data */
-            PatternList myPatterns = getData().getPatterns();
+            PatternList myPatterns = getDataSet().getPatterns();
             Iterator<Event> myIterator = myPatterns.iterator();
             Event myEvent;
 
@@ -2142,8 +2017,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 Event myEvent = new Event(this, (Event) pItem);
                 add(myEvent);
                 return myEvent;
-            } else if (pItem instanceof Statement.StatementLine) {
-                Event myEvent = new Event(this, (Statement.StatementLine) pItem);
+            } else if (pItem instanceof StatementLine) {
+                Event myEvent = new Event(this, (StatementLine) pItem);
                 add(myEvent);
                 return myEvent;
             }
@@ -2194,7 +2069,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                             final String pDilution,
                             final Integer pYears) throws JDataException {
             /* Access the accounts */
-            FinanceData myData = getData();
+            FinanceData myData = getDataSet();
             AccountList myAccounts = myData.getAccounts();
 
             /* Look up the Transaction Type */

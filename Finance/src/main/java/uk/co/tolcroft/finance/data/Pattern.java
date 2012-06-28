@@ -45,7 +45,6 @@ import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
 import uk.co.tolcroft.finance.views.Statement.StatementLine;
 import uk.co.tolcroft.models.data.DataItem;
 import uk.co.tolcroft.models.data.DataList;
-import uk.co.tolcroft.models.data.DataSet;
 
 /**
  * Pattern data type.
@@ -130,7 +129,9 @@ public class Pattern extends Event {
     @Override
     public void declareValues(final ValueSet pValues) {
         super.declareValues(pValues);
-        theValueSet = (EncryptedValueSet) pValues;
+        if (pValues instanceof EncryptedValueSet) {
+            theValueSet = (EncryptedValueSet) pValues;
+        }
     }
 
     /**
@@ -263,7 +264,6 @@ public class Pattern extends Event {
                    final StatementLine pLine) {
         /* Set standard values */
         super(pList, pLine);
-        pList.setNewId(this);
 
         /* Adjust the date so that it is in the correct range */
         DateDay myDate = new DateDay(getDate());
@@ -306,16 +306,13 @@ public class Pattern extends Event {
         super(pList, uId, uControlId, pDate, pDesc, uAccountId, uPartnerId, uTransId, pAmount, null, null,
                 null, null);
 
-        /* Local variables */
-        Frequency myFreq;
-
         /* Record the IDs */
         setValueFrequency(uFreqId);
 
         /* Access the Frequencys */
-        FinanceData myData = pList.getData();
+        FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
-        myFreq = myFrequencies.findItemById(uFreqId);
+        Frequency myFreq = myFrequencies.findItemById(uFreqId);
         if (myFreq == null) {
             throw new JDataException(ExceptionClass.DATA, this, "Invalid Frequency Id");
         }
@@ -357,17 +354,14 @@ public class Pattern extends Event {
         setValueIsCredit(isCredit);
     }
 
-    /**
-     * Rebuild Links to partner data.
-     * @param pData the DataSet
-     */
     @Override
-    protected void reBuildLinks(final FinanceData pData) {
+    protected void relinkToDataSet() {
         /* Update the Event details */
-        super.reBuildLinks(pData);
+        super.relinkToDataSet();
 
         /* Access Lists */
-        FrequencyList myFrequencys = pData.getFrequencys();
+        FinanceData myData = getDataSet();
+        FrequencyList myFrequencys = myData.getFrequencys();
 
         /* Update frequency to use the local copy */
         Frequency myFreq = getFrequency();
@@ -402,16 +396,13 @@ public class Pattern extends Event {
     public Event nextEvent(final EventList pEvents,
                            final TaxYear pTaxYear,
                            final DateDay pDate) throws JDataException {
-        Event myEvent;
-        TaxYear myBase;
-        int iAdjust;
-
         /* Access the frequency */
         FreqClass myFreq = getFrequency().getFrequency();
         DateDay myDate;
+        int iAdjust;
 
         /* Access the Tax Year list */
-        FinanceData myData = pEvents.getData();
+        FinanceData myData = getDataSet();
         TaxYearList myList = myData.getTaxYears();
 
         /* If this is the first request for an event */
@@ -422,7 +413,7 @@ public class Pattern extends Event {
                 myDate = getAccount().getMaturity();
 
                 /* Obtain the relevant tax year */
-                myBase = myList.findTaxYearForDate(getDate());
+                TaxYear myBase = myList.findTaxYearForDate(getDate());
 
                 /* Ignore if no maturity or else not this year */
                 if ((myDate == null) || (myBase == null) || (myBase.compareTo(pTaxYear) != 0)) {
@@ -487,7 +478,7 @@ public class Pattern extends Event {
         }
 
         /* Build the new linked event */
-        myEvent = new Event(pEvents, this);
+        Event myEvent = new Event(pEvents, this);
 
         /* Set the date for this event */
         myEvent.setDate(new DateDay(pDate));
@@ -538,6 +529,11 @@ public class Pattern extends Event {
      */
     @Override
     public boolean applyChanges(final DataItem pPattern) {
+        /* Can only update from Pattern */
+        if (!(pPattern instanceof Pattern)) {
+            return false;
+        }
+
         Pattern myPattern = (Pattern) pPattern;
 
         /* Store the current detail into history */
@@ -635,11 +631,6 @@ public class Pattern extends Event {
          */
         private Account theAccount = null;
 
-        @Override
-        public FinanceData getData() {
-            return (FinanceData) super.getData();
-        }
-
         /**
          * Obtain the account.
          * @return the account
@@ -666,66 +657,19 @@ public class Pattern extends Event {
             setRange(RANGE_PATTERN);
         }
 
-        /**
-         * Construct an update extract for the List.
-         * @param pStyle the style
-         * @return the update Extract
-         */
-        private PatternList getExtractList(final ListStyle pStyle) {
-            /* Build an empty Extract List */
-            PatternList myList = new PatternList(this);
-
-            /* Obtain underlying updates */
-            myList.populateList(pStyle);
-
-            /* Return the list */
-            return myList;
-        }
-
-        /* Obtain extract lists. */
         @Override
-        public PatternList getUpdateList() {
-            return getExtractList(ListStyle.UPDATE);
+        protected PatternList getEmptyList() {
+            return new PatternList(this);
         }
 
         @Override
-        public PatternList getEditList() {
-            return null;
+        public PatternList deriveList(final ListStyle pStyle) {
+            return (PatternList) super.deriveList(pStyle);
         }
 
         @Override
-        public PatternList getShallowCopy() {
-            return getExtractList(ListStyle.COPY);
-        }
-
-        @Override
-        public PatternList getDeepCopy(final DataSet<?> pDataSet) {
-            /* Build an empty Extract List */
-            PatternList myList = new PatternList(this);
-            myList.setData(pDataSet);
-
-            /* Obtain underlying clones */
-            myList.populateList(ListStyle.CLONE);
-            myList.setStyle(ListStyle.CORE);
-
-            /* Return the list */
-            return myList;
-        }
-
-        /**
-         * Construct a difference Pattern list.
-         * @param pOld the old Pattern list
-         * @return the difference list
-         */
-        protected PatternList getDifferences(final PatternList pOld) {
-            /* Build an empty Difference List */
-            PatternList myList = new PatternList(this);
-
-            /* Calculate the differences */
-            myList.getDifferenceList(this, pOld);
-
-            /* Return the list */
-            return myList;
+        public PatternList deriveDifferences(final EventList pSource) {
+            return (PatternList) super.deriveDifferences(pSource);
         }
 
         /**
@@ -733,11 +677,9 @@ public class Pattern extends Event {
          * @param pAccount The account to extract patterns for
          * @return the edit list
          */
-        public PatternList getEditList(final Account pAccount) {
+        public PatternList deriveEditList(final Account pAccount) {
             /* Build an empty Update */
-            PatternList myList = new PatternList(this);
-
-            /* Make this list the correct style */
+            PatternList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
             myList.theAccount = pAccount;
 
@@ -774,6 +716,11 @@ public class Pattern extends Event {
          */
         @Override
         public Pattern addNewItem(final DataItem pPattern) {
+            /* Can only clone from Pattern */
+            if (!(pPattern instanceof Pattern)) {
+                return null;
+            }
+
             Pattern myPattern = new Pattern(this, (Pattern) pPattern);
             add(myPattern);
             return myPattern;
@@ -786,6 +733,7 @@ public class Pattern extends Event {
         @Override
         public Pattern addNewItem() {
             Pattern myPattern = new Pattern(this);
+
             /* Set the Date as the start of the range */
             myPattern.setDate(getRange().getStart());
             add(myPattern);
@@ -840,7 +788,7 @@ public class Pattern extends Event {
                             final String pFrequency,
                             final boolean isCredit) throws JDataException {
             /* Access the Lists */
-            FinanceData myData = getData();
+            FinanceData myData = getDataSet();
             AccountList myAccounts = myData.getAccounts();
             TransTypeList myTranTypes = myData.getTransTypes();
             FrequencyList myFrequencies = myData.getFrequencys();
