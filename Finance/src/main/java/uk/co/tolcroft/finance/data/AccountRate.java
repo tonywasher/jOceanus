@@ -88,24 +88,11 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField("EndDate");
 
     /**
-     * The active set of values.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
-    /**
      * Obtain Rate.
      * @return the rate
      */
     public Rate getRate() {
-        return getRate(theValueSet);
+        return getRate(getValueSet());
     }
 
     /**
@@ -113,7 +100,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @return the Bytes
      */
     public byte[] getRateBytes() {
-        return getRateBytes(theValueSet);
+        return getRateBytes(getValueSet());
     }
 
     /**
@@ -121,7 +108,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @return the Field
      */
     private EncryptedRate getRateField() {
-        return getRateField(theValueSet);
+        return getRateField(getValueSet());
     }
 
     /**
@@ -129,7 +116,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @return the bonus rate
      */
     public Rate getBonus() {
-        return getBonus(theValueSet);
+        return getBonus(getValueSet());
     }
 
     /**
@@ -137,7 +124,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @return the Bytes
      */
     public byte[] getBonusBytes() {
-        return getBonusBytes(theValueSet);
+        return getBonusBytes(getValueSet());
     }
 
     /**
@@ -145,7 +132,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @return the Field
      */
     private EncryptedRate getBonusField() {
-        return getBonusField(theValueSet);
+        return getBonusField(getValueSet());
     }
 
     /**
@@ -161,7 +148,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @return the End Date
      */
     public DateDay getEndDate() {
-        return getEndDate(theValueSet);
+        return getEndDate(getValueSet());
     }
 
     /**
@@ -169,7 +156,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @return the account
      */
     public Account getAccount() {
-        return getAccount(theValueSet);
+        return getAccount(getValueSet());
     }
 
     /**
@@ -257,7 +244,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValue the account
      */
     private void setValueAccount(final Account pValue) {
-        theValueSet.setValue(FIELD_ACCOUNT, pValue);
+        getValueSet().setValue(FIELD_ACCOUNT, pValue);
     }
 
     /**
@@ -265,7 +252,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pId the account id
      */
     private void setValueAccount(final Integer pId) {
-        theValueSet.setValue(FIELD_ACCOUNT, pId);
+        getValueSet().setValue(FIELD_ACCOUNT, pId);
     }
 
     /**
@@ -300,7 +287,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValue the rate
      */
     private void setValueRate(final EncryptedRate pValue) {
-        theValueSet.setValue(FIELD_RATE, pValue);
+        getValueSet().setValue(FIELD_RATE, pValue);
     }
 
     /**
@@ -335,7 +322,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValue the bonus
      */
     private void setValueBonus(final EncryptedRate pValue) {
-        theValueSet.setValue(FIELD_BONUS, pValue);
+        getValueSet().setValue(FIELD_BONUS, pValue);
     }
 
     /**
@@ -343,7 +330,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValue the date
      */
     private void setValueEndDate(final DateDay pValue) {
-        theValueSet.setValue(FIELD_ENDDATE, pValue);
+        getValueSet().setValue(FIELD_ENDDATE, pValue);
     }
 
     @Override

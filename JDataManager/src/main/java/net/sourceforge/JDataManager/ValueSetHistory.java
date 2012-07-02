@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
+import java.util.ListIterator;
 import java.util.Stack;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -37,29 +38,42 @@ public class ValueSetHistory implements JDataContents {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(ValueSetHistory.class.getSimpleName());
+    protected JDataFields theLocalFields;
 
     @Override
     public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
+        /* Allocate new local fields */
+        theLocalFields = new JDataFields(ValueSetHistory.class.getSimpleName());
 
-    /**
-     * Stack Field Id.
-     */
-    public static final JDataField FIELD_STACK = FIELD_DEFS.declareEqualityField("Stack");
+        /* Loop through the fields */
+        ListIterator<ValueSetDelta> myIterator = theDeltas.listIterator(theDeltas.size());
+        while (myIterator.hasPrevious()) {
+            /* Access the Delta */
+            ValueSetDelta myDelta = myIterator.previous();
+
+            /* Declare the field */
+            theLocalFields.declareIndexField(ValueSet.FIELD_VERSION + "(" + myDelta.getVersion() + ")");
+        }
+
+        return theLocalFields;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (FIELD_STACK.equals(pField)) {
-            return theStack;
+        /* Access the index */
+        int myIndex = pField.getIndex();
+        int mySize = theDeltas.size();
+        if ((myIndex < 0) || (myIndex >= mySize)) {
+            return JDataFieldValue.UnknownField;
         }
-        return JDataFieldValue.UnknownField;
+
+        /* Access the delta */
+        return theDeltas.get(mySize - myIndex - 1);
     }
 
     @Override
     public String formatObject() {
-        return FIELD_DEFS.getName() + "(" + theStack.size() + ")";
+        return ValueSetHistory.class.getSimpleName() + "(" + theStack.size() + ")";
     }
 
     /**
@@ -78,11 +92,17 @@ public class ValueSetHistory implements JDataContents {
     private final Stack<ValueSet> theStack;
 
     /**
+     * The stack of valueSetDelta fields.
+     */
+    private final Stack<ValueSetDelta> theDeltas;
+
+    /**
      * Constructor.
      */
     public ValueSetHistory() {
         /* Allocate the stack */
         theStack = new Stack<ValueSet>();
+        theDeltas = new Stack<ValueSetDelta>();
     }
 
     /**
@@ -94,6 +114,7 @@ public class ValueSetHistory implements JDataContents {
         theCurr = pValues;
         theOriginal = theCurr;
         theStack.clear();
+        theDeltas.clear();
     }
 
     /**
@@ -121,6 +142,9 @@ public class ValueSetHistory implements JDataContents {
         ValueSet mySet = theCurr.cloneIt();
         mySet.setVersion(pVersion);
 
+        /* Add the delta to the stack */
+        theDeltas.push(new ValueSetDelta(mySet, theCurr));
+
         /* Add old values to the stack and record new values */
         theStack.push(theCurr);
         theCurr = mySet;
@@ -137,6 +161,7 @@ public class ValueSetHistory implements JDataContents {
         if (hasHistory()) {
             /* Remove it from the list */
             theCurr = theStack.pop();
+            theDeltas.pop();
 
             /* Declare the active set */
             theCurr.declareActive();
@@ -173,6 +198,7 @@ public class ValueSetHistory implements JDataContents {
     public void clearHistory() {
         /* Remove all history */
         theStack.clear();
+        theDeltas.clear();
         theOriginal = theCurr;
         theOriginal.setVersion(0);
     }
@@ -183,6 +209,7 @@ public class ValueSetHistory implements JDataContents {
     public void resetHistory() {
         /* Remove all history */
         theStack.clear();
+        theDeltas.clear();
         theCurr = theOriginal;
         theCurr.declareActive();
     }
@@ -196,6 +223,9 @@ public class ValueSetHistory implements JDataContents {
         theOriginal = theCurr.cloneIt();
         theOriginal.copyFrom(pBase);
         theStack.push(theOriginal);
+
+        /* Add the delta to the stack */
+        theDeltas.push(new ValueSetDelta(theCurr, theOriginal));
     }
 
     /**

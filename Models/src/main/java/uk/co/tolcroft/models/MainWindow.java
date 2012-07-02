@@ -573,24 +573,17 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Set visibility.
      */
     public void setVisibility() {
-        boolean hasUpdates;
-        boolean hasChanges;
-        boolean hasWorker;
-
         /* Determine whether we have any updates */
-        hasUpdates = hasUpdates();
-        hasChanges = hasChanges();
+        boolean hasUpdates = hasUpdates();
+        boolean hasChanges = hasChanges();
 
         /* Note whether we have a worker thread */
-        hasWorker = hasWorker();
+        boolean hasWorker = hasWorker();
 
         /* Disable menus if we have a worker thread */
         theDataMenu.setEnabled(!hasWorker);
         theBackupMenu.setEnabled(!hasWorker);
         theSecureMenu.setEnabled(!hasWorker);
-
-        /* Enable/Disable the debug menu item */
-        // theShowDebug.setVisible(theProperties.doShowDebug());
 
         /* If we have changes disable the create backup options */
         theWriteBackup.setEnabled(!hasChanges && !hasUpdates);
@@ -626,7 +619,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Has the underlying data got changes.
      * @return true/false
      */
-    protected boolean hasChanges() {
+    protected final boolean hasChanges() {
         return theView.getData().hasUpdates();
     }
 
@@ -640,7 +633,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * Is a worker active.
      * @return true/false
      */
-    protected boolean hasWorker() {
+    protected final boolean hasWorker() {
         return (theThread != null);
     }
 

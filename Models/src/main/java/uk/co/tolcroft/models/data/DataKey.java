@@ -98,22 +98,11 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
     public static final int KEYLEN = SymmetricKey.IDSIZE;
 
     /**
-     * The active set of values.
-     */
-    private ValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        theValueSet = pValues;
-    }
-
-    /**
      * Get the ControlKey.
      * @return the controlKey
      */
     public ControlKey getControlKey() {
-        return getControlKey(theValueSet);
+        return getControlKey(getValueSet());
     }
 
     /**
@@ -121,7 +110,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @return the key type
      */
     public SymKeyType getKeyType() {
-        return getKeyType(theValueSet);
+        return getKeyType(getValueSet());
     }
 
     /**
@@ -129,7 +118,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @return the key definition
      */
     public byte[] getSecuredKeyDef() {
-        return getSecuredKeyDef(theValueSet);
+        return getSecuredKeyDef(getValueSet());
     }
 
     /**
@@ -137,7 +126,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @return the data key
      */
     protected SymmetricKey getDataKey() {
-        return getDataKey(theValueSet);
+        return getDataKey(getValueSet());
     }
 
     /**
@@ -145,7 +134,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @return the cipher
      */
     protected DataCipher getCipher() {
-        return getCipher(theValueSet);
+        return getCipher(getValueSet());
     }
 
     /**
@@ -153,7 +142,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @return the passwordHash
      */
     protected PasswordHash getPasswordHash() {
-        return getPasswordHash(theValueSet);
+        return getPasswordHash(getValueSet());
     }
 
     /**
@@ -215,7 +204,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @param pValue the controlKey
      */
     private void setValueControlKey(final ControlKey pValue) {
-        theValueSet.setValue(FIELD_CONTROLKEY, pValue);
+        getValueSet().setValue(FIELD_CONTROLKEY, pValue);
     }
 
     /**
@@ -223,7 +212,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @param pId the controlKey id
      */
     private void setValueControlKey(final Integer pId) {
-        theValueSet.setValue(FIELD_CONTROLKEY, pId);
+        getValueSet().setValue(FIELD_CONTROLKEY, pId);
     }
 
     /**
@@ -231,7 +220,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @param pValue the KeyType
      */
     private void setValueKeyType(final SymKeyType pValue) {
-        theValueSet.setValue(FIELD_KEYTYPE, pValue);
+        getValueSet().setValue(FIELD_KEYTYPE, pValue);
     }
 
     /**
@@ -239,7 +228,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @param pId the KeyType id
      */
     private void setValueKeyType(final Integer pId) {
-        theValueSet.setValue(FIELD_KEYTYPE, pId);
+        getValueSet().setValue(FIELD_KEYTYPE, pId);
     }
 
     /**
@@ -247,7 +236,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @param pValue the KeyDefinition
      */
     private void setValueSecuredKeyDef(final byte[] pValue) {
-        theValueSet.setValue(FIELD_KEYDEF, pValue);
+        getValueSet().setValue(FIELD_KEYDEF, pValue);
     }
 
     /**
@@ -255,7 +244,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @param pValue the dataKey
      */
     private void setValueDataKey(final SymmetricKey pValue) {
-        theValueSet.setValue(FIELD_KEY, pValue);
+        getValueSet().setValue(FIELD_KEY, pValue);
     }
 
     /**
@@ -263,7 +252,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @param pValue the cipher
      */
     private void setValueCipher(final DataCipher pValue) {
-        theValueSet.setValue(FIELD_CIPHER, pValue);
+        getValueSet().setValue(FIELD_CIPHER, pValue);
     }
 
     /**
@@ -271,7 +260,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @param pValue the passwordHash
      */
     private void setValuePasswordHash(final PasswordHash pValue) {
-        theValueSet.setValue(FIELD_HASH, pValue);
+        getValueSet().setValue(FIELD_HASH, pValue);
     }
 
     @Override

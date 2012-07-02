@@ -14,7 +14,7 @@
   </dependencies>
   <licenses>
     <license>
-      <name>The Apache Software Licence, Version 2.0</name>
+      <name>The Apache Software License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>manual</distribution>
     </license>
@@ -41,7 +41,8 @@
     <url>http://Tony-LapTop/viewvc/finance/JDateDay</url>
   </scm>
   <properties>
-    <backup-dir>../../backup/lib</backup-dir>
+    <demo-name>${project.artifactId}-${project.version}</demo-name>
+    <demo-dir>${project.build.directory}/site/demo</demo-dir>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
   </properties>
   <build>
@@ -52,6 +53,22 @@
       </resource>
     </resources>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.7</version>
+        <configuration>
+          <finalName>${project.artifactId}-${project.version}-uber</finalName>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
@@ -72,17 +89,17 @@
                   <type>${project.packaging}</type>
                 </artifactItem>
               </artifactItems>
-              <outputDirectory>${backup-dir}</outputDirectory>
+              <outputDirectory>${demo-dir}</outputDirectory>
             </configuration>
-          </execution>
+          </execution>          
           <execution>
-            <id>copy-dependencies</id>
+            <id>copy-demo-dependencies</id>
             <phase>install</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <outputDirectory>${backup-dir}</outputDirectory>
+              <outputDirectory>${demo-dir}</outputDirectory>
             </configuration>
           </execution>
         </executions>

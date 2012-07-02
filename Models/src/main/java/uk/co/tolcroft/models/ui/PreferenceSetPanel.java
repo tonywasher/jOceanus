@@ -35,7 +35,9 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -82,6 +84,22 @@ public class PreferenceSetPanel extends JPanelWithEvents {
      * Integer width.
      */
     private static final int WIDTH_INTEGER = 10;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PreferenceSetPanel.class
+            .getName());
+
+    /**
+     * Text for Preferences Title.
+     */
+    private static final String NLS_PREFERENCES = NLS_BUNDLE.getString("PreferencesTitle");
+
+    /**
+     * Text for Options Title.
+     */
+    private static final String NLS_OPTIONS = NLS_BUNDLE.getString("OptionsTitle");
 
     /**
      * The PreferenceSet for this panel.
@@ -171,7 +189,7 @@ public class PreferenceSetPanel extends JPanelWithEvents {
         theList = new ArrayList<PreferenceElement>();
 
         /* Set a border */
-        setBorder(javax.swing.BorderFactory.createTitledBorder("Preferences"));
+        setBorder(BorderFactory.createTitledBorder(NLS_PREFERENCES));
 
         /* Set the layout for this panel */
         setLayout(new GridBagLayout());
@@ -193,7 +211,7 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                         /* Create options */
                         myOptions = new JPanel();
                         myOptions.setLayout(new FlowLayout(FlowLayout.LEADING));
-                        myOptions.setBorder(javax.swing.BorderFactory.createTitledBorder("Options"));
+                        myOptions.setBorder(BorderFactory.createTitledBorder(NLS_OPTIONS));
                     }
 
                     /* Add the item to the options panel */

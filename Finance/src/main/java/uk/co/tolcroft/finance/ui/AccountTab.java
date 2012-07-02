@@ -429,12 +429,11 @@ public class AccountTab extends JPanelWithEvents {
      * Set tabs to be visible or not depending on the type of account.
      */
     private void setVisibleTabs() {
-        int iIndex;
         boolean isPatternsSelected = false;
         boolean isPricesSelected = false;
 
         /* Access the Rates index */
-        iIndex = theTabs.indexOfTab(TITLE_RATES);
+        int iIndex = theTabs.indexOfTab(TITLE_RATES);
 
         /* If the account has rates */
         if ((theAccount != null) && (theAccount.isMoney())) {

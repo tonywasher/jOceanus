@@ -274,6 +274,7 @@ public class ZipReadFile {
 
             /* Handle entry not found */
             if (myEntry == null) {
+                myZipFile.close();
                 throw new JDataException(ExceptionClass.DATA, "File not found - " + pFile.getFileName());
             }
 

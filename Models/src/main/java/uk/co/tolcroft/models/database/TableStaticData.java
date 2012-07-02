@@ -34,11 +34,6 @@ import uk.co.tolcroft.models.database.TableDefinition.SortOrder;
  */
 public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableEncrypted<T> {
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      * @param pTabName the table name
@@ -46,26 +41,13 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
     protected TableStaticData(final Database<?> pDatabase,
                               final String pTabName) {
         super(pDatabase, pTabName);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        /* Define Standard table */
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
-
-        /* Define sort column variable */
-        ColumnDefinition mySortCol;
 
         /* Define the columns */
-        theTableDef.addBooleanColumn(StaticData.FIELD_ENABLED);
-        mySortCol = theTableDef.addIntegerColumn(StaticData.FIELD_ORDER);
-        theTableDef.addEncryptedColumn(StaticData.FIELD_NAME, StaticData.NAMELEN);
-        theTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.DESCLEN);
+        TableDefinition myTableDef = getTableDef();
+        myTableDef.addBooleanColumn(StaticData.FIELD_ENABLED);
+        ColumnDefinition mySortCol = myTableDef.addIntegerColumn(StaticData.FIELD_ORDER);
+        myTableDef.addEncryptedColumn(StaticData.FIELD_NAME, StaticData.NAMELEN);
+        myTableDef.addNullEncryptedColumn(StaticData.FIELD_DESC, StaticData.DESCLEN);
 
         /* Declare the sort order */
         mySortCol.setSortOrder(SortOrder.ASCENDING);
@@ -91,16 +73,12 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
     @Override
     protected void loadItem(final int pId,
                             final int pControlId) throws JDataException {
-        int myOrder;
-        boolean myEnabled;
-        byte[] myType;
-        byte[] myDesc;
-
         /* Get the various fields */
-        myEnabled = theTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
-        myOrder = theTableDef.getIntegerValue(StaticData.FIELD_ORDER);
-        myType = theTableDef.getBinaryValue(StaticData.FIELD_NAME);
-        myDesc = theTableDef.getBinaryValue(StaticData.FIELD_DESC);
+        TableDefinition myTableDef = getTableDef();
+        boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
+        int myOrder = myTableDef.getIntegerValue(StaticData.FIELD_ORDER);
+        byte[] myType = myTableDef.getBinaryValue(StaticData.FIELD_NAME);
+        byte[] myDesc = myTableDef.getBinaryValue(StaticData.FIELD_DESC);
 
         /* Add into the list */
         loadTheItem(pId, pControlId, myEnabled, myOrder, myType, myDesc);
@@ -110,14 +88,15 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
     protected void setFieldValue(final T pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (iField == StaticData.FIELD_ENABLED) {
-            theTableDef.setBooleanValue(iField, pItem.getEnabled());
+            myTableDef.setBooleanValue(iField, pItem.getEnabled());
         } else if (iField == StaticData.FIELD_ORDER) {
-            theTableDef.setIntegerValue(iField, pItem.getOrder());
+            myTableDef.setIntegerValue(iField, pItem.getOrder());
         } else if (iField == StaticData.FIELD_NAME) {
-            theTableDef.setBinaryValue(iField, pItem.getNameBytes());
+            myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (iField == StaticData.FIELD_DESC) {
-            theTableDef.setBinaryValue(iField, pItem.getDescBytes());
+            myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else {
             super.setFieldValue(pItem, iField);
         }

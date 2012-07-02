@@ -46,11 +46,6 @@ public class TableEventData extends TableEncrypted<EventData> {
     protected static final String TABLE_NAME = EventData.LIST_NAME;
 
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * The event data list.
      */
     private EventDataList theList = null;
@@ -61,25 +56,13 @@ public class TableEventData extends TableEncrypted<EventData> {
      */
     protected TableEventData(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        /* Define sort column variable */
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
-
-        /* Define sort column variable */
-        ColumnDefinition myEvtCol;
+        TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        theTableDef.addReferenceColumn(EventData.FIELD_INFOTYPE, TableEventInfoType.TABLE_NAME);
-        myEvtCol = theTableDef.addReferenceColumn(EventData.FIELD_EVENT, TableEvent.TABLE_NAME);
-        theTableDef.addEncryptedColumn(EventData.FIELD_VALUE, EncryptedData.MONEYLEN);
+        myTableDef.addReferenceColumn(EventData.FIELD_INFOTYPE, TableEventInfoType.TABLE_NAME);
+        ColumnDefinition myEvtCol = myTableDef.addReferenceColumn(EventData.FIELD_EVENT,
+                                                                  TableEvent.TABLE_NAME);
+        myTableDef.addEncryptedColumn(EventData.FIELD_VALUE, EncryptedData.MONEYLEN);
 
         /* Declare the sort order */
         myEvtCol.setSortOrder(SortOrder.ASCENDING);
@@ -96,9 +79,10 @@ public class TableEventData extends TableEncrypted<EventData> {
     protected void loadItem(final int pId,
                             final int pControlId) throws JDataException {
         /* Get the various fields */
-        int myInfoTypId = theTableDef.getIntegerValue(EventData.FIELD_INFOTYPE);
-        int myEventId = theTableDef.getIntegerValue(EventData.FIELD_EVENT);
-        byte[] myValue = theTableDef.getBinaryValue(EventData.FIELD_VALUE);
+        TableDefinition myTableDef = getTableDef();
+        int myInfoTypId = myTableDef.getIntegerValue(EventData.FIELD_INFOTYPE);
+        int myEventId = myTableDef.getIntegerValue(EventData.FIELD_EVENT);
+        byte[] myValue = myTableDef.getBinaryValue(EventData.FIELD_VALUE);
 
         /* Add into the list */
         theList.addItem(pId, pControlId, myInfoTypId, myEventId, myValue);
@@ -108,12 +92,13 @@ public class TableEventData extends TableEncrypted<EventData> {
     protected void setFieldValue(final EventData pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (iField == EventData.FIELD_INFOTYPE) {
-            theTableDef.setIntegerValue(EventData.FIELD_INFOTYPE, pItem.getInfoType().getId());
+            myTableDef.setIntegerValue(EventData.FIELD_INFOTYPE, pItem.getInfoType().getId());
         } else if (iField == EventData.FIELD_EVENT) {
-            theTableDef.setIntegerValue(EventData.FIELD_EVENT, pItem.getEvent().getId());
+            myTableDef.setIntegerValue(EventData.FIELD_EVENT, pItem.getEvent().getId());
         } else if (iField == EventData.FIELD_VALUE) {
-            theTableDef.setBinaryValue(EventData.FIELD_VALUE, pItem.getValueBytes());
+            myTableDef.setBinaryValue(EventData.FIELD_VALUE, pItem.getValueBytes());
         } else {
             super.setFieldValue(pItem, iField);
         }

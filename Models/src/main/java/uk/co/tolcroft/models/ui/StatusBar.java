@@ -25,6 +25,7 @@ package uk.co.tolcroft.models.ui;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -64,6 +65,31 @@ public class StatusBar {
      * Timer duration.
      */
     private static final int TIMER_DURATION = 5000;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StatusBar.class.getName());
+
+    /**
+     * Text for Clear Button.
+     */
+    private static final String NLS_CLEAR = NLS_BUNDLE.getString("ClearButton");
+
+    /**
+     * Text for Clear Button.
+     */
+    private static final String NLS_CANCEL = NLS_BUNDLE.getString("CancelButton");
+
+    /**
+     * Text for Clear Button.
+     */
+    private static final String NLS_PROGRESS = NLS_BUNDLE.getString("ProgressTitle");
+
+    /**
+     * Text for Clear Button.
+     */
+    private static final String NLS_STATUS = NLS_BUNDLE.getString("StatusTitle");
 
     /**
      * Progress panel.
@@ -180,8 +206,8 @@ public class StatusBar {
         theDataEntry = pData.getDataEntry(DataControl.DATA_ERROR);
 
         /* Create the boxes */
-        theCancel = new JButton("Cancel");
-        theClear = new JButton("Clear");
+        theCancel = new JButton(NLS_CANCEL);
+        theClear = new JButton(NLS_CLEAR);
         theTaskLabel = new JLabel();
         theStageLabel = new JLabel();
         theStatusLabel = new JLabel();
@@ -211,7 +237,7 @@ public class StatusBar {
 
         /* Create the progress panel */
         theProgPanel = new JPanel();
-        theProgPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Progress"));
+        theProgPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(NLS_PROGRESS));
 
         /* Create the layout for the save panel */
         panelLayout = new GroupLayout(theProgPanel);
@@ -268,7 +294,7 @@ public class StatusBar {
 
         /* Create the status panel */
         theStatPanel = new JPanel();
-        theStatPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Status"));
+        theStatPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(NLS_STATUS));
 
         /* Create the layout for the save panel */
         panelLayout = new GroupLayout(theStatPanel);

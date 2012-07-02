@@ -73,22 +73,11 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
     public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField("ControlKey");
 
     /**
-     * The active set of values.
-     */
-    private ValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        theValueSet = pValues;
-    }
-
-    /**
      * Get the data version.
      * @return data version
      */
     public Integer getDataVersion() {
-        return getDataVersion(theValueSet);
+        return getDataVersion(getValueSet());
     }
 
     /**
@@ -96,7 +85,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
      * @return the control key
      */
     public ControlKey getControlKey() {
-        return getControlKey(theValueSet);
+        return getControlKey(getValueSet());
     }
 
     /**
@@ -122,7 +111,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
      * @param pValue the value
      */
     private void setValueDataVersion(final Integer pValue) {
-        theValueSet.setValue(FIELD_VERSION, pValue);
+        getValueSet().setValue(FIELD_VERSION, pValue);
     }
 
     /**
@@ -130,7 +119,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
      * @param pValue the value
      */
     private void setValueControlKey(final ControlKey pValue) {
-        theValueSet.setValue(FIELD_CONTROLKEY, pValue);
+        getValueSet().setValue(FIELD_CONTROLKEY, pValue);
     }
 
     /**
@@ -138,7 +127,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
      * @param pId the value
      */
     private void setValueControlKey(final Integer pId) {
-        theValueSet.setValue(FIELD_CONTROLKEY, pId);
+        getValueSet().setValue(FIELD_CONTROLKEY, pId);
     }
 
     @Override

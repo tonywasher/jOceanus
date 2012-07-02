@@ -148,24 +148,11 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * The active set of values.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
-    /**
      * Obtain Date.
      * @return the date
      */
     public DateDay getDate() {
-        return getDate(theValueSet);
+        return getDate(getValueSet());
     }
 
     /**
@@ -173,7 +160,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the description
      */
     public String getDesc() {
-        return getDesc(theValueSet);
+        return getDesc(getValueSet());
     }
 
     /**
@@ -181,7 +168,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the bytes
      */
     public byte[] getDescBytes() {
-        return getDescBytes(theValueSet);
+        return getDescBytes(getValueSet());
     }
 
     /**
@@ -189,15 +176,15 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the Field
      */
     protected EncryptedString getDescField() {
-        return getDescField(theValueSet);
+        return getDescField(getValueSet());
     }
 
     /**
      * Obtain transaction Type.
      * @return the tranType
      */
-    public TransactionType getTransType() {
-        return getTransType(theValueSet);
+    public final TransactionType getTransType() {
+        return getTransType(getValueSet());
     }
 
     /**
@@ -205,7 +192,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the amount
      */
     public Money getAmount() {
-        return getAmount(theValueSet);
+        return getAmount(getValueSet());
     }
 
     /**
@@ -213,7 +200,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the bytes
      */
     public byte[] getAmountBytes() {
-        return getAmountBytes(theValueSet);
+        return getAmountBytes(getValueSet());
     }
 
     /**
@@ -221,7 +208,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the Field
      */
     protected EncryptedMoney getAmountField() {
-        return getAmountField(theValueSet);
+        return getAmountField(getValueSet());
     }
 
     /**
@@ -229,7 +216,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the debit
      */
     public Account getDebit() {
-        return getDebit(theValueSet);
+        return getDebit(getValueSet());
     }
 
     /**
@@ -237,7 +224,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the credit
      */
     public Account getCredit() {
-        return getCredit(theValueSet);
+        return getCredit(getValueSet());
     }
 
     /**
@@ -245,7 +232,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the units
      */
     public Units getUnits() {
-        return getUnits(theValueSet);
+        return getUnits(getValueSet());
     }
 
     /**
@@ -253,7 +240,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the bytes
      */
     public byte[] getUnitsBytes() {
-        return getUnitsBytes(theValueSet);
+        return getUnitsBytes(getValueSet());
     }
 
     /**
@@ -261,7 +248,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the Field
      */
     private EncryptedUnits getUnitsField() {
-        return getUnitsField(theValueSet);
+        return getUnitsField(getValueSet());
     }
 
     /**
@@ -269,7 +256,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the tax credit
      */
     public Money getTaxCredit() {
-        return getTaxCredit(theValueSet);
+        return getTaxCredit(getValueSet());
     }
 
     /**
@@ -277,7 +264,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the bytes
      */
     public byte[] getTaxCreditBytes() {
-        return getTaxCreditBytes(theValueSet);
+        return getTaxCreditBytes(getValueSet());
     }
 
     /**
@@ -285,7 +272,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the Field
      */
     private EncryptedMoney getTaxCreditField() {
-        return getTaxCreditField(theValueSet);
+        return getTaxCreditField(getValueSet());
     }
 
     /**
@@ -293,7 +280,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the dilution
      */
     public Dilution getDilution() {
-        return getDilution(theValueSet);
+        return getDilution(getValueSet());
     }
 
     /**
@@ -301,7 +288,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the bytes
      */
     public byte[] getDilutionBytes() {
-        return getDilutionBytes(theValueSet);
+        return getDilutionBytes(getValueSet());
     }
 
     /**
@@ -309,7 +296,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the Field
      */
     private EncryptedDilution getDilutionField() {
-        return getDilutionField(theValueSet);
+        return getDilutionField(getValueSet());
     }
 
     /**
@@ -317,7 +304,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @return the years
      */
     public Integer getYears() {
-        return getYears(theValueSet);
+        return getYears(getValueSet());
     }
 
     /**
@@ -505,7 +492,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      */
     private void setValueDate(final DateDay pValue) {
-        theValueSet.setValue(FIELD_DATE, pValue);
+        getValueSet().setValue(FIELD_DATE, pValue);
     }
 
     /**
@@ -530,8 +517,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Set description value.
      * @param pValue the value
      */
-    protected void setValueDesc(final EncryptedString pValue) {
-        theValueSet.setValue(FIELD_DESC, pValue);
+    protected final void setValueDesc(final EncryptedString pValue) {
+        getValueSet().setValue(FIELD_DESC, pValue);
     }
 
     /**
@@ -539,7 +526,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      */
     private void setValueTransType(final TransactionType pValue) {
-        theValueSet.setValue(FIELD_TRNTYP, pValue);
+        getValueSet().setValue(FIELD_TRNTYP, pValue);
     }
 
     /**
@@ -547,7 +534,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pId the id
      */
     private void setValueTransType(final Integer pId) {
-        theValueSet.setValue(FIELD_TRNTYP, pId);
+        getValueSet().setValue(FIELD_TRNTYP, pId);
     }
 
     /**
@@ -572,8 +559,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Set amount value.
      * @param pValue the value
      */
-    protected void setValueAmount(final EncryptedMoney pValue) {
-        theValueSet.setValue(FIELD_AMOUNT, pValue);
+    protected final void setValueAmount(final EncryptedMoney pValue) {
+        getValueSet().setValue(FIELD_AMOUNT, pValue);
     }
 
     /**
@@ -581,7 +568,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      */
     private void setValueDebit(final Account pValue) {
-        theValueSet.setValue(FIELD_DEBIT, pValue);
+        getValueSet().setValue(FIELD_DEBIT, pValue);
     }
 
     /**
@@ -589,7 +576,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pId the value
      */
     private void setValueDebit(final Integer pId) {
-        theValueSet.setValue(FIELD_DEBIT, pId);
+        getValueSet().setValue(FIELD_DEBIT, pId);
     }
 
     /**
@@ -597,7 +584,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      */
     private void setValueCredit(final Account pValue) {
-        theValueSet.setValue(FIELD_CREDIT, pValue);
+        getValueSet().setValue(FIELD_CREDIT, pValue);
     }
 
     /**
@@ -605,7 +592,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pId the id
      */
     private void setValueCredit(final Integer pId) {
-        theValueSet.setValue(FIELD_CREDIT, pId);
+        getValueSet().setValue(FIELD_CREDIT, pId);
     }
 
     /**
@@ -631,7 +618,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      */
     private void setValueUnits(final EncryptedUnits pValue) {
-        theValueSet.setValue(FIELD_UNITS, pValue);
+        getValueSet().setValue(FIELD_UNITS, pValue);
     }
 
     /**
@@ -657,7 +644,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      */
     private void setValueTaxCredit(final EncryptedMoney pValue) {
-        theValueSet.setValue(FIELD_TAXCREDIT, pValue);
+        getValueSet().setValue(FIELD_TAXCREDIT, pValue);
     }
 
     /**
@@ -683,7 +670,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      */
     private void setValueDilution(final EncryptedDilution pValue) {
-        theValueSet.setValue(FIELD_DILUTION, pValue);
+        getValueSet().setValue(FIELD_DILUTION, pValue);
     }
 
     /**
@@ -691,7 +678,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      */
     private void setValueYears(final Integer pValue) {
-        theValueSet.setValue(FIELD_YEARS, pValue);
+        getValueSet().setValue(FIELD_YEARS, pValue);
     }
 
     /**
@@ -708,7 +695,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     @Override
-    public FinanceData getDataSet() {
+    public final FinanceData getDataSet() {
         return (FinanceData) super.getDataSet();
     }
 
@@ -1563,7 +1550,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Determines whether an event is a stock split.
      * @return stock split true/false
      */
-    public boolean isStockSplit() {
+    public final boolean isStockSplit() {
         /* Check for stock split */
         return ((getTransType() != null) && (getTransType().isStockSplit()));
     }
@@ -1572,7 +1559,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Determines whether an event is an Admin Charge.
      * @return admin charge true/false
      */
-    public boolean isAdminCharge() {
+    public final boolean isAdminCharge() {
         /* Check for Admin charge */
         return ((getTransType() != null) && (getTransType().isAdminCharge()));
     }

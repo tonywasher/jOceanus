@@ -26,6 +26,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -54,9 +55,19 @@ public class ErrorPanel extends JPanelWithEvents {
     private static final int STRUT_WIDTH = 10;
 
     /**
-     * The parent panel.
+     * Resource Bundle.
      */
-    // private final StdPanel theParent;
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ErrorPanel.class.getName());
+
+    /**
+     * Text for Clear Button.
+     */
+    private static final String NLS_CLEAR = NLS_BUNDLE.getString("ClearButton");
+
+    /**
+     * Text for Box title.
+     */
+    private static final String NLS_TITLE = NLS_BUNDLE.getString("BoxTitle");
 
     /**
      * The error field.
@@ -102,13 +113,13 @@ public class ErrorPanel extends JPanelWithEvents {
         theErrorField = new JLabel();
 
         /* Create the clear button */
-        theClearButton = new JButton("Clear");
+        theClearButton = new JButton(NLS_CLEAR);
 
         /* Add the listener for item changes */
         theClearButton.addActionListener(new ErrorListener());
 
         /* Create the error panel */
-        setBorder(BorderFactory.createTitledBorder("Error"));
+        setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));

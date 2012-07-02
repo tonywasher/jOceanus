@@ -82,6 +82,14 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
     }
 
     /**
+     * Obtain table definition.
+     * @return the table definition
+     */
+    protected TableDefinition getTableDef() {
+        return theTable;
+    }
+
+    /**
      * Constructor.
      * @param pDatabase the database control
      * @param pTable the table name
@@ -92,14 +100,6 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
         theDatabase = pDatabase;
         theConn = theDatabase.getConn();
         theTable = new TableDefinition(theDatabase.getDriver(), pTable);
-        defineTable(theTable);
-    }
-
-    /**
-     * define the table columns.
-     * @param pTableDef the Table definition
-     */
-    protected void defineTable(final TableDefinition pTableDef) {
     }
 
     /**

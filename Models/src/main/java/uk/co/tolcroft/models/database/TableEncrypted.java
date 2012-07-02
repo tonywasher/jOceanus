@@ -32,11 +32,6 @@ import uk.co.tolcroft.models.data.EncryptedItem;
  */
 public abstract class TableEncrypted<T extends EncryptedItem & Comparable<T>> extends DatabaseTable<T> {
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      * @param pTabName the table name
@@ -44,17 +39,8 @@ public abstract class TableEncrypted<T extends EncryptedItem & Comparable<T>> ex
     protected TableEncrypted(final Database<?> pDatabase,
                              final String pTabName) {
         super(pDatabase, pTabName);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
-        theTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, TableControlKeys.TABLE_NAME);
+        TableDefinition myTableDef = getTableDef();
+        myTableDef.addReferenceColumn(EncryptedItem.FIELD_CONTROL, TableControlKeys.TABLE_NAME);
     }
 
     /**
@@ -68,10 +54,9 @@ public abstract class TableEncrypted<T extends EncryptedItem & Comparable<T>> ex
 
     @Override
     protected void loadItem(final int pId) throws JDataException {
-        int myControlId;
-
         /* Get the various fields */
-        myControlId = theTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
+        TableDefinition myTableDef = getTableDef();
+        int myControlId = myTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
 
         /* Add into the list */
         loadItem(pId, myControlId);
@@ -81,8 +66,9 @@ public abstract class TableEncrypted<T extends EncryptedItem & Comparable<T>> ex
     protected void setFieldValue(final T pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (iField == EncryptedItem.FIELD_CONTROL) {
-            theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
+            myTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
         } else {
             super.setFieldValue(pItem, iField);
         }

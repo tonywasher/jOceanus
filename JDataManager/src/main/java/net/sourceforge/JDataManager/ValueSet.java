@@ -37,6 +37,16 @@ public class ValueSet {
     private static final int DELETION_HASH = 3;
 
     /**
+     * the name of the version field.
+     */
+    public static final String FIELD_VERSION = "Version";
+
+    /**
+     * the name of the deletion field.
+     */
+    public static final String FIELD_DELETION = "isDeletion";
+
+    /**
      * The item to which the valueSet belongs.
      */
     private final JDataValues theItem;
@@ -200,6 +210,16 @@ public class ValueSet {
 
         /* Return the value */
         return theValues[pField.getIndex()];
+    }
+
+    /**
+     * Get the indexed value.
+     * @param pIndex the index
+     * @return the value
+     */
+    protected Object getValue(final int pIndex) {
+        /* Return the value */
+        return theValues[pIndex];
     }
 
     /**

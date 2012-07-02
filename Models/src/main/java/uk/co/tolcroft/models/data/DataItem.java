@@ -68,7 +68,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     private ValueSet theValueSet;
 
     @Override
-    public void declareValues(final ValueSet pValues) {
+    public final void declareValues(final ValueSet pValues) {
         theValueSet = pValues;
     }
 
@@ -100,7 +100,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     /**
      * Deleted Field Id.
      */
-    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField("isDeleted");
+    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(ValueSet.FIELD_DELETION);
 
     /**
      * DataState Field Id.
@@ -115,7 +115,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField("Version");
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ValueSet.FIELD_VERSION);
 
     /**
      * History Field Id.

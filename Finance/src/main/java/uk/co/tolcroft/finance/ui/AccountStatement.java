@@ -378,9 +378,6 @@ public class AccountStatement extends DataTable<Event> {
                                   .addContainerGap()
                                   .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
                                                                          false)
-                                                    .addComponent(theError, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                     .addGroup(myLayout.createSequentialGroup()
                                                                       .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                                                                         .addComponent(theSelect,
@@ -402,7 +399,6 @@ public class AccountStatement extends DataTable<Event> {
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                 .addGroup(GroupLayout.Alignment.TRAILING,
                           myLayout.createSequentialGroup()
-                                  .addComponent(theError)
                                   .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                                     .addComponent(theSelect).addComponent(theStateBox))
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,

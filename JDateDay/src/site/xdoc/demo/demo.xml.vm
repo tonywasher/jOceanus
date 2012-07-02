@@ -1,0 +1,18 @@
+<document>
+  <properties>
+    <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    <title>JDateDay Demo</title>
+  </properties>
+  <body>
+    <section name="Overview">
+      <p>Demo of JDateDay capabilities.</p>
+    </section>
+
+    <section name="Demo">
+      <applet code = 'net.sourceforge.JDateDay.Demo.DateDayExample' 
+        archive = '${demo-name}.jar'
+        width = "450" 
+        height = "300"></applet>      
+    </section>
+  </body>
+</document>

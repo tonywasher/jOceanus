@@ -86,24 +86,11 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField("Price");
 
     /**
-     * The active set of values.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
-    /**
      * Obtain Price.
      * @return the price
      */
     public Price getPrice() {
-        return getPrice(theValueSet);
+        return getPrice(getValueSet());
     }
 
     /**
@@ -111,7 +98,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @return the Bytes
      */
     public byte[] getPriceBytes() {
-        return getPriceBytes(theValueSet);
+        return getPriceBytes(getValueSet());
     }
 
     /**
@@ -119,7 +106,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @return the field
      */
     public EncryptedPrice getPriceField() {
-        return getPriceField(theValueSet);
+        return getPriceField(getValueSet());
     }
 
     /**
@@ -127,7 +114,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @return the date
      */
     public DateDay getDate() {
-        return getDate(theValueSet);
+        return getDate(getValueSet());
     }
 
     /**
@@ -135,7 +122,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @return the account
      */
     public Account getAccount() {
-        return getAccount(theValueSet);
+        return getAccount(getValueSet());
     }
 
     /**
@@ -196,7 +183,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pValue the account
      */
     private void setValueAccount(final Account pValue) {
-        theValueSet.setValue(FIELD_ACCOUNT, pValue);
+        getValueSet().setValue(FIELD_ACCOUNT, pValue);
     }
 
     /**
@@ -204,7 +191,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pId the account id
      */
     private void setValueAccount(final Integer pId) {
-        theValueSet.setValue(FIELD_ACCOUNT, pId);
+        getValueSet().setValue(FIELD_ACCOUNT, pId);
     }
 
     /**
@@ -239,7 +226,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pValue the price
      */
     public void setValuePrice(final EncryptedPrice pValue) {
-        theValueSet.setValue(FIELD_PRICE, pValue);
+        getValueSet().setValue(FIELD_PRICE, pValue);
     }
 
     /**
@@ -247,7 +234,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pValue the date
      */
     private void setValueDate(final DateDay pValue) {
-        theValueSet.setValue(FIELD_DATE, pValue);
+        getValueSet().setValue(FIELD_DATE, pValue);
     }
 
     @Override

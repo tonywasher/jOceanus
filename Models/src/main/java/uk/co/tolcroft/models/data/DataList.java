@@ -59,9 +59,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Declare fields.
      * @return the fields
      */
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
+    public abstract JDataFields declareFields();
 
     /**
      * Size Field Id.

@@ -24,6 +24,7 @@ package uk.co.tolcroft.models.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -59,6 +60,31 @@ public class SaveButtons extends JPanelWithEvents {
     public static final String CMD_RESET = "RESET";
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SaveButtons.class.getName());
+
+    /**
+     * Text for OK Button.
+     */
+    private static final String NLS_OK = NLS_BUNDLE.getString("OKButton");
+
+    /**
+     * Text for Undo Button.
+     */
+    private static final String NLS_UNDO = NLS_BUNDLE.getString("UndoButton");
+
+    /**
+     * Text for Reset Button.
+     */
+    private static final String NLS_RESET = NLS_BUNDLE.getString("ResetButton");
+
+    /**
+     * Text for Box Title.
+     */
+    private static final String NLS_TITLE = NLS_BUNDLE.getString("BoxTitle");
+
+    /**
      * The update set.
      */
     private final transient UpdateSet theUpdateSet;
@@ -84,9 +110,9 @@ public class SaveButtons extends JPanelWithEvents {
      */
     public SaveButtons(final UpdateSet pUpdateSet) {
         /* Create the boxes */
-        theOKButton = new JButton("OK");
-        theUndoButton = new JButton("Undo");
-        theResetButton = new JButton("Reset");
+        theOKButton = new JButton(NLS_OK);
+        theUndoButton = new JButton(NLS_UNDO);
+        theResetButton = new JButton(NLS_RESET);
 
         /* Record the update set */
         theUpdateSet = pUpdateSet;
@@ -98,7 +124,7 @@ public class SaveButtons extends JPanelWithEvents {
         theResetButton.addActionListener(myListener);
 
         /* Create the save panel */
-        setBorder(BorderFactory.createTitledBorder("Save Options"));
+        setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
         /* Define the layout */
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));

@@ -36,7 +36,6 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.finance.data.Account.AccountList;
 import uk.co.tolcroft.finance.data.Frequency.FrequencyList;
 import uk.co.tolcroft.finance.data.StaticClass.FreqClass;
@@ -122,24 +121,11 @@ public class Pattern extends Event {
     }
 
     /**
-     * The active set of values.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
-    /**
      * Obtain Frequency.
      * @return the frequency
      */
     public Frequency getFrequency() {
-        return getFrequency(theValueSet);
+        return getFrequency(getValueSet());
     }
 
     /**
@@ -147,7 +133,7 @@ public class Pattern extends Event {
      * @return true/false
      */
     public boolean isCredit() {
-        return isCredit(theValueSet);
+        return isCredit(getValueSet());
     }
 
     /**
@@ -198,7 +184,7 @@ public class Pattern extends Event {
      * @param isCredit true/false
      */
     private void setValueIsCredit(final Boolean isCredit) {
-        theValueSet.setValue(FIELD_ISCREDIT, isCredit);
+        getValueSet().setValue(FIELD_ISCREDIT, isCredit);
     }
 
     /**
@@ -206,7 +192,7 @@ public class Pattern extends Event {
      * @param pValue the frequency
      */
     private void setValueFrequency(final Frequency pValue) {
-        theValueSet.setValue(FIELD_FREQ, pValue);
+        getValueSet().setValue(FIELD_FREQ, pValue);
     }
 
     /**
@@ -214,7 +200,7 @@ public class Pattern extends Event {
      * @param pId the frequency id
      */
     private void setValueFrequency(final Integer pId) {
-        theValueSet.setValue(FIELD_FREQ, pId);
+        getValueSet().setValue(FIELD_FREQ, pId);
     }
 
     @Override

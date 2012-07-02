@@ -80,22 +80,11 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
     public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareDerivedValueField("Account");
 
     /**
-     * The active set of values.
-     */
-    private ValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        theValueSet = pValues;
-    }
-
-    /**
      * Obtain InfoType.
      * @return the Info type
      */
     public EventInfoType getInfoType() {
-        return getInfoType(theValueSet);
+        return getInfoType(getValueSet());
     }
 
     /**
@@ -103,7 +92,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @return the Event
      */
     public Event getEvent() {
-        return getEvent(theValueSet);
+        return getEvent(getValueSet());
     }
 
     /**
@@ -111,7 +100,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @return the Value
      */
     public Integer getValue() {
-        return getValue(theValueSet);
+        return getValue(getValueSet());
     }
 
     /**
@@ -119,7 +108,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @return the Account
      */
     public Account getAccount() {
-        return getAccount(theValueSet);
+        return getAccount(getValueSet());
     }
 
     /**
@@ -163,7 +152,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @param pValue the info Type
      */
     private void setValueInfoType(final EventInfoType pValue) {
-        theValueSet.setValue(FIELD_INFOTYPE, pValue);
+        getValueSet().setValue(FIELD_INFOTYPE, pValue);
     }
 
     /**
@@ -171,7 +160,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @param pId the info Type id
      */
     private void setValueInfoType(final Integer pId) {
-        theValueSet.setValue(FIELD_INFOTYPE, pId);
+        getValueSet().setValue(FIELD_INFOTYPE, pId);
     }
 
     /**
@@ -179,7 +168,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @param pValue the event
      */
     private void setValueEvent(final Event pValue) {
-        theValueSet.setValue(FIELD_EVENT, pValue);
+        getValueSet().setValue(FIELD_EVENT, pValue);
     }
 
     /**
@@ -187,7 +176,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @param pId the event id
      */
     private void setValueEvent(final Integer pId) {
-        theValueSet.setValue(FIELD_EVENT, pId);
+        getValueSet().setValue(FIELD_EVENT, pId);
     }
 
     /**
@@ -195,7 +184,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @param pValue the value
      */
     private void setValueValue(final Integer pValue) {
-        theValueSet.setValue(FIELD_VALUE, pValue);
+        getValueSet().setValue(FIELD_VALUE, pValue);
     }
 
     /**
@@ -203,7 +192,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @param pValue the account
      */
     private void setValueAccount(final Account pValue) {
-        theValueSet.setValue(FIELD_ACCOUNT, pValue);
+        getValueSet().setValue(FIELD_ACCOUNT, pValue);
     }
 
     @Override

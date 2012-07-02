@@ -33,7 +33,6 @@ import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.DilutedPrice;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountPrice;
 import uk.co.tolcroft.finance.views.DilutionEvent.DilutionEventList;
@@ -80,24 +79,11 @@ public class ViewPrice extends AccountPrice {
     private final boolean hasDilutions;
 
     /**
-     * The active set of values.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
-    /**
      * Obtain dilution.
      * @return the dilution
      */
     public Dilution getDilution() {
-        return getDilution(theValueSet);
+        return getDilution(getValueSet());
     }
 
     /**
@@ -105,7 +91,7 @@ public class ViewPrice extends AccountPrice {
      * @return the diluted price
      */
     public DilutedPrice getDilutedPrice() {
-        return getDilutedPrice(theValueSet);
+        return getDilutedPrice(getValueSet());
     }
 
     /**
@@ -131,7 +117,7 @@ public class ViewPrice extends AccountPrice {
      * @param pValue the dilution
      */
     private void setValueDilution(final Dilution pValue) {
-        theValueSet.setValue(FIELD_DILUTION, pValue);
+        getValueSet().setValue(FIELD_DILUTION, pValue);
     }
 
     /**
@@ -139,7 +125,7 @@ public class ViewPrice extends AccountPrice {
      * @param pValue the diluted price
      */
     private void setValueDilutedPrice(final DilutedPrice pValue) {
-        theValueSet.setValue(FIELD_DILUTEDPRICE, pValue);
+        getValueSet().setValue(FIELD_DILUTEDPRICE, pValue);
     }
 
     @Override
@@ -150,7 +136,7 @@ public class ViewPrice extends AccountPrice {
     /**
      * Calculate Diluted values.
      */
-    protected void calculateDiluted() {
+    protected final void calculateDiluted() {
         /* Access the list for the item */
         ViewPriceList myList = (ViewPriceList) getList();
 

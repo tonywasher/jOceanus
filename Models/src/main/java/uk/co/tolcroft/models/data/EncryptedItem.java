@@ -46,22 +46,9 @@ public abstract class EncryptedItem extends DataItem {
     protected static final JDataFields FIELD_DEFS = new JDataFields(EncryptedItem.class.getSimpleName(),
             DataItem.FIELD_DEFS);
 
-    /**
-     * Value set for item.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
     @Override
     public EncryptedValueSet getValueSet() {
-        return theValueSet;
+        return (EncryptedValueSet) super.getValueSet();
     }
 
     @Override
@@ -85,7 +72,7 @@ public abstract class EncryptedItem extends DataItem {
      * @return the ControlKey
      */
     public ControlKey getControlKey() {
-        return getControlKey(theValueSet);
+        return getControlKey(getValueSet());
     }
 
     /**
@@ -102,7 +89,7 @@ public abstract class EncryptedItem extends DataItem {
      * @param pKey the control key
      */
     private void setValueControlKey(final ControlKey pKey) {
-        theValueSet.setValue(FIELD_CONTROL, pKey);
+        getValueSet().setValue(FIELD_CONTROL, pKey);
         theGenerator = pKey.getFieldGenerator();
     }
 
@@ -111,7 +98,7 @@ public abstract class EncryptedItem extends DataItem {
      * @param pId the control key id
      */
     private void setValueControlKey(final Integer pId) {
-        theValueSet.setValue(FIELD_CONTROL, pId);
+        getValueSet().setValue(FIELD_CONTROL, pId);
     }
 
     /**
@@ -177,7 +164,8 @@ public abstract class EncryptedItem extends DataItem {
     protected void setEncryptedValue(final JDataField pField,
                                      final Object pValue) throws JDataException {
         /* Obtain the existing value */
-        Object myCurrent = theValueSet.getValue(pField);
+        EncryptedValueSet myValueSet = getValueSet();
+        Object myCurrent = myValueSet.getValue(pField);
 
         /* Handle bad usage */
         if ((myCurrent != null) && (!EncryptedField.class.isInstance(myCurrent))) {
@@ -189,7 +177,7 @@ public abstract class EncryptedItem extends DataItem {
         EncryptedField<?> myField = theGenerator.encryptValue(myCurr, pValue);
 
         /* Store the new value */
-        theValueSet.setValue(pField, myField);
+        myValueSet.setValue(pField, myField);
     }
 
     /**
@@ -206,7 +194,7 @@ public abstract class EncryptedItem extends DataItem {
         EncryptedField<?> myField = theGenerator.decryptValue(pEncrypted, pClass);
 
         /* Store the new value */
-        theValueSet.setValue(pField, myField);
+        getValueSet().setValue(pField, myField);
     }
 
     /**
@@ -260,7 +248,7 @@ public abstract class EncryptedItem extends DataItem {
         }
 
         /* Try to adopt the underlying */
-        theValueSet.adoptSecurity(theGenerator, myBaseValues);
+        getValueSet().adoptSecurity(theGenerator, myBaseValues);
     }
 
     /**
@@ -281,7 +269,7 @@ public abstract class EncryptedItem extends DataItem {
         setControlKey(pControl);
 
         /* Update all elements */
-        theValueSet.updateSecurity(theGenerator);
+        getValueSet().updateSecurity(theGenerator);
     }
 
     /**

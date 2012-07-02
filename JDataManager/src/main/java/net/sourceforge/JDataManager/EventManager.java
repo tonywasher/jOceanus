@@ -372,7 +372,7 @@ public class EventManager {
                                  final int pSubId,
                                  final Object pDetails) {
             /* Call super-constructor */
-            super(pSource, pId, null);
+            super(pSource, pId, (pDetails instanceof String) ? ((String) pDetails) : null);
 
             /* Set the details */
             theSubId = pSubId;
@@ -387,7 +387,7 @@ public class EventManager {
         public ActionDetailEvent(final Object pSource,
                                  final ActionDetailEvent pEvent) {
             /* Call super-constructor */
-            super(pSource, pEvent.getID(), null);
+            super(pSource, pEvent.getID(), pEvent.getActionCommand());
 
             /* Set the details */
             theSubId = pEvent.getSubId();

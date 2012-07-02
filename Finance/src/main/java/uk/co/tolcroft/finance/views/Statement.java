@@ -32,7 +32,6 @@ import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Units;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.Event;
@@ -492,24 +491,11 @@ public class Statement implements JDataContents {
         }
 
         /**
-         * The active set of values.
-         */
-        private EncryptedValueSet theValueSet;
-
-        @Override
-        public void declareValues(final ValueSet pValues) {
-            super.declareValues(pValues);
-            if (pValues instanceof EncryptedValueSet) {
-                theValueSet = (EncryptedValueSet) pValues;
-            }
-        }
-
-        /**
          * Is this a credit to the account?
          * @return true/false
          */
         public boolean isCredit() {
-            return isCredit(theValueSet);
+            return isCredit(getValueSet());
         }
 
         /**
@@ -551,7 +537,7 @@ public class Statement implements JDataContents {
          * @param isCredit true/false
          */
         private void setValueIsCredit(final Boolean isCredit) {
-            theValueSet.setValue(FIELD_ISCREDIT, isCredit);
+            getValueSet().setValue(FIELD_ISCREDIT, isCredit);
         }
 
         /**

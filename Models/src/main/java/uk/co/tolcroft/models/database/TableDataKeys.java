@@ -38,11 +38,6 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
     protected static final String TABLE_NAME = DataKey.LIST_NAME;
 
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * The DataKey data list.
      */
     private DataKeyList theList = null;
@@ -53,22 +48,12 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
      */
     protected TableDataKeys(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        /* Define Standard table */
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
+        TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        theTableDef.addReferenceColumn(DataKey.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
-        theTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE);
-        theTableDef.addBinaryColumn(DataKey.FIELD_KEY, DataKey.KEYLEN);
+        myTableDef.addReferenceColumn(DataKey.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
+        myTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE);
+        myTableDef.addBinaryColumn(DataKey.FIELD_KEY, DataKey.KEYLEN);
     }
 
     @Override
@@ -79,14 +64,11 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
 
     @Override
     protected void loadItem(final int pId) throws JDataException {
-        int myControl;
-        int myKeyType;
-        byte[] myKey;
-
         /* Get the various fields */
-        myControl = theTableDef.getIntegerValue(DataKey.FIELD_CONTROLKEY);
-        myKeyType = theTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE);
-        myKey = theTableDef.getBinaryValue(DataKey.FIELD_KEY);
+        TableDefinition myTableDef = getTableDef();
+        int myControl = myTableDef.getIntegerValue(DataKey.FIELD_CONTROLKEY);
+        int myKeyType = myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE);
+        byte[] myKey = myTableDef.getBinaryValue(DataKey.FIELD_KEY);
 
         /* Add into the list */
         theList.addItem(pId, myControl, myKeyType, myKey);
@@ -96,12 +78,13 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
     protected void setFieldValue(final DataKey pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (iField == DataKey.FIELD_CONTROLKEY) {
-            theTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
+            myTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
         } else if (iField == DataKey.FIELD_KEYTYPE) {
-            theTableDef.setIntegerValue(iField, pItem.getKeyType().getId());
+            myTableDef.setIntegerValue(iField, pItem.getKeyType().getId());
         } else if (iField == DataKey.FIELD_KEY) {
-            theTableDef.setBinaryValue(iField, pItem.getSecuredKeyDef());
+            myTableDef.setBinaryValue(iField, pItem.getSecuredKeyDef());
         } else {
             super.setFieldValue(pItem, iField);
         }

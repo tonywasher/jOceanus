@@ -79,19 +79,6 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField("Class");
 
     /**
-     * The active set of values.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
-    /**
      * The Enum Class for this Static Data.
      */
     private Class<E> theEnumClass = null;
@@ -138,7 +125,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return the name
      */
     public final String getName() {
-        return getName(theValueSet);
+        return getName(getValueSet());
     }
 
     /**
@@ -146,7 +133,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return the encrypted name
      */
     public final byte[] getNameBytes() {
-        return getNameBytes(theValueSet);
+        return getNameBytes(getValueSet());
     }
 
     /**
@@ -154,7 +141,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return the encrypted field
      */
     private EncryptedString getNameField() {
-        return getNameField(theValueSet);
+        return getNameField(getValueSet());
     }
 
     /**
@@ -162,7 +149,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return the description
      */
     public final String getDesc() {
-        return getDesc(theValueSet);
+        return getDesc(getValueSet());
     }
 
     /**
@@ -170,7 +157,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return the encrypted description
      */
     public final byte[] getDescBytes() {
-        return getDescBytes(theValueSet);
+        return getDescBytes(getValueSet());
     }
 
     /**
@@ -178,7 +165,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return the encrypted name
      */
     private EncryptedString getDescField() {
-        return getDescField(theValueSet);
+        return getDescField(getValueSet());
     }
 
     /**
@@ -186,7 +173,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return the order
      */
     public final int getOrder() {
-        return getOrder(theValueSet);
+        return getOrder(getValueSet());
     }
 
     /**
@@ -194,7 +181,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return the class
      */
     public final E getStaticClass() {
-        return getStaticClass(theValueSet, theEnumClass);
+        return getStaticClass(getValueSet(), theEnumClass);
     }
 
     /**
@@ -202,7 +189,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @return <code>true/false</code>
      */
     public final boolean getEnabled() {
-        return getEnabled(theValueSet);
+        return getEnabled(getValueSet());
     }
 
     /**
@@ -320,7 +307,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pField the encrypted name
      */
     private void setValueName(final EncryptedString pField) {
-        theValueSet.setValue(FIELD_NAME, pField);
+        getValueSet().setValue(FIELD_NAME, pField);
     }
 
     /**
@@ -346,7 +333,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pField the encrypted description
      */
     private void setValueDesc(final EncryptedString pField) {
-        theValueSet.setValue(FIELD_DESC, pField);
+        getValueSet().setValue(FIELD_DESC, pField);
     }
 
     /**
@@ -354,7 +341,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param isEnabled TRUE/FALSE
      */
     private void setValueEnabled(final Boolean isEnabled) {
-        theValueSet.setValue(FIELD_ENABLED, isEnabled);
+        getValueSet().setValue(FIELD_ENABLED, isEnabled);
     }
 
     /**
@@ -362,7 +349,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pOrder the order
      */
     private void setValueOrder(final Integer pOrder) {
-        theValueSet.setValue(FIELD_ORDER, pOrder);
+        getValueSet().setValue(FIELD_ORDER, pOrder);
     }
 
     /**
@@ -370,7 +357,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pClass the class
      */
     private void setValueClass(final E pClass) {
-        theValueSet.setValue(FIELD_CLASS, pClass);
+        getValueSet().setValue(FIELD_CLASS, pClass);
     }
 
     @Override

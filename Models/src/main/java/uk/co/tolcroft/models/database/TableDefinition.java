@@ -451,15 +451,12 @@ public class TableDefinition {
      * @param pTables the list of defined tables
      */
     protected void resolveReferences(final List<DatabaseTable<?>> pTables) {
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-
         /* Create the iterator */
-        myIterator = theList.iterator();
+        Iterator<ColumnDefinition> myIterator = theList.iterator();
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
             myDef.locateReference(pTables);
         }
     }
@@ -470,22 +467,34 @@ public class TableDefinition {
      * @throws SQLException on error
      */
     protected void loadResults(final ResultSet pResults) throws SQLException {
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-        int myIndex = 1;
-
-        /* Store the result set and clear values */
         ResultSet myResults = pResults;
-        clearValues();
 
-        /* Create the iterator */
-        myIterator = theList.iterator();
+        try {
+            /* Store the result set and clear values */
+            clearValues();
 
-        /* Loop through the columns */
-        while (myIterator.hasNext()) {
-            myDef = myIterator.next();
-            myDef.loadValue(myResults, myIndex++);
+            /* Create the iterator */
+            Iterator<ColumnDefinition> myIterator = theList.iterator();
+            int myIndex = 1;
+
+            /* Loop through the columns */
+            while (myIterator.hasNext()) {
+                ColumnDefinition myDef = myIterator.next();
+                myDef.loadValue(myResults, myIndex++);
+            }
+        } finally {
+            /* Close the resultSet */
+            myResults.close();
         }
+    }
+
+    /**
+     * Build column error string.
+     * @param pCol the column definition.
+     * @return the error string
+     */
+    private String getColumnError(final ColumnDefinition pCol) {
+        return "Column " + pCol.getColumnName() + " in table " + theTableName;
     }
 
     /**
@@ -495,24 +504,21 @@ public class TableDefinition {
      * @throws JDataException on error
      */
     protected void insertValues(final PreparedStatement pStmt) throws SQLException, JDataException {
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-        int myIndex = 1;
-
         /* Store the Statement */
         theStatement = pStmt;
 
         /* Create the iterator */
-        myIterator = theList.iterator();
+        Iterator<ColumnDefinition> myIterator = theList.iterator();
+        int myIndex = 1;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
 
             /* Reject if the value is not set */
             if (!myDef.isValueSet()) {
-                throw new JDataException(ExceptionClass.LOGIC, "Column " + myDef.getColumnName()
-                        + " in table " + theTableName + " has no value for insert");
+                throw new JDataException(ExceptionClass.LOGIC, getColumnError(myDef)
+                        + " has no value for insert");
             }
 
             myDef.storeValue(theStatement, myIndex++);
@@ -526,20 +532,18 @@ public class TableDefinition {
      * @throws JDataException on error
      */
     protected void updateValues(final PreparedStatement pStmt) throws SQLException, JDataException {
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
         ColumnDefinition myId = null;
-        int myIndex = 1;
 
         /* Store the Statement */
         theStatement = pStmt;
 
         /* Create the iterator */
-        myIterator = theList.iterator();
+        Iterator<ColumnDefinition> myIterator = theList.iterator();
+        int myIndex = 1;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
 
             /* If this is the Id record */
             if (myDef instanceof IdColumn) {
@@ -579,8 +583,7 @@ public class TableDefinition {
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Integer type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Integer type");
         }
 
         /* Return the value */
@@ -600,8 +603,7 @@ public class TableDefinition {
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Long type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Long type");
         }
 
         /* Return the value */
@@ -621,8 +623,7 @@ public class TableDefinition {
 
         /* Reject if this is not a date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Date type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Date type");
         }
 
         /* Return the value */
@@ -642,8 +643,8 @@ public class TableDefinition {
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Boolean type");
+            throw new JDataException(ExceptionClass.LOGIC, "Column " + getColumnError(myCol)
+                    + " is not Boolean type");
         }
 
         /* Return the value */
@@ -663,8 +664,7 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not String type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not String type");
         }
 
         /* Return the value */
@@ -684,8 +684,7 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Binary type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Binary type");
         }
 
         /* Return the value */
@@ -706,8 +705,7 @@ public class TableDefinition {
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Integer type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Integer type");
         }
 
         /* Set the value */
@@ -728,8 +726,7 @@ public class TableDefinition {
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Long type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Long type");
         }
 
         /* Set the value */
@@ -750,8 +747,7 @@ public class TableDefinition {
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Boolean type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Boolean type");
         }
 
         /* Set the value */
@@ -772,8 +768,7 @@ public class TableDefinition {
 
         /* Reject if this is not a Date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Date type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Date type");
         }
 
         /* Set the value */
@@ -794,8 +789,7 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not String type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not String type");
         }
 
         /* Set the value */
@@ -816,8 +810,7 @@ public class TableDefinition {
 
         /* Reject if this is not a binary column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Binary type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Binary type");
         }
 
         /* Set the value */
@@ -838,8 +831,7 @@ public class TableDefinition {
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Money type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Money type");
         }
 
         /* Set the value */
@@ -860,8 +852,7 @@ public class TableDefinition {
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + myCol.getColumnName() + " in table "
-                    + theTableName + " is not Rate type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Rate type");
         }
 
         /* Set the value */
@@ -895,9 +886,6 @@ public class TableDefinition {
      */
     protected String getCreateTableString() {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-        boolean myFirst = true;
 
         /* Build the initial create */
         myBuilder.append("create table ");
@@ -905,11 +893,12 @@ public class TableDefinition {
         myBuilder.append(" (");
 
         /* Create the iterator */
-        myIterator = theList.iterator();
+        Iterator<ColumnDefinition> myIterator = theList.iterator();
+        boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
             }
@@ -928,9 +917,6 @@ public class TableDefinition {
      */
     protected String getCreateIndexString() {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-        boolean myFirst = true;
 
         /* Return null if we are not indexed */
         if (!isIndexed()) {
@@ -946,11 +932,12 @@ public class TableDefinition {
         myBuilder.append(" (");
 
         /* Create the iterator */
-        myIterator = theSortList.iterator();
+        Iterator<ColumnDefinition> myIterator = theSortList.iterator();
+        boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
             }
@@ -994,19 +981,17 @@ public class TableDefinition {
      */
     protected String getLoadString() {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-        boolean myFirst = true;
 
         /* Build the initial insert */
         myBuilder.append("select ");
 
         /* Create the iterator */
-        myIterator = theList.iterator();
+        Iterator<ColumnDefinition> myIterator = theList.iterator();
+        boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
             }
@@ -1050,16 +1035,14 @@ public class TableDefinition {
     protected String getJoinString(final char pChar,
                                    final Integer pOffset) {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
 
         /* Create the iterator */
-        myIterator = theSortList.iterator();
+        Iterator<ColumnDefinition> myIterator = theSortList.iterator();
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
             /* Access next column and skip if not reference column */
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
             if (!(myDef instanceof ReferenceColumn)) {
                 continue;
             }
@@ -1081,17 +1064,14 @@ public class TableDefinition {
     protected String getOrderString(final char pChar,
                                     final Integer pOffset) {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-        boolean myFirst;
 
         /* Create the iterator */
-        myIterator = theSortList.iterator();
-        myFirst = true;
+        Iterator<ColumnDefinition> myIterator = theSortList.iterator();
+        boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
             /* Handle secondary columns */
             if (!myFirst) {
                 myBuilder.append(", ");
@@ -1135,9 +1115,6 @@ public class TableDefinition {
     protected String getInsertString() {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
         StringBuilder myValues = new StringBuilder(BUFFER_LEN);
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-        boolean myFirst = true;
 
         /* Build the initial insert */
         myBuilder.append("insert into ");
@@ -1145,11 +1122,12 @@ public class TableDefinition {
         myBuilder.append(" (");
 
         /* Create the iterator */
-        myIterator = theList.iterator();
+        Iterator<ColumnDefinition> myIterator = theList.iterator();
+        boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
             }
@@ -1175,10 +1153,6 @@ public class TableDefinition {
      */
     protected String getUpdateString() throws JDataException {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        Iterator<ColumnDefinition> myIterator;
-        ColumnDefinition myDef;
-        ColumnDefinition myId = null;
-        boolean myFirst = true;
 
         /* Build the initial update */
         myBuilder.append("update ");
@@ -1186,18 +1160,20 @@ public class TableDefinition {
         myBuilder.append(" set ");
 
         /* Create the iterator */
-        myIterator = theList.iterator();
+        Iterator<ColumnDefinition> myIterator = theList.iterator();
+        ColumnDefinition myId = null;
+        boolean myFirst = true;
 
         /* Loop through the columns */
         while (myIterator.hasNext()) {
-            myDef = myIterator.next();
+            ColumnDefinition myDef = myIterator.next();
 
             /* If this is the Id record */
             if (myDef instanceof IdColumn) {
                 /* Reject if the value is not set */
                 if (!myDef.isValueSet()) {
-                    throw new JDataException(ExceptionClass.LOGIC, "Column " + myDef.getColumnName()
-                            + " in table " + theTableName + " has no value for update");
+                    throw new JDataException(ExceptionClass.LOGIC, getColumnError(myDef)
+                            + " has no value for update");
                 }
 
                 /* Remember the column */
@@ -1233,7 +1209,6 @@ public class TableDefinition {
      */
     protected String getDeleteString() {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
-        ColumnDefinition myId = null;
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
@@ -1241,7 +1216,7 @@ public class TableDefinition {
         myBuilder.append(" where ");
 
         /* Access the id definition */
-        myId = theList.get(0);
+        ColumnDefinition myId = theList.get(0);
 
         /* Build the rest of the command */
         myBuilder.append(myId.getColumnName());

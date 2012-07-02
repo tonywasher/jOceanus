@@ -95,23 +95,6 @@ public final class JDataObject {
     }
 
     /**
-     * JDataElement object interface.
-     */
-    public interface JDataElement {
-        /**
-         * Obtain Object Name.
-         * @return the Name of the object
-         */
-        String getElementName();
-
-        /**
-         * Obtain Object Value.
-         * @return the Value of the object
-         */
-        Object getElementValue();
-    }
-
-    /**
      * Difference interface.
      */
     public interface JDataDiffers {

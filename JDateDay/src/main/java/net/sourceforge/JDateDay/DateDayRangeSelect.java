@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JDateDay;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,14 +30,15 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.LayoutStyle;
 
 /**
  * Selection panel to select a standard DatePeriod from within a range of dates.
@@ -49,9 +51,55 @@ public class DateDayRangeSelect extends JPanel {
     private static final long serialVersionUID = -1844318324805283367L;
 
     /**
+     * Strut width.
+     */
+    private static final int STRUT_WIDTH = 10;
+
+    /**
+     * Period Box width.
+     */
+    private static final int PERIOD_WIDTH = 150;
+
+    /**
+     * Period Box height.
+     */
+    private static final int PERIOD_HEIGHT = 25;
+
+    /**
      * Name of the Range property.
      */
     public static final String PROPERTY_RANGE = "SelectedDateDayRange";
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DateDayRangeSelect.class
+            .getName());
+
+    /**
+     * Text for Next Button.
+     */
+    private static final String NLS_NEXT = NLS_BUNDLE.getString("NextButton");
+
+    /**
+     * Text for Previous Button.
+     */
+    private static final String NLS_PREV = NLS_BUNDLE.getString("PrevButton");
+
+    /**
+     * Text for Start Label.
+     */
+    private static final String NLS_START = NLS_BUNDLE.getString("StartLabel");
+
+    /**
+     * Text for Period Label.
+     */
+    private static final String NLS_PERIOD = NLS_BUNDLE.getString("PeriodLabel");
+
+    /**
+     * Text for Box Title.
+     */
+    private static final String NLS_TITLE = NLS_BUNDLE.getString("BoxTitle");
 
     /**
      * The Date button.
@@ -125,6 +173,7 @@ public class DateDayRangeSelect extends JPanel {
 
         /* Create the boxes */
         thePeriodBox = new JComboBox();
+        thePeriodBox.setMaximumSize(new Dimension(PERIOD_WIDTH, PERIOD_HEIGHT));
 
         /* Create the DateButton */
         theDateButton = new DateDayButton();
@@ -138,49 +187,30 @@ public class DateDayRangeSelect extends JPanel {
         }
 
         /* Create the labels */
-        JLabel myStartLabel = new JLabel("Start Date:");
-        JLabel myPeriodLabel = new JLabel("Period:");
+        JLabel myStartLabel = new JLabel(NLS_START);
+        JLabel myPeriodLabel = new JLabel(NLS_PERIOD);
 
         /* Create the buttons */
-        theNextButton = new JButton("Next");
-        thePrevButton = new JButton("Prev");
+        theNextButton = new JButton(NLS_NEXT);
+        thePrevButton = new JButton(NLS_PREV);
 
         /* Create the panel */
-        setBorder(BorderFactory.createTitledBorder("Date Range Selection"));
+        setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
-        /* Create the layout for the panel */
-        GroupLayout panelLayout = new GroupLayout(this);
-        setLayout(panelLayout);
-
-        /* Set the layout */
-        panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(myStartLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(myPeriodLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(thePeriodBox, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theNextButton)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(thePrevButton).addContainerGap()));
-        panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                  .addComponent(myStartLabel)
-                                  .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addComponent(myPeriodLabel)
-                                  .addComponent(thePeriodBox, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addComponent(theNextButton).addComponent(thePrevButton)));
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(myStartLabel);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theDateButton);
+        add(Box.createHorizontalGlue());
+        add(myPeriodLabel);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(thePeriodBox);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theNextButton);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(thePrevButton);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create initial state and limit the selection to the Range */
         theState = new DateRangeState();

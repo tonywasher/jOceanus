@@ -1,0 +1,9 @@
+<HelpContents title="Personal Finance Help" initial="First">
+	<HelpElement title="Chapter One" name="FirstHelpChapter">
+		<HelpElement name="First" file="FirstHelp.txt"
+			title="FirstHelpModule">
+		</HelpElement>
+	</HelpElement>
+	<HelpElement name="SecondHelpChapter" title="Chapter Two">
+		<HelpElement name="Second" title="SecondHelpModule" file="SecondHelp.txt">
+		</HelpElement></HelpElement></HelpContents>

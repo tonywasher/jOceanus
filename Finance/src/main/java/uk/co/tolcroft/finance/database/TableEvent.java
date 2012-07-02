@@ -48,11 +48,6 @@ public class TableEvent extends TableEncrypted<Event> {
     protected static final String TABLE_NAME = Event.LIST_NAME;
 
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * The event list.
      */
     private EventList theList = null;
@@ -63,32 +58,19 @@ public class TableEvent extends TableEncrypted<Event> {
      */
     protected TableEvent(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        /* Define Standard table */
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
-
-        /* Define sort column variable */
-        ColumnDefinition myDateCol;
+        TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE);
-        theTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.DESCLEN);
-        theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, EncryptedData.MONEYLEN);
-        theTableDef.addReferenceColumn(Event.FIELD_DEBIT, TableAccount.TABLE_NAME);
-        theTableDef.addReferenceColumn(Event.FIELD_CREDIT, TableAccount.TABLE_NAME);
-        theTableDef.addNullEncryptedColumn(Event.FIELD_UNITS, EncryptedData.UNITSLEN);
-        theTableDef.addReferenceColumn(Event.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
-        theTableDef.addNullEncryptedColumn(Event.FIELD_TAXCREDIT, EncryptedData.MONEYLEN);
-        theTableDef.addNullEncryptedColumn(Event.FIELD_DILUTION, EncryptedData.DILUTELEN);
-        theTableDef.addNullIntegerColumn(Event.FIELD_YEARS);
+        ColumnDefinition myDateCol = myTableDef.addDateColumn(Event.FIELD_DATE);
+        myTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.DESCLEN);
+        myTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, EncryptedData.MONEYLEN);
+        myTableDef.addReferenceColumn(Event.FIELD_DEBIT, TableAccount.TABLE_NAME);
+        myTableDef.addReferenceColumn(Event.FIELD_CREDIT, TableAccount.TABLE_NAME);
+        myTableDef.addNullEncryptedColumn(Event.FIELD_UNITS, EncryptedData.UNITSLEN);
+        myTableDef.addReferenceColumn(Event.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
+        myTableDef.addNullEncryptedColumn(Event.FIELD_TAXCREDIT, EncryptedData.MONEYLEN);
+        myTableDef.addNullEncryptedColumn(Event.FIELD_DILUTION, EncryptedData.DILUTELEN);
+        myTableDef.addNullIntegerColumn(Event.FIELD_YEARS);
 
         /* Declare the sort order */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -106,16 +88,17 @@ public class TableEvent extends TableEncrypted<Event> {
     protected void loadItem(final int pId,
                             final int pControlId) throws JDataException {
         /* Get the various fields */
-        Date myDate = theTableDef.getDateValue(Event.FIELD_DATE);
-        byte[] myDesc = theTableDef.getBinaryValue(Event.FIELD_DESC);
-        byte[] myAmount = theTableDef.getBinaryValue(Event.FIELD_AMOUNT);
-        int myDebitId = theTableDef.getIntegerValue(Event.FIELD_DEBIT);
-        int myCreditId = theTableDef.getIntegerValue(Event.FIELD_CREDIT);
-        byte[] myUnits = theTableDef.getBinaryValue(Event.FIELD_UNITS);
-        int myTranType = theTableDef.getIntegerValue(Event.FIELD_TRNTYP);
-        byte[] myTaxCred = theTableDef.getBinaryValue(Event.FIELD_TAXCREDIT);
-        byte[] myDilution = theTableDef.getBinaryValue(Event.FIELD_DILUTION);
-        Integer myYears = theTableDef.getIntegerValue(Event.FIELD_YEARS);
+        TableDefinition myTableDef = getTableDef();
+        Date myDate = myTableDef.getDateValue(Event.FIELD_DATE);
+        byte[] myDesc = myTableDef.getBinaryValue(Event.FIELD_DESC);
+        byte[] myAmount = myTableDef.getBinaryValue(Event.FIELD_AMOUNT);
+        int myDebitId = myTableDef.getIntegerValue(Event.FIELD_DEBIT);
+        int myCreditId = myTableDef.getIntegerValue(Event.FIELD_CREDIT);
+        byte[] myUnits = myTableDef.getBinaryValue(Event.FIELD_UNITS);
+        int myTranType = myTableDef.getIntegerValue(Event.FIELD_TRNTYP);
+        byte[] myTaxCred = myTableDef.getBinaryValue(Event.FIELD_TAXCREDIT);
+        byte[] myDilution = myTableDef.getBinaryValue(Event.FIELD_DILUTION);
+        Integer myYears = myTableDef.getIntegerValue(Event.FIELD_YEARS);
 
         /* Add into the list */
         theList.addItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myUnits,
@@ -126,26 +109,27 @@ public class TableEvent extends TableEncrypted<Event> {
     protected void setFieldValue(final Event pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (iField == Event.FIELD_DATE) {
-            theTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
+            myTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
         } else if (iField == Event.FIELD_DESC) {
-            theTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
+            myTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
         } else if (iField == Event.FIELD_AMOUNT) {
-            theTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
+            myTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
         } else if (iField == Event.FIELD_DEBIT) {
-            theTableDef.setIntegerValue(Event.FIELD_DEBIT, pItem.getDebit().getId());
+            myTableDef.setIntegerValue(Event.FIELD_DEBIT, pItem.getDebit().getId());
         } else if (iField == Event.FIELD_CREDIT) {
-            theTableDef.setIntegerValue(Event.FIELD_CREDIT, pItem.getCredit().getId());
+            myTableDef.setIntegerValue(Event.FIELD_CREDIT, pItem.getCredit().getId());
         } else if (iField == Event.FIELD_UNITS) {
-            theTableDef.setBinaryValue(Event.FIELD_UNITS, pItem.getUnitsBytes());
+            myTableDef.setBinaryValue(Event.FIELD_UNITS, pItem.getUnitsBytes());
         } else if (iField == Event.FIELD_TRNTYP) {
-            theTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
+            myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
         } else if (iField == Event.FIELD_TAXCREDIT) {
-            theTableDef.setBinaryValue(Event.FIELD_TAXCREDIT, pItem.getTaxCreditBytes());
+            myTableDef.setBinaryValue(Event.FIELD_TAXCREDIT, pItem.getTaxCreditBytes());
         } else if (iField == Event.FIELD_DILUTION) {
-            theTableDef.setBinaryValue(Event.FIELD_DILUTION, pItem.getDilutionBytes());
+            myTableDef.setBinaryValue(Event.FIELD_DILUTION, pItem.getDilutionBytes());
         } else if (iField == Event.FIELD_YEARS) {
-            theTableDef.setIntegerValue(Event.FIELD_YEARS, pItem.getYears());
+            myTableDef.setIntegerValue(Event.FIELD_YEARS, pItem.getYears());
         } else {
             super.setFieldValue(pItem, iField);
         }

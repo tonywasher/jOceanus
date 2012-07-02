@@ -50,11 +50,6 @@ public class TablePattern extends TableEncrypted<Event> {
     protected static final String TABLE_NAME = Pattern.LIST_NAME;
 
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * The pattern list.
      */
     private PatternList theList = null;
@@ -70,31 +65,18 @@ public class TablePattern extends TableEncrypted<Event> {
      */
     protected TablePattern(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        /* Define sort column variable */
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
-
-        /* Define Sort Column variables */
-        ColumnDefinition myDateCol;
-        ColumnDefinition myActCol;
+        TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        myActCol = theTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
-        myDateCol = theTableDef.addDateColumn(Event.FIELD_DATE);
-        theTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.DESCLEN);
-        theTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, EncryptedData.MONEYLEN);
-        theTableDef.addReferenceColumn(Pattern.FIELD_PARTNER, TableAccount.TABLE_NAME);
-        theTableDef.addReferenceColumn(Event.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
-        theTableDef.addBooleanColumn(Pattern.FIELD_ISCREDIT);
-        theTableDef.addReferenceColumn(Pattern.FIELD_FREQ, TableFrequency.TABLE_NAME);
+        ColumnDefinition myActCol = myTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT,
+                                                                  TableAccount.TABLE_NAME);
+        ColumnDefinition myDateCol = myTableDef.addDateColumn(Event.FIELD_DATE);
+        myTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.DESCLEN);
+        myTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, EncryptedData.MONEYLEN);
+        myTableDef.addReferenceColumn(Pattern.FIELD_PARTNER, TableAccount.TABLE_NAME);
+        myTableDef.addReferenceColumn(Event.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
+        myTableDef.addBooleanColumn(Pattern.FIELD_ISCREDIT);
+        myTableDef.addReferenceColumn(Pattern.FIELD_FREQ, TableFrequency.TABLE_NAME);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -118,14 +100,15 @@ public class TablePattern extends TableEncrypted<Event> {
     protected void loadItem(final int pId,
                             final int pControlId) throws JDataException {
         /* Get the various fields */
-        int myAccountId = theTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
-        Date myDate = theTableDef.getDateValue(Event.FIELD_DATE);
-        byte[] myDesc = theTableDef.getBinaryValue(Event.FIELD_DESC);
-        byte[] myAmount = theTableDef.getBinaryValue(Event.FIELD_AMOUNT);
-        int myPartnerId = theTableDef.getIntegerValue(Pattern.FIELD_PARTNER);
-        int myTranType = theTableDef.getIntegerValue(Event.FIELD_TRNTYP);
-        boolean isCredit = theTableDef.getBooleanValue(Pattern.FIELD_ISCREDIT);
-        int myFreq = theTableDef.getIntegerValue(Pattern.FIELD_FREQ);
+        TableDefinition myTableDef = getTableDef();
+        int myAccountId = myTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
+        Date myDate = myTableDef.getDateValue(Event.FIELD_DATE);
+        byte[] myDesc = myTableDef.getBinaryValue(Event.FIELD_DESC);
+        byte[] myAmount = myTableDef.getBinaryValue(Event.FIELD_AMOUNT);
+        int myPartnerId = myTableDef.getIntegerValue(Pattern.FIELD_PARTNER);
+        int myTranType = myTableDef.getIntegerValue(Event.FIELD_TRNTYP);
+        boolean isCredit = myTableDef.getBooleanValue(Pattern.FIELD_ISCREDIT);
+        int myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
         /* Add into the list */
         theList.addItem(pId, pControlId, myDate, myDesc, myAmount, myAccountId, myPartnerId, myTranType,
@@ -143,22 +126,23 @@ public class TablePattern extends TableEncrypted<Event> {
         Pattern myItem = (Pattern) pItem;
 
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (iField == Pattern.FIELD_ACCOUNT) {
-            theTableDef.setIntegerValue(Pattern.FIELD_ACCOUNT, myItem.getAccount().getId());
+            myTableDef.setIntegerValue(Pattern.FIELD_ACCOUNT, myItem.getAccount().getId());
         } else if (iField == Event.FIELD_DATE) {
-            theTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
+            myTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
         } else if (iField == Event.FIELD_DESC) {
-            theTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
+            myTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
         } else if (iField == Event.FIELD_AMOUNT) {
-            theTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
+            myTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
         } else if (iField == Pattern.FIELD_PARTNER) {
-            theTableDef.setIntegerValue(Pattern.FIELD_PARTNER, myItem.getPartner().getId());
+            myTableDef.setIntegerValue(Pattern.FIELD_PARTNER, myItem.getPartner().getId());
         } else if (iField == Event.FIELD_TRNTYP) {
-            theTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
+            myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
         } else if (iField == Pattern.FIELD_ISCREDIT) {
-            theTableDef.setBooleanValue(Pattern.FIELD_ISCREDIT, myItem.isCredit());
+            myTableDef.setBooleanValue(Pattern.FIELD_ISCREDIT, myItem.isCredit());
         } else if (iField == Pattern.FIELD_FREQ) {
-            theTableDef.setIntegerValue(Pattern.FIELD_FREQ, myItem.getFrequency().getId());
+            myTableDef.setIntegerValue(Pattern.FIELD_FREQ, myItem.getFrequency().getId());
         } else {
             super.setFieldValue(pItem, iField);
         }

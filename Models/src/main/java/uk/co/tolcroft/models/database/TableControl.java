@@ -38,11 +38,6 @@ public class TableControl extends DatabaseTable<ControlData> {
     protected static final String TABLE_NAME = ControlData.LIST_NAME;
 
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * The control data list.
      */
     private ControlDataList theList = null;
@@ -53,21 +48,11 @@ public class TableControl extends DatabaseTable<ControlData> {
      */
     protected TableControl(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        /* Define Standard table */
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
+        TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        theTableDef.addIntegerColumn(ControlData.FIELD_VERSION);
-        theTableDef.addReferenceColumn(ControlData.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
+        myTableDef.addIntegerColumn(ControlData.FIELD_VERSION);
+        myTableDef.addReferenceColumn(ControlData.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
     }
 
     @Override
@@ -78,12 +63,10 @@ public class TableControl extends DatabaseTable<ControlData> {
 
     @Override
     protected void loadItem(final int pId) throws JDataException {
-        int myVers;
-        int myControl;
-
         /* Get the various fields */
-        myVers = theTableDef.getIntegerValue(ControlData.FIELD_VERSION);
-        myControl = theTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY);
+        TableDefinition myTableDef = getTableDef();
+        int myVers = myTableDef.getIntegerValue(ControlData.FIELD_VERSION);
+        int myControl = myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY);
 
         /* Add into the list */
         theList.addItem(pId, myVers, myControl);
@@ -93,10 +76,11 @@ public class TableControl extends DatabaseTable<ControlData> {
     protected void setFieldValue(final ControlData pItem,
                                  final JDataField pField) throws JDataException {
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (pField == ControlData.FIELD_VERSION) {
-            theTableDef.setIntegerValue(pField, pItem.getDataVersion());
+            myTableDef.setIntegerValue(pField, pItem.getDataVersion());
         } else if (pField == ControlData.FIELD_CONTROLKEY) {
-            theTableDef.setIntegerValue(pField, pItem.getControlKey().getId());
+            myTableDef.setIntegerValue(pField, pItem.getControlKey().getId());
         } else {
             super.setFieldValue(pItem, pField);
         }

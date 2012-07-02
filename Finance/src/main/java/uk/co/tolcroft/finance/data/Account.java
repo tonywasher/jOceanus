@@ -191,19 +191,6 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      */
     public static final JDataField FIELD_ISCLSABL = FIELD_DEFS.declareLocalField("isCloseable");
 
-    /**
-     * The active set of values.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
     @Override
     public String formatObject() {
         return getName();
@@ -354,7 +341,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the name
      */
     public String getName() {
-        return getName(theValueSet);
+        return getName(getValueSet());
     }
 
     /**
@@ -362,7 +349,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the bytes
      */
     public byte[] getNameBytes() {
-        return getNameBytes(theValueSet);
+        return getNameBytes(getValueSet());
     }
 
     /**
@@ -370,7 +357,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the Field
      */
     private EncryptedString getNameField() {
-        return getNameField(theValueSet);
+        return getNameField(getValueSet());
     }
 
     /**
@@ -378,7 +365,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the description
      */
     public String getDesc() {
-        return getDesc(theValueSet);
+        return getDesc(getValueSet());
     }
 
     /**
@@ -386,7 +373,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the bytes
      */
     public byte[] getDescBytes() {
-        return getDescBytes(theValueSet);
+        return getDescBytes(getValueSet());
     }
 
     /**
@@ -394,7 +381,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the Field
      */
     private EncryptedString getDescField() {
-        return getDescField(theValueSet);
+        return getDescField(getValueSet());
     }
 
     /**
@@ -402,7 +389,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the parent
      */
     public Account getParent() {
-        return getParent(theValueSet);
+        return getParent(getValueSet());
     }
 
     /**
@@ -410,7 +397,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the parent id
      */
     public Integer getParentId() {
-        return getParentId(theValueSet);
+        return getParentId(getValueSet());
     }
 
     /**
@@ -418,7 +405,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the alias
      */
     public Account getAlias() {
-        return getAlias(theValueSet);
+        return getAlias(getValueSet());
     }
 
     /**
@@ -426,7 +413,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the alias id
      */
     public Integer getAliasId() {
-        return getAliasId(theValueSet);
+        return getAliasId(getValueSet());
     }
 
     /**
@@ -458,7 +445,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the type
      */
     public AccountType getActType() {
-        return getAccountType(theValueSet);
+        return getAccountType(getValueSet());
     }
 
     /**
@@ -466,7 +453,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the order
      */
     public int getOrder() {
-        return getOrder(theValueSet);
+        return getOrder(getValueSet());
     }
 
     /**
@@ -474,7 +461,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the date
      */
     public DateDay getMaturity() {
-        return getMaturity(theValueSet);
+        return getMaturity(getValueSet());
     }
 
     /**
@@ -482,7 +469,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the date
      */
     public DateDay getClose() {
-        return getClose(theValueSet);
+        return getClose(getValueSet());
     }
 
     /**
@@ -490,7 +477,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the webSite
      */
     public char[] getWebSite() {
-        return getWebSite(theValueSet);
+        return getWebSite(getValueSet());
     }
 
     /**
@@ -498,7 +485,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the bytes
      */
     public byte[] getWebSiteBytes() {
-        return getWebSiteBytes(theValueSet);
+        return getWebSiteBytes(getValueSet());
     }
 
     /**
@@ -506,7 +493,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the Field
      */
     private EncryptedCharArray getWebSiteField() {
-        return getWebSiteField(theValueSet);
+        return getWebSiteField(getValueSet());
     }
 
     /**
@@ -514,7 +501,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the custNo
      */
     public char[] getCustNo() {
-        return getCustNo(theValueSet);
+        return getCustNo(getValueSet());
     }
 
     /**
@@ -522,7 +509,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the bytes
      */
     public byte[] getCustNoBytes() {
-        return getCustNoBytes(theValueSet);
+        return getCustNoBytes(getValueSet());
     }
 
     /**
@@ -530,7 +517,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the Field
      */
     private EncryptedCharArray getCustNoField() {
-        return getCustNoField(theValueSet);
+        return getCustNoField(getValueSet());
     }
 
     /**
@@ -538,7 +525,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the userId
      */
     public char[] getUserId() {
-        return getUserId(theValueSet);
+        return getUserId(getValueSet());
     }
 
     /**
@@ -546,7 +533,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the bytes
      */
     public byte[] getUserIdBytes() {
-        return getUserIdBytes(theValueSet);
+        return getUserIdBytes(getValueSet());
     }
 
     /**
@@ -554,7 +541,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the Field
      */
     private EncryptedCharArray getUserIdField() {
-        return getUserIdField(theValueSet);
+        return getUserIdField(getValueSet());
     }
 
     /**
@@ -562,7 +549,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the password
      */
     public char[] getPassword() {
-        return getPassword(theValueSet);
+        return getPassword(getValueSet());
     }
 
     /**
@@ -570,7 +557,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the bytes
      */
     public byte[] getPasswordBytes() {
-        return getPasswordBytes(theValueSet);
+        return getPasswordBytes(getValueSet());
     }
 
     /**
@@ -578,7 +565,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the Field
      */
     private EncryptedCharArray getPasswordField() {
-        return getPasswordField(theValueSet);
+        return getPasswordField(getValueSet());
     }
 
     /**
@@ -586,7 +573,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the account details
      */
     public char[] getAccount() {
-        return getAccount(theValueSet);
+        return getAccount(getValueSet());
     }
 
     /**
@@ -594,7 +581,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the bytes
      */
     public byte[] getAccountBytes() {
-        return getAccountBytes(theValueSet);
+        return getAccountBytes(getValueSet());
     }
 
     /**
@@ -602,7 +589,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the Field
      */
     private EncryptedCharArray getAccountField() {
-        return getAccountField(theValueSet);
+        return getAccountField(getValueSet());
     }
 
     /**
@@ -610,7 +597,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the notes
      */
     public char[] getNotes() {
-        return getNotes(theValueSet);
+        return getNotes(getValueSet());
     }
 
     /**
@@ -618,7 +605,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the bytes
      */
     public byte[] getNotesBytes() {
-        return getNotesBytes(theValueSet);
+        return getNotesBytes(getValueSet());
     }
 
     /**
@@ -626,7 +613,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the Field
      */
     private EncryptedCharArray getNotesField() {
-        return getNotesField(theValueSet);
+        return getNotesField(getValueSet());
     }
 
     /**
@@ -1024,7 +1011,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueName(final EncryptedString pValue) {
-        theValueSet.setValue(FIELD_NAME, pValue);
+        getValueSet().setValue(FIELD_NAME, pValue);
     }
 
     /**
@@ -1050,7 +1037,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueDesc(final EncryptedString pValue) {
-        theValueSet.setValue(FIELD_DESC, pValue);
+        getValueSet().setValue(FIELD_DESC, pValue);
     }
 
     /**
@@ -1058,7 +1045,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueType(final AccountType pValue) {
-        theValueSet.setValue(FIELD_TYPE, pValue);
+        getValueSet().setValue(FIELD_TYPE, pValue);
     }
 
     /**
@@ -1066,7 +1053,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueType(final Integer pValue) {
-        theValueSet.setValue(FIELD_TYPE, pValue);
+        getValueSet().setValue(FIELD_TYPE, pValue);
     }
 
     /**
@@ -1074,7 +1061,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueMaturity(final DateDay pValue) {
-        theValueSet.setValue(FIELD_MATURITY, pValue);
+        getValueSet().setValue(FIELD_MATURITY, pValue);
     }
 
     /**
@@ -1082,7 +1069,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueClose(final DateDay pValue) {
-        theValueSet.setValue(FIELD_CLOSE, pValue);
+        getValueSet().setValue(FIELD_CLOSE, pValue);
     }
 
     /**
@@ -1090,7 +1077,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueParent(final Account pValue) {
-        theValueSet.setValue(FIELD_PARENT, pValue);
+        getValueSet().setValue(FIELD_PARENT, pValue);
     }
 
     /**
@@ -1098,7 +1085,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueParent(final Integer pValue) {
-        theValueSet.setValue(FIELD_PARENT, pValue);
+        getValueSet().setValue(FIELD_PARENT, pValue);
     }
 
     /**
@@ -1106,7 +1093,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueAlias(final Account pValue) {
-        theValueSet.setValue(FIELD_ALIAS, pValue);
+        getValueSet().setValue(FIELD_ALIAS, pValue);
     }
 
     /**
@@ -1114,7 +1101,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueAlias(final Integer pValue) {
-        theValueSet.setValue(FIELD_ALIAS, pValue);
+        getValueSet().setValue(FIELD_ALIAS, pValue);
     }
 
     /**
@@ -1140,7 +1127,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueWebSite(final EncryptedCharArray pValue) {
-        theValueSet.setValue(FIELD_WEBSITE, pValue);
+        getValueSet().setValue(FIELD_WEBSITE, pValue);
     }
 
     /**
@@ -1166,7 +1153,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueCustNo(final EncryptedCharArray pValue) {
-        theValueSet.setValue(FIELD_CUSTNO, pValue);
+        getValueSet().setValue(FIELD_CUSTNO, pValue);
     }
 
     /**
@@ -1192,7 +1179,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueUserId(final EncryptedCharArray pValue) {
-        theValueSet.setValue(FIELD_USERID, pValue);
+        getValueSet().setValue(FIELD_USERID, pValue);
     }
 
     /**
@@ -1218,7 +1205,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValuePassword(final EncryptedCharArray pValue) {
-        theValueSet.setValue(FIELD_PASSWORD, pValue);
+        getValueSet().setValue(FIELD_PASSWORD, pValue);
     }
 
     /**
@@ -1244,7 +1231,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueAccount(final EncryptedCharArray pValue) {
-        theValueSet.setValue(FIELD_ACCOUNT, pValue);
+        getValueSet().setValue(FIELD_ACCOUNT, pValue);
     }
 
     /**
@@ -1270,7 +1257,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValue the value
      */
     private void setValueNotes(final EncryptedCharArray pValue) {
-        theValueSet.setValue(FIELD_NOTES, pValue);
+        getValueSet().setValue(FIELD_NOTES, pValue);
     }
 
     @Override
@@ -1292,7 +1279,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * Copy flags.
      * @param pItem the original item
      */
-    protected void copyFlags(final Account pItem) {
+    private void copyFlags(final Account pItem) {
         theEarliest = pItem.theEarliest;
         theLatest = pItem.theLatest;
         theInitPrice = pItem.theInitPrice;

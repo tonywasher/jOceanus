@@ -116,17 +116,6 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
      */
     private EncryptionGenerator theFieldGenerator = null;
 
-    /**
-     * The active set of values.
-     */
-    private ValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        theValueSet = pValues;
-    }
-
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_MAP.equals(pField)) {
@@ -143,7 +132,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
      * @return the hash bytes
      */
     public byte[] getHashBytes() {
-        return getHashBytes(theValueSet);
+        return getHashBytes(getValueSet());
     }
 
     /**
@@ -151,7 +140,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
      * @return the passwordHash
      */
     protected PasswordHash getPasswordHash() {
-        return getPasswordHash(theValueSet);
+        return getPasswordHash(getValueSet());
     }
 
     /**
@@ -159,7 +148,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
      * @return the hash mode
      */
     private HashMode getHashMode() {
-        return getHashMode(theValueSet);
+        return getHashMode(getValueSet());
     }
 
     /**
@@ -202,7 +191,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
      * @param pValue the PasswordHash
      */
     private void setValuePasswordHash(final PasswordHash pValue) {
-        theValueSet.setValue(FIELD_PASSHASH, pValue);
+        getValueSet().setValue(FIELD_PASSHASH, pValue);
         setValueHashMode((pValue == null) ? null : pValue.getHashMode());
         setValueHashBytes((pValue == null) ? null : pValue.getHashBytes());
     }
@@ -212,7 +201,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
      * @param pValue the Hash bytes
      */
     private void setValueHashBytes(final byte[] pValue) {
-        theValueSet.setValue(FIELD_HASHBYTES, pValue);
+        getValueSet().setValue(FIELD_HASHBYTES, pValue);
     }
 
     /**
@@ -220,7 +209,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
      * @param pValue the Hash Mode
      */
     private void setValueHashMode(final HashMode pValue) {
-        theValueSet.setValue(FIELD_HASHMODE, pValue);
+        getValueSet().setValue(FIELD_HASHMODE, pValue);
     }
 
     @Override

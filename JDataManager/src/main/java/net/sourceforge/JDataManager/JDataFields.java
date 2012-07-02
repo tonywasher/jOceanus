@@ -98,11 +98,6 @@ public class JDataFields {
         return theName;
     }
 
-    // @Override
-    // public int hashCode() {
-    // return theName.hashCode();
-    // }
-
     /**
      * Obtain the number of values.
      * @return the number of values
@@ -156,6 +151,15 @@ public class JDataFields {
     }
 
     /**
+     * Declare local field referenced by index.
+     * @param pName the name of the field
+     * @return the field
+     */
+    public JDataField declareIndexField(final String pName) {
+        return declareDataField(pName);
+    }
+
+    /**
      * Declare field.
      * @param pName the name of the field
      * @param isEqualityField is the field used in equality test
@@ -167,6 +171,22 @@ public class JDataFields {
                                         final boolean isValueSetField) {
         /* Create the field */
         JDataField myField = new JDataField(pName, isEqualityField, isValueSetField);
+
+        /* Add it to the list */
+        theFields.add(myField);
+
+        /* Return the index */
+        return myField;
+    }
+
+    /**
+     * Declare field.
+     * @param pName the name of the field
+     * @return the field
+     */
+    private JDataField declareDataField(final String pName) {
+        /* Create the field */
+        JDataField myField = new JDataField(pName);
 
         /* Add it to the list */
         theFields.add(myField);
@@ -310,6 +330,20 @@ public class JDataFields {
 
             /* Allocate value index if required */
             theIndex = isValueSetField ? theNextValue++ : -1;
+        }
+
+        /**
+         * Constructor.
+         * @param pName the name of the field
+         */
+        public JDataField(final String pName) {
+            /* Store parameters */
+            theName = pName;
+            isEqualityField = false;
+            isValueSetField = false;
+
+            /* Allocate value index */
+            theIndex = theNextValue++;
         }
 
         @Override

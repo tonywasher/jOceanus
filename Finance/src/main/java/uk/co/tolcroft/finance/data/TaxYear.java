@@ -185,17 +185,6 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      */
     public static final JDataField FIELD_HCPTAX = FIELD_DEFS.declareEqualityValueField("HoCapitalTaxRate");
 
-    /**
-     * The active set of values.
-     */
-    private ValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        theValueSet = pValues;
-    }
-
     @Override
     public String toString() {
         return Integer.toString(getTaxYear().getYear());
@@ -206,7 +195,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the taxYear date
      */
     public DateDay getTaxYear() {
-        return getTaxYear(theValueSet);
+        return getTaxYear(getValueSet());
     }
 
     /**
@@ -214,7 +203,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the taxRegime
      */
     public TaxRegime getTaxRegime() {
-        return getTaxRegime(theValueSet);
+        return getTaxRegime(getValueSet());
     }
 
     /**
@@ -222,7 +211,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the allowance
      */
     public Money getAllowance() {
-        return getAllowance(theValueSet);
+        return getAllowance(getValueSet());
     }
 
     /**
@@ -230,7 +219,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rental allowance
      */
     public Money getRentalAllowance() {
-        return getRentalAllowance(theValueSet);
+        return getRentalAllowance(getValueSet());
     }
 
     /**
@@ -238,7 +227,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the tax band
      */
     public Money getLoBand() {
-        return getLoBand(theValueSet);
+        return getLoBand(getValueSet());
     }
 
     /**
@@ -246,7 +235,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the tax band
      */
     public Money getBasicBand() {
-        return getBasicBand(theValueSet);
+        return getBasicBand(getValueSet());
     }
 
     /**
@@ -254,7 +243,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the allowance
      */
     public Money getCapitalAllow() {
-        return getCapitalAllow(theValueSet);
+        return getCapitalAllow(getValueSet());
     }
 
     /**
@@ -262,7 +251,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the allowance
      */
     public Money getLoAgeAllow() {
-        return getLoAgeAllow(theValueSet);
+        return getLoAgeAllow(getValueSet());
     }
 
     /**
@@ -270,7 +259,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the allowance
      */
     public Money getHiAgeAllow() {
-        return getHiAgeAllow(theValueSet);
+        return getHiAgeAllow(getValueSet());
     }
 
     /**
@@ -278,7 +267,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the limit
      */
     public Money getAgeAllowLimit() {
-        return getAgeAllowLimit(theValueSet);
+        return getAgeAllowLimit(getValueSet());
     }
 
     /**
@@ -286,7 +275,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the limit
      */
     public Money getAddAllowLimit() {
-        return getAddAllowLimit(theValueSet);
+        return getAddAllowLimit(getValueSet());
     }
 
     /**
@@ -294,7 +283,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the boundary
      */
     public Money getAddIncBound() {
-        return getAddIncBound(theValueSet);
+        return getAddIncBound(getValueSet());
     }
 
     /**
@@ -302,7 +291,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getLoTaxRate() {
-        return getLoTaxRate(theValueSet);
+        return getLoTaxRate(getValueSet());
     }
 
     /**
@@ -310,7 +299,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getBasicTaxRate() {
-        return getBasicTaxRate(theValueSet);
+        return getBasicTaxRate(getValueSet());
     }
 
     /**
@@ -318,7 +307,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getHiTaxRate() {
-        return getHiTaxRate(theValueSet);
+        return getHiTaxRate(getValueSet());
     }
 
     /**
@@ -326,7 +315,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getIntTaxRate() {
-        return getIntTaxRate(theValueSet);
+        return getIntTaxRate(getValueSet());
     }
 
     /**
@@ -334,7 +323,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getDivTaxRate() {
-        return getDivTaxRate(theValueSet);
+        return getDivTaxRate(getValueSet());
     }
 
     /**
@@ -342,7 +331,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getHiDivTaxRate() {
-        return getHiDivTaxRate(theValueSet);
+        return getHiDivTaxRate(getValueSet());
     }
 
     /**
@@ -350,7 +339,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getAddTaxRate() {
-        return getAddTaxRate(theValueSet);
+        return getAddTaxRate(getValueSet());
     }
 
     /**
@@ -358,7 +347,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getAddDivTaxRate() {
-        return getAddDivTaxRate(theValueSet);
+        return getAddDivTaxRate(getValueSet());
     }
 
     /**
@@ -366,7 +355,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getCapTaxRate() {
-        return getCapTaxRate(theValueSet);
+        return getCapTaxRate(getValueSet());
     }
 
     /**
@@ -374,7 +363,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @return the rate
      */
     public Rate getHiCapTaxRate() {
-        return getHiCapTaxRate(theValueSet);
+        return getHiCapTaxRate(getValueSet());
     }
 
     /**
@@ -604,7 +593,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueTaxYear(final DateDay pValue) {
-        theValueSet.setValue(FIELD_TAXYEAR, pValue);
+        getValueSet().setValue(FIELD_TAXYEAR, pValue);
     }
 
     /**
@@ -612,7 +601,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueTaxRegime(final TaxRegime pValue) {
-        theValueSet.setValue(FIELD_REGIME, pValue);
+        getValueSet().setValue(FIELD_REGIME, pValue);
     }
 
     /**
@@ -620,7 +609,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pId the id
      */
     private void setValueTaxRegime(final Integer pId) {
-        theValueSet.setValue(FIELD_REGIME, pId);
+        getValueSet().setValue(FIELD_REGIME, pId);
     }
 
     /**
@@ -628,7 +617,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueAllowance(final Money pValue) {
-        theValueSet.setValue(FIELD_ALLOW, pValue);
+        getValueSet().setValue(FIELD_ALLOW, pValue);
     }
 
     /**
@@ -636,7 +625,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueRental(final Money pValue) {
-        theValueSet.setValue(FIELD_RENTAL, pValue);
+        getValueSet().setValue(FIELD_RENTAL, pValue);
     }
 
     /**
@@ -644,7 +633,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueLoBand(final Money pValue) {
-        theValueSet.setValue(FIELD_LOBAND, pValue);
+        getValueSet().setValue(FIELD_LOBAND, pValue);
     }
 
     /**
@@ -652,7 +641,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueBasicBand(final Money pValue) {
-        theValueSet.setValue(FIELD_BSBAND, pValue);
+        getValueSet().setValue(FIELD_BSBAND, pValue);
     }
 
     /**
@@ -660,7 +649,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueCapitalAllowance(final Money pValue) {
-        theValueSet.setValue(FIELD_CAPALW, pValue);
+        getValueSet().setValue(FIELD_CAPALW, pValue);
     }
 
     /**
@@ -668,7 +657,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueLoAgeAllowance(final Money pValue) {
-        theValueSet.setValue(FIELD_LOAGAL, pValue);
+        getValueSet().setValue(FIELD_LOAGAL, pValue);
     }
 
     /**
@@ -676,7 +665,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueHiAgeAllowance(final Money pValue) {
-        theValueSet.setValue(FIELD_HIAGAL, pValue);
+        getValueSet().setValue(FIELD_HIAGAL, pValue);
     }
 
     /**
@@ -684,7 +673,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueAgeAllowLimit(final Money pValue) {
-        theValueSet.setValue(FIELD_AGELMT, pValue);
+        getValueSet().setValue(FIELD_AGELMT, pValue);
     }
 
     /**
@@ -692,7 +681,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueAddAllowLimit(final Money pValue) {
-        theValueSet.setValue(FIELD_ADDLMT, pValue);
+        getValueSet().setValue(FIELD_ADDLMT, pValue);
     }
 
     /**
@@ -700,7 +689,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueAddIncBound(final Money pValue) {
-        theValueSet.setValue(FIELD_ADDBDY, pValue);
+        getValueSet().setValue(FIELD_ADDBDY, pValue);
     }
 
     /**
@@ -708,7 +697,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueLoTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_LOTAX, pValue);
+        getValueSet().setValue(FIELD_LOTAX, pValue);
     }
 
     /**
@@ -716,7 +705,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueBasicTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_BASTAX, pValue);
+        getValueSet().setValue(FIELD_BASTAX, pValue);
     }
 
     /**
@@ -724,7 +713,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueHiTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_HITAX, pValue);
+        getValueSet().setValue(FIELD_HITAX, pValue);
     }
 
     /**
@@ -732,7 +721,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueIntTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_INTTAX, pValue);
+        getValueSet().setValue(FIELD_INTTAX, pValue);
     }
 
     /**
@@ -740,7 +729,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueDivTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_DIVTAX, pValue);
+        getValueSet().setValue(FIELD_DIVTAX, pValue);
     }
 
     /**
@@ -748,7 +737,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueHiDivTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_HDVTAX, pValue);
+        getValueSet().setValue(FIELD_HDVTAX, pValue);
     }
 
     /**
@@ -756,7 +745,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueAddTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_ADDTAX, pValue);
+        getValueSet().setValue(FIELD_ADDTAX, pValue);
     }
 
     /**
@@ -764,7 +753,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueAddDivTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_ADVTAX, pValue);
+        getValueSet().setValue(FIELD_ADVTAX, pValue);
     }
 
     /**
@@ -772,7 +761,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueCapTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_CAPTAX, pValue);
+        getValueSet().setValue(FIELD_CAPTAX, pValue);
     }
 
     /**
@@ -780,7 +769,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValue the value
      */
     private void setValueHiCapTaxRate(final Rate pValue) {
-        theValueSet.setValue(FIELD_HCPTAX, pValue);
+        getValueSet().setValue(FIELD_HCPTAX, pValue);
     }
 
     @Override

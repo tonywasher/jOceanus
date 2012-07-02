@@ -48,11 +48,6 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
     protected static final String TABLE_NAME = AccountRate.LIST_NAME;
 
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * The rate list.
      */
     private AccountRateList theList = null;
@@ -63,27 +58,14 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
      */
     protected TableAccountRate(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        /* Define sort column variable */
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
-
-        /* Define Sort Column variables */
-        ColumnDefinition myDateCol;
-        ColumnDefinition myActCol;
+        TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        myActCol = theTableDef.addReferenceColumn(AccountRate.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
-        theTableDef.addEncryptedColumn(AccountRate.FIELD_RATE, EncryptedData.RATELEN);
-        theTableDef.addNullEncryptedColumn(AccountRate.FIELD_BONUS, EncryptedData.RATELEN);
-        myDateCol = theTableDef.addNullDateColumn(AccountRate.FIELD_ENDDATE);
+        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountRate.FIELD_ACCOUNT,
+                                                                  TableAccount.TABLE_NAME);
+        myTableDef.addEncryptedColumn(AccountRate.FIELD_RATE, EncryptedData.RATELEN);
+        myTableDef.addNullEncryptedColumn(AccountRate.FIELD_BONUS, EncryptedData.RATELEN);
+        ColumnDefinition myDateCol = myTableDef.addNullDateColumn(AccountRate.FIELD_ENDDATE);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -101,10 +83,11 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
     protected void loadItem(final int pId,
                             final int pControlId) throws JDataException {
         /* Get the various fields */
-        int myAccountId = theTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT);
-        byte[] myRate = theTableDef.getBinaryValue(AccountRate.FIELD_RATE);
-        byte[] myBonus = theTableDef.getBinaryValue(AccountRate.FIELD_BONUS);
-        Date myEndDate = theTableDef.getDateValue(AccountRate.FIELD_ENDDATE);
+        TableDefinition myTableDef = getTableDef();
+        int myAccountId = myTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT);
+        byte[] myRate = myTableDef.getBinaryValue(AccountRate.FIELD_RATE);
+        byte[] myBonus = myTableDef.getBinaryValue(AccountRate.FIELD_BONUS);
+        Date myEndDate = myTableDef.getDateValue(AccountRate.FIELD_ENDDATE);
 
         /* Add into the list */
         theList.addItem(pId, pControlId, myAccountId, myRate, myEndDate, myBonus);
@@ -114,14 +97,15 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
     protected void setFieldValue(final AccountRate pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (iField == AccountRate.FIELD_ACCOUNT) {
-            theTableDef.setIntegerValue(iField, pItem.getAccount().getId());
+            myTableDef.setIntegerValue(iField, pItem.getAccount().getId());
         } else if (iField == AccountRate.FIELD_RATE) {
-            theTableDef.setBinaryValue(iField, pItem.getRateBytes());
+            myTableDef.setBinaryValue(iField, pItem.getRateBytes());
         } else if (iField == AccountRate.FIELD_BONUS) {
-            theTableDef.setBinaryValue(iField, pItem.getBonusBytes());
+            myTableDef.setBinaryValue(iField, pItem.getBonusBytes());
         } else if (iField == AccountRate.FIELD_ENDDATE) {
-            theTableDef.setDateValue(iField, pItem.getEndDate());
+            myTableDef.setDateValue(iField, pItem.getEndDate());
         } else {
             super.setFieldValue(pItem, iField);
         }

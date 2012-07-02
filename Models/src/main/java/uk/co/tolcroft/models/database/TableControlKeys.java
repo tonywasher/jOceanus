@@ -38,11 +38,6 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
     protected static final String TABLE_NAME = ControlKey.LIST_NAME;
 
     /**
-     * The table definition.
-     */
-    private TableDefinition theTableDef; /* Set during load */
-
-    /**
      * The control key list.
      */
     private ControlKeyList theList = null;
@@ -53,20 +48,10 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
      */
     protected TableControlKeys(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
-    }
-
-    /**
-     * Define the table columns (called from within super-constructor).
-     * @param pTableDef the table definition
-     */
-    @Override
-    protected void defineTable(final TableDefinition pTableDef) {
-        /* Define Standard table */
-        super.defineTable(pTableDef);
-        theTableDef = pTableDef;
+        TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        theTableDef.addBinaryColumn(ControlKey.FIELD_PASSHASH, ControlKey.HASHLEN);
+        myTableDef.addBinaryColumn(ControlKey.FIELD_PASSHASH, ControlKey.HASHLEN);
     }
 
     @Override
@@ -77,10 +62,9 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
 
     @Override
     protected void loadItem(final int pId) throws JDataException {
-        byte[] myHash;
-
         /* Get the various fields */
-        myHash = theTableDef.getBinaryValue(ControlKey.FIELD_PASSHASH);
+        TableDefinition myTableDef = getTableDef();
+        byte[] myHash = myTableDef.getBinaryValue(ControlKey.FIELD_PASSHASH);
 
         /* Add into the list */
         theList.addItem(pId, myHash);
@@ -90,8 +74,9 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
     protected void setFieldValue(final ControlKey pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
         if (iField == ControlKey.FIELD_PASSHASH) {
-            theTableDef.setBinaryValue(iField, pItem.getHashBytes());
+            myTableDef.setBinaryValue(iField, pItem.getHashBytes());
         } else {
             super.setFieldValue(pItem, iField);
         }

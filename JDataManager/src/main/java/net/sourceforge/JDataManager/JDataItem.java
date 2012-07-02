@@ -63,6 +63,11 @@ public class JDataItem {
     private static final int BUFFER_LEN = 1000;
 
     /**
+     * Tick factor.
+     */
+    private static final int TICK_FACTOR = 10;
+
+    /**
      * Strut width.
      */
     private static final int STRUT_WIDTH = 5;
@@ -305,7 +310,7 @@ public class JDataItem {
         /* Show/hide movement buttons */
         theNext.setVisible(true);
         thePrev.setVisible(true);
-        theSlider.setVisible(true);
+        theSlider.setVisible(mySize > 1);
         theLabel.setVisible(true);
 
         /* Enable movement buttons */
@@ -315,13 +320,62 @@ public class JDataItem {
         /* Set the text detail */
         theLabel.setText("Item " + (myPos + 1) + " of " + mySize);
         theSlider.setValue(myPos);
-        theSlider.setMaximum(mySize - 1);
-        theSlider.setMajorTickSpacing(10);
-        theSlider.setMinorTickSpacing(1);
-        theSlider.setPaintTicks(true);
+
+        /* Handle tick spacing */
+        determineTickSpacing(mySize);
 
         /* Set the text detail */
         theToggle.setText("Show header");
+    }
+
+    /**
+     * Determine Tick Spacing.
+     * @param pSize the size of the list
+     */
+    private void determineTickSpacing(final int pSize) {
+        /* Obtain the maximum value */
+        int iMax = pSize;
+        int iMajor = 1;
+
+        /* Set the maximum */
+        theSlider.setMaximum(pSize - 1);
+
+        /* Calculate nearest power of Ten */
+        while (iMax > TICK_FACTOR) {
+            /* Divide max by ten and multiply major by ten */
+            iMax /= TICK_FACTOR;
+            iMajor *= TICK_FACTOR;
+        }
+
+        /* If major tick spacing is one */
+        if (iMajor == 1) {
+            /* Set major and minor ticks to 1 */
+            theSlider.setMajorTickSpacing(iMajor);
+            theSlider.setMinorTickSpacing(iMajor);
+
+            /* else check on spacing */
+        } else {
+            /* Determine how many major ticks that gives us */
+            int iNumTicks = theSlider.getMaximum() / iMajor;
+
+            /* If we have 5 or more ticks */
+            if (iNumTicks >= (TICK_FACTOR >> 1)) {
+                /* Use the major ticks */
+                theSlider.setMajorTickSpacing(iMajor);
+
+                /* Minor ticks is half the major ticks */
+                theSlider.setMinorTickSpacing(iMajor >> 1);
+            } else {
+                /* Use half the major ticks */
+                theSlider.setMajorTickSpacing(iMajor >> 1);
+
+                /* Minor ticks is one-tenth the major ticks */
+                theSlider.setMinorTickSpacing(iMajor / TICK_FACTOR);
+            }
+        }
+
+        /* Ask for the ticks to be painted */
+        theSlider.setPaintTicks(true);
     }
 
     /**

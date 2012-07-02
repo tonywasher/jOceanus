@@ -29,7 +29,6 @@ import java.util.List;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataElement;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 
 /**
@@ -38,19 +37,21 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
  */
 public class ItemValidation implements JDataContents {
     /**
-     * Report fields.
+     * The local fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ItemValidation.class.getSimpleName());
+    private JDataFields theLocalFields = null;
+
+    /**
+     * Allocate new DataFields.
+     */
+    private void allocateNewFields() {
+        theLocalFields = new JDataFields(ItemValidation.class.getSimpleName());
+    }
 
     @Override
     public JDataFields getDataFields() {
-        return FIELD_DEFS;
+        return theLocalFields;
     }
-
-    /**
-     * Errors Field Id.
-     */
-    private static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField("Errors");
 
     @Override
     public String formatObject() {
@@ -59,10 +60,15 @@ public class ItemValidation implements JDataContents {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (FIELD_ERRORS.equals(pField)) {
-            return theErrors.iterator();
+        /* Handle out of range */
+        int iIndex = pField.getIndex();
+        if ((iIndex < 0) || iIndex >= theErrors.size()) {
+            return JDataFieldValue.UnknownField;
         }
-        return JDataFieldValue.UnknownField;
+
+        /* Access the element */
+        ErrorElement myError = theErrors.get(iIndex);
+        return myError.getError();
     }
 
     /**
@@ -83,6 +89,7 @@ public class ItemValidation implements JDataContents {
         /* Store details */
         theList = pItem.getList();
         theErrors = new ArrayList<ErrorElement>();
+        allocateNewFields();
     }
 
     /**
@@ -102,6 +109,9 @@ public class ItemValidation implements JDataContents {
                          final JDataField pField) {
         /* Create a new error element */
         ErrorElement myEl = new ErrorElement(pText, pField);
+
+        /* Declare error field */
+        theLocalFields.declareIndexField(pField.getName());
 
         /* Add to the end of the list */
         theErrors.add(myEl);
@@ -214,12 +224,13 @@ public class ItemValidation implements JDataContents {
     public void clearErrors() {
         /* Remove all errors */
         theErrors.clear();
+        allocateNewFields();
     }
 
     /**
      * represents an instance of an error for an object.
      */
-    public static final class ErrorElement implements JDataElement {
+    public static final class ErrorElement {
         /**
          * The text of the error.
          */
@@ -235,16 +246,6 @@ public class ItemValidation implements JDataContents {
          * @return the text
          */
         public String getError() {
-            return theError;
-        }
-
-        @Override
-        public String getElementName() {
-            return theField.getName();
-        }
-
-        @Override
-        public Object getElementValue() {
             return theError;
         }
 

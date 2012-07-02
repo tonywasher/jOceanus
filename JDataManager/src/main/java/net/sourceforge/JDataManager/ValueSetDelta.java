@@ -1,0 +1,153 @@
+/*******************************************************************************
+ * JDataManager: Java Data Manager
+ * Copyright 2012 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package net.sourceforge.JDataManager;
+
+import java.util.Iterator;
+
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.JDataManager.JDataObject.JDataValues;
+
+/**
+ * Provides the implementation of delta between two valueSets.
+ */
+public class ValueSetDelta implements JDataContents {
+    /**
+     * Report fields.
+     */
+    private JDataFields theLocalFields = null;
+
+    /**
+     * Old ValueSet.
+     */
+    private final ValueSet theOldSet;
+
+    /**
+     * New ValueSet.
+     */
+    private final ValueSet theNewSet;
+
+    /**
+     * Obtain the version.
+     * @return the version
+     */
+    public int getVersion() {
+        return theOldSet.getVersion();
+    }
+
+    /**
+     * Constructor
+     * @param pNew the new valueSet.
+     * @param pOld the old valueSet.
+     */
+    protected ValueSetDelta(final ValueSet pNew,
+                            final ValueSet pOld) {
+        /* Store parameters */
+        theOldSet = pOld;
+        theNewSet = pNew;
+    }
+
+    @Override
+    public String formatObject() {
+        /* Access the values */
+        Object[] myNewValues = theNewSet.getValues();
+        Object[] myOldValues = theOldSet.getValues();
+
+        /* Initialise number of differences */
+        int myNumDiffs = (theOldSet.isDeletion() == theNewSet.isDeletion()) ? 0 : 1;
+
+        /* Loop through the objects */
+        for (int i = 0; i < myNewValues.length; i++) {
+            if (!Difference.isEqual(myOldValues[i], myNewValues[i])) {
+                /* Increment the number of differences */
+                myNumDiffs++;
+            }
+        }
+
+        /* Return the number of differences */
+        return ValueSetDelta.class.getSimpleName() + "(" + myNumDiffs + ")";
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        /* Access the owning item fields */
+        JDataValues myItem = theOldSet.getItem();
+        JDataFields myFields = myItem.getDataFields();
+
+        /* Allocate new local fields */
+        theLocalFields = new JDataFields(ValueSetDelta.class.getSimpleName());
+
+        /* Declare the version field */
+        theLocalFields.declareIndexField(ValueSet.FIELD_VERSION);
+
+        /* Declare the deletion field */
+        theLocalFields.declareIndexField(ValueSet.FIELD_DELETION);
+
+        /* Loop through the fields */
+        Iterator<JDataField> myIterator = myFields.fieldIterator();
+        while (myIterator.hasNext()) {
+            /* Access Field */
+            JDataField myField = myIterator.next();
+
+            /* Skip if the field is not valueSet */
+            if (!myField.isValueSetField()) {
+                continue;
+            }
+
+            /* Declare the field */
+            theLocalFields.declareIndexField(myField.getName());
+        }
+
+        /* Return the fields */
+        return theLocalFields;
+    }
+
+    @Override
+    public Object getFieldValue(JDataField pField) {
+        /* Access the index */
+        int myIndex = pField.getIndex();
+
+        /* Return version */
+        if (myIndex == 0) {
+            return getVersion();
+
+            /* If this is the deletion field, return the flag */
+        } else if (myIndex == 1) {
+            return (theOldSet.isDeletion() == theNewSet.isDeletion()) ? JDataFieldValue.SkipField : theOldSet
+                    .isDeletion();
+        }
+
+        /* Adjust index */
+        myIndex -= 2;
+
+        /* If this value does not differ */
+        if (Difference.isEqual(theOldSet.getValue(myIndex), theNewSet.getValue(myIndex))) {
+            /* Skip the field */
+            return JDataFieldValue.SkipField;
+        }
+
+        /* Return the value */
+        return theOldSet.getValue(myIndex);
+    }
+}

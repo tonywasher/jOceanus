@@ -32,6 +32,9 @@ import java.awt.print.PrinterJob;
 import javax.swing.JComponent;
 import javax.swing.RepaintManager;
 
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+
 /**
  * Print Utilities class.
  * @author Tony Washer
@@ -45,8 +48,9 @@ public class PrintUtilities implements Printable {
     /**
      * Print the component.
      * @param c the component
+     * @throws JDataException on error
      */
-    public static void printComponent(final JComponent c) {
+    public static void printComponent(final JComponent c) throws JDataException {
         new PrintUtilities(c).print();
     }
 
@@ -60,15 +64,16 @@ public class PrintUtilities implements Printable {
 
     /**
      * Print it.
+     * @throws JDataException on error
      */
-    public void print() {
+    public void print() throws JDataException {
         PrinterJob printJob = PrinterJob.getPrinterJob();
         printJob.setPrintable(this);
         if (printJob.printDialog()) {
             try {
                 printJob.print();
             } catch (PrinterException pe) {
-                System.out.println("Error printing: " + pe);
+                throw new JDataException(ExceptionClass.DATA, "Error printing ", pe);
             }
         }
     }

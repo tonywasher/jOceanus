@@ -238,7 +238,7 @@ public class MaintProperties extends JPanelWithEvents {
     /**
      * Set the visibility.
      */
-    protected void setVisibility() {
+    protected final void setVisibility() {
         /* Enable selection */
         theSelect.setEnabled((theActive != null) && !theActive.hasChanges());
 

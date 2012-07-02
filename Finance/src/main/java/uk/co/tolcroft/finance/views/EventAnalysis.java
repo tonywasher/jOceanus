@@ -364,7 +364,7 @@ public class EventAnalysis implements JDataContents {
      * @param pStatement the statement
      * @throws JDataException on error
      */
-    protected void resetStatementBalance(final Statement pStatement) throws JDataException {
+    protected final void resetStatementBalance(final Statement pStatement) throws JDataException {
         /* Access the iterator */
         StatementLines myLines = pStatement.getLines();
         Iterator<Event> myIterator = myLines.listIterator();

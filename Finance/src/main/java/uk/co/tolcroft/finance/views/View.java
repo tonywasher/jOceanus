@@ -23,7 +23,6 @@
 package uk.co.tolcroft.finance.views;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDateDay.DateDayRange;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.finance.database.FinanceDatabase;
@@ -116,7 +115,7 @@ public class View extends DataControl<FinanceData> {
      * @return new DataSet
      */
     @Override
-    public FinanceData getNewData() {
+    public final FinanceData getNewData() {
         return new FinanceData(getSecurity());
     }
 
@@ -139,7 +138,7 @@ public class View extends DataControl<FinanceData> {
      * @param pData the new data set
      */
     @Override
-    public void setData(final FinanceData pData) {
+    public final void setData(final FinanceData pData) {
         /* Record the data */
         super.setData(pData);
         theData = pData;
@@ -157,7 +156,7 @@ public class View extends DataControl<FinanceData> {
      * @return the analysis
      * @throws JDataException on error
      */
-    public EventAnalysis analyseData(final FinanceData pData) throws JDataException {
+    public final EventAnalysis analyseData(final FinanceData pData) throws JDataException {
         /* Initialise the analysis */
         pData.initialiseAnalysis();
 
@@ -211,13 +210,6 @@ public class View extends DataControl<FinanceData> {
             if (!bPreserve) {
                 setError(e);
             }
-
-            /* Catch any exceptions */
-        } catch (Exception e) {
-            /* Report the failure */
-            if (!bPreserve) {
-                setError(new JDataException(ExceptionClass.DATA, "Failed to analyse data", e));
-            }
         }
 
         /* Return whether there was success */
@@ -228,7 +220,7 @@ public class View extends DataControl<FinanceData> {
      * refresh the window view.
      */
     @Override
-    protected void refreshWindow() {
+    protected final void refreshWindow() {
         /* Protect against exceptions */
         try {
             /* Refresh the Control */
@@ -237,11 +229,6 @@ public class View extends DataControl<FinanceData> {
             /* Catch any exceptions */
         } catch (JDataException e) {
             setError(e);
-
-            /* Catch any exceptions */
-        } catch (Exception e) {
-            /* Report the failure */
-            setError(new JDataException(ExceptionClass.DATA, "Failed refresh window", e));
         }
     }
 }

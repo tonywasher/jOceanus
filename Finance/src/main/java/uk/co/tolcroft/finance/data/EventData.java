@@ -82,24 +82,11 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
     public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField("Value");
 
     /**
-     * The active set of values.
-     */
-    private EncryptedValueSet theValueSet;
-
-    @Override
-    public void declareValues(final ValueSet pValues) {
-        super.declareValues(pValues);
-        if (pValues instanceof EncryptedValueSet) {
-            theValueSet = (EncryptedValueSet) pValues;
-        }
-    }
-
-    /**
      * Obtain InfoType.
      * @return the Info type
      */
     public EventInfoType getInfoType() {
-        return getInfoType(theValueSet);
+        return getInfoType(getValueSet());
     }
 
     /**
@@ -107,7 +94,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @return the Event
      */
     public Event getEvent() {
-        return getEvent(theValueSet);
+        return getEvent(getValueSet());
     }
 
     /**
@@ -115,7 +102,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @return the Units
      */
     public Units getUnits() {
-        return getUnits(theValueSet);
+        return getUnits(getValueSet());
     }
 
     /**
@@ -123,7 +110,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @return the Money
      */
     public Money getMoney() {
-        return getMoney(theValueSet);
+        return getMoney(getValueSet());
     }
 
     /**
@@ -131,7 +118,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @return the Dilution
      */
     public Dilution getDilution() {
-        return getDilution(theValueSet);
+        return getDilution(getValueSet());
     }
 
     /**
@@ -139,7 +126,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @return the Bytes
      */
     public byte[] getValueBytes() {
-        return getValueBytes(theValueSet);
+        return getValueBytes(getValueSet());
     }
 
     /**
@@ -213,7 +200,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValue the info Type
      */
     private void setValueInfoType(final EventInfoType pValue) {
-        theValueSet.setValue(FIELD_INFOTYPE, pValue);
+        getValueSet().setValue(FIELD_INFOTYPE, pValue);
     }
 
     /**
@@ -221,7 +208,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pId the info Type id
      */
     private void setValueInfoType(final Integer pId) {
-        theValueSet.setValue(FIELD_INFOTYPE, pId);
+        getValueSet().setValue(FIELD_INFOTYPE, pId);
     }
 
     /**
@@ -229,7 +216,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValue the event
      */
     private void setValueEvent(final Event pValue) {
-        theValueSet.setValue(FIELD_EVENT, pValue);
+        getValueSet().setValue(FIELD_EVENT, pValue);
     }
 
     /**
@@ -237,7 +224,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pId the event id
      */
     private void setValueEvent(final Integer pId) {
-        theValueSet.setValue(FIELD_EVENT, pId);
+        getValueSet().setValue(FIELD_EVENT, pId);
     }
 
     /**

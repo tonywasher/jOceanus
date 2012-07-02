@@ -54,7 +54,7 @@
   </dependencies>
   <licenses>
     <license>
-      <name>The Apache Software Licence, Version 2.0</name>
+      <name>The Apache Software License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
       <distribution>manual</distribution>
     </license>
@@ -125,6 +125,22 @@
             <configuration>
               <outputDirectory>${backuplib-dir}</outputDirectory>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>1.7</version>
+        <configuration>
+          <finalName>${project.artifactId}-${project.version}-uber</finalName>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

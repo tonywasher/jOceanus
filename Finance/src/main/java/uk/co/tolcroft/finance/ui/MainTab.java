@@ -269,7 +269,7 @@ public class MainTab extends MainWindow<FinanceData> {
     }
 
     @Override
-    public boolean hasUpdates() {
+    public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
         return theExtract.hasUpdates() || theAccountCtl.hasUpdates() || theSpotView.hasUpdates()
                 || theMaint.hasUpdates();
@@ -375,7 +375,12 @@ public class MainTab extends MainWindow<FinanceData> {
      * refresh data.
      * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
+    public final void refreshData() throws JDataException {
+        /* Skip if no view yet */
+        if (theView == null) {
+            return;
+        }
+
         /* Create the combo list */
         theComboList = new ComboSelect(theView);
 
@@ -391,24 +396,19 @@ public class MainTab extends MainWindow<FinanceData> {
     }
 
     @Override
-    public void setVisibility() {
-        int iIndex;
-        boolean hasUpdates;
-        boolean hasWorker;
-        boolean showTab;
-
+    public final void setVisibility() {
         /* Sort out underlying visibility */
         super.setVisibility();
 
         /* Determine whether we have any updates */
-        hasUpdates = hasUpdates();
+        boolean hasUpdates = hasUpdates();
 
         /* Note whether we have a worker thread */
-        hasWorker = hasWorker();
+        boolean hasWorker = hasWorker();
 
         /* Access the Extract panel and determine its status */
-        iIndex = theTabs.indexOfTab(TITLE_EXTRACT);
-        showTab = (!hasWorker && (!hasUpdates || theExtract.hasUpdates()));
+        int iIndex = theTabs.indexOfTab(TITLE_EXTRACT);
+        boolean showTab = (!hasWorker && (!hasUpdates || theExtract.hasUpdates()));
 
         /* Enable/Disable the extract tab */
         if (iIndex != -1) {
