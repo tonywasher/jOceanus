@@ -280,16 +280,7 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
         @Override
         protected void definePreferences() {
             /* Define the preferences */
-            definePreference(NAME_REPSTEPS, PreferenceType.Integer);
-        }
-
-        @Override
-        protected Object getDefaultValue(final String pName) {
-            /* Handle default values */
-            if (pName.equals(NAME_REPSTEPS)) {
-                return DEFAULT_REPSTEPS;
-            }
-            return null;
+            defineIntegerPreference(NAME_REPSTEPS, DEFAULT_REPSTEPS);
         }
 
         @Override

@@ -99,15 +99,6 @@ public class Rate extends Decimal {
     }
 
     /**
-     * Format a Rate.
-     * @param pRate the rate to format
-     * @return the formatted Rate
-     */
-    public static String format(final Rate pRate) {
-        return (pRate != null) ? pRate.format(false) : "null";
-    }
-
-    /**
      * Create a new Rate by parsing a string value.
      * @param pRate the Rate to parse
      * @return the new Rate or <code>null</code> if parsing failed
@@ -115,7 +106,7 @@ public class Rate extends Decimal {
     public static Rate parseString(final String pRate) {
         try {
             return new Rate(pRate);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }

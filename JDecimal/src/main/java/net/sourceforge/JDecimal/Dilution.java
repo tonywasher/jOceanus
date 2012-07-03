@@ -98,10 +98,7 @@ public class Dilution extends Decimal {
      */
     public Dilution getFurtherDilution(final Dilution pDilution) {
         /* Calculate the new dilution */
-        Dilution myTotal = new Dilution(this, pDilution);
-
-        /* Return value */
-        return myTotal;
+        return new Dilution(this, pDilution);
     }
 
     /**
@@ -126,17 +123,8 @@ public class Dilution extends Decimal {
     public static Dilution parseString(final String pDilution) {
         try {
             return new Dilution(pDilution);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
-    }
-
-    /**
-     * Format a Dilution.
-     * @param pDilution the dilution to format
-     * @return the formatted Dilution
-     */
-    public static String format(final Dilution pDilution) {
-        return (pDilution != null) ? pDilution.format(false) : "null";
     }
 }

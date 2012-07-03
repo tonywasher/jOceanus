@@ -29,7 +29,6 @@ import java.util.Arrays;
 import javax.crypto.Cipher;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.SymmetricKey;
 
 /**
@@ -91,26 +90,19 @@ public class EncryptionOutputStream extends OutputStream {
      */
     public EncryptionOutputStream(final SymmetricKey pKey,
                                   final OutputStream pStream) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Create the byte buffer */
-            theByte = new byte[1];
+        /* Create the byte buffer */
+        theByte = new byte[1];
 
-            /* record the output stream */
-            theStream = pStream;
+        /* record the output stream */
+        theStream = pStream;
 
-            /* Initialise the cipher */
-            theSymKey = pKey;
-            Cipher myCipher = theSymKey.initEncryptionStream();
-            theCipher = new StreamCipher(myCipher, myCipher.getIV());
+        /* Initialise the cipher */
+        theSymKey = pKey;
+        Cipher myCipher = theSymKey.initEncryptionStream();
+        theCipher = new StreamCipher(myCipher, myCipher.getIV());
 
-            /* Access the initialisation vector */
-            theInitVector = theCipher.getInitVector();
-
-            /* Catch exceptions */
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Exception creating encryption output stream", e);
-        }
+        /* Access the initialisation vector */
+        theInitVector = theCipher.getInitVector();
     }
 
     @Override

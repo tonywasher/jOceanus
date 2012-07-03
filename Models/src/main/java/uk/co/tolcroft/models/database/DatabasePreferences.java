@@ -145,40 +145,13 @@ public class DatabasePreferences extends PreferenceSet {
     @Override
     protected void definePreferences() {
         /* Define the preferences */
-        definePreference(NAME_DBDRIVER, JDBCDriver.class);
-        definePreference(NAME_DBSERVER, PreferenceType.String);
-        definePreference(NAME_DBINSTANCE, PreferenceType.String);
-        definePreference(NAME_DBNAME, PreferenceType.String);
-        definePreference(NAME_DBBATCH, PreferenceType.Integer);
-        definePreference(NAME_DBUSER, PreferenceType.String);
-        definePreference(NAME_DBPASS, PreferenceType.String);
-    }
-
-    @Override
-    protected Object getDefaultValue(final String pName) {
-        /* Handle default values */
-        if (pName.equals(NAME_DBDRIVER)) {
-            return DEFAULT_DBDRIVER;
-        }
-        if (pName.equals(NAME_DBSERVER)) {
-            return DEFAULT_DBSERVER;
-        }
-        if (pName.equals(NAME_DBINSTANCE)) {
-            return DEFAULT_DBINSTANCE;
-        }
-        if (pName.equals(NAME_DBNAME)) {
-            return DEFAULT_DBNAME;
-        }
-        if (pName.equals(NAME_DBBATCH)) {
-            return DEFAULT_DBBATCH;
-        }
-        if (pName.equals(NAME_DBUSER)) {
-            return DEFAULT_DBUSER;
-        }
-        if (pName.equals(NAME_DBPASS)) {
-            return DEFAULT_DBPASS;
-        }
-        return null;
+        definePreference(NAME_DBDRIVER, DEFAULT_DBDRIVER, JDBCDriver.class);
+        defineStringPreference(NAME_DBSERVER, DEFAULT_DBSERVER);
+        defineStringPreference(NAME_DBINSTANCE, DEFAULT_DBINSTANCE);
+        defineStringPreference(NAME_DBNAME, DEFAULT_DBNAME);
+        defineIntegerPreference(NAME_DBBATCH, DEFAULT_DBBATCH);
+        defineStringPreference(NAME_DBUSER, DEFAULT_DBUSER);
+        defineStringPreference(NAME_DBPASS, DEFAULT_DBPASS);
     }
 
     @Override

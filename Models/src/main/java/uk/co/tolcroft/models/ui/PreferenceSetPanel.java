@@ -22,10 +22,12 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.ui;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -40,8 +42,10 @@ import java.util.ResourceBundle;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
@@ -52,6 +56,7 @@ import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import uk.co.tolcroft.models.data.PreferenceSet;
 import uk.co.tolcroft.models.data.PreferenceSet.BooleanPreference;
+import uk.co.tolcroft.models.data.PreferenceSet.ColorPreference;
 import uk.co.tolcroft.models.data.PreferenceSet.DatePreference;
 import uk.co.tolcroft.models.data.PreferenceSet.EnumPreference;
 import uk.co.tolcroft.models.data.PreferenceSet.IntegerPreference;
@@ -100,6 +105,16 @@ public class PreferenceSetPanel extends JPanelWithEvents {
      * Text for Options Title.
      */
     private static final String NLS_OPTIONS = NLS_BUNDLE.getString("OptionsTitle");
+
+    /**
+     * Title for Colour Dialog.
+     */
+    private static final String NLS_COLORTITLE = NLS_BUNDLE.getString("ColourTitle");
+
+    /**
+     * Text for Colour Button.
+     */
+    private static final String NLS_COLORTEXT = NLS_BUNDLE.getString("ColourText");
 
     /**
      * The PreferenceSet for this panel.
@@ -380,6 +395,9 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                     break;
                 case Date:
                     theField = new DateField(thePreference);
+                    break;
+                case Color:
+                    theField = new ColorField(thePreference);
                     break;
                 case Enum:
                     theField = new EnumField(thePreference);
@@ -750,6 +768,7 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                 @Override
                 public void propertyChange(final PropertyChangeEvent evt) {
                     Object o = evt.getSource();
+
                     /* If this is our preference */
                     if (theField.equals(o)) {
                         /* Set the new value of the preference */
@@ -758,6 +777,94 @@ public class PreferenceSetPanel extends JPanelWithEvents {
 
                         /* Note if we have any changes */
                         notifyChanges();
+                    }
+                }
+            }
+        }
+
+        /**
+         * ColorField class.
+         */
+        private final class ColorField extends PreferenceField {
+            /**
+             * The underlying button field.
+             */
+            private final JButton theField;
+
+            /**
+             * The preference as a colorPreference.
+             */
+            private final ColorPreference theColor;
+
+            /**
+             * The colour chooser.
+             */
+            private final JColorChooser theChooser;
+
+            /**
+             * The colour chooser.
+             */
+            private final JDialog theDialog;
+
+            /**
+             * Constructor.
+             * @param pPreference the preference
+             */
+            private ColorField(final PreferenceItem pPreference) {
+                /* Access the preference and create the underlying field */
+                theColor = (ColorPreference) pPreference;
+                theField = new JButton();
+
+                /* Create listener */
+                PreferenceListener myListener = new PreferenceListener();
+
+                /* Create chooser and dialog */
+                theChooser = new JColorChooser();
+                theDialog = JColorChooser.createDialog(theField, NLS_COLORTITLE, true, theChooser,
+                                                       myListener, null);
+
+                /* Add action listener */
+                theField.addActionListener(myListener);
+            }
+
+            @Override
+            protected void updateField() {
+                /* Update the field */
+                theField.setText(NLS_COLORTEXT);
+
+                /* Set font and foreground */
+                theField.setForeground(theColor.getValue());
+                theField.setFont(RenderData.getFont(theColor));
+            }
+
+            @Override
+            protected JComponent getComponent() {
+                return theField;
+            }
+
+            /**
+             * PreferenceListener class.
+             */
+            private final class PreferenceListener implements ActionListener {
+
+                @Override
+                public void actionPerformed(final ActionEvent e) {
+                    Object o = e.getSource();
+
+                    /* If this is the button */
+                    if (theField.equals(o)) {
+                        /* Position the dialog just below the button */
+                        Point myLoc = getLocationOnScreen();
+                        theDialog.setLocation(myLoc.x, myLoc.y + getHeight());
+
+                        /* Show the dialog */
+                        theDialog.setVisible(true);
+
+                        /* else if this is the dialog */
+                    } else if (theDialog.equals(o)) {
+                        /* Record the colour */
+                        Color myColor = theChooser.getColor();
+                        theColor.setValue(myColor);
                     }
                 }
             }

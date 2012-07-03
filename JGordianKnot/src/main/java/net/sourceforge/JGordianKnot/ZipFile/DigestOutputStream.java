@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JGordianKnot.MsgDigest;
 
 /**
@@ -73,18 +72,11 @@ public class DigestOutputStream extends OutputStream {
      */
     public DigestOutputStream(final MsgDigest pDigest,
                               final OutputStream pStream) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Store the message digest */
-            theDigest = pDigest;
+        /* Store the message digest */
+        theDigest = pDigest;
 
-            /* Store the stream */
-            theStream = pStream;
-
-            /* Catch exceptions */
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Exception creating digest output stream", e);
-        }
+        /* Store the stream */
+        theStream = pStream;
     }
 
     @Override

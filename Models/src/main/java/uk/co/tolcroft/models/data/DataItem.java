@@ -31,6 +31,7 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.JDataObject.JDataValues;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataManager.ValueSetHistory;
+import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import net.sourceforge.JSortedList.OrderedIdItem;
 import uk.co.tolcroft.models.data.DataList.ListStyle;
 import uk.co.tolcroft.models.data.ItemValidation.ErrorElement;
@@ -628,15 +629,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
-     * Allocate the initial value set and associated controls.
-     * @return the new value set
-     */
-    public ValueSet allocateValueSet() {
-        /* Allocate initial value set and declare it */
-        return new ValueSet(theItem);
-    }
-
-    /**
      * Re-link all references to current DataSet.
      */
     protected void relinkToDataSet() {
@@ -664,7 +656,9 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
         theHistory = new ValueSetHistory();
 
         /* Allocate initial value set and declare it */
-        ValueSet myValues = allocateValueSet();
+        ValueSet myValues = (this instanceof EncryptedItem)
+                                                           ? new EncryptedValueSet(this)
+                                                           : new ValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);
 

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -75,6 +76,11 @@ public final class DataConverter {
      * Nybble mask.
      */
     public static final int NYBBLE_MASK = 0xF;
+
+    /**
+     * RGB colour length.
+     */
+    public static final int RGB_LENGTH = 6;
 
     /**
      * Private constructor to avoid instantiation.
@@ -164,6 +170,39 @@ public final class DataConverter {
 
         /* Return the string */
         return myValue.toString();
+    }
+
+    /**
+     * format a colour as a hexadecimal string.
+     * @param pValue the long value
+     * @return the string
+     */
+    public static String colorToHexString(final Color pValue) {
+        /* Access the RGB value */
+        int myValue = pValue.getRGB();
+
+        /* Allocate the string builder */
+        StringBuilder myBuilder = new StringBuilder();
+
+        /* While we have digits to format */
+        while (myValue > 0) {
+            /* Access the digit and move to next one */
+            int myDigit = (int) (myValue & NYBBLE_MASK);
+            char myChar = Character.forDigit(myDigit, HEX_RADIX);
+            myBuilder.insert(0, myChar);
+            myValue >>>= NYBBLE_SHIFT;
+        }
+
+        /* Add zeros to front if less than 6 digits */
+        while (myBuilder.length() < RGB_LENGTH) {
+            myBuilder.insert(0, '0');
+        }
+
+        /* Insert a # sign */
+        myBuilder.insert(0, '#');
+
+        /* Return the string */
+        return myBuilder.toString();
     }
 
     /**

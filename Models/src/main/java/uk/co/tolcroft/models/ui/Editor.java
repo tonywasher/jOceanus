@@ -138,7 +138,7 @@ public class Editor {
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
                     return Integer.valueOf((String) o);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     return null;
                 }
             }
@@ -352,7 +352,7 @@ public class Editor {
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
                     return new Rate((String) o);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     return null;
                 }
             }
@@ -375,7 +375,7 @@ public class Editor {
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
                     return new Money((String) o);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     return null;
                 }
             }
@@ -398,7 +398,7 @@ public class Editor {
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
                     return new Units((String) o);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     return null;
                 }
             }
@@ -421,7 +421,7 @@ public class Editor {
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
                     return new Dilution((String) o);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     return null;
                 }
             }
@@ -444,7 +444,7 @@ public class Editor {
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
                     return new Price((String) o);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     return null;
                 }
             }
@@ -467,7 +467,7 @@ public class Editor {
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
                     return new DilutedPrice((String) o);
-                } catch (Exception e) {
+                } catch (IllegalArgumentException e) {
                     return null;
                 }
             }

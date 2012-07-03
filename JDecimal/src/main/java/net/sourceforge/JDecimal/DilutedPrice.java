@@ -89,10 +89,7 @@ public class DilutedPrice extends Decimal {
      */
     public Price getPrice(final Dilution pDilution) {
         /* Calculate original base price */
-        Price myTotal = new Price(this, pDilution);
-
-        /* Return value */
-        return myTotal;
+        return new Price(this, pDilution);
     }
 
     @Override
@@ -148,17 +145,8 @@ public class DilutedPrice extends Decimal {
     public static DilutedPrice parseString(final String pPrice) {
         try {
             return new DilutedPrice(pPrice);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
-    }
-
-    /**
-     * Format a DilutedPrice.
-     * @param pPrice the price to format
-     * @return the formatted Price
-     */
-    public static String format(final DilutedPrice pPrice) {
-        return (pPrice != null) ? pPrice.format(false) : "null";
     }
 }

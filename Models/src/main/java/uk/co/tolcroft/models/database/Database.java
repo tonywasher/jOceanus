@@ -305,7 +305,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             /* Commit the database */
             try {
                 theConn.commit();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 close();
                 throw new JDataException(ExceptionClass.SQLSERVER, "Failed to commit transction", e);
             }

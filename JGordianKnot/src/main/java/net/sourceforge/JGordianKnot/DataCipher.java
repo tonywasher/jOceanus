@@ -27,7 +27,9 @@ import java.security.InvalidKeyException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.util.Arrays;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.IvParameterSpec;
 
 import net.sourceforge.JDataManager.DataConverter;
@@ -145,7 +147,9 @@ public class DataCipher implements JDataContents {
 
             /* Encrypt the byte array */
             myBytes = theCipher.doFinal(pBytes);
-        } catch (Exception e) {
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt bytes", e);
+        } catch (BadPaddingException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt bytes", e);
         }
 
@@ -171,7 +175,9 @@ public class DataCipher implements JDataContents {
 
             /* Encrypt the byte array */
             myBytes = theCipher.doFinal(pBytes);
-        } catch (Exception e) {
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt bytes", e);
+        } catch (BadPaddingException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt bytes", e);
         }
 
@@ -195,7 +201,9 @@ public class DataCipher implements JDataContents {
 
             /* Encrypt the byte array */
             myBytes = theCipher.doFinal(myBytes);
-        } catch (Exception e) {
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
+        } catch (BadPaddingException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt string", e);
         }
 
@@ -223,7 +231,9 @@ public class DataCipher implements JDataContents {
 
             /* Clear out the bytes */
             Arrays.fill(myRawBytes, (byte) 0);
-        } catch (Exception e) {
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt character array", e);
+        } catch (BadPaddingException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to encrypt character array", e);
         }
 
@@ -248,7 +258,9 @@ public class DataCipher implements JDataContents {
 
             /* Convert the bytes to a string */
             myString = DataConverter.byteArrayToString(myBytes);
-        } catch (Exception e) {
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
+        } catch (BadPaddingException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt string", e);
         }
 
@@ -276,7 +288,9 @@ public class DataCipher implements JDataContents {
 
             /* Clear out the bytes */
             Arrays.fill(myBytes, (byte) 0);
-        } catch (Exception e) {
+        } catch (IllegalBlockSizeException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt character array", e);
+        } catch (BadPaddingException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to decrypt character array", e);
         }
 
@@ -287,30 +301,34 @@ public class DataCipher implements JDataContents {
     /**
      * Initialise encryption.
      * @param pVector initialisation vector
-     * @throws InvalidAlgorithmParameterException on error
-     * @throws InvalidKeyException on error
+     * @throws JDataException on error
      */
-    private void initialiseEncryption(final byte[] pVector) throws InvalidKeyException,
-            InvalidAlgorithmParameterException {
-        AlgorithmParameterSpec myParms;
-
-        /* Initialise the cipher using the vector */
-        myParms = new IvParameterSpec(pVector);
-        theCipher.init(Cipher.ENCRYPT_MODE, theSymKey.getSecretKey(), myParms);
+    private void initialiseEncryption(final byte[] pVector) throws JDataException {
+        try {
+            /* Initialise the cipher using the vector */
+            AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
+            theCipher.init(Cipher.ENCRYPT_MODE, theSymKey.getSecretKey(), myParms);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise encryption", e);
+        } catch (InvalidKeyException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise encryption", e);
+        }
     }
 
     /**
      * Initialise decryption.
      * @param pVector initialisation vector
-     * @throws InvalidAlgorithmParameterException on error
-     * @throws InvalidKeyException on error
+     * @throws JDataException on error
      */
-    private void initialiseDecryption(final byte[] pVector) throws InvalidKeyException,
-            InvalidAlgorithmParameterException {
-        AlgorithmParameterSpec myParms;
-
-        /* Initialise the cipher using the vector */
-        myParms = new IvParameterSpec(pVector);
-        theCipher.init(Cipher.DECRYPT_MODE, theSymKey.getSecretKey(), myParms);
+    private void initialiseDecryption(final byte[] pVector) throws JDataException {
+        try {
+            /* Initialise the cipher using the vector */
+            AlgorithmParameterSpec myParms = new IvParameterSpec(pVector);
+            theCipher.init(Cipher.DECRYPT_MODE, theSymKey.getSecretKey(), myParms);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise decryption", e);
+        } catch (InvalidKeyException e) {
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise decryption", e);
+        }
     }
 }

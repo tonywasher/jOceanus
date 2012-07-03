@@ -450,7 +450,7 @@ public class ValueField extends JTextField {
             /* Protect against exceptions */
             try {
                 return Integer.parseInt(pValue);
-            } catch (Exception e) {
+            } catch (NumberFormatException e) {
                 return null;
             }
         }

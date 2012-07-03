@@ -248,18 +248,14 @@ public class RenderData {
      */
     public void processTableRow(final DataItem pRow,
                                 final JDataField iField) {
-        String myTip = null;
-        Color myFore;
-        Color myBack;
-        Font myFont;
-        boolean isChanged = false;
-
         /* Default is black on white */
-        myFore = getForeground(pRow, iField);
-        myBack = getBackground();
+        Color myFore = getForeground(pRow, iField);
+        Color myBack = getBackground();
+        String myTip = null;
+        Font myFont;
 
         /* Has the field changed */
-        isChanged = pRow.fieldChanged(iField).isDifferent();
+        boolean isChanged = pRow.fieldChanged(iField).isDifferent();
 
         /* Determine the colour */
         if (pRow.isDeleted()) {
@@ -313,10 +309,8 @@ public class RenderData {
      */
     public void processRowHeader(final DataItem pRow,
                                  final JDataField[] iFields) {
-        boolean isChanged;
-
         /* Has the row changed */
-        isChanged = pRow.hasHistory();
+        boolean isChanged = pRow.hasHistory();
 
         /* Determine the colour */
         if (pRow.isDeleted()) {

@@ -27,7 +27,6 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import uk.co.tolcroft.models.ui.StatusBar;
 import uk.co.tolcroft.models.ui.StatusBar.StatusData;
 
@@ -116,9 +115,6 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
             /* Catch any exceptions */
         } catch (JDataException e) {
             setError(e);
-            return null;
-        } catch (Exception e) {
-            setError(new JDataException(ExceptionClass.DATA, "Failed " + theTask, e));
             return null;
         }
     }

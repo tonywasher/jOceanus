@@ -101,28 +101,10 @@ public class JiraPreferences extends PreferenceSet {
     @Override
     protected void definePreferences() {
         /* Define the preferences */
-        definePreference(NAME_SERVER, PreferenceType.String);
-        definePreference(NAME_USER, PreferenceType.String);
-        definePreference(NAME_PASS, PreferenceType.String);
-        definePreference(NAME_PFIX, PreferenceType.String);
-    }
-
-    @Override
-    protected Object getDefaultValue(final String pName) {
-        /* Handle default values */
-        if (pName.equals(NAME_SERVER)) {
-            return DEFAULT_SERVER;
-        }
-        if (pName.equals(NAME_USER)) {
-            return DEFAULT_USER;
-        }
-        if (pName.equals(NAME_PASS)) {
-            return DEFAULT_PASS;
-        }
-        if (pName.equals(NAME_PFIX)) {
-            return DEFAULT_PFIX;
-        }
-        return null;
+        defineStringPreference(NAME_SERVER, DEFAULT_SERVER);
+        defineStringPreference(NAME_USER, DEFAULT_USER);
+        defineStringPreference(NAME_PASS, DEFAULT_PASS);
+        defineStringPreference(NAME_PFIX, DEFAULT_PFIX);
     }
 
     @Override

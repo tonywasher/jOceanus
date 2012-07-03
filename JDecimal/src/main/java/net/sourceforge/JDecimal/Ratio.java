@@ -96,15 +96,6 @@ public class Ratio extends Decimal {
     }
 
     /**
-     * Format a Ratio.
-     * @param pRatio the rate to format
-     * @return the formatted Ratio
-     */
-    public static String format(final Ratio pRatio) {
-        return (pRatio != null) ? pRatio.format(false) : "null";
-    }
-
-    /**
      * Create a new Ratio by parsing a string value.
      * @param pRatio the Ratio to parse
      * @return the new Ratio or <code>null</code> if parsing failed
@@ -112,7 +103,7 @@ public class Ratio extends Decimal {
     public static Ratio parseString(final String pRatio) {
         try {
             return new Ratio(pRatio);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }

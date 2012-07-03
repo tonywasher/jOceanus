@@ -138,10 +138,7 @@ public class Money extends Decimal {
      */
     public Money getDilutedAmount(final Dilution pDilution) {
         /* Calculate diluted value */
-        Money myTotal = new Money(this, pDilution);
-
-        /* Return value */
-        return myTotal;
+        return new Money(this, pDilution);
     }
 
     @Override
@@ -190,15 +187,6 @@ public class Money extends Decimal {
     }
 
     /**
-     * Format money.
-     * @param pMoney the money to format
-     * @return the formatted Money
-     */
-    public static String format(final Money pMoney) {
-        return (pMoney != null) ? pMoney.format(false) : "null";
-    }
-
-    /**
      * Create a new Money by parsing a string value.
      * @param pMoney the Money to parse
      * @return the new Money or <code>null</code> if parsing failed
@@ -206,7 +194,7 @@ public class Money extends Decimal {
     public static Money parseString(final String pMoney) {
         try {
             return new Money(pMoney);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }
@@ -218,10 +206,7 @@ public class Money extends Decimal {
      */
     public Money valueAtRate(final Rate pRate) {
         /* Calculate the money at this rate */
-        Money myTotal = new Money(this, pRate);
-
-        /* Return value */
-        return myTotal;
+        return new Money(this, pRate);
     }
 
     /**
@@ -233,10 +218,7 @@ public class Money extends Decimal {
     public Money grossValueAtRate(final Rate pRate) {
         /* Calculate the Gross corresponding to this net value at the rate */
         Ratio myRatio = pRate.getRemainingRate().getInverseRatio();
-        Money myTotal = new Money(this, myRatio);
-
-        /* Return value */
-        return myTotal;
+        return new Money(this, myRatio);
     }
 
     /**
@@ -248,10 +230,7 @@ public class Money extends Decimal {
     public Money taxCreditAtRate(final Rate pRate) {
         /* Calculate the Tax Credit corresponding to this net value at the rate */
         Ratio myRatio = new Ratio(pRate, pRate.getRemainingRate());
-        Money myTotal = new Money(this, myRatio);
-
-        /* Return value */
-        return myTotal;
+        return new Money(this, myRatio);
     }
 
     /**
@@ -269,10 +248,7 @@ public class Money extends Decimal {
 
         /* Calculate the defined ratio of this value */
         Ratio myRatio = new Ratio(pWeight, pTotal);
-        Money myTotal = new Money(this, myRatio);
-
-        /* Return value */
-        return myTotal;
+        return new Money(this, myRatio);
     }
 
     /**
@@ -290,10 +266,7 @@ public class Money extends Decimal {
 
         /* Calculate the defined ratio of this value */
         Ratio myRatio = new Ratio(pWeight, pTotal);
-        Money myTotal = new Money(this, myRatio);
-
-        /* Return value */
-        return myTotal;
+        return new Money(this, myRatio);
     }
 
     /**

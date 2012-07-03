@@ -198,7 +198,7 @@ public abstract class HelpModule {
             /* Close the stream */
             try {
                 myStream.close();
-            } catch (Exception e) {
+            } catch (IOException e) {
                 myStream = null;
             }
 
@@ -223,7 +223,7 @@ public abstract class HelpModule {
                 }
 
                 /* Ignore errors */
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 myStream = null;
             }
         }
@@ -267,7 +267,7 @@ public abstract class HelpModule {
                         }
 
                         /* Ignore errors */
-                    } catch (Exception ex) {
+                    } catch (IOException ex) {
                         myStream = null;
                     }
                 }

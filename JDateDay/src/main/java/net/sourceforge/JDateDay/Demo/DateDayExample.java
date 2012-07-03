@@ -25,11 +25,13 @@ package net.sourceforge.JDateDay.Demo;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -152,8 +154,10 @@ public class DateDayExample extends JApplet {
                     setContentPane(myPanel);
                 }
             });
-        } catch (Exception e) {
-            theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
+        } catch (InvocationTargetException e) {
+            theLogger.log(Level.SEVERE, "Failed to invoke thread", e);
+        } catch (InterruptedException e) {
+            theLogger.log(Level.SEVERE, "Thread was interrupted", e);
         }
     }
 
@@ -180,7 +184,7 @@ public class DateDayExample extends JApplet {
             myFrame.pack();
             myFrame.setLocationRelativeTo(null);
             myFrame.setVisible(true);
-        } catch (Exception e) {
+        } catch (HeadlessException e) {
             theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
         }
     }

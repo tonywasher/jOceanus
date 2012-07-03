@@ -34,11 +34,6 @@ import net.sourceforge.JDataManager.JDataObject.JDataValues;
  */
 public class ValueSetDelta implements JDataContents {
     /**
-     * Report fields.
-     */
-    private JDataFields theLocalFields = null;
-
-    /**
      * Old ValueSet.
      */
     private final ValueSet theOldSet;
@@ -57,7 +52,7 @@ public class ValueSetDelta implements JDataContents {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pNew the new valueSet.
      * @param pOld the old valueSet.
      */
@@ -96,13 +91,13 @@ public class ValueSetDelta implements JDataContents {
         JDataFields myFields = myItem.getDataFields();
 
         /* Allocate new local fields */
-        theLocalFields = new JDataFields(ValueSetDelta.class.getSimpleName());
+        JDataFields myLocal = new JDataFields(ValueSetDelta.class.getSimpleName());
 
         /* Declare the version field */
-        theLocalFields.declareIndexField(ValueSet.FIELD_VERSION);
+        myLocal.declareIndexField(ValueSet.FIELD_VERSION);
 
         /* Declare the deletion field */
-        theLocalFields.declareIndexField(ValueSet.FIELD_DELETION);
+        myLocal.declareIndexField(ValueSet.FIELD_DELETION);
 
         /* Loop through the fields */
         Iterator<JDataField> myIterator = myFields.fieldIterator();
@@ -116,15 +111,15 @@ public class ValueSetDelta implements JDataContents {
             }
 
             /* Declare the field */
-            theLocalFields.declareIndexField(myField.getName());
+            myLocal.declareIndexField(myField.getName());
         }
 
         /* Return the fields */
-        return theLocalFields;
+        return myLocal;
     }
 
     @Override
-    public Object getFieldValue(JDataField pField) {
+    public Object getFieldValue(final JDataField pField) {
         /* Access the index */
         int myIndex = pField.getIndex();
 

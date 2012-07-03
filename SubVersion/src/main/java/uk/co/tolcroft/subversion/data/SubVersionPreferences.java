@@ -146,40 +146,13 @@ public class SubVersionPreferences extends PreferenceSet {
     @Override
     protected void definePreferences() {
         /* Define the preferences */
-        definePreference(NAME_SVN_REPO, PreferenceType.String);
-        definePreference(NAME_SVN_USER, PreferenceType.String);
-        definePreference(NAME_SVN_PASS, PreferenceType.String);
-        definePreference(NAME_SVN_WORK, PreferenceType.Directory);
-        definePreference(NAME_SVN_BUILD, PreferenceType.Directory);
-        definePreference(NAME_SVN_DIR, PreferenceType.Directory);
-        definePreference(NAME_REPO_PFIX, PreferenceType.String);
-    }
-
-    @Override
-    protected Object getDefaultValue(final String pName) {
-        /* Handle default values */
-        if (pName.equals(NAME_SVN_REPO)) {
-            return DEFAULT_SVN_REPO;
-        }
-        if (pName.equals(NAME_SVN_USER)) {
-            return DEFAULT_SVN_USER;
-        }
-        if (pName.equals(NAME_SVN_PASS)) {
-            return DEFAULT_SVN_PASS;
-        }
-        if (pName.equals(NAME_SVN_WORK)) {
-            return DEFAULT_SVN_WORK;
-        }
-        if (pName.equals(NAME_SVN_BUILD)) {
-            return DEFAULT_SVN_BUILD;
-        }
-        if (pName.equals(NAME_SVN_DIR)) {
-            return DEFAULT_SVN_DIR;
-        }
-        if (pName.equals(NAME_REPO_PFIX)) {
-            return DEFAULT_REPO_PFIX;
-        }
-        return null;
+        defineStringPreference(NAME_SVN_REPO, DEFAULT_SVN_REPO);
+        defineStringPreference(NAME_SVN_USER, DEFAULT_SVN_USER);
+        defineStringPreference(NAME_SVN_PASS, DEFAULT_SVN_PASS);
+        defineDirectoryPreference(NAME_SVN_WORK, DEFAULT_SVN_WORK);
+        defineDirectoryPreference(NAME_SVN_BUILD, DEFAULT_SVN_BUILD);
+        defineDirectoryPreference(NAME_SVN_DIR, DEFAULT_SVN_DIR);
+        defineStringPreference(NAME_REPO_PFIX, DEFAULT_REPO_PFIX);
     }
 
     @Override

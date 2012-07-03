@@ -29,7 +29,6 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import net.sourceforge.JGordianKnot.EncryptionGenerator;
@@ -49,12 +48,6 @@ public abstract class EncryptedItem extends DataItem {
     @Override
     public EncryptedValueSet getValueSet() {
         return (EncryptedValueSet) super.getValueSet();
-    }
-
-    @Override
-    public ValueSet allocateValueSet() {
-        /* Allocate initial value set */
-        return new EncryptedValueSet(getItem());
     }
 
     /**

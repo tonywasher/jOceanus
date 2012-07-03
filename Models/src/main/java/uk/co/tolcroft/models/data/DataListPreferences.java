@@ -55,16 +55,7 @@ public class DataListPreferences extends PreferenceSet {
     @Override
     protected void definePreferences() {
         /* Define the properties */
-        definePreference(NAME_GRANULARITY, PreferenceType.Integer);
-    }
-
-    @Override
-    protected Object getDefaultValue(final String pName) {
-        /* Handle default values */
-        if (pName.equals(NAME_GRANULARITY)) {
-            return DEFAULT_GRANULARITY;
-        }
-        return null;
+        defineIntegerPreference(NAME_GRANULARITY, DEFAULT_GRANULARITY);
     }
 
     @Override

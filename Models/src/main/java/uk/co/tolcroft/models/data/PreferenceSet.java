@@ -22,6 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.data;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.EventManager;
 import net.sourceforge.JDataManager.JDataException;
@@ -42,6 +45,21 @@ import net.sourceforge.JDateDay.DateDay;
  * @author Tony Washer
  */
 public abstract class PreferenceSet {
+    /**
+     * Unknown preference string.
+     */
+    private static final String ERROR_UNKNOWN = "Unknown Preference: ";
+
+    /**
+     * Invalid preference string.
+     */
+    private static final String ERROR_INVALID = "Invalid Preference: ";
+
+    /**
+     * Font separator.
+     */
+    private static final String FONT_SEPARATOR = ":";
+
     /**
      * The Preference node for this set.
      */
@@ -79,7 +97,7 @@ public abstract class PreferenceSet {
         /* Access the active key names */
         try {
             theActive = theHandle.keys();
-        } catch (Exception e) {
+        } catch (BackingStoreException e) {
             throw new JDataException(ExceptionClass.PREFERENCE, "Failed to access preferences", e);
         }
 
@@ -96,13 +114,6 @@ public abstract class PreferenceSet {
     protected abstract void definePreferences();
 
     /**
-     * Callback from Constructor to obtain default value.
-     * @param pName the name of the preference
-     * @return the default value
-     */
-    protected abstract Object getDefaultValue(final String pName);
-
-    /**
      * Callback from Constructor to obtain display name.
      * @param pName the name of the preference
      * @return the display name
@@ -110,39 +121,15 @@ public abstract class PreferenceSet {
     protected abstract String getDisplayName(final String pName);
 
     /**
-     * Define preference, callback from {@link #definePreferences}.
+     * Define new String preference
      * @param pName the name of the preference
-     * @param pType the type of the preference
-     * @return the newly created preference
+     * @param pDefault the default value of the preference
+     * @return the preference item
      */
-    protected PreferenceItem definePreference(final String pName,
-                                              final PreferenceType pType) {
-        PreferenceItem myPref = null;
-
-        /* Switch on preference type */
-        switch (pType) {
-        /* Create preference */
-            case String:
-                myPref = new StringPreference(pName);
-                break;
-            case File:
-                myPref = new StringPreference(pName, PreferenceType.File);
-                break;
-            case Directory:
-                myPref = new StringPreference(pName, PreferenceType.Directory);
-                break;
-            case Integer:
-                myPref = new IntegerPreference(pName);
-                break;
-            case Boolean:
-                myPref = new BooleanPreference(pName);
-                break;
-            case Date:
-                myPref = new DatePreference(pName);
-                break;
-            default:
-                return null;
-        }
+    protected StringPreference defineStringPreference(final String pName,
+                                                      final String pDefault) {
+        /* Define the preference */
+        StringPreference myPref = new StringPreference(pName, pDefault);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -152,16 +139,144 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Define Enum preference, callback from {@link #definePreferences}.
+     * Define new File preference
+     * @param pName the name of the preference
+     * @param pDefault the default value of the preference
+     * @return the preference item
+     */
+    protected StringPreference defineFilePreference(final String pName,
+                                                    final String pDefault) {
+        /* Define the preference */
+        StringPreference myPref = new StringPreference(pName, pDefault, PreferenceType.File);
+
+        /* Add it to the list of preferences */
+        definePreference(myPref);
+
+        /* Return the preference */
+        return myPref;
+    }
+
+    /**
+     * Define new Directory preference
+     * @param pName the name of the preference
+     * @param pDefault the default value of the preference
+     * @return the preference item
+     */
+    protected StringPreference defineDirectoryPreference(final String pName,
+                                                         final String pDefault) {
+        /* Define the preference */
+        StringPreference myPref = new StringPreference(pName, pDefault, PreferenceType.Directory);
+
+        /* Add it to the list of preferences */
+        definePreference(myPref);
+
+        /* Return the preference */
+        return myPref;
+    }
+
+    /**
+     * Define new Integer preference
+     * @param pName the name of the preference
+     * @param pDefault the default value of the preference
+     * @return the preference item
+     */
+    protected IntegerPreference defineIntegerPreference(final String pName,
+                                                        final Integer pDefault) {
+        /* Define the preference */
+        IntegerPreference myPref = new IntegerPreference(pName, pDefault);
+
+        /* Add it to the list of preferences */
+        definePreference(myPref);
+
+        /* Return the preference */
+        return myPref;
+    }
+
+    /**
+     * Define new Boolean preference
+     * @param pName the name of the preference
+     * @param pDefault the default value of the preference
+     * @return the preference item
+     */
+    protected BooleanPreference defineBooleanPreference(final String pName,
+                                                        final Boolean pDefault) {
+        /* Define the preference */
+        BooleanPreference myPref = new BooleanPreference(pName, pDefault);
+
+        /* Add it to the list of preferences */
+        definePreference(myPref);
+
+        /* Return the preference */
+        return myPref;
+    }
+
+    /**
+     * Define new Date preference
+     * @param pName the name of the preference
+     * @param pDefault the default value of the preference
+     * @return the preference item
+     */
+    protected DatePreference defineDatePreference(final String pName,
+                                                  final DateDay pDefault) {
+        /* Define the preference */
+        DatePreference myPref = new DatePreference(pName, pDefault);
+
+        /* Add it to the list of preferences */
+        definePreference(myPref);
+
+        /* Return the preference */
+        return myPref;
+    }
+
+    /**
+     * Define new Colour preference
+     * @param pName the name of the preference
+     * @param pDefault the default value of the preference
+     * @return the preference item
+     */
+    protected ColorPreference defineColorPreference(final String pName,
+                                                    final Color pDefault) {
+        /* Define the preference */
+        ColorPreference myPref = new ColorPreference(pName, pDefault);
+
+        /* Add it to the list of preferences */
+        definePreference(myPref);
+
+        /* Return the preference */
+        return myPref;
+    }
+
+    /**
+     * Define new Font preference
+     * @param pName the name of the preference
+     * @param pDefault the default value of the preference
+     * @return the preference item
+     */
+    protected FontPreference defineFontPreference(final String pName,
+                                                  final Font pDefault) {
+        /* Define the preference */
+        FontPreference myPref = new FontPreference(pName, pDefault);
+
+        /* Add it to the list of preferences */
+        definePreference(myPref);
+
+        /* Return the preference */
+        return myPref;
+    }
+
+    /**
+     * Define new Enum preference.
      * @param <E> the Enum type
      * @param pName the name of the preference
+     * @param pDefault the default value of the preference
      * @param pClass the Enum class
      * @return the newly created preference
      */
-    protected <E extends Enum<E>> PreferenceItem definePreference(final String pName,
-                                                                  final Class<E> pClass) {
+    protected <E extends Enum<E>> EnumPreference<E> definePreference(final String pName,
+                                                                     final E pDefault,
+                                                                     final Class<E> pClass) {
         /* Create the preference */
-        PreferenceItem myPref = new EnumPreference<E>(pName, pClass);
+        EnumPreference<E> myPref = new EnumPreference<E>(pName, pDefault, pClass);
 
         /* Add it to the list of preferences */
         definePreference(myPref);
@@ -180,176 +295,159 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Obtain Integer preference.
-     * @param pName the name of the preference
-     * @return the Integer preference or null if no such integer preference exists
-     */
-    private IntegerPreference getIntegerPreference(final String pName) {
-        /* Access preference */
-        PreferenceItem myPref = getPreference(pName);
-
-        /* If not found or wrong type return null */
-        if ((myPref == null) || (!(myPref instanceof IntegerPreference))) {
-            return null;
-        }
-
-        /* Return the preference */
-        return (IntegerPreference) myPref;
-    }
-
-    /**
      * Obtain Integer value.
      * @param pName the name of the preference
-     * @return the Integer value or null if no such integer preference exists
+     * @return the Integer value
      */
     public Integer getIntegerValue(final String pName) {
         /* Access preference */
-        IntegerPreference myPref = getIntegerPreference(pName);
-
-        /* If not found or wrong type return null */
-        if (myPref == null) {
-            return null;
-        }
-
-        /* Return the preference */
-        return myPref.getValue();
-    }
-
-    /**
-     * Obtain Boolean preference.
-     * @param pName the name of the preference
-     * @return the Boolean preference or null if no such boolean preference exists
-     */
-    private BooleanPreference getBooleanPreference(final String pName) {
-        /* Access preference */
         PreferenceItem myPref = getPreference(pName);
 
-        /* If not found or wrong type return null */
-        if ((myPref == null) || (!(myPref instanceof BooleanPreference))) {
-            return null;
+        /* Reject if not found */
+        if (myPref == null) {
+            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
         }
 
+        /* Reject if wrong type */
+        if (!(myPref instanceof IntegerPreference)) {
+            throw new IllegalArgumentException(ERROR_INVALID + pName);
+        }
+
+        /* Access preference */
+        IntegerPreference myIntPref = (IntegerPreference) myPref;
+
         /* Return the preference */
-        return (BooleanPreference) myPref;
+        return myIntPref.getValue();
     }
 
     /**
      * Obtain Boolean value.
      * @param pName the name of the preference
-     * @return the Boolean value or null if no such boolean preference exists
+     * @return the Boolean value
      */
     public Boolean getBooleanValue(final String pName) {
         /* Access preference */
-        BooleanPreference myPref = getBooleanPreference(pName);
-
-        /* If not found or wrong type return null */
-        if (myPref == null) {
-            return null;
-        }
-
-        /* Return the value */
-        return myPref.getValue();
-    }
-
-    /**
-     * Obtain String preference.
-     * @param pName the name of the preference
-     * @return the String preference or null if no such string preference exists
-     */
-    private StringPreference getStringPreference(final String pName) {
-        /* Access preference */
         PreferenceItem myPref = getPreference(pName);
 
-        /* If not found or wrong type return null */
-        if ((myPref == null) || (!(myPref instanceof StringPreference))) {
-            return null;
+        /* Reject if not found */
+        if (myPref == null) {
+            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
         }
 
-        /* Return the preference */
-        return (StringPreference) myPref;
+        /* Reject if wrong type */
+        if (!(myPref instanceof BooleanPreference)) {
+            throw new IllegalArgumentException(ERROR_INVALID + pName);
+        }
+
+        /* Access preference */
+        BooleanPreference myBoolPref = (BooleanPreference) myPref;
+
+        /* Return the value */
+        return myBoolPref.getValue();
     }
 
     /**
      * Obtain String value.
      * @param pName the name of the preference
-     * @return the String value or null if no such string preference exists
+     * @return the String value
      */
     public String getStringValue(final String pName) {
         /* Access preference */
-        StringPreference myPref = getStringPreference(pName);
-
-        /* If not found or wrong type return null */
-        if (myPref == null) {
-            return null;
-        }
-
-        /* Return the value */
-        return myPref.getValue();
-    }
-
-    /**
-     * Obtain Date preference.
-     * @param pName the name of the preference
-     * @return the Date preference or null if no such date preference exists
-     */
-    private DatePreference getDatePreference(final String pName) {
-        /* Access preference */
         PreferenceItem myPref = getPreference(pName);
 
-        /* If not found or wrong type return null */
-        if ((myPref == null) || (!(myPref instanceof DatePreference))) {
-            return null;
+        /* Reject if not found */
+        if (myPref == null) {
+            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
         }
 
-        /* Return the preference */
-        return (DatePreference) myPref;
+        /* Reject if wrong type */
+        if (!(myPref instanceof StringPreference)) {
+            throw new IllegalArgumentException(ERROR_INVALID + pName);
+        }
+
+        /* Access preference */
+        StringPreference myStringPref = (StringPreference) myPref;
+
+        /* Return the value */
+        return myStringPref.getValue();
     }
 
     /**
      * Obtain Date value.
      * @param pName the name of the preference
-     * @return the Date or null if no such date preference exists
+     * @return the Date
      */
     public DateDay getDateValue(final String pName) {
         /* Access preference */
-        DatePreference myPref = getDatePreference(pName);
+        PreferenceItem myPref = getPreference(pName);
 
-        /* If not found or wrong type return null */
+        /* Reject if not found */
         if (myPref == null) {
-            return null;
+            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
         }
 
+        /* Reject if wrong type */
+        if (!(myPref instanceof DatePreference)) {
+            throw new IllegalArgumentException(ERROR_INVALID + pName);
+        }
+
+        /* Access preference */
+        DatePreference myDatePref = (DatePreference) myPref;
+
         /* Return the value */
-        return myPref.getValue();
+        return myDatePref.getValue();
     }
 
     /**
-     * Obtain Enum preference.
-     * @param <E> the enum type
+     * Obtain Colour value.
      * @param pName the name of the preference
-     * @param pClass the Enum class
-     * @return the Enum preference or null if no such Enum preference exists
+     * @return the Colour
      */
-    private <E extends Enum<E>> EnumPreference<E> getEnumPreference(final String pName,
-                                                                    final Class<E> pClass) {
+    public Color getColorValue(final String pName) {
         /* Access preference */
         PreferenceItem myPref = getPreference(pName);
 
-        /* If not found or wrong type return null */
-        if ((myPref == null) || (!(myPref instanceof EnumPreference))) {
-            return null;
+        /* Reject if not found */
+        if (myPref == null) {
+            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
         }
 
-        /* Access as Enum preference */
-        EnumPreference<?> myEnumPref = (EnumPreference<?>) myPref;
-        if (myEnumPref.theClass != pClass) {
-            return null;
+        /* Reject if wrong type */
+        if (!(myPref instanceof ColorPreference)) {
+            throw new IllegalArgumentException(ERROR_INVALID + pName);
         }
 
-        /* Return the preference */
-        @SuppressWarnings("unchecked")
-        EnumPreference<E> myResult = (EnumPreference<E>) myPref;
-        return myResult;
+        /* Access preference */
+        ColorPreference myColorPref = (ColorPreference) myPref;
+
+        /* Return the value */
+        return myColorPref.getValue();
+    }
+
+    /**
+     * Obtain Font value.
+     * @param pName the name of the preference
+     * @return the Font
+     */
+    public Font getFontValue(final String pName) {
+        /* Access preference */
+        PreferenceItem myPref = getPreference(pName);
+
+        /* Reject if not found */
+        if (myPref == null) {
+            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+        }
+
+        /* Reject if wrong type */
+        if (!(myPref instanceof FontPreference)) {
+            throw new IllegalArgumentException(ERROR_INVALID + pName);
+        }
+
+        /* Access preference */
+        FontPreference myFontPref = (FontPreference) myPref;
+
+        /* Return the value */
+        return myFontPref.getValue();
     }
 
     /**
@@ -361,16 +459,28 @@ public abstract class PreferenceSet {
      */
     public <E extends Enum<E>> E getEnumValue(final String pName,
                                               final Class<E> pClass) {
-        /* Access Enum preference */
-        EnumPreference<E> myPref = getEnumPreference(pName, pClass);
+        /* Access preference */
+        PreferenceItem myPref = getPreference(pName);
 
-        /* If not found or wrong type return null */
+        /* Reject if not found */
         if (myPref == null) {
-            return null;
+            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+        }
+
+        /* Reject if wrong type */
+        if (!(myPref instanceof EnumPreference)) {
+            throw new IllegalArgumentException(ERROR_INVALID + pName);
+        }
+
+        /* Access as Enum preference */
+        @SuppressWarnings("unchecked")
+        EnumPreference<E> myEnumPref = (EnumPreference<E>) myPref;
+        if (myEnumPref.theClass != pClass) {
+            throw new IllegalArgumentException(ERROR_INVALID + pName);
         }
 
         /* Return the value */
-        return myPref.getValue();
+        return myEnumPref.getValue();
     }
 
     /**
@@ -471,6 +581,11 @@ public abstract class PreferenceSet {
         private final String theName;
 
         /**
+         * default Value.
+         */
+        private final Object theDefault;
+
+        /**
          * Display Name.
          */
         private final String theDisplay;
@@ -539,12 +654,15 @@ public abstract class PreferenceSet {
         /**
          * Constructor.
          * @param pName the name of the preference
+         * @param pDefault the default value
          * @param pType the type of the preference
          */
         private PreferenceItem(final String pName,
+                               final Object pDefault,
                                final PreferenceType pType) {
             /* Store name and type */
             theName = pName;
+            theDefault = pDefault;
             theType = pType;
             theDisplay = getDisplayName(theName);
         }
@@ -562,7 +680,7 @@ public abstract class PreferenceSet {
          * @param pNewValue the new value
          */
         private void setNewValue(final Object pNewValue) {
-            theNewValue = (pNewValue == null) ? getDefaultValue(theName) : pNewValue;
+            theNewValue = (pNewValue == null) ? theDefault : pNewValue;
             isChanged = !Difference.isEqual(theNewValue, theValue);
         }
 
@@ -612,10 +730,12 @@ public abstract class PreferenceSet {
         /**
          * Constructor.
          * @param pName the name of the preference
+         * @param pDefault the default value
          */
-        public IntegerPreference(final String pName) {
+        public IntegerPreference(final String pName,
+                                 final Integer pDefault) {
             /* Store name */
-            super(pName, PreferenceType.Integer);
+            super(pName, pDefault, PreferenceType.Integer);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -631,7 +751,7 @@ public abstract class PreferenceSet {
                 /* else value does not exist */
             } else {
                 /* Use default as a changed value */
-                super.setNewValue(getDefaultValue(pName));
+                super.setNewValue(pDefault);
             }
         }
 
@@ -666,10 +786,12 @@ public abstract class PreferenceSet {
         /**
          * Constructor.
          * @param pName the name of the preference
+         * @param pDefault the default value
          */
-        public BooleanPreference(final String pName) {
+        public BooleanPreference(final String pName,
+                                 final Boolean pDefault) {
             /* Store name */
-            super(pName, PreferenceType.Boolean);
+            super(pName, pDefault, PreferenceType.Boolean);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -685,7 +807,7 @@ public abstract class PreferenceSet {
                 /* else value does not exist */
             } else {
                 /* Use default as a changed value */
-                super.setNewValue(getDefaultValue(pName));
+                super.setNewValue(pDefault);
             }
         }
 
@@ -727,20 +849,24 @@ public abstract class PreferenceSet {
         /**
          * Constructor.
          * @param pName the name of the preference
+         * @param pDefault the default value
          */
-        public StringPreference(final String pName) {
-            this(pName, PreferenceType.String);
+        public StringPreference(final String pName,
+                                final String pDefault) {
+            this(pName, pDefault, PreferenceType.String);
         }
 
         /**
          * Constructor.
          * @param pName the name of the preference
+         * @param pDefault the default value
          * @param pType the type of the preference
          */
         public StringPreference(final String pName,
+                                final String pDefault,
                                 final PreferenceType pType) {
             /* Store name */
-            super(pName, pType);
+            super(pName, pDefault, pType);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -756,7 +882,7 @@ public abstract class PreferenceSet {
                 /* else value does not exist */
             } else {
                 /* Use default as a changed value */
-                super.setNewValue(getDefaultValue(pName));
+                super.setNewValue(pDefault);
             }
         }
 
@@ -793,10 +919,12 @@ public abstract class PreferenceSet {
         /**
          * Constructor.
          * @param pName the name of the preference
+         * @param pDefault the default value
          */
-        public DatePreference(final String pName) {
+        public DatePreference(final String pName,
+                              final DateDay pDefault) {
             /* Store name */
-            super(pName, PreferenceType.Date);
+            super(pName, pDefault, PreferenceType.Date);
 
             /* Check whether we have an existing value */
             boolean bExists = checkExists(pName);
@@ -819,7 +947,7 @@ public abstract class PreferenceSet {
             /* if value does not exist or is invalid */
             if (!bExists) {
                 /* Use default as a changed value */
-                super.setNewValue(getDefaultValue(pName));
+                super.setNewValue(pDefault);
             }
         }
 
@@ -843,6 +971,144 @@ public abstract class PreferenceSet {
         protected void storeThePreference(final Object pNewValue) {
             /* Store the value */
             theHandle.put(getName(), ((DateDay) pNewValue).toString());
+        }
+    }
+
+    /**
+     * Colour preference.
+     */
+    public class ColorPreference extends PreferenceItem {
+        /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public Color getValue() {
+            return (Color) super.getValue();
+        }
+
+        /**
+         * Constructor.
+         * @param pName the name of the preference
+         * @param pDefault the default value
+         */
+        public ColorPreference(final String pName,
+                               final Color pDefault) {
+            /* Store name */
+            super(pName, pDefault, PreferenceType.Color);
+
+            /* Check whether we have an existing value */
+            boolean bExists = checkExists(pName);
+
+            /* If it exists */
+            if (bExists) {
+                /* Access the value */
+                String myValue = theHandle.get(pName, null);
+                if (myValue == null) {
+                    bExists = false;
+                } else {
+                    /* Parse the Colour */
+                    Color myColor = Color.decode(myValue);
+
+                    /* Set as initial value */
+                    super.setValue(myColor);
+                }
+            }
+
+            /* if value does not exist or is invalid */
+            if (!bExists) {
+                /* Use default as a changed value */
+                super.setNewValue(pDefault);
+            }
+        }
+
+        /**
+         * Set value.
+         * @param pNewValue the new value
+         */
+        public void setValue(final Color pNewValue) {
+            /* Set the new value */
+            super.setNewValue(pNewValue);
+        }
+
+        @Override
+        protected void storeThePreference(final Object pNewValue) {
+            /* Store the value */
+            theHandle.put(getName(), DataConverter.colorToHexString((Color) pNewValue));
+        }
+    }
+
+    /**
+     * Font preference.
+     */
+    public class FontPreference extends PreferenceItem {
+        /**
+         * Obtain the value of the preference.
+         * @return the value of the preference
+         */
+        public Font getValue() {
+            return (Font) super.getValue();
+        }
+
+        /**
+         * Constructor.
+         * @param pName the name of the preference
+         * @param pDefault the default value
+         */
+        public FontPreference(final String pName,
+                              final Font pDefault) {
+            /* Store name */
+            super(pName, pDefault, PreferenceType.Font);
+
+            /* Check whether we have an existing value */
+            boolean bExists = checkExists(pName);
+
+            /* If it exists */
+            if (bExists) {
+                /* Access the value */
+                String myValue = theHandle.get(pName, null);
+                if (myValue == null) {
+                    bExists = false;
+                } else {
+                    /* Parse the value */
+                    int myPos = myValue.indexOf(FONT_SEPARATOR);
+                    bExists = (myPos > 0);
+
+                    /* If we look good */
+                    if (bExists) {
+                        /* Access parts */
+                        int mySize = Integer.parseInt(myValue.substring(myPos + 1));
+                        String myName = myValue.substring(0, myPos);
+
+                        /* Create the font */
+                        Font myFont = new Font(myName, Font.PLAIN, mySize);
+
+                        /* Set as initial value */
+                        super.setValue(myFont);
+                    }
+                }
+            }
+
+            /* if value does not exist or is invalid */
+            if (!bExists) {
+                /* Use default as a changed value */
+                super.setNewValue(pDefault);
+            }
+        }
+
+        /**
+         * Set value.
+         * @param pNewValue the new value
+         */
+        public void setValue(final Font pNewValue) {
+            /* Set the new value */
+            super.setNewValue(pNewValue);
+        }
+
+        @Override
+        protected void storeThePreference(final Object pNewValue) {
+            /* Store the value */
+            Font myFont = (Font) pNewValue;
+            theHandle.put(getName(), myFont.getFontName() + FONT_SEPARATOR + myFont.getSize());
         }
     }
 
@@ -880,12 +1146,14 @@ public abstract class PreferenceSet {
         /**
          * Constructor.
          * @param pName the name of the preference
+         * @param pDefault the default value
          * @param pClass the class of the preference
          */
         public EnumPreference(final String pName,
+                              final E pDefault,
                               final Class<E> pClass) {
             /* Store name */
-            super(pName, PreferenceType.Enum);
+            super(pName, pDefault, PreferenceType.Enum);
 
             /* Store the class */
             theClass = pClass;
@@ -902,42 +1170,55 @@ public abstract class PreferenceSet {
                     bExists = false;
                 } else {
                     /* Set the value */
-                    bExists = setValue(myValue);
+                    E myEnum = findValue(myValue);
+                    bExists = (myEnum != null);
+                    if (bExists) {
+                        super.setValue(myEnum);
+                    }
                 }
             }
 
             /* if value does not exist or is invalid */
             if (!bExists) {
                 /* Use default as a changed value */
-                super.setNewValue(getDefaultValue(pName));
+                super.setNewValue(pDefault);
             }
         }
 
         /**
          * Set value.
          * @param pNewValue the new value
-         * @return whether the value was valid or not
+         * @return the Enum value
          */
-        public final boolean setValue(final String pNewValue) {
+        private E findValue(final String pNewValue) {
             /* Loop through the Enum constants */
             for (E myEnum : theValues) {
                 /* If we match */
                 if (pNewValue.equals(myEnum.name())) {
-                    /* Set as new value */
-                    super.setNewValue(myEnum);
-                    return true;
+                    /* Return the value */
+                    return myEnum;
                 }
             }
 
             /* Return invalid value */
-            return false;
+            return null;
         }
 
         /**
          * Set value.
          * @param pNewValue the new value
          */
-        public void setValue(final Enum<E> pNewValue) {
+        public final void setValue(final String pNewValue) {
+            /* Loop through the Enum constants */
+            E myEnum = findValue(pNewValue);
+            super.setNewValue(myEnum);
+        }
+
+        /**
+         * Set value.
+         * @param pNewValue the new value
+         */
+        public void setValue(final E pNewValue) {
             /* Set the new value */
             super.setNewValue(pNewValue);
         }
@@ -986,7 +1267,17 @@ public abstract class PreferenceSet {
         /**
          * Enum.
          */
-        Enum;
+        Enum,
+
+        /**
+         * Colour.
+         */
+        Color,
+
+        /**
+         * Font.
+         */
+        Font;
     }
 
     /**

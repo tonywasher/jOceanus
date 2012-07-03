@@ -580,7 +580,7 @@ public class ZipFileEntry {
                 pMac.update(theInitVectors[iIndex]);
             }
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
             throw new JDataException(ExceptionClass.CRYPTO, "Exception calculating signature", e);
         }
     }

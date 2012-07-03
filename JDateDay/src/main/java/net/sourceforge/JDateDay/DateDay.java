@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JDateDay;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -288,7 +289,7 @@ public class DateDay implements Comparable<DateDay> {
             /* Parse and build the date */
             myDate = theDateFormat.parse(pValue);
             buildDateDay(myDate, pLocale);
-        } catch (Exception e) {
+        } catch (ParseException e) {
             throw new IllegalArgumentException("Invalid Date string " + pValue, e);
         }
     }

@@ -456,9 +456,10 @@ public abstract class ColumnDefinition {
                     /* Determine new char */
                     char myNewChar = (char) ('a' + myOffset);
 
-                    /* Add the join string for the underlying table */
-                    ReferenceColumn myX = (ReferenceColumn) myDef;
-                    pBuilder.append(myX.theDefinition.getOrderString(myNewChar, myOffset));
+                    /* Add the join string for the underlying table. */
+                    /* Note that forced to implement in one line to avoid Sonar false positive. */
+                    pBuilder.append((((ReferenceColumn) myDef).theDefinition).getOrderString(myNewChar,
+                                                                                             myOffset));
 
                     /* else standard column */
                 } else {

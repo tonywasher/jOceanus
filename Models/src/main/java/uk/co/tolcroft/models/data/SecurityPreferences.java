@@ -138,32 +138,11 @@ public class SecurityPreferences extends PreferenceSet {
     @Override
     protected void definePreferences() {
         /* Define the properties */
-        definePreference(NAME_PROVIDER, SecurityProvider.class);
-        definePreference(NAME_RESTRICTED, PreferenceType.Boolean);
-        definePreference(NAME_CIPHER_STEPS, PreferenceType.Integer);
-        definePreference(NAME_HASH_ITERATIONS, PreferenceType.Integer);
-        definePreference(NAME_SECURITY_PHRASE, PreferenceType.String);
-    }
-
-    @Override
-    protected Object getDefaultValue(final String pName) {
-        /* Handle default values */
-        if (pName.equals(NAME_PROVIDER)) {
-            return DEFAULT_PROVIDER;
-        }
-        if (pName.equals(NAME_RESTRICTED)) {
-            return DEFAULT_RESTRICTED;
-        }
-        if (pName.equals(NAME_CIPHER_STEPS)) {
-            return DEFAULT_CIPHER_STEPS;
-        }
-        if (pName.equals(NAME_HASH_ITERATIONS)) {
-            return DEFAULT_HASH_ITERATIONS;
-        }
-        if (pName.equals(NAME_SECURITY_PHRASE)) {
-            return DEFAULT_SECURITY_PHRASE;
-        }
-        return null;
+        definePreference(NAME_PROVIDER, DEFAULT_PROVIDER, SecurityProvider.class);
+        defineBooleanPreference(NAME_RESTRICTED, DEFAULT_RESTRICTED);
+        defineIntegerPreference(NAME_CIPHER_STEPS, DEFAULT_CIPHER_STEPS);
+        defineIntegerPreference(NAME_HASH_ITERATIONS, DEFAULT_HASH_ITERATIONS);
+        defineStringPreference(NAME_SECURITY_PHRASE, DEFAULT_SECURITY_PHRASE);
     }
 
     @Override

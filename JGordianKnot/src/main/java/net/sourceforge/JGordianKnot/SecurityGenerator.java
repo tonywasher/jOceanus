@@ -35,6 +35,7 @@ import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.spec.ECGenParameterSpec;
+import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
@@ -45,6 +46,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyAgreement;
 import javax.crypto.KeyGenerator;
 import javax.crypto.Mac;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -336,7 +338,10 @@ public class SecurityGenerator {
             return KeyAgreement.getInstance(pAlgorithm, theProviderName);
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (NoSuchProviderException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create KeyAgreement", e);
+        } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to create KeyAgreement", e);
         }
@@ -355,7 +360,13 @@ public class SecurityGenerator {
             return Cipher.getInstance(pAlgorithm, theProviderName);
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (NoSuchPaddingException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
+        } catch (NoSuchProviderException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
+        } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
         }
@@ -374,9 +385,12 @@ public class SecurityGenerator {
             return MessageDigest.getInstance(pDigestType.getAlgorithm(), theProviderName);
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (NoSuchProviderException e) {
             /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Cipher", e);
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Digest", e);
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Digest", e);
         }
     }
 
@@ -460,7 +474,10 @@ public class SecurityGenerator {
             return Signature.getInstance(pAlgorithm, theProviderName);
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (NoSuchProviderException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Signature", e);
+        } catch (NoSuchAlgorithmException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, "Failed to create Signature", e);
         }
@@ -572,7 +589,10 @@ public class SecurityGenerator {
                 try {
                     /* Allocate the new factory */
                     theFactory = KeyFactory.getInstance(theAlgorithm, theProviderName);
-                } catch (Exception e) {
+                } catch (NoSuchProviderException e) {
+                    /* Throw the exception */
+                    throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key factory", e);
+                } catch (NoSuchAlgorithmException e) {
                     /* Throw the exception */
                     throw new JDataException(ExceptionClass.CRYPTO, "Failed to create key factory", e);
                 }
@@ -598,7 +618,7 @@ public class SecurityGenerator {
                 return new KeyPair(myPublic, myPrivate);
 
                 /* Catch exceptions */
-            } catch (Exception e) {
+            } catch (InvalidKeySpecException e) {
                 /* Throw the exception */
                 throw new JDataException(ExceptionClass.CRYPTO, "Failed to re-build KeyPair", e);
             }

@@ -222,7 +222,7 @@ public class ZipReadFile {
                 if (theHdrStream != null) {
                     theHdrStream.close();
                 }
-            } catch (Exception e) {
+            } catch (IOException e) {
                 theHdrStream = null;
             }
             theHdrStream = null;

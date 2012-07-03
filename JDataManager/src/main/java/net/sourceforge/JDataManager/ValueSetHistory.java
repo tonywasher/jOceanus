@@ -35,15 +35,10 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
  * @see ValueSet
  */
 public class ValueSetHistory implements JDataContents {
-    /**
-     * Report fields.
-     */
-    protected JDataFields theLocalFields;
-
     @Override
     public JDataFields getDataFields() {
         /* Allocate new local fields */
-        theLocalFields = new JDataFields(ValueSetHistory.class.getSimpleName());
+        JDataFields myFields = new JDataFields(ValueSetHistory.class.getSimpleName());
 
         /* Loop through the fields */
         ListIterator<ValueSetDelta> myIterator = theDeltas.listIterator(theDeltas.size());
@@ -52,10 +47,10 @@ public class ValueSetHistory implements JDataContents {
             ValueSetDelta myDelta = myIterator.previous();
 
             /* Declare the field */
-            theLocalFields.declareIndexField(ValueSet.FIELD_VERSION + "(" + myDelta.getVersion() + ")");
+            myFields.declareIndexField(ValueSet.FIELD_VERSION + "(" + myDelta.getVersion() + ")");
         }
 
-        return theLocalFields;
+        return myFields;
     }
 
     @Override

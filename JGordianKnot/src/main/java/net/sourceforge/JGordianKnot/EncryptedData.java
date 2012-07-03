@@ -25,6 +25,7 @@ package net.sourceforge.JGordianKnot;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -379,7 +380,7 @@ public final class EncryptedData {
                 return DataConverter.byteArrayToString(pBytes);
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -392,7 +393,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getValue());
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -432,7 +433,7 @@ public final class EncryptedData {
                 return Short.parseShort(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -445,7 +446,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -485,7 +486,7 @@ public final class EncryptedData {
                 return Integer.parseInt(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -498,7 +499,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -538,7 +539,7 @@ public final class EncryptedData {
                 return Long.parseLong(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -551,7 +552,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -591,7 +592,7 @@ public final class EncryptedData {
                 return Float.parseFloat(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -604,7 +605,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -644,7 +645,7 @@ public final class EncryptedData {
                 return Double.parseDouble(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -657,7 +658,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -697,7 +698,7 @@ public final class EncryptedData {
                 return Boolean.parseBoolean(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -710,7 +711,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -768,7 +769,9 @@ public final class EncryptedData {
                 return getDateFormat().parse(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            } catch (ParseException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -781,7 +784,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getDateFormat().format(getValue()));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -821,7 +824,7 @@ public final class EncryptedData {
                 return new DateDay(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -834,7 +837,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(getValue().toString());
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }
@@ -986,7 +989,7 @@ public final class EncryptedData {
                 return parseValue(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -1010,7 +1013,7 @@ public final class EncryptedData {
                 return DataConverter.stringToByteArray(myValue);
 
                 /* Catch Exceptions */
-            } catch (Exception e) {
+            } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
             }
         }

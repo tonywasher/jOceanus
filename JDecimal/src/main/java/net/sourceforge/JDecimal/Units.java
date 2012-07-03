@@ -95,10 +95,7 @@ public class Units extends Decimal {
      */
     public Money valueAtPrice(final Price pPrice) {
         /* Calculate value of units */
-        Money myTotal = new Money(this, pPrice);
-
-        /* Return value */
-        return myTotal;
+        return new Money(this, pPrice);
     }
 
     /**
@@ -109,17 +106,8 @@ public class Units extends Decimal {
     public static Units parseString(final String pUnits) {
         try {
             return new Units(pUnits);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return null;
         }
-    }
-
-    /**
-     * Format a Units.
-     * @param pUnits the units to format
-     * @return the formatted Units
-     */
-    public static String format(final Units pUnits) {
-        return (pUnits != null) ? pUnits.format(false) : "null";
     }
 }

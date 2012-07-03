@@ -337,23 +337,18 @@ public class PasswordHash implements JDataContents {
      * @throws JDataException on error
      */
     private void setPassword(final char[] pPassword) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Generate the HashBytes */
-            theHashBytes = generateHashBytes(pPassword);
+        /* Generate the HashBytes */
+        theHashBytes = generateHashBytes(pPassword);
 
-            /* Create the Cipher Set */
-            theCipherSet = new CipherSet(theGenerator, theHashMode);
-            theCipherSet.buildCiphers(theSecretHash);
+        /* Create the Cipher Set */
+        theCipherSet = new CipherSet(theGenerator, theHashMode);
+        theCipherSet.buildCiphers(theSecretHash);
 
-            /* Encrypt the password */
-            thePassword = theCipherSet.encryptChars(pPassword);
+        /* Encrypt the password */
+        thePassword = theCipherSet.encryptChars(pPassword);
 
-            /* Clear out the password */
-            Arrays.fill(pPassword, (char) 0);
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.CRYPTO, "Failed to initialise using password", e);
-        }
+        /* Clear out the password */
+        Arrays.fill(pPassword, (char) 0);
     }
 
     /**

@@ -205,7 +205,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
                 }
 
                 /* Ignore errors */
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 myStream = null;
             }
 
@@ -268,7 +268,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
                 }
 
                 /* Ignore errors */
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 myStream = null;
             }
 

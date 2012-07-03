@@ -381,14 +381,12 @@ public abstract class Decimal {
      */
     protected void parseStringValue(final String pString) {
         int myLen = pString.length();
-        StringBuilder myWork;
         StringBuilder myDecimals = null;
         int myPos;
         char myLastDigit = '0';
-        boolean isNegative;
 
         /* Create a working copy */
-        myWork = new StringBuilder(pString);
+        StringBuilder myWork = new StringBuilder(pString);
 
         /* Trim leading and trailing blanks */
         while ((myWork.length() > 0) && (Character.isWhitespace(myWork.charAt(0)))) {
@@ -402,7 +400,7 @@ public abstract class Decimal {
         }
 
         /* If the value is negative, strip the leading minus sign */
-        isNegative = (myWork.charAt(0) == DECIMAL_FORMATS.getMinusSign());
+        boolean isNegative = (myWork.charAt(0) == DECIMAL_FORMATS.getMinusSign());
         if (isNegative) {
             myWork = myWork.deleteCharAt(0);
         }

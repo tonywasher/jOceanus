@@ -215,16 +215,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
         @Override
         protected void definePreferences() {
             /* Define the preferences */
-            definePreference(NAME_BIRTHDATE, PreferenceType.Date);
-        }
-
-        @Override
-        protected Object getDefaultValue(final String pName) {
-            /* Handle default values */
-            if (pName.equals(NAME_BIRTHDATE)) {
-                return DEFAULT_BIRTHDATE;
-            }
-            return null;
+            defineDatePreference(NAME_BIRTHDATE, DEFAULT_BIRTHDATE);
         }
 
         @Override

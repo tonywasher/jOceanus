@@ -101,28 +101,10 @@ public class BackupPreferences extends PreferenceSet {
     @Override
     protected void definePreferences() {
         /* Define the preferences */
-        definePreference(NAME_BACKUP_DIR, PreferenceType.Directory);
-        definePreference(NAME_BACKUP_PFIX, PreferenceType.String);
-        definePreference(NAME_ARCHIVE_FILE, PreferenceType.File);
-        definePreference(NAME_BACKUP_TIME, PreferenceType.Boolean);
-    }
-
-    @Override
-    protected Object getDefaultValue(final String pName) {
-        /* Handle default values */
-        if (pName.equals(NAME_BACKUP_DIR)) {
-            return DEFAULT_BACKUPDIR;
-        }
-        if (pName.equals(NAME_BACKUP_PFIX)) {
-            return DEFAULT_BACKUP_PFIX;
-        }
-        if (pName.equals(NAME_ARCHIVE_FILE)) {
-            return DEFAULT_ARCHIVE_FILE;
-        }
-        if (pName.equals(NAME_BACKUP_TIME)) {
-            return DEFAULT_BACKUP_TIME;
-        }
-        return null;
+        defineDirectoryPreference(NAME_BACKUP_DIR, DEFAULT_BACKUPDIR);
+        defineStringPreference(NAME_BACKUP_PFIX, DEFAULT_BACKUP_PFIX);
+        defineFilePreference(NAME_ARCHIVE_FILE, DEFAULT_ARCHIVE_FILE);
+        defineBooleanPreference(NAME_BACKUP_TIME, DEFAULT_BACKUP_TIME);
     }
 
     @Override

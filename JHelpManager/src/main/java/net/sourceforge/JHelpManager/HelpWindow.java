@@ -23,6 +23,7 @@
 package net.sourceforge.JHelpManager;
 
 import java.awt.Dimension;
+import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.GroupLayout;
@@ -251,7 +252,7 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
                     } else {
                         theEditor.setPage(e.getURL());
                     }
-                } catch (Exception t) {
+                } catch (IOException t) {
                     url = null;
                 }
             }

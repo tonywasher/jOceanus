@@ -225,7 +225,7 @@ public class DecryptionInputStream extends InputStream {
             return iNumRead;
 
             /* Catch exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             throw new IOException(e);
         }
     }
