@@ -556,16 +556,13 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Insert an item.
      */
     protected void insertRow() {
-        int myRowNo;
-        T myItem;
-
         /* Create the new Item */
-        myItem = theList.addNewItem();
+        T myItem = theList.addNewItem();
         myItem.setNewVersion();
         theUpdateSet.incrementVersion();
 
         /* Determine the row # allowing for header */
-        myRowNo = myItem.indexOf();
+        int myRowNo = myItem.indexOf();
         if (hasHeader()) {
             myRowNo++;
         }
@@ -578,6 +575,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
 
         /* Shift display to line */
         selectRowWithScroll(myRowNo);
+        theUpdateSet.incrementVersion();
     }
 
     /**
@@ -612,18 +610,14 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Delete the selected items.
      */
     protected void deleteRows() {
-        DataItem[] myRows;
-        T myRow;
-        int myRowNo;
-        boolean hideDeleted = hideDeletedRows();
-
         /* Access the selected rows */
-        myRows = cacheSelectedRows();
+        DataItem[] myRows = cacheSelectedRows();
+        boolean hideDeleted = hideDeletedRows();
 
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = theClass.cast(myRows[i]);
+            T myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -636,7 +630,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             }
 
             /* Access the row # and adjust for header */
-            myRowNo = myRow.indexOf();
+            int myRowNo = myRow.indexOf();
             if (hasHeader()) {
                 myRowNo++;
             }
@@ -676,18 +670,13 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Duplicate the selected items.
      */
     protected void duplicateRows() {
-        DataItem[] myRows;
-        T myRow;
-        T myItem;
-        int myRowNo;
-
         /* Access the selected rows */
-        myRows = cacheSelectedRows();
+        DataItem[] myRows = cacheSelectedRows();
 
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = theClass.cast(myRows[i]);
+            T myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -700,13 +689,13 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             }
 
             /* Access the row # and adjust for header */
-            myRowNo = myRow.indexOf();
+            int myRowNo = myRow.indexOf();
             if (hasHeader()) {
                 myRowNo++;
             }
 
             /* Create the new Item */
-            myItem = theList.addNewItem(myRow);
+            T myItem = theList.addNewItem(myRow);
 
             /* Determine the row # allowing for header */
             myRowNo = myItem.indexOf();
@@ -722,6 +711,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
 
         /* Re-validate after change */
+        theUpdateSet.incrementVersion();
         // validateAfterChange();
     }
 
@@ -739,17 +729,13 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * Recover the selected items.
      */
     protected void recoverRows() {
-        DataItem[] myRows;
-        T myRow;
-        int myRowNo;
-
         /* Access the selected rows */
-        myRows = cacheSelectedRows();
+        DataItem[] myRows = cacheSelectedRows();
 
         /* Loop through the selected rows */
         for (int i = 0; i < myRows.length; i++) {
             /* Access the row */
-            myRow = theClass.cast(myRows[i]);
+            T myRow = theClass.cast(myRows[i]);
 
             /* Ignore locked rows */
             if ((myRow == null) || (myRow.isLocked())) {
@@ -762,7 +748,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             }
 
             /* Access the row # and adjust for header */
-            myRowNo = myRow.indexOf();
+            int myRowNo = myRow.indexOf();
             if (hasHeader()) {
                 myRowNo++;
             }
@@ -777,187 +763,7 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         }
 
         /* Re-validate after change */
-        // validateAfterChange();
-    }
-
-    /**
-     * Validate the selected items.
-     */
-    protected void validateRows() {
-        DataItem[] myRows;
-        T myRow;
-        int myRowNo;
-
-        /* Access the selected rows */
-        myRows = cacheSelectedRows();
-
-        /* Loop through the selected rows */
-        for (int i = 0; i < myRows.length; i++) {
-            /* Access the row */
-            myRow = theClass.cast(myRows[i]);
-
-            /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
-                continue;
-            }
-
-            /* Ignore deleted rows */
-            if (myRow.isDeleted()) {
-                continue;
-            }
-
-            /* Skip if validation not required */
-            if ((!myRow.hasHistory()) || (myRow.getEditState() == EditState.VALID)) {
-                continue;
-            }
-
-            /* Access the row # and adjust for header */
-            myRowNo = myRow.indexOf();
-            if (hasHeader()) {
-                myRowNo++;
-            }
-
-            /* Clear errors and re-validate */
-            myRow.clearErrors();
-            myRow.validate();
-
-            /* Notify of the update of the row */
-            theModel.fireUpdateRowEvents(myRowNo);
-        }
-    }
-
-    /**
-     * Reset the selected rows.
-     */
-    protected void resetRows() {
-        DataItem[] myRows;
-        T myRow;
-        int myRowNo;
-        int myNewRowNo;
-
-        /* Access the selected rows */
-        myRows = cacheSelectedRows();
-
-        /* Loop through the selected rows */
-        for (int i = 0; i < myRows.length; i++) {
-            /* Access the row */
-            myRow = theClass.cast(myRows[i]);
-
-            /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
-                continue;
-            }
-
-            /* Ignore deleted rows */
-            if (myRow.isDeleted()) {
-                continue;
-            }
-
-            /* Skip if reset not required */
-            if (!myRow.hasHistory()) {
-                continue;
-            }
-
-            /* Access the row # adjust for header */
-            myRowNo = myRow.indexOf();
-            if (hasHeader()) {
-                myRowNo++;
-            }
-
-            /* Clear errors and re-validate */
-            myRow.clearErrors();
-            myRow.resetHistory();
-            myRow.validate();
-
-            /* Determine new row # */
-            myNewRowNo = myRow.indexOf();
-            if (hasHeader()) {
-                myNewRowNo++;
-            }
-
-            /* If the row # has changed */
-            if (myRowNo != myNewRowNo) {
-                /* Report the deletion and insertion */
-                theModel.fireMoveRowEvents(myRowNo, myNewRowNo);
-                addRowSelectionInterval(myNewRowNo, myNewRowNo);
-
-                /* else the row has just been updated */
-            } else {
-                /* Report the update */
-                theModel.fireUpdateRowEvents(myRowNo);
-            }
-        }
-
-        /* Re-validate after change */
-        // validateAfterChange();
-    }
-
-    /**
-     * Undo changes to rows.
-     */
-    protected void unDoRows() {
-        DataItem[] myRows;
-        T myRow;
-        int myRowNo;
-        int myNewRowNo;
-
-        /* Access the selected rows */
-        myRows = cacheSelectedRows();
-
-        /* Loop through the selected rows */
-        for (int i = 0; i < myRows.length; i++) {
-            /* Access the row */
-            myRow = theClass.cast(myRows[i]);
-
-            /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
-                continue;
-            }
-
-            /* Ignore deleted rows */
-            if (myRow.isDeleted()) {
-                continue;
-            }
-
-            /* Skip if undo not required */
-            if (!myRow.hasHistory()) {
-                continue;
-            }
-
-            /* Access the row # and adjust for header */
-            myRowNo = myRow.indexOf();
-            if (hasHeader()) {
-                myRowNo++;
-            }
-
-            /* Pop last value */
-            myRow.popHistory();
-
-            /* Resort the item */
-            theList.reSort(myRow);
-            myRow.clearErrors();
-            myRow.validate();
-
-            /* Determine new row # */
-            myNewRowNo = myRow.indexOf();
-            if (hasHeader()) {
-                myNewRowNo++;
-            }
-
-            /* If the row # has changed */
-            if (myRowNo != myNewRowNo) {
-                /* Report the deletion and insertion */
-                theModel.fireMoveRowEvents(myRowNo, myNewRowNo);
-                addRowSelectionInterval(myNewRowNo, myNewRowNo);
-
-                /* else the row has just been updated */
-            } else {
-                /* Report the update */
-                theModel.fireUpdateRowEvents(myRowNo);
-            }
-        }
-
-        /* Re-validate after change */
+        theUpdateSet.incrementVersion();
         // validateAfterChange();
     }
 

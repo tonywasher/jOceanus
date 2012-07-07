@@ -75,7 +75,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == ControlKey.FIELD_PASSHASH) {
+        if (ControlKey.FIELD_PASSHASH.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getHashBytes());
         } else {
             super.setFieldValue(pItem, iField);

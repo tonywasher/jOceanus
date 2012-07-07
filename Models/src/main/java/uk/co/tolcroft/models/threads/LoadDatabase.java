@@ -75,6 +75,9 @@ public class LoadDatabase<T extends DataSet<T>> extends LoaderThread<T> {
         /* Load database */
         T myData = myDatabase.loadDatabase(theStatus);
 
+        /* Check security on the database */
+        myData.checkSecurity(theStatus);
+
         /* Return the loaded data */
         return myData;
     }

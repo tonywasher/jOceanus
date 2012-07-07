@@ -410,6 +410,22 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     }
 
     /**
+     * Clear lists.
+     */
+    public void clear() {
+        /* Clear the security lists */
+        theControlKeys.clear();
+        theDataKeys.clear();
+        theControlData.clear();
+
+        /* Loop through the List values */
+        for (DataList<?, ?> myList : theList) {
+            /* Clear the list */
+            myList.clear();
+        }
+    }
+
+    /**
      * Set Version.
      * @param pVersion the version
      */
@@ -646,6 +662,23 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
 
         /* Update Security */
         return updateSecurity(pTask);
+    }
+
+    /**
+     * Check Security for multiple controlKeys.
+     * @param pTask the task control
+     * @return Continue <code>true/false</code>
+     * @throws JDataException on error
+     */
+    public boolean checkSecurity(final TaskControl<T> pTask) throws JDataException {
+        /* If there is more than one controlKey */
+        if (theControlKeys.size() > 1) {
+            /* Update to the selected controlKey */
+            return updateSecurity(pTask);
+        }
+
+        /* Return success */
+        return true;
     }
 
     /**

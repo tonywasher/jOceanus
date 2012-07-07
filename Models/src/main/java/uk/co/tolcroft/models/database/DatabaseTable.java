@@ -570,7 +570,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
             JDataField iField = myCol.getColumnId();
 
             /* Ignore ID column */
-            if (iField == DataItem.FIELD_ID) {
+            if (DataItem.FIELD_ID.equals(iField)) {
                 continue;
             }
 

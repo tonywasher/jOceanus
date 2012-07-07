@@ -23,16 +23,18 @@
 package uk.co.tolcroft.models.ui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
-import javax.swing.GroupLayout;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
-import javax.swing.LayoutStyle;
 import javax.swing.Timer;
 import javax.swing.plaf.basic.BasicProgressBarUI;
 
@@ -50,6 +52,11 @@ public class StatusBar {
      * Maximum progress.
      */
     private static final int MAX_PROGRESS = 100;
+
+    /**
+     * Strut width.
+     */
+    private static final int STRUT_WIDTH = 10;
 
     /**
      * Stage width.
@@ -77,19 +84,34 @@ public class StatusBar {
     private static final String NLS_CLEAR = NLS_BUNDLE.getString("ClearButton");
 
     /**
-     * Text for Clear Button.
+     * Text for Cancel Button.
      */
     private static final String NLS_CANCEL = NLS_BUNDLE.getString("CancelButton");
 
     /**
-     * Text for Clear Button.
+     * Text for Progress Title.
      */
     private static final String NLS_PROGRESS = NLS_BUNDLE.getString("ProgressTitle");
 
     /**
-     * Text for Clear Button.
+     * Text for Status Title.
      */
     private static final String NLS_STATUS = NLS_BUNDLE.getString("StatusTitle");
+
+    /**
+     * Text for Succeeded.
+     */
+    private static final String NLS_SUCCESS = NLS_BUNDLE.getString("Succeeded");
+
+    /**
+     * Text for Failed.
+     */
+    private static final String NLS_FAIL = NLS_BUNDLE.getString("Failed");
+
+    /**
+     * Text for Cancelled.
+     */
+    private static final String NLS_CANCELLED = NLS_BUNDLE.getString("Cancelled");
 
     /**
      * Progress panel.
@@ -197,8 +219,6 @@ public class StatusBar {
      */
     public StatusBar(final ThreadControl pThread,
                      final DataControl<?> pData) {
-        GroupLayout panelLayout;
-
         /* Record passed parameters */
         theControl = pThread;
 
@@ -235,95 +255,38 @@ public class StatusBar {
         theCancel.addActionListener(theListener);
         theClear.addActionListener(theListener);
 
+        /* Set minimum width on stage label */
+        theStageLabel.setMinimumSize(new Dimension(STAGE_WIDTH, 0));
+
         /* Create the progress panel */
         theProgPanel = new JPanel();
-        theProgPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(NLS_PROGRESS));
+        theProgPanel.setBorder(BorderFactory.createTitledBorder(NLS_PROGRESS));
 
-        /* Create the layout for the save panel */
-        panelLayout = new GroupLayout(theProgPanel);
-        theProgPanel.setLayout(panelLayout);
-
-        /* Set the layout */
-        panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(theTaskLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theStages)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addComponent(theStageLabel, GroupLayout.PREFERRED_SIZE, STAGE_WIDTH,
-                                                GroupLayout.PREFERRED_SIZE)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theSteps)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addComponent(theCancel).addContainerGap()));
-        panelLayout
-                .setVerticalGroup(panelLayout
-                        .createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(panelLayout
-                                          .createSequentialGroup()
-                                          .addGroup(panelLayout
-                                                            .createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                                 false)
-                                                            .addComponent(theTaskLabel,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE)
-                                                            .addComponent(theStages,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE)
-                                                            .addComponent(theStageLabel,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE)
-                                                            .addComponent(theSteps,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE)
-                                                            .addComponent(theCancel,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE))));
+        /* Define the layout */
+        theProgPanel.setLayout(new BoxLayout(theProgPanel, BoxLayout.X_AXIS));
+        theProgPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theProgPanel.add(theTaskLabel);
+        theProgPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theProgPanel.add(theStages);
+        theProgPanel.add(Box.createHorizontalGlue());
+        theProgPanel.add(theStageLabel);
+        theProgPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theProgPanel.add(theSteps);
+        theProgPanel.add(Box.createHorizontalGlue());
+        theProgPanel.add(theCancel);
+        theProgPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create the status panel */
         theStatPanel = new JPanel();
-        theStatPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(NLS_STATUS));
+        theStatPanel.setBorder(BorderFactory.createTitledBorder(NLS_STATUS));
 
-        /* Create the layout for the save panel */
-        panelLayout = new GroupLayout(theStatPanel);
-        theStatPanel.setLayout(panelLayout);
-
-        /* Set the layout */
-        panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          panelLayout.createSequentialGroup().addContainerGap().addComponent(theClear)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theStatusLabel)));
-        panelLayout
-                .setVerticalGroup(panelLayout
-                        .createParallelGroup(GroupLayout.Alignment.LEADING)
-                        .addGroup(panelLayout
-                                          .createSequentialGroup()
-                                          .addGroup(panelLayout
-                                                            .createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                                 false)
-                                                            .addComponent(theStatusLabel,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE)
-                                                            .addComponent(theClear,
-                                                                          GroupLayout.Alignment.LEADING,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          GroupLayout.DEFAULT_SIZE,
-                                                                          Short.MAX_VALUE))));
+        /* Define the layout */
+        theStatPanel.setLayout(new BoxLayout(theStatPanel, BoxLayout.X_AXIS));
+        theStatPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theStatPanel.add(theClear);
+        theStatPanel.add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        theStatPanel.add(theStatusLabel);
+        theStatPanel.add(Box.createHorizontalGlue());
     }
 
     /**
@@ -394,7 +357,7 @@ public class StatusBar {
      */
     public void setSuccess(final String pOperation) {
         /* Set the status text field */
-        theStatusLabel.setText(pOperation + " succeeded");
+        theStatusLabel.setText(pOperation + " " + NLS_SUCCESS);
 
         /* Show the status window rather than the progress window */
         theStatPanel.setVisible(true);
@@ -416,7 +379,7 @@ public class StatusBar {
     public void setFailure(final String pOperation,
                            final JDataException pError) {
         /* Initialise the message */
-        String myText = pOperation + " failed";
+        String myText = pOperation + " " + NLS_FAIL;
 
         /* If there is an error detail */
         if (pError != null) {
@@ -425,7 +388,7 @@ public class StatusBar {
 
             /* else no failure - must have cancelled */
         } else {
-            myText += ". Operation cancelled";
+            myText += ". " + NLS_CANCELLED;
         }
 
         /* Store the error */

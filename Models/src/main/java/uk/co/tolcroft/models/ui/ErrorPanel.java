@@ -38,6 +38,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataManager.JPanelWithEvents;
+import uk.co.tolcroft.models.views.DataControl;
 
 /**
  * Error panel.
@@ -105,7 +106,7 @@ public class ErrorPanel extends JPanelWithEvents {
     public ErrorPanel(final JDataManager pManager,
                       final JDataEntry pParent) {
         /* Create the error debug entry for this view */
-        theDataError = pManager.new JDataEntry("Error");
+        theDataError = pManager.new JDataEntry(DataControl.DATA_ERROR);
         theDataError.addAsChildOf(pParent);
         theDataError.hideEntry();
 

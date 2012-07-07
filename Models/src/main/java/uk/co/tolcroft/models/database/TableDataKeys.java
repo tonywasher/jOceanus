@@ -79,11 +79,11 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == DataKey.FIELD_CONTROLKEY) {
+        if (DataKey.FIELD_CONTROLKEY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
-        } else if (iField == DataKey.FIELD_KEYTYPE) {
+        } else if (DataKey.FIELD_KEYTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getKeyType().getId());
-        } else if (iField == DataKey.FIELD_KEY) {
+        } else if (DataKey.FIELD_KEY.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getSecuredKeyDef());
         } else {
             super.setFieldValue(pItem, iField);

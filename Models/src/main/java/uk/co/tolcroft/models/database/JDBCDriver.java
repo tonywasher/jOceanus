@@ -142,7 +142,7 @@ public enum JDBCDriver {
             case Date:
                 return "date";
             case Money:
-                return "money";
+                return (isSQLServer) ? "money" : "numeric(18,2)";
             case Decimal:
                 return (isSQLServer) ? "decimal" : "numeric";
             case Binary:

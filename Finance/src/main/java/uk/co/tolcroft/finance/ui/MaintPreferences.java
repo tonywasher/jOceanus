@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -50,7 +51,7 @@ import uk.co.tolcroft.models.ui.PreferenceSetPanel;
  * Preference maintenance panel.
  * @author Tony Washer
  */
-public class MaintProperties extends JPanelWithEvents {
+public class MaintPreferences extends JPanelWithEvents {
     /**
      * The serial Id.
      */
@@ -70,6 +71,37 @@ public class MaintProperties extends JPanelWithEvents {
      * Strut width.
      */
     private static final int STRUT_WIDTH = 5;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintPreferences.class
+            .getName());
+
+    /**
+     * Text for OK.
+     */
+    private static final String NLS_OK = NLS_BUNDLE.getString("OKButton");
+
+    /**
+     * Text for Reset.
+     */
+    private static final String NLS_RESET = NLS_BUNDLE.getString("ResetButton");
+
+    /**
+     * Text for Options.
+     */
+    private static final String NLS_OPTIONS = NLS_BUNDLE.getString("SaveOptions");
+
+    /**
+     * Text for Selection.
+     */
+    private static final String NLS_SELECT = NLS_BUNDLE.getString("Selection");
+
+    /**
+     * Text for Set.
+     */
+    private static final String NLS_SET = NLS_BUNDLE.getString("PreferenceSet");
 
     /**
      * The OK button.
@@ -109,17 +141,17 @@ public class MaintProperties extends JPanelWithEvents {
     /**
      * Constructor.
      */
-    public MaintProperties() {
+    public MaintPreferences() {
         /* Create the buttons */
-        theOKButton = new JButton("OK");
-        theResetButton = new JButton("Reset");
+        theOKButton = new JButton(NLS_OK);
+        theResetButton = new JButton(NLS_RESET);
 
         /* Create the listener */
         theListener = new PropertyListener();
 
         /* Create the buttons panel */
         JPanel myButtons = new JPanel();
-        myButtons.setBorder(BorderFactory.createTitledBorder("Save Options"));
+        myButtons.setBorder(BorderFactory.createTitledBorder(NLS_OPTIONS));
 
         /* Create the layout for the buttons panel */
         myButtons.setLayout(new BoxLayout(myButtons, BoxLayout.X_AXIS));
@@ -130,13 +162,13 @@ public class MaintProperties extends JPanelWithEvents {
         myButtons.add(Box.createHorizontalGlue());
 
         /* Create selection box and label */
-        JLabel myLabel = new JLabel("PropertySet:");
+        JLabel myLabel = new JLabel(NLS_SET);
         theSelect = new JComboBox();
         theSelect.setMaximumSize(new Dimension(SELECT_WIDTH, SELECT_HEIGHT));
 
         /* Create the selection panel */
         JPanel mySelection = new JPanel();
-        mySelection.setBorder(BorderFactory.createTitledBorder("Selection"));
+        mySelection.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
         /* Create the layout for the selection panel */
         mySelection.setLayout(new BoxLayout(mySelection, BoxLayout.X_AXIS));

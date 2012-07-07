@@ -475,9 +475,8 @@ public class MainTab extends MainWindow<FinanceData> {
 
             /* If the selected component is SpotView */
         } else if (myComponent.equals(theSpotView.getPanel())) {
-            /* Set the debug focus */
-            // theSpotView.getDataEntry().setFocus();
-            theSpotView.requestFocusInWindow();
+            /* Determine focus of SpotView */
+            theSpotView.determineFocus();
 
             /* If the selected component is Maintenance */
         } else if (myComponent.equals(theMaint)) {

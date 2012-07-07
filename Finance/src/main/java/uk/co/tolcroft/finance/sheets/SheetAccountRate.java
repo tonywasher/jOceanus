@@ -312,7 +312,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
             }
 
             /* Handle exceptions */
-        } catch (Exception e) {
+        } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Rates", e);
         }
 

@@ -456,10 +456,13 @@ public abstract class Decimal {
 
         /* Parse the integer part */
         try {
-            Long.parseLong(myWork.toString());
+            theValue = Long.parseLong(myWork.toString());
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Non Decimal Numeric Value: " + pString, e);
         }
+
+        /* Raise to appropriate factor given by number of decimals */
+        theValue *= getFactor(theDecimals);
 
         /* If we have a decimal part */
         if (myDecimals != null) {
@@ -477,7 +480,7 @@ public abstract class Decimal {
 
             /* Parse the decimals */
             try {
-                Long.parseLong(myDecimals.toString());
+                theValue += Long.parseLong(myDecimals.toString());
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Non Decimal Numeric Value: " + pString, e);
             }
@@ -486,11 +489,6 @@ public abstract class Decimal {
             if (myLastDigit >= '5') {
                 theValue++;
             }
-
-            /* else we have no decimals */
-        } else {
-            /* Raise to appropriate factor given by number of decimals */
-            theValue *= getFactor(theDecimals);
         }
 
         /* If the value is negative, negate the number */

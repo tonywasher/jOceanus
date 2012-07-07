@@ -31,12 +31,15 @@ import java.beans.PropertyChangeListener;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.LayoutStyle;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -63,6 +66,7 @@ import uk.co.tolcroft.models.ui.ItemField.FieldSet;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
+import uk.co.tolcroft.models.views.DataControl;
 import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
@@ -85,16 +89,6 @@ public class MaintAccount extends JPanelWithEvents {
      * Container gap 2.
      */
     private static final int GAP_THIRTY = 30;
-
-    /**
-     * The parent.
-     */
-    private final MaintenanceTab theParent;
-
-    /**
-     * The panel.
-     */
-    private final JPanel thePanel;
 
     /**
      * The detail panel.
@@ -232,11 +226,6 @@ public class MaintAccount extends JPanelWithEvents {
     private final JButton theClsButton;
 
     /**
-     * The Undo button.
-     */
-    private final JButton theUndoButton;
-
-    /**
      * The Account.
      */
     private transient Account theAccount = null;
@@ -287,14 +276,6 @@ public class MaintAccount extends JPanelWithEvents {
     private final transient UpdateEntry theUpdateEntry;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
      * Obtain the account.
      * @return the account
      */
@@ -304,49 +285,33 @@ public class MaintAccount extends JPanelWithEvents {
 
     /**
      * Constructor.
-     * @param pParent the parent
+     * @param pView the data view
      */
-    public MaintAccount(final MaintenanceTab pParent) {
-        JLabel myName;
-        JLabel myDesc;
-        JLabel myFirst;
-        JLabel myLast;
-        JLabel myWebSite;
-        JLabel myCustNo;
-        JLabel myUserId;
-        JLabel myPassword;
-        JLabel myAccount;
-        JLabel myNotes;
-        String myDefValue;
-        char[] myDefChars;
-
-        /* Store passed data */
-        theParent = pParent;
-
+    public MaintAccount(final View pView) {
         /* Access the view */
-        theView = pParent.getView();
+        theView = pView;
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
         theUpdateEntry = theUpdateSet.registerClass(Account.class);
 
         /* Create the labels */
-        myName = new JLabel("Name:");
-        myDesc = new JLabel("Description:");
+        JLabel myName = new JLabel("Name:");
+        JLabel myDesc = new JLabel("Description:");
         theTypLabel = new JLabel("AccountType:");
         theMatLabel = new JLabel("Maturity:");
         theParLabel = new JLabel("Parent:");
         theAlsLabel = new JLabel("Alias:");
-        myFirst = new JLabel("FirstEvent:");
-        myLast = new JLabel("LastEvent:");
+        JLabel myFirst = new JLabel("FirstEvent:");
+        JLabel myLast = new JLabel("LastEvent:");
         theFirst = new JLabel("01-Jan-2000");
         theLast = new JLabel("01-Jan-2000");
-        myWebSite = new JLabel("WebSite:");
-        myCustNo = new JLabel("CustomerNo:");
-        myUserId = new JLabel("UserId:");
-        myPassword = new JLabel("Password:");
-        myAccount = new JLabel("Account:");
-        myNotes = new JLabel("Notes:");
+        JLabel myWebSite = new JLabel("WebSite:");
+        JLabel myCustNo = new JLabel("CustomerNo:");
+        JLabel myUserId = new JLabel("UserId:");
+        JLabel myPassword = new JLabel("Password:");
+        JLabel myAccount = new JLabel("Account:");
+        JLabel myNotes = new JLabel("Notes:");
 
         /* Build the field set */
         theFieldSet = new FieldSet();
@@ -357,7 +322,7 @@ public class MaintAccount extends JPanelWithEvents {
         theName.setColumns(Account.NAMELEN);
         theDesc.setColumns(Account.DESCLEN);
 
-        /* Create the password fields */
+        /* Create the security fields */
         theWebSite = new ItemField(ValueClass.CharArray, Account.FIELD_WEBSITE, theFieldSet);
         theCustNo = new ItemField(ValueClass.CharArray, Account.FIELD_CUSTNO, theFieldSet);
         theUserId = new ItemField(ValueClass.CharArray, Account.FIELD_USERID, theFieldSet);
@@ -382,9 +347,9 @@ public class MaintAccount extends JPanelWithEvents {
         theFieldSet.addItemField(new ItemField(theAliasBox, Account.FIELD_ALIAS));
 
         /* Dimension the account boxes correctly */
-        myDefChars = new char[Account.NAMELEN];
+        char[] myDefChars = new char[Account.NAMELEN];
         Arrays.fill(myDefChars, 'X');
-        myDefValue = new String(myDefChars);
+        String myDefValue = new String(myDefChars);
         theParentBox.setPrototypeDisplayValue(myDefValue);
         theAliasBox.setPrototypeDisplayValue(myDefValue);
 
@@ -402,7 +367,6 @@ public class MaintAccount extends JPanelWithEvents {
         theInsButton = new JButton("New");
         theDelButton = new JButton();
         theClsButton = new JButton();
-        theUndoButton = new JButton("Undo");
 
         /* Create the listener */
         AccountListener myListener = new AccountListener();
@@ -423,26 +387,28 @@ public class MaintAccount extends JPanelWithEvents {
         theInsButton.addActionListener(myListener);
         theDelButton.addActionListener(myListener);
         theClsButton.addActionListener(myListener);
-        theUndoButton.addActionListener(myListener);
 
         /* Create the Account Selection panel */
         theSelect = new AccountSelect(theView, true);
+        theSelect.addChangeListener(myListener);
 
         /* Create the Save buttons panel */
         theSaveButs = new SaveButtons(theUpdateSet);
         theSaveButs.addActionListener(myListener);
 
-        /* Create the debug entry, attach to MaintenanceDebug entry */
+        /* Create the debug entry, attach to Views */
         JDataManager myDataMgr = theView.getDataMgr();
-        theDataEntry = myDataMgr.new JDataEntry("Account");
-        theDataEntry.addAsChildOf(pParent.getDataEntry());
+        theDataEntry = myDataMgr.new JDataEntry(Account.class.getSimpleName());
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        theDataEntry.addAsChildOf(mySection);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
+        theError.addChangeListener(myListener);
 
         /* Create the buttons panel */
         theButtons = new JPanel();
-        theButtons.setBorder(javax.swing.BorderFactory.createTitledBorder("Actions"));
+        theButtons.setBorder(BorderFactory.createTitledBorder("Actions"));
 
         /* Create the layout for the panel */
         GroupLayout myLayout = new GroupLayout(theButtons);
@@ -455,20 +421,16 @@ public class MaintAccount extends JPanelWithEvents {
                                   .addComponent(theInsButton)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
                                                    GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theUndoButton)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                   .addComponent(theDelButton)
                                   .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
                                                    GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                   .addComponent(theClsButton).addContainerGap()));
         myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(theInsButton).addComponent(theUndoButton).addComponent(theDelButton)
-                .addComponent(theClsButton));
+                .addComponent(theInsButton).addComponent(theDelButton).addComponent(theClsButton));
 
         /* Create the secure panel */
         theSecure = new JPanel();
-        theSecure.setBorder(javax.swing.BorderFactory.createTitledBorder("Security Details"));
+        theSecure.setBorder(BorderFactory.createTitledBorder("Security Details"));
 
         /* Create the layout for the panel */
         myLayout = new GroupLayout(theSecure);
@@ -558,7 +520,7 @@ public class MaintAccount extends JPanelWithEvents {
 
         /* Create the detail panel */
         theDetail = new JPanel();
-        theDetail.setBorder(javax.swing.BorderFactory.createTitledBorder("Account Details"));
+        theDetail.setBorder(BorderFactory.createTitledBorder("Account Details"));
 
         /* Create the layout for the panel */
         myLayout = new GroupLayout(theDetail);
@@ -649,7 +611,7 @@ public class MaintAccount extends JPanelWithEvents {
 
         /* Create the status panel */
         JPanel myStatus = new JPanel();
-        myStatus.setBorder(javax.swing.BorderFactory.createTitledBorder("Account Status"));
+        myStatus.setBorder(BorderFactory.createTitledBorder("Account Status"));
 
         /* Create the layout for the panel */
         myLayout = new GroupLayout(myStatus);
@@ -686,12 +648,9 @@ public class MaintAccount extends JPanelWithEvents {
                                                                   GroupLayout.PREFERRED_SIZE))
                                   .addContainerGap()));
 
-        /* Create the panel */
-        thePanel = new JPanel();
-
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
+        myLayout = new GroupLayout(this);
+        setLayout(myLayout);
 
         /* Set the layout */
         myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -748,38 +707,6 @@ public class MaintAccount extends JPanelWithEvents {
     }
 
     /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    // @Override
-    // public void lockOnError(final boolean isError) {
-    /* Hide selection panel */
-    // theSelect.setVisible(!isError);
-
-    /* Lock data areas */
-    // theDetail.setEnabled(!isError);
-    // theSecure.setEnabled(!isError);
-
-    /* Lock row/tab buttons area */
-    // theButtons.setEnabled(!isError);
-    // theSaveButs.setEnabled(!isError);
-    // }
-
-    /**
-     * Perform the requested command.
-     * @param pCmd the command
-     */
-    public void performCommand(final String pCmd) {
-        /* Switch on command */
-        if (SaveButtons.CMD_OK.equals(pCmd)) {
-            saveData();
-        } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
-            resetData();
-        }
-        notifyChanges();
-    }
-
-    /**
      * Notify Changes.
      */
     public void notifyChanges() {
@@ -791,7 +718,7 @@ public class MaintAccount extends JPanelWithEvents {
         showAccount();
 
         /* Adjust visible tabs */
-        theParent.setVisibility();
+        fireStateChanged();
     }
 
     /**
@@ -799,40 +726,6 @@ public class MaintAccount extends JPanelWithEvents {
      */
     public void updateDebug() {
         theDataEntry.setObject(theActView);
-    }
-
-    /**
-     * resetData.
-     */
-    public void resetData() {
-        theAccount.clearErrors();
-        theAccount.resetHistory();
-        theAccount.validate();
-
-        /* Recalculate edit state */
-        theActView.findEditState();
-
-        /* if this is a new account */
-        if (theAccount.getState() == DataState.NEW) {
-            /* Delete the new account */
-            delNewAccount();
-        }
-
-        /* Notify changes */
-        notifyChanges();
-        updateDebug();
-    }
-
-    /**
-     * saveData.
-     */
-    public void saveData() {
-        /* Validate the data */
-        validate();
-        if (!theUpdateSet.hasErrors()) {
-            /* Save details for the account */
-            theUpdateSet.applyChanges();
-        }
     }
 
     /**
@@ -1144,7 +1037,6 @@ public class MaintAccount extends JPanelWithEvents {
             /* Enable buttons */
             theInsButton.setEnabled(!theAccount.hasChanges() && (!theAccount.getActType().isReserved()));
             theClsButton.setEnabled((isClosed) || (theAccount.isCloseable()));
-            theUndoButton.setEnabled(theAccount.hasChanges());
 
             /* Note that we are finished refreshing data */
             refreshingData = false;
@@ -1173,7 +1065,6 @@ public class MaintAccount extends JPanelWithEvents {
             theActDetail.setEnabled(false);
             theNotes.setEnabled(false);
             theClsButton.setVisible(false);
-            theUndoButton.setEnabled(false);
 
             theInsButton.setEnabled(myType != null);
             theDelButton.setVisible(false);
@@ -1218,33 +1109,10 @@ public class MaintAccount extends JPanelWithEvents {
     }
 
     /**
-     * Undo changes.
-     */
-    private void undoChanges() {
-        /* If the account has changes */
-        if (theAccount.hasHistory()) {
-            /* Pop last value */
-            theAccount.popHistory();
-
-            /* Re-validate the item */
-            theAccount.clearErrors();
-            theAccount.validate();
-
-            /* Notify changes */
-            notifyChanges();
-            updateDebug();
-
-            /* else if this is a new account */
-        } else if (theAccount.getState() == DataState.NEW) {
-            /* Delete the new account */
-            delNewAccount();
-        }
-    }
-
-    /**
      * AccountListener class.
      */
-    private final class AccountListener implements ActionListener, ItemListener, PropertyChangeListener {
+    private final class AccountListener implements ActionListener, ItemListener, PropertyChangeListener,
+            ChangeListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
             Object o = evt.getSource();
@@ -1331,8 +1199,11 @@ public class MaintAccount extends JPanelWithEvents {
 
             /* If this event relates to the save buttons */
             if (theSaveButs.equals(o)) {
-                /* Create the new account */
-                performCommand(evt.getActionCommand());
+                /* Perform the action */
+                theUpdateSet.processCommand(evt.getActionCommand());
+
+                /* Notify of any changes */
+                notifyChanges();
                 return;
 
                 /* If this event relates to the new button */
@@ -1350,19 +1221,15 @@ public class MaintAccount extends JPanelWithEvents {
 
                     /* Else we should just delete/recover the account */
                 } else {
-                    /* Set the appropriate state */
-                    // theAccount.setState(theAccount.isDeleted() ? DataState.RECOVERED : DataState.DELETED);
+                    /* Flip the deleted state */
+                    theAccount.setDeleted(!theAccount.isDeleted());
+
+                    /* Increment the update version */
+                    theUpdateSet.incrementVersion();
 
                     /* Notify changes */
                     notifyChanges();
-                    updateDebug();
                 }
-                return;
-
-                /* If this event relates to the undo button */
-            } else if (theUndoButton.equals(o)) {
-                /* Undo the changes */
-                undoChanges();
                 return;
             }
 
@@ -1498,6 +1365,40 @@ public class MaintAccount extends JPanelWithEvents {
                 /* Note that changes have occurred */
                 notifyChanges();
                 updateDebug();
+            }
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent evt) {
+            Object o = evt.getSource();
+
+            /* If this is the selection box */
+            if (theSelect.equals(o)) {
+                /* If we have changed the show closed option */
+                if (theSelect.doShowClosed() != doShowClosed) {
+                    /* Record details and refresh parents */
+                    doShowClosed = theSelect.doShowClosed();
+                    refreshParents();
+                }
+
+                /* Set the new account */
+                setSelection(theSelect.getSelected());
+
+                /* If this is the error panel reporting */
+            } else if (theError.equals(o)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel */
+                theSelect.setVisible(!isError);
+
+                /* Lock data areas */
+                theDetail.setEnabled(!isError);
+                theSecure.setEnabled(!isError);
+                theButtons.setEnabled(!isError);
+
+                /* Lock Save Buttons */
+                theSaveButs.setEnabled(!isError);
             }
         }
     }

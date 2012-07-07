@@ -77,9 +77,9 @@ public class TableControl extends DatabaseTable<ControlData> {
                                  final JDataField pField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (pField == ControlData.FIELD_VERSION) {
+        if (ControlData.FIELD_VERSION.equals(pField)) {
             myTableDef.setIntegerValue(pField, pItem.getDataVersion());
-        } else if (pField == ControlData.FIELD_CONTROLKEY) {
+        } else if (ControlData.FIELD_CONTROLKEY.equals(pField)) {
             myTableDef.setIntegerValue(pField, pItem.getControlKey().getId());
         } else {
             super.setFieldValue(pItem, pField);

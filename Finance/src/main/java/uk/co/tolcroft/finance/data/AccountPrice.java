@@ -255,18 +255,6 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     protected AccountPrice(final AccountPriceList pList,
                            final AccountPrice pPrice) {
         /* Set standard values */
-        super(pList, pPrice.getId());
-    }
-
-    /**
-     * Construct a new price from a SpotPrice.
-     * @param pList the list
-     * @param pPrice the price to copy
-     */
-    private AccountPrice(final AccountPriceList pList,
-                         final SpotPrice pPrice) {
-
-        /* Set standard values */
         super(pList, pPrice);
     }
 
@@ -285,7 +273,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      */
     protected AccountPrice(final AccountPriceList pList,
                            final Account pAccount) {
-        super(pList, pAccount.getId());
+        super(pList, 0);
         setControlKey(pList.getControlKey());
         setValueAccount(pAccount);
     }
@@ -508,15 +496,14 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      */
     @Override
     public boolean applyChanges(final DataItem pItem) {
-        boolean bChanged = false;
         if (pItem instanceof SpotPrice) {
             SpotPrice mySpot = (SpotPrice) pItem;
-            bChanged = applyChanges(mySpot);
+            return applyChanges(mySpot);
         } else if (pItem instanceof AccountPrice) {
             AccountPrice myPrice = (AccountPrice) pItem;
-            bChanged = applyChanges(myPrice);
+            return applyChanges(myPrice);
         }
-        return bChanged;
+        return false;
     }
 
     /**
@@ -683,11 +670,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
          */
         @Override
         public AccountPrice addNewItem(final DataItem pPrice) {
-            if (pPrice instanceof SpotPrice) {
-                AccountPrice myPrice = new AccountPrice(this, (SpotPrice) pPrice);
-                add(myPrice);
-                return myPrice;
-            } else if (pPrice instanceof AccountPrice) {
+            if (pPrice instanceof AccountPrice) {
                 AccountPrice myPrice = new AccountPrice(this, (AccountPrice) pPrice);
                 add(myPrice);
                 return myPrice;

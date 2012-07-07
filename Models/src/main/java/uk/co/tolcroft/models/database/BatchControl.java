@@ -179,7 +179,7 @@ public class BatchControl {
         }
 
         /**
-         * Mark a update in the table as committed as committed.
+         * Mark a update in the table as committed.
          */
         private void commitBatch() {
             /* Access the iterator */

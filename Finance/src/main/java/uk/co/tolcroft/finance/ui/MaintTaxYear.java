@@ -22,6 +22,8 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui;
 
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -30,13 +32,18 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
-import javax.swing.GroupLayout;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.LayoutStyle;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -59,6 +66,7 @@ import uk.co.tolcroft.models.ui.ItemField.FieldSet;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.ui.ValueField;
 import uk.co.tolcroft.models.ui.ValueField.ValueClass;
+import uk.co.tolcroft.models.views.DataControl;
 import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
@@ -73,39 +81,40 @@ public class MaintTaxYear extends JPanelWithEvents {
     private static final long serialVersionUID = 4527130528913817296L;
 
     /**
-     * Container gap 1.
+     * Padding size.
      */
-    private static final int GAP_TEN = 10;
+    private static final int PADDING_SIZE = 5;
 
     /**
-     * Container gap 2.
+     * Field Height.
      */
-    private static final int GAP_THIRTY = 30;
+    private static final int FIELD_HEIGHT = 20;
 
     /**
-     * Container gap 3.
+     * Field Width.
      */
-    private static final int GAP_FIFTY = 50;
+    private static final int FIELD_WIDTH = 200;
 
     /**
-     * Container gap 4.
+     * Grid rows.
      */
-    private static final int GAP_EIGHTY = 80;
+    private static final int GRID_ROWS = 2;
 
     /**
-     * The parent.
+     * Grid Columns.
      */
-    private final MaintenanceTab theParent;
+    private static final int GRID_COLS = 3;
 
     /**
-     * The panel.
+     * Resource Bundle.
      */
-    private final JPanel thePanel;
+    // private static final ResourceBundle NLS_BUNDLE =
+    // ResourceBundle.getBundle(MaintTaxYear.class.getName());
 
     /**
-     * The Buttons panel.
+     * Text for PopUpEnabled.
      */
-    private final JPanel theButtons;
+    // private static final String NLS_ENABLED = NLS_BUNDLE.getString("PopUpEnabled");
 
     /**
      * The tax year select panel.
@@ -273,11 +282,6 @@ public class MaintTaxYear extends JPanelWithEvents {
     private final JButton theDelButton;
 
     /**
-     * The undo button.
-     */
-    private final JButton theUndoButton;
-
-    /**
      * The tax year.
      */
     private transient TaxYear theTaxYear = null;
@@ -328,14 +332,6 @@ public class MaintTaxYear extends JPanelWithEvents {
     private final transient UpdateEntry theUpdateEntry;
 
     /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    /**
      * Obtain the tax Year.
      * @return the tax year
      */
@@ -345,65 +341,39 @@ public class MaintTaxYear extends JPanelWithEvents {
 
     /**
      * Constructor.
-     * @param pParent the parent
+     * @param pView the data view
      */
-    public MaintTaxYear(final MaintenanceTab pParent) {
-        JLabel myYear;
-        JLabel myRegime;
-        JLabel myAllow;
-        JLabel myLoAgeAllow;
-        JLabel myHiAgeAllow;
-        JLabel myCapitalAllow;
-        JLabel myRental;
-        JLabel myAgeAllowLimit;
-        JLabel myAddAllowLimit;
-        JLabel myAddIncBndry;
-        JLabel myLoBand;
-        JLabel myBasicBand;
-        JLabel myLoTaxRate;
-        JLabel myBasicTaxRate;
-        JLabel myHiTaxRate;
-        JLabel myIntTaxRate;
-        JLabel myDivTaxRate;
-        JLabel myHiDivTaxRate;
-        JLabel myAddTaxRate;
-        JLabel myAddDivTaxRate;
-        JLabel myCapTaxRate;
-        JLabel myHiCapTaxRate;
-
-        /* Store passed data */
-        theParent = pParent;
-
-        /* Access the view */
-        theView = pParent.getView();
+    public MaintTaxYear(final View pView) {
+        /* Record the view */
+        theView = pView;
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
         theUpdateEntry = theUpdateSet.registerClass(TaxYear.class);
 
         /* Create the labels */
-        myYear = new JLabel("Year:");
-        myRegime = new JLabel("Tax Regime:");
-        myAllow = new JLabel("Personal Allowance:");
-        myLoAgeAllow = new JLabel("Age 65-74 Allowance:");
-        myHiAgeAllow = new JLabel("Age 75+ Allowance:");
-        myCapitalAllow = new JLabel("Capital Allowance:");
-        myAgeAllowLimit = new JLabel("Age Allowance Limit:");
-        myAddAllowLimit = new JLabel("Additnl Allow Limit:");
-        myAddIncBndry = new JLabel("Additnl Tax Boundary:");
-        myRental = new JLabel("Rental Allowance:");
-        myLoBand = new JLabel("Low Tax Band:");
-        myBasicBand = new JLabel("Basic Tax Band:");
-        myLoTaxRate = new JLabel("Low Rate:");
-        myBasicTaxRate = new JLabel("Basic Rate:");
-        myHiTaxRate = new JLabel("High Rate:");
-        myIntTaxRate = new JLabel("Interest Rate:");
-        myDivTaxRate = new JLabel("Dividend Rate:");
-        myHiDivTaxRate = new JLabel("High Dividend Rate:");
-        myAddTaxRate = new JLabel("Additnl Rate:");
-        myAddDivTaxRate = new JLabel("Additnl Dividend Rate:");
-        myCapTaxRate = new JLabel("Capital Rate:");
-        myHiCapTaxRate = new JLabel("High Capital Rate:");
+        JLabel myYear = new JLabel("Year:");
+        JLabel myRegime = new JLabel("Tax Regime:");
+        JLabel myAllow = new JLabel("Personal Allowance:", SwingConstants.TRAILING);
+        JLabel myLoAgeAllow = new JLabel("Age 65-74 Allowance:", SwingConstants.TRAILING);
+        JLabel myHiAgeAllow = new JLabel("Age 75+ Allowance:", SwingConstants.TRAILING);
+        JLabel myCapitalAllow = new JLabel("Capital Allowance:", SwingConstants.TRAILING);
+        JLabel myAgeAllowLimit = new JLabel("Age Allowance Limit:", SwingConstants.TRAILING);
+        JLabel myAddAllowLimit = new JLabel("Additnl Allow Limit:", SwingConstants.TRAILING);
+        JLabel myAddIncBndry = new JLabel("Additnl Tax Boundary:", SwingConstants.TRAILING);
+        JLabel myRental = new JLabel("Rental Allowance:", SwingConstants.TRAILING);
+        JLabel myLoBand = new JLabel("Low Tax Band:", SwingConstants.TRAILING);
+        JLabel myBasicBand = new JLabel("Basic Tax Band:", SwingConstants.TRAILING);
+        JLabel myLoTaxRate = new JLabel("Low Rate:", SwingConstants.TRAILING);
+        JLabel myBasicTaxRate = new JLabel("Basic Rate:", SwingConstants.TRAILING);
+        JLabel myHiTaxRate = new JLabel("High Rate:", SwingConstants.TRAILING);
+        JLabel myIntTaxRate = new JLabel("Interest Rate:", SwingConstants.TRAILING);
+        JLabel myDivTaxRate = new JLabel("Dividend Rate:", SwingConstants.TRAILING);
+        JLabel myHiDivTaxRate = new JLabel("High Dividend Rate:", SwingConstants.TRAILING);
+        JLabel myAddTaxRate = new JLabel("Additnl Rate:", SwingConstants.TRAILING);
+        JLabel myAddDivTaxRate = new JLabel("Additnl Dividend Rate:", SwingConstants.TRAILING);
+        JLabel myCapTaxRate = new JLabel("Capital Rate:", SwingConstants.TRAILING);
+        JLabel myHiCapTaxRate = new JLabel("High Capital Rate:", SwingConstants.TRAILING);
 
         /* Build the field set */
         theFieldSet = new FieldSet();
@@ -411,9 +381,6 @@ public class MaintTaxYear extends JPanelWithEvents {
         /* Create the combo box and add to the field set */
         theRegimesBox = new JComboBox();
         theFieldSet.addItemField(new ItemField(theRegimesBox, TaxYear.FIELD_REGIME));
-
-        /* Create the TaxYearSelect panel */
-        theSelect = new TaxYearSelect(theView);
 
         /* Create the text fields */
         theYear = new JTextField();
@@ -438,12 +405,35 @@ public class MaintTaxYear extends JPanelWithEvents {
         theCapTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_CAPTAX, theFieldSet);
         theHiCapTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_HCPTAX, theFieldSet);
 
+        /* Limit sizes */
+        theYear.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theRegimesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theAllowance.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theLoAgeAllow.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theHiAgeAllow.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theRental.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theCapitalAllow.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theAddIncomeBndry.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theAgeAllowLimit.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theAddAllowLimit.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theLoTaxBand.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theBasicTaxBand.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theLoTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theBasicTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theHiTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theAddTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theIntTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theDivTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theHiDivTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theAddDivTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theCapTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theHiCapTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+
         /* The Year field is not edit-able */
         theYear.setEditable(false);
 
         /* Create the buttons */
         theDelButton = new JButton();
-        theUndoButton = new JButton("Undo");
 
         /* Create listener */
         TaxYearListener myListener = new TaxYearListener();
@@ -471,7 +461,10 @@ public class MaintTaxYear extends JPanelWithEvents {
         theCapTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
         theHiCapTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
         theDelButton.addActionListener(myListener);
-        theUndoButton.addActionListener(myListener);
+
+        /* Create the TaxYearSelect panel */
+        theSelect = new TaxYearSelect(theView);
+        theSelect.addChangeListener(myListener);
 
         /* Create the Table buttons panel */
         theSaveButs = new SaveButtons(theUpdateSet);
@@ -479,285 +472,153 @@ public class MaintTaxYear extends JPanelWithEvents {
 
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
-        theDataEntry = myDataMgr.new JDataEntry("TaxYear");
-        theDataEntry.addAsChildOf(pParent.getDataEntry());
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        theDataEntry = myDataMgr.new JDataEntry(TaxYear.class.getSimpleName());
+        theDataEntry.addAsChildOf(mySection);
+        theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
-
-        /* Create the buttons panel */
-        theButtons = new JPanel();
-        theButtons.setBorder(javax.swing.BorderFactory.createTitledBorder("Actions"));
-
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(theButtons);
-        theButtons.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(theUndoButton)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theDelButton).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(theUndoButton).addComponent(theDelButton));
+        theError.addChangeListener(myListener);
 
         /* Create the regime panel */
         theRegime = new JPanel();
-        theRegime.setBorder(javax.swing.BorderFactory.createTitledBorder("Tax Regime"));
+        theRegime.setBorder(BorderFactory.createTitledBorder("Tax Year"));
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(theRegime);
-        theRegime.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(myYear)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theYear)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addComponent(myRegime)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theRegimesBox).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(myYear).addComponent(theYear).addComponent(myRegime)
-                .addComponent(theRegimesBox));
+        theRegime.setLayout(new BoxLayout(theRegime, BoxLayout.X_AXIS));
+        theRegime.add(Box.createHorizontalGlue());
+        theRegime.add(myYear);
+        theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
+        theRegime.add(theYear);
+        theRegime.add(Box.createHorizontalGlue());
+        theRegime.add(myRegime);
+        theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
+        theRegime.add(theRegimesBox);
+        theRegime.add(Box.createHorizontalGlue());
+        theRegime.add(theDelButton);
+        theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
 
         /* Create the allowances panel */
         theAllows = new JPanel();
-        theAllows.setBorder(javax.swing.BorderFactory.createTitledBorder("Allowances"));
+        theAllows.setBorder(BorderFactory.createTitledBorder("Allowances"));
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(theAllows);
-        theAllows.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(myAllow).addComponent(myLoAgeAllow)
-                                                    .addComponent(myHiAgeAllow).addComponent(myRental)
-                                                    .addComponent(myCapitalAllow))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theAllowance).addComponent(theLoAgeAllow)
-                                                    .addComponent(theHiAgeAllow).addComponent(theRental)
-                                                    .addComponent(theCapitalAllow)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myAllow).addComponent(theAllowance))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myLoAgeAllow).addComponent(theLoAgeAllow))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myHiAgeAllow).addComponent(theHiAgeAllow))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myRental).addComponent(theRental))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myCapitalAllow)
-                                                    .addComponent(theCapitalAllow)).addContainerGap()));
+        /* Layout the allowances panel */
+        SpringLayout mySpring = new SpringLayout();
+        theAllows.setLayout(mySpring);
+        theAllows.add(myAllow);
+        theAllows.add(theAllowance);
+        theAllows.add(myLoAgeAllow);
+        theAllows.add(theLoAgeAllow);
+        theAllows.add(myHiAgeAllow);
+        theAllows.add(theHiAgeAllow);
+        theAllows.add(myRental);
+        theAllows.add(theRental);
+        theAllows.add(myCapitalAllow);
+        theAllows.add(theCapitalAllow);
+        SpringUtilities.makeCompactGrid(theAllows, mySpring, theAllows.getComponentCount() >> 1, 2,
+                                        PADDING_SIZE);
 
         /* Create the limits panel */
         theLimits = new JPanel();
-        theLimits.setBorder(javax.swing.BorderFactory.createTitledBorder("Limits"));
+        theLimits.setBorder(BorderFactory.createTitledBorder("Limits"));
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(theLimits);
-        theLimits.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(myAgeAllowLimit)
-                                                    .addComponent(myAddAllowLimit))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theAgeAllowLimit)
-                                                    .addComponent(theAddAllowLimit)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myAgeAllowLimit)
-                                                    .addComponent(theAgeAllowLimit))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myAddAllowLimit)
-                                                    .addComponent(theAddAllowLimit))
-                                  .addContainerGap(GAP_EIGHTY, GAP_EIGHTY)));
+        /* Layout the limits panel */
+        mySpring = new SpringLayout();
+        theLimits.setLayout(mySpring);
+        theLimits.add(myAgeAllowLimit);
+        theLimits.add(theAgeAllowLimit);
+        theLimits.add(myAddAllowLimit);
+        theLimits.add(theAddAllowLimit);
+        SpringUtilities.makeCompactGrid(theLimits, mySpring, theLimits.getComponentCount() >> 1, 2,
+                                        PADDING_SIZE);
 
         /* Create the bands panel */
         theBands = new JPanel();
-        theBands.setBorder(javax.swing.BorderFactory.createTitledBorder("Tax Bands"));
+        theBands.setBorder(BorderFactory.createTitledBorder("Tax Bands"));
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(theBands);
-        theBands.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(myLoBand).addComponent(myBasicBand)
-                                                    .addComponent(myAddIncBndry))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theLoTaxBand).addComponent(theBasicTaxBand)
-                                                    .addComponent(theAddIncomeBndry)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myLoBand).addComponent(theLoTaxBand))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myBasicBand).addComponent(theBasicTaxBand))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myAddIncBndry)
-                                                    .addComponent(theAddIncomeBndry))
-                                  .addContainerGap(GAP_FIFTY, GAP_FIFTY)));
+        /* Layout the bands panel */
+        mySpring = new SpringLayout();
+        theBands.setLayout(mySpring);
+        theBands.add(myLoBand);
+        theBands.add(theLoTaxBand);
+        theBands.add(myBasicBand);
+        theBands.add(theBasicTaxBand);
+        theBands.add(myAddIncBndry);
+        theBands.add(theAddIncomeBndry);
+        SpringUtilities.makeCompactGrid(theBands, mySpring, theBands.getComponentCount() >> 1, 2,
+                                        PADDING_SIZE);
 
         /* Create the standard rates panel */
         theStdRates = new JPanel();
-        theStdRates.setBorder(javax.swing.BorderFactory.createTitledBorder("Standard Rates"));
+        theStdRates.setBorder(BorderFactory.createTitledBorder("Standard Rates"));
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(theStdRates);
-        theStdRates.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(myLoTaxRate).addComponent(myBasicTaxRate)
-                                                    .addComponent(myHiTaxRate).addComponent(myAddTaxRate))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theLoTaxRate).addComponent(theBasicTaxRate)
-                                                    .addComponent(theHiTaxRate).addComponent(theAddTaxRate))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myLoTaxRate).addComponent(theLoTaxRate))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myBasicTaxRate)
-                                                    .addComponent(theBasicTaxRate))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myHiTaxRate).addComponent(theHiTaxRate))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myAddTaxRate).addComponent(theAddTaxRate))
-                                  .addContainerGap()));
+        /* Layout the stdRates panel */
+        mySpring = new SpringLayout();
+        theStdRates.setLayout(mySpring);
+        theStdRates.add(myLoTaxRate);
+        theStdRates.add(theLoTaxRate);
+        theStdRates.add(myBasicTaxRate);
+        theStdRates.add(theBasicTaxRate);
+        theStdRates.add(myHiTaxRate);
+        theStdRates.add(theHiTaxRate);
+        theStdRates.add(myAddTaxRate);
+        theStdRates.add(theAddTaxRate);
+        SpringUtilities.makeCompactGrid(theStdRates, mySpring, theStdRates.getComponentCount() >> 1, 2,
+                                        PADDING_SIZE);
 
         /* Create the extra rates panel */
         theXtraRates = new JPanel();
-        theXtraRates.setBorder(javax.swing.BorderFactory.createTitledBorder("Interest/Dividend Rates"));
+        theXtraRates.setBorder(BorderFactory.createTitledBorder("Interest/Dividend Rates"));
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(theXtraRates);
-        theXtraRates.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(myIntTaxRate).addComponent(myDivTaxRate)
-                                                    .addComponent(myHiDivTaxRate)
-                                                    .addComponent(myAddDivTaxRate))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theIntTaxRate).addComponent(theDivTaxRate)
-                                                    .addComponent(theHiDivTaxRate)
-                                                    .addComponent(theAddDivTaxRate)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myIntTaxRate).addComponent(theIntTaxRate))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myDivTaxRate).addComponent(theDivTaxRate))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myHiDivTaxRate)
-                                                    .addComponent(theHiDivTaxRate))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myAddDivTaxRate)
-                                                    .addComponent(theAddDivTaxRate)).addContainerGap()));
+        /* Layout the xtraRates panel */
+        mySpring = new SpringLayout();
+        theXtraRates.setLayout(mySpring);
+        theXtraRates.add(myIntTaxRate);
+        theXtraRates.add(theIntTaxRate);
+        theXtraRates.add(myDivTaxRate);
+        theXtraRates.add(theDivTaxRate);
+        theXtraRates.add(myHiDivTaxRate);
+        theXtraRates.add(theHiDivTaxRate);
+        theXtraRates.add(myAddDivTaxRate);
+        theXtraRates.add(theAddDivTaxRate);
+        SpringUtilities.makeCompactGrid(theXtraRates, mySpring, theXtraRates.getComponentCount() >> 1, 2,
+                                        PADDING_SIZE);
 
         /* Create the capital rates panel */
         theCapRates = new JPanel();
-        theCapRates.setBorder(javax.swing.BorderFactory.createTitledBorder("Capital Rates"));
+        theCapRates.setBorder(BorderFactory.createTitledBorder("Capital Rates"));
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(theCapRates);
-        theCapRates.setLayout(myLayout);
+        /* Layout the capRates panel */
+        mySpring = new SpringLayout();
+        theCapRates.setLayout(mySpring);
+        theCapRates.add(myCapTaxRate);
+        theCapRates.add(theCapTaxRate);
+        theCapRates.add(myHiCapTaxRate);
+        theCapRates.add(theHiCapTaxRate);
+        SpringUtilities.makeCompactGrid(theCapRates, mySpring, theCapRates.getComponentCount() >> 1, 2,
+                                        PADDING_SIZE);
 
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(myCapTaxRate).addComponent(myHiCapTaxRate))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theCapTaxRate)
-                                                    .addComponent(theHiCapTaxRate)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myCapTaxRate).addComponent(theCapTaxRate))
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(myHiCapTaxRate)
-                                                    .addComponent(theHiCapTaxRate))
-                                  .addContainerGap(GAP_FIFTY, GAP_FIFTY)));
+        /* Create a grid panel for the details */
+        JPanel myGridPanel = new JPanel(new GridLayout(GRID_ROWS, GRID_COLS, PADDING_SIZE, PADDING_SIZE));
+        myGridPanel.add(theAllows);
+        myGridPanel.add(theLimits);
+        myGridPanel.add(theBands);
+        myGridPanel.add(theStdRates);
+        myGridPanel.add(theXtraRates);
+        myGridPanel.add(theCapRates);
 
-        /* Create the panel */
-        thePanel = new JPanel();
-
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theSaveButs)
-                                                    .addComponent(theButtons)
-                                                    .addComponent(theError)
-                                                    .addComponent(theSelect)
-                                                    .addComponent(theRegime)
-                                                    .addGroup(myLayout.createSequentialGroup()
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(theAllows)
-                                                                                        .addComponent(theStdRates))
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(theLimits)
-                                                                                        .addComponent(theXtraRates))
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(theBands)
-                                                                                        .addComponent(theCapRates))))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(theError)
-                                  .addComponent(theSelect)
-                                  .addContainerGap(GAP_TEN, GAP_THIRTY)
-                                  .addComponent(theRegime)
-                                  .addContainerGap(GAP_TEN, GAP_THIRTY)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theAllows).addComponent(theLimits)
-                                                    .addComponent(theBands))
-                                  .addContainerGap(GAP_TEN, GAP_THIRTY)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theStdRates).addComponent(theXtraRates)
-                                                    .addComponent(theCapRates)).addContainerGap()
-                                  .addComponent(theButtons).addContainerGap().addComponent(theSaveButs)));
+        /* Add the components */
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(theError);
+        add(Box.createVerticalGlue());
+        add(theSelect);
+        add(Box.createVerticalGlue());
+        add(theRegime);
+        add(Box.createVerticalGlue());
+        add(myGridPanel);
+        add(Box.createVerticalGlue());
+        add(theSaveButs);
 
         /* Set initial display */
         showTaxYear();
@@ -788,22 +649,6 @@ public class MaintTaxYear extends JPanelWithEvents {
     }
 
     /**
-     * Perform the requested command.
-     * @param pCmd the command
-     */
-    public void performCommand(final String pCmd) {
-        /* Switch on command */
-        if (SaveButtons.CMD_OK.equals(pCmd)) {
-            saveData();
-        } else if (SaveButtons.CMD_UNDO.equals(pCmd)) {
-            resetData();
-        } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
-            resetData();
-        }
-        notifyChanges();
-    }
-
-    /**
      * Notify changes.
      */
     public void notifyChanges() {
@@ -814,18 +659,9 @@ public class MaintTaxYear extends JPanelWithEvents {
         /* Show the Tax Year */
         showTaxYear();
 
-        /* Adjust visible tabs */
-        theParent.setVisibility();
+        /* Alert listeners that there has been a change */
+        fireStateChanged();
     }
-
-    // @Override
-    // public void notifySelection(final Object obj) {
-    /* If this is a change from the year selection */
-    // if (theSelect.equals(obj)) {
-    // /* Set the new account */
-    // setSelection(theSelect.getTaxYear());
-    // }
-    // }
 
     /**
      * Update Debug view.
@@ -833,61 +669,6 @@ public class MaintTaxYear extends JPanelWithEvents {
     public void updateDebug() {
         theDataEntry.setObject(theTaxView);
     }
-
-    /**
-     * resetData.
-     */
-    public void resetData() {
-        theTaxYear.clearErrors();
-        theTaxYear.resetHistory();
-        theTaxYear.validate();
-
-        /* Recalculate edit state */
-        theTaxView.findEditState();
-
-        /* Notify changes */
-        notifyChanges();
-        updateDebug();
-    }
-
-    /**
-     * saveData.
-     */
-    public void saveData() {
-        /* Validate the data */
-        validate();
-        if (!theUpdateSet.hasErrors()) {
-            /* Save details for the tax year */
-            theUpdateSet.applyChanges();
-        }
-    }
-
-    /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    // @Override
-    // public void lockOnError(final boolean isError) {
-    /* Hide selection panel */
-    // theSelect.setVisible(!isError);
-
-    /* Lock regime areas */
-    // theRegime.setEnabled(!isError);
-
-    /* Lock bands areas */
-    // theAllows.setEnabled(!isError);
-    // theLimits.setEnabled(!isError);
-    // theBands.setEnabled(!isError);
-
-    /* Lock rates areas */
-    // // theStdRates.setEnabled(!isError);
-    // theXtraRates.setEnabled(!isError);
-    // theCapRates.setEnabled(!isError);
-
-    /* Lock row/tab buttons area */
-    // theButtons.setEnabled(!isError);
-    // theSaveButs.setEnabled(!isError);
-    // }
 
     /**
      * RefreshData.
@@ -964,26 +745,23 @@ public class MaintTaxYear extends JPanelWithEvents {
 
         /* notify changes */
         notifyChanges();
-        updateDebug();
     }
 
     /**
      * Show the tax year.
      */
     private void showTaxYear() {
-        TaxRegime myRegime;
-
         /* If we have an active year */
         if (theTaxYear != null) {
             /* Access the tax regime */
-            myRegime = theTaxYear.getTaxRegime();
+            TaxRegime myRegime = theTaxYear.getTaxRegime();
 
             /* Set the Year */
             theYear.setText(Integer.toString(theTaxYear.getTaxYear().getYear()));
             theYear.setEnabled(!theTaxYear.isDeleted());
 
             /* Set the Regime */
-            theRegimesBox.setSelectedItem(myRegime.getName());
+            theRegimesBox.setSelectedItem(myRegime);
             theRegimesBox.setEnabled(!theTaxYear.isDeleted());
 
             /* Set the Allowance */
@@ -1069,15 +847,11 @@ public class MaintTaxYear extends JPanelWithEvents {
             /* Render all fields in the set */
             theFieldSet.renderSet(theTaxYear);
 
-            /* Make sure buttons are visible */
-            theDelButton
-                    .setVisible(theTaxYear.isDeleted()
-                            || ((!theTaxYear.isActive()) && ((theTaxYears.peekPrevious(theTaxYear) == null) || (theTaxYears
-                                    .peekNext(theTaxYear) == null))));
+            /* Make sure delete buttons are visible */
+            boolean isEndOfList = ((theTaxYears.peekPrevious(theTaxYear) == null) || (theTaxYears
+                    .peekNext(theTaxYear) == null));
+            theDelButton.setVisible(theTaxYear.isDeleted() || ((!theTaxYear.isActive()) && (isEndOfList)));
             theDelButton.setText(theTaxYear.isDeleted() ? "Recover" : "Delete");
-
-            /* Enable buttons */
-            theUndoButton.setEnabled(theTaxYear.hasChanges());
 
             /* else no account */
         } else {
@@ -1127,39 +901,20 @@ public class MaintTaxYear extends JPanelWithEvents {
             theAddTaxRate.setEnabled(false);
             theAddDivTaxRate.setEnabled(false);
 
-            /* Handle buttons */
-            theUndoButton.setEnabled(false);
+            /* Hide the delete button */
             theDelButton.setVisible(false);
-        }
-    }
-
-    /**
-     * Undo changes.
-     */
-    private void undoChanges() {
-        /* If the account has changes */
-        if (theTaxYear.hasHistory()) {
-            /* Pop last value */
-            theTaxYear.popHistory();
-
-            /* Re-validate the item */
-            theTaxYear.clearErrors();
-            theTaxYear.validate();
-
-            /* Notify changes */
-            notifyChanges();
-            updateDebug();
         }
     }
 
     /**
      * TaxYearListener class.
      */
-    private final class TaxYearListener implements ActionListener, ItemListener, PropertyChangeListener {
+    private final class TaxYearListener implements ActionListener, ItemListener, ChangeListener,
+            PropertyChangeListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
             /* Ignore selection if refreshing data/not selected */
-            if ((refreshingData) || (evt.getStateChange() == ItemEvent.SELECTED)) {
+            if ((refreshingData) || (evt.getStateChange() == ItemEvent.DESELECTED)) {
                 return;
             }
 
@@ -1188,16 +943,11 @@ public class MaintTaxYear extends JPanelWithEvents {
 
                 /* Check for changes */
                 if (theTaxYear.checkForHistory()) {
-                    /* Note that the item has changed */
-                    // theTaxYear.setState(DataState.CHANGED);
-
-                    /* validate it */
-                    theTaxYear.clearErrors();
-                    theTaxYear.validate();
+                    /* Increment the update version */
+                    theUpdateSet.incrementVersion();
 
                     /* Note that changes have occurred */
                     notifyChanges();
-                    updateDebug();
                 }
             }
         }
@@ -1208,13 +958,22 @@ public class MaintTaxYear extends JPanelWithEvents {
 
             /* If this event relates to the save buttons */
             if (theSaveButs.equals(o)) {
-                /* Create the new account */
-                performCommand(evt.getActionCommand());
+                /* Perform the action */
+                theUpdateSet.processCommand(evt.getActionCommand());
 
-                /* If this event relates to the undo button */
-            } else if (theUndoButton.equals(o)) {
-                /* Undo the changes */
-                undoChanges();
+                /* Notify of any changes */
+                notifyChanges();
+
+                /* If this event relates to the delete button */
+            } else if (theDelButton.equals(o)) {
+                /* Flip the deletion status */
+                theTaxYear.setDeleted(!theTaxYear.isDeleted());
+
+                /* Increment the update version */
+                theUpdateSet.incrementVersion();
+
+                /* Notify of any changes */
+                notifyChanges();
             }
         }
 
@@ -1359,20 +1118,51 @@ public class MaintTaxYear extends JPanelWithEvents {
 
                 /* Show the error */
                 theError.setError(myError);
+                return;
             }
 
             /* Check for changes */
             if (theTaxYear.checkForHistory()) {
-                /* Note that the item has changed */
-                // theTaxYear.setState(DataState.CHANGED);
-
-                /* validate it */
-                theTaxYear.clearErrors();
-                theTaxYear.validate();
+                /* Increment the update version */
+                theUpdateSet.incrementVersion();
 
                 /* Note that changes have occurred */
                 notifyChanges();
-                updateDebug();
+            }
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent evt) {
+            Object o = evt.getSource();
+
+            /* If this is the selection box */
+            if (theSelect.equals(o)) {
+                /* Set the new account */
+                setSelection(theSelect.getTaxYear());
+
+                /* If this is the error panel reporting */
+            } else if (theError.equals(o)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel */
+                theSelect.setVisible(!isError);
+
+                /* Lock regime areas */
+                theRegime.setEnabled(!isError);
+
+                /* Lock bands areas */
+                theAllows.setEnabled(!isError);
+                theLimits.setEnabled(!isError);
+                theBands.setEnabled(!isError);
+
+                /* Lock rates areas */
+                theStdRates.setEnabled(!isError);
+                theXtraRates.setEnabled(!isError);
+                theCapRates.setEnabled(!isError);
+
+                /* Lock Save Buttons */
+                theSaveButs.setEnabled(!isError);
             }
         }
     }

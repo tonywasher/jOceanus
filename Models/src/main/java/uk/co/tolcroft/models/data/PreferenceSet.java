@@ -121,7 +121,7 @@ public abstract class PreferenceSet {
     protected abstract String getDisplayName(final String pName);
 
     /**
-     * Define new String preference
+     * Define new String preference.
      * @param pName the name of the preference
      * @param pDefault the default value of the preference
      * @return the preference item
@@ -139,7 +139,7 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Define new File preference
+     * Define new File preference.
      * @param pName the name of the preference
      * @param pDefault the default value of the preference
      * @return the preference item
@@ -157,7 +157,7 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Define new Directory preference
+     * Define new Directory preference.
      * @param pName the name of the preference
      * @param pDefault the default value of the preference
      * @return the preference item
@@ -175,7 +175,7 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Define new Integer preference
+     * Define new Integer preference.
      * @param pName the name of the preference
      * @param pDefault the default value of the preference
      * @return the preference item
@@ -193,7 +193,7 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Define new Boolean preference
+     * Define new Boolean preference.
      * @param pName the name of the preference
      * @param pDefault the default value of the preference
      * @return the preference item
@@ -211,7 +211,7 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Define new Date preference
+     * Define new Date preference.
      * @param pName the name of the preference
      * @param pDefault the default value of the preference
      * @return the preference item
@@ -229,7 +229,7 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Define new Colour preference
+     * Define new Colour preference.
      * @param pName the name of the preference
      * @param pDefault the default value of the preference
      * @return the preference item
@@ -247,7 +247,7 @@ public abstract class PreferenceSet {
     }
 
     /**
-     * Define new Font preference
+     * Define new Font preference.
      * @param pName the name of the preference
      * @param pDefault the default value of the preference
      * @return the preference item

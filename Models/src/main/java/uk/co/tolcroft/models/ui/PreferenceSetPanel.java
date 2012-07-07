@@ -906,7 +906,7 @@ public class PreferenceSetPanel extends JPanelWithEvents {
             @Override
             protected void updateField() {
                 /* Update the field */
-                theField.setSelectedItem(theEnum.getValue());
+                theField.setSelectedItem(theEnum.getValue().name());
 
                 /* Set font and foreground */
                 theField.setForeground(RenderData.getForeground(theEnum));

@@ -31,6 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -224,6 +225,7 @@ public class PricePoint extends DataTable<AccountPrice> {
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
         theDataPrice = myDataMgr.new JDataEntry("SpotPrices");
         theDataPrice.addAsChildOf(mySection);
+        theDataPrice.setObject(theUpdateSet);
 
         /* Create the model and declare it to our superclass */
         SpotViewModel myModel = new SpotViewModel();
@@ -266,103 +268,18 @@ public class PricePoint extends DataTable<AccountPrice> {
         thePanel.add(theError);
         thePanel.add(getScrollPane());
         thePanel.add(theSaveButtons);
-
-        /* Create the layout for the panel */
-        // myLayout = new GroupLayout(thePanel);
-        // thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        // myLayout.setHorizontalGroup(myLayout
-        // .createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(myLayout.createSequentialGroup()
-        // .addContainerGap()
-        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
-        // .addComponent(theError, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(theSelect, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(getScrollPane(),
-        // GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
-        // Short.MAX_VALUE)
-        // .addComponent(theSaveButtons,
-        // GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        // .addContainerGap()));
-        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(GroupLayout.Alignment.TRAILING,
-        // myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
-        // .addComponent(getScrollPane()).addComponent(theSaveButtons)));
     }
 
     /**
-     * Perform a command.
-     * @param pCmd the command to perform
+     * Determine focus.
      */
-    public void performCommand(final String pCmd) {
-        /* Cancel any editing */
-        cancelEditing();
+    protected void determineFocus() {
+        /* Request the focus */
+        requestFocusInWindow();
 
-        /* Process the command */
-        theUpdateSet.processCommand(pCmd);
-
-        /* Access any error */
-        JDataException myError = theView.getError();
-
-        /* Show the error */
-        if (myError != null) {
-            theError.setError(myError);
-        }
-
-        /* Notify listeners of changes */
-        notifyChanges();
+        /* Focus on the Data entry */
+        theDataPrice.setFocus();
     }
-
-    /**
-     * Notify table that there has been a change in selection by an underlying control.
-     * @param obj the underlying control that has changed selection
-     */
-    // @Override
-    // public void notifySelection(final Object obj) {
-    /* if this is a change from the date */
-    // if (theSelect.equals(obj)) {
-    /* Set the deleted option */
-    // if (getList().getShowDeleted() != theSelect.getShowClosed()) {
-    // setShowDeleted(theSelect.getShowClosed());
-    // }
-
-    /* Access selection */
-    // AccountType myType = theSelect.getAccountType();
-    // DateDay myDate = theSelect.getDate();
-
-    /* If the selection differs */
-    // if (((!Difference.isEqual(theDate, myDate))) || (!Difference.isEqual(theAccountType, myType))) {
-    /* Protect against exceptions */
-    // try {
-    /* Set selection */
-    // setSelection(myType, myDate);
-
-    /* Create SavePoint */
-    // theSelect.createSavePoint();
-
-    /* Catch Exceptions */
-    // } catch (JDataException e) {
-    /* Build the error */
-    // JDataException myError = new JDataException(ExceptionClass.DATA,
-    // "Failed to change selection", e);
-
-    /* Show the error */
-    // theError.setError(myError);
-
-    /* Restore SavePoint */
-    // theSelect.restoreSavePoint();
-    // }
-    // }
-    // }
-    // }
 
     /**
      * Refresh views/controls after a load/update of underlying data.
@@ -384,11 +301,6 @@ public class PricePoint extends DataTable<AccountPrice> {
      */
     @Override
     public void notifyChanges() {
-        /* Find the edit state */
-        if (thePrices != null) {
-            thePrices.findEditState();
-        }
-
         /* Update the table buttons */
         theSaveButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
@@ -415,7 +327,7 @@ public class PricePoint extends DataTable<AccountPrice> {
             theSnapshot = new SpotPrices(theView, pType, pDate);
             thePrices = theSnapshot.getPrices();
 
-            /* Update Next/Prev values */
+            /* Update Next/Previous values */
             theSelect.setAdjacent(theSnapshot.getPrev(), theSnapshot.getNext());
 
             /* else invalid selection */
@@ -519,9 +431,46 @@ public class PricePoint extends DataTable<AccountPrice> {
     private final class SpotViewListener implements ActionListener, ChangeListener {
 
         @Override
-        public void stateChanged(final ChangeEvent e) {
-            /* If this is the error panel */
-            if (theError.equals(e.getSource())) {
+        public void stateChanged(final ChangeEvent evt) {
+            Object o = evt.getSource();
+
+            /* If this is the selection panel */
+            if (theSelect.equals(o)) {
+                /* Set the deleted option */
+                if (getList().getShowDeleted() != theSelect.getShowClosed()) {
+                    setShowDeleted(theSelect.getShowClosed());
+                }
+
+                /* Access selection */
+                AccountType myType = theSelect.getAccountType();
+                DateDay myDate = theSelect.getDate();
+
+                /* If the selection differs */
+                if (((!Difference.isEqual(theDate, myDate))) || (!Difference.isEqual(theAccountType, myType))) {
+                    /* Protect against exceptions */
+                    try {
+                        /* Set selection */
+                        setSelection(myType, myDate);
+
+                        /* Create SavePoint */
+                        theSelect.createSavePoint();
+
+                        /* Catch Exceptions */
+                    } catch (JDataException e) {
+                        /* Build the error */
+                        JDataException myError = new JDataException(ExceptionClass.DATA,
+                                "Failed to change selection", e);
+
+                        /* Show the error */
+                        theError.setError(myError);
+
+                        /* Restore SavePoint */
+                        theSelect.restoreSavePoint();
+                    }
+                }
+
+                /* If this is the error panel */
+            } else if (theError.equals(o)) {
                 /* Determine whether we have an error */
                 boolean isError = theError.hasError();
 
@@ -537,11 +486,14 @@ public class PricePoint extends DataTable<AccountPrice> {
         }
 
         @Override
-        public void actionPerformed(final ActionEvent e) {
+        public void actionPerformed(final ActionEvent evt) {
             /* If this event relates to the save buttons */
-            if (theSaveButtons.equals(e.getSource())) {
-                /* Perform the save command */
-                performCommand(e.getActionCommand());
+            if (theSaveButtons.equals(evt.getSource())) {
+                /* Perform the command */
+                theUpdateSet.processCommand(evt.getActionCommand());
+
+                /* Notify listeners of changes */
+                notifyChanges();
             }
         }
     }
@@ -632,6 +584,10 @@ public class PricePoint extends DataTable<AccountPrice> {
                     return AccountPrice.FIELD_ACCOUNT;
                 case COLUMN_PRICE:
                     return AccountPrice.FIELD_PRICE;
+                case COLUMN_PREVPRICE:
+                    return SpotPrice.FIELD_PREVPRICE;
+                case COLUMN_PREVDATE:
+                    return SpotPrice.FIELD_PREVDATE;
                 default:
                     return null;
             }

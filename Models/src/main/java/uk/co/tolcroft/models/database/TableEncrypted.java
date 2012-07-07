@@ -67,7 +67,7 @@ public abstract class TableEncrypted<T extends EncryptedItem & Comparable<T>> ex
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == EncryptedItem.FIELD_CONTROL) {
+        if (EncryptedItem.FIELD_CONTROL.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
         } else {
             super.setFieldValue(pItem, iField);

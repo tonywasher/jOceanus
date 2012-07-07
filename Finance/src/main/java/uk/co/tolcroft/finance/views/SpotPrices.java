@@ -30,12 +30,14 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.AccountPrice;
 import uk.co.tolcroft.finance.data.AccountPrice.AccountPriceList;
 import uk.co.tolcroft.finance.data.AccountType;
 import uk.co.tolcroft.finance.data.FinanceData;
 import uk.co.tolcroft.models.data.DataItem;
+import uk.co.tolcroft.models.data.DataState;
 import uk.co.tolcroft.models.data.EditState;
 
 /**
@@ -330,6 +332,8 @@ public class SpotPrices implements JDataContents {
 
                 /* Create a SpotPrice entry */
                 SpotPrice mySpot = new SpotPrice(this, myAccount);
+                mySpot.setId(myAccount.getId());
+                mySpot.setDate(new DateDay(theDate));
                 add(mySpot);
 
                 /* If the account is closed then hide the entry */
@@ -372,7 +376,6 @@ public class SpotPrices implements JDataContents {
 
                     /* Link to base and re-establish state */
                     mySpot.setBase(myPrice);
-                    // mySpot.setState(DataState.CLEAN);
 
                     /* else we are a previous date */
                 } else {
@@ -384,7 +387,6 @@ public class SpotPrices implements JDataContents {
                     thePrev = myPrice.getDate();
                 }
             }
-
         }
 
         /* Is this list locked */
@@ -534,6 +536,17 @@ public class SpotPrices implements JDataContents {
          */
         public static final JDataField FIELD_PREVPRICE = FIELD_DEFS.declareEqualityField("PreviousPrice");
 
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            if (FIELD_PREVDATE.equals(pField)) {
+                return thePrevDate;
+            }
+            if (FIELD_PREVPRICE.equals(pField)) {
+                return thePrevPrice;
+            }
+            return super.getFieldValue(pField);
+        }
+
         /**
          * the previous date.
          */
@@ -609,17 +622,39 @@ public class SpotPrices implements JDataContents {
                 case NEW:
                 case CHANGED:
                 case RECOVERED:
-                    return getPrice();
                 case CLEAN:
-                    return (getBase().isDeleted()) ? null : getPrice();
+                    return super.getPrice();
+                    /*
+                     * case CLEAN: return (getBase().isDeleted()) ? null : getPrice();
+                     */
                 default:
                     return null;
             }
         }
 
-        /* Disable setDate */
         @Override
-        public void setDate(final DateDay pDate) {
+        public DataState getState() {
+            EncryptedValueSet myCurr = getValueSet();
+            EncryptedValueSet myBase = getOriginalValues();
+
+            /* If we have no changes we are CLEAN */
+            if (myCurr.getVersion() == 0) {
+                return DataState.CLEAN;
+            }
+
+            /* If the original price is Null */
+            if (getPrice(myBase) == null) {
+                /* Return status */
+                return myCurr.isDeletion() ? DataState.DELNEW : DataState.NEW;
+            }
+
+            /* If we are deleted return so */
+            if (myCurr.isDeletion()) {
+                return myBase.isDeletion() ? DataState.CLEAN : DataState.DELETED;
+            }
+
+            /* Return RECOVERED or CHANGED depending on whether we started as deleted */
+            return (myBase.isDeletion()) ? DataState.RECOVERED : DataState.CHANGED;
         }
     }
 }

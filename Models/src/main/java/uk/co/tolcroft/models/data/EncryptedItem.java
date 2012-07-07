@@ -50,6 +50,11 @@ public abstract class EncryptedItem extends DataItem {
         return (EncryptedValueSet) super.getValueSet();
     }
 
+    @Override
+    public EncryptedValueSet getOriginalValues() {
+        return (EncryptedValueSet) super.getOriginalValues();
+    }
+
     /**
      * Control Key Field Id.
      */

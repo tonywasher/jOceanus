@@ -144,49 +144,49 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == TaxYear.FIELD_TAXYEAR) {
+        if (TaxYear.FIELD_TAXYEAR.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getTaxYear());
-        } else if (iField == TaxYear.FIELD_REGIME) {
+        } else if (TaxYear.FIELD_REGIME.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getTaxRegime().getId());
-        } else if (iField == TaxYear.FIELD_ALLOW) {
+        } else if (TaxYear.FIELD_ALLOW.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getAllowance());
-        } else if (iField == TaxYear.FIELD_RENTAL) {
+        } else if (TaxYear.FIELD_RENTAL.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getRentalAllowance());
-        } else if (iField == TaxYear.FIELD_LOBAND) {
+        } else if (TaxYear.FIELD_LOBAND.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getLoBand());
-        } else if (iField == TaxYear.FIELD_BSBAND) {
+        } else if (TaxYear.FIELD_BSBAND.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getBasicBand());
-        } else if (iField == TaxYear.FIELD_LOAGAL) {
+        } else if (TaxYear.FIELD_LOAGAL.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getLoAgeAllow());
-        } else if (iField == TaxYear.FIELD_HIAGAL) {
+        } else if (TaxYear.FIELD_HIAGAL.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getHiAgeAllow());
-        } else if (iField == TaxYear.FIELD_AGELMT) {
+        } else if (TaxYear.FIELD_AGELMT.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getAgeAllowLimit());
-        } else if (iField == TaxYear.FIELD_ADDLMT) {
+        } else if (TaxYear.FIELD_ADDLMT.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getAddAllowLimit());
-        } else if (iField == TaxYear.FIELD_LOTAX) {
+        } else if (TaxYear.FIELD_LOTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getLoTaxRate());
-        } else if (iField == TaxYear.FIELD_BASTAX) {
+        } else if (TaxYear.FIELD_BASTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getBasicTaxRate());
-        } else if (iField == TaxYear.FIELD_HITAX) {
+        } else if (TaxYear.FIELD_HITAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getHiTaxRate());
-        } else if (iField == TaxYear.FIELD_INTTAX) {
+        } else if (TaxYear.FIELD_INTTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getIntTaxRate());
-        } else if (iField == TaxYear.FIELD_DIVTAX) {
+        } else if (TaxYear.FIELD_DIVTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getDivTaxRate());
-        } else if (iField == TaxYear.FIELD_HDVTAX) {
+        } else if (TaxYear.FIELD_HDVTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getHiDivTaxRate());
-        } else if (iField == TaxYear.FIELD_ADDTAX) {
+        } else if (TaxYear.FIELD_ADDTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getAddTaxRate());
-        } else if (iField == TaxYear.FIELD_ADVTAX) {
+        } else if (TaxYear.FIELD_ADVTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getAddDivTaxRate());
-        } else if (iField == TaxYear.FIELD_ADDBDY) {
+        } else if (TaxYear.FIELD_ADDBDY.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getAddIncBound());
-        } else if (iField == TaxYear.FIELD_CAPALW) {
+        } else if (TaxYear.FIELD_CAPALW.equals(iField)) {
             myTableDef.setMoneyValue(iField, pItem.getCapitalAllow());
-        } else if (iField == TaxYear.FIELD_CAPTAX) {
+        } else if (TaxYear.FIELD_CAPTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getCapTaxRate());
-        } else if (iField == TaxYear.FIELD_HCPTAX) {
+        } else if (TaxYear.FIELD_HCPTAX.equals(iField)) {
             myTableDef.setRateValue(iField, pItem.getHiCapTaxRate());
         } else {
             super.setFieldValue(pItem, iField);

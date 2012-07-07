@@ -139,11 +139,6 @@ public class JDataItem {
      * Constructor.
      */
     protected JDataItem() {
-        JScrollPane myScroll;
-        HTMLEditorKit myKit;
-        StyleSheet myStyle;
-        Document myDoc;
-
         /* Create the slider */
         theSlider = new JSlider(SwingConstants.HORIZONTAL);
         theSlider.setMinimum(0);
@@ -163,19 +158,18 @@ public class JDataItem {
         theEditor.setEditable(false);
 
         /* Add an editor kit to the editor */
-        myKit = new HTMLEditorKit();
+        HTMLEditorKit myKit = new HTMLEditorKit();
         theEditor.setEditorKit(myKit);
 
         /* Create a scroll-pane for the editor */
-        myScroll = new JScrollPane(theEditor);
+        JScrollPane myScroll = new JScrollPane(theEditor);
 
         /* Create the style-sheet for the window */
-        myStyle = myKit.getStyleSheet();
-        myStyle.addRule("body { color:#000; font-family:times; margins; 4px; }\n" + "h1 { color: black; }\n"
-                + "h2 { color: black; }");
+        StyleSheet myStyle = myKit.getStyleSheet();
+        JDataHTML.buildStylesheet(myStyle);
 
         /* Create the document for the window */
-        myDoc = myKit.createDefaultDocument();
+        Document myDoc = myKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
 
         /* Create the list panel */

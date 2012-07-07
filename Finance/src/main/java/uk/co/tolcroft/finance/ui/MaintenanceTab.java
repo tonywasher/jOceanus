@@ -73,9 +73,9 @@ public class MaintenanceTab extends JPanelWithEvents {
     private final MaintTaxYear theTaxYearTab;
 
     /**
-     * The Properties Panel.
+     * The Preferences Panel.
      */
-    private final MaintProperties theProperties;
+    private final MaintPreferences thePreferences;
 
     /**
      * The NewYear Panel.
@@ -135,9 +135,9 @@ public class MaintenanceTab extends JPanelWithEvents {
     private static final String TITLE_TAXYEARS = "TaxYears";
 
     /**
-     * Properties tab title.
+     * Preferences tab title.
      */
-    private static final String TITLE_PROPERTIES = "Properties";
+    private static final String TITLE_PREFERENCES = "Preferences";
 
     /**
      * NewYear tab title.
@@ -172,20 +172,22 @@ public class MaintenanceTab extends JPanelWithEvents {
         theTabs.addChangeListener(myListener);
 
         /* Create the account Tab and add it */
-        theAccountTab = new MaintAccount(this);
-        theTabs.addTab(TITLE_ACCOUNTS, theAccountTab.getPanel());
+        theAccountTab = new MaintAccount(theView);
+        theTabs.addTab(TITLE_ACCOUNTS, theAccountTab);
+        theAccountTab.addChangeListener(myListener);
 
         /* Create the TaxYears Tab */
-        theTaxYearTab = new MaintTaxYear(this);
-        theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab.getPanel());
+        theTaxYearTab = new MaintTaxYear(theView);
+        theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab);
+        theTaxYearTab.addChangeListener(myListener);
 
-        /* Create the Properties Tab */
-        theProperties = new MaintProperties();
-        theTabs.addTab(TITLE_PROPERTIES, theProperties);
-        theProperties.addChangeListener(myListener);
+        /* Create the Preferences Tab */
+        thePreferences = new MaintPreferences();
+        theTabs.addTab(TITLE_PREFERENCES, thePreferences);
+        thePreferences.addChangeListener(myListener);
 
         /* Create the PatternYear Tab */
-        thePatternYear = new MaintNewYear(this);
+        thePatternYear = new MaintNewYear(theView);
         theTabs.addTab(TITLE_NEWYEAR, thePatternYear.getPanel());
 
         /* Create the Static Tab */
@@ -225,7 +227,7 @@ public class MaintenanceTab extends JPanelWithEvents {
             hasUpdates = theTaxYearTab.hasUpdates();
         }
         if (!hasUpdates) {
-            hasUpdates = theProperties.hasUpdates();
+            hasUpdates = thePreferences.hasUpdates();
         }
         if (!hasUpdates) {
             hasUpdates = theStatic.hasUpdates();
@@ -283,11 +285,11 @@ public class MaintenanceTab extends JPanelWithEvents {
         }
 
         /* Access the Properties panel */
-        iIndex = theTabs.indexOfTab(TITLE_PROPERTIES);
+        iIndex = theTabs.indexOfTab(TITLE_PREFERENCES);
 
         /* Enable/Disable the Properties tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theProperties.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates || thePreferences.hasUpdates());
         }
 
         /* Access the PatternYear panel */
@@ -318,12 +320,12 @@ public class MaintenanceTab extends JPanelWithEvents {
         Component myComponent = theTabs.getSelectedComponent();
 
         /* If the selected component is Accounts */
-        if (myComponent.equals(theAccountTab.getPanel())) {
+        if (myComponent.equals(theAccountTab)) {
             /* Set the debug focus */
             // theAccountTab.getDataEntry().setFocus();
 
             /* If the selected component is TaxYear */
-        } else if (myComponent.equals(theTaxYearTab.getPanel())) {
+        } else if (myComponent.equals(theTaxYearTab)) {
             /* Set the debug focus */
             // theTaxYearTab.getDataEntry().setFocus();
 
@@ -352,7 +354,8 @@ public class MaintenanceTab extends JPanelWithEvents {
             if (theTabs.equals(o)) {
                 /* Determine the focus */
                 determineFocus();
-            } else if ((theProperties.equals(o)) || (theStatic.equals(o))) {
+            } else if ((thePreferences.equals(o)) || (theStatic.equals(o)) || (theTaxYearTab.equals(o))
+                    || (theAccountTab.equals(o))) {
                 /* Set the visibility */
                 setVisibility();
             }

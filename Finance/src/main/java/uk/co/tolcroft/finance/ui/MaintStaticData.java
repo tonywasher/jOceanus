@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
@@ -62,97 +63,50 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     private static final long serialVersionUID = -8747707037700378702L;
 
     /**
-     * The Data view.
+     * Resource Bundle.
      */
-    private final transient View theView;
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
+            .getBundle(MaintStaticData.class.getName());
 
     /**
-     * The Panel.
+     * Text for PopUpEnabled.
      */
-    private final JPanel thePanel;
+    private static final String NLS_ENABLED = NLS_BUNDLE.getString("PopUpEnabled");
 
     /**
-     * The Data class.
+     * Text for PopUpEnabled.
      */
-    private final Class<L> theClass;
-
-    /**
-     * The List.
-     */
-    private transient L theStatic = null;
-
-    /**
-     * Self reference.
-     */
-    private final MaintStaticData<L, T> theTable = this;
-
-    /**
-     * The Table Model.
-     */
-    private final StaticModel theModel;
-
-    /**
-     * The Columns model.
-     */
-    private final StaticColumnModel theColumns;
-
-    /**
-     * The UpdateSet.
-     */
-    private final transient UpdateSet theUpdateSet;
-
-    /**
-     * The UpdateEntry.
-     */
-    private final transient UpdateEntry theUpdateEntry;
-
-    /**
-     * The Error panel.
-     */
-    private final ErrorPanel theError;
-
-    /**
-     * Obtain the panel.
-     * @return the panel
-     */
-    public JPanel getPanel() {
-        return thePanel;
-    }
-
-    @Override
-    public boolean hasHeader() {
-        return false;
-    }
+    private static final String NLS_DISABLED = NLS_BUNDLE.getString("PopUpDisabled");
 
     /**
      * Class column title.
      */
-    private static final String TITLE_CLASS = "Class";
+    private static final String TITLE_CLASS = NLS_BUNDLE.getString("TitleClass");
 
     /**
      * Name column title.
      */
-    private static final String TITLE_NAME = "Name";
+    private static final String TITLE_NAME = NLS_BUNDLE.getString("TitleName");
 
     /**
      * Description column title.
      */
-    private static final String TITLE_DESC = "Description";
+    private static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
 
     /**
      * Order column title.
      */
-    private static final String TITLE_ORDER = "SortOrder";
+    private static final String TITLE_ORDER = NLS_BUNDLE.getString("TitleSortOrder");
 
     /**
      * Enabled column title.
      */
-    private static final String TITLE_ENABLED = "Enabled";
+    private static final String TITLE_ENABLED = NLS_BUNDLE.getString("TitleEnabled");
 
     /**
      * Active column title.
      */
-    private static final String TITLE_ACTIVE = "Active";
+    private static final String TITLE_ACTIVE = NLS_BUNDLE.getString("TitleActive");
 
     /**
      * Class column id.
@@ -223,6 +177,69 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
      * Panel height.
      */
     private static final int HEIGHT_PANEL = 200;
+
+    /**
+     * The Data view.
+     */
+    private final transient View theView;
+
+    /**
+     * The Panel.
+     */
+    private final JPanel thePanel;
+
+    /**
+     * The Data class.
+     */
+    private final Class<L> theClass;
+
+    /**
+     * The List.
+     */
+    private transient L theStatic = null;
+
+    /**
+     * Self reference.
+     */
+    private final MaintStaticData<L, T> theTable = this;
+
+    /**
+     * The Table Model.
+     */
+    private final StaticModel theModel;
+
+    /**
+     * The Columns model.
+     */
+    private final StaticColumnModel theColumns;
+
+    /**
+     * The UpdateSet.
+     */
+    private final transient UpdateSet theUpdateSet;
+
+    /**
+     * The UpdateEntry.
+     */
+    private final transient UpdateEntry theUpdateEntry;
+
+    /**
+     * The Error panel.
+     */
+    private final ErrorPanel theError;
+
+    /**
+     * Obtain the panel.
+     * @return the panel
+     */
+    public JPanel getPanel() {
+        return thePanel;
+    }
+
+    @Override
+    public boolean hasHeader() {
+        return false;
+    }
 
     /**
      * Constructor.
@@ -530,14 +547,14 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             } catch (JDataException e) {
                 /* Reset values */
                 myData.popHistory();
-                myData.pushHistory();
 
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA,
                         "Failed to update field at (" + row + "," + col + ")", e);
 
-                /* Show the error */
+                /* Show the error and return */
                 theError.setError(myError);
+                return;
             }
 
             /* Check for changes */
@@ -556,16 +573,6 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
      * Static mouse listener.
      */
     private final class StaticMouse extends DataMouse<T> {
-        /**
-         * Enabled Popup.
-         */
-        private static final String POPUP_ENABLED = "Set As Enabled";
-
-        /**
-         * Disabled Popup.
-         */
-        private static final String POPUP_DISABLED = "Set As Disabled";
-
         /**
          * Constructor.
          */
@@ -632,8 +639,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             /* If we can Enable the item */
             if (enableEnable) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(POPUP_ENABLED);
-                myItem.setActionCommand(POPUP_ENABLED);
+                myItem = new JMenuItem(NLS_ENABLED);
+                myItem.setActionCommand(NLS_ENABLED);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -641,8 +648,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             /* If we can Disable the item */
             if (enableDisable) {
                 /* Add the undo change choice */
-                myItem = new JMenuItem(POPUP_DISABLED);
-                myItem.setActionCommand(POPUP_DISABLED);
+                myItem = new JMenuItem(NLS_DISABLED);
+                myItem.setActionCommand(NLS_DISABLED);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -659,13 +666,13 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             /* Cancel any editing */
             theTable.cancelEditing();
 
-            /* If this is a set null units command */
-            if (myCmd.equals(POPUP_ENABLED)) {
+            /* If this is an enable command */
+            if (myCmd.equals(NLS_ENABLED)) {
                 /* Enable disabled rows */
                 setEnabledRows(true);
 
-                /* else if this is a set null tax command */
-            } else if (myCmd.equals(POPUP_DISABLED)) {
+                /* else if this is a disable command */
+            } else if (myCmd.equals(NLS_DISABLED)) {
                 /* Disable rows */
                 setEnabledRows(false);
 

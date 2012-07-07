@@ -95,7 +95,7 @@ public class Editor {
 
         @Override
         public boolean stopCellEditing() {
-            String s = (String) getCellEditorValue();
+            Object s = getCellEditorValue();
             if (s == null) {
                 fireEditingCanceled();
                 return false;

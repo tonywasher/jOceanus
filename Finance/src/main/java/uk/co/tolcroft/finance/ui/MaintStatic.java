@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -53,6 +54,7 @@ import uk.co.tolcroft.finance.data.TaxType.TaxTypeList;
 import uk.co.tolcroft.finance.data.TransactionType;
 import uk.co.tolcroft.finance.data.TransactionType.TransTypeList;
 import uk.co.tolcroft.finance.views.View;
+import uk.co.tolcroft.models.data.StaticData;
 import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.SaveButtons;
 import uk.co.tolcroft.models.views.DataControl;
@@ -77,6 +79,16 @@ public class MaintStatic extends JPanelWithEvents {
      * Panel height.
      */
     private static final int PANEL_HEIGHT = 25;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintStatic.class.getName());
+
+    /**
+     * Text for Selection Title.
+     */
+    private static final String NLS_SELECT = NLS_BUNDLE.getString("SelectionTitle");
 
     /**
      * The card panel.
@@ -165,7 +177,7 @@ public class MaintStatic extends JPanelWithEvents {
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = myView.getDataMgr();
         JDataEntry mySection = myView.getDataEntry(DataControl.DATA_VIEWS);
-        theDataEntry = myDataMgr.new JDataEntry("Static");
+        theDataEntry = myDataMgr.new JDataEntry(StaticData.class.getSimpleName());
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 
@@ -215,7 +227,7 @@ public class MaintStatic extends JPanelWithEvents {
 
         /* Create the selection panel */
         JPanel mySelect = new JPanel();
-        mySelect.setBorder(BorderFactory.createTitledBorder("Selection"));
+        mySelect.setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
         /* Create the layout for the selection panel */
         mySelect.setLayout(new BoxLayout(mySelect, BoxLayout.X_AXIS));

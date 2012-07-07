@@ -58,6 +58,11 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
     public static final String LIST_NAME = OBJECT_NAME + "s";
 
     /**
+     * Value must be positive error text.
+     */
+    private static final String ERROR_POSITIVE = "Value must be positive";
+
+    /**
      * TaxYear end of month day.
      */
     public static final int END_OF_MONTH_DAY = 5;
@@ -1078,17 +1083,17 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
 
         /* The allowance must be non-null */
         if ((getAllowance() == null) || (!getAllowance().isPositive())) {
-            addError("Value must be positive", FIELD_ALLOW);
+            addError(ERROR_POSITIVE, FIELD_ALLOW);
         }
 
         /* The rental allowance must be non-null */
         if ((getRentalAllowance() == null) || (!getRentalAllowance().isPositive())) {
-            addError("Value must be positive", FIELD_RENTAL);
+            addError(ERROR_POSITIVE, FIELD_RENTAL);
         }
 
         /* The loAgeAllow must be non-null */
         if ((getLoAgeAllow() == null) || (!getLoAgeAllow().isPositive())) {
-            addError("Value must be positive", FIELD_LOAGAL);
+            addError(ERROR_POSITIVE, FIELD_LOAGAL);
         }
 
         /* The loAgeAllow must be greater than Allowance */
@@ -1099,7 +1104,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
 
         /* The hiAgeAllow must be non-null */
         if ((getHiAgeAllow() == null) || (!getHiAgeAllow().isPositive())) {
-            addError("Value must be positive", FIELD_HIAGAL);
+            addError(ERROR_POSITIVE, FIELD_HIAGAL);
         }
 
         /* The hiAgeAllow must be greater than loAgeAllowance */
@@ -1110,74 +1115,74 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
 
         /* The ageAllowLimit must be non-null */
         if ((getAgeAllowLimit() == null) || (!getAgeAllowLimit().isPositive())) {
-            addError("Value must be positive", FIELD_AGELMT);
+            addError(ERROR_POSITIVE, FIELD_AGELMT);
         }
 
         /* The capitalAllow must be non-null */
         if ((getCapitalAllow() == null) || (!getCapitalAllow().isPositive())) {
-            addError("Value must be positive", FIELD_CAPALW);
+            addError(ERROR_POSITIVE, FIELD_CAPALW);
         }
 
         /* The loBand must be non-null */
         if ((getLoBand() == null) || (!getLoBand().isPositive())) {
-            addError("Value must be positive", FIELD_LOBAND);
+            addError(ERROR_POSITIVE, FIELD_LOBAND);
         }
 
         /* The basicBand must be non-null */
         if ((getBasicBand() == null) || (!getBasicBand().isPositive())) {
-            addError("Value must be positive", FIELD_BSBAND);
+            addError(ERROR_POSITIVE, FIELD_BSBAND);
         }
 
         /* The loRate must be non-null */
         if ((getLoTaxRate() == null) || (!getLoTaxRate().isPositive())) {
-            addError("Value must be positive", FIELD_LOTAX);
+            addError(ERROR_POSITIVE, FIELD_LOTAX);
         }
 
         /* The basicRate must be non-null */
         if ((getBasicTaxRate() == null) || (!getBasicTaxRate().isPositive())) {
-            addError("Value must be positive", FIELD_BASTAX);
+            addError(ERROR_POSITIVE, FIELD_BASTAX);
         }
 
         /* The hiRate must be non-null */
         if ((getHiTaxRate() == null) || (!getHiTaxRate().isPositive())) {
-            addError("Value must be positive", FIELD_HITAX);
+            addError(ERROR_POSITIVE, FIELD_HITAX);
         }
 
         /* The intRate must be non-null */
         if ((getIntTaxRate() == null) || (!getIntTaxRate().isPositive())) {
-            addError("Value must be positive", FIELD_INTTAX);
+            addError(ERROR_POSITIVE, FIELD_INTTAX);
         }
 
         /* The divRate must be non-null */
         if ((getDivTaxRate() == null) || (!getDivTaxRate().isPositive())) {
-            addError("Value must be positive", FIELD_DIVTAX);
+            addError(ERROR_POSITIVE, FIELD_DIVTAX);
         }
 
         /* The hiDivRate must be non-null */
         if ((getHiDivTaxRate() == null) || (!getHiDivTaxRate().isPositive())) {
-            addError("Value must be positive", FIELD_HDVTAX);
+            addError(ERROR_POSITIVE, FIELD_HDVTAX);
         }
 
         /* If the tax regime is additional */
         if ((getTaxRegime() != null) && (getTaxRegime().hasAdditionalTaxBand())) {
             /* The addAllowLimit must be non-null */
             if ((getAddAllowLimit() == null) || (!getAddAllowLimit().isPositive())) {
-                addError("Value must be positive", FIELD_ADDLMT);
+                addError(ERROR_POSITIVE, FIELD_ADDLMT);
             }
 
             /* The addIncBound must be non-null */
             if ((getAddIncBound() == null) || (!getAddIncBound().isPositive())) {
-                addError("Value must be positive", FIELD_ADDBDY);
+                addError(ERROR_POSITIVE, FIELD_ADDBDY);
             }
 
             /* The addRate must be non-null */
             if ((getAddTaxRate() == null) || (!getAddTaxRate().isPositive())) {
-                addError("Value must be positive", FIELD_ADDTAX);
+                addError(ERROR_POSITIVE, FIELD_ADDTAX);
             }
 
             /* The addDivRate must be non-null */
             if ((getAddDivTaxRate() == null) || (!getAddDivTaxRate().isPositive())) {
-                addError("Value must be positive", FIELD_ADVTAX);
+                addError(ERROR_POSITIVE, FIELD_ADVTAX);
             }
         }
 
@@ -1185,12 +1190,12 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
         if ((getTaxRegime() != null) && (!getTaxRegime().hasCapitalGainsAsIncome())) {
             /* The capitalRate must be non-null */
             if ((getCapTaxRate() == null) || (!getCapTaxRate().isPositive())) {
-                addError("Value must be positive", FIELD_CAPTAX);
+                addError(ERROR_POSITIVE, FIELD_CAPTAX);
             }
 
             /* The hiCapTaxRate must be positive */
             if ((getHiCapTaxRate() != null) && (!getHiCapTaxRate().isPositive())) {
-                addError("Value must be positive", FIELD_HCPTAX);
+                addError(ERROR_POSITIVE, FIELD_HCPTAX);
             }
         }
 
@@ -1678,12 +1683,12 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
                 /* Determine whether the date is owned by the tax year */
                 int iDiff = myRange.compareTo(pDate);
                 if (iDiff == 0) {
-                    break;
+                    return myCurr;
                 }
             }
 
             /* Return to caller */
-            return myCurr;
+            return null;
         }
 
         /**

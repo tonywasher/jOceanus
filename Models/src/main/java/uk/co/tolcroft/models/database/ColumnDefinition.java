@@ -22,6 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.models.database;
 
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -938,6 +939,17 @@ public abstract class ColumnDefinition {
             }
             super.setObject(myString);
         }
+
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            BigDecimal myDecimal = null;
+            String myValue = getValue();
+            if (myValue != null) {
+                myDecimal = new BigDecimal(myValue);
+            }
+            pStatement.setBigDecimal(pIndex, myDecimal);
+        }
     }
 
     /**
@@ -972,6 +984,17 @@ public abstract class ColumnDefinition {
                 myString = pValue.format(false);
             }
             super.setObject(myString);
+        }
+
+        @Override
+        protected void storeValue(final PreparedStatement pStatement,
+                                  final int pIndex) throws SQLException {
+            BigDecimal myDecimal = null;
+            String myValue = getValue();
+            if (myValue != null) {
+                myDecimal = new BigDecimal(myValue);
+            }
+            pStatement.setBigDecimal(pIndex, myDecimal);
         }
     }
 

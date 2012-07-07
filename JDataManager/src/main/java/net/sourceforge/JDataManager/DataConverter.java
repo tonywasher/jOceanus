@@ -68,6 +68,11 @@ public final class DataConverter {
     public static final int BYTE_MASK = 0xFF;
 
     /**
+     * Color mask.
+     */
+    public static final int COLOR_MASK = 0x00FFFFFF;
+
+    /**
      * Nybble shift.
      */
     public static final int NYBBLE_SHIFT = 4;
@@ -180,6 +185,7 @@ public final class DataConverter {
     public static String colorToHexString(final Color pValue) {
         /* Access the RGB value */
         int myValue = pValue.getRGB();
+        myValue &= COLOR_MASK;
 
         /* Allocate the string builder */
         StringBuilder myBuilder = new StringBuilder();

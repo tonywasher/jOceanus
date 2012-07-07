@@ -26,7 +26,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -47,6 +47,7 @@ import uk.co.tolcroft.models.ui.Renderer.CalendarRenderer;
 import uk.co.tolcroft.models.ui.Renderer.DecimalRenderer;
 import uk.co.tolcroft.models.ui.Renderer.RendererFieldValue;
 import uk.co.tolcroft.models.ui.Renderer.StringRenderer;
+import uk.co.tolcroft.models.views.DataControl;
 import uk.co.tolcroft.models.views.UpdateSet;
 import uk.co.tolcroft.models.views.UpdateSet.UpdateEntry;
 
@@ -76,11 +77,6 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     private transient EventList theEvents = null;
 
     /**
-     * The parent.
-     */
-    private final MaintenanceTab theParent;
-
-    /**
      * The panel.
      */
     private final JPanel thePanel;
@@ -94,16 +90,6 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
      * Pattern button.
      */
     private final JButton thePattern;
-
-    /**
-     * Data Year.
-     */
-    private final transient JDataEntry theDataYear;
-
-    /**
-     * Data Events.
-     */
-    private final transient JDataEntry theDataEvents;
 
     /**
      * View Set.
@@ -235,15 +221,11 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
 
     /**
      * Constructor for New Year Window.
-     * @param pParent the parent window
+     * @param pView the data view
      */
-    public MaintNewYear(final MaintenanceTab pParent) {
-        /* Declare variables */
-        GroupLayout myLayout;
-
+    public MaintNewYear(final View pView) {
         /* Record the passed details */
-        theParent = pParent;
-        theView = pParent.getView();
+        theView = pView;
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet(theView);
@@ -273,33 +255,16 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         thePanel = new JPanel();
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(getScrollPane());
+        thePanel.add(thePattern);
 
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
-                                                    .addComponent(getScrollPane(),
-                                                                  GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
-                                                                  Short.MAX_VALUE).addComponent(thePattern))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(getScrollPane())
-                                  .addComponent(thePattern)));
-
-        /* Create the debug entry, attach to MaintenanceDebug entry */
+        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
         JDataEntry myEntry = myDataMgr.new JDataEntry("NewYear");
-        myEntry.addAsChildOf(pParent.getDataEntry());
-        theDataYear = myDataMgr.new JDataEntry("Year");
-        theDataYear.addAsChildOf(myEntry);
-        theDataEvents = myDataMgr.new JDataEntry("Events");
-        theDataEvents.addAsChildOf(myEntry);
+        myEntry.addAsChildOf(mySection);
+        myEntry.setObject(theUpdateSet);
     }
 
     @Override
@@ -328,10 +293,8 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     public void refreshData() throws JDataException {
         FinanceData myData = theView.getData();
         TaxYear.TaxYearList myList = myData.getTaxYears();
-        OrderedListIterator<TaxYear> myIterator;
 
-        myIterator = myList.listIterator();
-        // theYear = myIterator.peekLast();
+        OrderedListIterator<TaxYear> myIterator = myList.listIterator();
         setSelection(myIterator.peekLast());
     }
 
@@ -354,9 +317,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         setList(theEvents);
         theYearEntry.setDataList(myTaxYears);
         theEventEntry.setDataList(theEvents);
-        theDataYear.setObject(myTaxYears);
-        theDataEvents.setObject(theEvents);
-        theParent.setVisibility();
+        fireStateChanged();
     }
 
     /**

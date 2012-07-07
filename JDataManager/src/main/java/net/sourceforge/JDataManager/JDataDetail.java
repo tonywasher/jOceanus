@@ -25,8 +25,6 @@ package net.sourceforge.JDataManager;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-
 /**
  * Debug Detail class that holds details of links to other objects.
  * @author Tony Washer
@@ -184,7 +182,7 @@ public class JDataDetail {
 
         /* Obtain the detail for this object */
         if (pObject != null) {
-            theBuilder = JDataObject.formatHTMLObject(this, pObject);
+            theBuilder = JDataHTML.formatHTMLObject(this, pObject);
             isList = (pObject instanceof List);
         } else {
             theBuilder = null;
@@ -211,7 +209,7 @@ public class JDataDetail {
         theIndex = theList.indexOf(pObject);
         theIterator = null;
         isChild = true;
-        theBuilder = JDataObject.formatHTMLObject(this, pObject);
+        theBuilder = JDataHTML.formatHTMLObject(this, pObject);
         isList = true;
     }
 
@@ -352,28 +350,23 @@ public class JDataDetail {
             return pText;
         }
 
-        /* If the item is a ReportDetail */
-        if (pItem instanceof JDataContents) {
-            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+        /* Allocate the string builder */
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-            /* Create the Debug Link */
-            JDataLink myLink = new JDataLink(this, (JDataContents) pItem);
+        /* Create the Debug Link */
+        JDataLink myLink = new JDataLink(this, pItem);
 
-            /* Add the link into the buffer */
-            myBuilder.append("<a href=\"#");
-            myBuilder.append(myLink.theName);
-            myBuilder.append("\">");
+        /* Add the link into the buffer */
+        myBuilder.append("<a href=\"#");
+        myBuilder.append(myLink.theName);
+        myBuilder.append("\">");
 
-            /* Add the text into the buffer */
-            myBuilder.append(pText);
+        /* Add the text into the buffer */
+        myBuilder.append(pText);
 
-            /* Close link and return */
-            myBuilder.append("</a>");
-            return myBuilder.toString();
-        }
-
-        /* Else just return the text */
-        return pText;
+        /* Close link and return */
+        myBuilder.append("</a>");
+        return myBuilder.toString();
     }
 
     /**

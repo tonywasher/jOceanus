@@ -55,7 +55,7 @@ public class ItemValidation implements JDataContents {
 
     @Override
     public String formatObject() {
-        return theErrors.size() + "Errors";
+        return theErrors.size() + " Errors";
     }
 
     @Override

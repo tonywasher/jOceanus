@@ -22,6 +22,7 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui.controls;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,14 +30,15 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JPanelWithEvents;
@@ -60,6 +62,56 @@ public class SpotSelect extends JPanelWithEvents {
      * Serial Id.
      */
     private static final long serialVersionUID = -361214955549174070L;
+
+    /**
+     * Strut width.
+     */
+    private static final int STRUT_WIDTH = 10;
+
+    /**
+     * Field Height.
+     */
+    private static final int FIELD_HEIGHT = 20;
+
+    /**
+     * Field Width.
+     */
+    private static final int FIELD_WIDTH = 200;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SpotSelect.class.getName());
+
+    /**
+     * Text for Date Label.
+     */
+    private static final String NLS_DATE = NLS_BUNDLE.getString("SelectDate");
+
+    /**
+     * Text for AccountType Label.
+     */
+    private static final String NLS_TYPE = NLS_BUNDLE.getString("SelectType");
+
+    /**
+     * Text for Show Closed.
+     */
+    private static final String NLS_CLOSED = NLS_BUNDLE.getString("ShowClosed");
+
+    /**
+     * Text for Next Button.
+     */
+    private static final String NLS_NEXT = NLS_BUNDLE.getString("NextButton");
+
+    /**
+     * Text for Prev Button.
+     */
+    private static final String NLS_PREV = NLS_BUNDLE.getString("PrevButton");
+
+    /**
+     * Text for Title.
+     */
+    private static final String NLS_TITLE = NLS_BUNDLE.getString("SpotTitle");
 
     /**
      * The data view.
@@ -147,71 +199,90 @@ public class SpotSelect extends JPanelWithEvents {
         theView = pView;
 
         /* Create Labels */
-        JLabel myDate = new JLabel("Date:");
-        JLabel myAct = new JLabel("AccountType:");
+        JLabel myDate = new JLabel(NLS_DATE);
+        JLabel myAct = new JLabel(NLS_TYPE);
 
         /* Create the check box */
-        theShowClosed = new JCheckBox("Show Closed");
+        theShowClosed = new JCheckBox(NLS_CLOSED);
         theShowClosed.setSelected(doShowClosed);
 
         /* Create the DateButton */
         theDateButton = new DateDayButton();
 
         /* Create the Buttons */
-        theNext = new JButton("Next");
-        thePrev = new JButton("Prev");
+        theNext = new JButton(NLS_NEXT);
+        thePrev = new JButton(NLS_PREV);
 
         /* Create the Type box */
         theTypesBox = new JComboBox();
+        theTypesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
 
         /* Create initial state */
         theState = new SpotState();
 
-        /* Initialise the data from the view */
-        refreshData();
-
         /* Create the panel */
-        setBorder(BorderFactory.createTitledBorder("Spot Selection"));
+        setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
+
+        /* Define the layout */
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(myDate);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theDateButton);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theNext);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(thePrev);
+        add(Box.createHorizontalGlue());
+        add(myAct);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theTypesBox);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theShowClosed);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create the layout for the panel */
-        GroupLayout panelLayout = new GroupLayout(this);
-        setLayout(panelLayout);
+        // GroupLayout panelLayout = new GroupLayout(this);
+        // setLayout(panelLayout);
 
         /* Set the layout */
-        panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(myDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                GroupLayout.PREFERRED_SIZE)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addComponent(theNext)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(thePrev)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(myAct)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theTypesBox)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addComponent(theShowClosed)));
-        panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                  .addComponent(myDate)
-                                  .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addComponent(theNext).addComponent(thePrev).addComponent(myAct)
-                                  .addComponent(theTypesBox).addComponent(theShowClosed)));
+        // panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(panelLayout
+        // .createSequentialGroup()
+        // .addContainerGap()
+        // .addComponent(myDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.PREFERRED_SIZE)
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+        // .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
+        // GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+        // .addComponent(theNext)
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+        // .addComponent(thePrev)
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(myAct)
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+        // .addComponent(theTypesBox)
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+        // .addComponent(theShowClosed)));
+        // panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(panelLayout
+        // .createParallelGroup(GroupLayout.Alignment.BASELINE)
+        // .addComponent(myDate)
+        // .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
+        // GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+        // .addComponent(theNext).addComponent(thePrev).addComponent(myAct)
+        // .addComponent(theTypesBox).addComponent(theShowClosed)));
+
+        /* Initialise the data from the view */
+        refreshData();
 
         /* Apply the current state */
         theState.applyState();
 
         /* Add the listener for item changes */
-        theDateButton.addPropertyChangeListener(JDateButton.PROPERTY_DATE, myListener);
+        theDateButton.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, myListener);
         theShowClosed.addItemListener(myListener);
         theNext.addActionListener(myListener);
         thePrev.addActionListener(myListener);
@@ -360,13 +431,15 @@ public class SpotSelect extends JPanelWithEvents {
 
             /* If this event relates to the Next button */
             if (theNext.equals(o)) {
-                /* Set the Date to be the Next date */
+                /* Set next and notify changes */
                 theState.setNext();
+                fireStateChanged();
 
                 /* If this event relates to the previous button */
             } else if (thePrev.equals(o)) {
-                /* Set the Date to be the Previous date */
+                /* Set previous and notify changes */
                 theState.setPrev();
+                fireStateChanged();
             }
         }
 

@@ -34,7 +34,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.table.AbstractTableModel;
 
 import uk.co.tolcroft.models.data.DataItem;
-import uk.co.tolcroft.models.data.EditState;
 
 /**
  * Template class to provide mouse support for a table.
@@ -118,21 +117,6 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
     private static final String POPUP_SHOWDEL = "Show Deleted";
 
     /**
-     * Undo menu item.
-     */
-    private static final String POPUP_UNDO = "Undo";
-
-    /**
-     * Validate menu item.
-     */
-    private static final String POPUP_VALIDATE = "Validate Item(s)";
-
-    /**
-     * Reset menu item.
-     */
-    private static final String POPUP_RESET = "Reset Item(s)";
-
-    /**
      * Constructor.
      * @param pTable the table
      */
@@ -209,9 +193,6 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
 
             /* Add insert/delete commands to menu */
             addInsertDelete(myMenu);
-
-            /* Add edit commands to menu */
-            addEditCommands(myMenu);
 
             /* Add null commands to menu */
             addNullCommands(myMenu);
@@ -319,96 +300,6 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
     }
 
     /**
-     * Add Edit commands to menu. Should be overridden if edit is not required.
-     * @param pMenu the menu to add to
-     */
-    protected void addEditCommands(final JPopupMenu pMenu) {
-        JMenuItem myItem;
-        boolean rowSelected = false;
-        boolean enableUndo = false;
-        boolean enableReset = false;
-        boolean enableValid = false;
-
-        /* Nothing to do if the table is locked */
-        if (theTable.isLocked()) {
-            return;
-        }
-
-        /* Loop through the selected rows */
-        for (DataItem myRow : theTable.cacheSelectedRows()) {
-            /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
-                continue;
-            }
-
-            /* Ignore deleted rows */
-            if (myRow.isDeleted()) {
-                continue;
-            }
-
-            /* If the row has Changes */
-            if (myRow.hasHistory()) {
-                /* Note that we can reset */
-                enableReset = true;
-
-                /* Enable validate if required */
-                if (myRow.getEditState() != EditState.VALID) {
-                    enableValid = true;
-                }
-            }
-
-            /* If this is a second (or later selection) */
-            if (rowSelected) {
-                /* Disable Undo */
-                enableUndo = false;
-
-                /* else this is the first selection */
-            } else {
-                /* Determine whether we can undo */
-                if (myRow.hasHistory()) {
-                    enableUndo = true;
-                }
-
-                /* Note that we have selected a row */
-                rowSelected = true;
-            }
-        }
-
-        /* If there is something to add and there are already items in the menu */
-        if ((enableUndo || enableReset || enableValid) && (pMenu.getComponentCount() > 0)) {
-            /* Add a separator */
-            pMenu.addSeparator();
-        }
-
-        /* If we can undo changes */
-        if (enableUndo) {
-            /* Add the undo change choice */
-            myItem = new JMenuItem(POPUP_UNDO);
-            myItem.setActionCommand(POPUP_UNDO);
-            myItem.addActionListener(this);
-            pMenu.add(myItem);
-        }
-
-        /* If we can reset changes */
-        if (enableReset) {
-            /* Add the reset items choice */
-            myItem = new JMenuItem(POPUP_RESET);
-            myItem.setActionCommand(POPUP_RESET);
-            myItem.addActionListener(this);
-            pMenu.add(myItem);
-        }
-
-        /* If we can validate changes */
-        if (enableValid) {
-            /* Add the reset items choice */
-            myItem = new JMenuItem(POPUP_VALIDATE);
-            myItem.setActionCommand(POPUP_VALIDATE);
-            myItem.addActionListener(this);
-            pMenu.add(myItem);
-        }
-    }
-
-    /**
      * Add Null commands to menu. Should be overridden if null values are required.
      * @param pMenu the menu to add to
      */
@@ -459,8 +350,17 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
             }
 
             /* set the null value */
-            myModel.setValueAt(null, row, col);
+            setNullValue(myRow, col);
         }
+    }
+
+    /**
+     * Set null value.
+     * @param pItem the item to set the null field in
+     * @param col the column to set null
+     */
+    protected void setNullValue(final DataItem pItem,
+                                final int col) {
     }
 
     @Override
@@ -498,21 +398,6 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
 
             /* Notify the table */
             theTable.setShowDeleted(doShowDeleted);
-
-            /* if this is a reset changes command */
-        } else if (myCmd.equals(POPUP_RESET)) {
-            /* Reset selected rows */
-            theTable.resetRows();
-
-            /* if this is a validate items command */
-        } else if (myCmd.equals(POPUP_VALIDATE)) {
-            /* Validate selected rows */
-            theTable.validateRows();
-
-            /* if this is an undo change command */
-        } else if (myCmd.equals(POPUP_UNDO)) {
-            /* Undo selected rows */
-            theTable.unDoRows();
         }
 
         /* Notify of any changes */

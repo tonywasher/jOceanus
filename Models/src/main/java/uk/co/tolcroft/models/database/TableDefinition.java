@@ -467,24 +467,17 @@ public class TableDefinition {
      * @throws SQLException on error
      */
     protected void loadResults(final ResultSet pResults) throws SQLException {
-        ResultSet myResults = pResults;
+        /* clear values */
+        clearValues();
 
-        try {
-            /* Store the result set and clear values */
-            clearValues();
+        /* Create the iterator */
+        Iterator<ColumnDefinition> myIterator = theList.iterator();
+        int myIndex = 1;
 
-            /* Create the iterator */
-            Iterator<ColumnDefinition> myIterator = theList.iterator();
-            int myIndex = 1;
-
-            /* Loop through the columns */
-            while (myIterator.hasNext()) {
-                ColumnDefinition myDef = myIterator.next();
-                myDef.loadValue(myResults, myIndex++);
-            }
-        } finally {
-            /* Close the resultSet */
-            myResults.close();
+        /* Loop through the columns */
+        while (myIterator.hasNext()) {
+            ColumnDefinition myDef = myIterator.next();
+            myDef.loadValue(pResults, myIndex++);
         }
     }
 

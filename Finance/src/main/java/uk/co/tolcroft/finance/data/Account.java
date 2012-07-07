@@ -1826,11 +1826,11 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             AccountType myAliasType = myAlias.getActType();
 
             /* Cannot alias to self */
-            if (!Difference.isEqual(this, myAlias)) {
+            if (Difference.isEqual(this, myAlias)) {
                 addError("Cannot alias to self", FIELD_ALIAS);
 
                 /* Cannot alias to same type */
-            } else if (!Difference.isEqual(myType, myAliasType)) {
+            } else if (Difference.isEqual(myType, myAliasType)) {
                 addError("Cannot alias to same account type", FIELD_ALIAS);
             }
 
@@ -2455,9 +2455,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                 myType.touchItem(myCurr);
 
                 /* If we are a child and have no latest event, then we are not close-able */
-                if ((myCurr.isChild()) && (myCurr.getLatest() == null)) {
-                    myCurr.setNonCloseable();
-                }
+                /*
+                 * if ((myCurr.isChild()) && (myCurr.getLatest() == null)) { myCurr.setNonCloseable(); }
+                 */
 
                 /* If we have patterns or are touched by patterns, then we are not close-able */
                 if (myCurr.hasPatterns || myCurr.isPatterned) {

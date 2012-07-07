@@ -89,13 +89,13 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == StaticData.FIELD_ENABLED) {
+        if (StaticData.FIELD_ENABLED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.getEnabled());
-        } else if (iField == StaticData.FIELD_ORDER) {
+        } else if (StaticData.FIELD_ORDER.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getOrder());
-        } else if (iField == StaticData.FIELD_NAME) {
+        } else if (StaticData.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
-        } else if (iField == StaticData.FIELD_DESC) {
+        } else if (StaticData.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else {
             super.setFieldValue(pItem, iField);

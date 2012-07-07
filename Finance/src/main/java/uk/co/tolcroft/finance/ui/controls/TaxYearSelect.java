@@ -22,16 +22,18 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui.controls;
 
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ListIterator;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JPanelWithEvents;
@@ -49,6 +51,31 @@ public class TaxYearSelect extends JPanelWithEvents {
      * Serial Id.
      */
     private static final long serialVersionUID = 1313452754119158982L;
+
+    /**
+     * Strut width.
+     */
+    private static final int STRUT_WIDTH = 10;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxYearSelect.class.getName());
+
+    /**
+     * Text for Selection Title.
+     */
+    private static final String NLS_YEAR = NLS_BUNDLE.getString("SelectYear");
+
+    /**
+     * Text for Selection Title.
+     */
+    private static final String NLS_DELETED = NLS_BUNDLE.getString("ShowDeleted");
+
+    /**
+     * Text for Selection Title.
+     */
+    private static final String NLS_SELECT = NLS_BUNDLE.getString("SelectTitle");
 
     /**
      * Data view.
@@ -111,13 +138,13 @@ public class TaxYearSelect extends JPanelWithEvents {
         theState = new YearState();
 
         /* Create the labels */
-        mySelect = new JLabel("Select Year:");
+        mySelect = new JLabel(NLS_YEAR);
 
         /* Create the combo boxes */
         theYearsBox = new JComboBox();
 
         /* Create the combo boxes */
-        theShowDeleted = new JCheckBox("ShowDeleted");
+        theShowDeleted = new JCheckBox(NLS_DELETED);
         theShowDeleted.setSelected(theState.doShowDeleted());
 
         /* Add item listeners */
@@ -125,24 +152,17 @@ public class TaxYearSelect extends JPanelWithEvents {
         theShowDeleted.addItemListener(myListener);
 
         /* Create the selection panel */
-        setBorder(BorderFactory.createTitledBorder("Selection"));
+        setBorder(BorderFactory.createTitledBorder(NLS_SELECT));
 
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(this);
-        setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(mySelect)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theYearsBox)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theShowDeleted).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(mySelect).addComponent(theYearsBox).addComponent(theShowDeleted));
+        /* Define the layout */
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(mySelect);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theYearsBox);
+        add(Box.createHorizontalGlue());
+        add(theShowDeleted);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Initialise the data from the view */
         refreshData();
@@ -211,13 +231,13 @@ public class TaxYearSelect extends JPanelWithEvents {
             }
 
             /* Add the item to the list */
-            theYearsBox.addItem(Integer.toString(myYear.getTaxYear().getYear()));
+            theYearsBox.addItem(myYear);
         }
 
         /* If we have a selected year */
         if (getTaxYear() != null) {
             /* Select it in the new list */
-            theYearsBox.setSelectedItem(Integer.toString(getTaxYear().getTaxYear().getYear()));
+            theYearsBox.setSelectedItem(getTaxYear());
 
             /* Else we have no year currently selected */
         } else if (theYearsBox.getItemCount() > 0) {

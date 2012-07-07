@@ -327,7 +327,9 @@ public class EventAnalysis implements JDataContents {
         }
 
         /* move the iterator back one */
-        myIterator.previous();
+        if (myIterator.hasPrevious()) {
+            myIterator.previous();
+        }
 
         /* create a save point */
         theAccount.createSavePoint();

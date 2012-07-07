@@ -39,6 +39,7 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
 import uk.co.tolcroft.finance.data.FinanceData;
+import uk.co.tolcroft.finance.views.DilutionEvent.DilutionEventList;
 import uk.co.tolcroft.models.data.ControlData.ControlDataList;
 import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 import uk.co.tolcroft.models.data.TaskControl;
@@ -218,7 +219,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
                 }
 
                 /* Ignore errors */
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 myStream = null;
             }
         }
@@ -251,7 +252,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
             YearRange myRange = new YearRange();
 
             /* Create the dilution event list */
-            // DilutionEventList myDilution = new DilutionEventList(myData);
+            DilutionEventList myDilution = new DilutionEventList(myData);
 
             /* Determine Year Range */
             boolean bContinue = loadArchive(pTask, myHelper, myData, myRange);
@@ -275,16 +276,35 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
             if (bContinue) {
                 bContinue = SheetEventInfoType.loadArchive(pTask, myHelper, myData);
             }
+
+            if (bContinue) {
+                bContinue = SheetTaxYear.loadArchive(pTask, myHelper, myData, myRange);
+            }
+
+            if (bContinue) {
+                myData.calculateDateRange();
+            }
+
+            if (bContinue) {
+                bContinue = SheetAccount.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountRate.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetDilution.loadArchive(pTask, myHelper, myData, myDilution);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountPrice.loadArchive(pTask, myHelper, myData, myDilution);
+            }
             /*
-             * TODO if (bContinue) { bContinue = SheetTaxYear.loadArchive(pTask, myHelper, myData, myRange); }
-             * if (bContinue) { myData.calculateDateRange(); } if (bContinue) { bContinue =
-             * SheetAccount.loadArchive(pTask, myHelper, myData); } if (bContinue) { bContinue =
-             * SheetAccountRate.loadArchive(pTask, myHelper, myData); } if (bContinue) { bContinue =
-             * SheetDilution.loadArchive(pTask, myHelper, myData, myDilution); } if (bContinue) { bContinue =
-             * SheetAccountPrice.loadArchive(pTask, myHelper, myData, myDilution); } if (bContinue) {
-             * bContinue = SheetPattern.loadArchive(pTask, myHelper, myData); } if (bContinue) {
-             * myData.getAccounts().validateLoadedAccounts(); } if (bContinue) { bContinue =
-             * SheetEvent.loadArchive(pTask, myHelper, myData, myRange); }
+             * if (bContinue) { bContinue = SheetPattern.loadArchive(pTask, myHelper, myData); }
+             */
+            if (bContinue) {
+                myData.getAccounts().validateLoadedAccounts();
+            }
+            /*
+             * if (bContinue) { bContinue = SheetEvent.loadArchive(pTask, myHelper, myData, myRange); }
              */
 
             /* Close the stream */

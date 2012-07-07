@@ -66,6 +66,11 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
     }
 
     /**
+     * Id Field Id.
+     */
+    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField("ID");
+
+    /**
      * Account Field Id.
      */
     public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
@@ -87,6 +92,9 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ID.equals(pField)) {
+            return theId;
+        }
         if (FIELD_ACCOUNT.equals(pField)) {
             return theAccount;
         }
@@ -103,19 +111,24 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
     }
 
     /**
+     * The Id.
+     */
+    private final int theId;
+
+    /**
      * The Account.
      */
-    private Account theAccount = null;
+    private final Account theAccount;
 
     /**
      * The Date.
      */
-    private DateDay theDate = null;
+    private final DateDay theDate;
 
     /**
      * The Dilution.
      */
-    private Dilution theDilution = null;
+    private final Dilution theDilution;
 
     /**
      * The Event.
@@ -156,7 +169,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
     @Override
     public Integer getOrderedId() {
-        return getEvent().getId();
+        return theId;
     }
 
     @Override
@@ -217,15 +230,16 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
     /**
      * Create a dilution event from an event.
+     * @param pId the id for the dilution
      * @param pEvent the underlying event
      */
-    private DilutionEvent(final Event pEvent) {
+    private DilutionEvent(final int pId,
+                          final Event pEvent) {
         /* Local variables */
         Account myAccount;
-        TransactionType myType;
 
         /* Access the transaction type */
-        myType = pEvent.getTransType();
+        TransactionType myType = pEvent.getTransType();
 
         /* Switch on the transaction type */
         switch (myType.getTranClass()) {
@@ -241,6 +255,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
         }
 
         /* Store the values */
+        theId = pId;
         theAccount = myAccount;
         theDate = pEvent.getDate();
         theDilution = pEvent.getDilution();
@@ -249,14 +264,17 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
     /**
      * Create a dilution event from details.
+     * @param pId the id for the dilution
      * @param pAccount the account
      * @param pDate the Date
      * @param pDilution the dilution
      */
-    private DilutionEvent(final Account pAccount,
+    private DilutionEvent(final int pId,
+                          final Account pAccount,
                           final DateDay pDate,
                           final Dilution pDilution) {
         /* Store the values */
+        theId = pId;
         theAccount = pAccount;
         theDate = pDate;
         theDilution = pDilution;
@@ -301,6 +319,11 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
         private FinanceData theData = null;
 
         /**
+         * The next Id.
+         */
+        private int theNextId = 1;
+
+        /**
          * Constructor.
          * @param pData the DataSet
          */
@@ -317,7 +340,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             DilutionEvent myDilution;
 
             /* Create the dilution event */
-            myDilution = new DilutionEvent(pEvent);
+            myDilution = new DilutionEvent(theNextId++, pEvent);
 
             /* Add it to the list */
             add(myDilution);
@@ -352,7 +375,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             }
 
             /* Create the dilution event */
-            DilutionEvent myEvent = new DilutionEvent(myAccount, myDate, myDilution);
+            DilutionEvent myEvent = new DilutionEvent(theNextId++, myAccount, myDate, myDilution);
 
             /* Add it to the list */
             add(myEvent);
