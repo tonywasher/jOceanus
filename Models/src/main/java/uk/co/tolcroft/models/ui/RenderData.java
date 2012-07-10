@@ -341,14 +341,17 @@ public class RenderData {
             return COLOR_DELETED;
         }
 
-        /* Handle error items */
-        if ((pItem.hasErrors()) && (pItem.hasErrors(iField))) {
-            return COLOR_ERROR;
-        }
+        /* If the field exists */
+        if (iField != null) {
+            /* Handle error items */
+            if ((pItem.hasErrors()) && (pItem.hasErrors(iField))) {
+                return COLOR_ERROR;
+            }
 
-        /* Handle changed items */
-        if (pItem.fieldChanged(iField).isDifferent()) {
-            return COLOR_CHANGED;
+            /* Handle changed items */
+            if (pItem.fieldChanged(iField).isDifferent()) {
+                return COLOR_CHANGED;
+            }
         }
 
         /* Switch on Status */

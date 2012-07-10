@@ -91,11 +91,11 @@ public class TableEventValues extends DatabaseTable<EventValue> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == EventValue.FIELD_INFOTYPE) {
+        if (EventValue.FIELD_INFOTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getInfoType().getId());
-        } else if (iField == EventValue.FIELD_EVENT) {
+        } else if (EventValue.FIELD_EVENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getEvent().getId());
-        } else if (iField == EventValue.FIELD_VALUE) {
+        } else if (EventValue.FIELD_VALUE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getValue());
         } else {
             super.setFieldValue(pItem, iField);

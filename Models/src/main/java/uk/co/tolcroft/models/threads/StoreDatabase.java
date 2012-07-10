@@ -91,6 +91,9 @@ public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
             throw new JDataException(ExceptionClass.DATA, myDiff, "DataStore is inconsistent");
         }
 
+        /* Derive new update list */
+        theControl.deriveUpdates();
+
         /* Return null */
         return null;
     }

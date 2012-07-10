@@ -24,7 +24,6 @@ package net.sourceforge.JDataManager;
 
 import java.awt.Dimension;
 
-import javax.swing.GroupLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -116,17 +115,18 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
 
         /* Create the panel */
         JPanel myPanel = new JPanel();
+        myPanel.add(mySplit);
 
         /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(myPanel);
-        myPanel.setLayout(myLayout);
+        // GroupLayout myLayout = new GroupLayout(myPanel);
+        // myPanel.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(mySplit)
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(mySplit));
+        // myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(mySplit)
+        // .addContainerGap()));
+        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addComponent(mySplit));
 
         /* Set this to be the main panel */
         getContentPane().add(myPanel);

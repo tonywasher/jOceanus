@@ -202,8 +202,8 @@ public class View extends DataControl<FinanceData> {
             /* Access the dilutions */
             theDilutions = theAnalysis.getDilutions();
 
-            /* Adjust the updates debug view */
-            setUpdates(theData.deriveUpdateSet());
+            /* Derive the update Set */
+            deriveUpdates();
 
             /* Catch any exceptions */
         } catch (JDataException e) {

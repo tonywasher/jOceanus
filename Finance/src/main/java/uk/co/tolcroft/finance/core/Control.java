@@ -25,6 +25,7 @@ package uk.co.tolcroft.finance.core;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.sourceforge.JDataManager.JDataException;
 import uk.co.tolcroft.finance.ui.MainTab;
 
 /**
@@ -40,7 +41,7 @@ public final class Control {
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getLogger("JFinanceApp");
+    private static Logger theLogger = Logger.getLogger(Control.class.getName());
 
     /**
      * Private constructor to avoid instantiation.
@@ -56,7 +57,7 @@ public final class Control {
             theWindow = new MainTab();
             theWindow.makeFrame();
 
-        } catch (Exception e) {
+        } catch (JDataException e) {
             theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
         }
     }

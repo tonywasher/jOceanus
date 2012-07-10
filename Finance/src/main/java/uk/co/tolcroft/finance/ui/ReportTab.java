@@ -62,11 +62,6 @@ public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
     private static final long serialVersionUID = 6499559461558661107L;
 
     /**
-     * Panel width.
-     */
-    // private static final int PANEL_WIDTH = 800;
-
-    /**
      * The Data View.
      */
     private final transient View theView;
@@ -156,30 +151,6 @@ public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
         add(theError);
         add(theSelect);
         add(theScroll);
-
-        /* Create the layout for the panel */
-        // GroupLayout myLayout = new GroupLayout(thePanel);
-        // thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        // myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(myLayout.createSequentialGroup()
-        // .addContainerGap()
-        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-        // false)
-        // .addComponent(theError, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(theSelect, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(theScroll, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
-        // Short.MAX_VALUE)).addContainerGap()));
-        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(GroupLayout.Alignment.TRAILING,
-        // myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
-        // .addComponent(theScroll).addContainerGap()));
     }
 
     /**

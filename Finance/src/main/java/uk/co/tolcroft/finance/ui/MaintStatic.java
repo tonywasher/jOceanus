@@ -28,6 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
@@ -136,6 +138,16 @@ public class MaintStatic extends JPanelWithEvents {
     private final MaintStaticData<?, ?> theInfoTypes;
 
     /**
+     * The Panel map.
+     */
+    private final Map<String, MaintStaticData<?, ?>> theMap;
+
+    /**
+     * The Active panel.
+     */
+    private MaintStaticData<?, ?> theActive;
+
+    /**
      * The error panel.
      */
     private final ErrorPanel theError;
@@ -176,7 +188,7 @@ public class MaintStatic extends JPanelWithEvents {
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = myView.getDataMgr();
-        JDataEntry mySection = myView.getDataEntry(DataControl.DATA_VIEWS);
+        JDataEntry mySection = myView.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.new JDataEntry(StaticData.class.getSimpleName());
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
@@ -246,6 +258,15 @@ public class MaintStatic extends JPanelWithEvents {
         theCardPanel.add(theFrequencys.getPanel(), Frequency.LIST_NAME);
         theCardPanel.add(theInfoTypes.getPanel(), EventInfoType.LIST_NAME);
 
+        /* Build the panel map */
+        theMap = new HashMap<String, MaintStaticData<?, ?>>();
+        theMap.put(AccountType.LIST_NAME, theActTypes);
+        theMap.put(TransactionType.LIST_NAME, theTranTypes);
+        theMap.put(TaxType.LIST_NAME, theTaxTypes);
+        theMap.put(TaxRegime.LIST_NAME, theTaxRegimes);
+        theMap.put(Frequency.LIST_NAME, theFrequencys);
+        theMap.put(EventInfoType.LIST_NAME, theInfoTypes);
+
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(mySelect);
@@ -261,6 +282,9 @@ public class MaintStatic extends JPanelWithEvents {
      * Determine Focus.
      */
     protected void determineFocus() {
+        /* Request the focus */
+        requestFocusInWindow();
+
         /* Set the required focus */
         theDataEntry.setFocus();
     }
@@ -272,6 +296,7 @@ public class MaintStatic extends JPanelWithEvents {
     private void setSelection(final String pName) {
         /* Select the correct static */
         theLayout.show(theCardPanel, pName);
+        theActive = theMap.get(pName);
     }
 
     /**
@@ -307,6 +332,19 @@ public class MaintStatic extends JPanelWithEvents {
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
+    }
+
+    /**
+     * Cancel Editing of underlying tables.
+     */
+    private void cancelEditing() {
+        /* Refresh the underlying children */
+        theActTypes.cancelEditing();
+        theTranTypes.cancelEditing();
+        theTaxTypes.cancelEditing();
+        theTaxRegimes.cancelEditing();
+        theFrequencys.cancelEditing();
+        theInfoTypes.cancelEditing();
     }
 
     /**
@@ -377,8 +415,11 @@ public class MaintStatic extends JPanelWithEvents {
 
             /* if this is the save buttons reporting */
             if (theSaveButtons.equals(o)) {
+                /* Cancel Editing */
+                cancelEditing();
+
                 /* Process the command */
-                theUpdateSet.processCommand(myCmd);
+                theUpdateSet.processCommand(myCmd, theError);
 
                 /* Adjust visibility */
                 setVisibility();

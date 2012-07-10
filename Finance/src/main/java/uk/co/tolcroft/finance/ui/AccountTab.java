@@ -25,6 +25,7 @@ package uk.co.tolcroft.finance.ui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JTabbedPane;
@@ -60,6 +61,31 @@ public class AccountTab extends JPanelWithEvents {
      * Serial Id.
      */
     private static final long serialVersionUID = 9200876063232169306L;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountTab.class.getName());
+
+    /**
+     * Statement panel title.
+     */
+    private static final String TITLE_STATEMENT = NLS_BUNDLE.getString("TabStatement");
+
+    /**
+     * Patterns panel title.
+     */
+    private static final String TITLE_PATTERNS = NLS_BUNDLE.getString("TabPatterns");
+
+    /**
+     * Prices panel title.
+     */
+    private static final String TITLE_PRICES = NLS_BUNDLE.getString("TabPrices");
+
+    /**
+     * Rates panel title.
+     */
+    private static final String TITLE_RATES = NLS_BUNDLE.getString("TabRates");
 
     /**
      * Data View.
@@ -143,26 +169,6 @@ public class AccountTab extends JPanelWithEvents {
     }
 
     /**
-     * Statement panel title.
-     */
-    private static final String TITLE_STATEMENT = "Statement";
-
-    /**
-     * Patterns panel title.
-     */
-    private static final String TITLE_PATTERNS = "Patterns";
-
-    /**
-     * Prices panel title.
-     */
-    private static final String TITLE_PRICES = "Prices";
-
-    /**
-     * Rates panel title.
-     */
-    private static final String TITLE_RATES = "Rates";
-
-    /**
      * Constructor for Account Window.
      * @param pView the data view
      */
@@ -175,8 +181,8 @@ public class AccountTab extends JPanelWithEvents {
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        theDataEntry = myDataMgr.new JDataEntry("Account");
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
+        theDataEntry = myDataMgr.new JDataEntry(Account.class.getSimpleName());
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
 
@@ -221,37 +227,6 @@ public class AccountTab extends JPanelWithEvents {
         add(theError);
         add(theTabs);
         add(theSaveButtons);
-
-        /* Set the layout */
-        // myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(myLayout.createSequentialGroup()
-        // .addContainerGap()
-        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-        // false)
-        // .addComponent(theError, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(theSelect, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(theTabs, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(theSaveButtons,
-        // GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        // .addContainerGap()));
-        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(GroupLayout.Alignment.TRAILING,
-        // myLayout.createSequentialGroup()
-        // .addComponent(theError)
-        // .addComponent(theSelect)
-        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(theTabs)
-        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-        // .addComponent(theSaveButtons).addContainerGap()));
     }
 
     /**
@@ -312,15 +287,7 @@ public class AccountTab extends JPanelWithEvents {
         cancelEditing();
 
         /* Process the command */
-        theUpdateSet.processCommand(pCmd);
-
-        /* Access any error */
-        JDataException myError = theView.getError();
-
-        /* Show the error */
-        if (myError != null) {
-            theError.setError(myError);
-        }
+        theUpdateSet.processCommand(pCmd, theError);
 
         /* Notify listeners of changes */
         notifyChanges();
@@ -558,7 +525,7 @@ public class AccountTab extends JPanelWithEvents {
 
             /* Create SavePoint */
             theSelect.createSavePoint();
-        } catch (Exception e) {
+        } catch (JDataException e) {
             /* Build the error */
             JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
@@ -632,8 +599,8 @@ public class AccountTab extends JPanelWithEvents {
      */
     private final class AccountListener implements ActionListener, ChangeListener {
         @Override
-        public void stateChanged(final ChangeEvent e) {
-            Object o = e.getSource();
+        public void stateChanged(final ChangeEvent evt) {
+            Object o = evt.getSource();
 
             /* If it is the tabs */
             if (theTabs.equals(o)) {
@@ -653,6 +620,24 @@ public class AccountTab extends JPanelWithEvents {
                 /* Lock Save Buttons */
                 theSaveButtons.setEnabled(!isError);
             } else if (theSelect.equals(o)) {
+                /* Protect against exceptions */
+                try {
+                    /* Select the account */
+                    setSelection(theSelect.getSelected());
+
+                    /* Create SavePoint */
+                    theSelect.createSavePoint();
+                } catch (JDataException e) {
+                    /* Build the error */
+                    JDataException myError = new JDataException(ExceptionClass.DATA,
+                            "Failed to change selection", e);
+
+                    /* Show the error */
+                    theError.setError(myError);
+
+                    /* Restore SavePoint */
+                    theSelect.restoreSavePoint();
+                }
 
             } else if ((theRates.equals(o)) || (thePrices.equals(o)) || (thePatterns.equals(o))
                     || (theStatement.equals(o))) {
@@ -666,8 +651,14 @@ public class AccountTab extends JPanelWithEvents {
 
             /* If this event relates to the save buttons */
             if (theSaveButtons.equals(o)) {
-                /* Perform the save command */
-                performCommand(evt.getActionCommand());
+                /* Cancel any editing */
+                cancelEditing();
+
+                /* Process the command */
+                theUpdateSet.processCommand(evt.getActionCommand(), theError);
+
+                /* Notify listeners of changes */
+                notifyChanges();
 
             } else if ((theStatement.equals(o)) && (evt instanceof ActionDetailEvent)) {
                 /* Cascade the command upwards */

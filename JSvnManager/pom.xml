@@ -1,9 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.tolcroft.JSvnManager</groupId>
+  <groupId>net.sourceforge.JSvnManager</groupId>
   <artifactId>JSvnManager</artifactId>
   <version>v1.1.0-SNAPSHOT</version>
-  <name>SubVersion Interface</name>
+  <name>Java SubVersion Manager</name>
   <description>SubVersion Manager</description>
   <dependencies>
     <dependency>
@@ -12,8 +12,8 @@
       <version>1.7.5</version>
     </dependency>  
     <dependency>
-      <groupId>uk.co.tolcroft.finapp</groupId>
-      <artifactId>finjira</artifactId>
+      <groupId>net.sourceforge.JiraAccess</groupId>
+      <artifactId>JiraAccess</artifactId>
       <version>v1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -90,7 +90,7 @@
         <configuration>
           <archive>
             <manifest>
-              <packageName>uk.co.tolcroft.SubVersion</packageName>
+              <packageName>net.sourceforge.JSvnManager</packageName>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>

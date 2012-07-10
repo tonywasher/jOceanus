@@ -200,6 +200,7 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
             /* Close the connection */
             theConn.close();
+            theConn = null;
 
             /* Discard Exceptions */
         } catch (SQLException e) {
@@ -318,9 +319,6 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
         if (!bContinue) {
             throw new JDataException(ExceptionClass.LOGIC, "Operation Cancelled");
         }
-
-        /* Reset the update set */
-        pData.clear();
     }
 
     /**

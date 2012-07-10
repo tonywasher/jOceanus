@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.tolcroft.finapp</groupId>
-  <artifactId>finjira</artifactId>
+  <groupId>net.sourceforge.JiraAccess</groupId>
+  <artifactId>JiraAccess</artifactId>
   <version>v1.1.0-SNAPSHOT</version>
-  <name>Java Jira Link</name>
-  <description>Jira Link facilities for SubVersion</description>
+  <name>Java Jira Access Link</name>
+  <description>Jira Generic Access facilities for Java</description>
   <profiles>
     <profile>
       <id>buildclient</id>
@@ -103,10 +103,10 @@
     <url>http://Tony-LapTop:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://Tony-LapTop/svn/finance/Jira</connection>
-    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/Jira</developerConnection>
+    <connection>scm:svn:http://Tony-LapTop/svn/finance/JiraAccess</connection>
+    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JiraAccess</developerConnection>
     <tag>HEAD</tag>
-    <url>http://Tony-LapTop/viewvc/finance/Jira</url>
+    <url>http://Tony-LapTop/viewvc/finance/JiraAccess</url>
   </scm>
   <properties>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
@@ -134,7 +134,7 @@
 	  <wsdlFiles>
 	    <wsdlFile>jirasoapservice-v2_1.wsdl</wsdlFile>
 	  </wsdlFiles>
-	  <packageSpace>uk.co.tolcroft.jira.soap</packageSpace>
+	  <packageSpace>net.sourceforge.JiraAccess.soap</packageSpace>
 	</configuration>
 	<executions>
 	  <execution>
@@ -153,7 +153,7 @@
         <configuration>
           <archive>
             <manifest>
-              <packageName>uk.co.tolcroft.Jira</packageName>
+              <packageName>net.sourceforge.JiraAccess</packageName>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>

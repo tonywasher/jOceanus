@@ -262,7 +262,7 @@ public class ValueField extends JTextField {
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* If this relates to the value */
-            if (e.getSource() == theSelf) {
+            if (theSelf.equals(e.getSource())) {
                 /* Check for finish of edit */
                 finishEdit();
             }

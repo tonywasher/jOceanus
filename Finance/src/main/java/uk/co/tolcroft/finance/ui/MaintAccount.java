@@ -399,7 +399,7 @@ public class MaintAccount extends JPanelWithEvents {
         /* Create the debug entry, attach to Views */
         JDataManager myDataMgr = theView.getDataMgr();
         theDataEntry = myDataMgr.new JDataEntry(Account.class.getSimpleName());
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry.addAsChildOf(mySection);
 
         /* Create the error panel for this view */
@@ -680,6 +680,17 @@ public class MaintAccount extends JPanelWithEvents {
 
         /* Set initial display */
         showAccount();
+    }
+
+    /**
+     * Determine Focus.
+     */
+    protected void determineFocus() {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        theDataEntry.setFocus();
     }
 
     /**
@@ -1166,7 +1177,7 @@ public class MaintAccount extends JPanelWithEvents {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (ClassCastException e) {
                 /* Reset values */
                 theAccount.popHistory();
                 theAccount.pushHistory();
@@ -1200,7 +1211,7 @@ public class MaintAccount extends JPanelWithEvents {
             /* If this event relates to the save buttons */
             if (theSaveButs.equals(o)) {
                 /* Perform the action */
-                theUpdateSet.processCommand(evt.getActionCommand());
+                theUpdateSet.processCommand(evt.getActionCommand(), theError);
 
                 /* Notify of any changes */
                 notifyChanges();
@@ -1249,7 +1260,7 @@ public class MaintAccount extends JPanelWithEvents {
                 }
 
                 /* Handle Exceptions */
-            } catch (Exception e) {
+            } catch (ClassCastException e) {
                 /* Reset values */
                 theAccount.popHistory();
                 theAccount.pushHistory();

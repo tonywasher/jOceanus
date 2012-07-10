@@ -26,7 +26,6 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.swing.GroupLayout;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -155,19 +154,9 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         mySplit.setOneTouchExpandable(true);
         mySplit.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 
-        /* Create the error panel */
+        /* Create the help panel */
         JPanel myPanel = new JPanel();
-
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(myPanel);
-        myPanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(mySplit)
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(mySplit));
+        myPanel.add(mySplit);
 
         /* Set this to be the main panel */
         getContentPane().add(myPanel);

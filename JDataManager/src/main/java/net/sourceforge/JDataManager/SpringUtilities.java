@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * JDataManager: Java Data Manager
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package uk.co.tolcroft.finance.ui;
+package net.sourceforge.JDataManager;
 
 import java.awt.Component;
 

@@ -410,22 +410,6 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     }
 
     /**
-     * Clear lists.
-     */
-    public void clear() {
-        /* Clear the security lists */
-        theControlKeys.clear();
-        theDataKeys.clear();
-        theControlData.clear();
-
-        /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
-            /* Clear the list */
-            myList.clear();
-        }
-    }
-
-    /**
      * Set Version.
      * @param pVersion the version
      */

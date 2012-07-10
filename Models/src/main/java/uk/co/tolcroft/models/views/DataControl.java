@@ -62,6 +62,16 @@ public abstract class DataControl<T extends DataSet<T>> {
     public static final String DATA_ANALYSIS = "Analysis";
 
     /**
+     * Debug View Name.
+     */
+    public static final String DATA_EDIT = "EditViews";
+
+    /**
+     * Debug View Name.
+     */
+    public static final String DATA_MAINT = "Maintenance";
+
+    /**
      * Error Name.
      */
     public static final String DATA_ERROR = "Error";
@@ -160,16 +170,15 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Record new Updates.
-     * @param pUpdates the new Updates
+     * Derive update list.
      */
-    protected void setUpdates(final T pUpdates) {
+    public void deriveUpdates() {
         /* Store the updates */
-        theUpdates = pUpdates;
+        theUpdates = theData.deriveUpdateSet();
 
         /* Update the Data entry */
         JDataEntry myData = getDataEntry(DATA_UPDATES);
-        myData.setObject(pUpdates);
+        myData.setObject(theUpdates);
     }
 
     /**
@@ -233,14 +242,18 @@ public abstract class DataControl<T extends DataSet<T>> {
         JDataEntry myData = getDataEntry(DATA_DATASET);
         JDataEntry myUpdates = getDataEntry(DATA_UPDATES);
         JDataEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
+        JDataEntry myEdit = getDataEntry(DATA_EDIT);
+        JDataEntry myMaint = getDataEntry(DATA_MAINT);
         JDataEntry myError = getDataEntry(DATA_ERROR);
 
         /* Create the structure */
         myViews.addAsRootChild();
-        myAnalysis.addAsRootChild();
+        myEdit.addAsRootChild();
+        myMaint.addAsRootChild();
+        myError.addAsRootChild();
         myData.addAsChildOf(myViews);
         myUpdates.addAsChildOf(myViews);
-        myError.addAsRootChild();
+        myAnalysis.addAsChildOf(myViews);
 
         /* Hide the Error Entry */
         myError.hideEntry();

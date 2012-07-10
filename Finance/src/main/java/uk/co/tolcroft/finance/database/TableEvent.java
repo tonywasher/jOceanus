@@ -110,25 +110,25 @@ public class TableEvent extends TableEncrypted<Event> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == Event.FIELD_DATE) {
+        if (Event.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
-        } else if (iField == Event.FIELD_DESC) {
+        } else if (Event.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
-        } else if (iField == Event.FIELD_AMOUNT) {
+        } else if (Event.FIELD_AMOUNT.equals(iField)) {
             myTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
-        } else if (iField == Event.FIELD_DEBIT) {
+        } else if (Event.FIELD_DEBIT.equals(iField)) {
             myTableDef.setIntegerValue(Event.FIELD_DEBIT, pItem.getDebit().getId());
-        } else if (iField == Event.FIELD_CREDIT) {
+        } else if (Event.FIELD_CREDIT.equals(iField)) {
             myTableDef.setIntegerValue(Event.FIELD_CREDIT, pItem.getCredit().getId());
-        } else if (iField == Event.FIELD_UNITS) {
+        } else if (Event.FIELD_UNITS.equals(iField)) {
             myTableDef.setBinaryValue(Event.FIELD_UNITS, pItem.getUnitsBytes());
-        } else if (iField == Event.FIELD_TRNTYP) {
+        } else if (Event.FIELD_TRNTYP.equals(iField)) {
             myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
-        } else if (iField == Event.FIELD_TAXCREDIT) {
+        } else if (Event.FIELD_TAXCREDIT.equals(iField)) {
             myTableDef.setBinaryValue(Event.FIELD_TAXCREDIT, pItem.getTaxCreditBytes());
-        } else if (iField == Event.FIELD_DILUTION) {
+        } else if (Event.FIELD_DILUTION.equals(iField)) {
             myTableDef.setBinaryValue(Event.FIELD_DILUTION, pItem.getDilutionBytes());
-        } else if (iField == Event.FIELD_YEARS) {
+        } else if (Event.FIELD_YEARS.equals(iField)) {
             myTableDef.setIntegerValue(Event.FIELD_YEARS, pItem.getYears());
         } else {
             super.setFieldValue(pItem, iField);

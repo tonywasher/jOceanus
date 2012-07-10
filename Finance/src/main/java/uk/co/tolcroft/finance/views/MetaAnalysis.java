@@ -410,18 +410,19 @@ public class MetaAnalysis implements PreferenceSetChooser {
             return;
         }
 
-        /* Obtain access to key elements */
-        AssetTotal myAssetTotals = theList.getAssetTotal();
-        MarketTotal myMarketTotals = theList.getMarketTotal();
-        theExternalTotals = theList.getExternalTotal();
-        theTransProfit = theList.getTransTotal(TaxClass.PROFITLOSS);
-        theCoreProfit = theList.getTransTotal(TaxClass.COREPROFITLOSS);
-        theCoreIncome = theList.getTransTotal(TaxClass.COREINCOME);
+        /* Create a set of total buckets */
+        BucketList myTotals = new BucketList(theAnalysis);
 
-        /* Access the iterator */
+        /* Obtain access to key totals elements */
+        AssetTotal myAssetTotals = myTotals.getAssetTotal();
+        MarketTotal myMarketTotals = myTotals.getMarketTotal();
+        theExternalTotals = myTotals.getExternalTotal();
+        theTransProfit = myTotals.getTransTotal(TaxClass.PROFITLOSS);
+        theCoreProfit = myTotals.getTransTotal(TaxClass.COREPROFITLOSS);
+        theCoreIncome = myTotals.getTransTotal(TaxClass.COREINCOME);
+
+        /* Loop through the detail buckets */
         Iterator<AnalysisBucket> myIterator = theList.iterator();
-
-        /* Loop through the buckets */
         while (myIterator.hasNext()) {
             AnalysisBucket myCurr = myIterator.next();
 
@@ -431,7 +432,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 case ASSETDETAIL:
                     /* Adjust Asset Summaries if the account is relevant */
                     if (myCurr.isRelevant()) {
-                        adjustAssetSummary((ActDetail) myCurr);
+                        adjustAssetSummary(myTotals, (ActDetail) myCurr);
                     }
 
                     /* Adjust Market Totals */
@@ -443,7 +444,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 case DEBTDETAIL:
                     /* Adjust Value Summaries */
                     if (myCurr.isRelevant()) {
-                        adjustAssetSummary((ActDetail) myCurr);
+                        adjustAssetSummary(myTotals, (ActDetail) myCurr);
                     }
                     break;
 
@@ -456,10 +457,27 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* Transaction Detail */
                 case TRANSDETAIL:
                     /* Adjust TransactionSummary */
-                    adjustTransSummary((TransDetail) myCurr);
+                    adjustTransSummary(myTotals, (TransDetail) myCurr);
                     break;
 
-                /* Asset Summaries */
+                /* Everything else */
+                default:
+                    /* Nothing to do */
+                    break;
+            }
+        }
+
+        /* Loop through the totals */
+        myIterator = myTotals.iterator();
+        while (myIterator.hasNext()) {
+            AnalysisBucket myCurr = myIterator.next();
+
+            /* Add it to the list */
+            theList.add(myCurr);
+
+            /* Switch on the bucket type */
+            switch (myCurr.getBucketType()) {
+            /* Asset Summaries */
                 case ASSETSUMMARY:
                     /* Adjust Asset Totals */
                     myAssetTotals.addValues((AssetSummary) myCurr);
@@ -650,9 +668,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
     /**
      * Adjust Asset Summary.
+     * @param pTotals the totals
      * @param pBucket the bucket
      */
-    private void adjustAssetSummary(final ActDetail pBucket) {
+    private void adjustAssetSummary(final BucketList pTotals,
+                                    final ActDetail pBucket) {
         ValueAccount myAccount = null;
         AccountType myType = pBucket.getAccountType();
 
@@ -668,7 +688,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 /* If we need to look up the Asset summary */
                 if ((theAssetSummary == null) || (!theAssetSummary.getAccountType().equals(myType))) {
                     /* Access the asset summary */
-                    theAssetSummary = theList.getAssetSummary(myType);
+                    theAssetSummary = pTotals.getAssetSummary(myType);
                 }
 
                 /* Add the value to the asset summary */
@@ -681,9 +701,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
     /**
      * Adjust Transaction Summary.
+     * @param pTotals the totals
      * @param pBucket the bucket
      */
-    private void adjustTransSummary(final TransDetail pBucket) {
+    private static void adjustTransSummary(final BucketList pTotals,
+                                           final TransDetail pBucket) {
         TransactionType myType = pBucket.getTransType();
         TransSummary myBucket;
 
@@ -691,63 +713,63 @@ public class MetaAnalysis implements PreferenceSetChooser {
         switch (myType.getTranClass()) {
             case TAXEDINCOME:
                 /* Adjust the Gross salary bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSSALARY);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSSALARY);
                 myBucket.addValues(pBucket);
                 break;
             case INTEREST:
                 /* Adjust the Gross interest bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSINTEREST);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSINTEREST);
                 myBucket.addValues(pBucket);
                 break;
             case DIVIDEND:
                 /* Adjust the Gross dividend bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSDIVIDEND);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSDIVIDEND);
                 myBucket.addValues(pBucket);
                 break;
             case UNITTRUSTDIVIDEND:
                 /* Adjust the Gross interest bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSUTDIVS);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSUTDIVS);
                 myBucket.addValues(pBucket);
                 break;
             case TAXABLEGAIN:
                 /* Adjust the Taxable Gains bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSTAXGAINS);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSTAXGAINS);
                 myBucket.addValues(pBucket);
                 break;
             case CAPITALGAIN:
                 /* Adjust the Capital Gains bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSCAPGAINS);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSCAPGAINS);
                 myBucket.addValues(pBucket);
                 break;
             case CAPITALLOSS:
                 /* Adjust the Capital Gains bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSCAPGAINS);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSCAPGAINS);
                 myBucket.subtractValues(pBucket);
                 break;
             case NATINSURANCE:
             case BENEFIT:
                 /* Adjust the Gross salary bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSSALARY);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSSALARY);
                 myBucket.addValues(pBucket);
 
                 /* Adjust the Virtual bucket */
-                myBucket = theList.getTransSummary(TaxClass.VIRTUAL);
+                myBucket = pTotals.getTransSummary(TaxClass.VIRTUAL);
                 myBucket.addValues(pBucket);
                 break;
             case RENTALINCOME:
                 /* Adjust the Gross rental bucket */
-                myBucket = theList.getTransSummary(TaxClass.GROSSRENTAL);
+                myBucket = pTotals.getTransSummary(TaxClass.GROSSRENTAL);
                 myBucket.addValues(pBucket);
                 break;
             case TAXCREDIT:
             case TAXOWED:
                 /* Adjust the Tax Paid bucket */
-                myBucket = theList.getTransSummary(TaxClass.TAXPAID);
+                myBucket = pTotals.getTransSummary(TaxClass.TAXPAID);
                 myBucket.addValues(pBucket);
                 break;
             case TAXREFUND:
                 /* Adjust the Tax Paid bucket */
-                myBucket = theList.getTransSummary(TaxClass.TAXPAID);
+                myBucket = pTotals.getTransSummary(TaxClass.TAXPAID);
                 myBucket.subtractValues(pBucket);
                 break;
             case TAXFREEINCOME:
@@ -755,16 +777,16 @@ public class MetaAnalysis implements PreferenceSetChooser {
             case TAXFREEDIVIDEND:
             case DEBTINTEREST:
                 /* Adjust the Tax Free bucket */
-                myBucket = theList.getTransSummary(TaxClass.TAXFREE);
+                myBucket = pTotals.getTransSummary(TaxClass.TAXFREE);
                 myBucket.addValues(pBucket);
                 break;
             case INHERITED:
                 /* Adjust the Tax Free bucket */
-                myBucket = theList.getTransSummary(TaxClass.TAXFREE);
+                myBucket = pTotals.getTransSummary(TaxClass.TAXFREE);
                 myBucket.addValues(pBucket);
 
                 /* Adjust the Non-Core bucket */
-                myBucket = theList.getTransSummary(TaxClass.NONCORE);
+                myBucket = pTotals.getTransSummary(TaxClass.NONCORE);
                 myBucket.addValues(pBucket);
                 break;
             case EXPENSE:
@@ -773,31 +795,31 @@ public class MetaAnalysis implements PreferenceSetChooser {
             case EXTRATAX:
             case WRITEOFF:
                 /* Adjust the Expense bucket */
-                myBucket = theList.getTransSummary(TaxClass.EXPENSE);
+                myBucket = pTotals.getTransSummary(TaxClass.EXPENSE);
                 myBucket.addValues(pBucket);
                 break;
             case RECOVERED:
             case TAXRELIEF:
                 /* Adjust the Expense bucket */
-                myBucket = theList.getTransSummary(TaxClass.EXPENSE);
+                myBucket = pTotals.getTransSummary(TaxClass.EXPENSE);
                 myBucket.subtractValues(pBucket);
                 break;
             case MARKETGROWTH:
                 /* Adjust the Market bucket */
-                myBucket = theList.getTransSummary(TaxClass.MARKET);
+                myBucket = pTotals.getTransSummary(TaxClass.MARKET);
                 myBucket.addValues(pBucket);
 
                 /* Adjust the Non-Core bucket */
-                myBucket = theList.getTransSummary(TaxClass.NONCORE);
+                myBucket = pTotals.getTransSummary(TaxClass.NONCORE);
                 myBucket.addValues(pBucket);
                 break;
             case MARKETSHRINK:
                 /* Adjust the Market bucket */
-                myBucket = theList.getTransSummary(TaxClass.MARKET);
+                myBucket = pTotals.getTransSummary(TaxClass.MARKET);
                 myBucket.subtractValues(pBucket);
 
                 /* Adjust the Non-Core bucket */
-                myBucket = theList.getTransSummary(TaxClass.NONCORE);
+                myBucket = pTotals.getTransSummary(TaxClass.NONCORE);
                 myBucket.subtractValues(pBucket);
                 break;
             case CASHTAKEOVER:

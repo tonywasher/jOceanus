@@ -325,11 +325,9 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
      * @param col the column
      */
     protected void setColumnToNull(final int col) {
-        AbstractTableModel myModel;
-        int row;
-
         /* Access the table model */
-        myModel = theTable.getTableModel();
+        AbstractTableModel myModel = theTable.getTableModel();
+        Class<T> myClass = theTable.getDataClass();
 
         /* Loop through the selected rows */
         for (DataItem myRow : theTable.cacheSelectedRows()) {
@@ -339,7 +337,7 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
             }
 
             /* Determine row */
-            row = myRow.indexOf();
+            int row = myRow.indexOf();
             if (theTable.hasHeader()) {
                 row++;
             }
@@ -349,8 +347,11 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
                 continue;
             }
 
+            /* Access data correctly */
+            T myData = myClass.cast(myRow);
+
             /* set the null value */
-            setNullValue(myRow, col);
+            setNullValue(myData, col);
         }
     }
 
@@ -359,7 +360,7 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
      * @param pItem the item to set the null field in
      * @param col the column to set null
      */
-    protected void setNullValue(final DataItem pItem,
+    protected void setNullValue(final T pItem,
                                 final int col) {
     }
 

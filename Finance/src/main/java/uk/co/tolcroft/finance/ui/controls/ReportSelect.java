@@ -22,19 +22,21 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui.controls;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JPanelWithEvents;
@@ -61,9 +63,54 @@ public class ReportSelect extends JPanelWithEvents {
     private static final long serialVersionUID = 4943254899793653170L;
 
     /**
+     * Strut width.
+     */
+    private static final int STRUT_WIDTH = 10;
+
+    /**
+     * Box width.
+     */
+    private static final int BOX_WIDTH = 200;
+
+    /**
+     * Box height.
+     */
+    private static final int BOX_HEIGHT = 25;
+
+    /**
      * Print operation string.
      */
     public static final String ACTION_PRINT = "PrintRequest";
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ReportSelect.class.getName());
+
+    /**
+     * Text for Report Label.
+     */
+    private static final String NLS_REPORT = NLS_BUNDLE.getString("SelectReport");
+
+    /**
+     * Text for Year Label.
+     */
+    private static final String NLS_YEAR = NLS_BUNDLE.getString("SelectYear");
+
+    /**
+     * Text for Date Label.
+     */
+    private static final String NLS_DATE = NLS_BUNDLE.getString("SelectDate");
+
+    /**
+     * Text for Print Button.
+     */
+    private static final String NLS_PRINT = NLS_BUNDLE.getString("PrintButton");
+
+    /**
+     * Text for Selection Title.
+     */
+    private static final String NLS_TITLE = NLS_BUNDLE.getString("SelectTitle");
 
     /**
      * Data view.
@@ -152,6 +199,8 @@ public class ReportSelect extends JPanelWithEvents {
         /* Create the boxes */
         theReportBox = new JComboBox();
         theYearsBox = new JComboBox();
+        theReportBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
+        theYearsBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
 
         /* Create the DateButton */
         theDateButton = new DateDayButton();
@@ -173,55 +222,33 @@ public class ReportSelect extends JPanelWithEvents {
         theReportBox.setSelectedItem(ReportType.INSTANT);
 
         /* Create the labels */
-        JLabel myRepLabel = new JLabel("Report:");
-        theYearLabel = new JLabel("Year:");
-        theDateLabel = new JLabel("Date:");
+        JLabel myRepLabel = new JLabel(NLS_REPORT);
+        theYearLabel = new JLabel(NLS_YEAR);
+        theDateLabel = new JLabel(NLS_DATE);
 
         /* Create the print button */
-        thePrintButton = new JButton("Print");
+        thePrintButton = new JButton(NLS_PRINT);
         thePrintButton.addActionListener(myListener);
 
         /* Create the selection panel */
-        setBorder(BorderFactory.createTitledBorder("Report Selection"));
+        setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
-        /* Create the layout for the panel */
-        GroupLayout panelLayout = new GroupLayout(this);
-        setLayout(panelLayout);
-
-        /* Set the layout */
-        panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(myRepLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theReportBox)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theYearLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theYearsBox)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theDateLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(thePrintButton).addContainerGap()));
-        panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                  .addComponent(myRepLabel)
-                                  .addComponent(theReportBox)
-                                  .addComponent(theYearLabel)
-                                  .addComponent(theYearsBox, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addComponent(theDateLabel)
-                                  .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                  .addComponent(thePrintButton)));
+        /* Define the layout */
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(myRepLabel);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theReportBox);
+        add(Box.createHorizontalGlue());
+        add(theYearLabel);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theYearsBox);
+        add(theDateLabel);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theDateButton);
+        add(Box.createHorizontalGlue());
+        add(thePrintButton);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Apply the current state */
         theState.applyState();

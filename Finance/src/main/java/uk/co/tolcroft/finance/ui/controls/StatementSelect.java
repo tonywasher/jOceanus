@@ -22,14 +22,16 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui.controls;
 
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.JPanelWithEvents;
 import uk.co.tolcroft.finance.data.Account;
@@ -45,9 +47,25 @@ public class StatementSelect extends JPanelWithEvents {
     private static final long serialVersionUID = 5497562263117308110L;
 
     /**
-     * Width of box.
+     * Strut width.
      */
-    private static final int BOX_WIDTH = 150;
+    private static final int STRUT_WIDTH = 10;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
+            .getBundle(StatementSelect.class.getName());
+
+    /**
+     * Text for View Label.
+     */
+    private static final String NLS_VIEW = NLS_BUNDLE.getString("ViewLabel");
+
+    /**
+     * Text for Selection Title.
+     */
+    private static final String NLS_TITLE = NLS_BUNDLE.getString("StatementTitle");
 
     /**
      * The State Box.
@@ -80,34 +98,22 @@ public class StatementSelect extends JPanelWithEvents {
         theStateBox = new JComboBox();
 
         /* Create the labels */
-        JLabel myStateLabel = new JLabel("View:");
+        JLabel myStateLabel = new JLabel(NLS_VIEW);
 
         /* Add the listener for item changes */
         StatementListener myListener = new StatementListener();
         theStateBox.addItemListener(myListener);
 
         /* Create the panel */
-        setBorder(BorderFactory.createTitledBorder("Statement View"));
+        setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
-        /* Create the layout for the panel */
-        GroupLayout panelLayout = new GroupLayout(this);
-        setLayout(panelLayout);
-
-        /* Set the layout */
-        panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(myStateLabel)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(theStateBox, GroupLayout.PREFERRED_SIZE, BOX_WIDTH,
-                                                GroupLayout.PREFERRED_SIZE).addContainerGap()));
-        panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(panelLayout
-                                  .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                  .addComponent(myStateLabel)
-                                  .addComponent(theStateBox, GroupLayout.PREFERRED_SIZE,
-                                                GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)));
+        /* Define the layout */
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(myStateLabel);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theStateBox);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
     }
 
     @Override

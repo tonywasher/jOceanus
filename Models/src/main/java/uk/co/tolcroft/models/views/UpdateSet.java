@@ -27,12 +27,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import uk.co.tolcroft.models.data.DataList;
 import uk.co.tolcroft.models.data.EditState;
+import uk.co.tolcroft.models.ui.ErrorPanel;
 import uk.co.tolcroft.models.ui.SaveButtons;
 
 /**
@@ -430,8 +432,10 @@ public class UpdateSet implements JDataContents {
     /**
      * Process Save command.
      * @param pCmd the command.
+     * @param pError the error panel
      */
-    public void processCommand(final String pCmd) {
+    public void processCommand(final String pCmd,
+                               ErrorPanel pError) {
         /* Switch on command */
         if (SaveButtons.CMD_OK.equals(pCmd)) {
             applyChanges();
@@ -439,6 +443,14 @@ public class UpdateSet implements JDataContents {
             undoLastChange();
         } else if (SaveButtons.CMD_RESET.equals(pCmd)) {
             resetChanges();
+        }
+
+        /* Access any error */
+        JDataException myError = theControl.getError();
+
+        /* Show the error */
+        if (myError != null) {
+            pError.setError(myError);
         }
     }
 

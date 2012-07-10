@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.Box;
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -38,7 +38,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.LayoutStyle;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.JDataManager.JDataException;
@@ -266,53 +265,27 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * @throws JDataException on error
      */
     public void buildMainWindow(final DataControl<T> pView) throws JDataException {
-        JPanel myProgress;
-        JPanel myStatus;
-        JComponent myMainPanel;
-
         /* Store the view */
         theView = pView;
 
         /* Create the new status bar */
         theStatusBar = new StatusBar(this, theView);
-        myProgress = theStatusBar.getProgressPanel();
+        JPanel myProgress = theStatusBar.getProgressPanel();
         myProgress.setVisible(false);
-        myStatus = theStatusBar.getStatusPanel();
+        JPanel myStatus = theStatusBar.getStatusPanel();
         myStatus.setVisible(false);
 
         /* Create the panel */
         thePanel = new JPanel();
 
         /* Build the Main Panel */
-        myMainPanel = buildMainPanel();
+        JComponent myMainPanel = buildMainPanel();
 
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                         false)
-                                                    .addComponent(myMainPanel, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(myProgress, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                    .addComponent(myStatus, GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup().addComponent(myStatus)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(myProgress)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addComponent(myMainPanel).addContainerGap()));
+        /* Create the layout */
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(myStatus);
+        thePanel.add(myProgress);
+        thePanel.add(myMainPanel);
 
         /* Create the frame */
         theFrame = new JFrame(getFrameName());

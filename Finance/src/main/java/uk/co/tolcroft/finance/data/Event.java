@@ -137,7 +137,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     /**
      * InfoSet Field Id.
      */
-    public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareEqualityField("InfoSet");
+    public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -172,7 +172,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * Obtain Encrypted Decscription Field.
+     * Obtain Encrypted Description Field.
      * @return the Field
      */
     protected EncryptedString getDescField() {
@@ -335,7 +335,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * Obtain Encrypted Decription field.
+     * Obtain Encrypted Description field.
      * @param pValueSet the valueSet
      * @return the field
      */
@@ -907,16 +907,18 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             if (pUnits != null) {
                 /* Create the data */
                 Units myUnits = new Units(pUnits);
+                Units myValue = myUnits;
                 setValueUnits(myUnits);
                 boolean isCredit = pCredit.isPriced();
                 if ((isStockSplit() || isAdminCharge()) && (!myUnits.isPositive())) {
-                    myUnits.negate();
+                    myValue = new Units(myValue);
+                    myValue.negate();
                     isCredit = false;
                 }
                 EventData myData = theInfoSet.getNewData(isCredit
                                                                  ? EventInfoClass.CreditUnits
                                                                  : EventInfoClass.DebitUnits);
-                myData.setUnits(myUnits);
+                myData.setUnits(myValue);
             }
 
             /* If TaxCredit exist */
@@ -1622,9 +1624,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     public Money calculateTaxCredit() {
         FinanceData myData = getDataSet();
         TaxYearList myList = myData.getTaxYears();
-        TaxYear myTax;
-        Rate myRate;
-        Money myCredit;
 
         /* Ignore unless tax credit is null/zero */
         if ((getTaxCredit() != null) && (getTaxCredit().isNonZero())) {
@@ -1637,20 +1636,13 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         }
 
         /* Access the relevant tax year */
-        myTax = myList.findTaxYearForDate(getDate());
+        TaxYear myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
-        if (getTransType().isInterest()) {
-            myRate = myTax.getIntTaxRate();
-        } else {
-            myRate = myTax.getDivTaxRate();
-        }
+        Rate myRate = (getTransType().isInterest()) ? myTax.getIntTaxRate() : myTax.getDivTaxRate();
 
         /* Calculate the tax credit */
-        myCredit = getAmount().taxCreditAtRate(myRate);
-
-        /* Return the tax credit */
-        return myCredit;
+        return getAmount().taxCreditAtRate(myRate);
     }
 
     /**

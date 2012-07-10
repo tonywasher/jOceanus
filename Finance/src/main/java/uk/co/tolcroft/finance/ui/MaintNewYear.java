@@ -77,6 +77,10 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     private transient EventList theEvents = null;
 
     /**
+     * The Data entry.
+     */
+    private final transient JDataEntry theDataEntry;
+    /**
      * The panel.
      */
     private final JPanel thePanel;
@@ -122,32 +126,32 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     /**
      * Date column title.
      */
-    private static final String TITLE_DATE = "Date";
+    private static final String TITLE_DATE = Extract.TITLE_DATE;
 
     /**
      * Description column title.
      */
-    private static final String TITLE_DESC = "Description";
+    private static final String TITLE_DESC = Extract.TITLE_DESC;
 
     /**
      * Transaction Type column title.
      */
-    private static final String TITLE_TRANTYPE = "TransactionType";
+    private static final String TITLE_TRANTYPE = Extract.TITLE_TRANS;
 
     /**
      * Amount column title.
      */
-    private static final String TITLE_AMOUNT = "Amount";
+    private static final String TITLE_AMOUNT = Extract.TITLE_AMOUNT;
 
     /**
      * Debit column title.
      */
-    private static final String TITLE_DEBIT = "Debit";
+    private static final String TITLE_DEBIT = Extract.TITLE_DEBIT;
 
     /**
      * Credit column title.
      */
-    private static final String TITLE_CREDIT = "Credit";
+    private static final String TITLE_CREDIT = Extract.TITLE_CREDIT;
 
     /**
      * Date column id.
@@ -261,10 +265,21 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
 
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        JDataEntry myEntry = myDataMgr.new JDataEntry("NewYear");
-        myEntry.addAsChildOf(mySection);
-        myEntry.setObject(theUpdateSet);
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
+        theDataEntry = myDataMgr.new JDataEntry("NewYear");
+        theDataEntry.addAsChildOf(mySection);
+        theDataEntry.setObject(theUpdateSet);
+    }
+
+    /**
+     * Determine Focus.
+     */
+    protected void determineFocus() {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        theDataEntry.setFocus();
     }
 
     @Override

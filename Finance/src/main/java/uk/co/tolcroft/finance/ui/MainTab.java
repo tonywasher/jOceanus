@@ -25,6 +25,7 @@ package uk.co.tolcroft.finance.ui;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 import javax.swing.JMenu;
@@ -38,6 +39,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDateDay.DateDayRangeSelect;
 import net.sourceforge.JHelpManager.HelpException;
 import net.sourceforge.JHelpManager.HelpModule;
+import net.sourceforge.JSvnManager.threads.SubversionBackup;
 import uk.co.tolcroft.finance.core.LoadArchive;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.data.FinanceData;
@@ -46,7 +48,6 @@ import uk.co.tolcroft.finance.ui.controls.ComboSelect;
 import uk.co.tolcroft.finance.views.View;
 import uk.co.tolcroft.models.MainWindow;
 import uk.co.tolcroft.models.threads.ThreadStatus;
-import uk.co.tolcroft.subversion.threads.SubversionBackup;
 
 /**
  * Main Window for JFinanceApp.
@@ -81,6 +82,46 @@ public class MainTab extends MainWindow<FinanceData> {
      * Maintain Account.
      */
     protected static final int ACTION_MAINTACCOUNT = generateEventId(4);
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MainTab.class.getName());
+
+    /**
+     * Extract tab title.
+     */
+    private static final String TITLE_EXTRACT = NLS_BUNDLE.getString("TabExtract");
+
+    /**
+     * Account tab title.
+     */
+    private static final String TITLE_ACCOUNT = NLS_BUNDLE.getString("TabAccount");
+
+    /**
+     * Report tab title.
+     */
+    private static final String TITLE_REPORT = NLS_BUNDLE.getString("TabReport");
+
+    /**
+     * SpotPrices tab title.
+     */
+    private static final String TITLE_SPOTVIEW = NLS_BUNDLE.getString("TabSpotPrices");
+
+    /**
+     * Maintenance tab title.
+     */
+    private static final String TITLE_MAINT = NLS_BUNDLE.getString("TabMaint");
+
+    /**
+     * Maintenance tab title.
+     */
+    private static final String MENU_ARCHIVE = NLS_BUNDLE.getString("MenuArchive");
+
+    /**
+     * Maintenance tab title.
+     */
+    private static final String MENU_SUBVERSION = NLS_BUNDLE.getString("MenuSubVersion");
 
     /**
      * The data view.
@@ -144,31 +185,6 @@ public class MainTab extends MainWindow<FinanceData> {
     protected ComboSelect getComboList() {
         return theComboList;
     }
-
-    /**
-     * Extract tab title.
-     */
-    private static final String TITLE_EXTRACT = "Extract";
-
-    /**
-     * Account tab title.
-     */
-    private static final String TITLE_ACCOUNT = "Account";
-
-    /**
-     * Report tab title.
-     */
-    private static final String TITLE_REPORT = "Report";
-
-    /**
-     * SpotPrices tab title.
-     */
-    private static final String TITLE_SPOTVIEW = "SpotPrices";
-
-    /**
-     * Maintenance tab title.
-     */
-    private static final String TITLE_MAINT = "Maintenance";
 
     /**
      * Obtain the frame name.
@@ -255,12 +271,12 @@ public class MainTab extends MainWindow<FinanceData> {
     @Override
     protected void addDataMenuItems(final JMenu pMenu) {
         /* Create the file menu items */
-        theLoadSheet = new JMenuItem("Load Spreadsheet");
+        theLoadSheet = new JMenuItem(MENU_ARCHIVE);
         theLoadSheet.addActionListener(this);
         pMenu.add(theLoadSheet);
 
         /* Create the file menu items */
-        theSVBackup = new JMenuItem("Backup SubVersion");
+        theSVBackup = new JMenuItem(MENU_SUBVERSION);
         theSVBackup.addActionListener(this);
         pMenu.add(theSVBackup);
 
@@ -464,9 +480,8 @@ public class MainTab extends MainWindow<FinanceData> {
 
         /* If the selected component is extract */
         if (myComponent.equals(theExtract.getPanel())) {
-            /* Set the debug focus */
-            // theExtract.getDataEntry().setFocus();
-            theExtract.requestFocusInWindow();
+            /* Determine focus of extract */
+            theExtract.determineFocus();
 
             /* If the selected component is account */
         } else if (myComponent.equals(theAccountCtl)) {

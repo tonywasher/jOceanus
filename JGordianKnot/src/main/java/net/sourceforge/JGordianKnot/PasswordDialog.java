@@ -30,16 +30,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
-import javax.swing.GroupLayout;
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.LayoutStyle;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+
+import net.sourceforge.JDataManager.SpringUtilities;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.
@@ -60,6 +65,61 @@ public class PasswordDialog extends JDialog implements ActionListener {
      * password field width.
      */
     private static final int PASSWORD_FIELD_LEN = 30;
+
+    /**
+     * Number of columns.
+     */
+    private static final int NUM_COLS = 3;
+
+    /**
+     * adding width
+     */
+    private static final int PADDING_SIZE = 5;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PasswordDialog.class.getName());
+
+    /**
+     * Text for Password Label.
+     */
+    private static final String NLS_PASSWORD = NLS_BUNDLE.getString("Password");
+
+    /**
+     * Text for Confirm Label.
+     */
+    private static final String NLS_CONFIRM = NLS_BUNDLE.getString("Confirm");
+
+    /**
+     * Text for OK Button.
+     */
+    private static final String NLS_OK = NLS_BUNDLE.getString("OKButton");
+
+    /**
+     * Text for Cancel Button.
+     */
+    private static final String NLS_CANCEL = NLS_BUNDLE.getString("CancelButton");
+
+    /**
+     * Text for Error Panel.
+     */
+    private static final String NLS_ERROR = NLS_BUNDLE.getString("Error");
+
+    /**
+     * Text for Error Panel.
+     */
+    private static final String NLS_CONFIRMERROR = NLS_BUNDLE.getString("ConfirmError");
+
+    /**
+     * Text for Error Panel.
+     */
+    private static final String NLS_LENGTHERR1 = NLS_BUNDLE.getString("LengthError1");
+
+    /**
+     * Text for Error Panel.
+     */
+    private static final String NLS_LENGTHERR2 = NLS_BUNDLE.getString("LengthError2");
 
     /**
      * Obtained password.
@@ -148,12 +208,12 @@ public class PasswordDialog extends JDialog implements ActionListener {
         JPanel myPanel;
 
         /* Create the components */
-        myPassLabel = new JLabel("Password:");
-        myConfLabel = new JLabel("Confirm:");
+        myPassLabel = new JLabel(NLS_PASSWORD, SwingConstants.TRAILING);
+        myConfLabel = new JLabel(NLS_CONFIRM, SwingConstants.TRAILING);
         thePassField = new JPasswordField("", PASSWORD_FIELD_LEN);
         theConfirmField = new JPasswordField("", PASSWORD_FIELD_LEN);
-        theOKButton = new JButton("OK");
-        theCancelButton = new JButton("Cancel");
+        theOKButton = new JButton(NLS_OK);
+        theCancelButton = new JButton(NLS_CANCEL);
         theErrorField = new JLabel();
 
         /* Add the listener for item changes */
@@ -164,102 +224,118 @@ public class PasswordDialog extends JDialog implements ActionListener {
 
         /* Create the error panel */
         theError = new JPanel();
-        theError.setBorder(javax.swing.BorderFactory.createTitledBorder("Error"));
-
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(theError);
-        theError.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(theErrorField)
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(theErrorField));
+        theError.setBorder(BorderFactory.createTitledBorder(NLS_ERROR));
+        theError.add(theErrorField);
 
         /* Set the Error panel to be red and invisible */
         theErrorField.setForeground(Color.red);
         theError.setVisible(false);
 
         /* Create the panel */
-        myPanel = new JPanel();
+        JPanel myForm = new JPanel();
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(myPanel);
-        myPanel.setLayout(myLayout);
-
-        /* If we need confirmation */
+        /* Layout the password panel */
+        SpringLayout mySpring = new SpringLayout();
+        int myNumRows = 1;
+        myForm.setLayout(mySpring);
+        myForm.add(myPassLabel);
+        myForm.add(thePassField);
+        myForm.add(theOKButton);
         if (needConfirm) {
-            /* Set the layout */
-            myLayout.setHorizontalGroup(myLayout
-                    .createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(theError, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
-                                  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(GroupLayout.Alignment.TRAILING,
-                              myLayout.createSequentialGroup()
-                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(myPassLabel).addComponent(myConfLabel))
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                        .addComponent(thePassField)
-                                                        .addComponent(theConfirmField))
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                        .addComponent(theOKButton,
-                                                                      GroupLayout.Alignment.LEADING,
-                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                      Short.MAX_VALUE)
-                                                        .addComponent(theCancelButton,
-                                                                      GroupLayout.Alignment.LEADING,
-                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                      Short.MAX_VALUE))));
-            myLayout.setVerticalGroup(myLayout
-                    .createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(GroupLayout.Alignment.TRAILING,
-                              myLayout.createSequentialGroup()
-                                      .addContainerGap()
-                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                             false).addComponent(myPassLabel)
-                                                        .addComponent(thePassField).addComponent(theOKButton))
-                                      .addContainerGap()
-                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                             false).addComponent(myConfLabel)
-                                                        .addComponent(theConfirmField)
-                                                        .addComponent(theCancelButton)).addContainerGap()
-                                      .addComponent(theError).addContainerGap()));
+            myNumRows++;
+            myForm.add(myConfLabel);
+            myForm.add(theConfirmField);
+            myForm.add(theCancelButton);
+        }
+        SpringUtilities.makeCompactGrid(myForm, mySpring, myNumRows, NUM_COLS, PADDING_SIZE);
 
+        /* Layout the panel */
+        myPanel = new JPanel();
+        myPanel.setLayout(new BoxLayout(myPanel, BoxLayout.Y_AXIS));
+        myPanel.add(myForm);
+        myPanel.add(theError);
+        if (needConfirm) {
             /* Set a focus traversal policy */
             myPanel.setFocusTraversalPolicy(new TraversalPolicy());
             myPanel.setFocusCycleRoot(true);
-
-            /* Else we need no confirmation */
-        } else {
-            /* Set the layout */
-            myLayout.setHorizontalGroup(myLayout
-                    .createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addComponent(theError)
-                    .addGroup(GroupLayout.Alignment.TRAILING,
-                              myLayout.createSequentialGroup()
-                                      .addContainerGap()
-                                      .addComponent(myPassLabel)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                                                       GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                      .addComponent(thePassField)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                       GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                      .addComponent(theOKButton).addContainerGap()));
-            myLayout.setVerticalGroup(myLayout
-                    .createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(GroupLayout.Alignment.TRAILING,
-                              myLayout.createSequentialGroup()
-                                      .addContainerGap()
-                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                             false).addComponent(myPassLabel)
-                                                        .addComponent(thePassField).addComponent(theOKButton))
-                                      .addContainerGap().addComponent(theError).addContainerGap()));
         }
+
+        /* Create the layout for the panel */
+        // GroupLayout myLayout = new GroupLayout(myPanel);
+        // myPanel.setLayout(myLayout);
+
+        /* If we need confirmation */
+        // if (needConfirm) {
+        // /* Set the layout */
+        // myLayout.setHorizontalGroup(myLayout
+        // .createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addComponent(theError, GroupLayout.Alignment.LEADING, GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addGroup(GroupLayout.Alignment.TRAILING,
+        // myLayout.createSequentialGroup()
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+        // .addComponent(myPassLabel).addComponent(myConfLabel))
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addComponent(thePassField)
+        // .addComponent(theConfirmField))
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addComponent(theOKButton,
+        // GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE,
+        // Short.MAX_VALUE)
+        // .addComponent(theCancelButton,
+        // GroupLayout.Alignment.LEADING,
+        // GroupLayout.DEFAULT_SIZE,
+        // GroupLayout.DEFAULT_SIZE,
+        // Short.MAX_VALUE))));
+        // myLayout.setVerticalGroup(myLayout
+        // .createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(GroupLayout.Alignment.TRAILING,
+        // myLayout.createSequentialGroup()
+        // .addContainerGap()
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
+        // false).addComponent(myPassLabel)
+        // .addComponent(thePassField).addComponent(theOKButton))
+        // .addContainerGap()
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
+        // false).addComponent(myConfLabel)
+        // .addComponent(theConfirmField)
+        // .addComponent(theCancelButton)).addContainerGap()
+        // .addComponent(theError).addContainerGap()));
+
+        /* Set a focus traversal policy */
+        // myPanel.setFocusTraversalPolicy(new TraversalPolicy());
+        // myPanel.setFocusCycleRoot(true);
+
+        /* Else we need no confirmation */
+        // } else {
+        // /* Set the layout */
+        // myLayout.setHorizontalGroup(myLayout
+        // .createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addComponent(theError)
+        // .addGroup(GroupLayout.Alignment.TRAILING,
+        // myLayout.createSequentialGroup()
+        // .addContainerGap()
+        // .addComponent(myPassLabel)
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(thePassField)
+        // .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
+        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        // .addComponent(theOKButton).addContainerGap()));
+        // myLayout.setVerticalGroup(myLayout
+        // .createParallelGroup(GroupLayout.Alignment.LEADING)
+        // .addGroup(GroupLayout.Alignment.TRAILING,
+        // myLayout.createSequentialGroup()
+        // .addContainerGap()
+        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
+        // false).addComponent(myPassLabel)
+        // .addComponent(thePassField).addComponent(theOKButton))
+        // .addContainerGap().addComponent(theError).addContainerGap()));
+        // }
 
         /* Set this to be the main panel */
         getContentPane().add(myPanel);
@@ -294,14 +370,14 @@ public class PasswordDialog extends JDialog implements ActionListener {
                 /* If the password is less than the minimum length */
                 if (thePassword.length < MIN_PASSWORD_LEN) {
                     /* Set error and return */
-                    setError("Password must be at least " + MIN_PASSWORD_LEN + " characters long");
+                    setError(NLS_LENGTHERR1 + " " + MIN_PASSWORD_LEN + " " + NLS_LENGTHERR2);
                     return;
                 }
 
                 /* If the confirm password does not match */
                 if (!Arrays.equals(thePassword, theConfirm)) {
                     /* Set error and return */
-                    setError("Confirmation password does not match password");
+                    setError(NLS_CONFIRMERROR);
                     return;
                 }
             }

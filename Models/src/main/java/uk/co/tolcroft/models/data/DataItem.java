@@ -328,6 +328,14 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
+     * Set null value for a field.
+     * @param pField the field to set
+     */
+    public void setNullValue(JDataField pField) {
+        getValueSet().setValue(pField, null);
+    }
+
+    /**
      * Set the Edit State.
      * @param pState the Edit Status
      */
@@ -525,7 +533,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * @return <code>true/false</code>
      */
     public Difference fieldChanged(final JDataField pField) {
-        return theHistory.fieldChanged(pField);
+        return (pField != null) ? theHistory.fieldChanged(pField) : Difference.Identical;
     }
 
     /**
@@ -558,7 +566,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * @return <code>true/false</code>
      */
     public boolean hasErrors(final JDataField pField) {
-        return theErrors.hasErrors(pField);
+        return (pField != null) ? theErrors.hasErrors(pField) : false;
     }
 
     /**
@@ -600,7 +608,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * @return the error text
      */
     public String getFieldErrors(final JDataField pField) {
-        return theErrors.getFieldErrors(pField);
+        return (pField != null) ? theErrors.getFieldErrors(pField) : null;
     }
 
     /**

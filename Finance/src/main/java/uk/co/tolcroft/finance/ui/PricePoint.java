@@ -222,8 +222,8 @@ public class PricePoint extends DataTable<AccountPrice> {
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        theDataPrice = myDataMgr.new JDataEntry("SpotPrices");
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
+        theDataPrice = myDataMgr.new JDataEntry(SpotPrices.class.getSimpleName());
         theDataPrice.addAsChildOf(mySection);
         theDataPrice.setObject(theUpdateSet);
 
@@ -489,8 +489,11 @@ public class PricePoint extends DataTable<AccountPrice> {
         public void actionPerformed(final ActionEvent evt) {
             /* If this event relates to the save buttons */
             if (theSaveButtons.equals(evt.getSource())) {
+                /* Cancel Editing */
+                cancelEditing();
+
                 /* Perform the command */
-                theUpdateSet.processCommand(evt.getActionCommand());
+                theUpdateSet.processCommand(evt.getActionCommand(), theError);
 
                 /* Notify listeners of changes */
                 notifyChanges();

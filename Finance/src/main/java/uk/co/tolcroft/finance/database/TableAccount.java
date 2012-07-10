@@ -115,32 +115,32 @@ public class TableAccount extends TableEncrypted<Account> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == Account.FIELD_NAME) {
+        if (Account.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
-        } else if (iField == Account.FIELD_TYPE) {
+        } else if (Account.FIELD_TYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getActType().getId());
-        } else if (iField == Account.FIELD_DESC) {
+        } else if (Account.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
-        } else if (iField == Account.FIELD_MATURITY) {
+        } else if (Account.FIELD_MATURITY.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getMaturity());
-        } else if (iField == Account.FIELD_CLOSE) {
+        } else if (Account.FIELD_CLOSE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getClose());
-        } else if (iField == Account.FIELD_PARENT) {
+        } else if (Account.FIELD_PARENT.equals(iField)) {
             myTableDef
                     .setIntegerValue(iField, (pItem.getParent() != null) ? pItem.getParent().getId() : null);
-        } else if (iField == Account.FIELD_ALIAS) {
+        } else if (Account.FIELD_ALIAS.equals(iField)) {
             myTableDef.setIntegerValue(iField, (pItem.getAlias() != null) ? pItem.getAlias().getId() : null);
-        } else if (iField == Account.FIELD_WEBSITE) {
+        } else if (Account.FIELD_WEBSITE.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getWebSiteBytes());
-        } else if (iField == Account.FIELD_CUSTNO) {
+        } else if (Account.FIELD_CUSTNO.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getCustNoBytes());
-        } else if (iField == Account.FIELD_USERID) {
+        } else if (Account.FIELD_USERID.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getUserIdBytes());
-        } else if (iField == Account.FIELD_PASSWORD) {
+        } else if (Account.FIELD_PASSWORD.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getPasswordBytes());
-        } else if (iField == Account.FIELD_ACCOUNT) {
+        } else if (Account.FIELD_ACCOUNT.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getAccountBytes());
-        } else if (iField == Account.FIELD_NOTES) {
+        } else if (Account.FIELD_NOTES.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNotesBytes());
         } else {
             super.setFieldValue(pItem, iField);

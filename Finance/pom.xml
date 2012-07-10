@@ -7,7 +7,7 @@
   <description>Finance Application</description>
   <dependencies>
     <dependency>
-      <groupId>uk.co.tolcroft.JSvnManager</groupId>
+      <groupId>net.sourceforge.JSvnManager</groupId>
       <artifactId>JSvnManager</artifactId>
       <version>v1.1.0-SNAPSHOT</version>
     </dependency>

@@ -98,13 +98,13 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == AccountRate.FIELD_ACCOUNT) {
+        if (AccountRate.FIELD_ACCOUNT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getAccount().getId());
-        } else if (iField == AccountRate.FIELD_RATE) {
+        } else if (AccountRate.FIELD_RATE.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getRateBytes());
-        } else if (iField == AccountRate.FIELD_BONUS) {
+        } else if (AccountRate.FIELD_BONUS.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getBonusBytes());
-        } else if (iField == AccountRate.FIELD_ENDDATE) {
+        } else if (AccountRate.FIELD_ENDDATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getEndDate());
         } else {
             super.setFieldValue(pItem, iField);

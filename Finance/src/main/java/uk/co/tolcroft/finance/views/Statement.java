@@ -603,6 +603,7 @@ public class Statement implements JDataContents {
         public StatementLine(final StatementLines pList) {
             super(pList);
             theStatement = pList.getStatement();
+            setValueIsCredit(false);
             setDebit(pList.getAccount());
         }
 
@@ -616,9 +617,7 @@ public class Statement implements JDataContents {
             /* Make this an element */
             super(pList, pEvent);
             theStatement = pList.getStatement();
-            if (!Difference.isEqual(getDebit(), pList.getAccount())) {
-                setValueIsCredit(true);
-            }
+            setValueIsCredit(!Difference.isEqual(getDebit(), pList.getAccount()));
             setBase(pEvent);
         }
 

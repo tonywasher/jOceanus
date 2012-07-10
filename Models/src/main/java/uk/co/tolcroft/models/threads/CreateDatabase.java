@@ -82,6 +82,9 @@ public class CreateDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
         T myData = theControl.getData();
         myData.reBase(myNull);
 
+        /* Derive the new set of updates */
+        theControl.deriveUpdates();
+
         /* Return null value */
         return null;
     }

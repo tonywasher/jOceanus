@@ -148,17 +148,17 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * Date column title.
      */
-    private static final String TITLE_DATE = "Date";
+    private static final String TITLE_DATE = Extract.TITLE_DATE;
 
     /**
      * Description column title.
      */
-    private static final String TITLE_DESC = "Description";
+    private static final String TITLE_DESC = Extract.TITLE_DESC;
 
     /**
      * Transaction type column title.
      */
-    private static final String TITLE_TRANS = "TransactionType";
+    private static final String TITLE_TRANS = Extract.TITLE_TRANS;
 
     /**
      * Partner column title.
@@ -168,12 +168,12 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * Credit column title.
      */
-    private static final String TITLE_CREDIT = "Credit";
+    private static final String TITLE_CREDIT = Extract.TITLE_CREDIT;
 
     /**
      * Debit column title.
      */
-    private static final String TITLE_DEBIT = "Debit";
+    private static final String TITLE_DEBIT = Extract.TITLE_DEBIT;
 
     /**
      * Frequency column title.

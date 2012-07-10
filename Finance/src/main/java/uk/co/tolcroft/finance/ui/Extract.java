@@ -27,9 +27,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
-import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -85,6 +85,96 @@ public class Extract extends DataTable<Event> {
      * Serial Id.
      */
     private static final long serialVersionUID = -5531752729052421790L;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Extract.class.getName());
+
+    /**
+     * Date column title.
+     */
+    protected static final String TITLE_DATE = NLS_BUNDLE.getString("TitleDate");
+
+    /**
+     * Description column title.
+     */
+    protected static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
+
+    /**
+     * TransType column title.
+     */
+    protected static final String TITLE_TRANS = NLS_BUNDLE.getString("TitleTran");
+
+    /**
+     * Amount column title.
+     */
+    protected static final String TITLE_AMOUNT = NLS_BUNDLE.getString("TitleAmount");
+
+    /**
+     * Debit column title.
+     */
+    protected static final String TITLE_DEBIT = NLS_BUNDLE.getString("TitleDebit");
+
+    /**
+     * Credit column title.
+     */
+    protected static final String TITLE_CREDIT = NLS_BUNDLE.getString("TitleCredit");
+
+    /**
+     * Units column title.
+     */
+    protected static final String TITLE_UNITS = NLS_BUNDLE.getString("TitleUnits");
+
+    /**
+     * Dilution column title.
+     */
+    protected static final String TITLE_DILUTE = NLS_BUNDLE.getString("TitleDilution");
+
+    /**
+     * TaxCredit column title.
+     */
+    protected static final String TITLE_TAXCRED = NLS_BUNDLE.getString("TitleTax");
+
+    /**
+     * Years column title.
+     */
+    protected static final String TITLE_YEARS = NLS_BUNDLE.getString("TitleYears");
+
+    /**
+     * PopUp viewAccount.
+     */
+    private static final String POPUP_VIEW = NLS_BUNDLE.getString("PopUpViewAccount");
+
+    /**
+     * PopUp maintAccount.
+     */
+    private static final String POPUP_MAINT = NLS_BUNDLE.getString("PopUpMaintAccount");
+
+    /**
+     * PopUp nullUnits.
+     */
+    private static final String POPUP_NULLUNITS = NLS_BUNDLE.getString("PopUpNullUnits");
+
+    /**
+     * PopUp nullTaxCredit.
+     */
+    private static final String POPUP_NULLTAX = NLS_BUNDLE.getString("PopUpNullTax");
+
+    /**
+     * PopUp nullYears.
+     */
+    private static final String POPUP_NULLYEARS = NLS_BUNDLE.getString("PopUpNullYears");
+
+    /**
+     * PopUp nullDilution.
+     */
+    private static final String POPUP_NULLDILUTE = NLS_BUNDLE.getString("PopUpNullDilute");
+
+    /**
+     * PopUp calcTax.
+     */
+    private static final String POPUP_CALCTAX = NLS_BUNDLE.getString("PopUpCalcTax");
 
     /**
      * Data View.
@@ -168,56 +258,6 @@ public class Extract extends DataTable<Event> {
     public boolean hasHeader() {
         return false;
     }
-
-    /**
-     * Date column title.
-     */
-    private static final String TITLE_DATE = "Date";
-
-    /**
-     * Description column title.
-     */
-    private static final String TITLE_DESC = "Description";
-
-    /**
-     * TransType column title.
-     */
-    private static final String TITLE_TRANS = "TransactionType";
-
-    /**
-     * Amount column title.
-     */
-    private static final String TITLE_AMOUNT = "Amount";
-
-    /**
-     * Debit column title.
-     */
-    private static final String TITLE_DEBIT = "Debit";
-
-    /**
-     * Credit column title.
-     */
-    private static final String TITLE_CREDIT = "Credit";
-
-    /**
-     * Units column title.
-     */
-    private static final String TITLE_UNITS = "Units";
-
-    /**
-     * Dilution column title.
-     */
-    private static final String TITLE_DILUTE = "Dilution";
-
-    /**
-     * TaxCredit column title.
-     */
-    private static final String TITLE_TAXCRED = "TaxCredit";
-
-    /**
-     * Years column title.
-     */
-    private static final String TITLE_YEARS = "Yrs";
 
     /**
      * Date column id.
@@ -334,9 +374,6 @@ public class Extract extends DataTable<Event> {
      * @param pView the data view
      */
     public Extract(final View pView) {
-        /* Declare variables */
-        GroupLayout myLayout;
-
         /* Record the passed details */
         theView = pView;
 
@@ -347,8 +384,8 @@ public class Extract extends DataTable<Event> {
 
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        theDataExtract = myDataMgr.new JDataEntry("Extract");
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
+        theDataExtract = myDataMgr.new JDataEntry(Extract.class.getSimpleName());
         theDataExtract.addAsChildOf(mySection);
 
         /* Create the model and declare it to our superclass */
@@ -387,110 +424,23 @@ public class Extract extends DataTable<Event> {
         thePanel = new JPanel();
 
         /* Create the layout for the panel */
-        myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(theError);
         thePanel.add(theSelect);
         thePanel.add(getScrollPane());
         thePanel.add(theSaveButtons);
-        /* Set the layout */
-        // myLayout.setHorizontalGroup(myLayout
-        // .createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(myLayout.createSequentialGroup()
-        // .addContainerGap()
-        // .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING, true)
-        // .addComponent(theError, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(theSelect, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(getScrollPane(),
-        // GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE, PANEL_WIDTH,
-        // Short.MAX_VALUE)
-        // .addComponent(theTabButs, GroupLayout.Alignment.LEADING,
-        // GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        // .addContainerGap()));
-        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(GroupLayout.Alignment.TRAILING,
-        // myLayout.createSequentialGroup().addComponent(theError).addComponent(theSelect)
-        // .addComponent(getScrollPane()).addComponent(theTabButs)));
     }
 
     /**
-     * Perform a command.
-     * @param pCmd the command to perform
+     * Determine focus.
      */
-    public void performCommand(final String pCmd) {
-        /* Cancel any editing */
-        cancelEditing();
+    protected void determineFocus() {
+        /* Request the focus */
+        requestFocusInWindow();
 
-        /* Process the command */
-        theUpdateSet.processCommand(pCmd);
-
-        /* Access any error */
-        JDataException myError = theView.getError();
-
-        /* Show the error */
-        if (myError != null) {
-            theError.setError(myError);
-        }
-
-        /* Notify listeners of changes */
-        notifyChanges();
+        /* Focus on the Data entry */
+        theDataExtract.setFocus();
     }
-
-    /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    // @Override
-    // public void lockOnError(final boolean isError) {
-    /* Hide selection panel */
-    // theSelect.setVisible(!isError);
-
-    /* Lock scroll-able area */
-    // getScrollPane().setEnabled(!isError);
-
-    /* Lock row/tab buttons area */
-    // theTabButs.setEnabled(!isError);
-    // }
-
-    /**
-     * Notify table that there has been a change in selection by an underlying control.
-     * @param obj the underlying control that has changed selection
-     */
-    // @Override
-    // public void notifySelection(final Object obj) {
-    /* if this is a change from the range */
-    // if (theSelect.equals(obj)) {
-    /* Protect against exceptions */
-    // try {
-    /* Set the new range */
-    // setSelection(theSelect.getRange());
-
-    /* Create SavePoint */
-    // theSelect.createSavePoint();
-
-    /* Catch Exceptions */
-    // } catch (JDataException e) {
-    /* Build the error */
-    // JDataException myError = new JDataException(ExceptionClass.DATA,
-    // "Failed to change selection", e);
-
-    /* Show the error */
-    // theError.setError(myError);
-
-    /* Restore SavePoint */
-    // theSelect.restoreSavePoint();
-    // }
-    // }
-    // }
 
     /**
      * Refresh views/controls after a load/update of underlying data.
@@ -568,7 +518,7 @@ public class Extract extends DataTable<Event> {
             /* Catch exceptions */
         } catch (JDataException e) {
             /* Build the error */
-            JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to select Period", e);
+            JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to select Range", e);
 
             /* Show the error */
             theError.setError(myError);
@@ -627,17 +577,44 @@ public class Extract extends DataTable<Event> {
         }
 
         @Override
-        public void propertyChange(final PropertyChangeEvent e) {
-            // TODO Auto-generated method stub
+        public void propertyChange(final PropertyChangeEvent evt) {
+            /* If this is the range select panel */
+            if (theSelect.equals(evt.getSource())) {
+                /* Protect against exceptions */
+                try {
+                    /* Set the new range */
+                    setSelection(theSelect.getRange());
 
+                    /* Create SavePoint */
+                    theSelect.createSavePoint();
+
+                    /* Catch Exceptions */
+                } catch (JDataException e) {
+                    /* Build the error */
+                    JDataException myError = new JDataException(ExceptionClass.DATA,
+                            "Failed to change selection", e);
+
+                    /* Show the error */
+                    theError.setError(myError);
+
+                    /* Restore SavePoint */
+                    theSelect.restoreSavePoint();
+                }
+            }
         }
 
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* If this event relates to the save buttons */
             if (theSaveButtons.equals(e.getSource())) {
-                /* Perform the save command */
-                performCommand(e.getActionCommand());
+                /* Cancel any editing */
+                cancelEditing();
+
+                /* Perform the command */
+                theUpdateSet.processCommand(e.getActionCommand(), theError);
+
+                /* Notify listeners of changes */
+                notifyChanges();
             }
         }
     }
@@ -1002,41 +979,6 @@ public class Extract extends DataTable<Event> {
      */
     private final class ExtractMouse extends DataMouse<Event> {
         /**
-         * PopUp viewAccount.
-         */
-        private static final String POPUP_VIEW = "View Account";
-
-        /**
-         * PopUp maintAccount.
-         */
-        private static final String POPUP_MAINT = "Maintain Account";
-
-        /**
-         * PopUp nullUnits.
-         */
-        private static final String POPUP_NULLUNITS = "Set Null Units";
-
-        /**
-         * PopUp nullTaxCredit.
-         */
-        private static final String POPUP_NULLTAX = "Set Null TaxCredit";
-
-        /**
-         * PopUp nullYears.
-         */
-        private static final String POPUP_NULLYEARS = "Set Null Years";
-
-        /**
-         * PopUp nullDilution.
-         */
-        private static final String POPUP_NULLDILUTE = "Set Null Dilution";
-
-        /**
-         * PopUp calcTax.
-         */
-        private static final String POPUP_CALCTAX = "Calculate Tax Credit";
-
-        /**
          * Constructor.
          */
         private ExtractMouse() {
@@ -1242,6 +1184,28 @@ public class Extract extends DataTable<Event> {
                 myItem.setActionCommand(POPUP_MAINT + ":" + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
+            }
+        }
+
+        @Override
+        protected void setNullValue(final Event pItem,
+                                    final int col) {
+            /* Switch on the column */
+            switch (col) {
+                case COLUMN_TAXCRED:
+                    pItem.setNullValue(Event.FIELD_TAXCREDIT);
+                    break;
+                case COLUMN_UNITS:
+                    pItem.setNullValue(Event.FIELD_UNITS);
+                    break;
+                case COLUMN_DILUTE:
+                    pItem.setNullValue(Event.FIELD_DILUTION);
+                    break;
+                case COLUMN_YEARS:
+                    pItem.setNullValue(Event.FIELD_YEARS);
+                    break;
+                default:
+                    break;
             }
         }
 

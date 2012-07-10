@@ -52,7 +52,6 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.JDateButton.JDateConfig;
-import net.sourceforge.JDateButton.Demo.DateExample;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayButton;
 import net.sourceforge.JDateDay.DateDayCellEditor;
@@ -140,7 +139,7 @@ public class DateDayExample extends JApplet {
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getLogger(DateExample.class.getName());
+    private static Logger theLogger = Logger.getAnonymousLogger();
 
     @Override
     public void init() {

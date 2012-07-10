@@ -127,21 +127,21 @@ public class TablePattern extends TableEncrypted<Event> {
 
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == Pattern.FIELD_ACCOUNT) {
+        if (Pattern.FIELD_ACCOUNT.equals(iField)) {
             myTableDef.setIntegerValue(Pattern.FIELD_ACCOUNT, myItem.getAccount().getId());
-        } else if (iField == Event.FIELD_DATE) {
+        } else if (Event.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
-        } else if (iField == Event.FIELD_DESC) {
+        } else if (Event.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
-        } else if (iField == Event.FIELD_AMOUNT) {
+        } else if (Event.FIELD_AMOUNT.equals(iField)) {
             myTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
-        } else if (iField == Pattern.FIELD_PARTNER) {
+        } else if (Pattern.FIELD_PARTNER.equals(iField)) {
             myTableDef.setIntegerValue(Pattern.FIELD_PARTNER, myItem.getPartner().getId());
-        } else if (iField == Event.FIELD_TRNTYP) {
+        } else if (Event.FIELD_TRNTYP.equals(iField)) {
             myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
-        } else if (iField == Pattern.FIELD_ISCREDIT) {
+        } else if (Pattern.FIELD_ISCREDIT.equals(iField)) {
             myTableDef.setBooleanValue(Pattern.FIELD_ISCREDIT, myItem.isCredit());
-        } else if (iField == Pattern.FIELD_FREQ) {
+        } else if (Pattern.FIELD_FREQ.equals(iField)) {
             myTableDef.setIntegerValue(Pattern.FIELD_FREQ, myItem.getFrequency().getId());
         } else {
             super.setFieldValue(pItem, iField);

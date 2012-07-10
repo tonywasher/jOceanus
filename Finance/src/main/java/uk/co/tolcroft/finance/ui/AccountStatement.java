@@ -23,13 +23,16 @@
 package uk.co.tolcroft.finance.ui;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
-import javax.swing.GroupLayout;
+import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.LayoutStyle;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
@@ -177,17 +180,17 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Date column header.
      */
-    private static final String TITLE_DATE = "Date";
+    private static final String TITLE_DATE = Extract.TITLE_DATE;
 
     /**
      * Description column header.
      */
-    private static final String TITLE_DESC = "Description";
+    private static final String TITLE_DESC = Extract.TITLE_DESC;
 
     /**
      * Transaction Type column header.
      */
-    private static final String TITLE_TRANS = "TransactionType";
+    private static final String TITLE_TRANS = Extract.TITLE_TRANS;
 
     /**
      * Partner column header.
@@ -197,12 +200,12 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Credit column header.
      */
-    private static final String TITLE_CREDIT = "Credit";
+    private static final String TITLE_CREDIT = Extract.TITLE_CREDIT;
 
     /**
      * Debit column header.
      */
-    private static final String TITLE_DEBIT = "Debit";
+    private static final String TITLE_DEBIT = Extract.TITLE_DEBIT;
 
     /**
      * Balance column header.
@@ -212,17 +215,17 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Dilution column header.
      */
-    private static final String TITLE_DILUTION = "Dilution";
+    private static final String TITLE_DILUTION = Extract.TITLE_DILUTE;
 
     /**
      * TaxCredit column header.
      */
-    private static final String TITLE_TAXCREDIT = "TaxCredit";
+    private static final String TITLE_TAXCREDIT = Extract.TITLE_TAXCRED;
 
     /**
      * Years column header.
      */
-    private static final String TITLE_YEARS = "Years";
+    private static final String TITLE_YEARS = Extract.TITLE_YEARS;
 
     /**
      * Date column id.
@@ -325,11 +328,6 @@ public class AccountStatement extends DataTable<Event> {
     private static final int WIDTH_YEARS = 50;
 
     /**
-     * Panel width.
-     */
-    private static final int WIDTH_PANEL = 900;
-
-    /**
      * Constructor for Statement Window.
      * @param pView the view
      * @param pUpdateSet the update set
@@ -364,46 +362,22 @@ public class AccountStatement extends DataTable<Event> {
         theSelect = new DateDayRangeSelect();
         theStateBox = new StatementSelect();
 
+        /* Create listeners */
+        StatementListener myListener = new StatementListener();
+        theSelect.addPropertyChangeListener(DateDayRangeSelect.PROPERTY_RANGE, myListener);
+        theStateBox.addChangeListener(myListener);
+
+        /* Create a small panel for selection */
+        JPanel myTop = new JPanel();
+        myTop.setLayout(new BoxLayout(myTop, BoxLayout.X_AXIS));
+        myTop.add(theSelect);
+        myTop.add(theStateBox);
+
         /* Create the panel */
         thePanel = new JPanel();
-
-        /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(thePanel);
-        thePanel.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING,
-                                                                         false)
-                                                    .addGroup(myLayout.createSequentialGroup()
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(theSelect,
-                                                                                                      GroupLayout.Alignment.LEADING,
-                                                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                                                      Short.MAX_VALUE))
-                                                                      .addContainerGap()
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(theStateBox,
-                                                                                                      GroupLayout.Alignment.LEADING,
-                                                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                                                      Short.MAX_VALUE)))
-                                                    .addComponent(getScrollPane(),
-                                                                  GroupLayout.Alignment.LEADING,
-                                                                  GroupLayout.DEFAULT_SIZE, WIDTH_PANEL,
-                                                                  Short.MAX_VALUE)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(GroupLayout.Alignment.TRAILING,
-                          myLayout.createSequentialGroup()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                    .addComponent(theSelect).addComponent(theStateBox))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(getScrollPane()).addContainerGap()));
+        thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
+        thePanel.add(myTop);
+        thePanel.add(getScrollPane());
     }
 
     // @Override
@@ -429,44 +403,50 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
-     * Notify table that there has been a change in selection by an underlying control.
-     * @param obj the underlying control that has changed selection
+     * The listener class.
      */
-    // @Override
-    // public void notifySelection(final Object obj) {
-    /* if this is a change from the range */
-    // if (theSelect.equals(obj)) {
-    /* Protect against exceptions */
-    // try {
-    /* Set the new range */
-    // setSelection(theSelect.getRange());
+    private final class StatementListener implements PropertyChangeListener, ChangeListener {
 
-    /* Create SavePoint */
-    // theSelect.createSavePoint();
+        @Override
+        public void stateChanged(ChangeEvent evt) {
+            /* if this is a change from the statement type */
+            if (theStateBox.equals(evt.getSource())) {
+                /* Reset the account */
+                try {
+                    setSelection(theAccount);
+                } catch (JDataException e) {
+                    e = null;
+                }
+            }
+        }
 
-    /* Catch Exceptions */
-    // } catch (JDataException e) {
-    /* Build the error */
-    // JDataException myError = new JDataException(ExceptionClass.DATA,
-    // "Failed to change selection", e);
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            /* If this is the range select panel */
+            if (theSelect.equals(evt.getSource())) {
+                /* Protect against exceptions */
+                try {
+                    /* Set the new range */
+                    setSelection(theSelect.getRange());
 
-    /* Show the error */
-    // theError.setError(myError);
+                    /* Create SavePoint */
+                    theSelect.createSavePoint();
 
-    /* Restore SavePoint */
-    // theSelect.restoreSavePoint();
-    // }
+                    /* Catch Exceptions */
+                } catch (JDataException e) {
+                    /* Build the error */
+                    JDataException myError = new JDataException(ExceptionClass.DATA,
+                            "Failed to change selection", e);
 
-    /* else if this is a change from the type */
-    // } else if (theStateBox.equals(obj)) {
-    /* Reset the account */
-    // try {
-    // setSelection(theAccount);
-    // } catch (Exception e) {
-    // e = null;
-    // }
-    // }
-    // }
+                    /* Show the error */
+                    theError.setError(myError);
+
+                    /* Restore SavePoint */
+                    theSelect.restoreSavePoint();
+                }
+            }
+        }
+    }
 
     /**
      * Refresh views/controls after a load/update of underlying data.

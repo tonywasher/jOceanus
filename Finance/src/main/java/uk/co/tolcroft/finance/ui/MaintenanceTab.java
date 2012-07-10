@@ -24,6 +24,7 @@ package uk.co.tolcroft.finance.ui;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.util.ResourceBundle;
 
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
@@ -31,11 +32,9 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataManager.JPanelWithEvents;
 import uk.co.tolcroft.finance.data.Account;
 import uk.co.tolcroft.finance.views.View;
-import uk.co.tolcroft.models.views.DataControl;
 
 /**
  * Maintenance Tab panel.
@@ -46,6 +45,36 @@ public class MaintenanceTab extends JPanelWithEvents {
      * The serial Id.
      */
     private static final long serialVersionUID = 4291381331160920L;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintenanceTab.class.getName());
+
+    /**
+     * Accounts tab title.
+     */
+    private static final String TITLE_ACCOUNTS = NLS_BUNDLE.getString("TabAccount");
+
+    /**
+     * TaxYears tab title.
+     */
+    private static final String TITLE_TAXYEARS = NLS_BUNDLE.getString("TabTaxYear");
+
+    /**
+     * Preferences tab title.
+     */
+    private static final String TITLE_PREFERENCES = NLS_BUNDLE.getString("TabPreference");
+
+    /**
+     * NewYear tab title.
+     */
+    private static final String TITLE_NEWYEAR = NLS_BUNDLE.getString("TabNewYear");
+
+    /**
+     * Static tab title.
+     */
+    private static final String TITLE_STATIC = NLS_BUNDLE.getString("TabStatic");
 
     /**
      * The Data View.
@@ -88,11 +117,6 @@ public class MaintenanceTab extends JPanelWithEvents {
     private final MaintStatic theStatic;
 
     /**
-     * The DataEntry.
-     */
-    private final transient JDataEntry theDataEntry;
-
-    /**
      * Obtain the view.
      * @return the view
      */
@@ -109,45 +133,12 @@ public class MaintenanceTab extends JPanelWithEvents {
     }
 
     /**
-     * Obtain the DataEntry.
-     * @return the entry
-     */
-    public JDataEntry getDataEntry() {
-        return theDataEntry;
-    }
-
-    /**
      * Obtain the data manager.
      * @return the manager
      */
     public JDataManager getDataManager() {
         return theParent.getDataMgr();
     }
-
-    /**
-     * Accounts tab title.
-     */
-    private static final String TITLE_ACCOUNTS = "Accounts";
-
-    /**
-     * TaxYears tab title.
-     */
-    private static final String TITLE_TAXYEARS = "TaxYears";
-
-    /**
-     * Preferences tab title.
-     */
-    private static final String TITLE_PREFERENCES = "Preferences";
-
-    /**
-     * NewYear tab title.
-     */
-    private static final String TITLE_NEWYEAR = "PatternYear";
-
-    /**
-     * Static tab title.
-     */
-    private static final String TITLE_STATIC = "Static";
 
     /**
      * Constructor.
@@ -157,12 +148,6 @@ public class MaintenanceTab extends JPanelWithEvents {
         /* Store details */
         theView = pTop.getView();
         theParent = pTop;
-
-        /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
-        theDataEntry = myDataMgr.new JDataEntry("Maintenance");
-        theDataEntry.addAsChildOf(mySection);
 
         /* Create a listener */
         MaintenanceListener myListener = new MaintenanceListener();
@@ -322,18 +307,17 @@ public class MaintenanceTab extends JPanelWithEvents {
         /* If the selected component is Accounts */
         if (myComponent.equals(theAccountTab)) {
             /* Set the debug focus */
-            // theAccountTab.getDataEntry().setFocus();
+            theAccountTab.determineFocus();
 
             /* If the selected component is TaxYear */
         } else if (myComponent.equals(theTaxYearTab)) {
             /* Set the debug focus */
-            // theTaxYearTab.getDataEntry().setFocus();
+            theTaxYearTab.determineFocus();
 
             /* If the selected component is NewYear */
         } else if (myComponent.equals(thePatternYear.getPanel())) {
             /* Set the debug focus */
-            // thePatternYear.getDataEntry().setFocus();
-            thePatternYear.requestFocusInWindow();
+            thePatternYear.determineFocus();
 
             /* If the selected component is Static */
         } else if (myComponent.equals(theStatic)) {

@@ -22,16 +22,18 @@
  ******************************************************************************/
 package uk.co.tolcroft.finance.ui.controls;
 
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.LayoutStyle;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JPanelWithEvents;
@@ -53,9 +55,49 @@ public class AccountSelect extends JPanelWithEvents {
     private static final long serialVersionUID = -3537658425524334120L;
 
     /**
-     * Width of Account Types box.
+     * Strut width.
      */
-    private static final int TYPES_WIDTH = 100;
+    private static final int STRUT_WIDTH = 10;
+
+    /**
+     * Box width.
+     */
+    private static final int BOX_WIDTH = 200;
+
+    /**
+     * Box height.
+     */
+    private static final int BOX_HEIGHT = 25;
+
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountSelect.class.getName());
+
+    /**
+     * Text for AccountType Label.
+     */
+    private static final String NLS_TYPE = NLS_BUNDLE.getString("AccountType");
+
+    /**
+     * Text for Account Label.
+     */
+    private static final String NLS_ACCOUNT = NLS_BUNDLE.getString("Account");
+
+    /**
+     * Text for Show Closed.
+     */
+    private static final String NLS_CLOSED = NLS_BUNDLE.getString("ShowClosed");
+
+    /**
+     * Text for Show Deleted.
+     */
+    private static final String NLS_DELETED = NLS_BUNDLE.getString("ShowDeleted");
+
+    /**
+     * Text for Selection Title.
+     */
+    private static final String NLS_TITLE = NLS_BUNDLE.getString("SelectTitle");
 
     /**
      * Data view.
@@ -151,6 +193,8 @@ public class AccountSelect extends JPanelWithEvents {
         theAccountBox = new JComboBox();
         theShowClosed = new JCheckBox();
         theShowDeleted = new JCheckBox();
+        theTypesBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
+        theAccountBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
 
         /* Create initial state */
         theState = new AccountState();
@@ -160,88 +204,36 @@ public class AccountSelect extends JPanelWithEvents {
         buildAccounts();
 
         /* Set the text for the check-box */
-        theShowClosed.setText("Show Closed");
+        theShowClosed.setText(NLS_CLOSED);
         theShowClosed.setSelected(doShowClosed());
 
         /* Set the text for the check-box */
-        theShowDeleted.setText("Show Deleted");
+        theShowDeleted.setText(NLS_DELETED);
         theShowDeleted.setSelected(doShowDeleted());
 
         /* Create the labels */
-        JLabel myTypeLabel = new JLabel("Account Type:");
-        JLabel myAccountLabel = new JLabel("Account:");
+        JLabel myTypeLabel = new JLabel(NLS_TYPE);
+        JLabel myAccountLabel = new JLabel(NLS_ACCOUNT);
 
         /* Create the panel */
-        setBorder(BorderFactory.createTitledBorder("Account Selection"));
+        setBorder(BorderFactory.createTitledBorder(NLS_TITLE));
 
-        /* Create the layout for the panel */
-        GroupLayout panelLayout = new GroupLayout(this);
-        setLayout(panelLayout);
-
-        /* If we are showing deleted */
+        /* Define the layout */
+        setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(myTypeLabel);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theTypesBox);
+        add(Box.createHorizontalGlue());
+        add(myAccountLabel);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
+        add(theAccountBox);
+        add(Box.createHorizontalGlue());
+        add(theShowClosed);
+        add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         if (showDeleted) {
-            /* Set the layout */
-            panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(panelLayout
-                                      .createSequentialGroup()
-                                      .addContainerGap()
-                                      .addComponent(myTypeLabel)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                      .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, TYPES_WIDTH,
-                                                    GroupLayout.PREFERRED_SIZE)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                      .addComponent(myAccountLabel)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                      .addComponent(theAccountBox)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                      .addComponent(theShowClosed, GroupLayout.PREFERRED_SIZE,
-                                                    GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                      .addComponent(theShowDeleted, GroupLayout.PREFERRED_SIZE,
-                                                    GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                      .addContainerGap()));
-            panelLayout.setVerticalGroup(panelLayout
-                    .createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(panelLayout
-                                      .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                      .addComponent(myTypeLabel)
-                                      .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE,
-                                                    GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                      .addComponent(myAccountLabel)
-                                      .addComponent(theAccountBox, GroupLayout.PREFERRED_SIZE,
-                                                    GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(theShowClosed).addComponent(theShowDeleted));
-        } else {
-            /* Set the layout */
-            panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(panelLayout
-                                      .createSequentialGroup()
-                                      .addContainerGap()
-                                      .addComponent(myTypeLabel)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                      .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, TYPES_WIDTH,
-                                                    GroupLayout.PREFERRED_SIZE)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                       GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                      .addComponent(myAccountLabel)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                      .addComponent(theAccountBox)
-                                      .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                       GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                      .addComponent(theShowClosed, GroupLayout.PREFERRED_SIZE,
-                                                    GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                      .addContainerGap()));
-            panelLayout.setVerticalGroup(panelLayout
-                    .createParallelGroup(GroupLayout.Alignment.LEADING)
-                    .addGroup(panelLayout
-                                      .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                      .addComponent(myTypeLabel)
-                                      .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE,
-                                                    GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                      .addComponent(myAccountLabel)
-                                      .addComponent(theAccountBox, GroupLayout.PREFERRED_SIZE,
-                                                    GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                    .addComponent(theShowClosed));
+            add(theShowDeleted);
+            add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         }
 
         /* Apply the current state */

@@ -50,6 +50,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataManager.JPanelWithEvents;
+import net.sourceforge.JDataManager.SpringUtilities;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Rate;
 import uk.co.tolcroft.finance.data.FinanceData;
@@ -472,7 +473,7 @@ public class MaintTaxYear extends JPanelWithEvents {
 
         /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
         JDataManager myDataMgr = theView.getDataMgr();
-        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_VIEWS);
+        JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.new JDataEntry(TaxYear.class.getSimpleName());
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
@@ -622,6 +623,17 @@ public class MaintTaxYear extends JPanelWithEvents {
 
         /* Set initial display */
         showTaxYear();
+    }
+
+    /**
+     * Determine Focus.
+     */
+    protected void determineFocus() {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        theDataEntry.setFocus();
     }
 
     /**
@@ -959,7 +971,7 @@ public class MaintTaxYear extends JPanelWithEvents {
             /* If this event relates to the save buttons */
             if (theSaveButs.equals(o)) {
                 /* Perform the action */
-                theUpdateSet.processCommand(evt.getActionCommand());
+                theUpdateSet.processCommand(evt.getActionCommand(), theError);
 
                 /* Notify of any changes */
                 notifyChanges();

@@ -93,11 +93,11 @@ public class TableEventData extends TableEncrypted<EventData> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (iField == EventData.FIELD_INFOTYPE) {
+        if (EventData.FIELD_INFOTYPE.equals(iField)) {
             myTableDef.setIntegerValue(EventData.FIELD_INFOTYPE, pItem.getInfoType().getId());
-        } else if (iField == EventData.FIELD_EVENT) {
+        } else if (EventData.FIELD_EVENT.equals(iField)) {
             myTableDef.setIntegerValue(EventData.FIELD_EVENT, pItem.getEvent().getId());
-        } else if (iField == EventData.FIELD_VALUE) {
+        } else if (EventData.FIELD_VALUE.equals(iField)) {
             myTableDef.setBinaryValue(EventData.FIELD_VALUE, pItem.getValueBytes());
         } else {
             super.setFieldValue(pItem, iField);

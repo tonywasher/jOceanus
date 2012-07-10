@@ -120,6 +120,9 @@ public class JDataException extends Exception implements JDataContents {
         /* Handle Origin separately */
         if (FIELD_ORIGIN.equals(pField)) {
             Throwable myResult = this;
+            if (myResult.getCause() == null) {
+                return JDataFieldValue.SkipField;
+            }
             while (myResult.getCause() != null) {
                 myResult = myResult.getCause();
             }
