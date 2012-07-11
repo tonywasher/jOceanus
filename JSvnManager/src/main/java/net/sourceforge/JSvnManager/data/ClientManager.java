@@ -25,11 +25,11 @@ package net.sourceforge.JSvnManager.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
+
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
-
-import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 
 /**
  * Manages connections to the server.

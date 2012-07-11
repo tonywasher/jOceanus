@@ -55,10 +55,10 @@
     <url>http://Tony-LapTop:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://Tony-LapTop/svn/finance/SubVersion</connection>
-    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/SubVersion</developerConnection>
+    <connection>scm:svn:http://Tony-LapTop/svn/finance/JSvnManager</connection>
+    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JSvnManager</developerConnection>
     <tag>HEAD</tag>
-    <url>http://Tony-LapTop/viewvc/finance/SubVersion</url>
+    <url>http://Tony-LapTop/viewvc/finance/JSvnManager</url>
   </scm>
   <repositories>
     <repository>

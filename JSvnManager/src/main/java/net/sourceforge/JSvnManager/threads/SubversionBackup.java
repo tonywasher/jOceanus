@@ -23,13 +23,13 @@
 package net.sourceforge.JSvnManager.threads;
 
 import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataModels.data.DataSet;
+import net.sourceforge.JDataModels.threads.ThreadStatus;
+import net.sourceforge.JDataModels.threads.WorkerThread;
+import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JSvnManager.tasks.Backup;
-import uk.co.tolcroft.models.data.DataSet;
-import uk.co.tolcroft.models.threads.ThreadStatus;
-import uk.co.tolcroft.models.threads.WorkerThread;
-import uk.co.tolcroft.models.views.DataControl;
 
 /**
  * Thread to handle subVersion backups.

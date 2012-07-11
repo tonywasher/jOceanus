@@ -35,6 +35,7 @@ import javax.xml.rpc.ServiceException;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JiraAccess.data.Security.Group;
 import net.sourceforge.JiraAccess.data.Security.Role;
 import net.sourceforge.JiraAccess.data.Security.User;
@@ -50,8 +51,6 @@ import net.sourceforge.JiraAccess.soap.RemoteResolution;
 import net.sourceforge.JiraAccess.soap.RemoteStatus;
 
 import org.apache.log4j.PropertyConfigurator;
-
-import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 
 /**
  * Represents a Jira server.

@@ -28,6 +28,7 @@ import java.io.InputStream;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Component.ComponentList;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
 
@@ -37,8 +38,6 @@ import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
-
-import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 
 /**
  * Represents a repository.

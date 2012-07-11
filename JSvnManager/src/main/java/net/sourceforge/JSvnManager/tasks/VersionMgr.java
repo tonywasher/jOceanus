@@ -26,6 +26,7 @@ import java.io.File;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Branch;
 import net.sourceforge.JSvnManager.data.Branch.BranchList;
 import net.sourceforge.JSvnManager.data.Component;
@@ -50,8 +51,6 @@ import org.tmatesoft.svn.core.wc.SVNEventAdapter;
 import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
-
-import uk.co.tolcroft.models.data.PreferenceSet.PreferenceManager;
 
 /**
  * Handles creating branches/tags in subversion.

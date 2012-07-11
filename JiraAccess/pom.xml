@@ -49,8 +49,8 @@
   </profiles>
   <dependencies>
     <dependency>
-      <groupId>uk.co.tolcroft.JFinanceApp</groupId>
-      <artifactId>JDataModel</artifactId>
+      <groupId>net.sourceforge.JDataModels</groupId>
+      <artifactId>JDataModels</artifactId>
       <version>v1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>

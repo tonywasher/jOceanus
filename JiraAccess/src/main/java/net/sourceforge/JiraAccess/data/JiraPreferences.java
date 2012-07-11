@@ -23,7 +23,7 @@
 package net.sourceforge.JiraAccess.data;
 
 import net.sourceforge.JDataManager.JDataException;
-import uk.co.tolcroft.models.data.PreferenceSet;
+import net.sourceforge.JDataModels.data.PreferenceSet;
 
 /**
  * Jira Preferences.
