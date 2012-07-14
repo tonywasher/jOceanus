@@ -128,10 +128,10 @@ public class JDataManager {
      * @param pLink the link colour
      * @param pChgLink the changed link colour
      */
-    public void setFormatter(Color pStandard,
-                             Color pChanged,
-                             Color pLink,
-                             Color pChgLink) {
+    public void setFormatter(final Color pStandard,
+                             final Color pChanged,
+                             final Color pLink,
+                             final Color pChgLink) {
         /* Set the colours */
         theFormatter = new JDataHTML(pStandard, pChanged, pLink, pChgLink);
 

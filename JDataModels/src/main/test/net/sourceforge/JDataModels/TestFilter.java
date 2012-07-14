@@ -135,6 +135,10 @@ public class TestFilter {
             theModel = new TestTableModel();
             setModel(theModel);
 
+            /* Create the filter and record it */
+            DataFilter<RowData> myFilter = new DataFilter<RowData>(theModel);
+            setRowSorter(myFilter);
+
             /* Add some items to the list */
             theModel.addNewRowAtEnd("Michael");
             theModel.addNewRowAtEnd("Timothy");
@@ -147,10 +151,6 @@ public class TestFilter {
             /* Create a new Scroll Pane and add this table to it */
             theScroll = new JScrollPane();
             theScroll.setViewportView(this);
-
-            /* Create the filter and record it */
-            DataFilter<RowData> myFilter = new DataFilter<RowData>(theModel);
-            setRowSorter(myFilter);
 
             /* Add the mouse listener */
             TestMouse myMouse = new TestMouse(this);
@@ -293,6 +293,7 @@ public class TestFilter {
 
             /* Say that we have added the row */
             fireTableRowsInserted(iIndex, iIndex);
+            theFilter.reportMappingChanged();
         }
 
         /**
@@ -308,6 +309,7 @@ public class TestFilter {
 
             /* Say that we have added the row */
             fireTableRowsInserted(pIndex, pIndex);
+            theFilter.reportMappingChanged();
         }
 
         /**
@@ -441,7 +443,17 @@ public class TestFilter {
         /**
          * Insert new name.
          */
-        private static final String POPUP_INSERT = "Insert Item";
+        private static final String POPUP_INSERTEND = "Insert At End";
+
+        /**
+         * Insert at position.
+         */
+        private static final String POPUP_INSERTHERE = "Insert Here";
+
+        /**
+         * Insert menu command.
+         */
+        private static final String CMD_INSERT = POPUP_INSERTHERE + ":";
 
         /**
          * Delete menu item.
@@ -511,13 +523,19 @@ public class TestFilter {
                 JPopupMenu myMenu = new JPopupMenu();
 
                 /* Add the delete item choice */
-                JMenuItem myItem = new JMenuItem(POPUP_INSERT);
-                myItem.setActionCommand(POPUP_INSERT);
+                JMenuItem myItem = new JMenuItem(POPUP_INSERTEND);
+                myItem.setActionCommand(POPUP_INSERTEND);
                 myItem.addActionListener(this);
                 myMenu.add(myItem);
 
                 /* If the row is in bounds */
                 if ((myRow >= 0) && (myRow < theModel.getRowCount())) {
+                    /* Add the delete item choice */
+                    myItem = new JMenuItem(POPUP_INSERTHERE);
+                    myItem.setActionCommand(CMD_INSERT + myRow);
+                    myItem.addActionListener(this);
+                    myMenu.add(myItem);
+
                     /* Add the delete item choice */
                     myItem = new JMenuItem(POPUP_DELETE);
                     myItem.setActionCommand(CMD_DELETE + myRow);
@@ -547,9 +565,19 @@ public class TestFilter {
             String myCmd = evt.getActionCommand();
 
             /* if this is an insert command */
-            if (myCmd.equals(POPUP_INSERT)) {
+            if (myCmd.equals(POPUP_INSERTEND)) {
                 /* Notify the table */
                 theModel.addNewRowAtEnd("New Name");
+
+                /* if this is a delete command */
+            } else if (myCmd.startsWith(CMD_INSERT)) {
+                /* Strip the prefix */
+                myCmd = myCmd.substring(CMD_INSERT.length());
+                int myRow = Integer.parseInt(myCmd);
+
+                /* Notify the table */
+                theModel.addNewRowAtIndex(myRow, "New Name");
+
                 /* if this is a delete command */
             } else if (myCmd.startsWith(CMD_DELETE)) {
                 /* Strip the prefix */
@@ -558,6 +586,7 @@ public class TestFilter {
 
                 /* Notify the table */
                 theModel.deleteRow(myRow);
+
                 /* if this is a show all command */
             } else if (myCmd.equals(POPUP_SHOWALL)) {
                 /* Note the new criteria */

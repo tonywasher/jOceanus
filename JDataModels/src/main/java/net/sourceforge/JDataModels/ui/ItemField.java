@@ -154,7 +154,7 @@ public class ItemField extends ValueField {
                              final DataItem pItem) {
         /* Determine the standard colours */
         Color myFore = pRenderMgr.getForeground(pItem, theField);
-        Color myBack = pRenderMgr.getBackground();
+        Color myBack = pRenderMgr.getStandardBackground();
 
         /* Determine the Font and ToolTip */
         Font myFont = pRenderMgr.getFont(pItem, theField, isFixed);

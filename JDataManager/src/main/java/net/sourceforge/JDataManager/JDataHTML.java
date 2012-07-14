@@ -61,12 +61,12 @@ public final class JDataHTML {
     /**
      * Name of odd table row class.
      */
-    private static String CLASS_ODDROW = "oddrow";
+    private static final String CLASS_ODDROW = "oddrow";
 
     /**
      * Name of even table row class.
      */
-    private static String CLASS_EVENROW = "evenrow";
+    private static final String CLASS_EVENROW = "evenrow";
 
     /**
      * Name of changed cell class.
@@ -82,6 +82,11 @@ public final class JDataHTML {
      * Buffer length.
      */
     private static final int BUFFER_LEN = 1000;
+
+    /**
+     * Wrap for hex string.
+     */
+    private static final int WRAP_HEXSTRING = 60;
 
     /**
      * Colour for standard elements.
@@ -117,10 +122,10 @@ public final class JDataHTML {
      * @param pLink the link colour
      * @param pChgLink the changed link colour
      */
-    protected JDataHTML(Color pStandard,
-                        Color pChanged,
-                        Color pLink,
-                        Color pChgLink) {
+    protected JDataHTML(final Color pStandard,
+                        final Color pChanged,
+                        final Color pLink,
+                        final Color pChgLink) {
         /* Set the colours */
         theColorStandard = pStandard;
         theColorChanged = pChanged;
@@ -317,6 +322,22 @@ public final class JDataHTML {
 
             /* Format the value */
             String myFormat = JDataObject.formatField(myValue);
+            if ((myValue instanceof byte[]) && (myFormat.length() > WRAP_HEXSTRING)) {
+                /* Format the buffer */
+                myResults.setLength(0);
+                myResults.append(myFormat);
+
+                /* Insert new lines */
+                int iCount = myFormat.length() / WRAP_HEXSTRING;
+                while (iCount > 0) {
+                    myResults.insert(WRAP_HEXSTRING * iCount--, '\n');
+                }
+
+                /* Obtain new format */
+                myFormat = myResults.toString();
+            }
+
+            /* Adjust for linkage */
             if (getDataType(myValue) != JDataType.None) {
                 myFormat = pDetail.addDataLink(myValue, myFormat);
             }
@@ -327,6 +348,8 @@ public final class JDataHTML {
             isOdd = !isOdd;
         }
 
+        /* Initialise results */
+        myResults.setLength(0);
         myResults.append("<h2 align=\"center\">");
         myResults.append(myFields.getName());
         myResults.append("<table><thead>");

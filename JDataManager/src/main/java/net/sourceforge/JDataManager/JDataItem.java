@@ -203,7 +203,7 @@ public class JDataItem {
     }
 
     /**
-     * Set new formatter
+     * Set new formatter.
      * @param pFormatter the formatter
      */
     protected void setFormatter(final JDataHTML pFormatter) {

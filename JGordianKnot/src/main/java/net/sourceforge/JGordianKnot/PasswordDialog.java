@@ -72,7 +72,7 @@ public class PasswordDialog extends JDialog implements ActionListener {
     private static final int NUM_COLS = 3;
 
     /**
-     * adding width
+     * adding width.
      */
     private static final int PADDING_SIZE = 5;
 

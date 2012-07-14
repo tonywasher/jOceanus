@@ -296,9 +296,9 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
             if (bContinue) {
                 bContinue = SheetAccountPrice.loadArchive(pTask, myHelper, myData, myDilution);
             }
-            // if (bContinue) {
-            // bContinue = SheetPattern.loadArchive(pTask, myHelper, myData);
-            // }
+            if (bContinue) {
+                bContinue = SheetPattern.loadArchive(pTask, myHelper, myData);
+            }
             if (bContinue) {
                 myData.getAccounts().validateLoadedAccounts();
             }

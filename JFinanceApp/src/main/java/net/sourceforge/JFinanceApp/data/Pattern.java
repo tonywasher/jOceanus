@@ -158,7 +158,7 @@ public class Pattern extends Event {
      * @return the partner
      */
     public Account getPartner() {
-        return isCredit() ? getCredit() : getDebit();
+        return isCredit() ? getDebit() : getCredit();
     }
 
     /**
@@ -289,13 +289,13 @@ public class Pattern extends Event {
                     final int uFreqId,
                     final boolean isCredit) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, uControlId, pDate, pDesc, uAccountId, uPartnerId, uTransId, pAmount, null, null,
-                null, null);
+        super(pList, uId, uControlId, pDate, pDesc, (isCredit) ? uPartnerId : uAccountId,
+                (isCredit) ? uAccountId : uPartnerId, uTransId, pAmount, null, null, null, null);
 
         /* Record the IDs */
         setValueFrequency(uFreqId);
 
-        /* Access the Frequencys */
+        /* Access the Frequencies */
         FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
         Frequency myFreq = myFrequencies.findItemById(uFreqId);
@@ -333,7 +333,8 @@ public class Pattern extends Event {
                     final Frequency pFrequency,
                     final boolean isCredit) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, pDate, pDesc, pAccount, pPartner, pTransType, pAmount, null, null, null, null);
+        super(pList, uId, pDate, pDesc, (isCredit) ? pPartner : pAccount, (isCredit) ? pAccount : pPartner,
+                pTransType, pAmount, null, null, null, null);
 
         /* Record the values */
         setValueFrequency(pFrequency);

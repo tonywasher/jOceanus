@@ -111,7 +111,7 @@ public abstract class PreferenceSet {
     /**
      * Fire State Changed Event to all registered listeners.
      */
-    protected void fireStateChanged() {
+    protected final void fireStateChanged() {
         /* Fire the standard event */
         theManager.fireStateChanged();
     }

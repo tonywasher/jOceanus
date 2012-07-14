@@ -99,7 +99,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
     }
 
     @Override
-    public void allRowsChanged() {
+    public final void allRowsChanged() {
         /* Allocate the two arrays */
         int iNumRows = theModel.getRowCount();
         int iView = 0;
@@ -260,17 +260,19 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
             throw new IndexOutOfBoundsException("Invalid Range");
         }
 
-        /* Determine the number of rows that we are inserting */
+        /* Determine the number of rows that we are inserting plus trailing entries */
         int iXtraLen = (pEndRow - pFirstRow) + 1;
+        int iNumTrailing = iNumRows - pFirstRow;
 
         /* Adjust Model to view to have space for new entries */
         theModelToView = Arrays.copyOf(theModelToView, iNumRows + iXtraLen);
-        if (iXtraLen > 1) {
-            System.arraycopy(theModelToView, pFirstRow, theModelToView, pEndRow + 1, iXtraLen);
+        if (iNumTrailing > 0) {
+            System.arraycopy(theModelToView, pFirstRow, theModelToView, pEndRow + 1, iNumTrailing);
         }
+        iNumRows += iXtraLen;
 
         /* Make a copy of the ViewToModel, expanded to full amount */
-        int[] newViewToModel = Arrays.copyOf(theViewToModel, iNumRows + iXtraLen);
+        int[] newViewToModel = Arrays.copyOf(theViewToModel, iNumRows);
         int iView = 0;
 
         /* Loop through the model elements */
@@ -306,7 +308,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
         }
 
         /* If we have hidden rows */
-        if (iView < iNumRows + iXtraLen) {
+        if (iView < iNumRows) {
             /* Truncate the new mapping */
             newViewToModel = Arrays.copyOf(newViewToModel, iView);
         }

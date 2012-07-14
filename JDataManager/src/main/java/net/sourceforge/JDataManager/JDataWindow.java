@@ -117,17 +117,6 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
         JPanel myPanel = new JPanel();
         myPanel.add(mySplit);
 
-        /* Create the layout for the panel */
-        // GroupLayout myLayout = new GroupLayout(myPanel);
-        // myPanel.setLayout(myLayout);
-
-        /* Set the layout */
-        // myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(myLayout.createSequentialGroup().addContainerGap().addComponent(mySplit)
-        // .addContainerGap()));
-        // myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addComponent(mySplit));
-
         /* Set this to be the main panel */
         getContentPane().add(myPanel);
         pack();
@@ -138,7 +127,7 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
     }
 
     /**
-     * Set new formatter
+     * Set new formatter.
      * @param pFormatter the formatter
      */
     protected void setFormatter(final JDataHTML pFormatter) {

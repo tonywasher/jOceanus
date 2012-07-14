@@ -114,16 +114,6 @@ public class RenderManager {
     private Color theBackgroundColor;
 
     /**
-     * The link colour.
-     */
-    private Color theLinkColor;
-
-    /**
-     * The changed link colour.
-     */
-    private Color theChgLinkColor;
-
-    /**
      * Populate RenderData interface.
      */
     protected interface PopulateRenderData {
@@ -139,7 +129,7 @@ public class RenderManager {
      * @param pManager the data manager
      * @throws JDataException on error
      */
-    public RenderManager(JDataManager pManager) throws JDataException {
+    public RenderManager(final JDataManager pManager) throws JDataException {
         /* Store the parameters */
         theDataManager = pManager;
 
@@ -165,11 +155,11 @@ public class RenderManager {
         theChangedColor = thePreferences.getColorValue(RenderPreferences.NAME_CHANGED);
         theDeletedColor = thePreferences.getColorValue(RenderPreferences.NAME_DELETED);
         theRecoveredColor = thePreferences.getColorValue(RenderPreferences.NAME_RECOVERED);
-        theLinkColor = thePreferences.getColorValue(RenderPreferences.NAME_LINK);
-        theChgLinkColor = thePreferences.getColorValue(RenderPreferences.NAME_CHGLINK);
+        Color myLinkColor = thePreferences.getColorValue(RenderPreferences.NAME_LINK);
+        Color myChgLinkColor = thePreferences.getColorValue(RenderPreferences.NAME_CHGLINK);
 
         /* Declare preferences to data manager */
-        theDataManager.setFormatter(theStandardColor, theChangedColor, theLinkColor, theChgLinkColor);
+        theDataManager.setFormatter(theStandardColor, theChangedColor, myLinkColor, myChgLinkColor);
     }
 
     /**
@@ -396,7 +386,7 @@ public class RenderManager {
                                     final JDataField iField) {
             /* Default is black on white */
             Color myFore = getForeground(pRow, iField);
-            Color myBack = getBackground();
+            Color myBack = getStandardBackground();
             String myTip = null;
             Font myFont;
 
@@ -526,7 +516,7 @@ public class RenderManager {
      * Determine Standard background.
      * @return the standard background
      */
-    public Color getBackground() {
+    public Color getStandardBackground() {
         return theBackgroundColor;
     }
 
