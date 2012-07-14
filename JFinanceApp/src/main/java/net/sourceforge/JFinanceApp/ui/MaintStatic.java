@@ -275,6 +275,7 @@ public class MaintStatic extends JPanelWithEvents {
         add(theSaveButtons);
 
         /* Select initial box */
+        theActive = theActTypes;
         theSelectBox.setSelectedItem(AccountType.LIST_NAME);
     }
 
@@ -283,10 +284,7 @@ public class MaintStatic extends JPanelWithEvents {
      */
     protected void determineFocus() {
         /* Request the focus */
-        requestFocusInWindow();
-
-        /* Set the required focus */
-        theDataEntry.setFocus();
+        theActive.determineFocus(theDataEntry);
     }
 
     /**
@@ -297,6 +295,7 @@ public class MaintStatic extends JPanelWithEvents {
         /* Select the correct static */
         theLayout.show(theCardPanel, pName);
         theActive = theMap.get(pName);
+        determineFocus();
     }
 
     /**

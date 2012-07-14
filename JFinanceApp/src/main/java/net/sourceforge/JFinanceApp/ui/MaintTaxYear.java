@@ -55,6 +55,7 @@ import net.sourceforge.JDataModels.data.EditState;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.ItemField;
 import net.sourceforge.JDataModels.ui.ItemField.FieldSet;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.ui.ValueField;
 import net.sourceforge.JDataModels.ui.ValueField.ValueClass;
@@ -323,6 +324,11 @@ public class MaintTaxYear extends JPanelWithEvents {
     private final transient View theView;
 
     /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
+
+    /**
      * The Update Set.
      */
     private final transient UpdateSet theUpdateSet;
@@ -347,6 +353,7 @@ public class MaintTaxYear extends JPanelWithEvents {
     public MaintTaxYear(final View pView) {
         /* Record the view */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
@@ -377,11 +384,11 @@ public class MaintTaxYear extends JPanelWithEvents {
         JLabel myHiCapTaxRate = new JLabel("High Capital Rate:", SwingConstants.TRAILING);
 
         /* Build the field set */
-        theFieldSet = new FieldSet();
+        theFieldSet = new FieldSet(theRenderMgr);
 
         /* Create the combo box and add to the field set */
         theRegimesBox = new JComboBox();
-        theFieldSet.addItemField(new ItemField(theRegimesBox, TaxYear.FIELD_REGIME));
+        theFieldSet.addItemField(theRegimesBox, TaxYear.FIELD_REGIME);
 
         /* Create the text fields */
         theYear = new JTextField();

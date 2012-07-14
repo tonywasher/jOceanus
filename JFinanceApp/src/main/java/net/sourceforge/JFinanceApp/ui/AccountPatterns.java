@@ -24,6 +24,7 @@ package net.sourceforge.JFinanceApp.ui;
 
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -34,6 +35,7 @@ import javax.swing.JPopupMenu;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.ui.DataMouse;
 import net.sourceforge.JDataModels.ui.DataTable;
@@ -42,6 +44,7 @@ import net.sourceforge.JDataModels.ui.Editor.ComboBoxEditor;
 import net.sourceforge.JDataModels.ui.Editor.MoneyEditor;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
@@ -76,6 +79,11 @@ public class AccountPatterns extends DataTable<Event> {
      * Date view.
      */
     private final transient View theView;
+
+    /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
 
     /**
      * Table Model.
@@ -146,6 +154,12 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
+            .getBundle(AccountPatterns.class.getName());
+
+    /**
      * Date column title.
      */
     private static final String TITLE_DATE = Extract.TITLE_DATE;
@@ -163,7 +177,7 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * Partner column title.
      */
-    private static final String TITLE_PARTNER = "Partner";
+    protected static final String TITLE_PARTNER = NLS_BUNDLE.getString("TitlePartner");
 
     /**
      * Credit column title.
@@ -178,7 +192,17 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * Frequency column title.
      */
-    private static final String TITLE_FREQ = "Frequency";
+    private static final String TITLE_FREQ = NLS_BUNDLE.getString("TitleFrequency");
+
+    /**
+     * Credit menu item.
+     */
+    protected static final String POPUP_CREDIT = NLS_BUNDLE.getString("PopUpCredit");
+
+    /**
+     * Debit menu item.
+     */
+    protected static final String POPUP_DEBIT = NLS_BUNDLE.getString("PopUpDebit");
 
     /**
      * Date column id.
@@ -251,11 +275,6 @@ public class AccountPatterns extends DataTable<Event> {
     private static final int WIDTH_FREQ = 110;
 
     /**
-     * Panel width.
-     */
-    // private static final int WIDTH_PANEL = 900;
-
-    /**
      * Constructor for Patterns Window.
      * @param pView the view
      * @param pUpdateSet the update set
@@ -266,6 +285,8 @@ public class AccountPatterns extends DataTable<Event> {
                            final ErrorPanel pError) {
         /* Store details */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
+        setRenderMgr(theRenderMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(Pattern.class);
@@ -295,6 +316,18 @@ public class AccountPatterns extends DataTable<Event> {
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+    }
+
+    /**
+     * Determine Focus.
+     * @param pEntry the master data entry
+     */
+    protected void determineFocus(final JDataEntry pEntry) {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        pEntry.setFocus(theUpdateEntry.getName());
     }
 
     /**
@@ -728,16 +761,6 @@ public class AccountPatterns extends DataTable<Event> {
      */
     private final class PatternMouse extends DataMouse<Event> {
         /**
-         * Credit menu item.
-         */
-        private static final String POPUP_CREDIT = "Set As Credit";
-
-        /**
-         * Debit menu item.
-         */
-        private static final String POPUP_DEBIT = "Set As Debit";
-
-        /**
          * Constructor.
          */
         private PatternMouse() {
@@ -921,11 +944,11 @@ public class AccountPatterns extends DataTable<Event> {
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = new CalendarRenderer();
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theDecimalRenderer = new DecimalRenderer();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
             theMoneyEditor = new MoneyEditor();
-            theStringRenderer = new StringRenderer();
+            theStringRenderer = theRenderMgr.allocateStringRenderer();
             theStringEditor = new StringEditor();
             theComboEditor = new ComboBoxEditor();
 

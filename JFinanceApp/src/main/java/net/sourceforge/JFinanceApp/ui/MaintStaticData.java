@@ -34,6 +34,7 @@ import javax.swing.JPopupMenu;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.StaticData;
@@ -42,6 +43,7 @@ import net.sourceforge.JDataModels.ui.DataMouse;
 import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
@@ -184,6 +186,11 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
     private final transient View theView;
 
     /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
+
+    /**
      * The Panel.
      */
     private final JPanel thePanel;
@@ -256,6 +263,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         theError = pError;
         theClass = pClass;
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
+        setRenderMgr(theRenderMgr);
 
         /* Build the Update set and List */
         theUpdateSet = pUpdateSet;
@@ -287,6 +296,18 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+    }
+
+    /**
+     * Determine Focus.
+     * @param pEntry the master data entry
+     */
+    protected void determineFocus(final JDataEntry pEntry) {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        pEntry.setFocus(theUpdateEntry.getName());
     }
 
     @Override
@@ -761,8 +782,8 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theIntegerRenderer = new IntegerRenderer();
-            theStringRenderer = new StringRenderer();
+            theIntegerRenderer = theRenderMgr.allocateIntegerRenderer();
+            theStringRenderer = theRenderMgr.allocateStringRenderer();
             theStringEditor = new StringEditor();
 
             /* Create the columns */

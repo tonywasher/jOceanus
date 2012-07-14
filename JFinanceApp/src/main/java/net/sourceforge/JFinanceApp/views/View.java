@@ -25,6 +25,7 @@ package net.sourceforge.JFinanceApp.views;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JFinanceApp.data.FinanceData;
@@ -64,6 +65,11 @@ public class View extends DataControl<FinanceData> {
     private DilutionEventList theDilutions = null;
 
     /**
+     * The render manager.
+     */
+    private final RenderManager theRenderMgr;
+
+    /**
      * Obtain the main window.
      * @return the main window.
      */
@@ -96,15 +102,27 @@ public class View extends DataControl<FinanceData> {
     }
 
     /**
+     * Obtain the render manager.
+     * @return the render manager
+     */
+    public RenderManager getRenderMgr() {
+        return theRenderMgr;
+    }
+
+    /**
      * Constructor.
      * @param pCtl the main window.
+     * @throws JDataException on error
      */
-    public View(final MainTab pCtl) {
+    public View(final MainTab pCtl) throws JDataException {
         /* Store access to the main window */
         theCtl = pCtl;
 
         /* Store access to the Debug Manager */
         setDataMgr(pCtl.getDataMgr());
+
+        /* Allocate the RenderManager */
+        theRenderMgr = new RenderManager(getDataMgr());
 
         /* Create an empty data set */
         setData(getNewData());

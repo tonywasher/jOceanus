@@ -25,6 +25,7 @@ package net.sourceforge.JFinanceApp.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
@@ -41,6 +42,7 @@ import net.sourceforge.JDataModels.ui.DataMouse;
 import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.PriceEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
@@ -75,7 +77,12 @@ public class PricePoint extends DataTable<AccountPrice> {
     private final transient View theView;
 
     /**
-     * The View list.
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
+
+    /**
+     * The updateSet.
      */
     private final transient UpdateSet theUpdateSet;
 
@@ -153,24 +160,29 @@ public class PricePoint extends DataTable<AccountPrice> {
     }
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PricePoint.class.getName());
+
+    /**
      * The Asset column name.
      */
-    private static final String TITLE_ASSET = "Asset";
+    private static final String TITLE_ASSET = NLS_BUNDLE.getString("TitleAsset");
 
     /**
      * The Price column name.
      */
-    private static final String TITLE_PRICE = "Price";
+    private static final String TITLE_PRICE = NLS_BUNDLE.getString("TitlePrice");
 
     /**
      * The previous price column name.
      */
-    private static final String TITLE_PREVPRICE = "Previous Price";
+    private static final String TITLE_PREVPRICE = NLS_BUNDLE.getString("TitlePrevPrice");
 
     /**
      * The previous date column name.
      */
-    private static final String TITLE_PREVDATE = "Previous Date";
+    private static final String TITLE_PREVDATE = NLS_BUNDLE.getString("TitlePrevDate");
 
     /**
      * The Asset column id.
@@ -214,6 +226,8 @@ public class PricePoint extends DataTable<AccountPrice> {
     public PricePoint(final View pView) {
         /* Record the passed details */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
+        setRenderMgr(theRenderMgr);
 
         /* Build the Update set and entry */
         theUpdateSet = new UpdateSet(theView);
@@ -762,10 +776,10 @@ public class PricePoint extends DataTable<AccountPrice> {
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = new CalendarRenderer();
-            theDecimalRenderer = new DecimalRenderer();
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
             thePriceEditor = new PriceEditor();
-            theStringRenderer = new StringRenderer();
+            theStringRenderer = theRenderMgr.allocateStringRenderer();
 
             /* Create the columns */
             addColumn(new DataColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer, null));

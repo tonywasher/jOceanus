@@ -46,6 +46,8 @@ import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.data.PreferenceSet;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JDataModels.ui.PreferenceSetPanel;
+import net.sourceforge.JDataModels.ui.RenderManager;
+import net.sourceforge.JFinanceApp.views.View;
 
 /**
  * Preference maintenance panel.
@@ -104,6 +106,11 @@ public class MaintPreferences extends JPanelWithEvents {
     private static final String NLS_SET = NLS_BUNDLE.getString("PreferenceSet");
 
     /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
+
+    /**
      * The OK button.
      */
     private final JButton theOKButton;
@@ -140,8 +147,12 @@ public class MaintPreferences extends JPanelWithEvents {
 
     /**
      * Constructor.
+     * @param pView the data view
      */
-    public MaintPreferences() {
+    public MaintPreferences(final View pView) {
+        /* Access render manager */
+        theRenderMgr = pView.getRenderMgr();
+
         /* Create the buttons */
         theOKButton = new JButton(NLS_OK);
         theResetButton = new JButton(NLS_RESET);
@@ -218,7 +229,7 @@ public class MaintPreferences extends JPanelWithEvents {
      */
     private void registerSet(final PreferenceSet pSet) {
         /* Create the underlying panel */
-        PreferenceSetPanel myPanel = new PreferenceSetPanel(pSet);
+        PreferenceSetPanel myPanel = new PreferenceSetPanel(theRenderMgr, pSet);
 
         /* Add the panel */
         theProperties.add(myPanel, myPanel.toString());

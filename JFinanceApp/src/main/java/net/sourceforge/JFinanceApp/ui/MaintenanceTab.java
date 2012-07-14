@@ -167,7 +167,7 @@ public class MaintenanceTab extends JPanelWithEvents {
         theTaxYearTab.addChangeListener(myListener);
 
         /* Create the Preferences Tab */
-        thePreferences = new MaintPreferences();
+        thePreferences = new MaintPreferences(theView);
         theTabs.addTab(TITLE_PREFERENCES, thePreferences);
         thePreferences.addChangeListener(myListener);
 

@@ -28,6 +28,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.util.Arrays;
+import java.util.ResourceBundle;
 
 import javax.swing.JComboBox;
 import javax.swing.JScrollPane;
@@ -50,7 +51,8 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.EditState;
-import net.sourceforge.JDataModels.ui.RenderData.PopulateRenderData;
+import net.sourceforge.JDataModels.ui.RenderManager.PopulateRenderData;
+import net.sourceforge.JDataModels.ui.RenderManager.RenderData;
 import net.sourceforge.JDataModels.ui.Renderer.RowCell;
 import net.sourceforge.JDataModels.views.UpdateSet;
 
@@ -66,6 +68,16 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
     private static final long serialVersionUID = 1258025191244933784L;
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataTable.class.getName());
+
+    /**
+     * Table header.
+     */
+    private static final String TITLE_ROW = NLS_BUNDLE.getString("TitleRow");
+
+    /**
      * Row Header Width.
      */
     private static final int ROWHDR_WIDTH = 30;
@@ -79,6 +91,11 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      * The Row Header Table.
      */
     private JTable theRowHdrTable = null;
+
+    /**
+     * RenderManager.
+     */
+    private RenderManager theRenderMgr = null;
 
     /**
      * Data Table Model.
@@ -204,6 +221,14 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      */
     public boolean hasHeader() {
         return false;
+    }
+
+    /**
+     * Obtain the render manager.
+     * @return the render manager
+     */
+    public RenderManager getRenderMgr() {
+        return theRenderMgr;
     }
 
     /**
@@ -355,6 +380,14 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
      */
     public EditState getEditState() {
         return (theUpdateSet == null) ? EditState.CLEAN : theUpdateSet.getEditState();
+    }
+
+    /**
+     * Set the render manager for the table.
+     * @param pRenderMgr the render manager
+     */
+    protected void setRenderMgr(final RenderManager pRenderMgr) {
+        theRenderMgr = pRenderMgr;
     }
 
     /**
@@ -777,11 +810,6 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
         private static final long serialVersionUID = -7172213268168894124L;
 
         /**
-         * Table header.
-         */
-        private static final String TITLE_ROW = "Row";
-
-        /**
          * The DataTable.
          */
         private DataTable<?> theTable = null;
@@ -1172,14 +1200,11 @@ public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTab
             /* Call super-constructor */
             super(pTable);
 
-            /* Allocate DataColumn */
-            DataColumn myCol;
-
             /* Create the relevant formatters/editors */
-            theRowRenderer = new RowCell();
+            theRowRenderer = pTable.getRenderMgr().allocateRowRenderer();
 
             /* Create the columns */
-            myCol = new DataColumn(0, ROWHDR_WIDTH, theRowRenderer, null);
+            DataColumn myCol = new DataColumn(0, ROWHDR_WIDTH, theRowRenderer, null);
             addColumn(myCol);
             myCol.setModel(pTable.getRowTableModel());
         }

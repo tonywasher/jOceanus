@@ -41,32 +41,32 @@ public final class JDataHTML {
     /**
      * Colour for standard elements.
      */
-    private static final Color COLOR_STANDARD = Color.black;
+    public static final Color COLOR_STANDARD = Color.black;
 
     /**
      * Colour for changed elements.
      */
-    private static final Color COLOR_CHANGED = Color.magenta;
+    public static final Color COLOR_CHANGED = Color.magenta;
 
     /**
      * Colour for standard links.
      */
-    private static final Color COLOR_LINK = Color.blue;
+    public static final Color COLOR_LINK = Color.blue;
 
     /**
      * Colour for changed link.
      */
-    private static final Color COLOR_CHGLINK = Color.green;
+    public static final Color COLOR_CHGLINK = Color.green;
 
     /**
      * Name of odd table row class.
      */
-    private static final String CLASS_ODDROW = "oddrow";
+    private static String CLASS_ODDROW = "oddrow";
 
     /**
      * Name of even table row class.
      */
-    private static final String CLASS_EVENROW = "evenrow";
+    private static String CLASS_EVENROW = "evenrow";
 
     /**
      * Name of changed cell class.
@@ -79,26 +79,65 @@ public final class JDataHTML {
     private static final String CLASS_SECCHANGED = "security";
 
     /**
-     * Private constructor to avoid instantiation.
-     */
-    private JDataHTML() {
-    }
-
-    /**
      * Buffer length.
      */
     private static final int BUFFER_LEN = 1000;
 
     /**
+     * Colour for standard elements.
+     */
+    private final Color theColorStandard;
+
+    /**
+     * Colour for changed elements.
+     */
+    private final Color theColorChanged;
+
+    /**
+     * Colour for standard links.
+     */
+    private final Color theColorLink;
+
+    /**
+     * Colour for changed link.
+     */
+    private final Color theColorChgLink;
+
+    /**
+     * Constructor.
+     */
+    protected JDataHTML() {
+        this(COLOR_STANDARD, COLOR_CHANGED, COLOR_LINK, COLOR_CHGLINK);
+    }
+
+    /**
+     * Constructor.
+     * @param pStandard the standard colour
+     * @param pChanged the changed colour
+     * @param pLink the link colour
+     * @param pChgLink the changed link colour
+     */
+    protected JDataHTML(Color pStandard,
+                        Color pChanged,
+                        Color pLink,
+                        Color pChgLink) {
+        /* Set the colours */
+        theColorStandard = pStandard;
+        theColorChanged = pChanged;
+        theColorLink = pLink;
+        theColorChgLink = pChgLink;
+    }
+
+    /**
      * Build CSS styleSheet.
      * @param pSheet the styleSheet
      */
-    protected static void buildStylesheet(final StyleSheet pSheet) {
+    protected void buildStylesheet(final StyleSheet pSheet) {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Define standard font for body and table contents */
         myBuilder.append("body { font-family: Verdana, sans-serif; font-size: 1em; color: ");
-        myBuilder.append(DataConverter.colorToHexString(COLOR_STANDARD));
+        myBuilder.append(DataConverter.colorToHexString(theColorStandard));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -132,7 +171,7 @@ public final class JDataHTML {
         myBuilder.append(".");
         myBuilder.append(CLASS_CHANGED);
         myBuilder.append(" { font-style: italic; color: ");
-        myBuilder.append(DataConverter.colorToHexString(COLOR_CHANGED));
+        myBuilder.append(DataConverter.colorToHexString(theColorChanged));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -141,21 +180,21 @@ public final class JDataHTML {
         myBuilder.append(".");
         myBuilder.append(CLASS_SECCHANGED);
         myBuilder.append(" { color: ");
-        myBuilder.append(DataConverter.colorToHexString(COLOR_CHANGED));
+        myBuilder.append(DataConverter.colorToHexString(theColorChanged));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Set standard link definition */
         myBuilder.append("a { text-decoration: none; color: ");
-        myBuilder.append(DataConverter.colorToHexString(COLOR_LINK));
+        myBuilder.append(DataConverter.colorToHexString(theColorLink));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Set hover colour for standard link */
         myBuilder.append("a:hover { color: ");
-        myBuilder.append(DataConverter.colorToHexString(COLOR_LINK.brighter()));
+        myBuilder.append(DataConverter.colorToHexString(theColorLink.brighter()));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -163,8 +202,8 @@ public final class JDataHTML {
         /* Set changed link definition */
         myBuilder.append("a.");
         myBuilder.append(CLASS_CHANGED);
-        myBuilder.append(" { color: ");
-        myBuilder.append(DataConverter.colorToHexString(COLOR_CHGLINK));
+        myBuilder.append(" { font-style: italic; color: ");
+        myBuilder.append(DataConverter.colorToHexString(theColorChgLink));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -172,8 +211,8 @@ public final class JDataHTML {
         /* Set hover colour for changed link */
         myBuilder.append("a.");
         myBuilder.append(CLASS_CHANGED);
-        myBuilder.append(":hover { color: ");
-        myBuilder.append(DataConverter.colorToHexString(COLOR_CHGLINK.brighter()));
+        myBuilder.append(":hover { font-style: italic; color: ");
+        myBuilder.append(DataConverter.colorToHexString(theColorChgLink.brighter()));
         myBuilder.append(";}");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);

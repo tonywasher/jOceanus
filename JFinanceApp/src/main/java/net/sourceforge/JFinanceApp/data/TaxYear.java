@@ -188,7 +188,12 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
     /**
      * HiCapitalTaxRate field Id.
      */
-    public static final JDataField FIELD_HCPTAX = FIELD_DEFS.declareEqualityValueField("HoCapitalTaxRate");
+    public static final JDataField FIELD_HCPTAX = FIELD_DEFS.declareEqualityValueField("HiCapitalTaxRate");
+
+    @Override
+    public String formatObject() {
+        return toString();
+    }
 
     @Override
     public String toString() {

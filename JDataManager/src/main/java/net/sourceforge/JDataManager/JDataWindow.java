@@ -106,7 +106,7 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
         myTreeScroll = new JScrollPane(theTree);
 
         /* Create the item panel */
-        theItemPane = new JDataItem();
+        theItemPane = new JDataItem(pManager.getFormatter());
 
         /* Create the split pane */
         mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, theItemPane.getPanel());
@@ -135,6 +135,15 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
         /* Set the relative location */
         setLocationRelativeTo(pParent);
         displayData(myEntry);
+    }
+
+    /**
+     * Set new formatter
+     * @param pFormatter the formatter
+     */
+    protected void setFormatter(final JDataHTML pFormatter) {
+        /* Use the new formatter */
+        theItemPane.setFormatter(pFormatter);
     }
 
     /**

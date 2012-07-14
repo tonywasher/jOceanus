@@ -24,6 +24,7 @@ package net.sourceforge.JFinanceApp.ui;
 
 import java.awt.event.ActionEvent;
 import java.util.ListIterator;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JMenuItem;
@@ -33,12 +34,14 @@ import javax.swing.JPopupMenu;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.ui.DataMouse;
 import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
 import net.sourceforge.JDataModels.ui.Editor.RateEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
@@ -67,6 +70,11 @@ public class AccountRates extends DataTable<AccountRate> {
      * The Data View.
      */
     private final transient View theView;
+
+    /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
 
     /**
      * The Table Model.
@@ -127,19 +135,34 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     /**
-     * Rate Table column name.
+     * Resource Bundle.
      */
-    private static final String TITLE_RATE = "Rate";
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountRates.class.getName());
 
     /**
      * Rate Table column name.
      */
-    private static final String TITLE_BONUS = "Bonus";
+    private static final String TITLE_RATE = NLS_BUNDLE.getString("TitleRate");
 
     /**
      * Rate Table column name.
      */
-    private static final String TITLE_DATE = "EndDate";
+    private static final String TITLE_BONUS = NLS_BUNDLE.getString("TitleBonus");
+
+    /**
+     * Rate Table column name.
+     */
+    private static final String TITLE_DATE = NLS_BUNDLE.getString("TitleEndDate");
+
+    /**
+     * Pop-up Null Date.
+     */
+    private static final String POPUP_NULLDATE = NLS_BUNDLE.getString("PopUpNullDate");
+
+    /**
+     * Pop-up Null Bonus.
+     */
+    private static final String POPUP_NULLBONUS = NLS_BUNDLE.getString("PopUpNullBonus");
 
     /**
      * Rate Table column id.
@@ -182,6 +205,8 @@ public class AccountRates extends DataTable<AccountRate> {
                         final ErrorPanel pError) {
         /* Store details */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
+        setRenderMgr(theRenderMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(AccountRate.class);
@@ -209,6 +234,18 @@ public class AccountRates extends DataTable<AccountRate> {
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+    }
+
+    /**
+     * Determine Focus.
+     * @param pEntry the master data entry
+     */
+    protected void determineFocus(final JDataEntry pEntry) {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        pEntry.setFocus(theUpdateEntry.getName());
     }
 
     /**
@@ -503,16 +540,6 @@ public class AccountRates extends DataTable<AccountRate> {
      */
     private final class RatesMouse extends DataMouse<AccountRate> {
         /**
-         * Pop-up Null Date.
-         */
-        private static final String POPUP_NULLDATE = "Set Null Date";
-
-        /**
-         * Pop-up Null Bonus.
-         */
-        private static final String POPUP_NULLBONUS = "Set Null Bonus";
-
-        /**
          * Constructor.
          */
         private RatesMouse() {
@@ -579,6 +606,22 @@ public class AccountRates extends DataTable<AccountRate> {
                 myItem.setActionCommand(POPUP_NULLBONUS);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
+            }
+        }
+
+        @Override
+        protected void setNullValue(final AccountRate pItem,
+                                    final int col) {
+            /* Switch on the column */
+            switch (col) {
+                case COLUMN_DATE:
+                    pItem.setNullValue(AccountRate.FIELD_ENDDATE);
+                    break;
+                case COLUMN_BONUS:
+                    pItem.setNullValue(AccountRate.FIELD_BONUS);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -653,9 +696,9 @@ public class AccountRates extends DataTable<AccountRate> {
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = new CalendarRenderer();
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theRateRenderer = new DecimalRenderer();
+            theRateRenderer = theRenderMgr.allocateDecimalRenderer();
             theRateEditor = new RateEditor();
 
             /* Create the columns */

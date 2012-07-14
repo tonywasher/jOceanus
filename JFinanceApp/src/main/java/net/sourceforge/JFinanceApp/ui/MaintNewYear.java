@@ -36,6 +36,7 @@ import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.EditState;
 import net.sourceforge.JDataModels.ui.DataTable;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
@@ -70,6 +71,11 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
      * The Data View.
      */
     private final transient View theView;
+
+    /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
 
     /**
      * The events.
@@ -230,6 +236,8 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     public MaintNewYear(final View pView) {
         /* Record the passed details */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
+        setRenderMgr(theRenderMgr);
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet(theView);
@@ -542,9 +550,9 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = new CalendarRenderer();
-            theDecimalRenderer = new DecimalRenderer();
-            theStringRenderer = new StringRenderer();
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
+            theStringRenderer = theRenderMgr.allocateStringRenderer();
 
             /* Create the columns */
             addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, null));

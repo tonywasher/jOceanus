@@ -27,11 +27,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ResourceBundle;
 
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.JTableHeader;
 
 import net.sourceforge.JDataModels.data.DataItem;
 
@@ -42,6 +44,36 @@ import net.sourceforge.JDataModels.data.DataItem;
  */
 public abstract class DataMouse<T extends DataItem & Comparable<T>> extends MouseAdapter implements
         ActionListener {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataMouse.class.getName());
+
+    /**
+     * Insert menu item.
+     */
+    private static final String POPUP_INSERT = NLS_BUNDLE.getString("PopUpInsert");
+
+    /**
+     * Delete menu item.
+     */
+    private static final String POPUP_DELETE = NLS_BUNDLE.getString("PopUpDelete");
+
+    /**
+     * Duplicate menu item.
+     */
+    private static final String POPUP_DUPLICATE = NLS_BUNDLE.getString("PopUpDuplicate");
+
+    /**
+     * Recover menu item.
+     */
+    private static final String POPUP_RECOVER = NLS_BUNDLE.getString("PopUpRecover");
+
+    /**
+     * ShowDeleted menu item.
+     */
+    private static final String POPUP_SHOWDEL = NLS_BUNDLE.getString("PopUpShowDeleted");
+
     /**
      * The underlying data table.
      */
@@ -92,31 +124,6 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
     }
 
     /**
-     * Insert menu item.
-     */
-    private static final String POPUP_INSERT = "Insert Item";
-
-    /**
-     * Delete menu item.
-     */
-    private static final String POPUP_DELETE = "Delete Item(s)";
-
-    /**
-     * Duplicate menu item.
-     */
-    private static final String POPUP_DUPLICATE = "Duplicate Item(s)";
-
-    /**
-     * Recover menu item.
-     */
-    private static final String POPUP_RECOVER = "Recover Item(s)";
-
-    /**
-     * ShowDeleted menu item.
-     */
-    private static final String POPUP_SHOWDEL = "Show Deleted";
-
-    /**
      * Constructor.
      * @param pTable the table
      */
@@ -143,13 +150,11 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
      * @param e the event
      */
     public void maybeShowPopup(final MouseEvent e) {
-        JPopupMenu myMenu;
-        int myRow;
-
         /* If we can trigger a PopUp menu */
         if ((e.isPopupTrigger()) && (theTable.isEnabled())) {
             /* Note if this is a header PopUp */
-            isHeader = (e.getComponent() == theTable.getTableHeader());
+            Object o = e.getComponent();
+            isHeader = (o instanceof JTableHeader);
 
             /* Access the point that the mouse was clicked at */
             Point p = new Point(e.getX(), e.getY());
@@ -159,7 +164,7 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
                 /* Access column and row */
                 theRow = theTable.rowAtPoint(p);
                 theCol = theTable.columnAtPoint(p);
-                myRow = theRow;
+                int myRow = theRow;
 
                 /* Adjust column for view differences */
                 theCol = theTable.convertColumnIndexToModel(theCol);
@@ -183,7 +188,7 @@ public abstract class DataMouse<T extends DataItem & Comparable<T>> extends Mous
             }
 
             /* Create the pop-up menu */
-            myMenu = new JPopupMenu();
+            JPopupMenu myMenu = new JPopupMenu();
 
             /* Add special commands to menu */
             addSpecialCommands(myMenu);

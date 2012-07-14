@@ -26,8 +26,10 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableModel;
 
-import net.sourceforge.JDataModels.ui.RenderData.PopulateRenderData;
+import net.sourceforge.JDataModels.ui.RenderManager.PopulateRenderData;
+import net.sourceforge.JDataModels.ui.RenderManager.RenderData;
 import net.sourceforge.JDateDay.DateDayCellRenderer;
 import net.sourceforge.JDecimal.Decimal;
 
@@ -63,8 +65,14 @@ public final class Renderer {
                                         final DefaultTableCellRenderer pComponent,
                                         final RenderData pData,
                                         final int pAlignment) {
+        /* Ignore if the model is not applicable */
+        TableModel myTableModel = pTable.getModel();
+        if (!(myTableModel instanceof PopulateRenderData)) {
+            return;
+        }
+
         /* Access the table model. */
-        PopulateRenderData myModel = (PopulateRenderData) pTable.getModel();
+        PopulateRenderData myModel = (PopulateRenderData) myTableModel;
 
         /* Determine the render data */
         myModel.populateRenderData(pData);
@@ -98,19 +106,20 @@ public final class Renderer {
 
         /**
          * Constructor.
+         * @param pManager the renderer manager
          */
-        public StringRenderer() {
-            this(false, SwingConstants.LEFT);
+        protected StringRenderer(final RenderManager pManager) {
+            this(pManager.allocateRenderData(false), SwingConstants.LEFT);
         }
 
         /**
          * Constructor for fixed width.
-         * @param pFixed is the item fixed width?
+         * @param pData the render data
          * @param pAlignment the alignment
          */
-        public StringRenderer(final boolean pFixed,
-                              final int pAlignment) {
-            theData = new RenderData(pFixed);
+        private StringRenderer(final RenderData pData,
+                               final int pAlignment) {
+            theData = pData;
             theAlignment = pAlignment;
         }
 
@@ -159,9 +168,10 @@ public final class Renderer {
 
         /**
          * Constructor.
+         * @param pManager the renderer manager
          */
-        public IntegerRenderer() {
-            super(true, SwingConstants.RIGHT);
+        protected IntegerRenderer(final RenderManager pManager) {
+            super(pManager.allocateRenderData(true), SwingConstants.RIGHT);
         }
 
         @Override
@@ -196,9 +206,10 @@ public final class Renderer {
 
         /**
          * Constructor.
+         * @param pManager the renderer manager
          */
-        public CalendarRenderer() {
-            theData = new RenderData(true);
+        protected CalendarRenderer(final RenderManager pManager) {
+            theData = pManager.allocateRenderData(true);
         }
 
         @Override
@@ -233,9 +244,10 @@ public final class Renderer {
 
         /**
          * Constructor.
+         * @param pManager the renderer manager
          */
-        public DecimalRenderer() {
-            super(true, SwingConstants.RIGHT);
+        protected DecimalRenderer(final RenderManager pManager) {
+            super(pManager.allocateRenderData(true), SwingConstants.RIGHT);
         }
 
         @Override
@@ -264,9 +276,10 @@ public final class Renderer {
 
         /**
          * Constructor.
+         * @param pManager the renderer manager
          */
-        public RowCell() {
-            super(true, SwingConstants.CENTER);
+        protected RowCell(final RenderManager pManager) {
+            super(pManager.allocateRenderData(true), SwingConstants.CENTER);
         }
 
         @Override

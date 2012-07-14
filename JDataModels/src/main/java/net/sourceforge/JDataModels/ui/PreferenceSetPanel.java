@@ -132,6 +132,11 @@ public class PreferenceSetPanel extends JPanelWithEvents {
     private transient List<PreferenceElement> theList = null;
 
     /**
+     * The RenderManager.
+     */
+    private final transient RenderManager theRenderMgr;
+
+    /**
      * The Set name.
      */
     private String theName = null;
@@ -187,15 +192,18 @@ public class PreferenceSetPanel extends JPanelWithEvents {
 
     /**
      * Constructor.
+     * @param pRenderMgr the render manager
      * @param pSet the preference set
      */
-    public PreferenceSetPanel(final PreferenceSet pSet) {
+    public PreferenceSetPanel(final RenderManager pRenderMgr,
+                              final PreferenceSet pSet) {
         /* Options SubPanel */
         JPanel myOptions = null;
         int myRow = 0;
 
-        /* Record the set */
+        /* Record the set and manager */
         thePreferences = pSet;
+        theRenderMgr = pRenderMgr;
 
         /* Record the name of the set */
         theName = pSet.getClass().getSimpleName();
@@ -512,8 +520,8 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                 theField.setValue(theString.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(RenderData.getForeground(theString));
-                theField.setFont(RenderData.getFont(theString));
+                theField.setForeground(theRenderMgr.getForeground(theString));
+                theField.setFont(theRenderMgr.getFont(theString));
             }
 
             @Override
@@ -625,8 +633,8 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                 theField.setValue(theInteger.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(RenderData.getForeground(theInteger));
-                theField.setFont(RenderData.getFont(theInteger));
+                theField.setForeground(theRenderMgr.getForeground(theInteger));
+                theField.setFont(theRenderMgr.getFont(theInteger));
             }
 
             @Override
@@ -688,8 +696,8 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                 theField.setSelected(theBoolean.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(RenderData.getForeground(theBoolean));
-                theField.setFont(RenderData.getFont(theBoolean));
+                theField.setForeground(theRenderMgr.getForeground(theBoolean));
+                theField.setFont(theRenderMgr.getFont(theBoolean));
             }
 
             @Override
@@ -751,8 +759,8 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                 theField.setSelectedDateDay(theDate.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(RenderData.getForeground(theDate));
-                theField.setFont(RenderData.getFont(theDate));
+                theField.setForeground(theRenderMgr.getForeground(theDate));
+                theField.setFont(theRenderMgr.getFont(theDate));
             }
 
             @Override
@@ -834,7 +842,7 @@ public class PreferenceSetPanel extends JPanelWithEvents {
 
                 /* Set font and foreground */
                 theField.setForeground(theColor.getValue());
-                theField.setFont(RenderData.getFont(theColor));
+                theField.setFont(theRenderMgr.getFont(theColor));
             }
 
             @Override
@@ -853,18 +861,23 @@ public class PreferenceSetPanel extends JPanelWithEvents {
 
                     /* If this is the button */
                     if (theField.equals(o)) {
-                        /* Position the dialog just below the button */
-                        Point myLoc = getLocationOnScreen();
-                        theDialog.setLocation(myLoc.x, myLoc.y + getHeight());
+                        /* Position the dialog just right of the button */
+                        Point myPanelLoc = getLocationOnScreen();
+                        Point myButtonLoc = theField.getLocationOnScreen();
+                        theDialog.setLocation(myButtonLoc.x + theField.getWidth(), myPanelLoc.y);
+                        theChooser.setColor(theColor.getValue());
 
                         /* Show the dialog */
                         theDialog.setVisible(true);
 
                         /* else if this is the dialog */
-                    } else if (theDialog.equals(o)) {
+                    } else {
                         /* Record the colour */
                         Color myColor = theChooser.getColor();
                         theColor.setValue(myColor);
+
+                        /* Note if we have any changes */
+                        notifyChanges();
                     }
                 }
             }
@@ -909,8 +922,8 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                 theField.setSelectedItem(theEnum.getValue().name());
 
                 /* Set font and foreground */
-                theField.setForeground(RenderData.getForeground(theEnum));
-                theField.setFont(RenderData.getFont(theEnum));
+                theField.setForeground(theRenderMgr.getForeground(theEnum));
+                theField.setFont(theRenderMgr.getFont(theEnum));
             }
 
             @Override

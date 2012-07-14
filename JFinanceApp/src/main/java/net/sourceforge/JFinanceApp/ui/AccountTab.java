@@ -153,22 +153,6 @@ public class AccountTab extends JPanelWithEvents {
     private final ErrorPanel theError;
 
     /**
-     * Obtain view.
-     * @return the view
-     */
-    public View getView() {
-        return theView;
-    }
-
-    /**
-     * Obtain the updateSet.
-     * @return the updateSet
-     */
-    public UpdateSet getUpdateSet() {
-        return theUpdateSet;
-    }
-
-    /**
      * Constructor for Account Window.
      * @param pView the data view
      */
@@ -249,6 +233,9 @@ public class AccountTab extends JPanelWithEvents {
 
         /* Create SavePoint */
         theSelect.createSavePoint();
+
+        /* Touch the updateSet */
+        theDataEntry.setObject(theUpdateSet);
     }
 
     /**
@@ -387,6 +374,9 @@ public class AccountTab extends JPanelWithEvents {
         thePatterns.setSelection(theAccount);
         thePrices.setSelection(theAccount);
         theRates.setSelection(theAccount);
+
+        /* Touch the updateSet */
+        theDataEntry.setObject(theUpdateSet);
 
         /* Note the changes */
         notifyChanges();
@@ -571,26 +561,22 @@ public class AccountTab extends JPanelWithEvents {
         /* If the selected component is Statement */
         if (myComponent.equals(theStatement.getPanel())) {
             /* Set the debug focus */
-            // theStatement.getDataEntry().setFocus();
-            theStatement.requestFocusInWindow();
+            theStatement.determineFocus(theDataEntry);
 
             /* If the selected component is Rates */
         } else if (myComponent.equals(theRates.getPanel())) {
             /* Set the debug focus */
-            // theRates.getDataEntry().setFocus();
-            theRates.requestFocusInWindow();
+            theRates.determineFocus(theDataEntry);
 
             /* If the selected component is Prices */
         } else if (myComponent.equals(thePrices.getPanel())) {
             /* Set the debug focus */
-            // thePrices.getDataEntry().setFocus();
-            thePrices.requestFocusInWindow();
+            thePrices.determineFocus(theDataEntry);
 
             /* If the selected component is Patterns */
         } else if (myComponent.equals(thePatterns.getPanel())) {
             /* Set the debug focus */
-            // thePatterns.getDataEntry().setFocus();
-            thePatterns.requestFocusInWindow();
+            thePatterns.determineFocus(theDataEntry);
         }
     }
 

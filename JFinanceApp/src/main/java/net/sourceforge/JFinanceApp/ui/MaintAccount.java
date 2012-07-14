@@ -54,6 +54,7 @@ import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.ItemField;
 import net.sourceforge.JDataModels.ui.ItemField.FieldSet;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.ui.ValueField;
 import net.sourceforge.JDataModels.ui.ValueField.ValueClass;
@@ -266,6 +267,11 @@ public class MaintAccount extends JPanelWithEvents {
     private final transient View theView;
 
     /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
+
+    /**
      * The Update Set.
      */
     private final transient UpdateSet theUpdateSet;
@@ -290,6 +296,7 @@ public class MaintAccount extends JPanelWithEvents {
     public MaintAccount(final View pView) {
         /* Access the view */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
@@ -314,7 +321,7 @@ public class MaintAccount extends JPanelWithEvents {
         JLabel myNotes = new JLabel("Notes:");
 
         /* Build the field set */
-        theFieldSet = new FieldSet();
+        theFieldSet = new FieldSet(theRenderMgr);
 
         /* Create the text fields */
         theName = new ItemField(ValueClass.String, Account.FIELD_NAME, theFieldSet);
@@ -342,9 +349,9 @@ public class MaintAccount extends JPanelWithEvents {
         theAliasBox = new JComboBox();
 
         /* Add the ComboBoxes to the Field Set */
-        theFieldSet.addItemField(new ItemField(theTypesBox, Account.FIELD_TYPE));
-        theFieldSet.addItemField(new ItemField(theParentBox, Account.FIELD_PARENT));
-        theFieldSet.addItemField(new ItemField(theAliasBox, Account.FIELD_ALIAS));
+        theFieldSet.addItemField(theTypesBox, Account.FIELD_TYPE);
+        theFieldSet.addItemField(theParentBox, Account.FIELD_PARENT);
+        theFieldSet.addItemField(theAliasBox, Account.FIELD_ALIAS);
 
         /* Dimension the account boxes correctly */
         char[] myDefChars = new char[Account.NAMELEN];
@@ -361,7 +368,7 @@ public class MaintAccount extends JPanelWithEvents {
 
         /* Create the Maturity Button */
         theMatButton = new DateDayButton();
-        theFieldSet.addItemField(new ItemField(theMatButton, Account.FIELD_MATURITY));
+        theFieldSet.addItemField(theMatButton, Account.FIELD_MATURITY);
 
         /* Create the buttons */
         theInsButton = new JButton("New");

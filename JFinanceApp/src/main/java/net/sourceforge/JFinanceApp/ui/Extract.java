@@ -53,6 +53,7 @@ import net.sourceforge.JDataModels.ui.Editor.MoneyEditor;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.Editor.UnitsEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
@@ -154,32 +155,37 @@ public class Extract extends DataTable<Event> {
     /**
      * PopUp nullUnits.
      */
-    private static final String POPUP_NULLUNITS = NLS_BUNDLE.getString("PopUpNullUnits");
+    protected static final String POPUP_NULLUNITS = NLS_BUNDLE.getString("PopUpNullUnits");
 
     /**
      * PopUp nullTaxCredit.
      */
-    private static final String POPUP_NULLTAX = NLS_BUNDLE.getString("PopUpNullTax");
+    protected static final String POPUP_NULLTAX = NLS_BUNDLE.getString("PopUpNullTax");
 
     /**
      * PopUp nullYears.
      */
-    private static final String POPUP_NULLYEARS = NLS_BUNDLE.getString("PopUpNullYears");
+    protected static final String POPUP_NULLYEARS = NLS_BUNDLE.getString("PopUpNullYears");
 
     /**
      * PopUp nullDilution.
      */
-    private static final String POPUP_NULLDILUTE = NLS_BUNDLE.getString("PopUpNullDilute");
+    protected static final String POPUP_NULLDILUTE = NLS_BUNDLE.getString("PopUpNullDilute");
 
     /**
      * PopUp calcTax.
      */
-    private static final String POPUP_CALCTAX = NLS_BUNDLE.getString("PopUpCalcTax");
+    protected static final String POPUP_CALCTAX = NLS_BUNDLE.getString("PopUpCalcTax");
 
     /**
      * Data View.
      */
     private final transient View theView;
+
+    /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
 
     /**
      * Update Set.
@@ -376,6 +382,8 @@ public class Extract extends DataTable<Event> {
     public Extract(final View pView) {
         /* Record the passed details */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
+        setRenderMgr(theRenderMgr);
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
@@ -459,6 +467,9 @@ public class Extract extends DataTable<Event> {
 
         /* Create SavePoint */
         theSelect.createSavePoint();
+
+        /* Touch the updateSet */
+        theDataExtract.setObject(theUpdateSet);
     }
 
     /**
@@ -500,6 +511,9 @@ public class Extract extends DataTable<Event> {
         theSaveButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
         fireStateChanged();
+
+        /* Touch the updateSet */
+        theDataExtract.setObject(theUpdateSet);
     }
 
     /**
@@ -1406,14 +1420,14 @@ public class Extract extends DataTable<Event> {
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = new CalendarRenderer();
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theDecimalRenderer = new DecimalRenderer();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
             theMoneyEditor = new MoneyEditor();
             theUnitsEditor = new UnitsEditor();
-            theIntegerRenderer = new IntegerRenderer();
+            theIntegerRenderer = theRenderMgr.allocateIntegerRenderer();
             theIntegerEditor = new IntegerEditor();
-            theStringRenderer = new StringRenderer();
+            theStringRenderer = theRenderMgr.allocateStringRenderer();
             theStringEditor = new StringEditor();
             theDiluteEditor = new DilutionEditor();
             theComboEditor = new ComboBoxEditor();

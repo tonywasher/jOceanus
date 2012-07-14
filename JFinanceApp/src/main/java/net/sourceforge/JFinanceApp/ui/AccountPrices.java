@@ -22,17 +22,21 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.ui;
 
+import java.util.ResourceBundle;
+
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.ui.DataMouse;
 import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
 import net.sourceforge.JDataModels.ui.Editor.PriceEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
@@ -61,6 +65,11 @@ public class AccountPrices extends DataTable<AccountPrice> {
      * Date View.
      */
     private final transient View theView;
+
+    /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
 
     /**
      * Price List.
@@ -129,24 +138,29 @@ public class AccountPrices extends DataTable<AccountPrice> {
     }
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountPrices.class.getName());
+
+    /**
      * Date column title.
      */
-    private static final String TITLE_DATE = "Date";
+    private static final String TITLE_DATE = NLS_BUNDLE.getString("TitleDate");
 
     /**
      * Price column title.
      */
-    private static final String TITLE_PRICE = "Price";
+    private static final String TITLE_PRICE = NLS_BUNDLE.getString("TitlePrice");
 
     /**
      * Dilution column title.
      */
-    private static final String TITLE_DILUTION = "Dilution";
+    private static final String TITLE_DILUTION = NLS_BUNDLE.getString("TitleDilution");
 
     /**
      * Diluted price column title.
      */
-    private static final String TITLE_DILUTEDPRICE = "DilutedPrice";
+    private static final String TITLE_DILUTEDPRICE = NLS_BUNDLE.getString("TitleDilutedPrice");
 
     /**
      * Date column id.
@@ -199,6 +213,8 @@ public class AccountPrices extends DataTable<AccountPrice> {
                          final ErrorPanel pError) {
         /* Store details */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
+        setRenderMgr(theRenderMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(ViewPrice.class);
@@ -226,6 +242,18 @@ public class AccountPrices extends DataTable<AccountPrice> {
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(getScrollPane());
+    }
+
+    /**
+     * Determine Focus.
+     * @param pEntry the master data entry
+     */
+    protected void determineFocus(final JDataEntry pEntry) {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        pEntry.setFocus(theUpdateEntry.getName());
     }
 
     /**
@@ -577,9 +605,9 @@ public class AccountPrices extends DataTable<AccountPrice> {
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = new CalendarRenderer();
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theDecimalRenderer = new DecimalRenderer();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
             thePriceEditor = new PriceEditor();
 
             /* Create the columns */

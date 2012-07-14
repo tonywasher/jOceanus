@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
+import java.awt.Color;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,6 +40,11 @@ import net.sourceforge.JDataManager.JDataObject.JDataValues;
  * @author Tony Washer
  */
 public class JDataManager {
+    /**
+     * HTML formatter.
+     */
+    private JDataHTML theFormatter = null;
+
     /**
      * Tree Model.
      */
@@ -94,6 +100,14 @@ public class JDataManager {
     }
 
     /**
+     * Get formatter.
+     * @return the formatter
+     */
+    protected JDataHTML getFormatter() {
+        return theFormatter;
+    }
+
+    /**
      * Constructor.
      */
     public JDataManager() {
@@ -102,6 +116,30 @@ public class JDataManager {
 
         /* Create the tree model */
         theModel = new DefaultTreeModel(theRoot.getNode());
+
+        /* Create the formatter */
+        theFormatter = new JDataHTML();
+    }
+
+    /**
+     * Set new formatter.
+     * @param pStandard the standard colour
+     * @param pChanged the changed colour
+     * @param pLink the link colour
+     * @param pChgLink the changed link colour
+     */
+    public void setFormatter(Color pStandard,
+                             Color pChanged,
+                             Color pLink,
+                             Color pChgLink) {
+        /* Set the colours */
+        theFormatter = new JDataHTML(pStandard, pChanged, pLink, pChgLink);
+
+        /* If we have a data window */
+        if (theWindow != null) {
+            /* Set the new formatter */
+            theWindow.setFormatter(theFormatter);
+        }
     }
 
     /**
@@ -313,6 +351,27 @@ public class JDataManager {
             if (theWindow != null) {
                 /* Set selection path and ensure visibility */
                 theWindow.displayData(this);
+            }
+        }
+
+        /**
+         * Set Focus onto a child of this debug entry.
+         * @param pName the name of the child
+         */
+        public void setFocus(final String pName) {
+            /* Loop through the children */
+            int iCount = theNode.getChildCount();
+            for (int i = 0; i < iCount; i++) {
+                /* Access child */
+                DefaultMutableTreeNode myChild = (DefaultMutableTreeNode) theNode.getChildAt(i);
+                JDataEntry myEntry = (JDataEntry) myChild.getUserObject();
+
+                /* If we match the object */
+                if (pName.equals(myEntry.theName)) {
+                    /* Set the focus and return */
+                    myEntry.setFocus();
+                    return;
+                }
             }
         }
 

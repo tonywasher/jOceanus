@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import javax.swing.event.ChangeListener;
+
 import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.EventManager;
@@ -61,6 +63,11 @@ public abstract class PreferenceSet {
     private static final String FONT_SEPARATOR = ":";
 
     /**
+     * Event Manager for this set.
+     */
+    private final EventManager theManager = new EventManager(this);
+
+    /**
      * The Preference node for this set.
      */
     private Preferences theHandle = null;
@@ -81,6 +88,32 @@ public abstract class PreferenceSet {
      */
     public Collection<PreferenceItem> getPreferences() {
         return theMap.values();
+    }
+
+    /**
+     * Add change Listener to list.
+     * @param pListener the listener to add
+     */
+    public void addChangeListener(final ChangeListener pListener) {
+        /* Add the change listener */
+        theManager.addChangeListener(pListener);
+    }
+
+    /**
+     * Remove Change Listener.
+     * @param pListener the listener to remove
+     */
+    public void removeChangeListener(final ChangeListener pListener) {
+        /* Remove the change listener */
+        theManager.removeChangeListener(pListener);
+    }
+
+    /**
+     * Fire State Changed Event to all registered listeners.
+     */
+    protected void fireStateChanged() {
+        /* Fire the standard event */
+        theManager.fireStateChanged();
     }
 
     /**
@@ -526,6 +559,9 @@ public abstract class PreferenceSet {
         try {
             /* Flush the output */
             theHandle.flush();
+
+            /* Notify listeners */
+            fireStateChanged();
         } catch (BackingStoreException e) {
             throw new JDataException(ExceptionClass.PREFERENCE, "Failed to flush preferences to store", e);
         }

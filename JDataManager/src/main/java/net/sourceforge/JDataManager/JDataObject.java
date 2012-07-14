@@ -196,5 +196,4 @@ public final class JDataObject {
         /* Standard format option */
         return pValue.getClass().getSimpleName();
     }
-
 }

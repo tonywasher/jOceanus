@@ -139,7 +139,7 @@ public class UpdateSet implements JDataContents {
         /* Not found , so add it */
         myList = new UpdateEntry(pClass);
         theList.add(myList);
-        theLocalFields.declareLocalField(pClass.getSimpleName());
+        theLocalFields.declareLocalField(myList.getName());
         return myList;
     }
 
@@ -158,8 +158,8 @@ public class UpdateSet implements JDataContents {
             /* Access list */
             myList = myIterator.next();
 
-            /* If we have found the class */
-            if (myList.theClass.getSimpleName().equals(pName)) {
+            /* If we have found the entry */
+            if (pName.equals(myList.getName())) {
                 /* Return the value */
                 return (myList.theDataList == null) ? JDataFieldValue.SkipField : myList.theDataList;
             }
@@ -467,6 +467,14 @@ public class UpdateSet implements JDataContents {
          * The DataList.
          */
         private DataList<?, ?> theDataList = null;
+
+        /**
+         * Obtain the name of the entry.
+         * @return the name
+         */
+        public String getName() {
+            return theClass.getSimpleName();
+        }
 
         /**
          * Set the Data list.

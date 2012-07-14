@@ -137,8 +137,9 @@ public class JDataItem {
 
     /**
      * Constructor.
+     * @param pFormatter the formatter
      */
-    protected JDataItem() {
+    protected JDataItem(final JDataHTML pFormatter) {
         /* Create the slider */
         theSlider = new JSlider(SwingConstants.HORIZONTAL);
         theSlider.setMinimum(0);
@@ -157,20 +158,11 @@ public class JDataItem {
         theEditor = new JEditorPane();
         theEditor.setEditable(false);
 
-        /* Add an editor kit to the editor */
-        HTMLEditorKit myKit = new HTMLEditorKit();
-        theEditor.setEditorKit(myKit);
-
         /* Create a scroll-pane for the editor */
         JScrollPane myScroll = new JScrollPane(theEditor);
 
-        /* Create the style-sheet for the window */
-        StyleSheet myStyle = myKit.getStyleSheet();
-        JDataHTML.buildStylesheet(myStyle);
-
-        /* Create the document for the window */
-        Document myDoc = myKit.createDefaultDocument();
-        theEditor.setDocument(myDoc);
+        /* Build the editor style sheet */
+        buildEditorStyleSheet(pFormatter);
 
         /* Create the list panel */
         theListPanel = new JPanel();
@@ -208,6 +200,33 @@ public class JDataItem {
 
         /* Add slider listener */
         theSlider.addChangeListener(myListener);
+    }
+
+    /**
+     * Set new formatter
+     * @param pFormatter the formatter
+     */
+    protected void setFormatter(final JDataHTML pFormatter) {
+        /* Use the new formatter */
+        buildEditorStyleSheet(pFormatter);
+    }
+
+    /**
+     * build editor styleSheet.
+     * @param pFormatter the formatter
+     */
+    protected void buildEditorStyleSheet(final JDataHTML pFormatter) {
+        /* Add a new editor kit to the editor */
+        HTMLEditorKit myKit = new HTMLEditorKit();
+        theEditor.setEditorKit(myKit);
+
+        /* Create the style-sheet for the window */
+        StyleSheet myStyle = myKit.getStyleSheet();
+        pFormatter.buildStylesheet(myStyle);
+
+        /* Create the document for the window */
+        Document myDoc = myKit.createDefaultDocument();
+        theEditor.setDocument(myDoc);
     }
 
     /**

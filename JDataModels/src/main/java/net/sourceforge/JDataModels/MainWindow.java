@@ -26,6 +26,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -68,6 +69,101 @@ import net.sourceforge.JHelpManager.HelpWindow;
  * @param <T> the data set type
  */
 public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl, ActionListener {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MainWindow.class.getName());
+
+    /**
+     * Data menu title.
+     */
+    private static final String MENU_DATA = NLS_BUNDLE.getString("MenuData");
+
+    /**
+     * Backup menu title.
+     */
+    private static final String MENU_BACKUP = NLS_BUNDLE.getString("MenuBackup");
+
+    /**
+     * Security menu title.
+     */
+    private static final String MENU_SECURITY = NLS_BUNDLE.getString("MenuSecurity");
+
+    /**
+     * Help menu title.
+     */
+    private static final String MENU_HELP = NLS_BUNDLE.getString("MenuHelp");
+
+    /**
+     * Load Database menu item.
+     */
+    private static final String ITEM_LOADDB = NLS_BUNDLE.getString("ItemLoadDB");
+
+    /**
+     * Store Database menu item.
+     */
+    private static final String ITEM_STOREDB = NLS_BUNDLE.getString("ItemStoreDB");
+
+    /**
+     * Create Database menu item.
+     */
+    private static final String ITEM_CREATEDB = NLS_BUNDLE.getString("ItemCreateDB");
+
+    /**
+     * Purge Database menu item.
+     */
+    private static final String ITEM_PURGEDB = NLS_BUNDLE.getString("ItemPurgeDB");
+
+    /**
+     * Create Backup menu item.
+     */
+    private static final String ITEM_MAKEBACKUP = NLS_BUNDLE.getString("ItemCreateBackup");
+
+    /**
+     * Restore Backup menu item.
+     */
+    private static final String ITEM_RESTOREBACK = NLS_BUNDLE.getString("ItemRestoreBackup");
+
+    /**
+     * Create Extract menu item.
+     */
+    private static final String ITEM_MAKEXTRACT = NLS_BUNDLE.getString("ItemCreateXtract");
+
+    /**
+     * Load Extract menu item.
+     */
+    private static final String ITEM_LOADXTRACT = NLS_BUNDLE.getString("ItemLoadXtract");
+
+    /**
+     * Renew Security.
+     */
+    private static final String ITEM_RENEWSEC = NLS_BUNDLE.getString("ItemRenewSecurity");
+
+    /**
+     * Change Password menu item.
+     */
+    private static final String ITEM_CHGPASS = NLS_BUNDLE.getString("ItemChangePass");
+
+    /**
+     * Help menu item.
+     */
+    private static final String ITEM_HELP = NLS_BUNDLE.getString("ItemHelp");
+
+    /**
+     * Data Manager menu item.
+     */
+    private static final String ITEM_DATAMGR = NLS_BUNDLE.getString("ItemDataMgr");
+
+    /**
+     * Discard prompt.
+     */
+    private static final String PROMPT_DISCARD = NLS_BUNDLE.getString("PromptDiscard");
+
+    /**
+     * Close Dialog title.
+     */
+    private static final String TITLE_CLOSE = NLS_BUNDLE.getString("TitleClose");
+
     /**
      * The data view.
      */
@@ -306,22 +402,22 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
         JMenuBar myMainMenu = new JMenuBar();
 
         /* Add Data Menu Items */
-        theDataMenu = new JMenu("Data");
+        theDataMenu = new JMenu(MENU_DATA);
         addDataMenuItems(theDataMenu);
         myMainMenu.add(theDataMenu);
 
         /* Add Backup Menu Items */
-        theBackupMenu = new JMenu("Backup");
+        theBackupMenu = new JMenu(MENU_BACKUP);
         addBackupMenuItems(theBackupMenu);
         myMainMenu.add(theBackupMenu);
 
         /* Add Security Menu Items */
-        theSecureMenu = new JMenu("Security");
+        theSecureMenu = new JMenu(MENU_SECURITY);
         addSecurityMenuItems(theSecureMenu);
         myMainMenu.add(theSecureMenu);
 
         /* Add Help Menu items */
-        JMenu myHelpMenu = new JMenu("Help");
+        JMenu myHelpMenu = new JMenu(MENU_HELP);
         addHelpMenuItems(myHelpMenu);
         myMainMenu.add(Box.createHorizontalGlue());
         myMainMenu.add(myHelpMenu);
@@ -336,16 +432,16 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      */
     protected void addDataMenuItems(final JMenu pMenu) {
         /* Add Standard Data Menu items */
-        theLoadDBase = new JMenuItem("Load Database");
+        theLoadDBase = new JMenuItem(ITEM_LOADDB);
         theLoadDBase.addActionListener(this);
         pMenu.add(theLoadDBase);
-        theSaveDBase = new JMenuItem("Store to Database");
+        theSaveDBase = new JMenuItem(ITEM_STOREDB);
         theSaveDBase.addActionListener(this);
         pMenu.add(theSaveDBase);
-        theCreateDBase = new JMenuItem("Create Database Tables");
+        theCreateDBase = new JMenuItem(ITEM_CREATEDB);
         theCreateDBase.addActionListener(this);
         pMenu.add(theCreateDBase);
-        thePurgeDBase = new JMenuItem("Purge Database");
+        thePurgeDBase = new JMenuItem(ITEM_PURGEDB);
         thePurgeDBase.addActionListener(this);
         pMenu.add(thePurgeDBase);
     }
@@ -356,16 +452,16 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      */
     protected void addBackupMenuItems(final JMenu pMenu) {
         /* Add Standard Backup menu items */
-        theWriteBackup = new JMenuItem("Create Backup");
+        theWriteBackup = new JMenuItem(ITEM_MAKEBACKUP);
         theWriteBackup.addActionListener(this);
         pMenu.add(theWriteBackup);
-        theLoadBackup = new JMenuItem("Restore from Backup");
+        theLoadBackup = new JMenuItem(ITEM_RESTOREBACK);
         theLoadBackup.addActionListener(this);
         pMenu.add(theLoadBackup);
-        theWriteExtract = new JMenuItem("Create Extract");
+        theWriteExtract = new JMenuItem(ITEM_MAKEXTRACT);
         theWriteExtract.addActionListener(this);
         pMenu.add(theWriteExtract);
-        theLoadExtract = new JMenuItem("Load from Extract");
+        theLoadExtract = new JMenuItem(ITEM_LOADXTRACT);
         theLoadExtract.addActionListener(this);
         pMenu.add(theLoadExtract);
     }
@@ -376,10 +472,10 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      */
     protected void addSecurityMenuItems(final JMenu pMenu) {
         /* Add Standard Security menu items */
-        theUpdatePass = new JMenuItem("Update Password");
+        theUpdatePass = new JMenuItem(ITEM_CHGPASS);
         theUpdatePass.addActionListener(this);
         pMenu.add(theUpdatePass);
-        theRenewSec = new JMenuItem("Renew Security");
+        theRenewSec = new JMenuItem(ITEM_RENEWSEC);
         theRenewSec.addActionListener(this);
         pMenu.add(theRenewSec);
     }
@@ -390,10 +486,10 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      */
     protected void addHelpMenuItems(final JMenu pMenu) {
         /* Create the menu items */
-        theHelpMgr = new JMenuItem("Help");
+        theHelpMgr = new JMenuItem(ITEM_HELP);
         theHelpMgr.addActionListener(this);
         pMenu.add(theHelpMgr);
-        theShowDataMgr = new JMenuItem("Data Manager");
+        theShowDataMgr = new JMenuItem(ITEM_DATAMGR);
         theShowDataMgr.addActionListener(this);
         pMenu.add(theShowDataMgr);
     }
@@ -430,8 +526,8 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
                 /* If we have updates or changes */
                 if ((hasUpdates()) || (hasChanges())) {
                     /* Ask whether to continue */
-                    int myOption = JOptionPane.showConfirmDialog(theFrame, "Discard unsaved data changes?",
-                                                                 "Confirm Close", JOptionPane.YES_NO_OPTION);
+                    int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE,
+                                                                 JOptionPane.YES_NO_OPTION);
 
                     /* Ignore if no was responded */
                     if (myOption != JOptionPane.YES_OPTION) {

@@ -64,10 +64,10 @@ public class ItemField extends ValueField {
     /**
      * Constructor.
      * @param pClass the value class
-     * @param iField the field number
+     * @param pField the field
      */
-    public ItemField(final ValueClass pClass,
-                     final JDataField iField) {
+    private ItemField(final ValueClass pClass,
+                      final JDataField pField) {
         /* Call super constructor */
         super(pClass);
 
@@ -75,7 +75,7 @@ public class ItemField extends ValueField {
         theComponent = this;
 
         /* Store the field id */
-        theField = iField;
+        theField = pField;
 
         /* Switch on the class */
         switch (pClass) {
@@ -99,15 +99,15 @@ public class ItemField extends ValueField {
     /**
      * Constructor for Component.
      * @param pComponent the component
-     * @param iField the field number
+     * @param pField the field
      */
-    public ItemField(final JComponent pComponent,
-                     final JDataField iField) {
+    private ItemField(final JComponent pComponent,
+                      final JDataField pField) {
         /* Store the Component */
         theComponent = pComponent;
 
         /* Store the field id */
-        theField = iField;
+        theField = pField;
 
         /* Set variable width */
         isFixed = false;
@@ -116,14 +116,14 @@ public class ItemField extends ValueField {
     /**
      * Constructor to add ItemField to list.
      * @param pClass the value class
-     * @param iField the field number
+     * @param pField the field
      * @param pSet the set to add to
      */
     public ItemField(final ValueClass pClass,
-                     final JDataField iField,
+                     final JDataField pField,
                      final FieldSet pSet) {
         /* Call standard constructor */
-        this(pClass, iField);
+        this(pClass, pField);
 
         /* Add to the set */
         pSet.addItemField(this);
@@ -132,14 +132,14 @@ public class ItemField extends ValueField {
     /**
      * Constructor to add Component to list.
      * @param pComponent the component
-     * @param iField the field number
+     * @param pField the field
      * @param pSet the set to add to
      */
     public ItemField(final JComponent pComponent,
-                     final JDataField iField,
+                     final JDataField pField,
                      final FieldSet pSet) {
         /* Call standard constructor */
-        this(pComponent, iField);
+        this(pComponent, pField);
 
         /* Add to the set */
         pSet.addItemField(this);
@@ -147,21 +147,18 @@ public class ItemField extends ValueField {
 
     /**
      * Render the item.
+     * @param pRenderMgr the render manager
      * @param pItem the item to use for rendering
      */
-    public void renderField(final DataItem pItem) {
-        Font myFont;
-        Color myBack;
-        Color myFore;
-        String myTip;
-
+    private void renderField(final RenderManager pRenderMgr,
+                             final DataItem pItem) {
         /* Determine the standard colours */
-        myFore = RenderData.getForeground(pItem, theField);
-        myBack = RenderData.getBackground();
+        Color myFore = pRenderMgr.getForeground(pItem, theField);
+        Color myBack = pRenderMgr.getBackground();
 
         /* Determine the Font and ToolTip */
-        myFont = RenderData.getFont(pItem, theField, isFixed);
-        myTip = RenderData.getToolTip(pItem, theField);
+        Font myFont = pRenderMgr.getFont(pItem, theField, isFixed);
+        String myTip = pRenderMgr.getToolTip(pItem, theField);
 
         theComponent.setForeground(myFore);
         if (!(theComponent instanceof JButton)) {
@@ -201,14 +198,23 @@ public class ItemField extends ValueField {
      */
     public static class FieldSet {
         /**
+         * The Render Manager.
+         */
+        private final transient RenderManager theRenderMgr;
+
+        /**
          * List of ItemFields.
          */
         private final List<ItemField> theList;
 
         /**
          * Constructor.
+         * @param pRenderMgr the render manager
          */
-        public FieldSet() {
+        public FieldSet(final RenderManager pRenderMgr) {
+            /* Store the render manager */
+            theRenderMgr = pRenderMgr;
+
             /* Create the list */
             theList = new ArrayList<ItemField>();
         }
@@ -220,6 +226,17 @@ public class ItemField extends ValueField {
         public void addItemField(final ItemField pField) {
             /* Add the field */
             theList.add(pField);
+        }
+
+        /**
+         * Add component to List.
+         * @param pComponent the component
+         * @param pField the field
+         */
+        public void addItemField(final JComponent pComponent,
+                                 final JDataField pField) {
+            /* Add the field */
+            theList.add(new ItemField(pComponent, pField));
         }
 
         /**
@@ -237,7 +254,7 @@ public class ItemField extends ValueField {
                 myField = myIterator.next();
 
                 /* Render it */
-                myField.renderField(pItem);
+                myField.renderField(theRenderMgr, pItem);
             }
         }
     }

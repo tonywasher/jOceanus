@@ -25,6 +25,7 @@ package net.sourceforge.JFinanceApp.ui;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
@@ -38,6 +39,7 @@ import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.ui.DataMouse;
 import net.sourceforge.JDataModels.ui.DataTable;
@@ -49,6 +51,7 @@ import net.sourceforge.JDataModels.ui.Editor.MoneyEditor;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.Editor.UnitsEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
@@ -88,6 +91,11 @@ public class AccountStatement extends DataTable<Event> {
      * Date view.
      */
     private final transient View theView;
+
+    /**
+     * The render manager.
+     */
+    private final transient RenderManager theRenderMgr;
 
     /**
      * Table Model.
@@ -178,6 +186,12 @@ public class AccountStatement extends DataTable<Event> {
     }
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountStatement.class
+            .getName());
+
+    /**
      * Date column header.
      */
     private static final String TITLE_DATE = Extract.TITLE_DATE;
@@ -195,7 +209,7 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Partner column header.
      */
-    private static final String TITLE_PARTNER = "Partner";
+    private static final String TITLE_PARTNER = AccountPatterns.TITLE_PARTNER;
 
     /**
      * Credit column header.
@@ -210,7 +224,7 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Balance column header.
      */
-    private static final String TITLE_BALANCE = "Balance";
+    private static final String TITLE_BALANCE = NLS_BUNDLE.getString("TitleBalance");
 
     /**
      * Dilution column header.
@@ -226,6 +240,76 @@ public class AccountStatement extends DataTable<Event> {
      * Years column header.
      */
     private static final String TITLE_YEARS = Extract.TITLE_YEARS;
+
+    /**
+     * Pop-up View Extract.
+     */
+    private static final String POPUP_EXTRACT = NLS_BUNDLE.getString("PopUpExtract");
+
+    /**
+     * Pop-up Maintain account.
+     */
+    private static final String POPUP_MAINT = NLS_BUNDLE.getString("PopUpMaint");
+
+    /**
+     * Pop-up View Parent.
+     */
+    private static final String POPUP_PARENT = NLS_BUNDLE.getString("PopUpParent");
+
+    /**
+     * Pop-up Maintain parent.
+     */
+    private static final String POPUP_MAINT_PARENT = NLS_BUNDLE.getString("PopUpMaintParent");
+
+    /**
+     * Pop-up View Partner.
+     */
+    private static final String POPUP_PARTNER = NLS_BUNDLE.getString("PopUpPartner");
+
+    /**
+     * Pop-up maintain partner.
+     */
+    private static final String POPUP_MAINT_PARTNER = NLS_BUNDLE.getString("PopUpMaintPartner");
+
+    /**
+     * Pop-up Set null units.
+     */
+    private static final String POPUP_NULLUNITS = Extract.POPUP_NULLUNITS;
+
+    /**
+     * Pop-up Set null Tax Credit.
+     */
+    private static final String POPUP_NULLTAX = Extract.POPUP_NULLTAX;
+
+    /**
+     * Pop-up Set null Years.
+     */
+    private static final String POPUP_NULLYEARS = Extract.POPUP_NULLYEARS;
+
+    /**
+     * Pop-up Set null dilution.
+     */
+    private static final String POPUP_NULLDILUTE = Extract.POPUP_NULLDILUTE;
+
+    /**
+     * Pop-up Add Pattern.
+     */
+    private static final String POPUP_PATTERN = NLS_BUNDLE.getString("PopUpPattern");
+
+    /**
+     * Pop-up Calculate Tax.
+     */
+    private static final String POPUP_CALCTAX = Extract.POPUP_CALCTAX;
+
+    /**
+     * Pop-up Set Credit.
+     */
+    private static final String POPUP_CREDIT = AccountPatterns.POPUP_CREDIT;
+
+    /**
+     * Pop-up Set Debit.
+     */
+    private static final String POPUP_DEBIT = AccountPatterns.POPUP_DEBIT;
 
     /**
      * Date column id.
@@ -338,6 +422,8 @@ public class AccountStatement extends DataTable<Event> {
                             final ErrorPanel pError) {
         /* Store passed details */
         theView = pView;
+        theRenderMgr = theView.getRenderMgr();
+        setRenderMgr(theRenderMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(StatementLine.class);
@@ -378,6 +464,18 @@ public class AccountStatement extends DataTable<Event> {
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(myTop);
         thePanel.add(getScrollPane());
+    }
+
+    /**
+     * Determine Focus.
+     * @param pEntry the master data entry
+     */
+    protected void determineFocus(final JDataEntry pEntry) {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        pEntry.setFocus(theUpdateEntry.getName());
     }
 
     // @Override
@@ -997,76 +1095,6 @@ public class AccountStatement extends DataTable<Event> {
      */
     private final class StatementMouse extends DataMouse<Event> {
         /**
-         * Pop-up View Extract.
-         */
-        private static final String POPUP_EXTRACT = "View Extract";
-
-        /**
-         * Pop-up Maintain account.
-         */
-        private static final String POPUP_MAINT = "Maintain Account";
-
-        /**
-         * Pop-up View Parent.
-         */
-        private static final String POPUP_PARENT = "View Parent";
-
-        /**
-         * Pop-up Maintain parent.
-         */
-        private static final String POPUP_MAINT_PARENT = "Maintain Parent";
-
-        /**
-         * Pop-up View Partner.
-         */
-        private static final String POPUP_PARTNER = "View Partner";
-
-        /**
-         * Pop-up maintain partner.
-         */
-        private static final String POPUP_MAINT_PARTNER = "Maintain Partner";
-
-        /**
-         * Pop-up Set null units.
-         */
-        private static final String POPUP_NULLUNITS = "Set Null Units";
-
-        /**
-         * Pop-up Set null Tax Credit.
-         */
-        private static final String POPUP_NULLTAX = "Set Null TaxCredit";
-
-        /**
-         * Pop-up Set null Years.
-         */
-        private static final String POPUP_NULLYEARS = "Set Null Years";
-
-        /**
-         * Pop-up Set null dilution.
-         */
-        private static final String POPUP_NULLDILUTE = "Set Null Dilution";
-
-        /**
-         * Pop-up Add Pattern.
-         */
-        private static final String POPUP_PATTERN = "Add to Pattern";
-
-        /**
-         * Pop-up Calculate Tax.
-         */
-        private static final String POPUP_CALCTAX = "Calculate Tax Credit";
-
-        /**
-         * Pop-up Set Credit.
-         */
-        private static final String POPUP_CREDIT = "Set As Credit";
-
-        /**
-         * Pop-up Set Debit.
-         */
-        private static final String POPUP_DEBIT = "Set As Debit";
-
-        /**
          * Constructor.
          */
         private StatementMouse() {
@@ -1380,6 +1408,28 @@ public class AccountStatement extends DataTable<Event> {
             theUpdateSet.incrementVersion();
         }
 
+        @Override
+        protected void setNullValue(final Event pItem,
+                                    final int col) {
+            /* Switch on the column */
+            switch (col) {
+                case COLUMN_TAXCREDIT:
+                    pItem.setNullValue(Event.FIELD_TAXCREDIT);
+                    break;
+                case COLUMN_CREDIT:
+                    pItem.setNullValue(Event.FIELD_UNITS);
+                    break;
+                case COLUMN_DILUTION:
+                    pItem.setNullValue(Event.FIELD_DILUTION);
+                    break;
+                case COLUMN_YEARS:
+                    pItem.setNullValue(Event.FIELD_YEARS);
+                    break;
+                default:
+                    break;
+            }
+        }
+
         /**
          * Perform actions for controls/pop-ups on this table.
          * @param evt the event
@@ -1400,7 +1450,6 @@ public class AccountStatement extends DataTable<Event> {
             /* If this is a set null units command */
             if (myCmd.equals(POPUP_NULLUNITS)) {
                 /* Set Units column to null */
-                setColumnToNull(COLUMN_DEBIT);
                 setColumnToNull(COLUMN_CREDIT);
 
                 /* else if this is a set null tax command */
@@ -1657,15 +1706,15 @@ public class AccountStatement extends DataTable<Event> {
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = new CalendarRenderer();
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theDecimalRenderer = new DecimalRenderer();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
             theMoneyEditor = new MoneyEditor();
             theUnitsEditor = new UnitsEditor();
-            theStringRenderer = new StringRenderer();
+            theStringRenderer = theRenderMgr.allocateStringRenderer();
             theStringEditor = new StringEditor();
             theDilutionEditor = new DilutionEditor();
-            theIntegerRenderer = new IntegerRenderer();
+            theIntegerRenderer = theRenderMgr.allocateIntegerRenderer();
             theIntegerEditor = new IntegerEditor();
             theComboEditor = new ComboBoxEditor();
 
