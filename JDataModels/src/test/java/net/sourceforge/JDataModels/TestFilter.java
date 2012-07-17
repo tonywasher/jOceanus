@@ -29,11 +29,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -47,12 +49,38 @@ import javax.swing.table.AbstractTableModel;
 import net.sourceforge.JDataModels.ui.DataFilter;
 import net.sourceforge.JDataModels.ui.DataFilter.DataFilterModel;
 
-public class TestFilter {
+public class TestFilter extends JApplet {
+    /**
+     * The Serial Id.
+     */
+    private static final long serialVersionUID = 1701124585110023740L;
 
     /**
      * Logger.
      */
     private static Logger theLogger = Logger.getAnonymousLogger();
+
+    @Override
+    public void init() {
+        // Execute a job on the event-dispatching thread; creating this applet's GUI.
+        try {
+            SwingUtilities.invokeAndWait(new Runnable() {
+                @Override
+                public void run() {
+                    /* Create the Test Table */
+                    TestTable myTable = new TestTable();
+
+                    /* Access the panel */
+                    JScrollPane myPanel = myTable.getScrollPane();
+                    setContentPane(myPanel);
+                }
+            });
+        } catch (InvocationTargetException e) {
+            theLogger.log(Level.SEVERE, "Failed to invoke thread", e);
+        } catch (InterruptedException e) {
+            theLogger.log(Level.SEVERE, "Thread was interrupted", e);
+        }
+    }
 
     /**
      * Main function.
@@ -148,13 +176,11 @@ public class TestFilter {
             /* Set the number of visible rows */
             setPreferredScrollableViewportSize(new Dimension(600, 500));
 
-            /* Create a new Scroll Pane and add this table to it */
-            theScroll = new JScrollPane();
-            theScroll.setViewportView(this);
+            /* Create a new Scroll Pane for this table */
+            theScroll = new JScrollPane(this);
 
             /* Add the mouse listener */
-            TestMouse myMouse = new TestMouse(this);
-            addMouseListener(myMouse);
+            addMouseListener(new TestMouse(this));
         }
     }
 
@@ -254,6 +280,11 @@ public class TestFilter {
         private boolean showAll = false;
 
         /**
+         * Should we sort items.
+         */
+        private boolean sortItems = false;
+
+        /**
          * Should we show all items.
          */
         private DataFilter<RowData> theFilter = null;
@@ -264,6 +295,14 @@ public class TestFilter {
          */
         public boolean showAll() {
             return showAll;
+        }
+
+        /**
+         * Get showAll value
+         * @return true/false
+         */
+        public boolean sortItems() {
+            return sortItems;
         }
 
         @Override
@@ -309,7 +348,6 @@ public class TestFilter {
 
             /* Say that we have added the row */
             fireTableRowsInserted(pIndex, pIndex);
-            theFilter.reportMappingChanged();
         }
 
         /**
@@ -322,6 +360,16 @@ public class TestFilter {
 
             /* Say that we have deleted the row */
             fireTableRowsDeleted(pRowIndex, pRowIndex);
+        }
+
+        /**
+         * Set sort items
+         * @param doSort true/false
+         */
+        public void setSortItems(final boolean doSort) {
+            /* Set the sort details */
+            theFilter.setSortMode(doSort);
+            sortItems = doSort;
         }
 
         /**
@@ -346,12 +394,9 @@ public class TestFilter {
         }
 
         @Override
-        public boolean includeIndex(final int pRowIndex) {
-            /* Access the row */
-            RowData myItem = getItemAtIndex(pRowIndex);
-
+        public boolean includeRow(final RowData pRow) {
             /* Return visibility */
-            return showAll || myItem.isVisible();
+            return showAll || pRow.isVisible();
         }
 
         @Override
@@ -432,6 +477,19 @@ public class TestFilter {
 
             /* Say that we have changed the row */
             fireTableCellUpdated(pRowIndex, pColIndex);
+        }
+
+        @Override
+        public void fireTableRowsInserted(final int pFirstRowIndex,
+                                          final int pEndRowIndex) {
+            super.fireTableRowsInserted(pFirstRowIndex, pEndRowIndex);
+            theFilter.reportMappingChanged();
+        }
+
+        @Override
+        public void fireTableCellUpdated(final int pRowIndex,
+                                         final int pColIndex) {
+            super.fireTableCellUpdated(pRowIndex, pColIndex);
             theFilter.reportMappingChanged();
         }
     }
@@ -469,6 +527,11 @@ public class TestFilter {
          * ShowDeleted menu item.
          */
         private static final String POPUP_SHOWALL = "Show All Items";
+
+        /**
+         * SetSorted menu item.
+         */
+        private static final String POPUP_SORT = "Sort Items";
 
         /**
          * The Table
@@ -550,6 +613,13 @@ public class TestFilter {
                 myCheckBox.addActionListener(this);
                 myMenu.add(myCheckBox);
 
+                /* Add the Sort CheckBox */
+                myCheckBox = new JCheckBoxMenuItem(POPUP_SORT);
+                myCheckBox.setSelected(theModel.sortItems());
+                myCheckBox.setActionCommand(POPUP_SORT);
+                myCheckBox.addActionListener(this);
+                myMenu.add(myCheckBox);
+
                 /* If we have items in the menu */
                 if (myMenu.getComponentCount() > 0) {
                     /* Show the pop-up menu */
@@ -594,6 +664,14 @@ public class TestFilter {
 
                 /* Notify the table */
                 theModel.setShowAll(doShowAll);
+
+                /* if this is a sort command */
+            } else if (myCmd.equals(POPUP_SORT)) {
+                /* Note the new criteria */
+                boolean doSort = ((JCheckBoxMenuItem) mySrc).isSelected();
+
+                /* Notify the table */
+                theModel.setSortItems(doSort);
             }
         }
     }

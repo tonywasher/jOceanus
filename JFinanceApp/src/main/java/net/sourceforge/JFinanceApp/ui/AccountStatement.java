@@ -69,6 +69,7 @@ import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.TransactionType;
+import net.sourceforge.JFinanceApp.ui.MainTab.ActionRequest;
 import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
 import net.sourceforge.JFinanceApp.ui.controls.StatementSelect;
 import net.sourceforge.JFinanceApp.ui.controls.StatementSelect.StatementType;
@@ -1562,7 +1563,7 @@ public class AccountStatement extends DataTable<Event> {
                 StatementLine myLine = (StatementLine) myRow;
 
                 /* Request the action */
-                fireActionEvent(MainTab.ACTION_ADDPATTERN, myLine);
+                fireActionEvent(MainTab.ACTION_ADDPATTERN, new ActionRequest(theAccount, myLine));
             }
         }
 
@@ -1589,17 +1590,17 @@ public class AccountStatement extends DataTable<Event> {
 
             /* Handle commands */
             if (myCmd.equals(POPUP_EXTRACT)) {
-                fireActionEvent(MainTab.ACTION_VIEWEXTRACT, theSelect);
+                fireActionEvent(MainTab.ACTION_VIEWEXTRACT, new ActionRequest(theSelect));
             } else if (myCmd.equals(POPUP_MAINT)) {
-                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, theAccount);
+                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, new ActionRequest(theAccount));
             } else if (myCmd.equals(POPUP_PARENT)) {
-                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, theAccount.getParent());
+                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, new ActionRequest(theAccount.getParent()));
             } else if (myCmd.equals(POPUP_MAINT_PARENT)) {
-                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, theAccount.getParent());
+                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, new ActionRequest(theAccount.getParent()));
             } else if (myCmd.equals(POPUP_PARTNER)) {
-                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, myAccount);
+                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, new ActionRequest(myAccount));
             } else if (myCmd.equals(POPUP_MAINT_PARTNER)) {
-                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, myAccount);
+                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, new ActionRequest(myAccount));
             }
         }
     }

@@ -474,7 +474,7 @@ public class AccountSelect extends JPanelWithEvents {
         /* If we have a selected account */
         if (mySelected != null) {
             /* Select it in the new list */
-            theAccountBox.setSelectedItem(mySelected.getName());
+            theAccountBox.setSelectedItem(mySelected);
 
             /* Else we have no account currently selected */
         } else if (theAccountBox.getItemCount() > 0) {

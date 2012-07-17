@@ -429,7 +429,10 @@ public class StatusBar {
 
                 /* Make the Status window invisible */
                 theStatPanel.setVisible(false);
+
+                /* Clear the error */
                 theError = null;
+                theDataEntry.hideEntry();
 
                 /* Finish the thread */
                 theControl.finishThread();

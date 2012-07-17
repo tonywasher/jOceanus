@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataDifference;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.JDataObject.JDataValues;
 
@@ -136,13 +137,11 @@ public class ValueSetDelta implements JDataContents {
         /* Adjust index */
         myIndex -= 2;
 
-        /* If this value does not differ */
-        if (Difference.isEqual(theOldSet.getValue(myIndex), theNewSet.getValue(myIndex))) {
-            /* Skip the field */
-            return JDataFieldValue.SkipField;
-        }
+        /* Obtain the difference */
+        Object myObject = theOldSet.getValue(myIndex);
+        Difference myDifference = Difference.getDifference(myObject, theNewSet.getValue(myIndex));
 
         /* Return the value */
-        return theOldSet.getValue(myIndex);
+        return new JDataDifference(myObject, myDifference);
     }
 }

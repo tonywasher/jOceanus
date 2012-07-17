@@ -115,6 +115,48 @@ public final class JDataObject {
     }
 
     /**
+     * Difference class.
+     */
+    public static class JDataDifference {
+        /**
+         * The object itself.
+         */
+        private final Object theObject;
+
+        /**
+         * The difference.
+         */
+        private final Difference theDifference;
+
+        /**
+         * Obtain the object.
+         * @return the object
+         */
+        public Object getObject() {
+            return theObject;
+        }
+
+        /**
+         * Obtain the difference.
+         * @return the difference
+         */
+        public Difference getDifference() {
+            return theDifference;
+        }
+
+        /**
+         * Constructor.
+         * @param pObject the object
+         * @param pDifference the difference
+         */
+        public JDataDifference(final Object pObject,
+                               final Difference pDifference) {
+            theObject = pObject;
+            theDifference = pDifference;
+        }
+    }
+
+    /**
      * Format a field value.
      * @param pValue the value of the field
      * @return the formatted value
@@ -191,6 +233,11 @@ public final class JDataObject {
         /* Handle decimal classes */
         if (Decimal.class.isInstance(pValue)) {
             return ((Decimal) pValue).format(true);
+        }
+
+        /* Handle difference class */
+        if (JDataDifference.class.isInstance(pValue)) {
+            return formatField(((JDataDifference) pValue).getObject());
         }
 
         /* Standard format option */

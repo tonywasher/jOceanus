@@ -43,7 +43,6 @@ import net.sourceforge.JFinanceApp.data.Frequency.FrequencyList;
 import net.sourceforge.JFinanceApp.data.StaticClass.FreqClass;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
 import net.sourceforge.JFinanceApp.data.TransactionType.TransTypeList;
-import net.sourceforge.JFinanceApp.views.Statement.StatementLine;
 
 /**
  * Pattern data type.
@@ -247,7 +246,7 @@ public class Pattern extends Event {
      * @param pLine the line
      */
     public Pattern(final PatternList pList,
-                   final StatementLine pLine) {
+                   final Event pLine) {
         /* Set standard values */
         super(pList, pLine);
 
@@ -260,6 +259,14 @@ public class Pattern extends Event {
             myDate.adjustYear(1);
         }
         setDate(myDate);
+
+        /* Default to debit */
+        setValueIsCredit(Boolean.FALSE);
+
+        /* Default to monthly frequency */
+        FinanceData myData = getDataSet();
+        FrequencyList myFrequencies = myData.getFrequencys();
+        setValueFrequency(myFrequencies.findItemByClass(FreqClass.MONTHLY));
     }
 
     /**

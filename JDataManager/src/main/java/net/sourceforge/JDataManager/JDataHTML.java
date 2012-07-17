@@ -30,6 +30,7 @@ import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataDifference;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.JDataObject.JDataValues;
 
@@ -71,7 +72,7 @@ public final class JDataHTML {
     /**
      * Name of changed cell class.
      */
-    private static final String CLASS_CHANGED = "changed";
+    protected static final String CLASS_CHANGED = "changed";
 
     /**
      * Name of security changed cell class.
@@ -271,6 +272,9 @@ public final class JDataHTML {
         if (StackTraceElement[].class.isInstance(pObject)) {
             return JDataType.StackTrace;
         }
+        if (JDataDifference.class.isInstance(pObject)) {
+            return getDataType(((JDataDifference) pObject).getObject());
+        }
         return JDataType.None;
     }
 
@@ -321,26 +325,7 @@ public final class JDataHTML {
             myEntries.append("</td><td>");
 
             /* Format the value */
-            String myFormat = JDataObject.formatField(myValue);
-            if ((myValue instanceof byte[]) && (myFormat.length() > WRAP_HEXSTRING)) {
-                /* Format the buffer */
-                myResults.setLength(0);
-                myResults.append(myFormat);
-
-                /* Insert new lines */
-                int iCount = myFormat.length() / WRAP_HEXSTRING;
-                while (iCount > 0) {
-                    myResults.insert(WRAP_HEXSTRING * iCount--, '\n');
-                }
-
-                /* Obtain new format */
-                myFormat = myResults.toString();
-            }
-
-            /* Adjust for linkage */
-            if (getDataType(myValue) != JDataType.None) {
-                myFormat = pDetail.addDataLink(myValue, myFormat);
-            }
+            String myFormat = formatHTMLValue(pDetail, myValue);
             myEntries.append(myFormat);
             myEntries.append("</td></tr>");
 
@@ -364,6 +349,79 @@ public final class JDataHTML {
 
         /* Return the formatted item */
         return myResults;
+    }
+
+    /**
+     * Format an HTML value
+     * @param pDetail linking detail
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    private static String formatHTMLValue(final JDataDetail pDetail,
+                                          final Object pValue) {
+        /* Format the value */
+        String myFormat = JDataObject.formatField(pValue);
+
+        /* Perform special formatting for a long byte[] */
+        if ((pValue instanceof byte[]) && (myFormat.length() > WRAP_HEXSTRING)) {
+            StringBuilder myBuffer = new StringBuilder(BUFFER_LEN);
+
+            /* Format the buffer */
+            myBuffer.append(myFormat);
+
+            /* Insert new lines */
+            int iCount = myFormat.length() / WRAP_HEXSTRING;
+            while (iCount > 0) {
+                myBuffer.insert(WRAP_HEXSTRING * iCount--, '\n');
+            }
+
+            /* Obtain new format */
+            myFormat = myBuffer.toString();
+        }
+
+        /* If this needs a linkage */
+        if (getDataType(pValue) != JDataType.None) {
+            /* Adjust for linkage */
+            myFormat = pDetail.addDataLink(pValue, myFormat);
+
+            /* else if it is a JDataDifference */
+        } else if (pValue instanceof JDataDifference) {
+            /* Access the difference */
+            Difference myDifference = ((JDataDifference) pValue).getDifference();
+
+            /* Format it */
+            myFormat = formatHTMLChange(myFormat, myDifference);
+        }
+
+        /* Return the formatted value */
+        return myFormat;
+    }
+
+    /**
+     * Format an HTML changed value
+     * @param pText the value to format
+     * @param pDifference the difference
+     * @return the formatted value
+     */
+    protected static String formatHTMLChange(final String pText,
+                                             final Difference pDifference) {
+        /* If there is no difference */
+        if (pDifference.isIdentical()) {
+            /* Just return the text */
+            return pText;
+        }
+
+        StringBuilder myBuffer = new StringBuilder(BUFFER_LEN);
+
+        /* Build a div section */
+        myBuffer.append("<div class=\"");
+        myBuffer.append(pDifference.isValueChanged() ? CLASS_CHANGED : CLASS_SECCHANGED);
+        myBuffer.append("\">");
+
+        /* Add value and reformat */
+        myBuffer.append(pText);
+        myBuffer.append("</div>");
+        return myBuffer.toString();
     }
 
     /**

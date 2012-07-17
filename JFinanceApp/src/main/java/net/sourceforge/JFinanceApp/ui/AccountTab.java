@@ -46,10 +46,11 @@ import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDateDay.DateDayRangeSelect;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
+import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.JFinanceApp.ui.MainTab.ActionRequest;
 import net.sourceforge.JFinanceApp.ui.controls.AccountSelect;
 import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
-import net.sourceforge.JFinanceApp.views.Statement.StatementLine;
 import net.sourceforge.JFinanceApp.views.View;
 
 /**
@@ -281,16 +282,6 @@ public class AccountTab extends JPanelWithEvents {
     }
 
     /**
-     * Is this table locked?
-     * @return true/false
-     */
-    // @Override
-    // public boolean isLocked() {
-    /* State whether account is locked */
-    // return ((theAccount == null) || theAccount.isClosed());
-    // }
-
-    /**
      * Cancel all editing.
      */
     public void cancelEditing() {
@@ -302,38 +293,8 @@ public class AccountTab extends JPanelWithEvents {
     }
 
     /**
-     * Notify table that there has been a change in selection by an underlying control.
-     * @param obj the underlying control that has changed selection
-     */
-    // @Override
-    // public void notifySelection(final Object obj) {
-    /* If this is a change from the account selection */
-    // if (theSelect.equals(obj)) {
-    /* Protect against exceptions */
-    // try {
-    /* Select the account */
-    // setSelection(theSelect.getSelected());
-
-    /* Create SavePoint */
-    // theSelect.createSavePoint();
-    // } catch (Exception e) {
-    /* Build the error */
-    // JDataException myError = new JDataException(ExceptionClass.DATA,
-    // "Failed to change selection", e);
-
-    /* Show the error */
-    // theError.setError(myError);
-
-    /* Restore SavePoint */
-    // theSelect.restoreSavePoint();
-    // }
-    // }
-    // }
-
-    /**
      * Call underlying controls to take notice of changes in view/selection.
      */
-    // @Override
     public void notifyChanges() {
         /* Lock down the table buttons and the selection */
         theSaveButtons.setEnabled(true);
@@ -348,7 +309,7 @@ public class AccountTab extends JPanelWithEvents {
      * @param pAccount the account to select
      * @throws JDataException on error
      */
-    public void setSelection(final Account pAccount) throws JDataException {
+    private void setSelection(final Account pAccount) throws JDataException {
         FinanceData myData = theView.getData();
 
         /* Release old list */
@@ -506,8 +467,11 @@ public class AccountTab extends JPanelWithEvents {
                               final DateDayRangeSelect pSource) {
         /* Protect against exceptions */
         try {
-            /* Adjust the date selection for the statements appropriately */
-            theStatement.selectPeriod(pSource);
+            /* If we have a source period */
+            if (pSource != null) {
+                /* Adjust the date selection for the statements appropriately */
+                theStatement.selectPeriod(pSource);
+            }
 
             /* Adjust the account selection */
             theSelect.setSelection(pAccount);
@@ -528,12 +492,12 @@ public class AccountTab extends JPanelWithEvents {
     }
 
     /**
-     * Add a pattern from a statement line.
-     * @param pLine the line to add
+     * Add a pattern from an event.
+     * @param pEvent the base event
      */
-    public void addPattern(final StatementLine pLine) {
+    protected void addPattern(final Event pEvent) {
         /* Pass through to the Patterns table */
-        thePatterns.addPattern(pLine);
+        thePatterns.addPattern(pEvent);
 
         /* Change focus to the Patterns */
         gotoNamedTab(TITLE_PATTERNS);
@@ -543,7 +507,7 @@ public class AccountTab extends JPanelWithEvents {
      * Select the explicitly named tab.
      * @param pTabName the tab to select
      */
-    public void gotoNamedTab(final String pTabName) {
+    private void gotoNamedTab(final String pTabName) {
         /* Access the required index */
         int iIndex = theTabs.indexOfTab(pTabName);
 
@@ -647,8 +611,20 @@ public class AccountTab extends JPanelWithEvents {
                 notifyChanges();
 
             } else if ((theStatement.equals(o)) && (evt instanceof ActionDetailEvent)) {
-                /* Cascade the command upwards */
-                cascadeActionEvent((ActionDetailEvent) evt);
+                /* Access the request */
+                ActionDetailEvent action = (ActionDetailEvent) evt;
+                o = action.getDetails();
+
+                /* If this is an addPattern request */
+                if ((action.getSubId() == MainTab.ACTION_ADDPATTERN) && (o instanceof ActionRequest)) {
+                    /* Add the pattern */
+                    ActionRequest myReq = (ActionRequest) o;
+                    addPattern(myReq.getEvent());
+                    /* else */
+                } else {
+                    /* Cascade the command upwards */
+                    cascadeActionEvent((ActionDetailEvent) evt);
+                }
             }
         }
     }

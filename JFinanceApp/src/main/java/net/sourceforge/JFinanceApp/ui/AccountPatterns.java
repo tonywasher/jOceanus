@@ -62,7 +62,6 @@ import net.sourceforge.JFinanceApp.data.Pattern;
 import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
 import net.sourceforge.JFinanceApp.data.TransactionType;
 import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
-import net.sourceforge.JFinanceApp.views.Statement.StatementLine;
 import net.sourceforge.JFinanceApp.views.View;
 
 /**
@@ -434,15 +433,12 @@ public class AccountPatterns extends DataTable<Event> {
     }
 
     /**
-     * Add a pattern based on a statement line.
-     * @param pLine the statement line
+     * Add a pattern based on an event.
+     * @param pEvent the base event
      */
-    public void addPattern(final StatementLine pLine) {
-        Pattern myPattern;
-        int myRow;
-
+    protected void addPattern(final Event pEvent) {
         /* Create the new Item */
-        myPattern = new Pattern(thePatterns, pLine);
+        Pattern myPattern = new Pattern(thePatterns, pEvent);
         thePatterns.add(myPattern);
         myPattern.validate();
 
@@ -450,7 +446,7 @@ public class AccountPatterns extends DataTable<Event> {
         notifyChanges();
 
         /* Access the row # */
-        myRow = myPattern.indexOf();
+        int myRow = myPattern.indexOf();
 
         /* Notify of the insertion of the row */
         theModel.fireInsertRows(myRow);
@@ -775,7 +771,6 @@ public class AccountPatterns extends DataTable<Event> {
         @Override
         protected void addSpecialCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
-            Pattern myLine;
             boolean enableCredit = false;
             boolean enableDebit = false;
 
@@ -792,7 +787,7 @@ public class AccountPatterns extends DataTable<Event> {
                 }
 
                 /* Access as line */
-                myLine = (Pattern) myRow;
+                Pattern myLine = (Pattern) myRow;
 
                 /* Enable Debit if we have credit */
                 if (myLine.isCredit()) {

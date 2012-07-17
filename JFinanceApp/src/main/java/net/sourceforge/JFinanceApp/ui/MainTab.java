@@ -34,6 +34,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.JDataManager.EventManager.ActionDetailEvent;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.MainWindow;
@@ -41,6 +42,7 @@ import net.sourceforge.JDataModels.threads.ThreadStatus;
 import net.sourceforge.JDateDay.DateDayRangeSelect;
 import net.sourceforge.JFinanceApp.core.LoadArchive;
 import net.sourceforge.JFinanceApp.data.Account;
+import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.help.FinanceHelp;
 import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
@@ -55,33 +57,24 @@ import net.sourceforge.JSvnManager.threads.SubversionBackup;
  */
 public class MainTab extends MainWindow<FinanceData> {
     /**
-     * Generate the true action event id.
-     * @param pId the id
-     * @return the actual id
-     */
-    private static int generateEventId(final int pId) {
-        return ActionEvent.ACTION_PERFORMED + pId;
-    }
-
-    /**
      * Add pattern action event.
      */
-    protected static final int ACTION_ADDPATTERN = generateEventId(1);
+    protected static final int ACTION_ADDPATTERN = ActionEvent.ACTION_PERFORMED + 1;
 
     /**
      * View Extract.
      */
-    protected static final int ACTION_VIEWEXTRACT = generateEventId(2);
+    protected static final int ACTION_VIEWEXTRACT = ACTION_ADDPATTERN + 1;
 
     /**
      * View Account.
      */
-    protected static final int ACTION_VIEWACCOUNT = generateEventId(3);
+    protected static final int ACTION_VIEWACCOUNT = ACTION_VIEWEXTRACT + 1;
 
     /**
      * Maintain Account.
      */
-    protected static final int ACTION_MAINTACCOUNT = generateEventId(4);
+    protected static final int ACTION_MAINTACCOUNT = ACTION_VIEWACCOUNT + 1;
 
     /**
      * Resource Bundle.
@@ -342,8 +335,8 @@ public class MainTab extends MainWindow<FinanceData> {
      * @param pAccount the account
      * @param pSource the range
      */
-    public void selectAccount(final Account pAccount,
-                              final DateDayRangeSelect pSource) {
+    private void selectAccount(final Account pAccount,
+                               final DateDayRangeSelect pSource) {
         /* Pass through to the Account control */
         theAccountCtl.selectAccount(pAccount, pSource);
 
@@ -355,7 +348,7 @@ public class MainTab extends MainWindow<FinanceData> {
      * Select an explicit extract period.
      * @param pSource the range
      */
-    public void selectPeriod(final DateDayRangeSelect pSource) {
+    private void selectExtract(final DateDayRangeSelect pSource) {
         /* Pass through to the Extract */
         theExtract.selectPeriod(pSource);
 
@@ -367,7 +360,7 @@ public class MainTab extends MainWindow<FinanceData> {
      * Select an explicit account for maintenance.
      * @param pAccount the account
      */
-    public void selectAccountMaint(final Account pAccount) {
+    private void selectAccountMaint(final Account pAccount) {
         /* Pass through to the Account control */
         theMaint.selectAccount(pAccount);
 
@@ -376,10 +369,22 @@ public class MainTab extends MainWindow<FinanceData> {
     }
 
     /**
+     * Add a pattern from an event.
+     * @param pEvent the base event
+     */
+    private void addPattern(final Event pEvent) {
+        /* Add the pattern */
+        theAccountCtl.addPattern(pEvent);
+
+        /* Change focus to the account */
+        gotoNamedTab(TITLE_ACCOUNT);
+    }
+
+    /**
      * Goto the specific tab.
      * @param pTabName the tab name
      */
-    public void gotoNamedTab(final String pTabName) {
+    private void gotoNamedTab(final String pTabName) {
         /* Access the Named index */
         int iIndex = theTabs.indexOfTab(pTabName);
 
@@ -524,8 +529,127 @@ public class MainTab extends MainWindow<FinanceData> {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
-            // TODO Auto-generated method stub
+            /* If this is an ActionDetailEvent */
+            if (e instanceof ActionDetailEvent) {
+                /* Access event and obtain details */
+                ActionDetailEvent evt = (ActionDetailEvent) e;
+                Object o = evt.getDetails();
+                if (o instanceof ActionRequest) {
+                    ActionRequest myReq = (ActionRequest) o;
+                    switch (evt.getSubId()) {
+                    /* Add the requested pattern */
+                        case ACTION_ADDPATTERN:
+                            selectAccount(myReq.getAccount(), myReq.getRange());
+                            addPattern(myReq.getEvent());
+                            break;
 
+                        /* View the requested extract */
+                        case ACTION_VIEWEXTRACT:
+                            selectExtract(myReq.getRange());
+                            break;
+
+                        /* View the requested account */
+                        case ACTION_VIEWACCOUNT:
+                            selectAccount(myReq.getAccount(), myReq.getRange());
+                            break;
+
+                        /* Maintain the requested account */
+                        case ACTION_MAINTACCOUNT:
+                            selectAccountMaint(myReq.getAccount());
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Account and period request.
+     */
+    protected static final class ActionRequest {
+        /**
+         * The account.
+         */
+        private final Account theAccount;
+
+        /**
+         * The selected range.
+         */
+        private final DateDayRangeSelect theRange;
+
+        /**
+         * The base Event.
+         */
+        private final Event theEvent;
+
+        /**
+         * Obtain the selected account.
+         * @return the account
+         */
+        protected Account getAccount() {
+            return theAccount;
+        }
+
+        /**
+         * Obtain the selected range.
+         * @return the range
+         */
+        protected DateDayRangeSelect getRange() {
+            return theRange;
+        }
+
+        /**
+         * Obtain the selected event.
+         * @return the event
+         */
+        protected Event getEvent() {
+            return theEvent;
+        }
+
+        /**
+         * Constructor.
+         * @param pAccount the requested account
+         */
+        protected ActionRequest(final Account pAccount) {
+            theAccount = pAccount;
+            theRange = null;
+            theEvent = null;
+        }
+
+        /**
+         * Constructor.
+         * @param pRange the requested range
+         */
+        protected ActionRequest(final DateDayRangeSelect pRange) {
+            theAccount = null;
+            theRange = pRange;
+            theEvent = null;
+        }
+
+        /**
+         * Constructor.
+         * @param pAccount the requested account
+         * @param pRange the requested range
+         */
+        protected ActionRequest(final Account pAccount,
+                                final DateDayRangeSelect pRange) {
+            theAccount = pAccount;
+            theRange = pRange;
+            theEvent = null;
+        }
+
+        /**
+         * Constructor.
+         * @param pAccount the requested account
+         * @param pEvent the base event
+         */
+        protected ActionRequest(final Account pAccount,
+                                final Event pEvent) {
+            theAccount = pAccount;
+            theRange = null;
+            theEvent = pEvent;
         }
     }
 }

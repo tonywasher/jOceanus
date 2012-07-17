@@ -74,6 +74,7 @@ import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.TransactionType;
+import net.sourceforge.JFinanceApp.ui.MainTab.ActionRequest;
 import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
 import net.sourceforge.JFinanceApp.views.View;
 
@@ -1338,12 +1339,12 @@ public class Extract extends DataTable<Event> {
             /* If this is an account view request */
             if (myCmd.compareTo(POPUP_VIEW) == 0) {
                 /* Switch view */
-                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, myAccount);
+                fireActionEvent(MainTab.ACTION_VIEWACCOUNT, new ActionRequest(myAccount, theSelect));
 
                 /* If this is an account maintenance request */
             } else if (myCmd.compareTo(POPUP_MAINT) == 0) {
                 /* Switch view */
-                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, myAccount);
+                fireActionEvent(MainTab.ACTION_MAINTACCOUNT, new ActionRequest(myAccount));
             }
         }
     }

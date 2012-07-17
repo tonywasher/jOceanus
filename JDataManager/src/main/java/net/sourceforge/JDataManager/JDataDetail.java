@@ -25,6 +25,8 @@ package net.sourceforge.JDataManager;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.JDataManager.JDataObject.JDataDifference;
+
 /**
  * Debug Detail class that holds details of links to other objects.
  * @author Tony Washer
@@ -345,21 +347,40 @@ public class JDataDetail {
      */
     public String addDataLink(final Object pItem,
                               final String pText) {
+        /* If the item is a JDataDifference */
+        Object myItem = pItem;
+        Difference myDifference = Difference.Identical;
+        if (myItem instanceof JDataDifference) {
+            /* Access the difference */
+            JDataDifference myDiffer = (JDataDifference) pItem;
+            myDifference = myDiffer.getDifference();
+            myItem = myDiffer.getObject();
+        }
+
         /* Return text if item is null */
-        if (pItem == null) {
-            return pText;
+        if (myItem == null) {
+            return JDataHTML.formatHTMLChange(pText, myDifference);
         }
 
         /* Allocate the string builder */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Create the Debug Link */
-        JDataLink myLink = new JDataLink(this, pItem);
+        JDataLink myLink = new JDataLink(this, myItem);
 
         /* Add the link into the buffer */
         myBuilder.append("<a href=\"#");
         myBuilder.append(myLink.theName);
-        myBuilder.append("\">");
+        myBuilder.append("\"");
+
+        /* If we have a difference */
+        if (myDifference.isDifferent()) {
+            /* Add class details */
+            myBuilder.append(" class=\"");
+            myBuilder.append(JDataHTML.CLASS_CHANGED);
+            myBuilder.append("\"");
+        }
+        myBuilder.append(">");
 
         /* Add the text into the buffer */
         myBuilder.append(pText);

@@ -49,11 +49,11 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
         T getItemAtIndex(final int pRowIndex);
 
         /**
-         * Include item at index in view.
-         * @param pRowIndex the index
+         * Do we include row in view.
+         * @param pRow the row
          * @return true/false
          */
-        boolean includeIndex(final int pRowIndex);
+        boolean includeRow(final T pRow);
 
         /**
          * Register filter.
@@ -63,24 +63,100 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
     }
 
     /**
+     * Filtered index indicator.
+     */
+    private static final int ROW_FILTERED = -1;
+
+    /**
+     * Row class for data structures
+     * @param <X> the row type
+     */
+    private final static class RowEntry<X extends Comparable<X>> {
+        /**
+         * The actual Row
+         */
+        private X theRow;
+
+        /**
+         * The reference index.
+         */
+        private int theReference;
+
+        /**
+         * Constructor.
+         * @param pRow the row
+         */
+        private RowEntry(final X pRow) {
+            /* Store parameters */
+            theRow = pRow;
+            theReference = ROW_FILTERED;
+        }
+
+        /**
+         * Constructor.
+         * @param pEntry the entry
+         */
+        private RowEntry(final RowEntry<X> pEntry) {
+            /* Store parameters */
+            theRow = pEntry.theRow;
+            theReference = pEntry.theReference;
+        }
+
+        /**
+         * Constructor.
+         * @param pRow the row
+         * @param pReference the reference
+         */
+        private RowEntry(final X pRow,
+                         final int pReference) {
+            /* Store parameters */
+            theRow = pRow;
+            theReference = pReference;
+        }
+
+        /**
+         * Compare row using natural order.
+         * @param pThat the row to compare to
+         * @return -1,0,1 as per the order
+         */
+        public int compareRow(final RowEntry<X> pThat) {
+            return theRow.compareTo(pThat.theRow);
+        }
+
+        /**
+         * Compare reference.
+         * @param pThat the row to compare to
+         * @return negative,0,positive as per the order
+         */
+        public int compareReference(final RowEntry<X> pThat) {
+            return theReference - pThat.theReference;
+        }
+    }
+
+    /**
      * The model for the Filter.
      */
     private final DataFilterModel<T> theModel;
 
     /**
+     * Are we sorting?
+     */
+    private boolean doSort = false;
+
+    /**
      * Mapping from View to Model.
      */
-    private int[] theViewToModel;
+    private RowEntry<T>[] theViewToModel;
 
     /**
-     * Mapping from Model to View. If an element is not present in the view the value is set to -1.
+     * Mapping from Model to View.
      */
-    private int[] theModelToView;
+    private RowEntry<T>[] theModelToView;
 
     /**
-     * Saved mapping for ViewToModel.
+     * Index mapping for ViewToModel.
      */
-    private int[] theOldViewToModel = null;
+    private int[] theIndexViewToModel = null;
 
     /**
      * Empty SortKey list.
@@ -92,10 +168,77 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
      * @param pModel the model
      */
     public DataFilter(final DataFilterModel<T> pModel) {
+        this(pModel, false);
+    }
+
+    /**
+     * Constructor.
+     * @param pModel the model
+     * @param sortEntries do we sort entries? true/false
+     */
+    public DataFilter(final DataFilterModel<T> pModel,
+                      final boolean sortEntries) {
         theModel = pModel;
+        doSort = sortEntries;
         pModel.registerFilter(this);
         allRowsChanged();
         theSortList = new ArrayList<SortKey>();
+    }
+
+    /**
+     * Allocate an array of rows.
+     * @param <X> the row type
+     * @param pNumRows the number of rows in the array
+     * @return the allocated array
+     */
+    @SuppressWarnings("unchecked")
+    private static <X extends Comparable<X>> RowEntry<X>[] allocateRows(final int pNumRows) {
+        return (RowEntry<X>[]) new RowEntry[pNumRows];
+    }
+
+    /**
+     * Obtain reference array from mapping array
+     * @param <X> the rowType
+     * @param pSource the mapping array
+     * @return the reference array
+     */
+    private static <X extends Comparable<X>> int[] getReferenceArray(final RowEntry<X>[] pSource) {
+        /* Allocate new array */
+        int iNumRows = pSource.length;
+        int[] myArray = new int[iNumRows];
+
+        /* Loop through the rows copying reference */
+        for (int i = 0; i < iNumRows; i++) {
+            myArray[i] = pSource[i].theReference;
+        }
+
+        /* Return the new array */
+        return myArray;
+    }
+
+    /**
+     * Deep clone the array
+     * @param <X> the rowType
+     * @param pSource the mapping array
+     * @param pNewLen the new length of the array
+     * @return the reference array
+     */
+    private static <X extends Comparable<X>> RowEntry<X>[] cloneArray(final RowEntry<X>[] pSource,
+                                                                      final int pNewLen) {
+        /* Allocate new array */
+        RowEntry<X>[] myArray = allocateRows(pNewLen);
+        int iSrcLen = pSource.length;
+
+        /* Loop through the rows copying reference */
+        for (int i = 0; i < iSrcLen; i++) {
+            RowEntry<X> myEntry = pSource[i];
+            if (myEntry != null) {
+                myArray[i] = new RowEntry<X>(myEntry);
+            }
+        }
+
+        /* Return the new array */
+        return myArray;
     }
 
     @Override
@@ -103,27 +246,61 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
         /* Allocate the two arrays */
         int iNumRows = theModel.getRowCount();
         int iView = 0;
-        theViewToModel = new int[iNumRows];
-        theModelToView = new int[iNumRows];
+        theViewToModel = allocateRows(iNumRows);
+        theModelToView = allocateRows(iNumRows);
 
         /* Loop through the model elements */
         for (int i = 0; i < iNumRows; i++) {
+            /* Access the row */
+            T myRow = theModel.getItemAtIndex(i);
+            RowEntry<T> myEntry = new RowEntry<T>(myRow);
+
             /* If the row is visible */
-            if (theModel.includeIndex(i)) {
-                /* Set indices */
-                theViewToModel[iView] = i;
-                theModelToView[i] = iView++;
+            if (theModel.includeRow(myRow)) {
+                /* Update view and link arrays */
+                theViewToModel[iView] = new RowEntry<T>(myRow, i);
+                myEntry.theReference = iView++;
 
                 /* else not visible */
             } else {
-                theModelToView[i] = -1;
+                myEntry.theReference = ROW_FILTERED;
             }
+
+            /* Record entry */
+            theModelToView[i] = myEntry;
         }
 
         /* If we have hidden rows */
         if (iView < iNumRows) {
             /* Truncate the viewToModel array */
             theViewToModel = Arrays.copyOf(theViewToModel, iView);
+        }
+
+        /* If we are sorting */
+        if (doSort) {
+            /* Sort the view mapping */
+            sortViewToModel(theViewToModel);
+        }
+    }
+
+    /**
+     * Set Sort mode.
+     * @param sortEntries do we sort entries? true/false
+     */
+    public void setSortMode(final boolean sortEntries) {
+        /* If the mode is changing */
+        if (doSort != sortEntries) {
+            /* Record the mode */
+            doSort = sortEntries;
+
+            /* Record the old reference mapping */
+            theIndexViewToModel = getReferenceArray(theViewToModel);
+
+            /* Rebuild the mappings */
+            allRowsChanged();
+
+            /* Report the mapping change */
+            reportMappingChanged();
         }
     }
 
@@ -134,8 +311,8 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
             throw new IndexOutOfBoundsException("Invalid Index");
         }
 
-        /* If we have a mapping */
-        return theViewToModel[pIndex];
+        /* Return mapping */
+        return theViewToModel[pIndex].theReference;
     }
 
     @Override
@@ -145,8 +322,8 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
             throw new IndexOutOfBoundsException("Invalid Index");
         }
 
-        /* If we have a mapping */
-        return theModelToView[pIndex];
+        /* Return mapping */
+        return theModelToView[pIndex].theReference;
     }
 
     @Override
@@ -180,72 +357,59 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
                             final int pEndRow) {
         /* Determine model row count */
         int iNumRows = theModelToView.length;
+        int iIndex;
 
         /* If the range is invalid */
         if ((pFirstRow < 0) || (pEndRow >= iNumRows) || (pFirstRow > pEndRow)) {
             throw new IndexOutOfBoundsException("Invalid Range");
         }
 
-        /* Make a copy of the ViewToModel, expanded to full amount */
-        int[] newViewToModel = Arrays.copyOf(theViewToModel, iNumRows);
-        int iView = 0;
+        /* Make a deep copy of the ViewToModel */
+        RowEntry<T>[] newViewToModel = cloneArray(theViewToModel, theViewToModel.length);
+        boolean viewDeleted = false;
 
-        /* Loop through the existing model elements */
-        for (int i = 0; i < iNumRows; i++) {
-            /* Determine whether we are currently visible */
-            boolean isCurrVisible = (theModelToView[i] != -1);
+        /* Loop through the rows to be deleted */
+        for (int i = pFirstRow; i <= pEndRow; i++) {
+            /* Access view reference */
+            iIndex = theModelToView[i].theReference;
 
-            /* If we have yet to reach the first row */
-            if (i < pFirstRow) {
-                /* If we are currently visible */
-                if (isCurrVisible) {
-                    /* Increment view */
-                    iView++;
-                }
-
-                /* Re-loop */
-                continue;
-            }
-
-            /* Determine whether we are now visible */
-            boolean isNowVisible = (i > pEndRow) ? isCurrVisible : false;
-
-            /* If the row is visible */
-            if (isNowVisible) {
-                /* Set indices */
-                newViewToModel[iView] = i;
-                theModelToView[i] = iView++;
-
-                /* else not visible */
-            } else {
-                theModelToView[i] = -1;
+            /* If the row is currently visible */
+            if (iIndex != ROW_FILTERED) {
+                /* Remove link from view to Model */
+                newViewToModel[iIndex].theReference = ROW_FILTERED;
+                viewDeleted = true;
             }
         }
 
-        /* Calculate number of trailing entries and new row count */
+        /* Compress the ModelToView array */
         int iNumTrailing = iNumRows - pEndRow - 1;
         int iNewLen = pFirstRow + iNumTrailing;
         if (iNumTrailing > 0) {
             /* Shift entries in the map down */
             System.arraycopy(theModelToView, pEndRow + 1, theModelToView, pFirstRow, iNumTrailing);
 
-            /* Adjust View indices */
+            /* Adjust View references for moved model indices */
             for (int i = pFirstRow; i < iNewLen; i++) {
                 /* If the entry is visible */
-                int index = theModelToView[i];
-                if (index != -1) {
-                    /* Repair the index */
-                    newViewToModel[index] = i;
+                iIndex = theModelToView[i].theReference;
+                if (iIndex != ROW_FILTERED) {
+                    /* Repair the reference */
+                    newViewToModel[iIndex].theReference = i;
                 }
             }
         }
 
-        /* Truncate the arrays */
+        /* Truncate the modelToView array */
         theModelToView = Arrays.copyOf(theModelToView, iNewLen);
-        newViewToModel = Arrays.copyOf(newViewToModel, iView);
 
-        /* Save the old mapping and swap in the new */
-        theOldViewToModel = theViewToModel;
+        /* If we should compress the viewToModel array */
+        if (viewDeleted) {
+            /* Compress the viewToModel array */
+            newViewToModel = compressViewToModel(newViewToModel, newViewToModel.length);
+        }
+
+        /* Record the old reference mapping and swap in the new */
+        theIndexViewToModel = getReferenceArray(theViewToModel);
         theViewToModel = newViewToModel;
     }
 
@@ -263,58 +427,63 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
         /* Determine the number of rows that we are inserting plus trailing entries */
         int iXtraLen = (pEndRow - pFirstRow) + 1;
         int iNumTrailing = iNumRows - pFirstRow;
+        int iNewLen = iNumRows + iXtraLen;
+        int iIndex;
 
-        /* Adjust Model to view to have space for new entries */
-        theModelToView = Arrays.copyOf(theModelToView, iNumRows + iXtraLen);
+        /* Adjust arrays to have space for new entries */
+        theModelToView = Arrays.copyOf(theModelToView, iNewLen);
+        RowEntry<T>[] newViewToModel = cloneArray(theViewToModel, theViewToModel.length + iXtraLen);
+
+        /* If we have trailing entries */
         if (iNumTrailing > 0) {
+            /* Shift the model entries up */
             System.arraycopy(theModelToView, pFirstRow, theModelToView, pEndRow + 1, iNumTrailing);
-        }
-        iNumRows += iXtraLen;
-
-        /* Make a copy of the ViewToModel, expanded to full amount */
-        int[] newViewToModel = Arrays.copyOf(theViewToModel, iNumRows);
-        int iView = 0;
-
-        /* Loop through the model elements */
-        for (int i = 0; i < iNumRows; i++) {
-            /* Determine whether we are currently visible */
-            boolean isCurrVisible = (theModelToView[i] != -1);
-
-            /* If we have yet to reach the first row */
-            if (i < pFirstRow) {
-                /* If we are currently visible */
-                if (isCurrVisible) {
-                    /* Increment view */
-                    iView++;
+            for (int i = pEndRow + 1; i < iNewLen; i++) {
+                /* If the entry is visible */
+                iIndex = theModelToView[i].theReference;
+                if (iIndex != ROW_FILTERED) {
+                    /* Adjust view to model reference */
+                    newViewToModel[iIndex].theReference = i;
                 }
-
-                /* Re-loop */
-                continue;
             }
+        }
 
-            /* Determine whether we are now visible */
-            boolean isNowVisible = (i > pEndRow) ? isCurrVisible : theModel.includeIndex(i);
+        /* Adjust lengths */
+        iNumRows += iXtraLen;
+        int iView = theViewToModel.length;
+
+        /* Loop through the new model elements */
+        for (int i = pFirstRow; i <= pEndRow; i++) {
+            /* Access the row */
+            T myRow = theModel.getItemAtIndex(i);
+            RowEntry<T> myEntry = new RowEntry<T>(myRow);
 
             /* If the row is visible */
-            if (isNowVisible) {
-                /* Set indices */
-                newViewToModel[iView] = i;
-                theModelToView[i] = iView++;
+            if (theModel.includeRow(myRow)) {
+                /* Update view and link arrays */
+                newViewToModel[iView] = new RowEntry<T>(myRow, i);
+                myEntry.theReference = iView++;
 
                 /* else not visible */
             } else {
-                theModelToView[i] = -1;
+                myEntry.theReference = ROW_FILTERED;
             }
+
+            /* Record entry */
+            theModelToView[i] = myEntry;
         }
 
         /* If we have hidden rows */
-        if (iView < iNumRows) {
+        if (iView < theViewToModel.length + iXtraLen) {
             /* Truncate the new mapping */
             newViewToModel = Arrays.copyOf(newViewToModel, iView);
         }
 
+        /* Sort the view mapping */
+        sortViewToModel(newViewToModel);
+
         /* Save the old mapping and swap in the new */
-        theOldViewToModel = theViewToModel;
+        theIndexViewToModel = getReferenceArray(theViewToModel);
         theViewToModel = newViewToModel;
     }
 
@@ -330,58 +499,66 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
         }
 
         /* Make a copy of the ViewToModel, expanded to full amount */
-        theOldViewToModel = null;
-        int[] newViewToModel = Arrays.copyOf(theViewToModel, iNumRows);
-        int iView = 0;
-        boolean isChanged = false;
+        theIndexViewToModel = null;
+        RowEntry<T>[] newViewToModel = cloneArray(theViewToModel, iNumRows);
+        int iView = theViewToModel.length;
+        boolean viewChanged = false;
+        boolean viewDeleted = false;
 
-        /* Loop through the existing model elements */
-        for (int i = 0; i < iNumRows; i++) {
+        /* Loop through the updated model elements */
+        for (int i = pFirstRow; i <= pEndRow; i++) {
             /* Determine whether we are currently visible */
-            boolean isCurrVisible = (theModelToView[i] != -1);
+            boolean isCurrVisible = (theModelToView[i].theReference != ROW_FILTERED);
 
-            /* If we have yet to reach the first row */
-            if (i < pFirstRow) {
-                /* If we are currently visible */
-                if (isCurrVisible) {
-                    /* Increment view */
-                    iView++;
-                }
+            /* Access the row */
+            T myRow = theModelToView[i].theRow;
 
-                /* Re-loop */
+            /* Determine whether we are now visible */
+            boolean isNowVisible = theModel.includeRow(myRow);
+
+            /* Skip if there is no change */
+            if (isCurrVisible == isNowVisible) {
                 continue;
             }
 
-            /* Determine whether we are now visible */
-            boolean isNowVisible = (i > pEndRow) ? isCurrVisible : theModel.includeIndex(i);
-
-            /* Note if we have made a change */
-            if (isCurrVisible != isNowVisible) {
-                isChanged = true;
-            }
+            /* Note that there is a change */
+            viewChanged = true;
 
             /* If the row is visible */
             if (isNowVisible) {
                 /* Set indices */
-                newViewToModel[iView] = i;
-                theModelToView[i] = iView++;
+                newViewToModel[iView] = new RowEntry<T>(myRow, i);
+                theModelToView[i].theReference = iView++;
 
                 /* else not visible */
             } else {
-                theModelToView[i] = -1;
+                /* Access view reference */
+                int iIndex = theModelToView[i].theReference;
+
+                /* Remove links between view and Model */
+                newViewToModel[iIndex].theReference = ROW_FILTERED;
+                theModelToView[i].theReference = ROW_FILTERED;
+                viewDeleted = true;
             }
         }
 
-        /* if there has been a change */
-        if (isChanged) {
-            /* If we have hidden rows */
-            if (iView < iNumRows) {
-                /* Truncate the new mapping */
-                newViewToModel = Arrays.copyOf(newViewToModel, iView);
-            }
+        /* If we should compress the viewToModel array */
+        if (viewDeleted) {
+            /* Compress the viewToModel array */
+            newViewToModel = compressViewToModel(newViewToModel, iView);
 
+            /* else if we have hidden rows */
+        } else if (iView < iNumRows) {
+            /* Truncate the new mapping */
+            newViewToModel = Arrays.copyOf(newViewToModel, iView);
+        }
+
+        /* Sort the array */
+        viewChanged = sortViewToModel(newViewToModel) || viewChanged;
+
+        if (viewChanged) {
             /* Save the old mapping and swap in the new */
-            theOldViewToModel = theViewToModel;
+            theIndexViewToModel = getReferenceArray(theViewToModel);
             theViewToModel = newViewToModel;
         }
     }
@@ -398,12 +575,12 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
      */
     public void reportMappingChanged() {
         /* If we have a saved mapping change */
-        if (theOldViewToModel != null) {
+        if (theIndexViewToModel != null) {
             /* Fire the event */
-            fireRowSorterChanged(theOldViewToModel);
+            fireRowSorterChanged(theIndexViewToModel);
 
-            /* Reset old view to model */
-            theOldViewToModel = null;
+            /* Reset reference model */
+            theIndexViewToModel = null;
         }
     }
 
@@ -418,6 +595,100 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
 
         /* Ignore column */
         rowsUpdated(pFirstRow, pEndRow);
+    }
+
+    /**
+     * Compress viewToModel array
+     * @param pArray the array to compress
+     * @param pLength the length of the array
+     * @return the compressed array
+     */
+    private RowEntry<T>[] compressViewToModel(final RowEntry<T>[] pArray,
+                                              final int pLength) {
+        /* Compress the ViewToModel array */
+        int iView = 0;
+        for (int i = 0; i < pLength; i++) {
+            /* If the entry is visible */
+            int iIndex = pArray[i].theReference;
+            if (iIndex != ROW_FILTERED) {
+                /* If the index differs */
+                if (i != iView) {
+                    /* Move entry down and fix model reference */
+                    pArray[iView] = pArray[i];
+                    theModelToView[iIndex].theReference = iView;
+                }
+
+                /* Increment view count */
+                iView++;
+            }
+        }
+
+        /* Return the new shrunken array */
+        return Arrays.copyOf(pArray, iView);
+    }
+
+    /**
+     * Check whether the first row is correctly before the second row
+     * @param pFirst the first row to test
+     * @param pSecond the second row to test
+     * @return true/false
+     */
+    private boolean isCorrectOrder(RowEntry<T> pFirst,
+                                   RowEntry<T> pSecond) {
+        int iResult = (doSort) ? pFirst.compareRow(pSecond) : pFirst.compareReference(pSecond);
+        return iResult <= 0;
+    }
+
+    /**
+     * Sort the viewToModel map.
+     * <p>
+     * Uses insertion sort since the list will generally be almost sorted. We could used Arrays.sort() but
+     * this does not return an indication of whether the array was changed by the sort.
+     * @param pArray the array to sort
+     * @return was sort order changed? true/false
+     */
+    private boolean sortViewToModel(RowEntry<T>[] pArray) {
+        /* Default is no sort occurred */
+        boolean isChanged = false;
+
+        /* Loop through the array */
+        int iLen = pArray.length;
+        for (int i = 1; i < iLen; i++) {
+            /* Access the item and note the hole */
+            RowEntry<T> myItem = pArray[i];
+            int iHole = i;
+
+            /* Loop while we have a hole */
+            while (iHole > 0) {
+                /* If we are in the correct place, break loop */
+                RowEntry<T> myTest = pArray[iHole - 1];
+                if (isCorrectOrder(myTest, myItem)) {
+                    break;
+                }
+
+                /* Shift tested item and note the change */
+                pArray[iHole--] = myTest;
+                isChanged = true;
+            }
+
+            /* Store item into hole */
+            pArray[iHole] = myItem;
+        }
+
+        /* If a change occurred */
+        if (isChanged) {
+            /* Loop through the array */
+            for (int i = 0; i < iLen; i++) {
+                /* Access view reference */
+                int iIndex = pArray[i].theReference;
+
+                /* Correct the link from the model */
+                theModelToView[iIndex].theReference = i;
+            }
+        }
+
+        /* Return whether a sort was effected */
+        return isChanged;
     }
 
     @Override
