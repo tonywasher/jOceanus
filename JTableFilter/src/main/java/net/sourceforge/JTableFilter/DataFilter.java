@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JTableFilter: JTable RowFilter/Sorter
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JTableFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +29,8 @@ import java.util.List;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.JDataModels.ui.DataFilter.DataFilterModel;
+import net.sourceforge.JTableFilter.DataFilter.DataFilterModel;
+
 
 /**
  * RowSorter to provide filtering capabilities without sort.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JTableFilter: JTable RowFilter/Sorter
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels;
+package net.sourceforge.JTableFilter.Demo;
 
 import java.awt.Dimension;
 import java.awt.HeadlessException;
@@ -46,8 +46,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.JDataModels.ui.DataFilter;
-import net.sourceforge.JDataModels.ui.DataFilter.DataFilterModel;
+import net.sourceforge.JTableFilter.DataFilter;
+import net.sourceforge.JTableFilter.DataFilter.DataFilterModel;
 
 public class TestFilter extends JApplet {
     /**
