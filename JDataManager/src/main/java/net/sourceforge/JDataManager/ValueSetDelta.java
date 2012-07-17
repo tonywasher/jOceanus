@@ -130,8 +130,11 @@ public class ValueSetDelta implements JDataContents {
 
             /* If this is the deletion field, return the flag */
         } else if (myIndex == 1) {
-            return (theOldSet.isDeletion() == theNewSet.isDeletion()) ? JDataFieldValue.SkipField : theOldSet
-                    .isDeletion();
+            return (theOldSet.isDeletion() == theNewSet.isDeletion())
+                                                                     ? JDataFieldValue.SkipField
+                                                                     : new JDataDifference(
+                                                                             theOldSet.isDeletion(),
+                                                                             Difference.Different);
         }
 
         /* Adjust index */

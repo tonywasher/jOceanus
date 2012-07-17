@@ -49,7 +49,11 @@ import javax.swing.table.AbstractTableModel;
 import net.sourceforge.JTableFilter.DataFilter;
 import net.sourceforge.JTableFilter.DataFilter.DataFilterModel;
 
-public class TestFilter extends JApplet {
+/**
+ * Demo application for JTableFilter.
+ * @author Tony Washer
+ */
+public class DemoFilter extends JApplet {
     /**
      * The Serial Id.
      */
@@ -133,12 +137,22 @@ public class TestFilter extends JApplet {
         private static final long serialVersionUID = -3910208219313418696L;
 
         /**
-         * ScrollPane
+         * The Panel Width.
+         */
+        private static final int PANEL_WIDTH = 600;
+
+        /**
+         * The Panel Height.
+         */
+        private static final int PANEL_HEIGHT = 300;
+
+        /**
+         * ScrollPane.
          */
         private final JScrollPane theScroll;
 
         /**
-         * The model
+         * The model.
          */
         private final TestTableModel theModel;
 
@@ -174,7 +188,7 @@ public class TestFilter extends JApplet {
             theModel.addNewRowAtEnd("David");
 
             /* Set the number of visible rows */
-            setPreferredScrollableViewportSize(new Dimension(600, 500));
+            setPreferredScrollableViewportSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
 
             /* Create a new Scroll Pane for this table */
             theScroll = new JScrollPane(this);
@@ -189,17 +203,17 @@ public class TestFilter extends JApplet {
      */
     public static class RowData implements Comparable<RowData> {
         /**
-         * Name of item
+         * Name of item.
          */
         private String theName = null;
 
         /**
-         * Visible
+         * Visible.
          */
         private boolean isVisible = true;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pName the name
          */
         public RowData(final String pName) {
@@ -207,7 +221,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Obtain the name
+         * Obtain the name.
          * @return the name
          */
         public String getName() {
@@ -223,7 +237,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Set name of item
+         * Set name of item.
          * @param pName the name
          */
         public void setName(final String pName) {
@@ -231,7 +245,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Set visibility of item
+         * Set visibility of item.
          * @param setVisible true/false
          */
         public void setVisibility(final boolean setVisible) {
@@ -242,6 +256,17 @@ public class TestFilter extends JApplet {
         public int compareTo(final RowData pThat) {
             /* Compare names */
             return theName.compareTo(pThat.getName());
+        }
+
+        @Override
+        public boolean equals(final Object pThat) {
+            /* Compare names */
+            return (pThat instanceof RowData) && theName.equals(((RowData) pThat).getName());
+        }
+
+        @Override
+        public int hashCode() {
+            return theName.hashCode();
         }
     }
 
@@ -265,14 +290,14 @@ public class TestFilter extends JApplet {
         private static final int COL_VISIBLE = 1;
 
         /**
-         * Number of columns
+         * Number of columns.
          */
         private static final int NUM_COLS = COL_VISIBLE + 1;
 
         /**
-         * List of items
+         * List of items.
          */
-        private final List<RowData> theList;
+        private final transient List<RowData> theList;
 
         /**
          * Should we show all items.
@@ -287,10 +312,10 @@ public class TestFilter extends JApplet {
         /**
          * Should we show all items.
          */
-        private DataFilter<RowData> theFilter = null;
+        private transient DataFilter<RowData> theFilter = null;
 
         /**
-         * Get showAll value
+         * Get showAll value.
          * @return true/false
          */
         public boolean showAll() {
@@ -298,7 +323,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Get showAll value
+         * Get showAll value.
          * @return true/false
          */
         public boolean sortItems() {
@@ -311,7 +336,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Constructor
+         * Constructor.
          */
         public TestTableModel() {
             /* Allocate the list */
@@ -319,7 +344,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Add row at end
+         * Add row at end.
          * @param pName the name
          */
         public void addNewRowAtEnd(final String pName) {
@@ -336,7 +361,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Add row at index
+         * Add row at index.
          * @param pIndex the index
          * @param pName the name
          */
@@ -351,7 +376,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Delete row at index
+         * Delete row at index.
          * @param pRowIndex the row to delete
          */
         public void deleteRow(final int pRowIndex) {
@@ -363,7 +388,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Set sort items
+         * Set sort items.
          * @param doSort true/false
          */
         public void setSortItems(final boolean doSort) {
@@ -373,7 +398,7 @@ public class TestFilter extends JApplet {
         }
 
         /**
-         * Set showAll value
+         * Set showAll value.
          * @param doShowAll true/false
          */
         public void setShowAll(final boolean doShowAll) {
@@ -534,12 +559,12 @@ public class TestFilter extends JApplet {
         private static final String POPUP_SORT = "Sort Items";
 
         /**
-         * The Table
+         * The Table.
          */
         private final TestTable theTable;
 
         /**
-         * The Model
+         * The Model.
          */
         private final TestTableModel theModel;
 

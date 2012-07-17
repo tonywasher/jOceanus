@@ -36,6 +36,7 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
@@ -659,6 +660,11 @@ public class Pattern extends Event {
         @Override
         public PatternList deriveList(final ListStyle pStyle) {
             return (PatternList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public PatternList cloneList(final DataSet<?> pDataSet) {
+            return (PatternList) super.cloneList(pDataSet);
         }
 
         @Override

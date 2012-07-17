@@ -279,6 +279,20 @@ public final class JDataHTML {
     }
 
     /**
+     * does the object format need wrapping?
+     * @param pObject the object
+     * @return true/false
+     */
+    private static boolean needsWrapping(final Object pObject) {
+        /* Determine whether we need wrapping */
+        Object myObject = pObject;
+        if (JDataDifference.class.isInstance(myObject)) {
+            myObject = ((JDataDifference) pObject).getObject();
+        }
+        return byte[].class.isInstance(myObject);
+    }
+
+    /**
      * Build HTML table describing ReportObject.
      * @param pDetail linking detail
      * @param pObject the ReportObject to describe
@@ -352,7 +366,7 @@ public final class JDataHTML {
     }
 
     /**
-     * Format an HTML value
+     * Format an HTML value.
      * @param pDetail linking detail
      * @param pValue the value to format
      * @return the formatted value
@@ -363,7 +377,7 @@ public final class JDataHTML {
         String myFormat = JDataObject.formatField(pValue);
 
         /* Perform special formatting for a long byte[] */
-        if ((pValue instanceof byte[]) && (myFormat.length() > WRAP_HEXSTRING)) {
+        if (needsWrapping(pValue) && (myFormat.length() > WRAP_HEXSTRING)) {
             StringBuilder myBuffer = new StringBuilder(BUFFER_LEN);
 
             /* Format the buffer */
@@ -398,7 +412,7 @@ public final class JDataHTML {
     }
 
     /**
-     * Format an HTML changed value
+     * Format an HTML changed value.
      * @param pText the value to format
      * @param pDifference the difference
      * @return the formatted value

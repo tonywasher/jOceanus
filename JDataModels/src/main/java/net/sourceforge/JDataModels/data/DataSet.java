@@ -276,9 +276,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      */
     protected void deriveCloneSet(final DataSet<T> pSource) {
         /* Clone the Security items */
-        theControlKeys = pSource.getControlKeys().deriveList(ListStyle.CLONE);
-        theDataKeys = pSource.getDataKeys().deriveList(ListStyle.CLONE);
-        theControlData = pSource.getControlData().deriveList(ListStyle.CLONE);
+        theControlKeys = pSource.getControlKeys().cloneList(this);
+        theDataKeys = pSource.getDataKeys().cloneList(this);
+        theControlData = pSource.getControlData().cloneList(this);
     }
 
     /**

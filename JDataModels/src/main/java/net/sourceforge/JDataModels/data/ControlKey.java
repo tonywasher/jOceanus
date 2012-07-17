@@ -389,11 +389,13 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
     private void allocateDataKeys(final DataSet<?> pData) throws JDataException {
         /* Access the DataKey List */
         DataKeyList myKeys = pData.getDataKeys();
+        setNewVersion();
 
         /* Loop through the SymKeyType values */
         for (SymKeyType myType : SymKeyType.values()) {
             /* Create a new DataKey for this ControlKey */
             DataKey myKey = myKeys.addItem(this, myType);
+            myKey.setNewVersion();
 
             /* Store the DataKey into the map */
             theMap.put(myType, myKey);
@@ -573,11 +575,6 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
          * @throws JDataException on error
          */
         public ControlKey addItem(final ControlKey pSource) throws JDataException {
-            /* Check that we are the same list */
-            if (pSource.getList() != this) {
-                throw new JDataException(ExceptionClass.LOGIC, "Invalid clone operation");
-            }
-
             /* Create the key */
             ControlKey myKey = new ControlKey(pSource);
 
@@ -622,8 +619,9 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
 
             /* Loop through the controlKeys */
             Iterator<ControlKey> myIterator = iterator();
-            ControlKey myCurr;
-            while ((myCurr = myIterator.next()) != null) {
+            while (myIterator.hasNext()) {
+                ControlKey myCurr = myIterator.next();
+
                 /* Delete if this is not the active key */
                 if (!myKey.equals(myCurr)) {
                     myCurr.deleteControlSet();

@@ -154,7 +154,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     /**
      * The DataSet.
      */
-    private final DataSet<?> theDataSet;
+    private DataSet<?> theDataSet;
 
     /**
      * The granularity of the list.
@@ -401,9 +401,31 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
 
     /**
      * Obtain an empty list based on this list.
-     * @return the list)
+     * @return the list
      */
     protected abstract L getEmptyList();
+
+    /**
+     * Derive an cloned extract of this list.
+     * @param pDataSet the new DataSet
+     * @return the cloned list
+     */
+    public L cloneList(final DataSet<?> pDataSet) {
+        /* Obtain an empty list of the correct style */
+        L myList = getEmptyList();
+        myList.theStyle = ListStyle.CLONE;
+        myList.theDataSet = pDataSet;
+
+        /* Populate the list */
+        populateList(myList);
+
+        /* Remove base reference and reset to CORE list */
+        myList.theBase = null;
+        myList.theStyle = ListStyle.CORE;
+
+        /* Return the cloned list */
+        return myList;
+    }
 
     /**
      * Derive an extract of this list.
@@ -415,9 +437,22 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
         L myList = getEmptyList();
         myList.theStyle = pStyle;
 
+        /* Populate the list */
+        populateList(myList);
+
+        /* Return the derived list */
+        return myList;
+    }
+
+    /**
+     * Populate a list extract.
+     * @param pList the list to populate
+     */
+    private void populateList(final L pList) {
         /* Determine special styles */
-        boolean isUpdate = (pStyle == ListStyle.UPDATE);
-        boolean isClone = (pStyle == ListStyle.CLONE);
+        ListStyle myStyle = pList.getStyle();
+        boolean isUpdate = (myStyle == ListStyle.UPDATE);
+        boolean isClone = (myStyle == ListStyle.CLONE);
 
         /* Create an iterator for all items in the list */
         Iterator<? extends DataItem> myIterator = iterator();
@@ -434,7 +469,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
             }
 
             /* Copy the item */
-            DataItem myItem = myList.addNewItem(myCurr);
+            DataItem myItem = pList.addNewItem(myCurr);
 
             /* If this is a Clone list */
             if (isClone) {
@@ -442,16 +477,6 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                 myItem.relinkToDataSet();
             }
         }
-
-        /* For Clone lists */
-        if (isClone) {
-            /* Remove base reference and reset to CORE list */
-            myList.theBase = null;
-            myList.theStyle = ListStyle.CORE;
-        }
-
-        /* Return the derived list */
-        return myList;
     }
 
     /**
@@ -1023,7 +1048,6 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                     /* Clear history and set as a clean item */
                     myCurr.clearHistory();
                     myCurr.setRestoring(false);
-                    // myCurr.setState(DataState.CLEAN);
                     break;
                 default:
                     break;

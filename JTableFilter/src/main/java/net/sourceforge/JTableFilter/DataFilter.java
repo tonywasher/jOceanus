@@ -31,7 +31,6 @@ import javax.swing.table.TableModel;
 
 import net.sourceforge.JTableFilter.DataFilter.DataFilterModel;
 
-
 /**
  * RowSorter to provide filtering capabilities without sort.
  * @param <T> row data type
@@ -69,12 +68,12 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
     private static final int ROW_FILTERED = -1;
 
     /**
-     * Row class for data structures
+     * Row class for data structures.
      * @param <X> the row type
      */
-    private final static class RowEntry<X extends Comparable<X>> {
+    private static final class RowEntry<X extends Comparable<X>> {
         /**
-         * The actual Row
+         * The actual Row.
          */
         private X theRow;
 
@@ -198,7 +197,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
     }
 
     /**
-     * Obtain reference array from mapping array
+     * Obtain reference array from mapping array.
      * @param <X> the rowType
      * @param pSource the mapping array
      * @return the reference array
@@ -218,7 +217,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
     }
 
     /**
-     * Deep clone the array
+     * Deep clone the array.
      * @param <X> the rowType
      * @param pSource the mapping array
      * @param pNewLen the new length of the array
@@ -449,8 +448,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
             }
         }
 
-        /* Adjust lengths */
-        iNumRows += iXtraLen;
+        /* Initialise insert point */
         int iView = theViewToModel.length;
 
         /* Loop through the new model elements */
@@ -599,7 +597,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
     }
 
     /**
-     * Compress viewToModel array
+     * Compress viewToModel array.
      * @param pArray the array to compress
      * @param pLength the length of the array
      * @return the compressed array
@@ -629,13 +627,13 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
     }
 
     /**
-     * Check whether the first row is correctly before the second row
+     * Check whether the first row is correctly before the second row.
      * @param pFirst the first row to test
      * @param pSecond the second row to test
      * @return true/false
      */
-    private boolean isCorrectOrder(RowEntry<T> pFirst,
-                                   RowEntry<T> pSecond) {
+    private boolean isCorrectOrder(final RowEntry<T> pFirst,
+                                   final RowEntry<T> pSecond) {
         int iResult = (doSort) ? pFirst.compareRow(pSecond) : pFirst.compareReference(pSecond);
         return iResult <= 0;
     }
@@ -648,7 +646,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
      * @param pArray the array to sort
      * @return was sort order changed? true/false
      */
-    private boolean sortViewToModel(RowEntry<T>[] pArray) {
+    private boolean sortViewToModel(final RowEntry<T>[] pArray) {
         /* Default is no sort occurred */
         boolean isChanged = false;
 

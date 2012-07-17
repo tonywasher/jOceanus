@@ -469,22 +469,22 @@ public class FinanceData extends DataSet<FinanceData> {
         myExtract.deriveCloneSet(this);
 
         /* Build the static extract */
-        myExtract.theActTypes = theActTypes.deriveList(ListStyle.CLONE);
-        myExtract.theTransTypes = theTransTypes.deriveList(ListStyle.CLONE);
-        myExtract.theTaxTypes = theTaxTypes.deriveList(ListStyle.CLONE);
-        myExtract.theTaxRegimes = theTaxRegimes.deriveList(ListStyle.CLONE);
-        myExtract.theFrequencys = theFrequencys.deriveList(ListStyle.CLONE);
-        myExtract.theInfoTypes = theInfoTypes.deriveList(ListStyle.CLONE);
+        myExtract.theActTypes = theActTypes.cloneList(this);
+        myExtract.theTransTypes = theTransTypes.cloneList(this);
+        myExtract.theTaxTypes = theTaxTypes.cloneList(this);
+        myExtract.theTaxRegimes = theTaxRegimes.cloneList(this);
+        myExtract.theFrequencys = theFrequencys.cloneList(this);
+        myExtract.theInfoTypes = theInfoTypes.cloneList(this);
 
         /* Build the data extract */
-        myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.CLONE);
-        myExtract.theAccounts = theAccounts.deriveList(ListStyle.CLONE);
-        myExtract.theRates = theRates.deriveList(ListStyle.CLONE);
-        myExtract.thePrices = thePrices.deriveList(ListStyle.CLONE);
-        myExtract.thePatterns = thePatterns.deriveList(ListStyle.CLONE);
-        myExtract.theEvents = theEvents.deriveList(ListStyle.CLONE);
-        myExtract.theEventData = theEventData.deriveList(ListStyle.CLONE);
-        myExtract.theEventValues = theEventValues.deriveList(ListStyle.CLONE);
+        myExtract.theTaxYears = theTaxYears.cloneList(this);
+        myExtract.theAccounts = theAccounts.cloneList(this);
+        myExtract.theRates = theRates.cloneList(this);
+        myExtract.thePrices = thePrices.cloneList(this);
+        myExtract.thePatterns = thePatterns.cloneList(this);
+        myExtract.theEvents = theEvents.cloneList(this);
+        myExtract.theEventData = theEventData.cloneList(this);
+        myExtract.theEventValues = theEventValues.cloneList(this);
 
         /* Declare the lists */
         myExtract.declareLists();
