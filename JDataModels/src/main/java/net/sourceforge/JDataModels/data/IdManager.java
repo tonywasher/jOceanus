@@ -29,7 +29,7 @@ import net.sourceforge.JSortedList.OrderedIdIndex;
  * @author Tony Washer
  * @param <T> the dataType
  */
-public class IdManager<T extends DataItem & Comparable<T>> extends OrderedIdIndex<Integer, T> {
+public class IdManager<T extends DataItem & Comparable<? super T>> extends OrderedIdIndex<Integer, T> {
     /**
      * The maximum id.
      */

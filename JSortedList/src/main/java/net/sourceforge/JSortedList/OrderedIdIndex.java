@@ -32,7 +32,7 @@ import java.util.Map.Entry;
  * @param <I> the data-type of the id
  * @param <T> the data-type of the list
  */
-public class OrderedIdIndex<I, T extends OrderedIdItem<I> & Comparable<T>> extends OrderedIndex<T> {
+public class OrderedIdIndex<I, T extends OrderedIdItem<I> & Comparable<? super T>> extends OrderedIndex<T> {
     /**
      * Hash map.
      */

@@ -955,30 +955,6 @@ public class Extract extends DataTable<Event> {
 
             /* Check for changes */
             if (myEvent.checkForHistory()) {
-                /* Switch on the updated column */
-                switch (col) {
-                /* If we have changed a sorting column */
-                    case COLUMN_DATE:
-                    case COLUMN_DESC:
-                    case COLUMN_TRANTYP:
-                        /* Re-Sort the row */
-                        theEvents.reSort(myEvent);
-
-                        /* Determine new row # */
-                        int myNewRowNo = myEvent.indexOf();
-
-                        /* If the row # has changed */
-                        if (myNewRowNo != row) {
-                            /* Report the move of the row */
-                            selectRowWithScroll(myNewRowNo);
-                            break;
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
-
                 /* Increment data version */
                 theUpdateSet.incrementVersion();
 

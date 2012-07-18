@@ -1049,38 +1049,6 @@ public class AccountStatement extends DataTable<Event> {
 
             /* Check for changes */
             if (myLine.checkForHistory()) {
-                /* Switch on the updated column */
-                switch (col) {
-                /* redraw whole table if we have updated a sort col */
-                    case COLUMN_DATE:
-                    case COLUMN_DESC:
-                    case COLUMN_TRANTYP:
-                        /* Re-Sort the row */
-                        theLines.reSort(myLine);
-                        // validateAfterChange();
-
-                        /* Determine new row # */
-                        int myNewRowNo = myLine.indexOf();
-
-                        /* If the row # has changed */
-                        if (myNewRowNo != row) {
-                            /* Report the move of the row */
-                            selectRowWithScroll(myNewRowNo);
-                            break;
-                        }
-                        break;
-
-                    /* Recalculate balance if required */
-                    // case COLUMN_CREDIT:
-                    // case COLUMN_DEBIT:
-                    // validateAfterChange();
-                    // break;
-
-                    /* else note that we have updated this cell */
-                    default:
-                        break;
-                }
-
                 /* Increment data version */
                 theUpdateSet.incrementVersion();
 
@@ -1110,7 +1078,6 @@ public class AccountStatement extends DataTable<Event> {
         @Override
         protected void addNullCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
-            StatementLine myLine;
             boolean enableNullUnits = false;
             boolean enableNullTax = false;
             boolean enableNullYears = false;
@@ -1129,7 +1096,7 @@ public class AccountStatement extends DataTable<Event> {
                 }
 
                 /* Access as line */
-                myLine = (StatementLine) myRow;
+                StatementLine myLine = (StatementLine) myRow;
 
                 /* Enable null Units if we have units and are showing units */
                 if ((theStateType == StatementType.Units) && (myLine.getUnits() != null)) {

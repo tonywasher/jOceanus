@@ -720,28 +720,6 @@ public class AccountPatterns extends DataTable<Event> {
 
             /* Check for changes */
             if (myPattern.checkForHistory()) {
-                /* Switch on the updated column */
-                switch (col) {
-                /* if we have updated a sort col */
-                    case COLUMN_DATE:
-                    case COLUMN_DESC:
-                    case COLUMN_TRANTYP:
-                        /* Re-Sort the row */
-                        thePatterns.reSort(myPattern);
-
-                        /* Determine new row # */
-                        int myNewRowNo = myPattern.indexOf();
-
-                        /* If the row # has changed */
-                        if (myNewRowNo != row) {
-                            /* Report the move of the row */
-                            selectRowWithScroll(myNewRowNo);
-                        }
-                        break;
-                    default:
-                        break;
-                }
-
                 /* Increment data version */
                 theUpdateSet.incrementVersion();
 

@@ -275,7 +275,7 @@ public abstract class EncryptedItem extends DataItem {
      * @param <L> the list type
      * @param <T> the item type
      */
-    public abstract static class EncryptedList<L extends EncryptedList<L, T>, T extends EncryptedItem & Comparable<T>>
+    public abstract static class EncryptedList<L extends EncryptedList<L, T>, T extends EncryptedItem & Comparable<? super T>>
             extends DataList<L, T> {
         /**
          * Get the active controlKey.

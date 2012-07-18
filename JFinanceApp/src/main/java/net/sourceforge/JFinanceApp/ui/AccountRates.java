@@ -505,26 +505,6 @@ public class AccountRates extends DataTable<AccountRate> {
 
             /* reset history if no change */
             if (myRate.checkForHistory()) {
-                /* Switch on the updated column */
-                switch (col) {
-                /* if we have updated a sort column */
-                    case COLUMN_DATE:
-                        /* Re-Sort the row */
-                        theRates.reSort(myRate);
-
-                        /* Determine new row # */
-                        int myNewRowNo = myRate.indexOf();
-
-                        /* If the row # has changed */
-                        if (myNewRowNo != row) {
-                            /* Report the move of the row */
-                            selectRowWithScroll(myNewRowNo);
-                            break;
-                        }
-                    default:
-                        break;
-                }
-
                 /* Increment data version */
                 theUpdateSet.incrementVersion();
 

@@ -189,8 +189,8 @@ public enum Difference {
      * @param pNew The new object
      * @return true/false
      */
-    public static <X extends Comparable<X>> int compareObject(final X pCurr,
-                                                              final X pNew) {
+    public static <X extends Comparable<? super X>> int compareObject(final X pCurr,
+                                                                      final X pNew) {
         /* Handle identity */
         if (pCurr == pNew) {
             return 0;

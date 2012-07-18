@@ -29,7 +29,7 @@ import java.util.Arrays;
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
-public class OrderedIndex<T extends Comparable<T>> {
+public class OrderedIndex<T extends Comparable<? super T>> {
     /**
      * Expansion rate of map.
      */
@@ -143,11 +143,8 @@ public class OrderedIndex<T extends Comparable<T>> {
      * @return the relevant node (or null)
      */
     protected OrderedNode<T> getNodeAtIndex(final int iIndex) {
-        int iMapIndex;
-        OrderedNode<T> myNode;
-
         /* Calculate the map index */
-        iMapIndex = iIndex >>> theGranularityShift;
+        int iMapIndex = iIndex >>> theGranularityShift;
 
         /* Handle out of range */
         if (iMapIndex > theActiveMapLength - 1) {
@@ -155,7 +152,7 @@ public class OrderedIndex<T extends Comparable<T>> {
         }
 
         /* Access the start node for the search */
-        myNode = theMap[iMapIndex];
+        OrderedNode<T> myNode = theMap[iMapIndex];
 
         /* Search for the correct node */
         while (myNode != null) {
@@ -520,5 +517,54 @@ public class OrderedIndex<T extends Comparable<T>> {
         /* Reinitialise the map to null */
         Arrays.fill(theMap, null);
         theActiveMapLength = 0;
+    }
+
+    /**
+     * ReSort the list.
+     */
+    protected void reSort() {
+        /* Access first element in list */
+        OrderedNode<T> myNode = theList.getFirst();
+
+        /* Access the second node */
+        if (myNode != null) {
+            myNode = myNode.getNext();
+        }
+
+        /* Loop while there are elements to sort */
+        while (myNode != null) {
+            /* Access next and previous items */
+            OrderedNode<T> myNext = myNode.getNext();
+            OrderedNode<T> myPrev = myNode.getPrev();
+
+            /* Access the index */
+            int iIndex = myNode.getIndex();
+
+            /* Loop while we are out of order */
+            while (myNode.compareTo(myPrev) < 0) {
+                /* Calculate the map index */
+                int iMapIndex = iIndex >>> theGranularityShift;
+
+                /* If the previous element is a mapped node */
+                if (((iIndex - 1) & theGranularityMask) == 0) {
+                    /* Shift to this element */
+                    theMap[iMapIndex] = myNode;
+                    /* else if this is a mapped node */
+                } else if ((iIndex & theGranularityMask) == 0) {
+                    /* Shift to the previous element */
+                    theMap[iMapIndex] = myPrev;
+                }
+
+                /* Swap Nodes */
+                myNode.swapWithPrevious();
+
+                /* Adjust elements */
+                myPrev = myNode.getPrev();
+                iIndex--;
+            }
+
+            /* Move to next node */
+            myNode = myNext;
+        }
     }
 }

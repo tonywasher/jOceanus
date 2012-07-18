@@ -30,7 +30,7 @@ import java.util.Map;
  * @param <I> the date-type of the id
  * @param <T> the data-type of the list
  */
-public class OrderedIdList<I, T extends Comparable<T> & OrderedIdItem<I>> extends OrderedList<T> {
+public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>> extends OrderedList<T> {
     @SuppressWarnings("unchecked")
     @Override
     protected OrderedIdIndex<I, T> getIndex() {

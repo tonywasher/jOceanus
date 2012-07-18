@@ -27,7 +27,7 @@ package net.sourceforge.JSortedList;
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
-public class OrderedNode<T extends Comparable<T>> {
+public class OrderedNode<T extends Comparable<? super T>> {
     /**
      * The object that this node refers to.
      */
@@ -78,7 +78,7 @@ public class OrderedNode<T extends Comparable<T>> {
      * @param pPoint the node before which we have to insert
      */
     protected void addBeforeNode(final OrderedNode<T> pPoint) {
-        /* Set values for the new item */
+        /* Set values for the new node */
         thePrev = pPoint.thePrev;
         theNext = pPoint;
 
@@ -87,11 +87,18 @@ public class OrderedNode<T extends Comparable<T>> {
 
         /* Add to the list */
         pPoint.thePrev = this;
+
+        /* If we have a preceding node */
         if (thePrev != null) {
+            /* Adjust preceding node to point to this */
             thePrev.theNext = this;
+
+            /* else set this node as first in list */
+        } else {
+            theList.setFirst(this);
         }
 
-        /* Loop through subsequent elements increasing the indices */
+        /* Loop through subsequent nodes increasing the indices */
         adjustIndicesAfterInsert(theNext);
     }
 
@@ -99,7 +106,7 @@ public class OrderedNode<T extends Comparable<T>> {
      * add Node to the tail of the list (note that we cannot be an empty list at this point).
      */
     protected void addToTail() {
-        /* Set values for the new item */
+        /* Set values for the new node */
         thePrev = theList.getLast();
         theNext = null;
 
@@ -108,6 +115,9 @@ public class OrderedNode<T extends Comparable<T>> {
 
         /* Add to the list */
         thePrev.theNext = this;
+
+        /* Set node as last in list */
+        theList.setLast(this);
     }
 
     /**
@@ -115,7 +125,7 @@ public class OrderedNode<T extends Comparable<T>> {
      * @param pPoint the node after which we have to insert
      */
     protected void addAfterNode(final OrderedNode<T> pPoint) {
-        /* Set values for the new item */
+        /* Set values for the new node */
         theNext = pPoint.theNext;
         thePrev = pPoint;
 
@@ -124,12 +134,19 @@ public class OrderedNode<T extends Comparable<T>> {
 
         /* Add to the list */
         pPoint.theNext = this;
-        if (theNext != null) {
-            theNext.thePrev = this;
-        }
 
-        /* Adjust following indices */
-        adjustIndicesAfterInsert(theNext);
+        /* If we have a following node */
+        if (theNext != null) {
+            /* Link the next node back to us */
+            theNext.thePrev = this;
+
+            /* Adjust following indices */
+            adjustIndicesAfterInsert(theNext);
+
+            /* else set this node as last in list */
+        } else {
+            theList.setLast(this);
+        }
     }
 
     /**
@@ -143,13 +160,21 @@ public class OrderedNode<T extends Comparable<T>> {
         /* Set new index */
         theIndex = 0;
 
-        /* Adjust the following link */
-        if (theNext != null) {
-            theNext.thePrev = this;
-        }
+        /* Record this node as first in the list */
+        theList.setFirst(this);
 
-        /* Adjust following indices */
-        adjustIndicesAfterInsert(theNext);
+        /* If we have a following node */
+        if (theNext != null) {
+            /* Link the next node back to us */
+            theNext.thePrev = this;
+
+            /* Adjust following indices */
+            adjustIndicesAfterInsert(theNext);
+
+            /* else set this node as last in list */
+        } else {
+            theList.setLast(this);
+        }
     }
 
     /**
@@ -182,16 +207,28 @@ public class OrderedNode<T extends Comparable<T>> {
      * Remove node from list.
      */
     protected void remove() {
-        /* Adjust nodes either side of this node */
+        /* If we have a preceding node */
         if (thePrev != null) {
+            /* Link previous node past us */
             thePrev.theNext = theNext;
-        }
-        if (theNext != null) {
-            theNext.thePrev = thePrev;
+
+            /* else set next as first list */
+        } else {
+            theList.setFirst(theNext);
         }
 
-        /* Adjust following indices */
-        adjustIndicesAfterRemove(theNext);
+        /* If we have a following node */
+        if (theNext != null) {
+            /* Link following node back to previous */
+            theNext.thePrev = thePrev;
+
+            /* Adjust following indices */
+            adjustIndicesAfterRemove(theNext);
+
+            /* else set previous as last in list */
+        } else {
+            theList.setLast(thePrev);
+        }
 
         /* clean our links */
         theNext = null;
@@ -274,5 +311,31 @@ public class OrderedNode<T extends Comparable<T>> {
     @Override
     public int hashCode() {
         return theObject.hashCode();
+    }
+
+    /**
+     * Swap node with previous node.
+     */
+    protected void swapWithPrevious() {
+        /* Access previous node */
+        OrderedNode<T> myPrev = thePrev;
+
+        /* Swap linkages */
+        thePrev = myPrev.thePrev;
+        myPrev.theNext = theNext;
+        theNext = myPrev;
+        myPrev.thePrev = this;
+
+        /* Adjust indices */
+        theIndex--;
+        myPrev.theIndex++;
+
+        /* Adjust first and last nodes if necessary */
+        if (thePrev == null) {
+            theList.setFirst(this);
+        }
+        if (myPrev.theNext == null) {
+            theList.setLast(myPrev);
+        }
     }
 }

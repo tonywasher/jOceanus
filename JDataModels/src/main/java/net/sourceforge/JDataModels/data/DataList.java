@@ -38,7 +38,7 @@ import net.sourceforge.JSortedList.OrderedListIterator;
  * @param <L> the list type
  * @param <T> the item type
  */
-public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Comparable<T>> extends
+public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Comparable<? super T>> extends
         OrderedIdList<Integer, T> implements JDataContents {
     /**
      * Local Report fields.
@@ -938,13 +938,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                     /* Set new state */
                     // myBase.setState(DataState.CHANGED);
 
-                    /* Re-sort the item */
-                    theBase.reSort(myBase);
                     break;
                 default:
                     break;
             }
         }
+
+        /* Re-sort the underlying list */
+        theBase.reSort();
     }
 
     /**
@@ -1006,14 +1007,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
                         myBase.setRestoring(false);
 
                     }
-
-                    /* Re-sort the item */
-                    theBase.reSort(myBase);
                     break;
                 default:
                     break;
             }
         }
+
+        /* Re-sort the underlying list */
+        theBase.reSort();
     }
 
     /**

@@ -510,25 +510,6 @@ public class AccountPrices extends DataTable<AccountPrice> {
 
             /* If we have changes */
             if (myPrice.checkForHistory()) {
-                /* Switch on the updated column */
-                switch (col) {
-                    case COLUMN_DATE:
-                        /* Re-Sort the row */
-                        thePrices.reSort(myPrice);
-
-                        /* Determine new row # */
-                        int myNewRowNo = myPrice.indexOf();
-
-                        /* If the row # has changed */
-                        if (myNewRowNo != row) {
-                            /* Report the move of the row */
-                            selectRowWithScroll(myNewRowNo);
-                            break;
-                        }
-                    default:
-                        break;
-                }
-
                 /* Increment data version */
                 theUpdateSet.incrementVersion();
 

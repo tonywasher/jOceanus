@@ -31,7 +31,7 @@ import java.util.NoSuchElementException;
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
-public class OrderedListIterator<T extends Comparable<T>> implements ListIterator<T> {
+public class OrderedListIterator<T extends Comparable<? super T>> implements ListIterator<T> {
     /**
      * Owning list.
      */

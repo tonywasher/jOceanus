@@ -35,12 +35,12 @@ import net.sourceforge.JTableFilter.DataFilter.DataFilterModel;
  * RowSorter to provide filtering capabilities without sort.
  * @param <T> row data type
  */
-public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterModel<T>> {
+public class DataFilter<T extends Comparable<? super T>> extends RowSorter<DataFilterModel<T>> {
     /**
      * Interface for Model.
      * @param <T> the row type
      */
-    public interface DataFilterModel<T extends Comparable<T>> extends TableModel {
+    public interface DataFilterModel<T extends Comparable<? super T>> extends TableModel {
         /**
          * Obtain the item at the model index.
          * @param pRowIndex the index
@@ -71,7 +71,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
      * Row class for data structures.
      * @param <X> the row type
      */
-    private static final class RowEntry<X extends Comparable<X>> {
+    private static final class RowEntry<X extends Comparable<? super X>> {
         /**
          * The actual Row.
          */
@@ -192,7 +192,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
      * @return the allocated array
      */
     @SuppressWarnings("unchecked")
-    private static <X extends Comparable<X>> RowEntry<X>[] allocateRows(final int pNumRows) {
+    private static <X extends Comparable<? super X>> RowEntry<X>[] allocateRows(final int pNumRows) {
         return (RowEntry<X>[]) new RowEntry[pNumRows];
     }
 
@@ -202,7 +202,7 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
      * @param pSource the mapping array
      * @return the reference array
      */
-    private static <X extends Comparable<X>> int[] getReferenceArray(final RowEntry<X>[] pSource) {
+    private static <X extends Comparable<? super X>> int[] getReferenceArray(final RowEntry<X>[] pSource) {
         /* Allocate new array */
         int iNumRows = pSource.length;
         int[] myArray = new int[iNumRows];
@@ -223,8 +223,8 @@ public class DataFilter<T extends Comparable<T>> extends RowSorter<DataFilterMod
      * @param pNewLen the new length of the array
      * @return the reference array
      */
-    private static <X extends Comparable<X>> RowEntry<X>[] cloneArray(final RowEntry<X>[] pSource,
-                                                                      final int pNewLen) {
+    private static <X extends Comparable<? super X>> RowEntry<X>[] cloneArray(final RowEntry<X>[] pSource,
+                                                                              final int pNewLen) {
         /* Allocate new array */
         RowEntry<X>[] myArray = allocateRows(pNewLen);
         int iSrcLen = pSource.length;

@@ -33,8 +33,7 @@ import java.util.List;
 import java.util.RandomAccess;
 
 /**
- * Sorted Linked list. Extension of {@link java.util.List} that provides a sorted linked list implementation
- * with the ability for objects to be hidden on the list.
+ * Sorted Linked list. Extension of {@link java.util.List} that provides a sorted linked list implementation.
  * <ul>
  * <li>Null objects are not allowed.
  * <li>Duplicate objects are not allowed
@@ -43,10 +42,15 @@ import java.util.RandomAccess;
  * object are disallowed.
  * <li>The {@link #subList} method is not supported
  * </ul>
+ * <p>
+ * Because the elements in the list are mutable, changes can be made to the list that result in elements
+ * becoming out of order with respect to the natural ordering. The {@link #reSort} method is provided to
+ * repair the sort order. If an element is added when the list is out of sort order, the element will be
+ * inserted as near as possible to its correct position.
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
-public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable, RandomAccess {
+public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cloneable, RandomAccess {
     /**
      * The Hash prime.
      */
@@ -242,14 +246,6 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable,
             }
         }
 
-        /* Adjust first and last if necessary */
-        if (pNode.getPrev() == null) {
-            theFirst = pNode;
-        }
-        if (pNode.getNext() == null) {
-            theLast = pNode;
-        }
-
         /* Adjust the indexMap */
         theIndexMap.insertNode(pNode);
     }
@@ -261,14 +257,6 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable,
     protected void removeNode(final OrderedNode<T> pNode) {
         /* Remove the node from the index map */
         theIndexMap.removeNode(pNode);
-
-        /* Adjust first and last indicators if required */
-        if (theFirst.equals(pNode)) {
-            theFirst = pNode.getNext();
-        }
-        if (theLast.equals(pNode)) {
-            theLast = pNode.getPrev();
-        }
 
         /* Remove the node from the list */
         pNode.remove();
@@ -290,8 +278,7 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable,
             myNode.remove();
         }
 
-        /* Reset the first item and clear the map */
-        theFirst = null;
+        /* Clear the map */
         theIndexMap.clear();
     }
 
@@ -525,39 +512,14 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable,
     }
 
     /**
-     * re-sort the specified item by removing it from the list and re-adding it.
-     * @param o the item to resort
+     * Re-sort the list.
      */
-    public void reSort(final Object o) {
-        /* Reject if the object is null */
-        if (o == null) {
-            throw new IllegalArgumentException(NULL_DISALLOWED);
-        }
-
-        /* Reject if the object is invalid */
-        if (!(theClass.isInstance(o))) {
-            throw new ClassCastException();
-        }
-
-        /* Cast the object correctly */
-        T myItem = theClass.cast(o);
-
-        /* Find the node for the object */
-        OrderedNode<T> myNode = theIndexMap.findUnsortedNodeForObject(myItem);
-
-        /* If the node does not belong to the list then ignore */
-        if (myNode == null) {
-            return;
-        }
-
+    public void reSort() {
         /* Increment the modification count */
         theModCount++;
 
-        /* Remove the object from the list */
-        removeNode(myNode);
-
-        /* Add the item back into the list */
-        insertNode(myNode, false);
+        /* Perform sort via the indexMap */
+        theIndexMap.reSort();
     }
 
     @Override
@@ -933,6 +895,22 @@ public class OrderedList<T extends Comparable<T>> implements List<T>, Cloneable,
      */
     protected OrderedNode<T> getLast() {
         return theLast;
+    }
+
+    /**
+     * Set the first node in the sequence.
+     * @param pFirst the First node
+     */
+    protected void setFirst(final OrderedNode<T> pFirst) {
+        theFirst = pFirst;
+    }
+
+    /**
+     * Get the last node in the sequence.
+     * @param pLast the Last node
+     */
+    protected void setLast(final OrderedNode<T> pLast) {
+        theLast = pLast;
     }
 
     @Override

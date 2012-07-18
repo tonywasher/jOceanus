@@ -645,6 +645,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
         /* Determine whether we have any updates */
         boolean hasUpdates = hasUpdates();
         boolean hasChanges = hasChanges();
+        boolean hasControl = (getView().getData().getControl() != null);
 
         /* Note whether we have a worker thread */
         boolean hasWorker = hasWorker();
@@ -652,11 +653,11 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
         /* Disable menus if we have a worker thread */
         theDataMenu.setEnabled(!hasWorker);
         theBackupMenu.setEnabled(!hasWorker);
-        theSecureMenu.setEnabled(!hasWorker);
+        theSecureMenu.setEnabled(!hasWorker && hasControl);
 
         /* If we have changes disable the create backup options */
-        theWriteBackup.setEnabled(!hasChanges && !hasUpdates);
-        theWriteExtract.setEnabled(!hasChanges && !hasUpdates);
+        theWriteBackup.setEnabled(!hasChanges && !hasUpdates && hasControl);
+        theWriteExtract.setEnabled(!hasChanges && !hasUpdates && hasControl);
 
         /* If we have changes disable the security options */
         theUpdatePass.setEnabled(!hasChanges && !hasUpdates);
