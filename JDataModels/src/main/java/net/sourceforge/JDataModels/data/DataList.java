@@ -35,11 +35,10 @@ import net.sourceforge.JSortedList.OrderedListIterator;
 /**
  * Generic implementation of a DataList for DataItems.
  * @author Tony Washer
- * @param <L> the list type
  * @param <T> the item type
  */
-public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Comparable<? super T>> extends
-        OrderedIdList<Integer, T> implements JDataContents {
+public abstract class DataList<T extends DataItem & Comparable<? super T>> extends OrderedIdList<Integer, T>
+        implements JDataContents {
     /**
      * Local Report fields.
      */
@@ -167,19 +166,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
     private final IdManager<T> theMgr;
 
     /**
-     * The class.
-     */
-    private final Class<L> theClass;
-
-    /**
-     * The list self reference.
-     */
-    private final L theList;
-
-    /**
      * The base list (for extracts).
      */
-    private DataList<?, ? extends DataItem> theBase = null;
+    private DataList<? extends DataItem> theBase = null;
 
     /**
      * The generation.
@@ -320,24 +309,8 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Set the base DataList.
      * @param pBase the list that this list is based upon
      */
-    protected void setBase(final DataList<?, ? extends DataItem> pBase) {
+    protected void setBase(final DataList<? extends DataItem> pBase) {
         theBase = pBase;
-    }
-
-    /**
-     * Get List.
-     * @return the List
-     */
-    public L getList() {
-        return theList;
-    }
-
-    /**
-     * Get ListClass.
-     * @return the ListClass
-     */
-    protected Class<L> getListClass() {
-        return theClass;
     }
 
     /**
@@ -358,18 +331,14 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
 
     /**
      * Construct a new object.
-     * @param pClass the class
      * @param pBaseClass the class of the underlying object
      * @param pDataSet the owning dataSet
      * @param pStyle the new {@link ListStyle}
      */
-    protected DataList(final Class<L> pClass,
-                       final Class<T> pBaseClass,
+    protected DataList(final Class<T> pBaseClass,
                        final DataSet<?> pDataSet,
                        final ListStyle pStyle) {
         super(pBaseClass, new IdManager<T>(pDataSet.getGranularity()));
-        theClass = pClass;
-        theList = pClass.cast(this);
         theStyle = pStyle;
         theDataSet = pDataSet;
         theGranularity = pDataSet.getGranularity();
@@ -384,11 +353,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Construct a clone object.
      * @param pSource the list to clone
      */
-    protected DataList(final L pSource) {
+    protected DataList(final DataList<T> pSource) {
         super(pSource.getBaseClass(), new IdManager<T>(pSource.getGranularity()));
         theStyle = ListStyle.VIEW;
-        theClass = pSource.getListClass();
-        theList = theClass.cast(this);
         theMgr = (IdManager<T>) getIndex();
         theBase = pSource;
         theDataSet = pSource.getDataSet();
@@ -403,16 +370,16 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Obtain an empty list based on this list.
      * @return the list
      */
-    protected abstract L getEmptyList();
+    protected abstract DataList<T> getEmptyList();
 
     /**
      * Derive an cloned extract of this list.
      * @param pDataSet the new DataSet
      * @return the cloned list
      */
-    public L cloneList(final DataSet<?> pDataSet) {
+    public DataList<T> cloneList(final DataSet<?> pDataSet) {
         /* Obtain an empty list of the correct style */
-        L myList = getEmptyList();
+        DataList<T> myList = getEmptyList();
         myList.theStyle = ListStyle.CLONE;
         myList.theDataSet = pDataSet;
 
@@ -432,9 +399,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * @param pStyle the Style of the extract
      * @return the derived list
      */
-    public L deriveList(final ListStyle pStyle) {
+    public DataList<T> deriveList(final ListStyle pStyle) {
         /* Obtain an empty list of the correct style */
-        L myList = getEmptyList();
+        DataList<T> myList = getEmptyList();
         myList.theStyle = pStyle;
 
         /* Populate the list */
@@ -448,7 +415,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * Populate a list extract.
      * @param pList the list to populate
      */
-    private void populateList(final L pList) {
+    private void populateList(final DataList<T> pList) {
         /* Determine special styles */
         ListStyle myStyle = pList.getStyle();
         boolean isUpdate = (myStyle == ListStyle.UPDATE);
@@ -487,9 +454,9 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * @param pOld The old list to compare to
      * @return the difference list
      */
-    public L deriveDifferences(final L pOld) {
+    public DataList<T> deriveDifferences(final DataList<T> pOld) {
         /* Obtain an empty list of the correct style */
-        L myList = getEmptyList();
+        DataList<T> myList = getEmptyList();
         myList.theStyle = ListStyle.DIFFER;
 
         /* Access an Id Map of the old list */
@@ -550,7 +517,7 @@ public abstract class DataList<L extends DataList<L, T>, T extends DataItem & Co
      * will be viewed as changed
      * @param pBase The base list to re-base on
      */
-    public void reBase(final L pBase) {
+    public void reBase(final DataList<T> pBase) {
         /* Access an Id Map of the old list */
         Map<Integer, T> myBase = pBase.getIdMap();
 

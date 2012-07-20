@@ -34,6 +34,7 @@ import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.DateDay;
@@ -252,7 +253,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pList the list
      * @param pPrice The Price
      */
-    protected AccountPrice(final EncryptedList<?, ?> pList,
+    protected AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                            final AccountPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
@@ -263,7 +264,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pList the list
      * @param pAccount the account
      */
-    protected AccountPrice(final EncryptedList<?, ?> pList,
+    protected AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                            final Account pAccount) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
@@ -279,7 +280,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pPrice the price
      * @throws JDataException on error
      */
-    private AccountPrice(final EncryptedList<?, ?> pList,
+    private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final int uId,
                          final int uAccountId,
                          final Date pDate,
@@ -324,7 +325,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pPrice the price
      * @throws JDataException on error
      */
-    private AccountPrice(final EncryptedList<?, ?> pList,
+    private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final int uId,
                          final int uControlId,
                          final int uAccountId,
@@ -371,7 +372,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pPrice the price
      * @throws JDataException on error
      */
-    private AccountPrice(final AccountPriceList pList,
+    private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final Account pAccount,
                          final DateDay pDate,
                          final Price pPrice) throws JDataException {
@@ -551,7 +552,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     /**
      * Price List.
      */
-    public static class AccountPriceList extends EncryptedList<AccountPriceList, AccountPrice> {
+    public static class AccountPriceList extends EncryptedList<AccountPrice> {
         /**
          * Local Report fields.
          */
@@ -578,7 +579,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
          * @param pData the DataSet for the list
          */
         protected AccountPriceList(final FinanceData pData) {
-            super(AccountPriceList.class, AccountPrice.class, pData);
+            super(AccountPrice.class, pData);
         }
 
         /**
@@ -592,6 +593,21 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         @Override
         protected AccountPriceList getEmptyList() {
             return new AccountPriceList(this);
+        }
+
+        @Override
+        public AccountPriceList cloneList(final DataSet<?> pDataSet) {
+            return (AccountPriceList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public AccountPriceList deriveList(final ListStyle pStyle) {
+            return (AccountPriceList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public AccountPriceList deriveDifferences(final DataList<AccountPrice> pOld) {
+            return (AccountPriceList) super.deriveDifferences(pOld);
         }
 
         /**

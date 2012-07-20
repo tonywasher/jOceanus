@@ -30,6 +30,7 @@ import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;
@@ -586,7 +587,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
     /**
      * List class for EventData.
      */
-    public static class EventDataList extends EncryptedList<EventDataList, EventData> {
+    public static class EventDataList extends EncryptedList<EventData> {
         /**
          * Local Report fields.
          */
@@ -608,7 +609,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
          * @param pData the DataSet for the list
          */
         protected EventDataList(final FinanceData pData) {
-            super(EventDataList.class, EventData.class, pData);
+            super(EventData.class, pData);
         }
 
         /**
@@ -618,7 +619,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
          */
         protected EventDataList(final FinanceData pData,
                                 final ListStyle pStyle) {
-            super(EventDataList.class, EventData.class, pData);
+            super(EventData.class, pData);
             setStyle(pStyle);
             setGeneration(pData.getGeneration());
         }
@@ -634,6 +635,21 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
         @Override
         protected EventDataList getEmptyList() {
             return new EventDataList(this);
+        }
+
+        @Override
+        public EventDataList cloneList(final DataSet<?> pDataSet) {
+            return (EventDataList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public EventDataList deriveList(final ListStyle pStyle) {
+            return (EventDataList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public EventDataList deriveDifferences(final DataList<EventData> pOld) {
+            return (EventDataList) super.deriveDifferences(pOld);
         }
 
         /**

@@ -72,7 +72,7 @@ public final class JDataHTML {
     /**
      * Name of changed cell class.
      */
-    protected static final String CLASS_CHANGED = "changed";
+    public static final String CLASS_CHANGED = "changed";
 
     /**
      * Name of security changed cell class.

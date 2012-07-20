@@ -201,24 +201,17 @@ public class SheetPattern extends SheetDataItem<Pattern> {
 
     @Override
     protected void insertItem(final Pattern pItem) throws JDataException {
-        /* Can only handle a pattern */
-        if (!(pItem instanceof Pattern)) {
-            return;
-        }
-
-        Pattern myItem = (Pattern) pItem;
-
         /* If we are creating a backup */
         if (isBackup) {
             /* Set the fields */
             writeInteger(COL_ID, pItem.getId());
             writeInteger(COL_CONTROL, pItem.getControlKey().getId());
-            writeInteger(COL_ACCOUNT, myItem.getAccount().getId());
-            writeInteger(COL_PARTNER, myItem.getPartner().getId());
+            writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
+            writeInteger(COL_PARTNER, pItem.getPartner().getId());
             writeInteger(COL_TRAN, pItem.getTransType().getId());
-            writeInteger(COL_FREQ, myItem.getFrequency().getId());
+            writeInteger(COL_FREQ, pItem.getFrequency().getId());
             writeDate(COL_DATE, pItem.getDate());
-            writeBoolean(COL_CREDIT, myItem.isCredit());
+            writeBoolean(COL_CREDIT, pItem.isCredit());
             writeBytes(COL_DESC, pItem.getDescBytes());
             writeBytes(COL_AMOUNT, pItem.getAmountBytes());
 
@@ -226,12 +219,12 @@ public class SheetPattern extends SheetDataItem<Pattern> {
         } else {
             /* Set the fields */
             writeInteger(COL_ID, pItem.getId());
-            writeString(COL_ACCOUNT - 1, myItem.getAccount().getName());
-            writeString(COL_PARTNER - 1, myItem.getPartner().getName());
+            writeString(COL_ACCOUNT - 1, pItem.getAccount().getName());
+            writeString(COL_PARTNER - 1, pItem.getPartner().getName());
             writeString(COL_TRAN - 1, pItem.getTransType().getName());
-            writeString(COL_FREQ - 1, myItem.getFrequency().getName());
+            writeString(COL_FREQ - 1, pItem.getFrequency().getName());
             writeDate(COL_DATE - 1, pItem.getDate());
-            writeBoolean(COL_CREDIT - 1, myItem.isCredit());
+            writeBoolean(COL_CREDIT - 1, pItem.isCredit());
             writeString(COL_DESC - 1, pItem.getDesc());
             writeNumber(COL_AMOUNT - 1, pItem.getAmount());
         }

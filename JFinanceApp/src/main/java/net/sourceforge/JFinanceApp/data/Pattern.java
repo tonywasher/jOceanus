@@ -36,6 +36,7 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
@@ -329,7 +330,7 @@ public class Pattern extends Event {
      * @param isCredit true/false
      * @throws JDataException on error
      */
-    private Pattern(final PatternList pList,
+    private Pattern(final EncryptedList<Pattern> pList,
                     final int uId,
                     final Account pAccount,
                     final Date pDate,
@@ -595,7 +596,7 @@ public class Pattern extends Event {
     /**
      * The list.
      */
-    public static class PatternList extends EncryptedList<PatternList, Pattern> {
+    public static class PatternList extends EncryptedList<Pattern> {
         /**
          * Local Report fields.
          */
@@ -648,7 +649,7 @@ public class Pattern extends Event {
          * @param pData the DataSet for the list
          */
         protected PatternList(final FinanceData pData) {
-            super(PatternList.class, Pattern.class, pData);
+            super(Pattern.class, pData);
         }
 
         /**
@@ -662,6 +663,21 @@ public class Pattern extends Event {
         @Override
         protected PatternList getEmptyList() {
             return new PatternList(this);
+        }
+
+        @Override
+        public PatternList cloneList(final DataSet<?> pDataSet) {
+            return (PatternList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public PatternList deriveList(final ListStyle pStyle) {
+            return (PatternList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public PatternList deriveDifferences(final DataList<Pattern> pOld) {
+            return (PatternList) super.deriveDifferences(pOld);
         }
 
         /**

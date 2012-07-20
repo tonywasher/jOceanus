@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JFinanceApp.data.StaticClass.TaxClass;
 
@@ -167,7 +168,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
     /**
      * Represents a list of {@link TaxType} objects.
      */
-    public static class TaxTypeList extends StaticList<TaxTypeList, TaxType, TaxClass> {
+    public static class TaxTypeList extends StaticList<TaxType, TaxClass> {
         /**
          * Local Report fields.
          */
@@ -194,7 +195,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @param pData the DataSet for the list
          */
         protected TaxTypeList(final FinanceData pData) {
-            super(TaxTypeList.class, TaxType.class, pData, ListStyle.CORE);
+            super(TaxType.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -208,6 +209,21 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
         @Override
         protected TaxTypeList getEmptyList() {
             return new TaxTypeList(this);
+        }
+
+        @Override
+        public TaxTypeList cloneList(final DataSet<?> pDataSet) {
+            return (TaxTypeList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public TaxTypeList deriveList(final ListStyle pStyle) {
+            return (TaxTypeList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public TaxTypeList deriveDifferences(final DataList<TaxType> pOld) {
+            return (TaxTypeList) super.deriveDifferences(pOld);
         }
 
         /**

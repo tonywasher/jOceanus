@@ -110,7 +110,7 @@ public abstract class DataTable<T extends DataItem & Comparable<? super T>> exte
     /**
      * The Data List associated with the table.
      */
-    private DataList<?, T> theList = null;
+    private DataList<T> theList = null;
 
     /**
      * The UpdateSet associated with the table.
@@ -267,7 +267,7 @@ public abstract class DataTable<T extends DataItem & Comparable<? super T>> exte
      * Get the data list.
      * @return the data list
      */
-    public DataList<?, T> getList() {
+    public DataList<T> getList() {
         return theList;
     }
 
@@ -402,7 +402,7 @@ public abstract class DataTable<T extends DataItem & Comparable<? super T>> exte
      * Set the list for the table.
      * @param pList the list
      */
-    protected void setList(final DataList<?, T> pList) {
+    protected void setList(final DataList<T> pList) {
         int myZeroRow = hasHeader() ? 1 : 0;
 
         /* Store list and select correct mode */

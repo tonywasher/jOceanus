@@ -30,6 +30,7 @@ import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.EventInfoType.EventInfoTypeList;
@@ -466,7 +467,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
     /**
      * List class for EventValues.
      */
-    public static class EventValueList extends DataList<EventValueList, EventValue> {
+    public static class EventValueList extends DataList<EventValue> {
         /**
          * Local Report fields.
          */
@@ -493,12 +494,27 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
             return new EventValueList(this);
         }
 
+        @Override
+        public EventValueList cloneList(final DataSet<?> pDataSet) {
+            return (EventValueList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public EventValueList deriveList(final ListStyle pStyle) {
+            return (EventValueList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public EventValueList deriveDifferences(final DataList<EventValue> pOld) {
+            return (EventValueList) super.deriveDifferences(pOld);
+        }
+
         /**
          * Construct an empty CORE list.
          * @param pData the DataSet for the list
          */
         protected EventValueList(final FinanceData pData) {
-            super(EventValueList.class, EventValue.class, pData, ListStyle.CORE);
+            super(EventValue.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -508,7 +524,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
          */
         protected EventValueList(final FinanceData pData,
                                  final ListStyle pStyle) {
-            super(EventValueList.class, EventValue.class, pData, pStyle);
+            super(EventValue.class, pData, pStyle);
         }
 
         /**

@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JFinanceApp.data.StaticClass.TransClass;
 
@@ -424,7 +425,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     /**
      * Represents a list of {@link TransactionType} objects.
      */
-    public static class TransTypeList extends StaticList<TransTypeList, TransactionType, TransClass> {
+    public static class TransTypeList extends StaticList<TransactionType, TransClass> {
         /**
          * Local Report fields.
          */
@@ -451,7 +452,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @param pData the DataSet for the list
          */
         protected TransTypeList(final FinanceData pData) {
-            super(TransTypeList.class, TransactionType.class, pData, ListStyle.CORE);
+            super(TransactionType.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -465,6 +466,21 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
         @Override
         protected TransTypeList getEmptyList() {
             return new TransTypeList(this);
+        }
+
+        @Override
+        public TransTypeList cloneList(final DataSet<?> pDataSet) {
+            return (TransTypeList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public TransTypeList deriveList(final ListStyle pStyle) {
+            return (TransTypeList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public TransTypeList deriveDifferences(final DataList<TransactionType> pOld) {
+            return (TransTypeList) super.deriveDifferences(pOld);
         }
 
         /**

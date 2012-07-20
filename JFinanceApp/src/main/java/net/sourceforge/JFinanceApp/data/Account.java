@@ -35,6 +35,7 @@ import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.DateDay;
@@ -2290,7 +2291,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     /**
      * AccountList class.
      */
-    public static class AccountList extends EncryptedList<AccountList, Account> {
+    public static class AccountList extends EncryptedList<Account> {
         /**
          * Local Report fields.
          */
@@ -2343,7 +2344,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @param pData the DataSet for the list
          */
         protected AccountList(final FinanceData pData) {
-            super(AccountList.class, Account.class, pData);
+            super(Account.class, pData);
         }
 
         /**
@@ -2357,6 +2358,21 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         @Override
         protected AccountList getEmptyList() {
             return new AccountList(this);
+        }
+
+        @Override
+        public AccountList cloneList(final DataSet<?> pDataSet) {
+            return (AccountList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public AccountList deriveList(final ListStyle pStyle) {
+            return (AccountList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public AccountList deriveDifferences(final DataList<Account> pOld) {
+            return (AccountList) super.deriveDifferences(pOld);
         }
 
         /**

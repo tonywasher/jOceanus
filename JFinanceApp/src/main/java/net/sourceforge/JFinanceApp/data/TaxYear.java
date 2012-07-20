@@ -35,6 +35,7 @@ import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Money;
@@ -1536,7 +1537,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
     /**
      * The Tax Year List class.
      */
-    public static class TaxYearList extends DataList<TaxYearList, TaxYear> {
+    public static class TaxYearList extends DataList<TaxYear> {
         /**
          * Local Report fields.
          */
@@ -1576,7 +1577,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @param pData the DataSet for the list
          */
         protected TaxYearList(final FinanceData pData) {
-            super(TaxYearList.class, TaxYear.class, pData, ListStyle.CORE);
+            super(TaxYear.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -1590,6 +1591,21 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
         @Override
         protected TaxYearList getEmptyList() {
             return new TaxYearList(this);
+        }
+
+        @Override
+        public TaxYearList cloneList(final DataSet<?> pDataSet) {
+            return (TaxYearList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public TaxYearList deriveList(final ListStyle pStyle) {
+            return (TaxYearList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public TaxYearList deriveDifferences(final DataList<TaxYear> pOld) {
+            return (TaxYearList) super.deriveDifferences(pOld);
         }
 
         /**

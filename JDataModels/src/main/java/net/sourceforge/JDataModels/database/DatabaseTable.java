@@ -57,7 +57,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
     /**
      * The list of items for this table.
      */
-    private DataList<?, T> theList = null;
+    private DataList<T> theList = null;
 
     /**
      * The prepared statement.
@@ -230,7 +230,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * Set the list of items.
      * @param pList the list of items
      */
-    protected void setList(final DataList<?, T> pList) {
+    protected void setList(final DataList<T> pList) {
         theList = pList;
     }
 
@@ -238,7 +238,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * Obtain the list of items.
      * @return the list of items
      */
-    protected DataList<?, T> getList() {
+    protected DataList<T> getList() {
         return theList;
     }
 

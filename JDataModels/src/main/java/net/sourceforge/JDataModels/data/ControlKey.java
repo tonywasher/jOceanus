@@ -466,7 +466,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
     /**
      * ControlKey List.
      */
-    public static class ControlKeyList extends DataList<ControlKeyList, ControlKey> {
+    public static class ControlKeyList extends DataList<ControlKey> {
         /**
          * Local Report fields.
          */
@@ -488,7 +488,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
          * @param pData the DataSet for the list
          */
         protected ControlKeyList(final DataSet<?> pData) {
-            super(ControlKeyList.class, ControlKey.class, pData, ListStyle.CORE);
+            super(ControlKey.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -498,7 +498,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
          */
         protected ControlKeyList(final DataSet<?> pData,
                                  final ListStyle pStyle) {
-            super(ControlKeyList.class, ControlKey.class, pData, pStyle);
+            super(ControlKey.class, pData, pStyle);
         }
 
         /**
@@ -512,6 +512,21 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
         @Override
         protected ControlKeyList getEmptyList() {
             return new ControlKeyList(this);
+        }
+
+        @Override
+        public ControlKeyList cloneList(final DataSet<?> pDataSet) {
+            return (ControlKeyList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public ControlKeyList deriveList(final ListStyle pStyle) {
+            return (ControlKeyList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public ControlKeyList deriveDifferences(final DataList<ControlKey> pOld) {
+            return (ControlKeyList) super.deriveDifferences(pOld);
         }
 
         @Override

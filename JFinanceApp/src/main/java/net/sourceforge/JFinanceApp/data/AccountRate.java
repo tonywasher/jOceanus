@@ -35,6 +35,7 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Rate;
@@ -626,7 +627,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     /**
      * List class.
      */
-    public static class AccountRateList extends EncryptedList<AccountRateList, AccountRate> {
+    public static class AccountRateList extends EncryptedList<AccountRate> {
         /**
          * Local Report fields.
          */
@@ -679,7 +680,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          * @param pData the DataSet for the list
          */
         protected AccountRateList(final FinanceData pData) {
-            super(AccountRateList.class, AccountRate.class, pData);
+            super(AccountRate.class, pData);
         }
 
         /**
@@ -693,6 +694,21 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
         @Override
         protected AccountRateList getEmptyList() {
             return new AccountRateList(this);
+        }
+
+        @Override
+        public AccountRateList cloneList(final DataSet<?> pDataSet) {
+            return (AccountRateList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public AccountRateList deriveList(final ListStyle pStyle) {
+            return (AccountRateList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public AccountRateList deriveDifferences(final DataList<AccountRate> pOld) {
+            return (AccountRateList) super.deriveDifferences(pOld);
         }
 
         /**

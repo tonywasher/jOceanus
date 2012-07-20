@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JFinanceApp.data.StaticClass.TaxRegClass;
 
@@ -173,7 +174,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     /**
      * Represents a list of {@link TaxRegime} objects.
      */
-    public static class TaxRegimeList extends StaticList<TaxRegimeList, TaxRegime, TaxRegClass> {
+    public static class TaxRegimeList extends StaticList<TaxRegime, TaxRegClass> {
         /**
          * Local Report fields.
          */
@@ -200,7 +201,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @param pData the DataSet for the list
          */
         protected TaxRegimeList(final FinanceData pData) {
-            super(TaxRegimeList.class, TaxRegime.class, pData, ListStyle.CORE);
+            super(TaxRegime.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -214,6 +215,21 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
         @Override
         protected TaxRegimeList getEmptyList() {
             return new TaxRegimeList(this);
+        }
+
+        @Override
+        public TaxRegimeList cloneList(final DataSet<?> pDataSet) {
+            return (TaxRegimeList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public TaxRegimeList deriveList(final ListStyle pStyle) {
+            return (TaxRegimeList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public TaxRegimeList deriveDifferences(final DataList<TaxRegime> pOld) {
+            return (TaxRegimeList) super.deriveDifferences(pOld);
         }
 
         /**

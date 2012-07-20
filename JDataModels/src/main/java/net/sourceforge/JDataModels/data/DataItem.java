@@ -174,7 +174,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     /**
      * The list to which this item belongs.
      */
-    private DataList<?, ?> theList = null;
+    private DataList<?> theList = null;
 
     /**
      * Self reference.
@@ -225,7 +225,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * Obtain the list.
      * @return the list
      */
-    public DataList<?, ?> getList() {
+    public DataList<?> getList() {
         return theList;
     }
 
@@ -647,7 +647,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public DataItem(final DataList<?, ?> pList,
+    public DataItem(final DataList<?> pList,
                     final Integer uId) {
         /* Record list and item references */
         theId = uId;
@@ -679,7 +679,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * @param pList the list that this item is associated with
      * @param pBase the old item
      */
-    protected DataItem(final DataList<?, ?> pList,
+    protected DataItem(final DataList<?> pList,
                        final DataItem pBase) {
         /* Initialise as a ReportItem */
         this(pList, pBase.getId());

@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JFinanceApp.data.StaticClass.EventInfoClass;
 
@@ -138,8 +139,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
     /**
      * Represents a list of {@link EventInfoType} objects.
      */
-    public static class EventInfoTypeList extends
-            StaticList<EventInfoTypeList, EventInfoType, EventInfoClass> {
+    public static class EventInfoTypeList extends StaticList<EventInfoType, EventInfoClass> {
         /**
          * Local Report fields.
          */
@@ -166,7 +166,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * @param pData the DataSet for the list
          */
         protected EventInfoTypeList(final FinanceData pData) {
-            super(EventInfoTypeList.class, EventInfoType.class, pData, ListStyle.CORE);
+            super(EventInfoType.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -180,6 +180,21 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
         @Override
         protected EventInfoTypeList getEmptyList() {
             return new EventInfoTypeList(this);
+        }
+
+        @Override
+        public EventInfoTypeList cloneList(final DataSet<?> pDataSet) {
+            return (EventInfoTypeList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public EventInfoTypeList deriveList(final ListStyle pStyle) {
+            return (EventInfoTypeList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public EventInfoTypeList deriveDifferences(final DataList<EventInfoType> pOld) {
+            return (EventInfoTypeList) super.deriveDifferences(pOld);
         }
 
         @Override

@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JFinanceApp.data.StaticClass.AccountClass;
 
@@ -482,7 +483,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
     /**
      * Represents a list of {@link AccountType} objects.
      */
-    public static class AccountTypeList extends StaticList<AccountTypeList, AccountType, AccountClass> {
+    public static class AccountTypeList extends StaticList<AccountType, AccountClass> {
         /**
          * Local Report fields.
          */
@@ -509,7 +510,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * @param pData the DataSet for the list
          */
         protected AccountTypeList(final FinanceData pData) {
-            super(AccountTypeList.class, AccountType.class, pData, ListStyle.CORE);
+            super(AccountType.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -523,6 +524,21 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
         @Override
         protected AccountTypeList getEmptyList() {
             return new AccountTypeList(this);
+        }
+
+        @Override
+        public AccountTypeList cloneList(final DataSet<?> pDataSet) {
+            return (AccountTypeList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public AccountTypeList deriveList(final ListStyle pStyle) {
+            return (AccountTypeList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public AccountTypeList deriveDifferences(final DataList<AccountType> pOld) {
+            return (AccountTypeList) super.deriveDifferences(pOld);
         }
 
         @Override

@@ -209,7 +209,7 @@ public class ViewPrice extends AccountPrice {
     /**
      * Price List.
      */
-    public static class ViewPriceList extends EncryptedList<ViewPriceList, ViewPrice> {
+    public static class ViewPriceList extends EncryptedList<ViewPrice> {
         /**
          * Report fields.
          */
@@ -304,7 +304,7 @@ public class ViewPrice extends AccountPrice {
         public ViewPriceList(final View pView,
                              final Account pAccount) {
             /* Declare the data and set the style */
-            super(ViewPriceList.class, ViewPrice.class, pView.getData());
+            super(ViewPrice.class, pView.getData());
             setStyle(ListStyle.EDIT);
 
             /* Skip to alias if required */

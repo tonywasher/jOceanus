@@ -256,7 +256,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
     /**
      * Control Data List.
      */
-    public static class ControlDataList extends DataList<ControlDataList, ControlData> {
+    public static class ControlDataList extends DataList<ControlData> {
         /**
          * Local Report fields.
          */
@@ -291,7 +291,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          * @param pData the DataSet for the list
          */
         protected ControlDataList(final DataSet<?> pData) {
-            super(ControlDataList.class, ControlData.class, pData, ListStyle.CORE);
+            super(ControlData.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -301,7 +301,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          */
         protected ControlDataList(final DataSet<?> pData,
                                   final ListStyle pStyle) {
-            super(ControlDataList.class, ControlData.class, pData, pStyle);
+            super(ControlData.class, pData, pStyle);
         }
 
         /**
@@ -315,6 +315,21 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
         @Override
         protected ControlDataList getEmptyList() {
             return new ControlDataList(this);
+        }
+
+        @Override
+        public ControlDataList cloneList(final DataSet<?> pDataSet) {
+            return (ControlDataList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public ControlDataList deriveList(final ListStyle pStyle) {
+            return (ControlDataList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public ControlDataList deriveDifferences(final DataList<ControlData> pOld) {
+            return (ControlDataList) super.deriveDifferences(pOld);
         }
 
         @Override

@@ -74,7 +74,7 @@ public class ItemValidation implements JDataContents {
     /**
      * The list to which this Validation Control belongs.
      */
-    private final DataList<?, ?> theList;
+    private final DataList<?> theList;
 
     /**
      * The first error in the list.

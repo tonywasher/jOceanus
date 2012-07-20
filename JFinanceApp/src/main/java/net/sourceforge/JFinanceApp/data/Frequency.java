@@ -27,6 +27,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JFinanceApp.data.StaticClass.FreqClass;
 
@@ -132,7 +133,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
     /**
      * Represents a list of {@link Frequency} objects.
      */
-    public static class FrequencyList extends StaticList<FrequencyList, Frequency, FreqClass> {
+    public static class FrequencyList extends StaticList<Frequency, FreqClass> {
         /**
          * Local Report fields.
          */
@@ -159,7 +160,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @param pData the DataSet for the list
          */
         protected FrequencyList(final FinanceData pData) {
-            super(FrequencyList.class, Frequency.class, pData, ListStyle.CORE);
+            super(Frequency.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -173,6 +174,21 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
         @Override
         protected FrequencyList getEmptyList() {
             return new FrequencyList(this);
+        }
+
+        @Override
+        public FrequencyList cloneList(final DataSet<?> pDataSet) {
+            return (FrequencyList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public FrequencyList deriveList(final ListStyle pStyle) {
+            return (FrequencyList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public FrequencyList deriveDifferences(final DataList<Frequency> pOld) {
+            return (FrequencyList) super.deriveDifferences(pOld);
         }
 
         /**

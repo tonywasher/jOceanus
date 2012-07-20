@@ -170,7 +170,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     /**
      * The DataList Array.
      */
-    private final List<DataList<?, ?>> theList;
+    private final List<DataList<?>> theList;
 
     /**
      * Get Security Manager.
@@ -246,7 +246,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         theControlData = new ControlDataList(this);
 
         /* Create the list of additional DataLists */
-        theList = new ArrayList<DataList<?, ?>>();
+        theList = new ArrayList<DataList<?>>();
     }
 
     /**
@@ -261,7 +261,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         theSecurity = pSource.getSecurity();
 
         /* Create the map of additional lists */
-        theList = new ArrayList<DataList<?, ?>>();
+        theList = new ArrayList<DataList<?>>();
     }
 
     /**
@@ -342,7 +342,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      * Add DataList to list of lists.
      * @param pList the list to add
      */
-    protected void addList(final DataList<?, ?> pList) {
+    protected void addList(final DataList<?> pList) {
         /* Add the DataList to the list */
         theList.add(pList);
 
@@ -359,9 +359,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      * @param pItemType the type of items
      * @return the list of items
      */
-    public <L extends DataList<L, D>, D extends DataItem & Comparable<D>> L getDataList(final Class<L> pItemType) {
+    public <L extends DataList<D>, D extends DataItem & Comparable<? super D>> L getDataList(final Class<L> pItemType) {
         /* Access the class */
-        DataList<?, ?> myList = getDataListForClass(pItemType);
+        DataList<?> myList = getDataListForClass(pItemType);
 
         /* Cast correctly */
         return (myList == null) ? null : pItemType.cast(myList);
@@ -372,14 +372,14 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      * @param pItemType the type of items
      * @return the list of items
      */
-    protected DataList<?, ?> getDataListForClass(final Class<?> pItemType) {
+    protected DataList<?> getDataListForClass(final Class<?> pItemType) {
         /* Create the iterator */
-        ListIterator<DataList<?, ?>> myIterator = theList.listIterator();
+        ListIterator<DataList<?>> myIterator = theList.listIterator();
 
         /* Loop through the list */
         while (myIterator.hasNext()) {
             /* Return list if it is requested one */
-            DataList<?, ?> myList = myIterator.next();
+            DataList<?> myList = myIterator.next();
             if (pItemType == myList.getClass()) {
                 return myList;
             }
@@ -403,7 +403,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         theControlData.setGeneration(pGeneration);
 
         /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
+        for (DataList<?> myList : theList) {
             /* Set the Generation */
             myList.setGeneration(pGeneration);
         }
@@ -423,7 +423,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         theControlData.setVersion(pVersion);
 
         /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
+        for (DataList<?> myList : theList) {
             /* Set the Version */
             myList.setVersion(pVersion);
         }
@@ -443,7 +443,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         theControlData.rewindToVersion(pVersion);
 
         /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
+        for (DataList<?> myList : theList) {
             /* Rewind the list */
             myList.rewindToVersion(pVersion);
         }
@@ -479,9 +479,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         }
 
         /* Loop through the List values */
-        for (DataList<?, ?> myThisList : theList) {
+        for (DataList<?> myThisList : theList) {
             /* Access equivalent list */
-            DataList<?, ?> myThatList = myThat.getDataListForClass(myThisList.getClass());
+            DataList<?> myThatList = myThat.getDataListForClass(myThisList.getClass());
 
             /* Handle trivial cases */
             if (myThisList == myThatList) {
@@ -508,7 +508,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         myHashCode += theControlData.hashCode();
 
         /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
+        for (DataList<?> myList : theList) {
             /* Access equivalent list */
             myHashCode *= HASH_PRIME;
             myHashCode += myList.hashCode();
@@ -529,7 +529,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         }
 
         /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
+        for (DataList<?> myList : theList) {
             /* Determine whether the list is empty */
             if (!myList.isEmpty()) {
                 return false;
@@ -551,7 +551,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         }
 
         /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
+        for (DataList<?> myList : theList) {
             /* Determine whether the list has updates */
             if (myList.hasUpdates()) {
                 return true;
@@ -610,15 +610,15 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         ControlKey myControl = getControlKey();
 
         /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
+        for (DataList<?> myList : theList) {
             /* Access equivalent base list */
-            DataList<?, ?> myBase = pBase.getDataListForClass(myList.getClass());
+            DataList<?> myBase = pBase.getDataListForClass(myList.getClass());
 
             /* If the list is an encrypted list */
             if (myList instanceof EncryptedList) {
                 /* Adopt the security */
-                EncryptedList<?, ?> myEncrypted = (EncryptedList<?, ?>) myList;
-                if (!myEncrypted.adoptSecurity(pTask, myControl, (EncryptedList<?, ?>) myBase)) {
+                EncryptedList<?> myEncrypted = (EncryptedList<?>) myList;
+                if (!myEncrypted.adoptSecurity(pTask, myControl, (EncryptedList<?>) myBase)) {
                     return false;
                 }
             }
@@ -681,11 +681,11 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         }
 
         /* Loop through the List values */
-        for (DataList<?, ?> myList : theList) {
+        for (DataList<?> myList : theList) {
             /* If the list is an encrypted list */
             if (myList instanceof EncryptedList) {
                 /* Update the security */
-                EncryptedList<?, ?> myEncrypted = (EncryptedList<?, ?>) myList;
+                EncryptedList<?> myEncrypted = (EncryptedList<?>) myList;
                 if (!myEncrypted.updateSecurity(pTask, myControl)) {
                     return false;
                 }

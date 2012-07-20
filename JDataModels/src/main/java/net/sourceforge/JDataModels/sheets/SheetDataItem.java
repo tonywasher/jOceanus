@@ -127,7 +127,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     /**
      * The DataList.
      */
-    private DataList<?, T> theList = null;
+    private DataList<T> theList = null;
 
     /**
      * The name of the related range.
@@ -196,7 +196,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Set the DataList.
      * @param pList the Data list
      */
-    protected void setDataList(final DataList<?, T> pList) {
+    protected void setDataList(final DataList<T> pList) {
         /* Store parameters */
         theList = pList;
     }

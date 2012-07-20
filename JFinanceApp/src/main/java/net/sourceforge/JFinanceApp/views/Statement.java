@@ -364,7 +364,7 @@ public class Statement implements JDataContents {
     /**
      * The Statement Lines.
      */
-    public static class StatementLines extends EncryptedList<StatementLines, StatementLine> {
+    public static class StatementLines extends EncryptedList<StatementLine> {
         /**
          * Local Report fields.
          */
@@ -408,7 +408,7 @@ public class Statement implements JDataContents {
          */
         public StatementLines(final Statement pStatement) {
             /* Declare the data and set the style */
-            super(StatementLines.class, StatementLine.class, pStatement.theView.getData());
+            super(StatementLine.class, pStatement.theView.getData());
             setStyle(ListStyle.EDIT);
             theStatement = pStatement;
             setBase(theStatement.theView.getData().getEvents());

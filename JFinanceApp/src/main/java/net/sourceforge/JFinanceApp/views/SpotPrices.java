@@ -219,7 +219,7 @@ public class SpotPrices implements JDataContents {
     /**
      * The Spot Prices List class.
      */
-    public static class SpotList extends EncryptedList<SpotList, SpotPrice> {
+    public static class SpotList extends EncryptedList<SpotPrice> {
         /**
          * Local Report fields.
          */
@@ -325,7 +325,7 @@ public class SpotPrices implements JDataContents {
          */
         public SpotList(final SpotPrices pPrices) {
             /* Build initial list */
-            super(SpotList.class, SpotPrice.class, pPrices.getData());
+            super(SpotPrice.class, pPrices.getData());
             setStyle(ListStyle.EDIT);
             theDate = pPrices.getDate();
             theView = pPrices.getView();

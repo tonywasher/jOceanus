@@ -181,7 +181,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry myList = myIterator.next();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* Increment the version if the list exists */
             if (myDataList != null) {
@@ -206,7 +206,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry myList = myIterator.next();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* If the list exists */
             if (myDataList != null) {
@@ -294,7 +294,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry myList = myIterator.next();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* Prepare the changes */
             if (myDataList != null) {
@@ -315,7 +315,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry myList = myIterator.next();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* commit the changes */
             if (myDataList != null) {
@@ -333,7 +333,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasPrevious()) {
             /* Access list */
             UpdateEntry myList = myIterator.previous();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* rollback the changes */
             if (myDataList != null) {
@@ -352,7 +352,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry myList = myIterator.next();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* Determine whether there are updates */
             if ((myDataList != null) && (myDataList.hasUpdates())) {
@@ -374,7 +374,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry myList = myIterator.next();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* Determine whether there are errors */
             if ((myDataList != null) && (myDataList.hasErrors())) {
@@ -395,7 +395,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry myList = myIterator.next();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* Combine states if list exists */
             if (myDataList != null) {
@@ -417,7 +417,7 @@ public class UpdateSet implements JDataContents {
         while (myIterator.hasNext()) {
             /* Access list */
             UpdateEntry myList = myIterator.next();
-            DataList<?, ?> myDataList = myList.theDataList;
+            DataList<?> myDataList = myList.theDataList;
 
             /* Combine states if list exists */
             if (myDataList != null) {
@@ -466,7 +466,7 @@ public class UpdateSet implements JDataContents {
         /**
          * The DataList.
          */
-        private DataList<?, ?> theDataList = null;
+        private DataList<?> theDataList = null;
 
         /**
          * Obtain the name of the entry.
@@ -480,7 +480,7 @@ public class UpdateSet implements JDataContents {
          * Set the Data list.
          * @param pDataList the DataList
          */
-        public void setDataList(final DataList<?, ?> pDataList) {
+        public void setDataList(final DataList<?> pDataList) {
             theDataList = pDataList;
         }
 

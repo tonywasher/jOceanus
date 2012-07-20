@@ -58,7 +58,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * @param <L> the list type
  * @param <T> the data type
  */
-public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData<T, ?>> extends DataTable<T> {
+public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T, ?>> extends DataTable<T> {
     /**
      * Serial Id.
      */
@@ -331,7 +331,7 @@ public class MaintStaticData<L extends StaticList<L, T, ?>, T extends StaticData
 
         /* Access edit list */
         theStatic = myData.getDataList(theClass);
-        theStatic = theStatic.deriveList(ListStyle.EDIT);
+        theStatic = theClass.cast(theStatic.deriveList(ListStyle.EDIT));
 
         /* Update the Data View */
         setList(theStatic);

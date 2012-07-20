@@ -35,6 +35,7 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
@@ -723,7 +724,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pList the event list
      * @param pEvent The Event to copy
      */
-    public Event(final EncryptedList<?, ?> pList,
+    public Event(final EncryptedList<? extends Event> pList,
                  final Event pEvent) {
         /* Set standard values */
         super(pList, pEvent);
@@ -740,7 +741,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pList the list to build into
      * @param pLine The Line to copy
      */
-    protected Event(final EncryptedList<?, ?> pList,
+    protected Event(final EncryptedList<? extends Event> pList,
                     final Pattern pLine) {
         /* Set standard values */
         super(pList, pLine);
@@ -755,7 +756,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Standard constructor for a newly inserted event.
      * @param pList the list
      */
-    public Event(final EncryptedList<?, ?> pList) {
+    public Event(final EncryptedList<? extends Event> pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
 
@@ -782,7 +783,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pYears the years
      * @throws JDataException on error
      */
-    protected Event(final EncryptedList<?, ?> pList,
+    protected Event(final EncryptedList<? extends Event> pList,
                     final int uId,
                     final int uControlId,
                     final Date pDate,
@@ -872,7 +873,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pYears the years
      * @throws JDataException on error
      */
-    protected Event(final EncryptedList<?, ?> pList,
+    protected Event(final EncryptedList<? extends Event> pList,
                     final int uId,
                     final Date pDate,
                     final String pDesc,
@@ -1259,7 +1260,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      */
     @Override
     public void validate() {
-        EventList myList = (EventList) getList();
         DateDay myDate = getDate();
         String myDesc = getDesc();
         Account myDebit = getDebit();
@@ -1271,55 +1271,51 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         Integer myYears = getYears();
         Dilution myDilution = getDilution();
 
+        /* Determine date range to check for */
+        DateDayRange myRange = (this instanceof Pattern) ? Pattern.RANGE_PATTERN : getDataSet()
+                .getDateRange();
+
         /* The date must be non-null */
         if (myDate == null) {
             addError("Null date is not allowed", FIELD_DATE);
 
             /* The date must be in-range */
-        } else if (myList.getRange().compareTo(myDate) != 0) {
+        } else if (myRange.compareTo(myDate) != 0) {
             addError("Date must be within range", FIELD_DATE);
-        }
-
-        /* Debit must be non-null */
-        if (myDebit == null) {
-            addError("Debit account must be non-null", FIELD_DEBIT);
-        }
-
-        /* Credit must be non-null */
-        if (myCredit == null) {
-            addError("Credit account must be non-null", FIELD_CREDIT);
         }
 
         /* TransType must be non-null */
         if (myTransType == null) {
             addError("TransType must be non-null", FIELD_TRNTYP);
+            /* Must be enabled */
         } else if (!myTransType.getEnabled()) {
             addError("TransType must be enabled", FIELD_TRNTYP);
+            /* Must not be hidden */
+        } else if (myTransType.isHiddenType()) {
+            addError("Hidden transaction types are not allowed", FIELD_TRNTYP);
         }
 
         /* The description must be non-null */
         if (myDesc == null) {
             addError("Description must be non-null", FIELD_DESC);
-
-            /* The description must not be too long */
+            /* and not too long */
         } else if (myDesc.length() > DESCLEN) {
             addError("Description is too long", FIELD_DESC);
         }
 
-        /* Hidden Events are not allowed */
-        if ((myTransType != null) && (myTransType.isHiddenType())) {
-            addError("Hidden transaction types are not allowed", FIELD_TRNTYP);
-        }
-
-        /* Check credit account */
-        if ((myTransType != null) && (myCredit != null)
-                && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
+        /* Credit account must be non-null */
+        if (myCredit == null) {
+            addError("Credit account must be non-null", FIELD_CREDIT);
+            /* And valid for transaction type */
+        } else if ((myTransType != null) && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
             addError("Invalid credit account for transaction", FIELD_CREDIT);
         }
 
-        /* Check debit account */
-        if ((myTransType != null) && (myDebit != null)
-                && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
+        /* Debit account must be non-null */
+        if (myDebit == null) {
+            addError("Debit account must be non-null", FIELD_DEBIT);
+            /* And valid for transactiuon type */
+        } else if ((myTransType != null) && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
             addError("Invalid debit account for transaction", FIELD_DEBIT);
         }
 
@@ -1811,7 +1807,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     /**
      * List class for Events.
      */
-    public static class EventList extends EncryptedList<EventList, Event> {
+    public static class EventList extends EncryptedList<Event> {
         /**
          * Local Report fields.
          */
@@ -1867,7 +1863,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @param pData the DataSet for the list
          */
         protected EventList(final FinanceData pData) {
-            super(EventList.class, Event.class, pData);
+            super(Event.class, pData);
         }
 
         /**
@@ -1881,6 +1877,21 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         @Override
         protected EventList getEmptyList() {
             return new EventList(this);
+        }
+
+        @Override
+        public EventList cloneList(final DataSet<?> pDataSet) {
+            return (EventList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public EventList deriveList(final ListStyle pStyle) {
+            return (EventList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public EventList deriveDifferences(final DataList<Event> pOld) {
+            return (EventList) super.deriveDifferences(pOld);
         }
 
         /**

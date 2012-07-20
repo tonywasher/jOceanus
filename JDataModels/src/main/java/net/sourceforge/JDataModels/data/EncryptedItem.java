@@ -105,7 +105,7 @@ public abstract class EncryptedItem extends DataItem {
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
-    public EncryptedItem(final EncryptedList<?, ?> pList,
+    public EncryptedItem(final EncryptedList<?> pList,
                          final int uId) {
         super(pList, uId);
         theGenerator = new EncryptionGenerator(null);
@@ -116,7 +116,7 @@ public abstract class EncryptedItem extends DataItem {
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
-    public EncryptedItem(final EncryptedList<?, ?> pList,
+    public EncryptedItem(final EncryptedList<?> pList,
                          final EncryptedItem pSource) {
         super(pList, pSource);
         theGenerator = pSource.theGenerator;
@@ -272,11 +272,10 @@ public abstract class EncryptedItem extends DataItem {
 
     /**
      * Encrypted DataList.
-     * @param <L> the list type
      * @param <T> the item type
      */
-    public abstract static class EncryptedList<L extends EncryptedList<L, T>, T extends EncryptedItem & Comparable<? super T>>
-            extends DataList<L, T> {
+    public abstract static class EncryptedList<T extends EncryptedItem & Comparable<? super T>> extends
+            DataList<T> {
         /**
          * Get the active controlKey.
          * @return the active controlKey
@@ -287,35 +286,31 @@ public abstract class EncryptedItem extends DataItem {
 
         /**
          * Construct an empty CORE encrypted list.
-         * @param pClass the class
          * @param pBaseClass the class of the underlying object
          * @param pData the DataSet for the list
          */
-        protected EncryptedList(final Class<L> pClass,
-                                final Class<T> pBaseClass,
+        protected EncryptedList(final Class<T> pBaseClass,
                                 final DataSet<?> pData) {
-            super(pClass, pBaseClass, pData, ListStyle.CORE);
+            super(pBaseClass, pData, ListStyle.CORE);
         }
 
         /**
          * Construct a generic encrypted list.
-         * @param pClass the class
          * @param pBaseClass the class of the underlying object
          * @param pData the DataSet for the list
          * @param pStyle the style of the list
          */
-        public EncryptedList(final Class<L> pClass,
-                             final Class<T> pBaseClass,
+        public EncryptedList(final Class<T> pBaseClass,
                              final DataSet<?> pData,
                              final ListStyle pStyle) {
-            super(pClass, pBaseClass, pData, pStyle);
+            super(pBaseClass, pData, pStyle);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected EncryptedList(final L pSource) {
+        protected EncryptedList(final EncryptedList<T> pSource) {
             super(pSource);
         }
 
@@ -373,7 +368,7 @@ public abstract class EncryptedItem extends DataItem {
          */
         protected boolean adoptSecurity(final TaskControl<?> pTask,
                                         final ControlKey pControl,
-                                        final EncryptedList<?, ?> pBase) throws JDataException {
+                                        final EncryptedList<?> pBase) throws JDataException {
             /* Declare the new stage */
             if (!pTask.setNewStage(listName())) {
                 return false;

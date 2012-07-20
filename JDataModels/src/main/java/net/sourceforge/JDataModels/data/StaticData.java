@@ -394,7 +394,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
     @Override
     public void validate() {
-        StaticList<?, ?, ?> myList = (StaticList<?, ?, ?>) getList();
+        StaticList<?, ?> myList = (StaticList<?, ?>) getList();
 
         /* Name must be non-null */
         if (getName() == null) {
@@ -432,7 +432,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pList The list to associate the Static Data with
      * @param pSource The static data to copy
      */
-    protected StaticData(final StaticList<?, T, E> pList,
+    protected StaticData(final StaticList<T, E> pList,
                          final T pSource) {
         super(pList, pSource);
         theEnumClass = pSource.getEnumClass();
@@ -444,7 +444,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pValue the name of the new item
      * @throws JDataException on error
      */
-    protected StaticData(final StaticList<?, T, E> pList,
+    protected StaticData(final StaticList<T, E> pList,
                          final String pValue) throws JDataException {
         /* Call super constructor */
         super(pList, 0);
@@ -468,7 +468,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pDesc the description of the new item
      * @throws JDataException on error
      */
-    protected StaticData(final StaticList<?, T, E> pList,
+    protected StaticData(final StaticList<T, E> pList,
                          final int uId,
                          final boolean isEnabled,
                          final int uOrder,
@@ -507,7 +507,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pDesc the encrypted description of the new item
      * @throws JDataException on error
      */
-    protected StaticData(final StaticList<?, T, E> pList,
+    protected StaticData(final StaticList<T, E> pList,
                          final int uId,
                          final int uControlId,
                          final boolean isEnabled,
@@ -682,12 +682,11 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
     /**
      * Represents a list of StaticData objects.
-     * @param <L> the list type
      * @param <T> the item type
      * @param <E> the static data class
      */
-    public abstract static class StaticList<L extends StaticList<L, T, E>, T extends StaticData<T, E>, E extends Enum<E> & StaticInterface>
-            extends EncryptedList<L, T> {
+    public abstract static class StaticList<T extends StaticData<T, E>, E extends Enum<E> & StaticInterface>
+            extends EncryptedList<T> {
         /**
          * Obtain the enumClass.
          * @return the enumClass
@@ -696,23 +695,21 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /**
          * Construct a generic static data list.
-         * @param pClass the class
          * @param pBaseClass the class of the underlying object
          * @param pData the dataSet
          * @param pStyle the style of the list
          */
-        public StaticList(final Class<L> pClass,
-                          final Class<T> pBaseClass,
+        public StaticList(final Class<T> pBaseClass,
                           final DataSet<?> pData,
                           final ListStyle pStyle) {
-            super(pClass, pBaseClass, pData, pStyle);
+            super(pBaseClass, pData, pStyle);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected StaticList(final L pSource) {
+        protected StaticList(final StaticList<T, E> pSource) {
             super(pSource);
         }
 

@@ -215,7 +215,7 @@ public class JDataItem {
      * build editor styleSheet.
      * @param pFormatter the formatter
      */
-    protected void buildEditorStyleSheet(final JDataHTML pFormatter) {
+    protected final void buildEditorStyleSheet(final JDataHTML pFormatter) {
         /* Add a new editor kit to the editor */
         HTMLEditorKit myKit = new HTMLEditorKit();
         theEditor.setEditorKit(myKit);

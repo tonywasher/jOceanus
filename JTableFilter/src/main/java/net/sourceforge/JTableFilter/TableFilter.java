@@ -186,17 +186,6 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     }
 
     /**
-     * Allocate an array of rows.
-     * @param <X> the row type
-     * @param pNumRows the number of rows in the array
-     * @return the allocated array
-     */
-    @SuppressWarnings("unchecked")
-    private static <X extends Comparable<? super X>> RowEntry<X>[] allocateRows(final int pNumRows) {
-        return (RowEntry<X>[]) new RowEntry[pNumRows];
-    }
-
-    /**
      * Obtain reference array from mapping array.
      * @param <X> the rowType
      * @param pSource the mapping array
@@ -226,7 +215,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     private static <X extends Comparable<? super X>> RowEntry<X>[] cloneArray(final RowEntry<X>[] pSource,
                                                                               final int pNewLen) {
         /* Allocate new array */
-        RowEntry<X>[] myArray = allocateRows(pNewLen);
+        @SuppressWarnings("unchecked")
+        RowEntry<X>[] myArray = (RowEntry<X>[]) new RowEntry[pNewLen];
         int iSrcLen = pSource.length;
 
         /* Loop through the rows copying reference */
@@ -241,13 +231,14 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
         return myArray;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public final void allRowsChanged() {
         /* Allocate the two arrays */
         int iNumRows = theModel.getRowCount();
         int iView = 0;
-        theViewToModel = allocateRows(iNumRows);
-        theModelToView = allocateRows(iNumRows);
+        theViewToModel = (RowEntry<T>[]) new RowEntry[iNumRows];
+        theModelToView = (RowEntry<T>[]) new RowEntry[iNumRows];
 
         /* Loop through the model elements */
         for (int i = 0; i < iNumRows; i++) {

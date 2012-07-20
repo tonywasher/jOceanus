@@ -468,7 +468,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
     /**
      * DataKey List.
      */
-    public static class DataKeyList extends DataList<DataKeyList, DataKey> {
+    public static class DataKeyList extends DataList<DataKey> {
         /**
          * Local Report fields.
          */
@@ -490,7 +490,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          * @param pData the DataSet for the list
          */
         protected DataKeyList(final DataSet<?> pData) {
-            super(DataKeyList.class, DataKey.class, pData, ListStyle.CORE);
+            super(DataKey.class, pData, ListStyle.CORE);
         }
 
         /**
@@ -500,7 +500,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          */
         protected DataKeyList(final DataSet<?> pData,
                               final ListStyle pStyle) {
-            super(DataKeyList.class, DataKey.class, pData, pStyle);
+            super(DataKey.class, pData, pStyle);
         }
 
         /**
@@ -514,6 +514,21 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
         @Override
         protected DataKeyList getEmptyList() {
             return new DataKeyList(this);
+        }
+
+        @Override
+        public DataKeyList cloneList(final DataSet<?> pDataSet) {
+            return (DataKeyList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public DataKeyList deriveList(final ListStyle pStyle) {
+            return (DataKeyList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public DataKeyList deriveDifferences(final DataList<DataKey> pOld) {
+            return (DataKeyList) super.deriveDifferences(pOld);
         }
 
         @Override
