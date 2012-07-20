@@ -42,7 +42,7 @@ import net.sourceforge.JDataModels.data.DataItem;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class DataMouse<T extends DataItem & Comparable<T>> extends MouseAdapter implements
+public abstract class DataMouse<T extends DataItem & Comparable<? super T>> extends MouseAdapter implements
         ActionListener {
     /**
      * Resource Bundle.

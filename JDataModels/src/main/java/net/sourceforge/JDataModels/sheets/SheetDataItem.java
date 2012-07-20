@@ -53,7 +53,7 @@ import org.apache.poi.ss.util.CellReference;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class SheetDataItem<T extends DataItem & Comparable<T>> {
+public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> {
     /**
      * Version column.
      */

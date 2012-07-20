@@ -29,18 +29,18 @@ import java.util.List;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.JTableFilter.DataFilter.DataFilterModel;
+import net.sourceforge.JTableFilter.TableFilter.TableFilterModel;
 
 /**
  * RowSorter to provide filtering capabilities without sort.
  * @param <T> row data type
  */
-public class DataFilter<T extends Comparable<? super T>> extends RowSorter<DataFilterModel<T>> {
+public class TableFilter<T extends Comparable<? super T>> extends RowSorter<TableFilterModel<T>> {
     /**
      * Interface for Model.
      * @param <T> the row type
      */
-    public interface DataFilterModel<T extends Comparable<? super T>> extends TableModel {
+    public interface TableFilterModel<T extends Comparable<? super T>> extends TableModel {
         /**
          * Obtain the item at the model index.
          * @param pRowIndex the index
@@ -59,7 +59,7 @@ public class DataFilter<T extends Comparable<? super T>> extends RowSorter<DataF
          * Register filter.
          * @param pFilter the filter
          */
-        void registerFilter(final DataFilter<T> pFilter);
+        void registerFilter(final TableFilter<T> pFilter);
     }
 
     /**
@@ -136,7 +136,7 @@ public class DataFilter<T extends Comparable<? super T>> extends RowSorter<DataF
     /**
      * The model for the Filter.
      */
-    private final DataFilterModel<T> theModel;
+    private final TableFilterModel<T> theModel;
 
     /**
      * Are we sorting?
@@ -167,7 +167,7 @@ public class DataFilter<T extends Comparable<? super T>> extends RowSorter<DataF
      * Constructor.
      * @param pModel the model
      */
-    public DataFilter(final DataFilterModel<T> pModel) {
+    public TableFilter(final TableFilterModel<T> pModel) {
         this(pModel, false);
     }
 
@@ -176,8 +176,8 @@ public class DataFilter<T extends Comparable<? super T>> extends RowSorter<DataF
      * @param pModel the model
      * @param sortEntries do we sort entries? true/false
      */
-    public DataFilter(final DataFilterModel<T> pModel,
-                      final boolean sortEntries) {
+    public TableFilter(final TableFilterModel<T> pModel,
+                       final boolean sortEntries) {
         theModel = pModel;
         doSort = sortEntries;
         pModel.registerFilter(this);
@@ -327,7 +327,7 @@ public class DataFilter<T extends Comparable<? super T>> extends RowSorter<DataF
     }
 
     @Override
-    public DataFilterModel<T> getModel() {
+    public TableFilterModel<T> getModel() {
         return theModel;
     }
 

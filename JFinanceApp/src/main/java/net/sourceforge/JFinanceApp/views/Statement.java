@@ -30,13 +30,15 @@ import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
+import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDecimal.Money;
 import net.sourceforge.JDecimal.Units;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.Event.EventList;
+import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
 import net.sourceforge.JFinanceApp.views.Analysis.ActDetail;
 import net.sourceforge.JFinanceApp.views.Analysis.AssetAccount;
 import net.sourceforge.JFinanceApp.views.Analysis.BucketType;
@@ -362,7 +364,18 @@ public class Statement implements JDataContents {
     /**
      * The Statement Lines.
      */
-    public static class StatementLines extends EventList {
+    public static class StatementLines extends EncryptedList<StatementLines, StatementLine> {
+        /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PatternList.class.getSimpleName(),
+                DataList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
         /**
          * Statement.
          */
@@ -384,17 +397,26 @@ public class Statement implements JDataContents {
             return theStatement.getAccount();
         }
 
+        @Override
+        public String listName() {
+            return StatementLines.class.getSimpleName();
+        }
+
         /**
          * Constructor.
          * @param pStatement the statement
          */
         public StatementLines(final Statement pStatement) {
             /* Declare the data and set the style */
-            super(pStatement.theView.getData());
+            super(StatementLines.class, StatementLine.class, pStatement.theView.getData());
             setStyle(ListStyle.EDIT);
             theStatement = pStatement;
-            setRange(theStatement.getDateRange());
             setBase(theStatement.theView.getData().getEvents());
+        }
+
+        @Override
+        protected StatementLines getEmptyList() {
+            throw new UnsupportedOperationException();
         }
 
         /* Is this list locked */

@@ -723,7 +723,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pList the event list
      * @param pEvent The Event to copy
      */
-    public Event(final EventList pList,
+    public Event(final EncryptedList<?, ?> pList,
                  final Event pEvent) {
         /* Set standard values */
         super(pList, pEvent);
@@ -740,7 +740,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pList the list to build into
      * @param pLine The Line to copy
      */
-    protected Event(final EventList pList,
+    protected Event(final EncryptedList<?, ?> pList,
                     final Pattern pLine) {
         /* Set standard values */
         super(pList, pLine);
@@ -755,7 +755,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Standard constructor for a newly inserted event.
      * @param pList the list
      */
-    public Event(final EventList pList) {
+    public Event(final EncryptedList<?, ?> pList) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
 
@@ -782,7 +782,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pYears the years
      * @throws JDataException on error
      */
-    protected Event(final EventList pList,
+    protected Event(final EncryptedList<?, ?> pList,
                     final int uId,
                     final int uControlId,
                     final Date pDate,
@@ -872,7 +872,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pYears the years
      * @throws JDataException on error
      */
-    protected Event(final EventList pList,
+    protected Event(final EncryptedList<?, ?> pList,
                     final int uId,
                     final Date pDate,
                     final String pDesc,
@@ -1945,7 +1945,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
 
             /* Access the underlying data */
             PatternList myPatterns = getDataSet().getPatterns();
-            Iterator<Event> myIterator = myPatterns.iterator();
+            Iterator<Pattern> myIterator = myPatterns.iterator();
             Event myEvent;
 
             /* Loop through the Patterns */

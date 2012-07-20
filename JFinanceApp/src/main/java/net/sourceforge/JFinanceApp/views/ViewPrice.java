@@ -30,12 +30,14 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
+import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.DilutedPrice;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
+import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.views.DilutionEvent.DilutionEventList;
 
 /**
@@ -185,7 +187,7 @@ public class ViewPrice extends AccountPrice {
      * @param pList the list
      */
     private ViewPrice(final ViewPriceList pList) {
-        super(pList);
+        super(pList, pList.getAccount());
 
         /* Determine whether the account has dilutions */
         hasDilutions = ((ViewPriceList) getList()).hasDilutions;
@@ -207,16 +209,26 @@ public class ViewPrice extends AccountPrice {
     /**
      * Price List.
      */
-    public static class ViewPriceList extends AccountPriceList {
+    public static class ViewPriceList extends EncryptedList<ViewPriceList, ViewPrice> {
         /**
          * Report fields.
          */
         private static final JDataFields FIELD_DEFS = new JDataFields(ViewPriceList.class.getSimpleName(),
-                AccountPriceList.FIELD_DEFS);
+                DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public String listName() {
+            return ViewPriceList.class.getSimpleName();
+        }
+
+        @Override
+        protected ViewPriceList getEmptyList() {
+            throw new UnsupportedOperationException();
         }
 
         /**
@@ -240,6 +252,11 @@ public class ViewPrice extends AccountPrice {
             return super.getFieldValue(pField);
         }
 
+        @Override
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
+        }
+
         /**
          * The account.
          */
@@ -254,6 +271,14 @@ public class ViewPrice extends AccountPrice {
          * Does the account have dilutions?
          */
         private boolean hasDilutions = false;
+
+        /**
+         * Obtain account.
+         * @return the account
+         */
+        private Account getAccount() {
+            return theAccount;
+        }
 
         /**
          * Obtain dilutions.
@@ -279,7 +304,7 @@ public class ViewPrice extends AccountPrice {
         public ViewPriceList(final View pView,
                              final Account pAccount) {
             /* Declare the data and set the style */
-            super(pView.getData());
+            super(ViewPriceList.class, ViewPrice.class, pView.getData());
             setStyle(ListStyle.EDIT);
 
             /* Skip to alias if required */
@@ -325,7 +350,7 @@ public class ViewPrice extends AccountPrice {
 
         @Override
         public ViewPrice addNewItem(final DataItem pElement) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**
@@ -335,6 +360,7 @@ public class ViewPrice extends AccountPrice {
         @Override
         public ViewPrice addNewItem() {
             ViewPrice myPrice = new ViewPrice(this);
+            myPrice.setAccount(theAccount);
             add(myPrice);
             return myPrice;
         }

@@ -82,7 +82,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Account Statement Table.
  * @author Tony Washer
  */
-public class AccountStatement extends DataTable<Event> {
+public class AccountStatement extends DataTable<StatementLine> {
     /**
      * Serial Id.
      */
@@ -647,7 +647,7 @@ public class AccountStatement extends DataTable<Event> {
     public JComboBox getComboBox(final int row,
                                  final int column) {
         /* Access the line */
-        StatementLine myLine = (StatementLine) theLines.get(row - 1);
+        StatementLine myLine = theLines.get(row - 1);
 
         /* Switch on column */
         switch (column) {
@@ -764,7 +764,7 @@ public class AccountStatement extends DataTable<Event> {
                                           final int column) {
             StatementLine myLine = null;
             if (row > 0) {
-                myLine = (StatementLine) theLines.get(row - 1);
+                myLine = theLines.get(row - 1);
             }
 
             /* Switch on column */
@@ -824,7 +824,7 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Access the line */
-            StatementLine myLine = (StatementLine) theLines.get(row - 1);
+            StatementLine myLine = theLines.get(row - 1);
 
             /* Cannot edit if row is deleted or locked */
             if (myLine.isDeleted() || myLine.isLocked()) {
@@ -895,8 +895,8 @@ public class AccountStatement extends DataTable<Event> {
             }
 
             /* Access the line */
-            StatementLine myLine = (StatementLine) theLines.get(row - 1);
-            StatementLine myNext = (StatementLine) theLines.peekNext(myLine);
+            StatementLine myLine = theLines.get(row - 1);
+            StatementLine myNext = theLines.peekNext(myLine);
             Object o = null;
             boolean bShow = true;
 
@@ -971,7 +971,7 @@ public class AccountStatement extends DataTable<Event> {
                                final int row,
                                final int col) {
             /* Access the line */
-            StatementLine myLine = (StatementLine) theLines.get(row - 1);
+            StatementLine myLine = theLines.get(row - 1);
 
             /* Push history */
             myLine.pushHistory();
@@ -1062,7 +1062,7 @@ public class AccountStatement extends DataTable<Event> {
     /**
      * Statement mouse listener.
      */
-    private final class StatementMouse extends DataMouse<Event> {
+    private final class StatementMouse extends DataMouse<StatementLine> {
         /**
          * Constructor.
          */
@@ -1284,7 +1284,7 @@ public class AccountStatement extends DataTable<Event> {
             /* If it is valid */
             if ((!isHeader()) && (myRow >= 0)) {
                 /* Access the line and partner */
-                myLine = (StatementLine) theTable.extractItemAt(myRow);
+                myLine = theTable.extractItemAt(myRow);
                 myAccount = myLine.getPartner();
 
                 /* If we have a different account then we can navigate */
@@ -1350,8 +1350,6 @@ public class AccountStatement extends DataTable<Event> {
          * @param isCredit set to Credit or else Debit
          */
         protected void setIsCredit(final boolean isCredit) {
-            StatementLine myLine;
-
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
@@ -1360,7 +1358,7 @@ public class AccountStatement extends DataTable<Event> {
                 }
 
                 /* Cast to Statement Line */
-                myLine = (StatementLine) myRow;
+                StatementLine myLine = (StatementLine) myRow;
 
                 /* Ignore rows that are already correct */
                 if (myLine.isCredit() == isCredit) {
@@ -1377,7 +1375,7 @@ public class AccountStatement extends DataTable<Event> {
         }
 
         @Override
-        protected void setNullValue(final Event pItem,
+        protected void setNullValue(final StatementLine pItem,
                                     final int col) {
             /* Switch on the column */
             switch (col) {

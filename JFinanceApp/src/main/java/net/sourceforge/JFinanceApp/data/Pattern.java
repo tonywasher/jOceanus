@@ -36,7 +36,6 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
@@ -596,7 +595,7 @@ public class Pattern extends Event {
     /**
      * The list.
      */
-    public static class PatternList extends EventList {
+    public static class PatternList extends EncryptedList<PatternList, Pattern> {
         /**
          * Local Report fields.
          */
@@ -621,6 +620,16 @@ public class Pattern extends Event {
             return super.getFieldValue(pField);
         }
 
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
+
+        @Override
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
+        }
+
         /**
          * The Account.
          */
@@ -639,8 +648,7 @@ public class Pattern extends Event {
          * @param pData the DataSet for the list
          */
         protected PatternList(final FinanceData pData) {
-            super(pData);
-            setRange(RANGE_PATTERN);
+            super(PatternList.class, Pattern.class, pData);
         }
 
         /**
@@ -649,27 +657,11 @@ public class Pattern extends Event {
          */
         private PatternList(final PatternList pSource) {
             super(pSource);
-            setRange(RANGE_PATTERN);
         }
 
         @Override
         protected PatternList getEmptyList() {
             return new PatternList(this);
-        }
-
-        @Override
-        public PatternList deriveList(final ListStyle pStyle) {
-            return (PatternList) super.deriveList(pStyle);
-        }
-
-        @Override
-        public PatternList cloneList(final DataSet<?> pDataSet) {
-            return (PatternList) super.cloneList(pDataSet);
-        }
-
-        @Override
-        public PatternList deriveDifferences(final EventList pSource) {
-            return (PatternList) super.deriveDifferences(pSource);
         }
 
         /**
@@ -684,11 +676,11 @@ public class Pattern extends Event {
             myList.theAccount = pAccount;
 
             /* Access the list iterator */
-            Iterator<Event> myIterator = listIterator();
+            Iterator<Pattern> myIterator = listIterator();
 
             /* Loop through the Prices */
             while (myIterator.hasNext()) {
-                Pattern myCurr = (Pattern) myIterator.next();
+                Pattern myCurr = myIterator.next();
 
                 /* Skip differing accounts */
                 if (!pAccount.equals(myCurr.getAccount())) {
@@ -735,7 +727,7 @@ public class Pattern extends Event {
             Pattern myPattern = new Pattern(this);
 
             /* Set the Date as the start of the range */
-            myPattern.setDate(getRange().getStart());
+            myPattern.setDate(RANGE_PATTERN.getStart());
             add(myPattern);
             return myPattern;
         }
@@ -745,11 +737,11 @@ public class Pattern extends Event {
          */
         public void markActiveItems() {
             /* Access the list iterator */
-            Iterator<Event> myIterator = listIterator();
+            Iterator<Pattern> myIterator = listIterator();
 
             /* Loop through the Prices */
             while (myIterator.hasNext()) {
-                Pattern myCurr = (Pattern) myIterator.next();
+                Pattern myCurr = myIterator.next();
 
                 /* Touch the patterned account */
                 myCurr.getAccount().touchItem(myCurr);

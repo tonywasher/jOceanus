@@ -43,7 +43,7 @@ import net.sourceforge.JGordianKnot.EncryptedData;
  * TabelEncrypted extension for Pattern.
  * @author Tony Washer
  */
-public class TablePattern extends TableEncrypted<Event> {
+public class TablePattern extends TableEncrypted<Pattern> {
     /**
      * The name of the Patterns table.
      */
@@ -116,19 +116,12 @@ public class TablePattern extends TableEncrypted<Event> {
     }
 
     @Override
-    protected void setFieldValue(final Event pItem,
+    protected void setFieldValue(final Pattern pItem,
                                  final JDataField iField) throws JDataException {
-        /* Can only handle a pattern */
-        if (!(pItem instanceof Pattern)) {
-            return;
-        }
-
-        Pattern myItem = (Pattern) pItem;
-
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (Pattern.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setIntegerValue(Pattern.FIELD_ACCOUNT, myItem.getAccount().getId());
+            myTableDef.setIntegerValue(Pattern.FIELD_ACCOUNT, pItem.getAccount().getId());
         } else if (Event.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
         } else if (Event.FIELD_DESC.equals(iField)) {
@@ -136,13 +129,13 @@ public class TablePattern extends TableEncrypted<Event> {
         } else if (Event.FIELD_AMOUNT.equals(iField)) {
             myTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
         } else if (Pattern.FIELD_PARTNER.equals(iField)) {
-            myTableDef.setIntegerValue(Pattern.FIELD_PARTNER, myItem.getPartner().getId());
+            myTableDef.setIntegerValue(Pattern.FIELD_PARTNER, pItem.getPartner().getId());
         } else if (Event.FIELD_TRNTYP.equals(iField)) {
             myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
         } else if (Pattern.FIELD_ISCREDIT.equals(iField)) {
-            myTableDef.setBooleanValue(Pattern.FIELD_ISCREDIT, myItem.isCredit());
+            myTableDef.setBooleanValue(Pattern.FIELD_ISCREDIT, pItem.isCredit());
         } else if (Pattern.FIELD_FREQ.equals(iField)) {
-            myTableDef.setIntegerValue(Pattern.FIELD_FREQ, myItem.getFrequency().getId());
+            myTableDef.setIntegerValue(Pattern.FIELD_FREQ, pItem.getFrequency().getId());
         } else {
             super.setFieldValue(pItem, iField);
         }

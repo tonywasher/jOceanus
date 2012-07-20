@@ -68,7 +68,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Account Patterns Table.
  * @author Tony Washer
  */
-public class AccountPatterns extends DataTable<Event> {
+public class AccountPatterns extends DataTable<Pattern> {
     /**
      * Serial Id.
      */
@@ -413,7 +413,7 @@ public class AccountPatterns extends DataTable<Event> {
     public JComboBox getComboBox(final int row,
                                  final int column) {
         /* Access the pattern */
-        Pattern myPattern = (Pattern) thePatterns.get(row);
+        Pattern myPattern = thePatterns.get(row);
 
         /* Switch on column */
         switch (column) {
@@ -592,7 +592,7 @@ public class AccountPatterns extends DataTable<Event> {
             }
 
             /* Access the pattern */
-            Pattern myPattern = (Pattern) thePatterns.get(row);
+            Pattern myPattern = thePatterns.get(row);
 
             /* Cannot edit if row is deleted or locked */
             if (myPattern.isDeleted() || myPattern.isLocked()) {
@@ -619,7 +619,7 @@ public class AccountPatterns extends DataTable<Event> {
         public Object getValueAt(final int row,
                                  final int col) {
             /* Access the pattern */
-            Pattern myPattern = (Pattern) thePatterns.get(row);
+            Pattern myPattern = thePatterns.get(row);
             Object o;
 
             /* Return the appropriate value */
@@ -673,7 +673,7 @@ public class AccountPatterns extends DataTable<Event> {
                                final int row,
                                final int col) {
             /* Access the pattern */
-            Pattern myPattern = (Pattern) thePatterns.get(row);
+            Pattern myPattern = thePatterns.get(row);
 
             /* Push history */
             myPattern.pushHistory();
@@ -733,7 +733,7 @@ public class AccountPatterns extends DataTable<Event> {
     /**
      * Pattern mouse listener.
      */
-    private final class PatternMouse extends DataMouse<Event> {
+    private final class PatternMouse extends DataMouse<Pattern> {
         /**
          * Constructor.
          */

@@ -54,10 +54,10 @@ import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
-import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
 import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.ui.controls.SpotSelect;
 import net.sourceforge.JFinanceApp.views.SpotPrices;
+import net.sourceforge.JFinanceApp.views.SpotPrices.SpotList;
 import net.sourceforge.JFinanceApp.views.SpotPrices.SpotPrice;
 import net.sourceforge.JFinanceApp.views.View;
 
@@ -65,7 +65,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * SpotPrices panel.
  * @author Tony Washer
  */
-public class PricePoint extends DataTable<AccountPrice> {
+public class PricePoint extends DataTable<SpotPrice> {
     /**
      * Serial Id.
      */
@@ -99,7 +99,7 @@ public class PricePoint extends DataTable<AccountPrice> {
     /**
      * The account price list.
      */
-    private transient AccountPriceList thePrices = null;
+    private transient SpotList thePrices = null;
 
     /**
      * The panel.
@@ -374,6 +374,7 @@ public class PricePoint extends DataTable<AccountPrice> {
      * @param pRow the row
      * @return is the row deletable
      */
+    @Override
     protected boolean isRowDeletable(final SpotPrice pRow) {
         /* Switch on the Data State */
         switch (pRow.getState()) {
@@ -395,6 +396,7 @@ public class PricePoint extends DataTable<AccountPrice> {
      * @param pRow the row
      * @return is the row recoverable
      */
+    @Override
     protected boolean isRowRecoverable(final SpotPrice pRow) {
         /* Switch on the Data State */
         switch (pRow.getState()) {
@@ -417,6 +419,7 @@ public class PricePoint extends DataTable<AccountPrice> {
      * @param pRow the row
      * @return false
      */
+    @Override
     protected boolean isRowDuplicatable(final SpotPrice pRow) {
         return false;
     }
@@ -435,6 +438,7 @@ public class PricePoint extends DataTable<AccountPrice> {
      * @param pRow the row
      * @return true
      */
+    @Override
     protected boolean disableShowDeleted(final SpotPrice pRow) {
         return true;
     }
@@ -641,7 +645,7 @@ public class PricePoint extends DataTable<AccountPrice> {
         public Object getValueAt(final int row,
                                  final int col) {
             /* Access the spot price */
-            SpotPrice mySpot = (SpotPrice) thePrices.get(row);
+            SpotPrice mySpot = thePrices.get(row);
             Object o;
 
             /* Return the appropriate value */
@@ -683,7 +687,7 @@ public class PricePoint extends DataTable<AccountPrice> {
                                final int row,
                                final int col) {
             /* Access the line */
-            SpotPrice mySpot = (SpotPrice) thePrices.get(row);
+            SpotPrice mySpot = thePrices.get(row);
 
             /* Push history */
             mySpot.pushHistory();
@@ -728,7 +732,7 @@ public class PricePoint extends DataTable<AccountPrice> {
     /**
      * SpotView mouse listener.
      */
-    private static final class SpotViewMouse extends DataMouse<AccountPrice> {
+    private static final class SpotViewMouse extends DataMouse<SpotPrice> {
         /**
          * Constructor.
          * @param pTable the table

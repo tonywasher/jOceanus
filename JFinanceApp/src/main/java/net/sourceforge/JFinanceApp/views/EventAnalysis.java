@@ -369,7 +369,7 @@ public class EventAnalysis implements JDataContents {
     protected final void resetStatementBalance(final Statement pStatement) throws JDataException {
         /* Access the iterator */
         StatementLines myLines = pStatement.getLines();
-        Iterator<Event> myIterator = myLines.listIterator();
+        Iterator<StatementLine> myIterator = myLines.listIterator();
 
         /* If we don't have balances just return */
         if (theAccount instanceof ExternalAccount) {
@@ -381,7 +381,7 @@ public class EventAnalysis implements JDataContents {
 
         /* Loop through the lines adjusting the balance */
         while (myIterator.hasNext()) {
-            StatementLine myCurr = (StatementLine) myIterator.next();
+            StatementLine myCurr = myIterator.next();
             /* Skip deleted lines */
             if (myCurr.isDeleted()) {
                 continue;

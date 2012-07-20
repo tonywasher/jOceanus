@@ -43,7 +43,7 @@ import net.sourceforge.JDataModels.data.TaskControl;
  * Database Table class. This controls should be extended for each DataType/Table.
  * @param <T> the DataType
  */
-public abstract class DatabaseTable<T extends DataItem & Comparable<T>> {
+public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> {
     /**
      * The Database control.
      */

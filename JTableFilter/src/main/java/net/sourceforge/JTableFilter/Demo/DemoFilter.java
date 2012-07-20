@@ -46,8 +46,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.JTableFilter.DataFilter;
-import net.sourceforge.JTableFilter.DataFilter.DataFilterModel;
+import net.sourceforge.JTableFilter.TableFilter;
+import net.sourceforge.JTableFilter.TableFilter.TableFilterModel;
 
 /**
  * Demo application for JTableFilter.
@@ -178,7 +178,7 @@ public class DemoFilter extends JApplet {
             setModel(theModel);
 
             /* Create the filter and record it */
-            DataFilter<RowData> myFilter = new DataFilter<RowData>(theModel);
+            TableFilter<RowData> myFilter = new TableFilter<RowData>(theModel);
             setRowSorter(myFilter);
 
             /* Add some items to the list */
@@ -273,7 +273,7 @@ public class DemoFilter extends JApplet {
     /**
      * DataModel.
      */
-    protected static class TestTableModel extends AbstractTableModel implements DataFilterModel<RowData> {
+    protected static class TestTableModel extends AbstractTableModel implements TableFilterModel<RowData> {
         /**
          * The Serial Id.
          */
@@ -310,9 +310,9 @@ public class DemoFilter extends JApplet {
         private boolean sortItems = false;
 
         /**
-         * Should we show all items.
+         * The table filter.
          */
-        private transient DataFilter<RowData> theFilter = null;
+        private transient TableFilter<RowData> theFilter = null;
 
         /**
          * Get showAll value.
@@ -331,7 +331,7 @@ public class DemoFilter extends JApplet {
         }
 
         @Override
-        public void registerFilter(final DataFilter<RowData> pFilter) {
+        public void registerFilter(final TableFilter<RowData> pFilter) {
             theFilter = pFilter;
         }
 

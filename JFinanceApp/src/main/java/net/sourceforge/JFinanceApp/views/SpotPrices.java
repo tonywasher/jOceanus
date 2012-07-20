@@ -29,8 +29,10 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataModels.data.DataItem;
+import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EditState;
+import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -217,12 +219,12 @@ public class SpotPrices implements JDataContents {
     /**
      * The Spot Prices List class.
      */
-    public static class SpotList extends AccountPriceList {
+    public static class SpotList extends EncryptedList<SpotList, SpotPrice> {
         /**
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(SpotList.class.getSimpleName(),
-                AccountPriceList.FIELD_DEFS);
+                DataList.FIELD_DEFS);
 
         /**
          * The account type field Id.
@@ -264,6 +266,16 @@ public class SpotPrices implements JDataContents {
                 return getPrev();
             }
             return super.getFieldValue(pField);
+        }
+
+        @Override
+        public String listName() {
+            return SpotList.class.getSimpleName();
+        }
+
+        @Override
+        protected SpotList getEmptyList() {
+            throw new UnsupportedOperationException();
         }
 
         /**
@@ -313,7 +325,7 @@ public class SpotPrices implements JDataContents {
          */
         public SpotList(final SpotPrices pPrices) {
             /* Build initial list */
-            super(pPrices.getData());
+            super(SpotList.class, SpotPrice.class, pPrices.getData());
             setStyle(ListStyle.EDIT);
             theDate = pPrices.getDate();
             theView = pPrices.getView();
@@ -398,12 +410,12 @@ public class SpotPrices implements JDataContents {
         /* Disable Add a new item */
         @Override
         public SpotPrice addNewItem(final DataItem pElement) {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public SpotPrice addNewItem() {
-            return null;
+            throw new UnsupportedOperationException();
         }
 
         /**
@@ -412,12 +424,12 @@ public class SpotPrices implements JDataContents {
         @Override
         public void findEditState() {
             /* Access the iterator */
-            Iterator<AccountPrice> myIterator = listIterator();
+            Iterator<SpotPrice> myIterator = listIterator();
             EditState myEdit = EditState.CLEAN;
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
+                SpotPrice myCurr = myIterator.next();
                 /* Switch on new state */
                 switch (myCurr.getState()) {
                     case NEW:
@@ -441,7 +453,7 @@ public class SpotPrices implements JDataContents {
         @Override
         public boolean hasUpdates() {
             /* Access the iterator */
-            Iterator<AccountPrice> myIterator = listIterator();
+            Iterator<SpotPrice> myIterator = listIterator();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
@@ -470,7 +482,7 @@ public class SpotPrices implements JDataContents {
         @Override
         public void resetChanges() {
             /* Create an iterator for the list */
-            Iterator<AccountPrice> myIterator = iterator();
+            Iterator<SpotPrice> myIterator = iterator();
 
             /* Loop through the elements */
             while (myIterator.hasNext()) {

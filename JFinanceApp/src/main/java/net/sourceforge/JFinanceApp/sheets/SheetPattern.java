@@ -47,7 +47,7 @@ import org.apache.poi.ss.util.CellReference;
  * SheetDataItem extension for Pattern.
  * @author Tony Washer
  */
-public class SheetPattern extends SheetDataItem<Event> {
+public class SheetPattern extends SheetDataItem<Pattern> {
     /**
      * NamedArea for Patterns.
      */
@@ -200,7 +200,7 @@ public class SheetPattern extends SheetDataItem<Event> {
     }
 
     @Override
-    protected void insertItem(final Event pItem) throws JDataException {
+    protected void insertItem(final Pattern pItem) throws JDataException {
         /* Can only handle a pattern */
         if (!(pItem instanceof Pattern)) {
             return;

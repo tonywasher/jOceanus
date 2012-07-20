@@ -55,7 +55,7 @@ import net.sourceforge.JFinanceApp.views.ViewPrice.ViewPriceList;
  * Account Prices Table.
  * @author Tony Washer
  */
-public class AccountPrices extends DataTable<AccountPrice> {
+public class AccountPrices extends DataTable<ViewPrice> {
     /**
      * Serial Id.
      */
@@ -305,6 +305,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
      * @param pRow the row
      * @return is the row deletable
      */
+    @Override
     protected boolean isRowDeletable(final ViewPrice pRow) {
         /* If the row is not deleted, we can delete if the list size is greater than one */
         return ((!pRow.isDeleted()) && (thePrices.size() > 1));
@@ -315,6 +316,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
      * @param pRow the row
      * @return false
      */
+    @Override
     protected boolean isRowDuplicatable(final ViewPrice pRow) {
         return false;
     }
@@ -433,7 +435,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
         public Object getValueAt(final int row,
                                  final int col) {
             /* Access the price */
-            ViewPrice myPrice = (ViewPrice) thePrices.get(row);
+            ViewPrice myPrice = thePrices.get(row);
             Object o;
 
             /* Return the appropriate value */
@@ -475,7 +477,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
                                final int row,
                                final int col) {
             /* Access the price */
-            ViewPrice myPrice = (ViewPrice) thePrices.get(row);
+            ViewPrice myPrice = thePrices.get(row);
 
             /* Push history */
             myPrice.pushHistory();
@@ -523,7 +525,7 @@ public class AccountPrices extends DataTable<AccountPrice> {
     /**
      * Prices mouse listener.
      */
-    private static final class PricesMouse extends DataMouse<AccountPrice> {
+    private static final class PricesMouse extends DataMouse<ViewPrice> {
         /**
          * Constructor.
          * @param pTable the table

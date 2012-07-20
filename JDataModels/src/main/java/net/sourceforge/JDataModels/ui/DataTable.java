@@ -61,7 +61,7 @@ import net.sourceforge.JDataModels.views.UpdateSet;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class DataTable<T extends DataItem & Comparable<T>> extends JTable {
+public abstract class DataTable<T extends DataItem & Comparable<? super T>> extends JTable {
     /**
      * Serial Id.
      */

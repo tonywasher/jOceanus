@@ -43,10 +43,24 @@ import java.util.RandomAccess;
  * <li>The {@link #subList} method is not supported
  * </ul>
  * <p>
- * Because the elements in the list are mutable, changes can be made to the list that result in elements
- * becoming out of order with respect to the natural ordering. The {@link #reSort} method is provided to
- * repair the sort order. If an element is added when the list is out of sort order, the element will be
- * inserted as near as possible to its correct position.
+ * Because the elements in the list are mutable, changes can be made to the items themselves that result in
+ * the list being incorrectly sorted, since the list is unaware of these changes. When this occurs the list is
+ * referred to as <b>dirty</b>. The {@link #reSort} method is provided to clean up the list and repair the
+ * sort order. A dirty list has the following implications.
+ * <ol>
+ * <li>If an element is added to a dirty list, the element may not be inserted in the correct position. It
+ * will be inserted into <i>a valid</i> position in that it will be correctly positioned with respect to its
+ * previous and following element.
+ * <li>If an element is searched for in a dirty list, it may not be found, since the search may be aborted
+ * early if the item is not found in its expected location. To alleviate this, the {@link #remove(Object)}
+ * method will assume that it is searching a dirty list. The {@link #contains} and {@link #indexOf(Object)}
+ * methods assume a clean list, and so may give incorrect results on a dirty list.
+ * <li>The add method cannot check for duplicate entries, hence a dirty list may contain duplicate items.
+ * Similarly, changes made to elements may result in previously dissimilar items becoming equal as far as the
+ * natural ordering is concerned. TODO The {@link #reSort} method will remove such duplicate items.
+ * </ol>
+ * <p>
+ * TODO relax duplicate object requirement and impose on {@link OrderedIdList}
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
@@ -213,7 +227,7 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
     protected void insertNode(final OrderedNode<T> pNode,
                               final boolean atEnd) {
         /* If we are adding to an empty list */
-        if (theFirst == null) {
+        if (isEmpty()) {
             /* Add to head of list */
             pNode.addToHead();
 
@@ -491,7 +505,7 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         T myItem = theClass.cast(o);
 
         /* Access the node of the item */
-        OrderedNode<T> myNode = theIndexMap.findNodeForObject(myItem);
+        OrderedNode<T> myNode = theIndexMap.findUnsortedNodeForObject(myItem);
 
         /* If the node does not belong to the list then ignore */
         if (myNode == null) {

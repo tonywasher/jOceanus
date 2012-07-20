@@ -31,7 +31,6 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
@@ -41,6 +40,7 @@ import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Price;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.views.SpotPrices;
+import net.sourceforge.JFinanceApp.views.SpotPrices.SpotList;
 import net.sourceforge.JFinanceApp.views.SpotPrices.SpotPrice;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedPrice;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
@@ -252,18 +252,10 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pList the list
      * @param pPrice The Price
      */
-    protected AccountPrice(final AccountPriceList pList,
+    protected AccountPrice(final EncryptedList<?, ?> pList,
                            final AccountPrice pPrice) {
         /* Set standard values */
         super(pList, pPrice);
-    }
-
-    /**
-     * Constructor.
-     * @param pList the account list
-     */
-    protected AccountPrice(final AccountPriceList pList) {
-        this(pList, pList.getAccount());
     }
 
     /**
@@ -271,7 +263,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pList the list
      * @param pAccount the account
      */
-    protected AccountPrice(final AccountPriceList pList,
+    protected AccountPrice(final EncryptedList<?, ?> pList,
                            final Account pAccount) {
         super(pList, 0);
         setControlKey(pList.getControlKey());
@@ -287,7 +279,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pPrice the price
      * @throws JDataException on error
      */
-    private AccountPrice(final AccountPriceList pList,
+    private AccountPrice(final EncryptedList<?, ?> pList,
                          final int uId,
                          final int uAccountId,
                          final Date pDate,
@@ -332,7 +324,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pPrice the price
      * @throws JDataException on error
      */
-    private AccountPrice(final AccountPriceList pList,
+    private AccountPrice(final EncryptedList<?, ?> pList,
                          final int uId,
                          final int uControlId,
                          final int uAccountId,
@@ -566,28 +558,10 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         protected static final JDataFields FIELD_DEFS = new JDataFields(
                 AccountPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
 
-        /**
-         * Account field id.
-         */
-        public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
-
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_ACCOUNT.equals(pField)) {
-                return (theAccount == null) ? JDataFieldValue.SkipField : theAccount;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * The account.
-         */
-        private Account theAccount = null;
 
         @Override
         public String listName() {
@@ -597,14 +571,6 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         @Override
         public FinanceData getDataSet() {
             return (FinanceData) super.getDataSet();
-        }
-
-        /**
-         * Obtain the account.
-         * @return the account
-         */
-        public Account getAccount() {
-            return theAccount;
         }
 
         /**
@@ -629,41 +595,6 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         }
 
         /**
-         * Construct an edit extract of a Price list.
-         * @param pAccount The account to extract price for
-         * @return the edit list
-         */
-        public AccountPriceList deriveEditList(final Account pAccount) {
-            /* Build an empty Update */
-            AccountPriceList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
-            myList.theAccount = pAccount;
-
-            /* Access the list iterator */
-            Iterator<AccountPrice> myIterator = iterator();
-
-            /* Loop through the Prices */
-            while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
-
-                /* Check the account */
-                int myResult = pAccount.compareTo(myCurr.getAccount());
-
-                /* Skip different accounts */
-                if (myResult != 0) {
-                    continue;
-                }
-
-                /* Copy the item */
-                AccountPrice myItem = new AccountPrice(myList, myCurr);
-                myList.addAtEnd(myItem);
-            }
-
-            /* Return the List */
-            return myList;
-        }
-
-        /**
          * Add a new item to the core list.
          * @param pPrice item
          * @return the newly added item
@@ -685,10 +616,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
          */
         @Override
         public AccountPrice addNewItem() {
-            AccountPrice myPrice = new AccountPrice(this);
-            myPrice.setAccount(theAccount);
-            add(myPrice);
-            return myPrice;
+            throw new UnsupportedOperationException();
         }
 
         /**
@@ -781,14 +709,14 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         public void applyChanges(final SpotPrices pPrices) {
             /* Access details */
             DateDay myDate = pPrices.getDate();
-            AccountPriceList myList = pPrices.getPrices();
+            SpotList myList = pPrices.getPrices();
 
             /* Access the iterator */
-            Iterator<AccountPrice> myIterator = myList.listIterator();
+            Iterator<SpotPrice> myIterator = myList.listIterator();
 
             /* Loop through the spot prices */
             while (myIterator.hasNext()) {
-                AccountPrice mySpot = myIterator.next();
+                SpotPrice mySpot = myIterator.next();
 
                 /* Access the price for this date if it exists */
                 AccountPrice myPrice = mySpot.getBase();
@@ -804,12 +732,11 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
                         /* else if we have a new price with no underlying */
                     } else if (myPoint != null) {
                         /* Create the new Price */
-                        myPrice = new AccountPrice(this);
+                        myPrice = new AccountPrice(this, mySpot.getAccount());
 
                         /* Set the date and price */
                         myPrice.setDate(new DateDay(myDate));
                         myPrice.setValuePrice(myPoint);
-                        myPrice.setAccount(mySpot.getAccount());
 
                         /* Add to the list and link backwards */
                         mySpot.setBase(myPrice);
