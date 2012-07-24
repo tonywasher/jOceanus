@@ -354,15 +354,15 @@ public class RenderManager {
 
         /**
          * Record location and selection.
-         * @param row the row
-         * @param col the column
+         * @param pRowIndex the row
+         * @param pColIndex the column
          * @param pSelected is the item selected?
          */
-        protected void setPosition(final int row,
-                                   final int col,
+        protected void setPosition(final int pRowIndex,
+                                   final int pColIndex,
                                    final boolean pSelected) {
-            theRow = row;
-            theCol = col;
+            theRow = pRowIndex;
+            theCol = pColIndex;
             isSelected = pSelected;
         }
 

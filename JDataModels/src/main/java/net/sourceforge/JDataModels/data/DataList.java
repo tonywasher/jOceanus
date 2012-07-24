@@ -181,11 +181,6 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
     private int theVersion = 0;
 
     /**
-     * Do we show deleted items.
-     */
-    private boolean doShowDeleted = false;
-
-    /**
      * Get the style of the list.
      * @return the list style
      */
@@ -287,22 +282,6 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
      */
     public boolean isLocked() {
         return false;
-    }
-
-    /**
-     * Determine whether we should count deleted items as present.
-     * @return <code>true/false</code>
-     */
-    public boolean getShowDeleted() {
-        return doShowDeleted;
-    }
-
-    /**
-     * Set whether we should count deleted items as present.
-     * @param bShow <code>true/false</code>
-     */
-    public void setShowDeleted(final boolean bShow) {
-        doShowDeleted = bShow;
     }
 
     /**

@@ -73,14 +73,14 @@ public class Editor {
         }
 
         @Override
-        public JComponent getTableCellEditorComponent(final JTable table,
-                                                      final Object value,
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
                                                       final boolean isSelected,
-                                                      final int row,
-                                                      final int col) {
-            theField.setText(((value == null) || (RendererFieldValue.Error.equals(value)))
-                                                                                          ? ""
-                                                                                          : (String) value);
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
+            theField.setText(((pValue == null) || (RendererFieldValue.Error.equals(pValue)))
+                                                                                            ? ""
+                                                                                            : (String) pValue);
             return theField;
         }
 
@@ -114,13 +114,13 @@ public class Editor {
         private static final long serialVersionUID = 2172483058466364800L;
 
         @Override
-        public JComponent getTableCellEditorComponent(final JTable table,
-                                                      final Object value,
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
                                                       final boolean isSelected,
-                                                      final int row,
-                                                      final int col) {
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
             /* Access the value */
-            Object o = value;
+            Object o = pValue;
 
             /* If we have an integer value passed */
             if (o instanceof Integer) {
@@ -129,7 +129,7 @@ public class Editor {
             }
 
             /* Pass through to super-class */
-            return super.getTableCellEditorComponent(table, o, isSelected, row, col);
+            return super.getTableCellEditorComponent(pTable, o, isSelected, pRowIndex, pColIndex);
         }
 
         @Override
@@ -171,18 +171,19 @@ public class Editor {
         private final transient ComboPopup thePopupListener = new ComboPopup();
 
         @Override
-        public JComponent getTableCellEditorComponent(final JTable table,
-                                                      final Object value,
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
                                                       final boolean isSelected,
-                                                      final int row,
-                                                      final int col) {
-            if (!(table instanceof DataTable)) {
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
+            if (!(pTable instanceof JDataTable)) {
                 return null;
             }
-            DataTable<?> myTable = (DataTable<?>) table;
-            theCombo = myTable.getComboBox(row, col);
-            if (value != null) {
-                theCombo.setSelectedItem(value);
+            JDataTable<?> myTable = (JDataTable<?>) pTable;
+            theCombo = myTable.getComboBox(pTable.convertRowIndexToModel(pRowIndex),
+                                           pTable.convertColumnIndexToModel(pColIndex));
+            if (pValue != null) {
+                theCombo.setSelectedItem(pValue);
             } else {
                 theCombo.setSelectedIndex(-1);
             }
@@ -267,21 +268,21 @@ public class Editor {
         }
 
         @Override
-        public JComponent getTableCellEditorComponent(final JTable table,
-                                                      final Object value,
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
                                                       final boolean isSelected,
-                                                      final int row,
-                                                      final int col) {
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
             /* Access the range */
             DateDay myStart = (theRange == null) ? null : theRange.getStart();
             DateDay myEnd = (theRange == null) ? null : theRange.getEnd();
             DateDay myCurr;
 
             /* If the value is null */
-            if ((value == null) || (RendererFieldValue.Error.equals(value))) {
+            if ((pValue == null) || (RendererFieldValue.Error.equals(pValue))) {
                 myCurr = new DateDay();
             } else {
-                myCurr = (DateDay) value;
+                myCurr = (DateDay) pValue;
             }
 
             /* Set up initial values and range */
@@ -289,7 +290,7 @@ public class Editor {
             setLatestDateDay(myEnd);
 
             /* Pass onwards */
-            return super.getTableCellEditorComponent(table, myCurr, isSelected, row, col);
+            return super.getTableCellEditorComponent(pTable, myCurr, isSelected, pRowIndex, pColIndex);
         }
 
         @Override
@@ -318,13 +319,13 @@ public class Editor {
         private static final long serialVersionUID = 2636603780411978911L;
 
         @Override
-        public JComponent getTableCellEditorComponent(final JTable table,
-                                                      final Object value,
+        public JComponent getTableCellEditorComponent(final JTable pTable,
+                                                      final Object pValue,
                                                       final boolean isSelected,
-                                                      final int row,
-                                                      final int col) {
+                                                      final int pRowIndex,
+                                                      final int pColIndex) {
             /* Access the value */
-            Object o = value;
+            Object o = pValue;
 
             /* If we have a decimal value passed */
             if (o instanceof Decimal) {
@@ -333,7 +334,7 @@ public class Editor {
             }
 
             /* Pass through to super-class */
-            return super.getTableCellEditorComponent(table, o, isSelected, row, col);
+            return super.getTableCellEditorComponent(pTable, o, isSelected, pRowIndex, pColIndex);
         }
     }
 

@@ -32,20 +32,21 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JDataModels.data.StaticData.StaticList;
-import net.sourceforge.JDataModels.ui.DataMouse;
-import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.JDataTable;
+import net.sourceforge.JDataModels.ui.JDataTableColumn;
+import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.JDataModels.ui.JDataTableModel;
+import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
@@ -58,7 +59,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * @param <L> the list type
  * @param <T> the data type
  */
-public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T, ?>> extends DataTable<T> {
+public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T, ?>> extends JDataTable<T> {
     /**
      * Serial Id.
      */
@@ -244,8 +245,8 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     }
 
     @Override
-    public boolean hasHeader() {
-        return false;
+    protected void setError(final JDataException pError) {
+        theError.setError(pError);
     }
 
     /**
@@ -341,7 +342,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * Static table model.
      */
-    public final class StaticModel extends DataTableModel {
+    public final class StaticModel extends JDataTableModel<T> {
         /**
          * Serial Id.
          */
@@ -353,6 +354,12 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         private StaticModel() {
             /* call constructor */
             super(theTable);
+        }
+
+        @Override
+        public T getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return theStatic.get(pRowIndex);
         }
 
         /**
@@ -373,14 +380,9 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             return (theStatic == null) ? 0 : theStatic.size();
         }
 
-        /**
-         * Get the name of the column.
-         * @param col the column
-         * @return the name of the column
-         */
         @Override
-        public String getColumnName(final int col) {
-            switch (col) {
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_CLASS:
                     return TITLE_CLASS;
                 case COLUMN_NAME:
@@ -398,17 +400,11 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             }
         }
 
-        /**
-         * Obtain the Field id associated with the column.
-         * @param row the row
-         * @param column the column
-         * @return the field id.
-         */
         @Override
-        public JDataField getFieldForCell(final int row,
-                                          final int column) {
+        public JDataField getFieldForCell(final T pItem,
+                                          final int pColIndex) {
             /* Switch on column */
-            switch (column) {
+            switch (pColIndex) {
                 case COLUMN_CLASS:
                     return StaticData.FIELD_CLASS;
                 case COLUMN_NAME:
@@ -426,14 +422,9 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             }
         }
 
-        /**
-         * Get the object class of the column.
-         * @param col the column
-         * @return the class of the objects associated with the column
-         */
         @Override
-        public Class<?> getColumnClass(final int col) {
-            switch (col) {
+        public Class<?> getColumnClass(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
                 case COLUMN_CLASS:
@@ -443,33 +434,24 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
                 case COLUMN_ORDER:
                     return Integer.class;
                 case COLUMN_ENABLED:
-                    return String.class;
+                    return Boolean.class;
                 case COLUMN_ACTIVE:
-                    return String.class;
+                    return Boolean.class;
                 default:
                     return Object.class;
             }
         }
 
-        /**
-         * Is the cell at (row, col) editable?
-         * @param row the row
-         * @param col the column
-         * @return true/false
-         */
         @Override
-        public boolean isCellEditable(final int row,
-                                      final int col) {
-            /* Access the data */
-            T myData = theStatic.get(row);
-
+        public boolean isCellEditable(final T pItem,
+                                      final int pColIndex) {
             /* Not edit-able is not enabled */
-            if (!myData.getEnabled()) {
+            if (!pItem.getEnabled()) {
                 return false;
             }
 
             /* switch on column */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_NAME:
                 case COLUMN_DESC:
                     return true;
@@ -482,110 +464,42 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             }
         }
 
-        /**
-         * Get the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @return the object value
-         */
         @Override
-        public Object getValueAt(final int row,
-                                 final int col) {
-            T myData;
-            Object o;
-
-            /* Access the data */
-            myData = theStatic.get(row);
-
+        public Object getItemValue(final T pItem,
+                                   final int pColIndex) {
             /* Return the appropriate value */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_CLASS:
-                    o = myData.getStaticClass().toString();
-                    break;
+                    return pItem.getStaticClass().toString();
                 case COLUMN_NAME:
-                    o = myData.getName();
-                    break;
+                    return pItem.getName();
                 case COLUMN_DESC:
-                    o = myData.getDesc();
-                    if ((o != null) && (((String) o).length() == 0)) {
-                        o = null;
-                    }
-                    break;
+                    return pItem.getDesc();
                 case COLUMN_ENABLED:
-                    o = myData.getEnabled() ? "true" : "false";
-                    break;
+                    return pItem.getEnabled(); // ? "true" : "false";
                 case COLUMN_ORDER:
-                    o = myData.getOrder();
-                    break;
+                    return pItem.getOrder();
                 case COLUMN_ACTIVE:
-                    o = myData.isActive() ? "true" : "false";
-                    break;
+                    return pItem.isActive(); // ? "true" : "false";
                 default:
-                    o = null;
-                    break;
+                    return null;
             }
-
-            /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myData.hasErrors(getFieldForCell(row, col)))) {
-                o = RendererFieldValue.Error;
-            }
-
-            /* Return to caller */
-            return o;
         }
 
-        /**
-         * Set the value at (row, col).
-         * @param obj the object value to set
-         * @param row the row
-         * @param col the column
-         */
         @Override
-        public void setValueAt(final Object obj,
-                               final int row,
-                               final int col) {
-            /* Access the line */
-            T myData = theStatic.get(row);
-
-            /* Push history */
-            myData.pushHistory();
-
-            /* Protect against Exceptions */
-            try {
-                /* Store the appropriate value */
-                switch (col) {
-                    case COLUMN_NAME:
-                        myData.setName((String) obj);
-                        break;
-                    case COLUMN_DESC:
-                        myData.setDescription((String) obj);
-                        break;
-                    default:
-                        break;
-                }
-
-                /* Handle Exceptions */
-            } catch (JDataException e) {
-                /* Reset values */
-                myData.popHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to update field at (" + row + "," + col + ")", e);
-
-                /* Show the error and return */
-                theError.setError(myError);
-                return;
-            }
-
-            /* Check for changes */
-            if (myData.checkForHistory()) {
-                /* Increment the update version */
-                theUpdateSet.incrementVersion();
-
-                /* note that data has changed */
-                fireTableDataChanged();
-                notifyChanges();
+        public void setItemValue(final T pItem,
+                                 final int pColIndex,
+                                 final Object pValue) throws JDataException {
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_NAME:
+                    pItem.setName((String) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pItem.setDescription((String) pValue);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -593,7 +507,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * Static mouse listener.
      */
-    private final class StaticMouse extends DataMouse<T> {
+    private final class StaticMouse extends JDataTableMouse<T> {
         /**
          * Constructor.
          */
@@ -753,7 +667,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * Column Model class.
      */
-    private final class StaticColumnModel extends DataColumnModel {
+    private final class StaticColumnModel extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -787,12 +701,12 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             theStringEditor = new StringEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_ORDER, WIDTH_ORDER, theIntegerRenderer, null));
-            addColumn(new DataColumn(COLUMN_ENABLED, WIDTH_ENABLED, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_ACTIVE, WIDTH_ACTIVE, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            addColumn(new JDataTableColumn(COLUMN_ORDER, WIDTH_ORDER, theIntegerRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_ENABLED, null, null));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ACTIVE, null, null));
         }
     }
 }

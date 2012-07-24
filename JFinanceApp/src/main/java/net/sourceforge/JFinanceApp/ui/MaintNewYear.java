@@ -35,11 +35,13 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.EditState;
-import net.sourceforge.JDataModels.ui.DataTable;
+import net.sourceforge.JDataModels.ui.JDataTable;
+import net.sourceforge.JDataModels.ui.JDataTableColumn;
+import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.JDataModels.ui.JDataTableModel;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
@@ -56,7 +58,7 @@ import net.sourceforge.JSortedList.OrderedListIterator;
  * NewYear maintenance panel.
  * @author Tony Washer
  */
-public class MaintNewYear extends DataTable<Event> implements ActionListener {
+public class MaintNewYear extends JDataTable<Event> implements ActionListener {
     /**
      * Serial Id.
      */
@@ -125,8 +127,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     }
 
     @Override
-    public boolean hasHeader() {
-        return false;
+    protected void setError(final JDataException pError) {
     }
 
     /**
@@ -359,7 +360,7 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
     /**
      * PatternYear table model.
      */
-    public final class PatternYearModel extends DataTableModel {
+    public final class PatternYearModel extends JDataTableModel<Event> {
         /**
          * Serial Id.
          */
@@ -371,6 +372,12 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
         private PatternYearModel() {
             /* call constructor */
             super(theTable);
+        }
+
+        @Override
+        public Event getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return theEvents.get(pRowIndex);
         }
 
         /**
@@ -391,14 +398,9 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
             return (theEvents == null) ? 0 : theEvents.size();
         }
 
-        /**
-         * Get the name of the column.
-         * @param col the column
-         * @return the name of the column
-         */
         @Override
-        public String getColumnName(final int col) {
-            switch (col) {
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return TITLE_DATE;
                 case COLUMN_DESC:
@@ -416,30 +418,16 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
             }
         }
 
-        /**
-         * Obtain the Field id associated with the column.
-         * @param row the row
-         * @param column the column
-         * @return the field id
-         */
         @Override
-        public JDataField getFieldForCell(final int row,
-                                          final int column) {
-            /* Switch on column */
-            switch (column) {
-                default:
-                    return null;
-            }
+        public JDataField getFieldForCell(final Event pEvent,
+                                          final int pColIndex) {
+            /* Always null */
+            return null;
         }
 
-        /**
-         * Get the object class of the column.
-         * @param col the column
-         * @return the class of the objects associated with the column
-         */
         @Override
-        public Class<?> getColumnClass(final int col) {
-            switch (col) {
+        public Class<?> getColumnClass(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
                 case COLUMN_TRANTYP:
@@ -453,75 +441,39 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
             }
         }
 
-        /**
-         * Is the cell at (row, col) editable?
-         * @param row the row
-         * @param col the column
-         * @return true/false
-         */
         @Override
-        public boolean isCellEditable(final int row,
-                                      final int col) {
+        public boolean isCellEditable(final Event pEvent,
+                                      final int pColIndex) {
             return false;
         }
 
-        /**
-         * Get the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @return the object value
-         */
         @Override
-        public Object getValueAt(final int row,
-                                 final int col) {
-            Event myEvent;
-            Object o;
-
-            /* Access the event */
-            myEvent = theEvents.get(row);
-
+        public Object getItemValue(final Event pEvent,
+                                   final int pColIndex) {
             /* Return the appropriate value */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
-                    o = myEvent.getDate();
-                    break;
+                    return pEvent.getDate();
                 case COLUMN_TRANTYP:
-                    o = myEvent.getTransType();
-                    break;
+                    return pEvent.getTransType();
                 case COLUMN_CREDIT:
-                    o = myEvent.getCredit();
-                    break;
+                    return pEvent.getCredit();
                 case COLUMN_DEBIT:
-                    o = myEvent.getDebit();
-                    break;
+                    return pEvent.getDebit();
                 case COLUMN_AMOUNT:
-                    o = myEvent.getAmount();
-                    break;
+                    return pEvent.getAmount();
                 case COLUMN_DESC:
-                    o = myEvent.getDesc();
-                    if ((o != null) && (((String) o).length() == 0)) {
-                        o = null;
-                    }
-                    break;
+                    return pEvent.getDesc();
                 default:
-                    o = null;
-                    break;
+                    return null;
             }
-
-            /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col)))) {
-                o = RendererFieldValue.Error;
-            }
-
-            /* Return to caller */
-            return o;
         }
     }
 
     /**
      * Column Model class.
      */
-    private final class YearColumnModel extends DataColumnModel {
+    private final class YearColumnModel extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -555,12 +507,12 @@ public class MaintNewYear extends DataTable<Event> implements ActionListener {
             theStringRenderer = theRenderMgr.allocateStringRenderer();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, null));
-            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, null));
-            addColumn(new DataColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, null));
         }
     }
 }

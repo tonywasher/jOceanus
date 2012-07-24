@@ -179,6 +179,7 @@ public class DemoFilter extends JApplet {
 
             /* Create the filter and record it */
             TableFilter<RowData> myFilter = new TableFilter<RowData>(theModel);
+            theModel.registerFilter(myFilter);
             setRowSorter(myFilter);
 
             /* Add some items to the list */
@@ -330,7 +331,10 @@ public class DemoFilter extends JApplet {
             return sortItems;
         }
 
-        @Override
+        /**
+         * Register the data filter.
+         * @param pFilter the filter
+         */
         public void registerFilter(final TableFilter<RowData> pFilter) {
             theFilter = pFilter;
         }
@@ -502,13 +506,6 @@ public class DemoFilter extends JApplet {
 
             /* Say that we have changed the row */
             fireTableCellUpdated(pRowIndex, pColIndex);
-        }
-
-        @Override
-        public void fireTableRowsInserted(final int pFirstRowIndex,
-                                          final int pEndRowIndex) {
-            super.fireTableRowsInserted(pFirstRowIndex, pEndRowIndex);
-            theFilter.reportMappingChanged();
         }
 
         @Override

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.database;
 
+import javax.swing.SortOrder;
+
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataModels.data.DataSet;
@@ -29,7 +31,6 @@ import net.sourceforge.JDataModels.database.ColumnDefinition;
 import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.DatabaseTable;
 import net.sourceforge.JDataModels.database.TableDefinition;
-import net.sourceforge.JDataModels.database.TableDefinition.SortOrder;
 import net.sourceforge.JFinanceApp.data.EventValue;
 import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
 import net.sourceforge.JFinanceApp.data.FinanceData;

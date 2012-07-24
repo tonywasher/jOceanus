@@ -41,8 +41,6 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.ui.DataMouse;
-import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
 import net.sourceforge.JDataModels.ui.Editor.ComboBoxEditor;
 import net.sourceforge.JDataModels.ui.Editor.DilutionEditor;
@@ -51,11 +49,15 @@ import net.sourceforge.JDataModels.ui.Editor.MoneyEditor;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.Editor.UnitsEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.JDataTable;
+import net.sourceforge.JDataModels.ui.JDataTableColumn;
+import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.JDataModels.ui.JDataTableModel;
+import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
@@ -82,7 +84,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Account Statement Table.
  * @author Tony Washer
  */
-public class AccountStatement extends DataTable<StatementLine> {
+public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * Serial Id.
      */
@@ -176,6 +178,11 @@ public class AccountStatement extends DataTable<StatementLine> {
     @Override
     public boolean hasHeader() {
         return true;
+    }
+
+    @Override
+    protected void setError(final JDataException pError) {
+        theError.setError(pError);
     }
 
     /**
@@ -669,7 +676,7 @@ public class AccountStatement extends DataTable<StatementLine> {
     /**
      * Statement table model.
      */
-    public final class StatementModel extends DataTableModel {
+    public final class StatementModel extends JDataTableModel<StatementLine> {
         /**
          * Serial Id.
          */
@@ -681,6 +688,12 @@ public class AccountStatement extends DataTable<StatementLine> {
         private StatementModel() {
             /* call constructor */
             super(theTable);
+        }
+
+        @Override
+        public StatementLine getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return theLines.get(pRowIndex);
         }
 
         /**
@@ -698,17 +711,12 @@ public class AccountStatement extends DataTable<StatementLine> {
          */
         @Override
         public int getRowCount() {
-            return (theLines == null) ? 0 : theLines.size() + 1;
+            return (theLines == null) ? 0 : theLines.size();
         }
 
-        /**
-         * Get the name of the column.
-         * @param col the column
-         * @return the name of the column
-         */
         @Override
-        public String getColumnName(final int col) {
-            switch (col) {
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return TITLE_DATE;
                 case COLUMN_DESC:
@@ -734,14 +742,9 @@ public class AccountStatement extends DataTable<StatementLine> {
             }
         }
 
-        /**
-         * Get the object class of the column.
-         * @param col the column
-         * @return the class of the objects associated with the column
-         */
         @Override
-        public Class<?> getColumnClass(final int col) {
-            switch (col) {
+        public Class<?> getColumnClass(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
                 case COLUMN_TRANTYP:
@@ -753,22 +756,11 @@ public class AccountStatement extends DataTable<StatementLine> {
             }
         }
 
-        /**
-         * Obtain the Field id associated with the column.
-         * @param row the row
-         * @param column the column
-         * @return the field id
-         */
         @Override
-        public JDataField getFieldForCell(final int row,
-                                          final int column) {
-            StatementLine myLine = null;
-            if (row > 0) {
-                myLine = theLines.get(row - 1);
-            }
-
+        public JDataField getFieldForCell(final StatementLine pLine,
+                                          final int pColIndex) {
             /* Switch on column */
-            switch (column) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
@@ -784,7 +776,7 @@ public class AccountStatement extends DataTable<StatementLine> {
                 case COLUMN_YEARS:
                     return Event.FIELD_YEARS;
                 case COLUMN_CREDIT:
-                    if ((myLine == null) || (myLine.isCredit())) {
+                    if ((pLine == null) || (pLine.isCredit())) {
                         return ((theStateType == StatementType.Units)
                                                                      ? Event.FIELD_UNITS
                                                                      : Event.FIELD_AMOUNT);
@@ -792,7 +784,7 @@ public class AccountStatement extends DataTable<StatementLine> {
                         return null;
                     }
                 case COLUMN_DEBIT:
-                    if ((myLine == null) || (!myLine.isCredit())) {
+                    if ((pLine == null) || (!pLine.isCredit())) {
                         return ((theStateType == StatementType.Units)
                                                                      ? Event.FIELD_UNITS
                                                                      : Event.FIELD_AMOUNT);
@@ -804,58 +796,44 @@ public class AccountStatement extends DataTable<StatementLine> {
             }
         }
 
-        /**
-         * Is the cell at (row, col) editable?
-         * @param row the row
-         * @param col the column
-         * @return true/false
-         */
         @Override
-        public boolean isCellEditable(final int row,
-                                      final int col) {
+        public boolean isCellEditable(final StatementLine pLine,
+                                      final int pColIndex) {
             /* Locked if the account is closed */
             if (theStatement.getAccount().isClosed()) {
                 return false;
             }
 
-            /* Lock the start balance */
-            if (row == 0) {
-                return false;
-            }
-
-            /* Access the line */
-            StatementLine myLine = theLines.get(row - 1);
-
-            /* Cannot edit if row is deleted or locked */
-            if (myLine.isDeleted() || myLine.isLocked()) {
+            /* Cannot edit if row is header, deleted or locked */
+            if (pLine.isHeader() || pLine.isDeleted() || pLine.isLocked()) {
                 return false;
             }
 
             /* switch on column */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_BALANCE:
                     return false;
                 case COLUMN_DATE:
                     return true;
                 case COLUMN_TRANTYP:
-                    return (myLine.getDate() != null);
+                    return (pLine.getDate() != null);
                 case COLUMN_DESC:
-                    return ((myLine.getDate() != null) && (myLine.getTransType() != null));
+                    return ((pLine.getDate() != null) && (pLine.getTransType() != null));
                 default:
-                    if ((myLine.getDate() == null) || (myLine.getDesc() == null)
-                            || (myLine.getTransType() == null)) {
+                    if ((pLine.getDate() == null) || (pLine.getDesc() == null)
+                            || (pLine.getTransType() == null)) {
                         return false;
                     }
 
                     /* Access the transaction type */
-                    TransactionType myType = myLine.getTransType();
+                    TransactionType myType = pLine.getTransType();
 
                     /* Handle columns */
-                    switch (col) {
+                    switch (pColIndex) {
                         case COLUMN_CREDIT:
-                            return myLine.isCredit();
+                            return pLine.isCredit();
                         case COLUMN_DEBIT:
-                            return !myLine.isCredit();
+                            return !pLine.isCredit();
                         case COLUMN_YEARS:
                             return myType.isTaxableGain();
                         case COLUMN_TAXCREDIT:
@@ -869,192 +847,108 @@ public class AccountStatement extends DataTable<StatementLine> {
 
         }
 
-        /**
-         * Get the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @return the object value
-         */
         @Override
-        public Object getValueAt(final int row,
-                                 final int col) {
-            /* If this is the first row */
-            if (row == 0) {
-                switch (col) {
-                    case COLUMN_DATE:
-                        return theStatement.getDateRange().getStart();
-                    case COLUMN_DESC:
-                        return "Starting Balance";
-                    case COLUMN_BALANCE:
-                        return (theStateType == StatementType.Units)
-                                                                    ? theStatement.getStartUnits()
-                                                                    : theStatement.getStartBalance();
-                    default:
-                        return null;
-                }
-            }
-
+        public Object getItemValue(final StatementLine pLine,
+                                   final int pColIndex) {
             /* Access the line */
-            StatementLine myLine = theLines.get(row - 1);
-            StatementLine myNext = theLines.peekNext(myLine);
-            Object o = null;
-            boolean bShow = true;
+            StatementLine myNext = theLines.peekNext(pLine);
+            boolean isUnits = (theStateType == StatementType.Units);
 
             /* Return the appropriate value */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
-                    o = myLine.getDate();
+                    return pLine.getDate();
+                case COLUMN_TRANTYP:
+                    return pLine.getTransType();
+                case COLUMN_PARTNER:
+                    return pLine.getPartner();
+                case COLUMN_BALANCE:
+                    if ((myNext != null) && (Difference.isEqual(myNext.getDate(), pLine.getDate()))) {
+                        return null;
+                    } else {
+                        return (isUnits) ? pLine.getBalanceUnits() : pLine.getBalance();
+                    }
+                case COLUMN_CREDIT:
+                    if (pLine.isCredit()) {
+                        return (isUnits) ? pLine.getUnits() : pLine.getAmount();
+                    }
+                    return null;
+                case COLUMN_DEBIT:
+                    if (!pLine.isCredit()) {
+
+                        return (isUnits) ? pLine.getUnits() : pLine.getAmount();
+                    }
+                    return null;
+                case COLUMN_DESC:
+                    return pLine.getDesc();
+                case COLUMN_DILUTION:
+                    return pLine.getDilution();
+                case COLUMN_TAXCREDIT:
+                    return pLine.getTaxCredit();
+                case COLUMN_YEARS:
+                    return pLine.getYears();
+                default:
+                    return null;
+            }
+        }
+
+        @Override
+        public void setItemValue(final StatementLine pLine,
+                                 final int pColIndex,
+                                 final Object pValue) throws JDataException {
+            /* Determine whether the line needs a tax credit */
+            boolean needsTaxCredit = Event.needsTaxCredit(pLine.getTransType(),
+                                                          pLine.isCredit() ? pLine.getPartner() : pLine
+                                                                  .getAccount());
+
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    pLine.setDate((DateDay) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pLine.setDescription((String) pValue);
                     break;
                 case COLUMN_TRANTYP:
-                    o = myLine.getTransType();
-                    break;
-                case COLUMN_PARTNER:
-                    o = myLine.getPartner();
-                    break;
-                case COLUMN_BALANCE:
-                    if ((myNext != null) && (Difference.isEqual(myNext.getDate(), myLine.getDate()))) {
-                        o = null;
-                    } else {
-                        o = (theStateType == StatementType.Units) ? myLine.getBalanceUnits() : myLine
-                                .getBalance();
+                    pLine.setTransType((TransactionType) pValue);
+
+                    /* If the need for a tax credit has changed */
+                    if (needsTaxCredit != Event.needsTaxCredit(pLine.getTransType(),
+                                                               pLine.isCredit() ? pLine.getPartner() : pLine
+                                                                       .getAccount())) {
+                        /* Determine new Tax Credit */
+                        if (needsTaxCredit) {
+                            pLine.setTaxCredit(null);
+                        } else {
+                            pLine.setTaxCredit(pLine.calculateTaxCredit());
+                        }
                     }
                     break;
                 case COLUMN_CREDIT:
-                    bShow = myLine.isCredit();
-                    if (bShow) {
-                        o = ((theStateType == StatementType.Units) ? myLine.getUnits() : myLine.getAmount());
-                    }
-                    break;
                 case COLUMN_DEBIT:
-                    bShow = !myLine.isCredit();
-                    if (bShow) {
-                        o = ((theStateType == StatementType.Units) ? myLine.getUnits() : myLine.getAmount());
+                    if (theStateType == StatementType.Units) {
+                        pLine.setUnits((Units) pValue);
+                    } else {
+                        pLine.setAmount((Money) pValue);
+                        if (needsTaxCredit) {
+                            pLine.setTaxCredit(pLine.calculateTaxCredit());
+                        }
                     }
                     break;
-                case COLUMN_DESC:
-                    o = myLine.getDesc();
-                    if ((o != null) && (((String) o).length() == 0)) {
-                        o = null;
-                    }
+                case COLUMN_PARTNER:
+                    pLine.setPartner((Account) pValue);
                     break;
                 case COLUMN_DILUTION:
-                    o = myLine.getDilution();
+                    pLine.setDilution((Dilution) pValue);
                     break;
                 case COLUMN_TAXCREDIT:
-                    o = myLine.getTaxCredit();
+                    pLine.setTaxCredit((Money) pValue);
                     break;
                 case COLUMN_YEARS:
-                    o = myLine.getYears();
+                    pLine.setYears((Integer) pValue);
                     break;
                 default:
-                    o = null;
                     break;
-            }
-
-            /* If we have a null value for an error field, set error description */
-            if ((o == null) && (bShow) && (myLine.hasErrors(getFieldForCell(row, col)))) {
-                o = RendererFieldValue.Error;
-            }
-
-            /* Return to caller */
-            return o;
-        }
-
-        /**
-         * Set the value at (row, col).
-         * @param obj the object value to set
-         * @param row the row
-         * @param col the column
-         */
-        @Override
-        public void setValueAt(final Object obj,
-                               final int row,
-                               final int col) {
-            /* Access the line */
-            StatementLine myLine = theLines.get(row - 1);
-
-            /* Push history */
-            myLine.pushHistory();
-
-            /* Determine whether the line needs a tax credit */
-            boolean needsTaxCredit = Event.needsTaxCredit(myLine.getTransType(),
-                                                          myLine.isCredit() ? myLine.getPartner() : myLine
-                                                                  .getAccount());
-
-            /* Protect against exceptions */
-            try {
-                /* Store the appropriate value */
-                switch (col) {
-                    case COLUMN_DATE:
-                        myLine.setDate((DateDay) obj);
-                        break;
-                    case COLUMN_DESC:
-                        myLine.setDescription((String) obj);
-                        break;
-                    case COLUMN_TRANTYP:
-                        myLine.setTransType((TransactionType) obj);
-                        /* If the need for a tax credit has changed */
-                        if (needsTaxCredit != Event.needsTaxCredit(myLine.getTransType(),
-                                                                   myLine.isCredit()
-                                                                                    ? myLine.getPartner()
-                                                                                    : myLine.getAccount())) {
-                            /* Determine new Tax Credit */
-                            if (needsTaxCredit) {
-                                myLine.setTaxCredit(null);
-                            } else {
-                                myLine.setTaxCredit(myLine.calculateTaxCredit());
-                            }
-                        }
-                        break;
-                    case COLUMN_CREDIT:
-                    case COLUMN_DEBIT:
-                        if (theStateType == StatementType.Units) {
-                            myLine.setUnits((Units) obj);
-                        } else {
-                            myLine.setAmount((Money) obj);
-                            if (needsTaxCredit) {
-                                myLine.setTaxCredit(myLine.calculateTaxCredit());
-                            }
-                        }
-                        break;
-                    case COLUMN_PARTNER:
-                        myLine.setPartner((Account) obj);
-                        break;
-                    case COLUMN_DILUTION:
-                        myLine.setDilution((Dilution) obj);
-                        break;
-                    case COLUMN_TAXCREDIT:
-                        myLine.setTaxCredit((Money) obj);
-                        break;
-                    case COLUMN_YEARS:
-                        myLine.setYears((Integer) obj);
-                        break;
-                    default:
-                        break;
-                }
-
-                /* Handle Exceptions */
-            } catch (JDataException e) {
-                /* Reset values */
-                myLine.popHistory();
-                myLine.pushHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to update field at (" + row + "," + col + ")", e);
-
-                /* Show the error */
-                theError.setError(myError);
-            }
-
-            /* Check for changes */
-            if (myLine.checkForHistory()) {
-                /* Increment data version */
-                theUpdateSet.incrementVersion();
-
-                /* Update components to reflect changes */
-                fireTableDataChanged();
-                notifyChanges();
             }
         }
     }
@@ -1062,7 +956,7 @@ public class AccountStatement extends DataTable<StatementLine> {
     /**
      * Statement mouse listener.
      */
-    private final class StatementMouse extends DataMouse<StatementLine> {
+    private final class StatementMouse extends JDataTableMouse<StatementLine> {
         /**
          * Constructor.
          */
@@ -1284,7 +1178,7 @@ public class AccountStatement extends DataTable<StatementLine> {
             /* If it is valid */
             if ((!isHeader()) && (myRow >= 0)) {
                 /* Access the line and partner */
-                myLine = theTable.extractItemAt(myRow);
+                myLine = theModel.getItemAtIndex(myRow);
                 myAccount = myLine.getPartner();
 
                 /* If we have a different account then we can navigate */
@@ -1372,28 +1266,6 @@ public class AccountStatement extends DataTable<StatementLine> {
 
             /* Increment version */
             theUpdateSet.incrementVersion();
-        }
-
-        @Override
-        protected void setNullValue(final StatementLine pItem,
-                                    final int col) {
-            /* Switch on the column */
-            switch (col) {
-                case COLUMN_TAXCREDIT:
-                    pItem.setNullValue(Event.FIELD_TAXCREDIT);
-                    break;
-                case COLUMN_CREDIT:
-                    pItem.setNullValue(Event.FIELD_UNITS);
-                    break;
-                case COLUMN_DILUTION:
-                    pItem.setNullValue(Event.FIELD_DILUTION);
-                    break;
-                case COLUMN_YEARS:
-                    pItem.setNullValue(Event.FIELD_YEARS);
-                    break;
-                default:
-                    break;
-            }
         }
 
         /**
@@ -1573,7 +1445,7 @@ public class AccountStatement extends DataTable<StatementLine> {
     /**
      * Column Model class.
      */
-    private final class StatementColumnModel extends DataColumnModel {
+    private final class StatementColumnModel extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -1637,32 +1509,32 @@ public class AccountStatement extends DataTable<StatementLine> {
         /**
          * Credit Column.
          */
-        private final DataColumn theCreditCol;
+        private final JDataTableColumn theCreditCol;
 
         /**
          * Debit Column.
          */
-        private final DataColumn theDebitCol;
+        private final JDataTableColumn theDebitCol;
 
         /**
          * Balance Column.
          */
-        private final DataColumn theBalanceCol;
+        private final JDataTableColumn theBalanceCol;
 
         /**
          * Dilution Column.
          */
-        private final DataColumn theDiluteCol;
+        private final JDataTableColumn theDiluteCol;
 
         /**
          * Tax Credit column.
          */
-        private final DataColumn theTaxCredCol;
+        private final JDataTableColumn theTaxCredCol;
 
         /**
          * Years Column.
          */
-        private final DataColumn theYearsCol;
+        private final JDataTableColumn theYearsCol;
 
         /**
          * Constructor.
@@ -1685,18 +1557,21 @@ public class AccountStatement extends DataTable<StatementLine> {
             theComboEditor = new ComboBoxEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            addColumn(new DataColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
-            theCreditCol = new DataColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer, theMoneyEditor);
-            theDebitCol = new DataColumn(COLUMN_DEBIT, WIDTH_DEBIT, theDecimalRenderer, theMoneyEditor);
-            theBalanceCol = new DataColumn(COLUMN_BALANCE, WIDTH_BALANCE, theDecimalRenderer, theMoneyEditor);
-            theDiluteCol = new DataColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer,
-                    theDilutionEditor);
-            theTaxCredCol = new DataColumn(COLUMN_TAXCREDIT, WIDTH_TAXCREDIT, theDecimalRenderer,
+            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new JDataTableColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            addColumn(new JDataTableColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
+            theCreditCol = new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer,
                     theMoneyEditor);
-            theYearsCol = new DataColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer, theIntegerEditor);
+            theDebitCol = new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theDecimalRenderer, theMoneyEditor);
+            theBalanceCol = new JDataTableColumn(COLUMN_BALANCE, WIDTH_BALANCE, theDecimalRenderer,
+                    theMoneyEditor);
+            theDiluteCol = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer,
+                    theDilutionEditor);
+            theTaxCredCol = new JDataTableColumn(COLUMN_TAXCREDIT, WIDTH_TAXCREDIT, theDecimalRenderer,
+                    theMoneyEditor);
+            theYearsCol = new JDataTableColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer,
+                    theIntegerEditor);
             addColumn(theCreditCol);
             addColumn(theDebitCol);
             addColumn(theBalanceCol);

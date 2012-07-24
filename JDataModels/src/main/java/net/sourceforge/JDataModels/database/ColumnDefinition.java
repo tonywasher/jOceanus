@@ -32,9 +32,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.swing.SortOrder;
+
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.database.TableDefinition.SortOrder;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDecimal.Dilution;
 import net.sourceforge.JDecimal.Money;

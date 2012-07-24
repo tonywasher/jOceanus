@@ -32,9 +32,9 @@ import java.util.ResourceBundle;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 
+import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.DataItem;
 
 /**
@@ -42,12 +42,13 @@ import net.sourceforge.JDataModels.data.DataItem;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class DataMouse<T extends DataItem & Comparable<? super T>> extends MouseAdapter implements
-        ActionListener {
+public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>> extends MouseAdapter
+        implements ActionListener {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataMouse.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
+            .getBundle(JDataTableMouse.class.getName());
 
     /**
      * Insert menu item.
@@ -72,17 +73,17 @@ public abstract class DataMouse<T extends DataItem & Comparable<? super T>> exte
     /**
      * ShowDeleted menu item.
      */
-    private static final String POPUP_SHOWDEL = NLS_BUNDLE.getString("PopUpShowDeleted");
+    private static final String POPUP_SHOWALL = NLS_BUNDLE.getString("PopUpShowAll");
 
     /**
      * The underlying data table.
      */
-    private final DataTable<T> theTable;
+    private final JDataTable<T> theTable;
 
     /**
-     * Are we showing deleted items?
+     * Are we showing all items?
      */
-    private boolean doShowDeleted = false;
+    private boolean doShowAll = false;
 
     /**
      * The row that the mouse is on.
@@ -127,7 +128,7 @@ public abstract class DataMouse<T extends DataItem & Comparable<? super T>> exte
      * Constructor.
      * @param pTable the table
      */
-    public DataMouse(final DataTable<T> pTable) {
+    public JDataTableMouse(final JDataTable<T> pTable) {
         /* Store parameters */
         theTable = pTable;
 
@@ -167,7 +168,12 @@ public abstract class DataMouse<T extends DataItem & Comparable<? super T>> exte
                 int myRow = theRow;
 
                 /* Adjust column for view differences */
-                theCol = theTable.convertColumnIndexToModel(theCol);
+                if (theCol != -1) {
+                    theCol = theTable.convertColumnIndexToModel(theCol);
+                }
+                if (theRow != -1) {
+                    theRow = theTable.convertRowIndexToModel(theRow);
+                }
 
                 /* If the table has a header */
                 if (theTable.hasHeader()) {
@@ -244,15 +250,14 @@ public abstract class DataMouse<T extends DataItem & Comparable<? super T>> exte
             /* Determine actions for row */
             enableDel |= theTable.isRowDeletable(myData);
             enableDupl |= theTable.isRowDuplicatable(myData);
-            enableShow &= !theTable.disableShowDeleted(myData);
+            enableShow &= !theTable.disableShowAll(myData);
             enableRecov |= theTable.isRowRecoverable(myData);
         }
 
         /* If there is something to add and there are already items in the menu */
-        boolean addSeparator = (pMenu.getComponentCount() > 0);
-        addSeparator |= enableIns || enableDel || enableDupl;
-        addSeparator |= enableShow || enableRecov;
-        if (addSeparator) {
+        boolean haveItems = enableIns || enableDel || enableDupl;
+        haveItems |= enableShow || enableRecov;
+        if ((haveItems) && (pMenu.getComponentCount() > 0)) {
             /* Add a separator */
             pMenu.addSeparator();
         }
@@ -296,9 +301,9 @@ public abstract class DataMouse<T extends DataItem & Comparable<? super T>> exte
         /* If we can change the show deleted indication */
         if (enableShow) {
             /* Add the CheckBox items choice */
-            myCheckBox = new JCheckBoxMenuItem(POPUP_SHOWDEL);
-            myCheckBox.setSelected(doShowDeleted);
-            myCheckBox.setActionCommand(POPUP_SHOWDEL);
+            myCheckBox = new JCheckBoxMenuItem(POPUP_SHOWALL);
+            myCheckBox.setSelected(doShowAll);
+            myCheckBox.setActionCommand(POPUP_SHOWALL);
             myCheckBox.addActionListener(this);
             pMenu.add(myCheckBox);
         }
@@ -331,42 +336,37 @@ public abstract class DataMouse<T extends DataItem & Comparable<? super T>> exte
      */
     protected void setColumnToNull(final int col) {
         /* Access the table model */
-        AbstractTableModel myModel = theTable.getTableModel();
+        JDataTableModel<T> myModel = theTable.getTableModel();
         Class<T> myClass = theTable.getDataClass();
 
-        /* Loop through the selected rows */
-        for (DataItem myRow : theTable.cacheSelectedRows()) {
-            /* Ignore locked/deleted rows */
-            if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
-                continue;
+        try {
+            /* Loop through the selected rows */
+            for (DataItem myRow : theTable.cacheSelectedRows()) {
+                /* Ignore locked/deleted rows */
+                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                    continue;
+                }
+
+                /* Determine row */
+                int row = myRow.indexOf();
+                if (theTable.hasHeader()) {
+                    row++;
+                }
+
+                /* Ignore null rows */
+                if (myModel.getValueAt(row, col) == null) {
+                    continue;
+                }
+
+                /* Access data correctly */
+                T myData = myClass.cast(myRow);
+
+                /* set the null value */
+                myModel.setItemValue(myData, col, null);
             }
-
-            /* Determine row */
-            int row = myRow.indexOf();
-            if (theTable.hasHeader()) {
-                row++;
-            }
-
-            /* Ignore null rows */
-            if (myModel.getValueAt(row, col) == null) {
-                continue;
-            }
-
-            /* Access data correctly */
-            T myData = myClass.cast(myRow);
-
-            /* set the null value */
-            setNullValue(myData, col);
+        } catch (JDataException e) {
+            myModel = null;
         }
-    }
-
-    /**
-     * Set null value.
-     * @param pItem the item to set the null field in
-     * @param col the column to set null
-     */
-    protected void setNullValue(final T pItem,
-                                final int col) {
     }
 
     @Override
@@ -397,13 +397,13 @@ public abstract class DataMouse<T extends DataItem & Comparable<? super T>> exte
             /* Recover selected rows */
             theTable.recoverRows();
 
-            /* if this is a show deleted command */
-        } else if (myCmd.equals(POPUP_SHOWDEL)) {
+            /* if this is a show all command */
+        } else if (myCmd.equals(POPUP_SHOWALL)) {
             /* Note the new criteria */
-            doShowDeleted = ((JCheckBoxMenuItem) mySrc).isSelected();
+            doShowAll = ((JCheckBoxMenuItem) mySrc).isSelected();
 
             /* Notify the table */
-            theTable.setShowDeleted(doShowDeleted);
+            theTable.setShowAll(doShowAll);
         }
 
         /* Notify of any changes */

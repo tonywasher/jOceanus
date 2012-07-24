@@ -33,21 +33,22 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.ui.DataMouse;
-import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
 import net.sourceforge.JDataModels.ui.Editor.ComboBoxEditor;
 import net.sourceforge.JDataModels.ui.Editor.MoneyEditor;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.JDataTable;
+import net.sourceforge.JDataModels.ui.JDataTableColumn;
+import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.JDataModels.ui.JDataTableModel;
+import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
@@ -68,7 +69,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Account Patterns Table.
  * @author Tony Washer
  */
-public class AccountPatterns extends DataTable<Pattern> {
+public class AccountPatterns extends JDataTable<Pattern> {
     /**
      * Serial Id.
      */
@@ -148,8 +149,8 @@ public class AccountPatterns extends DataTable<Pattern> {
     }
 
     @Override
-    public boolean hasHeader() {
-        return false;
+    protected void setError(final JDataException pError) {
+        theError.setError(pError);
     }
 
     /**
@@ -455,7 +456,7 @@ public class AccountPatterns extends DataTable<Pattern> {
     /**
      * Patterns table model.
      */
-    public final class PatternsModel extends DataTableModel {
+    public final class PatternsModel extends JDataTableModel<Pattern> {
         /**
          * Serial Id.
          */
@@ -467,6 +468,12 @@ public class AccountPatterns extends DataTable<Pattern> {
         private PatternsModel() {
             /* call constructor */
             super(theTable);
+        }
+
+        @Override
+        public Pattern getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return thePatterns.get(pRowIndex);
         }
 
         /**
@@ -495,14 +502,9 @@ public class AccountPatterns extends DataTable<Pattern> {
             return (thePatterns == null) ? 0 : thePatterns.size();
         }
 
-        /**
-         * Get the name of the column.
-         * @param col the column
-         * @return the name of the column
-         */
         @Override
-        public String getColumnName(final int col) {
-            switch (col) {
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return TITLE_DATE;
                 case COLUMN_DESC:
@@ -522,14 +524,9 @@ public class AccountPatterns extends DataTable<Pattern> {
             }
         }
 
-        /**
-         * Get the object class of the column.
-         * @param col the column
-         * @return the class of the objects associated with the column
-         */
         @Override
-        public Class<?> getColumnClass(final int col) {
-            switch (col) {
+        public Class<?> getColumnClass(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
                 case COLUMN_TRANTYP:
@@ -547,17 +544,11 @@ public class AccountPatterns extends DataTable<Pattern> {
             }
         }
 
-        /**
-         * Obtain the Field id associated with the column.
-         * @param row the row
-         * @param column the column
-         * @return the field id
-         */
         @Override
-        public JDataField getFieldForCell(final int row,
-                                          final int column) {
+        public JDataField getFieldForCell(final Pattern pPattern,
+                                          final int pColIndex) {
             /* Switch on column */
-            switch (column) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
@@ -577,155 +568,79 @@ public class AccountPatterns extends DataTable<Pattern> {
             }
         }
 
-        /**
-         * Is the cell at (row, col) editable?
-         * @param row the row
-         * @param col the column
-         * @return true/false
-         */
         @Override
-        public boolean isCellEditable(final int row,
-                                      final int col) {
+        public boolean isCellEditable(final Pattern pPattern,
+                                      final int pColIndex) {
             /* If the account is not editable */
             if (theAccount.isLocked()) {
                 return false;
             }
 
-            /* Access the pattern */
-            Pattern myPattern = thePatterns.get(row);
-
             /* Cannot edit if row is deleted or locked */
-            if (myPattern.isDeleted() || myPattern.isLocked()) {
+            if (pPattern.isDeleted() || pPattern.isLocked()) {
                 return false;
             }
 
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_CREDIT:
-                    return myPattern.isCredit();
+                    return pPattern.isCredit();
                 case COLUMN_DEBIT:
-                    return !myPattern.isCredit();
+                    return !pPattern.isCredit();
                 default:
                     return true;
             }
         }
 
-        /**
-         * Get the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @return the object value
-         */
         @Override
-        public Object getValueAt(final int row,
-                                 final int col) {
-            /* Access the pattern */
-            Pattern myPattern = thePatterns.get(row);
-            Object o;
-
+        public Object getItemValue(final Pattern pPattern,
+                                   final int pColIndex) {
             /* Return the appropriate value */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
-                    o = myPattern.getDate();
-                    break;
+                    return pPattern.getDate();
                 case COLUMN_DESC:
-                    o = myPattern.getDesc();
-                    if ((o != null) && (((String) o).length() == 0)) {
-                        o = null;
-                    }
-                    break;
+                    return pPattern.getDesc();
                 case COLUMN_TRANTYP:
-                    o = myPattern.getTransType();
-                    break;
+                    return pPattern.getTransType();
                 case COLUMN_PARTNER:
-                    o = myPattern.getPartner();
-                    break;
+                    return pPattern.getPartner();
                 case COLUMN_CREDIT:
-                    o = (myPattern.isCredit()) ? myPattern.getAmount() : null;
-                    break;
+                    return (pPattern.isCredit()) ? pPattern.getAmount() : null;
                 case COLUMN_DEBIT:
-                    o = (!myPattern.isCredit()) ? myPattern.getAmount() : null;
-                    break;
+                    return (!pPattern.isCredit()) ? pPattern.getAmount() : null;
                 case COLUMN_FREQ:
-                    o = myPattern.getFrequency();
-                    break;
+                    return pPattern.getFrequency();
                 default:
-                    o = null;
-                    break;
+                    return null;
             }
-
-            /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myPattern.hasErrors(getFieldForCell(row, col)))) {
-                o = RendererFieldValue.Error;
-            }
-
-            /* Return to caller */
-            return o;
         }
 
-        /**
-         * Set the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @param obj the object value to set
-         */
         @Override
-        public void setValueAt(final Object obj,
-                               final int row,
-                               final int col) {
-            /* Access the pattern */
-            Pattern myPattern = thePatterns.get(row);
-
-            /* Push history */
-            myPattern.pushHistory();
-
-            /* Process errors caught here */
-            try {
-                /* Store the appropriate value */
-                switch (col) {
-                    case COLUMN_DATE:
-                        myPattern.setDate((DateDay) obj);
-                        break;
-                    case COLUMN_DESC:
-                        myPattern.setDescription((String) obj);
-                        break;
-                    case COLUMN_TRANTYP:
-                        myPattern.setTransType((TransactionType) obj);
-                        break;
-                    case COLUMN_CREDIT:
-                    case COLUMN_DEBIT:
-                        myPattern.setAmount((Money) obj);
-                        break;
-                    case COLUMN_PARTNER:
-                        myPattern.setPartner((Account) obj);
-                        break;
-                    case COLUMN_FREQ:
-                    default:
-                        myPattern.setFrequency((Frequency) obj);
-                        break;
-                }
-
-                /* Handle Exceptions */
-            } catch (JDataException e) {
-                /* Reset values */
-                myPattern.popHistory();
-                myPattern.pushHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to update field at (" + row + "," + col + ")", e);
-
-                /* Show the error */
-                theError.setError(myError);
-            }
-
-            /* Check for changes */
-            if (myPattern.checkForHistory()) {
-                /* Increment data version */
-                theUpdateSet.incrementVersion();
-
-                /* Update components to reflect changes */
-                fireTableDataChanged();
-                notifyChanges();
+        public void setItemValue(final Pattern pPattern,
+                                 final int pColIndex,
+                                 final Object pValue) throws JDataException {
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    pPattern.setDate((DateDay) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pPattern.setDescription((String) pValue);
+                    break;
+                case COLUMN_TRANTYP:
+                    pPattern.setTransType((TransactionType) pValue);
+                    break;
+                case COLUMN_CREDIT:
+                case COLUMN_DEBIT:
+                    pPattern.setAmount((Money) pValue);
+                    break;
+                case COLUMN_PARTNER:
+                    pPattern.setPartner((Account) pValue);
+                    break;
+                case COLUMN_FREQ:
+                default:
+                    pPattern.setFrequency((Frequency) pValue);
+                    break;
             }
         }
     }
@@ -733,7 +648,7 @@ public class AccountPatterns extends DataTable<Pattern> {
     /**
      * Pattern mouse listener.
      */
-    private final class PatternMouse extends DataMouse<Pattern> {
+    private final class PatternMouse extends JDataTableMouse<Pattern> {
         /**
          * Constructor.
          */
@@ -868,7 +783,7 @@ public class AccountPatterns extends DataTable<Pattern> {
     /**
      * Column Model class.
      */
-    private final class PatternColumnModel extends DataColumnModel {
+    private final class PatternColumnModel extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -929,13 +844,13 @@ public class AccountPatterns extends DataTable<Pattern> {
             theDateEditor.setRange(Pattern.RANGE_PATTERN);
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            addColumn(new DataColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer, theMoneyEditor));
-            addColumn(new DataColumn(COLUMN_DEBIT, WIDTH_DEBIT, theDecimalRenderer, theMoneyEditor));
-            addColumn(new DataColumn(COLUMN_FREQ, WIDTH_FREQ, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new JDataTableColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            addColumn(new JDataTableColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer, theMoneyEditor));
+            addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theDecimalRenderer, theMoneyEditor));
+            addColumn(new JDataTableColumn(COLUMN_FREQ, WIDTH_FREQ, theStringRenderer, theComboEditor));
         }
     }
 }

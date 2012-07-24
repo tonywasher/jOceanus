@@ -124,11 +124,11 @@ public final class Renderer {
         }
 
         @Override
-        public void setValue(final Object value) {
-            Object o = value;
+        public void setValue(final Object pValue) {
+            Object o = pValue;
 
             /* Convert null value */
-            if (value == null) {
+            if (o == null) {
                 o = "";
             }
 
@@ -137,20 +137,21 @@ public final class Renderer {
         }
 
         @Override
-        public JComponent getTableCellRendererComponent(final JTable table,
-                                                        final Object value,
+        public JComponent getTableCellRendererComponent(final JTable pTable,
+                                                        final Object pValue,
                                                         final boolean isSelected,
                                                         final boolean hasFocus,
-                                                        final int row,
-                                                        final int column) {
+                                                        final int pRowIndex,
+                                                        final int pColIndex) {
             /* Pass call on */
-            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
 
             /* Declare the Cell position */
-            theData.setPosition(row, column, isSelected);
+            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex),
+                                pTable.convertColumnIndexToModel(pColIndex), isSelected);
 
             /* Determine the render data */
-            renderComponent(table, this, theData, theAlignment);
+            renderComponent(pTable, this, theData, theAlignment);
 
             /* Return this as the render item */
             return this;
@@ -171,17 +172,17 @@ public final class Renderer {
          * @param pManager the renderer manager
          */
         protected IntegerRenderer(final RenderManager pManager) {
-            super(pManager.allocateRenderData(true), SwingConstants.RIGHT);
+            super(pManager.allocateRenderData(true), SwingConstants.CENTER);
         }
 
         @Override
-        public void setValue(final Object value) {
-            Object o = value;
+        public void setValue(final Object pValue) {
+            Object o = pValue;
 
             /* If the value is an integer */
-            if (value instanceof Integer) {
+            if (o instanceof Integer) {
                 /* Convert to a string */
-                Integer i = (Integer) value;
+                Integer i = (Integer) o;
                 o = i.toString();
             }
 
@@ -213,20 +214,21 @@ public final class Renderer {
         }
 
         @Override
-        public JComponent getTableCellRendererComponent(final JTable table,
-                                                        final Object value,
+        public JComponent getTableCellRendererComponent(final JTable pTable,
+                                                        final Object pValue,
                                                         final boolean isSelected,
                                                         final boolean hasFocus,
-                                                        final int row,
-                                                        final int column) {
+                                                        final int pRowIndex,
+                                                        final int pColIndex) {
             /* Pass call on */
-            super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+            super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
 
-            /* Declare the Cell position */
-            theData.setPosition(row, column, isSelected);
+            /* Declare the Cell position in terms of the model */
+            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex),
+                                pTable.convertColumnIndexToModel(pColIndex), isSelected);
 
             /* Determine the render data */
-            renderComponent(table, this, theData, SwingConstants.LEFT);
+            renderComponent(pTable, this, theData, SwingConstants.LEFT);
 
             /* Return this as the render item */
             return this;
@@ -251,12 +253,12 @@ public final class Renderer {
         }
 
         @Override
-        public void setValue(final Object value) {
-            Object o = value;
+        public void setValue(final Object pValue) {
+            Object o = pValue;
 
             /* If the value is a Decimal */
-            if (value instanceof Decimal) {
-                Decimal myDec = (Decimal) value;
+            if (o instanceof Decimal) {
+                Decimal myDec = (Decimal) o;
                 o = myDec.format(true);
             }
 
@@ -283,13 +285,13 @@ public final class Renderer {
         }
 
         @Override
-        public void setValue(final Object value) {
-            Object o = value;
+        public void setValue(final Object pValue) {
+            Object o = pValue;
 
             /* If the value is an integer */
-            if (value instanceof Integer) {
+            if (o instanceof Integer) {
                 /* Convert to a string */
-                Integer i = (Integer) value;
+                Integer i = (Integer) o;
                 if (i == 0) {
                     o = "";
                 } else {

@@ -241,40 +241,6 @@ public class SpotSelect extends JPanelWithEvents {
         add(theShowClosed);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
-        /* Create the layout for the panel */
-        // GroupLayout panelLayout = new GroupLayout(this);
-        // setLayout(panelLayout);
-
-        /* Set the layout */
-        // panelLayout.setHorizontalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(panelLayout
-        // .createSequentialGroup()
-        // .addContainerGap()
-        // .addComponent(myDate, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-        // GroupLayout.PREFERRED_SIZE)
-        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-        // .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
-        // GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        // .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-        // .addComponent(theNext)
-        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-        // .addComponent(thePrev)
-        // .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-        // GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        // .addComponent(myAct)
-        // .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-        // .addComponent(theTypesBox)
-        // .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-        // .addComponent(theShowClosed)));
-        // panelLayout.setVerticalGroup(panelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-        // .addGroup(panelLayout
-        // .createParallelGroup(GroupLayout.Alignment.BASELINE)
-        // .addComponent(myDate)
-        // .addComponent(theDateButton, GroupLayout.PREFERRED_SIZE,
-        // GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-        // .addComponent(theNext).addComponent(thePrev).addComponent(myAct)
-        // .addComponent(theTypesBox).addComponent(theShowClosed)));
-
         /* Initialise the data from the view */
         refreshData();
 
@@ -464,6 +430,7 @@ public class SpotSelect extends JPanelWithEvents {
             if (theShowClosed.equals(o)) {
                 /* Note the new criteria and re-build lists */
                 doShowClosed = theShowClosed.isSelected();
+                fireStateChanged();
 
                 /* If this event relates to the Account Type box */
             } else if ((theTypesBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
@@ -625,7 +592,6 @@ public class SpotSelect extends JPanelWithEvents {
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
             theTypesBox.setSelectedItem(theType);
-
         }
     }
 }

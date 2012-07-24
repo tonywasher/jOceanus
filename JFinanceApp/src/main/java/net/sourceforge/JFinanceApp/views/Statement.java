@@ -249,15 +249,6 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Obtain the line at the index.
-     * @param uIndex the index
-     * @return the line
-     */
-    public StatementLine extractItemAt(final long uIndex) {
-        return (StatementLine) theLines.get((int) uIndex);
-    }
-
-    /**
      * Constructor.
      * @param pView the view
      * @param pAccount the account
@@ -641,6 +632,24 @@ public class Statement implements JDataContents {
             theStatement = pList.getStatement();
             setValueIsCredit(!Difference.isEqual(getDebit(), pList.getAccount()));
             setBase(pEvent);
+        }
+
+        /**
+         * Constructor for header.
+         * @param pStatement the statement
+         * @throws JDataException on error
+         */
+        public StatementLine(final Statement pStatement) throws JDataException {
+            /* Make this an element */
+            super(pStatement.getLines());
+            theStatement = pStatement;
+            setHeader(true);
+            setDate(theStatement.getDateRange().getStart());
+            setDescription("Opening Balance");
+            setValueIsCredit(false);
+            setDebit(theStatement.getAccount());
+            theBalance = theStatement.getStartBalance();
+            theBalUnits = theStatement.getStartUnits();
         }
 
         /**

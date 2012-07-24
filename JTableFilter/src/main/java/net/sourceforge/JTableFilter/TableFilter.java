@@ -54,12 +54,6 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
          * @return true/false
          */
         boolean includeRow(final T pRow);
-
-        /**
-         * Register filter.
-         * @param pFilter the filter
-         */
-        void registerFilter(final TableFilter<T> pFilter);
     }
 
     /**
@@ -180,7 +174,6 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
                        final boolean sortEntries) {
         theModel = pModel;
         doSort = sortEntries;
-        pModel.registerFilter(this);
         allRowsChanged();
         theSortList = new ArrayList<SortKey>();
     }
@@ -546,6 +539,7 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
         /* Sort the array */
         viewChanged = sortViewToModel(newViewToModel) || viewChanged;
 
+        /* If we have changed */
         if (viewChanged) {
             /* Save the old mapping and swap in the new */
             theIndexViewToModel = getReferenceArray(theViewToModel);
@@ -556,8 +550,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     /**
      * Update sort mapping if required.
      * <p>
-     * This should really be done within the rowsUpdated() etc. methods, but unfortunately fireXXX methods are
-     * ignored from within these methods (undocumented), and hence additional calls must be made to honour the
+     * This should really be done within the rowsUpdated() method, but unfortunately fireXXX methods are
+     * ignored from within these method (undocumented), and hence additional calls must be made to honour the
      * interface.
      * <p>
      * Note also that the parameter to the fireMethod is ViewToModel as per the documented name of the

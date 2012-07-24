@@ -977,6 +977,11 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             return -1;
         }
 
+        /* If header settings differ */
+        if (isHeader() != pThat.isHeader()) {
+            return isHeader() ? -1 : 1;
+        }
+
         /* If the dates differ */
         int iDiff = Difference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
@@ -1270,6 +1275,12 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         Money myTaxCred = getTaxCredit();
         Integer myYears = getYears();
         Dilution myDilution = getDilution();
+
+        /* Header is always valid */
+        if (isHeader()) {
+            setValidEdit();
+            return;
+        }
 
         /* Determine date range to check for */
         DateDayRange myRange = (this instanceof Pattern) ? Pattern.RANGE_PATTERN : getDataSet()

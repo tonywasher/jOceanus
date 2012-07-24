@@ -32,6 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SortOrder;
+
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -1241,20 +1243,5 @@ public class TableDefinition {
         myBuilder.append("select count(*) from ");
         myBuilder.append(theTableName);
         return myBuilder.toString();
-    }
-
-    /**
-     * Sort order indication.
-     */
-    public enum SortOrder {
-        /**
-         * Ascending sort order.
-         */
-        ASCENDING,
-
-        /**
-         * Descending sort order.
-         */
-        DESCENDING;
     }
 }

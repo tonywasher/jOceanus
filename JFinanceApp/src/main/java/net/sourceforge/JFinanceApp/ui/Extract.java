@@ -43,8 +43,6 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.ui.DataMouse;
-import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
 import net.sourceforge.JDataModels.ui.Editor.ComboBoxEditor;
 import net.sourceforge.JDataModels.ui.Editor.DilutionEditor;
@@ -53,11 +51,15 @@ import net.sourceforge.JDataModels.ui.Editor.MoneyEditor;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.Editor.UnitsEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.JDataTable;
+import net.sourceforge.JDataModels.ui.JDataTableColumn;
+import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.JDataModels.ui.JDataTableModel;
+import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
@@ -82,7 +84,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Event Extract Table.
  * @author Tony Washer
  */
-public class Extract extends DataTable<Event> {
+public class Extract extends JDataTable<Event> {
     /**
      * Serial Id.
      */
@@ -262,8 +264,8 @@ public class Extract extends DataTable<Event> {
     }
 
     @Override
-    public boolean hasHeader() {
-        return false;
+    protected void setError(final JDataException pError) {
+        theError.setError(pError);
     }
 
     /**
@@ -536,7 +538,7 @@ public class Extract extends DataTable<Event> {
             JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to select Range", e);
 
             /* Show the error */
-            theError.setError(myError);
+            setError(myError);
 
             /* Restore the original selection */
             theSelect.restoreSavePoint();
@@ -610,7 +612,7 @@ public class Extract extends DataTable<Event> {
                             "Failed to change selection", e);
 
                     /* Show the error */
-                    theError.setError(myError);
+                    setError(myError);
 
                     /* Restore SavePoint */
                     theSelect.restoreSavePoint();
@@ -637,7 +639,7 @@ public class Extract extends DataTable<Event> {
     /**
      * Extract table model.
      */
-    public final class ExtractModel extends DataTableModel {
+    public final class ExtractModel extends JDataTableModel<Event> {
         /**
          * Serial Id.
          */
@@ -669,14 +671,9 @@ public class Extract extends DataTable<Event> {
             return (theEvents == null) ? 0 : theEvents.size();
         }
 
-        /**
-         * Get the name of the column.
-         * @param col the column
-         * @return the name of the column
-         */
         @Override
-        public String getColumnName(final int col) {
-            switch (col) {
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return TITLE_DATE;
                 case COLUMN_DESC:
@@ -702,14 +699,9 @@ public class Extract extends DataTable<Event> {
             }
         }
 
-        /**
-         * Get the object class of the column.
-         * @param col the column
-         * @return the class of the objects associated with the column
-         */
         @Override
-        public Class<?> getColumnClass(final int col) {
-            switch (col) {
+        public Class<?> getColumnClass(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
                 case COLUMN_TRANTYP:
@@ -723,17 +715,17 @@ public class Extract extends DataTable<Event> {
             }
         }
 
-        /**
-         * Obtain the Field id associated with the column.
-         * @param row the row
-         * @param column the column
-         * @return the fieldId
-         */
         @Override
-        public JDataField getFieldForCell(final int row,
-                                          final int column) {
+        public Event getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return theEvents.get(pRowIndex);
+        }
+
+        @Override
+        public JDataField getFieldForCell(final Event pEvent,
+                                          final int pColIndex) {
             /* Switch on column */
-            switch (column) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
@@ -759,208 +751,127 @@ public class Extract extends DataTable<Event> {
             }
         }
 
-        /**
-         * Is the cell at (row, col) editable?
-         * @param row the row
-         * @param col the column
-         * @return true/false
-         */
         @Override
-        public boolean isCellEditable(final int row,
-                                      final int col) {
-            /* Access the event */
-            Event myEvent = theEvents.get(row);
-
+        public boolean isCellEditable(final Event pEvent,
+                                      final int pColIndex) {
             /* Cannot edit if row is deleted or locked */
-            if (myEvent.isDeleted() || myEvent.isLocked()) {
+            if (pEvent.isDeleted() || pEvent.isLocked()) {
                 return false;
             }
 
             /* switch on column */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return true;
                 case COLUMN_TRANTYP:
-                    return (myEvent.getDate() != null);
+                    return (pEvent.getDate() != null);
                 case COLUMN_DESC:
-                    return ((myEvent.getDate() != null) && (myEvent.getTransType() != null));
+                    return ((pEvent.getDate() != null) && (pEvent.getTransType() != null));
                 default:
-                    if ((myEvent.getDate() == null) || (myEvent.getDesc() == null)
-                            || (myEvent.getTransType() == null)) {
+                    if ((pEvent.getDate() == null) || (pEvent.getDesc() == null)
+                            || (pEvent.getTransType() == null)) {
                         return false;
                     }
-                    switch (col) {
+                    switch (pColIndex) {
                         case COLUMN_UNITS:
-                            return ((myEvent.getDebit() != null) && (myEvent.getCredit() != null) && (myEvent
-                                    .getCredit().isPriced() != myEvent.getDebit().isPriced()));
+                            return ((pEvent.getDebit() != null) && (pEvent.getCredit() != null) && (pEvent
+                                    .getCredit().isPriced() != pEvent.getDebit().isPriced()));
                         case COLUMN_YEARS:
-                            return ((myEvent.getTransType() != null) && (myEvent.getTransType()
-                                    .isTaxableGain()));
+                            return ((pEvent.getTransType() != null) && (pEvent.getTransType().isTaxableGain()));
                         case COLUMN_TAXCRED:
-                            return Event.needsTaxCredit(myEvent.getTransType(), myEvent.getDebit());
+                            return Event.needsTaxCredit(pEvent.getTransType(), pEvent.getDebit());
                         case COLUMN_DILUTE:
-                            return Event.needsDilution(myEvent.getTransType());
+                            return Event.needsDilution(pEvent.getTransType());
                         default:
                             return true;
                     }
             }
         }
 
-        /**
-         * Get the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @return the object value
-         */
         @Override
-        public Object getValueAt(final int row,
-                                 final int col) {
-            /* Access the event */
-            Event myEvent = theEvents.get(row);
-            Object o;
-
+        public Object getItemValue(final Event pEvent,
+                                   final int pColIndex) {
             /* Return the appropriate value */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
-                    o = myEvent.getDate();
-                    break;
+                    return pEvent.getDate();
                 case COLUMN_TRANTYP:
-                    o = myEvent.getTransType();
-                    break;
+                    return pEvent.getTransType();
                 case COLUMN_CREDIT:
-                    o = myEvent.getCredit();
-                    break;
+                    return pEvent.getCredit();
                 case COLUMN_DEBIT:
-                    o = myEvent.getDebit();
-                    break;
+                    return pEvent.getDebit();
                 case COLUMN_AMOUNT:
-                    o = myEvent.getAmount();
-                    break;
+                    return pEvent.getAmount();
                 case COLUMN_DILUTE:
-                    o = myEvent.getDilution();
-                    break;
+                    return pEvent.getDilution();
                 case COLUMN_TAXCRED:
-                    o = myEvent.getTaxCredit();
-                    break;
+                    return pEvent.getTaxCredit();
                 case COLUMN_UNITS:
-                    o = myEvent.getUnits();
-                    break;
+                    return pEvent.getUnits();
                 case COLUMN_YEARS:
-                    o = myEvent.getYears();
-                    break;
+                    return pEvent.getYears();
                 case COLUMN_DESC:
-                    o = myEvent.getDesc();
-                    if ((o != null) && (((String) o).length() == 0)) {
-                        o = null;
-                    }
-                    break;
+                    return pEvent.getDesc();
                 default:
-                    o = null;
-                    break;
+                    return null;
             }
-
-            /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myEvent.hasErrors(getFieldForCell(row, col)))) {
-                o = RendererFieldValue.Error;
-            }
-
-            /* Return to caller */
-            return o;
         }
 
-        /**
-         * Set the value at (row, col).
-         * @param obj the object value to set
-         * @param row the row
-         * @param col the column
-         */
         @Override
-        public void setValueAt(final Object obj,
-                               final int row,
-                               final int col) {
-            /* Access the line */
-            Event myEvent = theEvents.get(row);
-
-            /* Push history */
-            myEvent.pushHistory();
-
+        public void setItemValue(final Event pEvent,
+                                 final int pColIndex,
+                                 final Object pValue) throws JDataException {
             /* Determine whether the line needs a tax credit */
-            boolean needsTaxCredit = Event.needsTaxCredit(myEvent.getTransType(), myEvent.getDebit());
+            boolean needsTaxCredit = Event.needsTaxCredit(pEvent.getTransType(), pEvent.getDebit());
 
-            /* Protect against Exceptions */
-            try {
-                /* Store the appropriate value */
-                switch (col) {
-                    case COLUMN_DATE:
-                        myEvent.setDate((DateDay) obj);
-                        break;
-                    case COLUMN_DESC:
-                        myEvent.setDescription((String) obj);
-                        break;
-                    case COLUMN_TRANTYP:
-                        myEvent.setTransType((TransactionType) obj);
-                        /* If the need for a tax credit has changed */
-                        if (needsTaxCredit != Event
-                                .needsTaxCredit(myEvent.getTransType(), myEvent.getDebit())) {
-                            /* Determine new Tax Credit */
-                            if (needsTaxCredit) {
-                                myEvent.setTaxCredit(null);
-                            } else {
-                                myEvent.setTaxCredit(myEvent.calculateTaxCredit());
-                            }
-                        }
-                        break;
-                    case COLUMN_AMOUNT:
-                        myEvent.setAmount((Money) obj);
-                        /* Determine new Tax Credit if required */
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    pEvent.setDate((DateDay) pValue);
+                    break;
+                case COLUMN_DESC:
+                    pEvent.setDescription((String) pValue);
+                    break;
+                case COLUMN_TRANTYP:
+                    pEvent.setTransType((TransactionType) pValue);
+                    /* If the need for a tax credit has changed */
+                    if (needsTaxCredit != Event.needsTaxCredit(pEvent.getTransType(), pEvent.getDebit())) {
+                        /* Determine new Tax Credit */
                         if (needsTaxCredit) {
-                            myEvent.setTaxCredit(myEvent.calculateTaxCredit());
+                            pEvent.setTaxCredit(null);
+                        } else {
+                            pEvent.setTaxCredit(pEvent.calculateTaxCredit());
                         }
-                        break;
-                    case COLUMN_DILUTE:
-                        myEvent.setDilution((Dilution) obj);
-                        break;
-                    case COLUMN_TAXCRED:
-                        myEvent.setTaxCredit((Money) obj);
-                        break;
-                    case COLUMN_YEARS:
-                        myEvent.setYears((Integer) obj);
-                        break;
-                    case COLUMN_UNITS:
-                        myEvent.setUnits((Units) obj);
-                        break;
-                    case COLUMN_CREDIT:
-                        myEvent.setCredit((Account) obj);
-                        break;
-                    case COLUMN_DEBIT:
-                        myEvent.setDebit((Account) obj);
-                        break;
-                    default:
-                        break;
-                }
-
-                /* Handle Exceptions */
-            } catch (JDataException e) {
-                /* Reset values */
-                myEvent.popHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to update field at (" + row + "," + col + ")", e);
-
-                /* Show the error */
-                theError.setError(myError);
-                return;
-            }
-
-            /* Check for changes */
-            if (myEvent.checkForHistory()) {
-                /* Increment data version */
-                theUpdateSet.incrementVersion();
-
-                /* Update components to reflect changes */
-                fireTableDataChanged();
-                notifyChanges();
+                    }
+                    break;
+                case COLUMN_AMOUNT:
+                    pEvent.setAmount((Money) pValue);
+                    /* Determine new Tax Credit if required */
+                    if (needsTaxCredit) {
+                        pEvent.setTaxCredit(pEvent.calculateTaxCredit());
+                    }
+                    break;
+                case COLUMN_DILUTE:
+                    pEvent.setDilution((Dilution) pValue);
+                    break;
+                case COLUMN_TAXCRED:
+                    pEvent.setTaxCredit((Money) pValue);
+                    break;
+                case COLUMN_YEARS:
+                    pEvent.setYears((Integer) pValue);
+                    break;
+                case COLUMN_UNITS:
+                    pEvent.setUnits((Units) pValue);
+                    break;
+                case COLUMN_CREDIT:
+                    pEvent.setCredit((Account) pValue);
+                    break;
+                case COLUMN_DEBIT:
+                    pEvent.setDebit((Account) pValue);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -968,7 +879,7 @@ public class Extract extends DataTable<Event> {
     /**
      * Extract mouse listener.
      */
-    private final class ExtractMouse extends DataMouse<Event> {
+    private final class ExtractMouse extends JDataTableMouse<Event> {
         /**
          * Constructor.
          */
@@ -1137,7 +1048,7 @@ public class Extract extends DataTable<Event> {
             }
 
             /* Access the event */
-            Event myEvent = theTable.extractItemAt(myRow);
+            Event myEvent = theModel.getItemAtIndex(myRow);
 
             /* If the column is Credit */
             Account myAccount;
@@ -1175,28 +1086,6 @@ public class Extract extends DataTable<Event> {
                 myItem.setActionCommand(POPUP_MAINT + ":" + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
-            }
-        }
-
-        @Override
-        protected void setNullValue(final Event pItem,
-                                    final int col) {
-            /* Switch on the column */
-            switch (col) {
-                case COLUMN_TAXCRED:
-                    pItem.setNullValue(Event.FIELD_TAXCREDIT);
-                    break;
-                case COLUMN_UNITS:
-                    pItem.setNullValue(Event.FIELD_UNITS);
-                    break;
-                case COLUMN_DILUTE:
-                    pItem.setNullValue(Event.FIELD_DILUTION);
-                    break;
-                case COLUMN_YEARS:
-                    pItem.setNullValue(Event.FIELD_YEARS);
-                    break;
-                default:
-                    break;
             }
         }
 
@@ -1328,7 +1217,7 @@ public class Extract extends DataTable<Event> {
     /**
      * Column Model class.
      */
-    private final class ExtractColumnModel extends DataColumnModel {
+    private final class ExtractColumnModel extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -1410,16 +1299,16 @@ public class Extract extends DataTable<Event> {
             theComboEditor = new ComboBoxEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            addColumn(new DataColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
-            addColumn(new DataColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, theMoneyEditor));
-            addColumn(new DataColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, theComboEditor));
-            addColumn(new DataColumn(COLUMN_UNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
-            addColumn(new DataColumn(COLUMN_DILUTE, WIDTH_DILUTE, theDecimalRenderer, theDiluteEditor));
-            addColumn(new DataColumn(COLUMN_TAXCRED, WIDTH_TAXCRED, theDecimalRenderer, theMoneyEditor));
-            addColumn(new DataColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer, theIntegerEditor));
+            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new JDataTableColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
+            addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, theMoneyEditor));
+            addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_UNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
+            addColumn(new JDataTableColumn(COLUMN_DILUTE, WIDTH_DILUTE, theDecimalRenderer, theDiluteEditor));
+            addColumn(new JDataTableColumn(COLUMN_TAXCRED, WIDTH_TAXCRED, theDecimalRenderer, theMoneyEditor));
+            addColumn(new JDataTableColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer, theIntegerEditor));
         }
 
         /**

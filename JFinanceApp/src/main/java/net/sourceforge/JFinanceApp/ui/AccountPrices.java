@@ -28,18 +28,19 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.ui.DataMouse;
-import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
 import net.sourceforge.JDataModels.ui.Editor.PriceEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.JDataTable;
+import net.sourceforge.JDataModels.ui.JDataTableColumn;
+import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.JDataModels.ui.JDataTableModel;
+import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
@@ -55,7 +56,7 @@ import net.sourceforge.JFinanceApp.views.ViewPrice.ViewPriceList;
  * Account Prices Table.
  * @author Tony Washer
  */
-public class AccountPrices extends DataTable<ViewPrice> {
+public class AccountPrices extends JDataTable<ViewPrice> {
     /**
      * Serial Id.
      */
@@ -125,16 +126,8 @@ public class AccountPrices extends DataTable<ViewPrice> {
     }
 
     @Override
-    public boolean hasHeader() {
-        return false;
-    }
-
-    /**
-     * Do we need members?
-     * @return true/false
-     */
-    public boolean needsMembers() {
-        return true;
+    protected void setError(final JDataException pError) {
+        theError.setError(pError);
     }
 
     /**
@@ -324,7 +317,7 @@ public class AccountPrices extends DataTable<ViewPrice> {
     /**
      * Prices table model.
      */
-    public final class PricesModel extends DataTableModel {
+    public final class PricesModel extends JDataTableModel<ViewPrice> {
         /**
          * Serial Id.
          */
@@ -336,6 +329,12 @@ public class AccountPrices extends DataTable<ViewPrice> {
         private PricesModel() {
             /* call constructor */
             super(theTable);
+        }
+
+        @Override
+        public ViewPrice getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return thePrices.get(pRowIndex);
         }
 
         /**
@@ -356,14 +355,9 @@ public class AccountPrices extends DataTable<ViewPrice> {
             return (thePrices == null) ? 0 : thePrices.size();
         }
 
-        /**
-         * Get the name of the column.
-         * @param col the column
-         * @return the name of the column
-         */
         @Override
-        public String getColumnName(final int col) {
-            switch (col) {
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return TITLE_DATE;
                 case COLUMN_PRICE:
@@ -377,17 +371,11 @@ public class AccountPrices extends DataTable<ViewPrice> {
             }
         }
 
-        /**
-         * Obtain the Field id associated with the column.
-         * @param row the row
-         * @param column the column
-         * @return the fieldId
-         */
         @Override
-        public JDataField getFieldForCell(final int row,
-                                          final int column) {
+        public JDataField getFieldForCell(final ViewPrice pPrice,
+                                          final int pColIndex) {
             /* Switch on column */
-            switch (column) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return AccountPrice.FIELD_DATE;
                 case COLUMN_PRICE:
@@ -397,21 +385,15 @@ public class AccountPrices extends DataTable<ViewPrice> {
             }
         }
 
-        /**
-         * Is the cell at (row, col) editable?
-         * @param row the row
-         * @param col the column
-         * @return true/false
-         */
         @Override
-        public boolean isCellEditable(final int row,
-                                      final int col) {
+        public boolean isCellEditable(final ViewPrice pPrice,
+                                      final int pColIndex) {
             /* Locked if the account is closed */
             if (theAccount.isClosed()) {
                 return false;
             }
 
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
                     return (theRange != null);
                 case COLUMN_PRICE:
@@ -425,99 +407,38 @@ public class AccountPrices extends DataTable<ViewPrice> {
             }
         }
 
-        /**
-         * Get the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @return the object value
-         */
         @Override
-        public Object getValueAt(final int row,
-                                 final int col) {
-            /* Access the price */
-            ViewPrice myPrice = thePrices.get(row);
-            Object o;
-
+        public Object getItemValue(final ViewPrice pPrice,
+                                   final int pColIndex) {
             /* Return the appropriate value */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_DATE:
-                    o = myPrice.getDate();
-                    break;
+                    return pPrice.getDate();
                 case COLUMN_PRICE:
-                    o = myPrice.getPrice();
-                    break;
+                    return pPrice.getPrice();
                 case COLUMN_DILUTION:
-                    o = myPrice.getDilution();
-                    break;
+                    return pPrice.getDilution();
                 case COLUMN_DILUTEDPRICE:
-                    o = myPrice.getDilutedPrice();
-                    break;
+                    return pPrice.getDilutedPrice();
                 default:
-                    o = null;
-                    break;
+                    return null;
             }
-
-            /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myPrice.hasErrors(getFieldForCell(row, col)))) {
-                o = RendererFieldValue.Error;
-            }
-
-            /* Return to caller */
-            return o;
         }
 
-        /**
-         * Set the value at (row, col).
-         * @param obj the object value to set
-         * @param row the row
-         * @param col the column
-         */
         @Override
-        public void setValueAt(final Object obj,
-                               final int row,
-                               final int col) {
-            /* Access the price */
-            ViewPrice myPrice = thePrices.get(row);
-
-            /* Push history */
-            myPrice.pushHistory();
-
-            /* Protect against Exceptions */
-            try {
-                /* Store the appropriate value */
-                switch (col) {
-                    case COLUMN_DATE:
-                        myPrice.setDate((DateDay) obj);
-                        break;
-                    case COLUMN_PRICE:
-                        myPrice.setPrice((Price) obj);
-                        break;
-                    default:
-                        break;
-                }
-
-                /* Handle Exceptions */
-            } catch (JDataException e) {
-                /* Reset values */
-                myPrice.popHistory();
-                myPrice.pushHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to update field at (" + row + "," + col + ")", e);
-
-                /* Show the error */
-                theError.setError(myError);
-            }
-
-            /* If we have changes */
-            if (myPrice.checkForHistory()) {
-                /* Increment data version */
-                theUpdateSet.incrementVersion();
-
-                /* Update components to reflect changes */
-                fireTableDataChanged();
-                notifyChanges();
+        public void setItemValue(final ViewPrice pPrice,
+                                 final int pColIndex,
+                                 final Object pValue) throws JDataException {
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    pPrice.setDate((DateDay) pValue);
+                    break;
+                case COLUMN_PRICE:
+                    pPrice.setPrice((Price) pValue);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -525,7 +446,7 @@ public class AccountPrices extends DataTable<ViewPrice> {
     /**
      * Prices mouse listener.
      */
-    private static final class PricesMouse extends DataMouse<ViewPrice> {
+    private static final class PricesMouse extends JDataTableMouse<ViewPrice> {
         /**
          * Constructor.
          * @param pTable the table
@@ -539,7 +460,7 @@ public class AccountPrices extends DataTable<ViewPrice> {
     /**
      * Column Model class.
      */
-    private final class PricesColumnModel extends DataColumnModel {
+    private final class PricesColumnModel extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -568,12 +489,12 @@ public class AccountPrices extends DataTable<ViewPrice> {
         /**
          * Dilution column.
          */
-        private final DataColumn theDiluteCol;
+        private final JDataTableColumn theDiluteCol;
 
         /**
          * Diluted Price column.
          */
-        private final DataColumn theDilPriceCol;
+        private final JDataTableColumn theDilPriceCol;
 
         /**
          * Do we have dilutions?
@@ -594,10 +515,11 @@ public class AccountPrices extends DataTable<ViewPrice> {
             thePriceEditor = new PriceEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            addColumn(new DataColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
-            theDiluteCol = new DataColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, null);
-            theDilPriceCol = new DataColumn(COLUMN_DILUTEDPRICE, WIDTH_DILUTEDPRICE, theDecimalRenderer, null);
+            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
+            theDiluteCol = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, null);
+            theDilPriceCol = new JDataTableColumn(COLUMN_DILUTEDPRICE, WIDTH_DILUTEDPRICE,
+                    theDecimalRenderer, null);
             addColumn(theDiluteCol);
             addColumn(theDilPriceCol);
         }

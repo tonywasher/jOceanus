@@ -38,14 +38,17 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.ui.DataMouse;
-import net.sourceforge.JDataModels.ui.DataTable;
+import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.ui.Editor.PriceEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.JDataTable;
+import net.sourceforge.JDataModels.ui.JDataTableColumn;
+import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.JDataModels.ui.JDataTableModel;
+import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
@@ -65,7 +68,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * SpotPrices panel.
  * @author Tony Washer
  */
-public class PricePoint extends DataTable<SpotPrice> {
+public class PricePoint extends JDataTable<SpotPrice> {
     /**
      * Serial Id.
      */
@@ -155,8 +158,8 @@ public class PricePoint extends DataTable<SpotPrice> {
     }
 
     @Override
-    public boolean hasHeader() {
-        return false;
+    protected void setError(final JDataException pError) {
+        theError.setError(pError);
     }
 
     /**
@@ -379,7 +382,8 @@ public class PricePoint extends DataTable<SpotPrice> {
         /* Switch on the Data State */
         switch (pRow.getState()) {
             case CLEAN:
-                if (pRow.getBase().isDeleted()) {
+                DataItem myBase = pRow.getBase();
+                if ((myBase != null) && (myBase.isDeleted())) {
                     return false;
                 }
             case NEW:
@@ -425,21 +429,12 @@ public class PricePoint extends DataTable<SpotPrice> {
     }
 
     /**
-     * Check whether we should hide deleted rows.
-     * @return false
-     */
-    @Override
-    protected boolean hideDeletedRows() {
-        return false;
-    }
-
-    /**
      * Check whether we duplicate a row.
      * @param pRow the row
      * @return true
      */
     @Override
-    protected boolean disableShowDeleted(final SpotPrice pRow) {
+    protected boolean disableShowAll(final SpotPrice pRow) {
         return true;
     }
 
@@ -455,9 +450,7 @@ public class PricePoint extends DataTable<SpotPrice> {
             /* If this is the selection panel */
             if (theSelect.equals(o)) {
                 /* Set the deleted option */
-                if (getList().getShowDeleted() != theSelect.getShowClosed()) {
-                    setShowDeleted(theSelect.getShowClosed());
-                }
+                setShowAll(theSelect.getShowClosed());
 
                 /* Access selection */
                 AccountType myType = theSelect.getAccountType();
@@ -480,7 +473,7 @@ public class PricePoint extends DataTable<SpotPrice> {
                                 "Failed to change selection", e);
 
                         /* Show the error */
-                        theError.setError(myError);
+                        setError(myError);
 
                         /* Restore SavePoint */
                         theSelect.restoreSavePoint();
@@ -522,7 +515,7 @@ public class PricePoint extends DataTable<SpotPrice> {
     /**
      * SpotView table model.
      */
-    public final class SpotViewModel extends DataTableModel {
+    public final class SpotViewModel extends JDataTableModel<SpotPrice> {
         /**
          * Serial Id.
          */
@@ -534,6 +527,18 @@ public class PricePoint extends DataTable<SpotPrice> {
         private SpotViewModel() {
             /* call constructor */
             super(theTable);
+        }
+
+        @Override
+        public SpotPrice getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return thePrices.get(pRowIndex);
+        }
+
+        @Override
+        public boolean includeRow(final SpotPrice pRow) {
+            /* Return visibility of row */
+            return showAll() || !pRow.getAccount().isClosed();
         }
 
         /**
@@ -554,14 +559,9 @@ public class PricePoint extends DataTable<SpotPrice> {
             return (thePrices == null) ? 0 : thePrices.size();
         }
 
-        /**
-         * Get the name of the column.
-         * @param col the column
-         * @return the name of the column
-         */
         @Override
-        public String getColumnName(final int col) {
-            switch (col) {
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_ASSET:
                     return TITLE_ASSET;
                 case COLUMN_PRICE:
@@ -575,14 +575,9 @@ public class PricePoint extends DataTable<SpotPrice> {
             }
         }
 
-        /**
-         * Get the object class of the column.
-         * @param col the column
-         * @return the class of the objects associated with the column
-         */
         @Override
-        public Class<?> getColumnClass(final int col) {
-            switch (col) {
+        public Class<?> getColumnClass(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_ASSET:
                     return String.class;
                 default:
@@ -590,17 +585,11 @@ public class PricePoint extends DataTable<SpotPrice> {
             }
         }
 
-        /**
-         * Obtain the Field id associated with the row.
-         * @param pRow the row
-         * @param pCol the column
-         * @return the field id
-         */
         @Override
-        public JDataField getFieldForCell(final int pRow,
-                                          final int pCol) {
+        public JDataField getFieldForCell(final SpotPrice pSpot,
+                                          final int pColIndex) {
             /* Switch on column */
-            switch (pCol) {
+            switch (pColIndex) {
                 case COLUMN_ASSET:
                     return AccountPrice.FIELD_ACCOUNT;
                 case COLUMN_PRICE:
@@ -614,17 +603,11 @@ public class PricePoint extends DataTable<SpotPrice> {
             }
         }
 
-        /**
-         * Is the cell at (row, col) editable?
-         * @param row the row
-         * @param col the column
-         * @return true/false
-         */
         @Override
-        public boolean isCellEditable(final int row,
-                                      final int col) {
+        public boolean isCellEditable(final SpotPrice pSpot,
+                                      final int pColIndex) {
             /* switch on column */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_ASSET:
                 case COLUMN_PREVPRICE:
                 case COLUMN_PREVDATE:
@@ -635,96 +618,35 @@ public class PricePoint extends DataTable<SpotPrice> {
             }
         }
 
-        /**
-         * Get the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @return the object value
-         */
         @Override
-        public Object getValueAt(final int row,
-                                 final int col) {
-            /* Access the spot price */
-            SpotPrice mySpot = thePrices.get(row);
-            Object o;
-
+        public Object getItemValue(final SpotPrice pSpot,
+                                   final int pColIndex) {
             /* Return the appropriate value */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_ASSET:
-                    o = mySpot.getAccount().getName();
-                    break;
+                    return pSpot.getAccount().getName();
                 case COLUMN_PRICE:
-                    o = mySpot.getPrice();
-                    break;
+                    return pSpot.getPrice();
                 case COLUMN_PREVPRICE:
-                    o = mySpot.getPrevPrice();
-                    break;
+                    return pSpot.getPrevPrice();
                 case COLUMN_PREVDATE:
-                    o = mySpot.getPrevDate();
-                    break;
+                    return pSpot.getPrevDate();
                 default:
-                    o = null;
-                    break;
+                    return null;
             }
-
-            /* If we have a null value */
-            if ((o == null) && (mySpot.hasErrors(getFieldForCell(row, col)))) {
-                o = RendererFieldValue.Error;
-            }
-
-            /* Return to caller */
-            return o;
         }
 
-        /**
-         * Set the value at (row, col).
-         * @param obj the object value to set
-         * @param row the row
-         * @param col the column
-         */
         @Override
-        public void setValueAt(final Object obj,
-                               final int row,
-                               final int col) {
-            /* Access the line */
-            SpotPrice mySpot = thePrices.get(row);
-
-            /* Push history */
-            mySpot.pushHistory();
-
-            /* Protect against Exceptions */
-            try {
-                /* Store the appropriate value */
-                switch (col) {
-                    case COLUMN_PRICE:
-                        mySpot.setPrice((Price) obj);
-                        break;
-                    default:
-                        break;
-                }
-
-                /* Handle Exceptions */
-            } catch (JDataException e) {
-                /* Reset values */
-                mySpot.popHistory();
-                mySpot.pushHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to update field at (" + row + "," + col + ")", e);
-
-                /* Show the error */
-                theError.setError(myError);
-            }
-
-            /* Check for changes */
-            if (mySpot.checkForHistory()) {
-                /* Increment data version */
-                theUpdateSet.incrementVersion();
-
-                /* Update components to reflect changes */
-                fireTableDataChanged();
-                notifyChanges();
+        public void setItemValue(final SpotPrice pSpot,
+                                 final int pColIndex,
+                                 final Object pValue) throws JDataException {
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_PRICE:
+                    pSpot.setPrice((Price) pValue);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -732,7 +654,7 @@ public class PricePoint extends DataTable<SpotPrice> {
     /**
      * SpotView mouse listener.
      */
-    private static final class SpotViewMouse extends DataMouse<SpotPrice> {
+    private static final class SpotViewMouse extends JDataTableMouse<SpotPrice> {
         /**
          * Constructor.
          * @param pTable the table
@@ -746,7 +668,7 @@ public class PricePoint extends DataTable<SpotPrice> {
     /**
      * Column Model class.
      */
-    private final class SpotViewColumnModel extends DataColumnModel {
+    private final class SpotViewColumnModel extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -786,10 +708,10 @@ public class PricePoint extends DataTable<SpotPrice> {
             theStringRenderer = theRenderMgr.allocateStringRenderer();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer, null));
-            addColumn(new DataColumn(COLUMN_PRICE, WIDTH_COLUMN, theDecimalRenderer, thePriceEditor));
-            addColumn(new DataColumn(COLUMN_PREVPRICE, WIDTH_COLUMN, theDecimalRenderer, null));
-            addColumn(new DataColumn(COLUMN_PREVDATE, WIDTH_COLUMN, theDateRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_COLUMN, theDecimalRenderer, thePriceEditor));
+            addColumn(new JDataTableColumn(COLUMN_PREVPRICE, WIDTH_COLUMN, theDecimalRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_PREVDATE, WIDTH_COLUMN, theDateRenderer, null));
         }
     }
 }

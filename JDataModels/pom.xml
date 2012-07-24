@@ -38,6 +38,11 @@
       <version>v1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
+      <groupId>net.sourceforge.JTableFilter</groupId>
+      <artifactId>JTableFilter</artifactId>
+      <version>v1.0.0-SNAPSHOT</version>
+    </dependency>
+    <dependency>
       <groupId>net.sourceforge.JHelpManager</groupId>
       <artifactId>JHelpManager</artifactId>
       <version>v1.0.0-SNAPSHOT</version>

@@ -32,19 +32,20 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.ui.DataMouse;
-import net.sourceforge.JDataModels.ui.DataTable;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
 import net.sourceforge.JDataModels.ui.Editor.RateEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
+import net.sourceforge.JDataModels.ui.JDataTable;
+import net.sourceforge.JDataModels.ui.JDataTableColumn;
+import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.JDataModels.ui.JDataTableModel;
+import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
@@ -60,7 +61,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Account Rates Table.
  * @author Tony Washer
  */
-public class AccountRates extends DataTable<AccountRate> {
+public class AccountRates extends JDataTable<AccountRate> {
     /**
      * Serial Id.
      */
@@ -130,8 +131,8 @@ public class AccountRates extends DataTable<AccountRate> {
     }
 
     @Override
-    public boolean hasHeader() {
-        return false;
+    protected void setError(final JDataException pError) {
+        theError.setError(pError);
     }
 
     /**
@@ -328,7 +329,7 @@ public class AccountRates extends DataTable<AccountRate> {
     /**
      * Rates table model.
      */
-    public final class RatesModel extends DataTableModel {
+    public final class RatesModel extends JDataTableModel<AccountRate> {
         /**
          * Serial Id.
          */
@@ -340,6 +341,12 @@ public class AccountRates extends DataTable<AccountRate> {
         private RatesModel() {
             /* call constructor */
             super(theTable);
+        }
+
+        @Override
+        public AccountRate getItemAtIndex(final int pRowIndex) {
+            /* Extract item from index */
+            return theRates.get(pRowIndex);
         }
 
         /**
@@ -360,14 +367,9 @@ public class AccountRates extends DataTable<AccountRate> {
             return (theRates == null) ? 0 : theRates.size();
         }
 
-        /**
-         * Get the name of the column.
-         * @param col the column
-         * @return the name of the column
-         */
         @Override
-        public String getColumnName(final int col) {
-            switch (col) {
+        public String getColumnName(final int pColIndex) {
+            switch (pColIndex) {
                 case COLUMN_RATE:
                     return TITLE_RATE;
                 case COLUMN_BONUS:
@@ -379,17 +381,11 @@ public class AccountRates extends DataTable<AccountRate> {
             }
         }
 
-        /**
-         * Obtain the Field id associated with the column.
-         * @param row the row
-         * @param column the column
-         * @return the field id
-         */
         @Override
-        public JDataField getFieldForCell(final int row,
-                                          final int column) {
+        public JDataField getFieldForCell(final AccountRate pRate,
+                                          final int pColIndex) {
             /* Switch on column */
-            switch (column) {
+            switch (pColIndex) {
                 case COLUMN_RATE:
                     return AccountRate.FIELD_RATE;
                 case COLUMN_BONUS:
@@ -401,116 +397,46 @@ public class AccountRates extends DataTable<AccountRate> {
             }
         }
 
-        /**
-         * Is the cell editable?
-         * @param row the row
-         * @param col the column
-         * @return true/false
-         */
         @Override
-        public boolean isCellEditable(final int row,
-                                      final int col) {
+        public boolean isCellEditable(final AccountRate pPrice,
+                                      final int pColIndex) {
             /* Locked if the account is closed */
             return !theAccount.isClosed();
         }
 
-        /**
-         * Get the value at (row, col).
-         * @param row the row
-         * @param col the column
-         * @return the object value
-         */
         @Override
-        public Object getValueAt(final int row,
-                                 final int col) {
-            AccountRate myRate;
-            Object o;
-
-            /* Access the rate */
-            myRate = theRates.get(row);
-
+        public Object getItemValue(final AccountRate pRate,
+                                   final int pColIndex) {
             /* Return the appropriate value */
-            switch (col) {
+            switch (pColIndex) {
                 case COLUMN_RATE:
-                    o = myRate.getRate();
-                    break;
+                    return pRate.getRate();
                 case COLUMN_BONUS:
-                    o = myRate.getBonus();
-                    break;
+                    return pRate.getBonus();
                 case COLUMN_DATE:
-                    o = myRate.getEndDate();
-                    break;
+                    return pRate.getEndDate();
                 default:
-                    o = null;
-                    break;
+                    return null;
             }
-
-            /* If we have a null value for an error field, set error description */
-            if ((o == null) && (myRate.hasErrors(getFieldForCell(row, col)))) {
-                o = RendererFieldValue.Error;
-            }
-
-            /* Return to caller */
-            return o;
         }
 
-        /**
-         * Set the value at (row, col).
-         * @param obj the object value to set
-         * @param row the row
-         * @param col the column
-         */
         @Override
-        public void setValueAt(final Object obj,
-                               final int row,
-                               final int col) {
-            AccountRate myRate;
-
-            /* Access the rate */
-            myRate = theRates.get(row);
-
-            /* Push history */
-            myRate.pushHistory();
-
-            /* Protect against Exceptions */
-            try {
-                /* Store the appropriate value */
-                switch (col) {
-                    case COLUMN_RATE:
-                        myRate.setRate((Rate) obj);
-                        break;
-                    case COLUMN_BONUS:
-                        myRate.setBonus((Rate) obj);
-                        break;
-                    case COLUMN_DATE:
-                        myRate.setEndDate((DateDay) obj);
-                        break;
-                    default:
-                        break;
-                }
-
-                /* Handle Exceptions */
-            } catch (JDataException e) {
-                /* Reset values */
-                myRate.popHistory();
-                myRate.pushHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA,
-                        "Failed to update field at (" + row + "," + col + ")", e);
-
-                /* Show the error */
-                theError.setError(myError);
-            }
-
-            /* reset history if no change */
-            if (myRate.checkForHistory()) {
-                /* Increment data version */
-                theUpdateSet.incrementVersion();
-
-                /* Update components to reflect changes */
-                fireTableDataChanged();
-                notifyChanges();
+        public void setItemValue(final AccountRate pRate,
+                                 final int pColIndex,
+                                 final Object pValue) throws JDataException {
+            /* Store the appropriate value */
+            switch (pColIndex) {
+                case COLUMN_RATE:
+                    pRate.setRate((Rate) pValue);
+                    break;
+                case COLUMN_BONUS:
+                    pRate.setBonus((Rate) pValue);
+                    break;
+                case COLUMN_DATE:
+                    pRate.setEndDate((DateDay) pValue);
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -518,7 +444,7 @@ public class AccountRates extends DataTable<AccountRate> {
     /**
      * Rates mouse listener.
      */
-    private final class RatesMouse extends DataMouse<AccountRate> {
+    private final class RatesMouse extends JDataTableMouse<AccountRate> {
         /**
          * Constructor.
          */
@@ -589,22 +515,6 @@ public class AccountRates extends DataTable<AccountRate> {
             }
         }
 
-        @Override
-        protected void setNullValue(final AccountRate pItem,
-                                    final int col) {
-            /* Switch on the column */
-            switch (col) {
-                case COLUMN_DATE:
-                    pItem.setNullValue(AccountRate.FIELD_ENDDATE);
-                    break;
-                case COLUMN_BONUS:
-                    pItem.setNullValue(AccountRate.FIELD_BONUS);
-                    break;
-                default:
-                    break;
-            }
-        }
-
         /**
          * Perform actions for controls/pop-ups on this table.
          * @param evt the event
@@ -642,7 +552,7 @@ public class AccountRates extends DataTable<AccountRate> {
     /**
      * Column Model class.
      */
-    private final class RatesColumnModel extends DataColumnModel {
+    private final class RatesColumnModel extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -682,9 +592,9 @@ public class AccountRates extends DataTable<AccountRate> {
             theRateEditor = new RateEditor();
 
             /* Create the columns */
-            addColumn(new DataColumn(COLUMN_RATE, WIDTH_RATE, theRateRenderer, theRateEditor));
-            addColumn(new DataColumn(COLUMN_BONUS, WIDTH_BONUS, theRateRenderer, theRateEditor));
-            addColumn(new DataColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
+            addColumn(new JDataTableColumn(COLUMN_RATE, WIDTH_RATE, theRateRenderer, theRateEditor));
+            addColumn(new JDataTableColumn(COLUMN_BONUS, WIDTH_BONUS, theRateRenderer, theRateEditor));
+            addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
         }
 
         /**

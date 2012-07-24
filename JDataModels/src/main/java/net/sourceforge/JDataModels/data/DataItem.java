@@ -119,6 +119,11 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ValueSet.FIELD_VERSION);
 
     /**
+     * Header Field Id.
+     */
+    public static final JDataField FIELD_HEADER = FIELD_DEFS.declareLocalField("Header");
+
+    /**
      * History Field Id.
      */
     public static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField("History");
@@ -160,6 +165,9 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
         if (FIELD_VERSION.equals(pField)) {
             return (theValueSet != null) ? theValueSet.getVersion() : JDataFieldValue.SkipField;
         }
+        if (FIELD_HEADER.equals(pField)) {
+            return (isHeader) ? isHeader : JDataFieldValue.SkipField;
+        }
         if (FIELD_HISTORY.equals(pField)) {
             return hasHistory() ? theHistory : JDataFieldValue.SkipField;
         }
@@ -190,6 +198,11 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      * The Edit state of this item {@link EditState}.
      */
     private EditState theEdit = EditState.CLEAN;
+
+    /**
+     * Is the item a header.
+     */
+    private boolean isHeader = false;
 
     /**
      * Is the item in the process of being changed.
@@ -328,14 +341,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
-     * Set null value for a field.
-     * @param pField the field to set
-     */
-    public void setNullValue(final JDataField pField) {
-        getValueSet().setValue(pField, null);
-    }
-
-    /**
      * Set the Edit State.
      * @param pState the Edit Status
      */
@@ -352,6 +357,14 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     }
 
     /**
+     * Determine whether the item is a header item.
+     * @return <code>true/false</code>
+     */
+    public boolean isHeader() {
+        return isHeader;
+    }
+
+    /**
      * Determine whether the item is in the process of being changed.
      * @return <code>true/false</code>
      */
@@ -365,6 +378,14 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      */
     protected boolean isRestoring() {
         return isRestoring;
+    }
+
+    /**
+     * Set the header indication.
+     * @param pHeader true/false
+     */
+    protected void setHeader(final boolean pHeader) {
+        isHeader = pHeader;
     }
 
     /**

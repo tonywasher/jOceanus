@@ -22,10 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.JDataModels.database;
 
+import javax.swing.SortOrder;
+
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JDataModels.database.TableDefinition.SortOrder;
 
 /**
  * Database table class for Static Data Items. Each data type that represents Static Data should extend this

@@ -337,6 +337,10 @@ public class EventAnalysis implements JDataContents {
         /* Set starting balance and units for account */
         pStatement.setStartBalances(theAccount);
 
+        /* Add the opening balance to the statement */
+        StatementLine myLine = new StatementLine(pStatement);
+        myList.addAtEnd(myLine);
+
         /* Continue looping through the Events extracting relevant elements */
         while (myIterator.hasNext()) {
             Event myCurr = myIterator.next();
@@ -353,7 +357,7 @@ public class EventAnalysis implements JDataContents {
             }
 
             /* Add a statement line to the statement */
-            StatementLine myLine = new StatementLine(myList, myCurr);
+            myLine = new StatementLine(myList, myCurr);
             myList.addAtEnd(myLine);
         }
 
