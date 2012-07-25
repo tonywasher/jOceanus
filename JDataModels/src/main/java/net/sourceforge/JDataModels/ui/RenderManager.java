@@ -37,6 +37,7 @@ import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceItem;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceType;
+import net.sourceforge.JDataModels.ui.Renderer.BooleanRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
@@ -225,6 +226,15 @@ public class RenderManager {
     public DecimalRenderer allocateDecimalRenderer() {
         /* Return a new DecimalRenderer object */
         return new DecimalRenderer(this);
+    }
+
+    /**
+     * Allocate a DecimalRenderer object.
+     * @return the decimal renderer
+     */
+    public BooleanRenderer allocateBooleanRenderer() {
+        /* Return a new BooleanRenderer object */
+        return new BooleanRenderer(this);
     }
 
     /**

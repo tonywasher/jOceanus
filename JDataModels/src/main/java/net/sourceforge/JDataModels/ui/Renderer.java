@@ -22,10 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.JDataModels.ui;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.JDataModels.ui.RenderManager.PopulateRenderData;
@@ -59,12 +61,10 @@ public final class Renderer {
      * @param pTable the table
      * @param pComponent the component
      * @param pData the render data
-     * @param pAlignment the alignment
      */
     private static void renderComponent(final JTable pTable,
-                                        final DefaultTableCellRenderer pComponent,
-                                        final RenderData pData,
-                                        final int pAlignment) {
+                                        final JComponent pComponent,
+                                        final RenderData pData) {
         /* Ignore if the model is not applicable */
         TableModel myTableModel = pTable.getModel();
         if (!(myTableModel instanceof PopulateRenderData)) {
@@ -81,7 +81,6 @@ public final class Renderer {
         pComponent.setForeground(pData.getForeGround());
         pComponent.setBackground(pData.getBackGround());
         pComponent.setFont(pData.getFont());
-        pComponent.setHorizontalAlignment(pAlignment);
         pComponent.setToolTipText(pData.getToolTip());
     }
 
@@ -100,11 +99,6 @@ public final class Renderer {
         private final transient RenderData theData;
 
         /**
-         * Cell alignment.
-         */
-        private final int theAlignment;
-
-        /**
          * Constructor.
          * @param pManager the renderer manager
          */
@@ -120,7 +114,7 @@ public final class Renderer {
         private StringRenderer(final RenderData pData,
                                final int pAlignment) {
             theData = pData;
-            theAlignment = pAlignment;
+            setHorizontalAlignment(pAlignment);
         }
 
         @Override
@@ -151,7 +145,7 @@ public final class Renderer {
                                 pTable.convertColumnIndexToModel(pColIndex), isSelected);
 
             /* Determine the render data */
-            renderComponent(pTable, this, theData, theAlignment);
+            renderComponent(pTable, this, theData);
 
             /* Return this as the render item */
             return this;
@@ -192,6 +186,61 @@ public final class Renderer {
     }
 
     /**
+     * Boolean Cell Renderer.
+     */
+    public static class BooleanRenderer extends JCheckBox implements TableCellRenderer {
+        /**
+         * Serial Id.
+         */
+        private static final long serialVersionUID = 2197785411706668287L;
+
+        /**
+         * The Render Data.
+         */
+        private final transient RenderData theData;
+
+        /**
+         * Constructor.
+         * @param pManager the renderer manager
+         */
+        protected BooleanRenderer(final RenderManager pManager) {
+            this(pManager.allocateRenderData(true), SwingConstants.CENTER);
+        }
+
+        /**
+         * Constructor for fixed width.
+         * @param pData the render data
+         * @param pAlignment the alignment
+         */
+        private BooleanRenderer(final RenderData pData,
+                                final int pAlignment) {
+            theData = pData;
+            setHorizontalAlignment(pAlignment);
+        }
+
+        @Override
+        public JComponent getTableCellRendererComponent(final JTable pTable,
+                                                        final Object pValue,
+                                                        final boolean isSelected,
+                                                        final boolean hasFocus,
+                                                        final int pRowIndex,
+                                                        final int pColIndex) {
+            /* Pass call on */
+            setSelected((pValue != null && ((Boolean) pValue).booleanValue()));
+
+            /* Declare the Cell position */
+            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex),
+                                pTable.convertColumnIndexToModel(pColIndex), isSelected);
+
+            /* Determine the render data */
+            renderComponent(pTable, this, theData);
+
+            /* Return this as the render item */
+            return this;
+        }
+    }
+
+    /**
      * Calendar Cell Renderer.
      */
     public static class CalendarRenderer extends DateDayCellRenderer {
@@ -211,6 +260,7 @@ public final class Renderer {
          */
         protected CalendarRenderer(final RenderManager pManager) {
             theData = pManager.allocateRenderData(true);
+            setHorizontalAlignment(SwingConstants.LEFT);
         }
 
         @Override
@@ -228,7 +278,7 @@ public final class Renderer {
                                 pTable.convertColumnIndexToModel(pColIndex), isSelected);
 
             /* Determine the render data */
-            renderComponent(pTable, this, theData, SwingConstants.LEFT);
+            renderComponent(pTable, this, theData);
 
             /* Return this as the render item */
             return this;

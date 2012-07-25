@@ -23,13 +23,10 @@
 package net.sourceforge.JFinanceApp.ui;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -38,14 +35,15 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JDataModels.data.StaticData.StaticList;
+import net.sourceforge.JDataModels.ui.Editor.BooleanEditor;
 import net.sourceforge.JDataModels.ui.Editor.StringEditor;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.JDataTable;
 import net.sourceforge.JDataModels.ui.JDataTableColumn;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel;
-import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.RenderManager;
+import net.sourceforge.JDataModels.ui.Renderer.BooleanRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
@@ -70,16 +68,6 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle
             .getBundle(MaintStaticData.class.getName());
-
-    /**
-     * Text for PopUpEnabled.
-     */
-    private static final String NLS_ENABLED = NLS_BUNDLE.getString("PopUpEnabled");
-
-    /**
-     * Text for PopUpEnabled.
-     */
-    private static final String NLS_DISABLED = NLS_BUNDLE.getString("PopUpDisabled");
 
     /**
      * Class column title.
@@ -287,10 +275,6 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         /* Set the number of visible rows */
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
-        /* Add the mouse listener */
-        StaticMouse myMouse = new StaticMouse();
-        addMouseListener(myMouse);
-
         /* Create the panel */
         thePanel = new JPanel();
 
@@ -445,19 +429,15 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         @Override
         public boolean isCellEditable(final T pItem,
                                       final int pColIndex) {
-            /* Not edit-able is not enabled */
-            if (!pItem.getEnabled()) {
-                return false;
-            }
-
             /* switch on column */
             switch (pColIndex) {
                 case COLUMN_NAME:
                 case COLUMN_DESC:
-                    return true;
+                    return pItem.getEnabled();
+                case COLUMN_ENABLED:
+                    return !pItem.isActive();
                 case COLUMN_CLASS:
                 case COLUMN_ORDER:
-                case COLUMN_ENABLED:
                 case COLUMN_ACTIVE:
                 default:
                     return false;
@@ -476,11 +456,11 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
                 case COLUMN_DESC:
                     return pItem.getDesc();
                 case COLUMN_ENABLED:
-                    return pItem.getEnabled(); // ? "true" : "false";
+                    return pItem.getEnabled();
                 case COLUMN_ORDER:
                     return pItem.getOrder();
                 case COLUMN_ACTIVE:
-                    return pItem.isActive(); // ? "true" : "false";
+                    return pItem.isActive();
                 default:
                     return null;
             }
@@ -498,169 +478,12 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
                 case COLUMN_DESC:
                     pItem.setDescription((String) pValue);
                     break;
+                case COLUMN_ENABLED:
+                    pItem.setEnabled((Boolean) pValue);
+                    break;
                 default:
                     break;
             }
-        }
-    }
-
-    /**
-     * Static mouse listener.
-     */
-    private final class StaticMouse extends JDataTableMouse<T> {
-        /**
-         * Constructor.
-         */
-        private StaticMouse() {
-            /* Call super-constructor */
-            super(theTable);
-        }
-
-        /**
-         * Disable Insert/Delete.
-         * @param pMenu the menu to add to
-         */
-        @Override
-        protected void addInsertDelete(final JPopupMenu pMenu) {
-        }
-
-        /**
-         * Add Special commands to menu.
-         * @param pMenu the menu to add to
-         */
-        @Override
-        protected void addSpecialCommands(final JPopupMenu pMenu) {
-            JMenuItem myItem;
-            T myData;
-            Class<T> myClass = (theStatic != null) ? theStatic.getBaseClass() : null;
-            boolean enableEnable = false;
-            boolean enableDisable = false;
-            boolean isEnabled;
-            boolean isActive;
-
-            /* Nothing to do if the table is locked */
-            if (theTable.isLocked()) {
-                return;
-            }
-
-            /* Loop through the selected rows */
-            for (DataItem myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
-                    continue;
-                }
-
-                /* Access as data */
-                myData = myClass.cast(myRow);
-
-                /* Determine flags */
-                isEnabled = myData.getEnabled();
-                isActive = myData.isActive();
-
-                /* Determine whether we can enable/disable */
-                if (!isEnabled) {
-                    enableEnable = true;
-                } else if (!isActive) {
-                    enableDisable = true;
-                }
-            }
-
-            /* If there is something to add and there are already items in the menu */
-            if (((enableEnable) || (enableDisable)) && (pMenu.getComponentCount() > 0)) {
-                /* Add a separator */
-                pMenu.addSeparator();
-            }
-
-            /* If we can Enable the item */
-            if (enableEnable) {
-                /* Add the undo change choice */
-                myItem = new JMenuItem(NLS_ENABLED);
-                myItem.setActionCommand(NLS_ENABLED);
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-
-            /* If we can Disable the item */
-            if (enableDisable) {
-                /* Add the undo change choice */
-                myItem = new JMenuItem(NLS_DISABLED);
-                myItem.setActionCommand(NLS_DISABLED);
-                myItem.addActionListener(this);
-                pMenu.add(myItem);
-            }
-        }
-
-        /**
-         * Perform actions for controls/pop-ups on this table.
-         * @param evt the event
-         */
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            String myCmd = evt.getActionCommand();
-
-            /* Cancel any editing */
-            theTable.cancelEditing();
-
-            /* If this is an enable command */
-            if (myCmd.equals(NLS_ENABLED)) {
-                /* Enable disabled rows */
-                setEnabledRows(true);
-
-                /* else if this is a disable command */
-            } else if (myCmd.equals(NLS_DISABLED)) {
-                /* Disable rows */
-                setEnabledRows(false);
-
-                /* else we do not recognise the action */
-            } else {
-                /* Pass it to the superclass */
-                super.actionPerformed(evt);
-                return;
-            }
-
-            /* Notify of any changes */
-            theModel.fireTableDataChanged();
-            notifyChanges();
-        }
-
-        /**
-         * Enable/Disable Rows.
-         * @param doEnable true/false
-         */
-        private void setEnabledRows(final boolean doEnable) {
-            T myData;
-            Class<T> myClass = (theStatic != null) ? theStatic.getBaseClass() : null;
-            boolean isEnabled;
-            boolean isActive;
-
-            /* Loop through the selected rows */
-            for (DataItem myRow : theTable.cacheSelectedRows()) {
-                /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
-                    continue;
-                }
-
-                /* Access as data */
-                myData = myClass.cast(myRow);
-
-                /* Determine flags */
-                isEnabled = myData.getEnabled();
-                isActive = myData.isActive();
-
-                /* Ignore if we are already correct state or are active */
-                if ((doEnable == isEnabled) || (isActive)) {
-                    continue;
-                }
-
-                /* Push history */
-                myData.pushHistory();
-
-                /* Enable/Disable the row */
-                myData.setEnabled(doEnable);
-            }
-
-            /* Increment the version */
-            theUpdateSet.incrementVersion();
         }
     }
 
@@ -684,9 +507,19 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         private final StringRenderer theStringRenderer;
 
         /**
+         * Boolean renderer.
+         */
+        private final BooleanRenderer theBooleanRenderer;
+
+        /**
          * String Editor.
          */
         private final StringEditor theStringEditor;
+
+        /**
+         * Boolean Editor.
+         */
+        private final BooleanEditor theBooleanEditor;
 
         /**
          * Constructor.
@@ -698,15 +531,18 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             /* Create the relevant formatters/editors */
             theIntegerRenderer = theRenderMgr.allocateIntegerRenderer();
             theStringRenderer = theRenderMgr.allocateStringRenderer();
+            theBooleanRenderer = theRenderMgr.allocateBooleanRenderer();
             theStringEditor = new StringEditor();
+            theBooleanEditor = new BooleanEditor();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_ORDER, WIDTH_ORDER, theIntegerRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_ENABLED, null, null));
-            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ACTIVE, null, null));
+            addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_ENABLED, theBooleanRenderer,
+                    theBooleanEditor));
+            addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ACTIVE, theBooleanRenderer, null));
         }
     }
 }
