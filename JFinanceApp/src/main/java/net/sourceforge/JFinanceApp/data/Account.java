@@ -39,7 +39,7 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.FinanceData.LoadState;
@@ -1918,16 +1918,16 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pDate The date of the valuation
      * @return Valuation of account
      */
-    public Money getValue(final DateDay pDate) {
+    public JMoney getValue(final DateDay pDate) {
         /* Initialise money */
-        Money myValue = new Money(0);
+        JMoney myValue = new JMoney();
 
-        /* Access the Events and create an iterator on the events */
+        /* Access the Events */
         FinanceData mySet = getDataSet();
         EventList myEvents = mySet.getEvents();
-        Iterator<Event> myIterator = myEvents.iterator();
 
         /* Loop through the Events extracting relevant elements */
+        Iterator<Event> myIterator = myEvents.iterator();
         while (myIterator.hasNext()) {
             /* Check the range */
             Event myCurr = myIterator.next();
@@ -1941,7 +1941,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             /* If this Event relates to this account */
             if (myCurr.relatesTo(this)) {
                 /* Access the amount */
-                Money myAmount = myCurr.getAmount();
+                JMoney myAmount = myCurr.getAmount();
 
                 /* If this is a credit add the value */
                 if (this.compareTo(myCurr.getCredit()) == 0) {

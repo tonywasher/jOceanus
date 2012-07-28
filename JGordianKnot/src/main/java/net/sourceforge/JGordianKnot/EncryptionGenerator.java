@@ -29,12 +29,13 @@ import java.util.Date;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedBigDecimal;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedBigInteger;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedBoolean;
@@ -65,12 +66,18 @@ public class EncryptionGenerator {
     private final CipherSet theCipherSet;
 
     /**
+     * Data formatter.
+     */
+    private final JDataFormatter theFormatter;
+
+    /**
      * Constructor.
      * @param pCipherSet the CipherSet
      */
     public EncryptionGenerator(final CipherSet pCipherSet) {
         /* Store Parameter */
         theCipherSet = pCipherSet;
+        theFormatter = new JDataFormatter();
     }
 
     /**
@@ -103,59 +110,59 @@ public class EncryptionGenerator {
 
         /* We need a new Field so handle each case individually */
         if (String.class.isInstance(pValue)) {
-            return new EncryptedString(theCipherSet, (String) pValue);
+            return new EncryptedString(theCipherSet, theFormatter, (String) pValue);
         }
         if (Short.class.isInstance(pValue)) {
-            return new EncryptedShort(theCipherSet, (Short) pValue);
+            return new EncryptedShort(theCipherSet, theFormatter, (Short) pValue);
         }
         if (Integer.class.isInstance(pValue)) {
-            return new EncryptedInteger(theCipherSet, (Integer) pValue);
+            return new EncryptedInteger(theCipherSet, theFormatter, (Integer) pValue);
         }
         if (Long.class.isInstance(pValue)) {
-            return new EncryptedLong(theCipherSet, (Long) pValue);
+            return new EncryptedLong(theCipherSet, theFormatter, (Long) pValue);
         }
         if (Boolean.class.isInstance(pValue)) {
-            return new EncryptedBoolean(theCipherSet, (Boolean) pValue);
+            return new EncryptedBoolean(theCipherSet, theFormatter, (Boolean) pValue);
         }
         if (Date.class.isInstance(pValue)) {
-            return new EncryptedDate(theCipherSet, (Date) pValue);
+            return new EncryptedDate(theCipherSet, theFormatter, (Date) pValue);
         }
         if (char[].class.isInstance(pValue)) {
-            return new EncryptedCharArray(theCipherSet, (char[]) pValue);
+            return new EncryptedCharArray(theCipherSet, theFormatter, (char[]) pValue);
         }
         if (Float.class.isInstance(pValue)) {
-            return new EncryptedFloat(theCipherSet, (Float) pValue);
+            return new EncryptedFloat(theCipherSet, theFormatter, (Float) pValue);
         }
         if (Double.class.isInstance(pValue)) {
-            return new EncryptedDouble(theCipherSet, (Double) pValue);
+            return new EncryptedDouble(theCipherSet, theFormatter, (Double) pValue);
         }
 
         /* Handle big integer classes */
         if (BigInteger.class.isInstance(pValue)) {
-            return new EncryptedBigInteger(theCipherSet, (BigInteger) pValue);
+            return new EncryptedBigInteger(theCipherSet, theFormatter, (BigInteger) pValue);
         }
         if (BigDecimal.class.isInstance(pValue)) {
-            return new EncryptedBigDecimal(theCipherSet, (BigDecimal) pValue);
+            return new EncryptedBigDecimal(theCipherSet, theFormatter, (BigDecimal) pValue);
         }
 
         /* Handle decimal instances */
         if (DateDay.class.isInstance(pValue)) {
-            return new EncryptedDateDay(theCipherSet, (DateDay) pValue);
+            return new EncryptedDateDay(theCipherSet, theFormatter, (DateDay) pValue);
         }
-        if (Money.class.isInstance(pValue)) {
-            return new EncryptedMoney(theCipherSet, (Money) pValue);
+        if (JMoney.class.isInstance(pValue)) {
+            return new EncryptedMoney(theCipherSet, theFormatter, (JMoney) pValue);
         }
-        if (Units.class.isInstance(pValue)) {
-            return new EncryptedUnits(theCipherSet, (Units) pValue);
+        if (JUnits.class.isInstance(pValue)) {
+            return new EncryptedUnits(theCipherSet, theFormatter, (JUnits) pValue);
         }
-        if (Rate.class.isInstance(pValue)) {
-            return new EncryptedRate(theCipherSet, (Rate) pValue);
+        if (JRate.class.isInstance(pValue)) {
+            return new EncryptedRate(theCipherSet, theFormatter, (JRate) pValue);
         }
-        if (Price.class.isInstance(pValue)) {
-            return new EncryptedPrice(theCipherSet, (Price) pValue);
+        if (JPrice.class.isInstance(pValue)) {
+            return new EncryptedPrice(theCipherSet, theFormatter, (JPrice) pValue);
         }
-        if (Dilution.class.isInstance(pValue)) {
-            return new EncryptedDilution(theCipherSet, (Dilution) pValue);
+        if (JDilution.class.isInstance(pValue)) {
+            return new EncryptedDilution(theCipherSet, theFormatter, (JDilution) pValue);
         }
 
         /* Unsupported so reject */
@@ -179,59 +186,59 @@ public class EncryptionGenerator {
 
         /* We need a new Field so handle each case individually */
         if (String.class == pClass) {
-            return new EncryptedString(theCipherSet, pEncrypted);
+            return new EncryptedString(theCipherSet, theFormatter, pEncrypted);
         }
         if (Short.class == pClass) {
-            return new EncryptedShort(theCipherSet, pEncrypted);
+            return new EncryptedShort(theCipherSet, theFormatter, pEncrypted);
         }
         if (Integer.class == pClass) {
-            return new EncryptedInteger(theCipherSet, pEncrypted);
+            return new EncryptedInteger(theCipherSet, theFormatter, pEncrypted);
         }
         if (Long.class == pClass) {
-            return new EncryptedLong(theCipherSet, pEncrypted);
+            return new EncryptedLong(theCipherSet, theFormatter, pEncrypted);
         }
         if (Boolean.class == pClass) {
-            return new EncryptedBoolean(theCipherSet, pEncrypted);
+            return new EncryptedBoolean(theCipherSet, theFormatter, pEncrypted);
         }
         if (Date.class == pClass) {
-            return new EncryptedDate(theCipherSet, pEncrypted);
+            return new EncryptedDate(theCipherSet, theFormatter, pEncrypted);
         }
         if (char[].class == pClass) {
-            return new EncryptedCharArray(theCipherSet, pEncrypted);
+            return new EncryptedCharArray(theCipherSet, theFormatter, pEncrypted);
         }
         if (Float.class == pClass) {
-            return new EncryptedFloat(theCipherSet, pEncrypted);
+            return new EncryptedFloat(theCipherSet, theFormatter, pEncrypted);
         }
         if (Double.class == pClass) {
-            return new EncryptedDouble(theCipherSet, pEncrypted);
+            return new EncryptedDouble(theCipherSet, theFormatter, pEncrypted);
         }
 
         /* Handle BigInteger classes */
         if (BigInteger.class == pClass) {
-            return new EncryptedBigInteger(theCipherSet, pEncrypted);
+            return new EncryptedBigInteger(theCipherSet, theFormatter, pEncrypted);
         }
         if (BigDecimal.class == pClass) {
-            return new EncryptedBigDecimal(theCipherSet, pEncrypted);
+            return new EncryptedBigDecimal(theCipherSet, theFormatter, pEncrypted);
         }
 
         /* Handle decimal instances */
         if (DateDay.class == pClass) {
-            return new EncryptedDateDay(theCipherSet, pEncrypted);
+            return new EncryptedDateDay(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Money.class == pClass) {
-            return new EncryptedMoney(theCipherSet, pEncrypted);
+        if (JMoney.class == pClass) {
+            return new EncryptedMoney(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Units.class == pClass) {
-            return new EncryptedUnits(theCipherSet, pEncrypted);
+        if (JUnits.class == pClass) {
+            return new EncryptedUnits(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Rate.class == pClass) {
-            return new EncryptedRate(theCipherSet, pEncrypted);
+        if (JRate.class == pClass) {
+            return new EncryptedRate(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Price.class == pClass) {
-            return new EncryptedPrice(theCipherSet, pEncrypted);
+        if (JPrice.class == pClass) {
+            return new EncryptedPrice(theCipherSet, theFormatter, pEncrypted);
         }
-        if (Dilution.class == pClass) {
-            return new EncryptedDilution(theCipherSet, pEncrypted);
+        if (JDilution.class == pClass) {
+            return new EncryptedDilution(theCipherSet, theFormatter, pEncrypted);
         }
 
         /* Unsupported so reject */

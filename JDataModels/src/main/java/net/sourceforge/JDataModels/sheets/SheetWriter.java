@@ -38,12 +38,12 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
-import net.sourceforge.JDecimal.Decimal;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDecimal;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
@@ -324,20 +324,20 @@ public abstract class SheetWriter<T extends DataSet<T>> {
      * @param pValue the value
      * @return the required CellStyle
      */
-    protected CellStyle getCellStyle(final Decimal pValue) {
-        if (pValue instanceof Money) {
+    protected CellStyle getCellStyle(final JDecimal pValue) {
+        if (pValue instanceof JMoney) {
             return getCellStyle(CellStyleType.Money);
         }
-        if (pValue instanceof Units) {
+        if (pValue instanceof JUnits) {
             return getCellStyle(CellStyleType.Units);
         }
-        if (pValue instanceof Rate) {
+        if (pValue instanceof JRate) {
             return getCellStyle(CellStyleType.Rate);
         }
-        if (pValue instanceof Price) {
+        if (pValue instanceof JPrice) {
             return getCellStyle(CellStyleType.Price);
         }
-        if (pValue instanceof Dilution) {
+        if (pValue instanceof JDilution) {
             return getCellStyle(CellStyleType.Dilution);
         }
         return null;

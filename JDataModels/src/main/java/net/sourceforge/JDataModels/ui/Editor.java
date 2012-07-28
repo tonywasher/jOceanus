@@ -44,13 +44,8 @@ import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayCellEditor;
 import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Decimal;
-import net.sourceforge.JDecimal.DilutedPrice;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDecimal;
+import net.sourceforge.JDecimal.JDecimalParser;
 
 /**
  * Cell editors.
@@ -236,7 +231,7 @@ public class Editor {
          */
         private class BooleanListener implements ItemListener {
             @Override
-            public void itemStateChanged(ItemEvent arg0) {
+            public void itemStateChanged(final ItemEvent arg0) {
                 stopCellEditing();
             }
         }
@@ -424,9 +419,9 @@ public class Editor {
             Object o = pValue;
 
             /* If we have a decimal value passed */
-            if (o instanceof Decimal) {
+            if (o instanceof JDecimal) {
                 /* Format it */
-                o = ((Decimal) o).format(false);
+                o = ((JDecimal) o).toString();
             }
 
             /* Pass through to super-class */
@@ -443,12 +438,32 @@ public class Editor {
          */
         private static final long serialVersionUID = 2636603780411978911L;
 
+        /**
+         * Decimal Parser.
+         */
+        private final transient JDecimalParser theParser;
+
+        /**
+         * Constructor.
+         */
+        public RateEditor() {
+            this(new JDecimalParser());
+        }
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         */
+        public RateEditor(final JDecimalParser pParser) {
+            theParser = pParser;
+        }
+
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
-                    return new Rate((String) o);
+                    return theParser.parseRateValue((String) o);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -466,12 +481,32 @@ public class Editor {
          */
         private static final long serialVersionUID = 2748644075720076417L;
 
+        /**
+         * Decimal Parser.
+         */
+        private final transient JDecimalParser theParser;
+
+        /**
+         * Constructor.
+         */
+        public MoneyEditor() {
+            this(new JDecimalParser());
+        }
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         */
+        public MoneyEditor(final JDecimalParser pParser) {
+            theParser = pParser;
+        }
+
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
-                    return new Money((String) o);
+                    return theParser.parseMoneyValue((String) o);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -489,12 +524,32 @@ public class Editor {
          */
         private static final long serialVersionUID = -5924761972037405523L;
 
+        /**
+         * Decimal Parser.
+         */
+        private final transient JDecimalParser theParser;
+
+        /**
+         * Constructor.
+         */
+        public UnitsEditor() {
+            this(new JDecimalParser());
+        }
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         */
+        public UnitsEditor(final JDecimalParser pParser) {
+            theParser = pParser;
+        }
+
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
-                    return new Units((String) o);
+                    return theParser.parseUnitsValue((String) o);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -512,12 +567,32 @@ public class Editor {
          */
         private static final long serialVersionUID = -4764410922782962134L;
 
+        /**
+         * Decimal Parser.
+         */
+        private final transient JDecimalParser theParser;
+
+        /**
+         * Constructor.
+         */
+        public DilutionEditor() {
+            this(new JDecimalParser());
+        }
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         */
+        public DilutionEditor(final JDecimalParser pParser) {
+            theParser = pParser;
+        }
+
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
-                    return new Dilution((String) o);
+                    return theParser.parseDilutionValue((String) o);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -535,12 +610,32 @@ public class Editor {
          */
         private static final long serialVersionUID = 7215554993415708775L;
 
+        /**
+         * Decimal Parser.
+         */
+        private final transient JDecimalParser theParser;
+
+        /**
+         * Constructor.
+         */
+        public PriceEditor() {
+            this(new JDecimalParser());
+        }
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         */
+        public PriceEditor(final JDecimalParser pParser) {
+            theParser = pParser;
+        }
+
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
-                    return new Price((String) o);
+                    return theParser.parsePriceValue((String) o);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }
@@ -558,12 +653,32 @@ public class Editor {
          */
         private static final long serialVersionUID = 3930787232807465136L;
 
+        /**
+         * Decimal Parser.
+         */
+        private final transient JDecimalParser theParser;
+
+        /**
+         * Constructor.
+         */
+        public DilutedPriceEditor() {
+            this(new JDecimalParser());
+        }
+
+        /**
+         * Constructor.
+         * @param pParser the parser
+         */
+        public DilutedPriceEditor(final JDecimalParser pParser) {
+            theParser = pParser;
+        }
+
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
             if ((o instanceof String) && (!o.equals(""))) {
                 try {
-                    return new DilutedPrice((String) o);
+                    return theParser.parseDilutedPriceValue((String) o);
                 } catch (IllegalArgumentException e) {
                     return null;
                 }

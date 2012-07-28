@@ -43,6 +43,7 @@ import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.RowCell;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
+import net.sourceforge.JDecimal.JDecimalFormatter;
 
 /**
  * Class to determine rendering details for an item.
@@ -226,6 +227,16 @@ public class RenderManager {
     public DecimalRenderer allocateDecimalRenderer() {
         /* Return a new DecimalRenderer object */
         return new DecimalRenderer(this);
+    }
+
+    /**
+     * Allocate a DecimalRenderer object.
+     * @param pFormatter the decimal formatter
+     * @return the decimal renderer
+     */
+    public DecimalRenderer allocateDecimalRenderer(final JDecimalFormatter pFormatter) {
+        /* Return a new DecimalRenderer object */
+        return new DecimalRenderer(this, pFormatter);
     }
 
     /**

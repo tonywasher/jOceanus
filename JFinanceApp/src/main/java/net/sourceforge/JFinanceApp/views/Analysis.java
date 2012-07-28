@@ -29,10 +29,10 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
@@ -1318,7 +1318,7 @@ public class Analysis implements JDataContents {
         /**
          * The value.
          */
-        private Money theValue = null;
+        private JMoney theValue = null;
 
         @Override
         public ValueAccount getBase() {
@@ -1329,7 +1329,7 @@ public class Analysis implements JDataContents {
          * Obtain the value.
          * @return the value
          */
-        public Money getValue() {
+        public JMoney getValue() {
             return theValue;
         }
 
@@ -1337,7 +1337,7 @@ public class Analysis implements JDataContents {
          * Obtain the previous value.
          * @return the value
          */
-        public Money getPrevValue() {
+        public JMoney getPrevValue() {
             return (getBase() != null) ? getBase().getValue() : null;
         }
 
@@ -1345,7 +1345,7 @@ public class Analysis implements JDataContents {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final Money pValue) {
+        protected void setValue(final JMoney pValue) {
             theValue = pValue;
         }
 
@@ -1360,7 +1360,7 @@ public class Analysis implements JDataContents {
             super(pType, pAccount);
 
             /* Initialise the money values */
-            theValue = new Money(0);
+            theValue = new JMoney();
         }
 
         /**
@@ -1372,7 +1372,7 @@ public class Analysis implements JDataContents {
             super(pBase);
 
             /* Initialise the money values */
-            theValue = new Money(0);
+            theValue = new JMoney();
         }
 
         @Override
@@ -1447,7 +1447,7 @@ public class Analysis implements JDataContents {
         /**
          * The rate.
          */
-        private Rate theRate = null;
+        private JRate theRate = null;
 
         /**
          * The maturity.
@@ -1468,7 +1468,7 @@ public class Analysis implements JDataContents {
          * Obtain the rate.
          * @return the rate
          */
-        public Rate getRate() {
+        public JRate getRate() {
             return theRate;
         }
 
@@ -1498,7 +1498,7 @@ public class Analysis implements JDataContents {
             super(pBase.cloneIt());
 
             /* Initialise the Money values */
-            setValue(new Money(pBase.getValue()));
+            setValue(new JMoney(pBase.getValue()));
         }
 
         /**
@@ -1510,9 +1510,9 @@ public class Analysis implements JDataContents {
             MoneyAccount myClone = new MoneyAccount(getAccount());
 
             /* Copy the Money values */
-            myClone.setValue(new Money(getValue()));
+            myClone.setValue(new JMoney(getValue()));
             if (getRate() != null) {
-                myClone.theRate = new Rate(getRate());
+                myClone.theRate = new JRate(getRate());
             }
             if (getMaturity() != null) {
                 myClone.theMaturity = new DateDay(getMaturity());
@@ -1566,7 +1566,7 @@ public class Analysis implements JDataContents {
             /* If we have a Save point */
             if (theSavePoint != null) {
                 /* Restore original value */
-                setValue(new Money(theSavePoint.getValue()));
+                setValue(new JMoney(theSavePoint.getValue()));
             }
         }
     }
@@ -1602,7 +1602,7 @@ public class Analysis implements JDataContents {
         /**
          * The spend.
          */
-        private Money theSpend = null;
+        private JMoney theSpend = null;
 
         /**
          * The savePoint.
@@ -1618,7 +1618,7 @@ public class Analysis implements JDataContents {
          * Obtain the spend.
          * @return the spend
          */
-        public Money getSpend() {
+        public JMoney getSpend() {
             return theSpend;
         }
 
@@ -1631,7 +1631,7 @@ public class Analysis implements JDataContents {
             super(BucketType.DEBTDETAIL, pAccount);
 
             /* Initialise the money values */
-            theSpend = new Money(0);
+            theSpend = new JMoney();
         }
 
         /**
@@ -1643,8 +1643,8 @@ public class Analysis implements JDataContents {
             super(pBase.cloneIt());
 
             /* Initialise the Money values */
-            setValue(new Money(pBase.getValue()));
-            theSpend = new Money(0);
+            setValue(new JMoney(pBase.getValue()));
+            theSpend = new JMoney();
         }
 
         /**
@@ -1656,8 +1656,8 @@ public class Analysis implements JDataContents {
             DebtAccount myClone = new DebtAccount(getAccount());
 
             /* Copy the Debt values */
-            myClone.setValue(new Money(getValue()));
-            myClone.theSpend = new Money(theSpend);
+            myClone.setValue(new JMoney(getValue()));
+            myClone.theSpend = new JMoney(theSpend);
 
             /* Return the clone */
             return myClone;
@@ -1680,8 +1680,8 @@ public class Analysis implements JDataContents {
             /* If we have a Save point */
             if (theSavePoint != null) {
                 /* Restore original value */
-                setValue(new Money(theSavePoint.getValue()));
-                theSpend = new Money(theSavePoint.getSpend());
+                setValue(new JMoney(theSavePoint.getValue()));
+                theSpend = new JMoney(theSavePoint.getSpend());
             }
         }
     }
@@ -1783,42 +1783,42 @@ public class Analysis implements JDataContents {
         /**
          * The cost.
          */
-        private Money theCost = null;
+        private JMoney theCost = null;
 
         /**
          * The units.
          */
-        private Units theUnits = null;
+        private JUnits theUnits = null;
 
         /**
          * The gained.
          */
-        private Money theGained = null;
+        private JMoney theGained = null;
 
         /**
          * The invested.
          */
-        private Money theInvested = null;
+        private JMoney theInvested = null;
 
         /**
          * The dividend.
          */
-        private Money theDividend = null;
+        private JMoney theDividend = null;
 
         /**
          * The gains.
          */
-        private Money theGains = null;
+        private JMoney theGains = null;
 
         /**
          * The profit.
          */
-        private Money theProfit = null;
+        private JMoney theProfit = null;
 
         /**
          * The price.
          */
-        private Price thePrice = null;
+        private JPrice thePrice = null;
 
         /**
          * The savePoint.
@@ -1834,7 +1834,7 @@ public class Analysis implements JDataContents {
          * Obtain cost.
          * @return the cost
          */
-        public Money getCost() {
+        public JMoney getCost() {
             return theCost;
         }
 
@@ -1842,7 +1842,7 @@ public class Analysis implements JDataContents {
          * Obtain units.
          * @return the units
          */
-        public Units getUnits() {
+        public JUnits getUnits() {
             return theUnits;
         }
 
@@ -1850,7 +1850,7 @@ public class Analysis implements JDataContents {
          * Obtain gained.
          * @return the gained
          */
-        public Money getGained() {
+        public JMoney getGained() {
             return theGained;
         }
 
@@ -1858,7 +1858,7 @@ public class Analysis implements JDataContents {
          * Obtain invested.
          * @return the invested
          */
-        public Money getInvested() {
+        public JMoney getInvested() {
             return theInvested;
         }
 
@@ -1866,7 +1866,7 @@ public class Analysis implements JDataContents {
          * Obtain dividend.
          * @return the dividend
          */
-        public Money getDividend() {
+        public JMoney getDividend() {
             return theDividend;
         }
 
@@ -1874,7 +1874,7 @@ public class Analysis implements JDataContents {
          * Obtain gains.
          * @return the gains
          */
-        public Money getGains() {
+        public JMoney getGains() {
             return theGains;
         }
 
@@ -1882,7 +1882,7 @@ public class Analysis implements JDataContents {
          * Obtain profit.
          * @return the profit
          */
-        public Money getProfit() {
+        public JMoney getProfit() {
             return theProfit;
         }
 
@@ -1890,7 +1890,7 @@ public class Analysis implements JDataContents {
          * Obtain price.
          * @return the price
          */
-        public Price getPrice() {
+        public JPrice getPrice() {
             return thePrice;
         }
 
@@ -1898,7 +1898,7 @@ public class Analysis implements JDataContents {
          * Obtain previous cost.
          * @return the cost
          */
-        public Money getPrevCost() {
+        public JMoney getPrevCost() {
             return (getBase() != null) ? getBase().getCost() : null;
         }
 
@@ -1906,7 +1906,7 @@ public class Analysis implements JDataContents {
          * Obtain previous units.
          * @return the units
          */
-        public Units getPrevUnits() {
+        public JUnits getPrevUnits() {
             return (getBase() != null) ? getBase().getUnits() : null;
         }
 
@@ -1914,7 +1914,7 @@ public class Analysis implements JDataContents {
          * Obtain previous gained.
          * @return the gained
          */
-        public Money getPrevGained() {
+        public JMoney getPrevGained() {
             return (getBase() != null) ? getBase().getGained() : null;
         }
 
@@ -1938,13 +1938,13 @@ public class Analysis implements JDataContents {
 
             /* Initialise the values */
             theData = pData;
-            theUnits = new Units(0);
-            theCost = new Money(0);
-            theGained = new Money(0);
+            theUnits = new JUnits();
+            theCost = new JMoney();
+            theGained = new JMoney();
 
-            theInvested = new Money(0);
-            theDividend = new Money(0);
-            theGains = new Money(0);
+            theInvested = new JMoney();
+            theDividend = new JMoney();
+            theGains = new JMoney();
 
             /* allocate the Capital events */
             theEvents = new CapitalEventList(pData, pAccount);
@@ -1960,12 +1960,12 @@ public class Analysis implements JDataContents {
 
             /* Initialise the values */
             theData = pBase.theData;
-            theUnits = new Units(pBase.getUnits());
-            theCost = new Money(pBase.getCost());
-            theGained = new Money(pBase.getGained());
-            theInvested = new Money(0);
-            theGains = new Money(0);
-            theDividend = new Money(0);
+            theUnits = new JUnits(pBase.getUnits());
+            theCost = new JMoney(pBase.getCost());
+            theGained = new JMoney(pBase.getGained());
+            theInvested = new JMoney();
+            theGains = new JMoney();
+            theDividend = new JMoney();
 
             /* Copy the Capital Events */
             theEvents = pBase.getCapitalEvents();
@@ -1980,17 +1980,17 @@ public class Analysis implements JDataContents {
             AssetAccount myClone = new AssetAccount(theData, getAccount());
 
             /* Copy the Asset values */
-            myClone.setValue(new Money(getValue()));
-            myClone.theUnits = new Units(theUnits);
-            myClone.theCost = new Money(theCost);
-            myClone.theGained = new Money(theGained);
-            myClone.theInvested = new Money(theInvested);
-            myClone.theGains = new Money(theGains);
-            myClone.theDividend = new Money(theDividend);
+            myClone.setValue(new JMoney(getValue()));
+            myClone.theUnits = new JUnits(theUnits);
+            myClone.theCost = new JMoney(theCost);
+            myClone.theGained = new JMoney(theGained);
+            myClone.theInvested = new JMoney(theInvested);
+            myClone.theGains = new JMoney(theGains);
+            myClone.theDividend = new JMoney(theDividend);
 
             /* Copy price if available */
             if (thePrice != null) {
-                myClone.thePrice = new Price(thePrice);
+                myClone.thePrice = new JPrice(thePrice);
             }
 
             /* Return the clone */
@@ -2027,7 +2027,7 @@ public class Analysis implements JDataContents {
 
                 /* else assume zero price */
             } else {
-                thePrice = new Price(0);
+                thePrice = new JPrice();
             }
 
             /* Calculate the value */
@@ -2039,7 +2039,7 @@ public class Analysis implements JDataContents {
          */
         protected void calculateProfit() {
             /* Calculate the profit */
-            theProfit = new Money(getValue());
+            theProfit = new JMoney(getValue());
             theProfit.subtractAmount(theCost);
             theProfit.addAmount(theGained);
         }
@@ -2087,19 +2087,19 @@ public class Analysis implements JDataContents {
             /* If we have a Save point */
             if (theSavePoint != null) {
                 /* Restore original value */
-                setValue(new Money(theSavePoint.getValue()));
+                setValue(new JMoney(theSavePoint.getValue()));
 
                 /* Initialise the Money values */
-                theUnits = new Units(theSavePoint.getUnits());
-                theCost = new Money(theSavePoint.getCost());
-                theGained = new Money(theSavePoint.getGained());
-                theInvested = new Money(theSavePoint.getInvested());
-                theDividend = new Money(theSavePoint.getDividend());
-                theGains = new Money(theSavePoint.getGains());
+                theUnits = new JUnits(theSavePoint.getUnits());
+                theCost = new JMoney(theSavePoint.getCost());
+                theGained = new JMoney(theSavePoint.getGained());
+                theInvested = new JMoney(theSavePoint.getInvested());
+                theDividend = new JMoney(theSavePoint.getDividend());
+                theGains = new JMoney(theSavePoint.getGains());
 
                 /* Copy price if available */
                 if (theSavePoint.getPrice() != null) {
-                    thePrice = new Price(theSavePoint.getPrice());
+                    thePrice = new JPrice(theSavePoint.getPrice());
                 }
 
                 /* Trim back the capital events */
@@ -2149,12 +2149,12 @@ public class Analysis implements JDataContents {
         /**
          * The income.
          */
-        private Money theIncome = null;
+        private JMoney theIncome = null;
 
         /**
          * The expense.
          */
-        private Money theExpense = null;
+        private JMoney theExpense = null;
 
         /**
          * The save point.
@@ -2170,7 +2170,7 @@ public class Analysis implements JDataContents {
          * Obtain income.
          * @return the income
          */
-        public Money getIncome() {
+        public JMoney getIncome() {
             return theIncome;
         }
 
@@ -2178,7 +2178,7 @@ public class Analysis implements JDataContents {
          * Obtain expense.
          * @return the expense
          */
-        public Money getExpense() {
+        public JMoney getExpense() {
             return theExpense;
         }
 
@@ -2186,7 +2186,7 @@ public class Analysis implements JDataContents {
          * Obtain previous income.
          * @return the income
          */
-        public Money getPrevIncome() {
+        public JMoney getPrevIncome() {
             return (getBase() != null) ? getBase().getIncome() : null;
         }
 
@@ -2194,7 +2194,7 @@ public class Analysis implements JDataContents {
          * Obtain previous expense.
          * @return the expense
          */
-        public Money getPrevExpense() {
+        public JMoney getPrevExpense() {
             return (getBase() != null) ? getBase().getExpense() : null;
         }
 
@@ -2207,8 +2207,8 @@ public class Analysis implements JDataContents {
             super(BucketType.EXTERNALDETAIL, pAccount);
 
             /* Initialise the money values */
-            theIncome = new Money(0);
-            theExpense = new Money(0);
+            theIncome = new JMoney();
+            theExpense = new JMoney();
         }
 
         /**
@@ -2220,8 +2220,8 @@ public class Analysis implements JDataContents {
             super(pBase.cloneIt());
 
             /* Initialise the Money values */
-            theIncome = new Money(0);
-            theExpense = new Money(0);
+            theIncome = new JMoney();
+            theExpense = new JMoney();
         }
 
         /**
@@ -2233,8 +2233,8 @@ public class Analysis implements JDataContents {
             ExternalAccount myClone = new ExternalAccount(getAccount());
 
             /* Copy the External values */
-            myClone.theIncome = new Money(theIncome);
-            myClone.theExpense = new Money(theExpense);
+            myClone.theIncome = new JMoney(theIncome);
+            myClone.theExpense = new JMoney(theExpense);
 
             /* Return the clone */
             return myClone;
@@ -2262,8 +2262,8 @@ public class Analysis implements JDataContents {
         @Override
         protected void adjustForDebit(final Event pEvent) {
             TransactionType myTransType = pEvent.getTransType();
-            Money myAmount = pEvent.getAmount();
-            Money myTaxCred = pEvent.getTaxCredit();
+            JMoney myAmount = pEvent.getAmount();
+            JMoney myTaxCred = pEvent.getTaxCredit();
 
             /* If this is a recovered transaction */
             if (myTransType.isRecovered()) {
@@ -2328,8 +2328,8 @@ public class Analysis implements JDataContents {
             /* If we have a Save point */
             if (theSavePoint != null) {
                 /* Restore original value */
-                theIncome = new Money(theSavePoint.getIncome());
-                theExpense = new Money(theSavePoint.getExpense());
+                theIncome = new JMoney(theSavePoint.getIncome());
+                theExpense = new JMoney(theSavePoint.getExpense());
             }
         }
     }
@@ -2373,12 +2373,12 @@ public class Analysis implements JDataContents {
         /**
          * The value.
          */
-        private Money theValue = null;
+        private JMoney theValue = null;
 
         /**
          * The previous value.
          */
-        private Money thePrevValue = null;
+        private JMoney thePrevValue = null;
 
         @Override
         public AssetSummary getBase() {
@@ -2389,7 +2389,7 @@ public class Analysis implements JDataContents {
          * Obtain value.
          * @return the value
          */
-        public Money getValue() {
+        public JMoney getValue() {
             return theValue;
         }
 
@@ -2397,7 +2397,7 @@ public class Analysis implements JDataContents {
          * Obtain previous value.
          * @return the value
          */
-        public Money getPrevValue() {
+        public JMoney getPrevValue() {
             return thePrevValue;
         }
 
@@ -2410,8 +2410,8 @@ public class Analysis implements JDataContents {
             super(pAccountType);
 
             /* Initialise the Money values */
-            theValue = new Money(0);
-            thePrevValue = new Money(0);
+            theValue = new JMoney();
+            thePrevValue = new JMoney();
         }
 
         @Override
@@ -2488,17 +2488,17 @@ public class Analysis implements JDataContents {
         /**
          * The value.
          */
-        private Money theValue = null;
+        private JMoney theValue = null;
 
         /**
          * The profit.
          */
-        private Money theProfit = null;
+        private JMoney theProfit = null;
 
         /**
          * The previous value.
          */
-        private Money thePrevValue = null;
+        private JMoney thePrevValue = null;
 
         @Override
         public AssetTotal getBase() {
@@ -2509,7 +2509,7 @@ public class Analysis implements JDataContents {
          * Obtain value.
          * @return the value
          */
-        public Money getValue() {
+        public JMoney getValue() {
             return theValue;
         }
 
@@ -2517,7 +2517,7 @@ public class Analysis implements JDataContents {
          * Obtain profit.
          * @return the profit
          */
-        public Money getProfit() {
+        public JMoney getProfit() {
             return theProfit;
         }
 
@@ -2525,7 +2525,7 @@ public class Analysis implements JDataContents {
          * Obtain previous value.
          * @return the value
          */
-        public Money getPrevValue() {
+        public JMoney getPrevValue() {
             return thePrevValue;
         }
 
@@ -2537,8 +2537,8 @@ public class Analysis implements JDataContents {
             super(BucketType.ASSETTOTAL, 0);
 
             /* Initialise the Money values */
-            theValue = new Money(0);
-            thePrevValue = new Money(0);
+            theValue = new JMoney();
+            thePrevValue = new JMoney();
         }
 
         @Override
@@ -2565,7 +2565,7 @@ public class Analysis implements JDataContents {
          * Calculate profit.
          */
         protected void calculateProfit() {
-            theProfit = new Money(theValue);
+            theProfit = new JMoney(theValue);
             theProfit.subtractAmount(thePrevValue);
         }
     }
@@ -2641,32 +2641,32 @@ public class Analysis implements JDataContents {
         /**
          * The income.
          */
-        private Money theIncome = null;
+        private JMoney theIncome = null;
 
         /**
          * The expense.
          */
-        private Money theExpense = null;
+        private JMoney theExpense = null;
 
         /**
          * The profit.
          */
-        private Money theProfit = null;
+        private JMoney theProfit = null;
 
         /**
          * The previous income.
          */
-        private Money thePrevIncome = null;
+        private JMoney thePrevIncome = null;
 
         /**
          * The previous expense.
          */
-        private Money thePrevExpense = null;
+        private JMoney thePrevExpense = null;
 
         /**
          * The previous profit.
          */
-        private Money thePrevProfit = null;
+        private JMoney thePrevProfit = null;
 
         @Override
         public ExternalTotal getBase() {
@@ -2677,7 +2677,7 @@ public class Analysis implements JDataContents {
          * Obtain income.
          * @return the income
          */
-        public Money getIncome() {
+        public JMoney getIncome() {
             return theIncome;
         }
 
@@ -2685,7 +2685,7 @@ public class Analysis implements JDataContents {
          * Obtain expense.
          * @return the expense
          */
-        public Money getExpense() {
+        public JMoney getExpense() {
             return theExpense;
         }
 
@@ -2693,7 +2693,7 @@ public class Analysis implements JDataContents {
          * Obtain profit.
          * @return the profit
          */
-        public Money getProfit() {
+        public JMoney getProfit() {
             return theProfit;
         }
 
@@ -2701,7 +2701,7 @@ public class Analysis implements JDataContents {
          * Obtain previous income.
          * @return the income
          */
-        public Money getPrevIncome() {
+        public JMoney getPrevIncome() {
             return thePrevIncome;
         }
 
@@ -2709,7 +2709,7 @@ public class Analysis implements JDataContents {
          * Obtain previous expense.
          * @return the expense
          */
-        public Money getPrevExpense() {
+        public JMoney getPrevExpense() {
             return thePrevExpense;
         }
 
@@ -2717,7 +2717,7 @@ public class Analysis implements JDataContents {
          * Obtain previous profit.
          * @return the profit
          */
-        public Money getPrevProfit() {
+        public JMoney getPrevProfit() {
             return thePrevProfit;
         }
 
@@ -2729,10 +2729,10 @@ public class Analysis implements JDataContents {
             super(BucketType.EXTERNALTOTAL, 0);
 
             /* Initialise the Money values */
-            theIncome = new Money(0);
-            theExpense = new Money(0);
-            thePrevIncome = new Money(0);
-            thePrevExpense = new Money(0);
+            theIncome = new JMoney();
+            theExpense = new JMoney();
+            thePrevIncome = new JMoney();
+            thePrevExpense = new JMoney();
         }
 
         @Override
@@ -2768,9 +2768,9 @@ public class Analysis implements JDataContents {
          * Calculate profit.
          */
         protected void calculateProfit() {
-            theProfit = new Money(theIncome);
+            theProfit = new JMoney(theIncome);
             theProfit.subtractAmount(theExpense);
-            thePrevProfit = new Money(thePrevIncome);
+            thePrevProfit = new JMoney(thePrevIncome);
             thePrevProfit.subtractAmount(thePrevExpense);
         }
     }
@@ -2830,22 +2830,22 @@ public class Analysis implements JDataContents {
         /**
          * The cost.
          */
-        private Money theCost = null;
+        private JMoney theCost = null;
 
         /**
          * The value.
          */
-        private Money theValue = null;
+        private JMoney theValue = null;
 
         /**
          * The gained.
          */
-        private Money theGained = null;
+        private JMoney theGained = null;
 
         /**
          * The profit.
          */
-        private Money theProfit = null;
+        private JMoney theProfit = null;
 
         @Override
         public MarketTotal getBase() {
@@ -2856,7 +2856,7 @@ public class Analysis implements JDataContents {
          * Obtain cost.
          * @return the cost
          */
-        public Money getCost() {
+        public JMoney getCost() {
             return theCost;
         }
 
@@ -2864,7 +2864,7 @@ public class Analysis implements JDataContents {
          * Obtain gained.
          * @return the gained
          */
-        public Money getGained() {
+        public JMoney getGained() {
             return theGained;
         }
 
@@ -2872,7 +2872,7 @@ public class Analysis implements JDataContents {
          * Obtain value.
          * @return the value
          */
-        public Money getValue() {
+        public JMoney getValue() {
             return theValue;
         }
 
@@ -2880,7 +2880,7 @@ public class Analysis implements JDataContents {
          * Obtain profit.
          * @return the profit
          */
-        public Money getProfit() {
+        public JMoney getProfit() {
             return theProfit;
         }
 
@@ -2892,10 +2892,10 @@ public class Analysis implements JDataContents {
             super(BucketType.MARKETTOTAL, 0);
 
             /* Initialise the Money values */
-            theCost = new Money(0);
-            theValue = new Money(0);
-            theGained = new Money(0);
-            theProfit = new Money(0);
+            theCost = new JMoney();
+            theValue = new JMoney();
+            theGained = new JMoney();
+            theProfit = new JMoney();
         }
 
         @Override
@@ -2959,12 +2959,12 @@ public class Analysis implements JDataContents {
         /**
          * The amount.
          */
-        private Money theAmount = null;
+        private JMoney theAmount = null;
 
         /**
          * The tax credit.
          */
-        private Money theTaxCredit = null;
+        private JMoney theTaxCredit = null;
 
         @Override
         public TransDetail getBase() {
@@ -2975,7 +2975,7 @@ public class Analysis implements JDataContents {
          * Obtain the amount.
          * @return the amount
          */
-        public Money getAmount() {
+        public JMoney getAmount() {
             return theAmount;
         }
 
@@ -2983,7 +2983,7 @@ public class Analysis implements JDataContents {
          * Obtain the tax credit.
          * @return the tax credit
          */
-        public Money getTaxCredit() {
+        public JMoney getTaxCredit() {
             return theTaxCredit;
         }
 
@@ -2991,7 +2991,7 @@ public class Analysis implements JDataContents {
          * Obtain the previous amount.
          * @return the amount
          */
-        public Money getPrevAmount() {
+        public JMoney getPrevAmount() {
             return (getBase() != null) ? getBase().getAmount() : null;
         }
 
@@ -2999,7 +2999,7 @@ public class Analysis implements JDataContents {
          * Obtain the previous tax credit.
          * @return the tax credit
          */
-        public Money getPrevTax() {
+        public JMoney getPrevTax() {
             return (getBase() != null) ? getBase().getTaxCredit() : null;
         }
 
@@ -3012,8 +3012,8 @@ public class Analysis implements JDataContents {
             super(pTransType);
 
             /* Initialise the Money values */
-            theAmount = new Money(0);
-            theTaxCredit = new Money(0);
+            theAmount = new JMoney();
+            theTaxCredit = new JMoney();
         }
 
         /**
@@ -3025,8 +3025,8 @@ public class Analysis implements JDataContents {
             super(pBase.cloneIt());
 
             /* Initialise the Money values */
-            theAmount = new Money(0);
-            theTaxCredit = new Money(0);
+            theAmount = new JMoney();
+            theTaxCredit = new JMoney();
         }
 
         /**
@@ -3038,8 +3038,8 @@ public class Analysis implements JDataContents {
             TransDetail myClone = new TransDetail(getTransType());
 
             /* Copy the External values */
-            myClone.theAmount = new Money(theAmount);
-            myClone.theTaxCredit = new Money(theTaxCredit);
+            myClone.theAmount = new JMoney(theAmount);
+            myClone.theTaxCredit = new JMoney(theTaxCredit);
 
             /* Return the clone */
             return myClone;
@@ -3120,12 +3120,12 @@ public class Analysis implements JDataContents {
         /**
          * The amount.
          */
-        private Money theAmount = null;
+        private JMoney theAmount = null;
 
         /**
          * The previous amount.
          */
-        private Money thePrevAmount = null;
+        private JMoney thePrevAmount = null;
 
         @Override
         public TransSummary getBase() {
@@ -3136,7 +3136,7 @@ public class Analysis implements JDataContents {
          * Obtain the amount.
          * @return the amount.
          */
-        public Money getAmount() {
+        public JMoney getAmount() {
             return theAmount;
         }
 
@@ -3144,7 +3144,7 @@ public class Analysis implements JDataContents {
          * Obtain the previous amount.
          * @return the amount.
          */
-        public Money getPrevAmount() {
+        public JMoney getPrevAmount() {
             return thePrevAmount;
         }
 
@@ -3157,8 +3157,8 @@ public class Analysis implements JDataContents {
             super(pTaxType);
 
             /* Initialise the Money values */
-            theAmount = new Money(0);
-            thePrevAmount = new Money(0);
+            theAmount = new JMoney();
+            thePrevAmount = new JMoney();
         }
 
         @Override
@@ -3247,12 +3247,12 @@ public class Analysis implements JDataContents {
         /**
          * The amount.
          */
-        private Money theAmount = null;
+        private JMoney theAmount = null;
 
         /**
          * The previous amount.
          */
-        private Money thePrevAmount = null;
+        private JMoney thePrevAmount = null;
 
         @Override
         public TransTotal getBase() {
@@ -3263,7 +3263,7 @@ public class Analysis implements JDataContents {
          * Obtain amount.
          * @return the amount
          */
-        public Money getAmount() {
+        public JMoney getAmount() {
             return theAmount;
         }
 
@@ -3271,7 +3271,7 @@ public class Analysis implements JDataContents {
          * Obtain previous amount.
          * @return the amount
          */
-        public Money getPrevAmount() {
+        public JMoney getPrevAmount() {
             return thePrevAmount;
         }
 
@@ -3284,8 +3284,8 @@ public class Analysis implements JDataContents {
             super(pTaxType);
 
             /* Initialise the Money values */
-            theAmount = new Money(0);
-            thePrevAmount = new Money(0);
+            theAmount = new JMoney();
+            thePrevAmount = new JMoney();
         }
 
         @Override
@@ -3380,17 +3380,17 @@ public class Analysis implements JDataContents {
         /**
          * The amount.
          */
-        private Money theAmount = null;
+        private JMoney theAmount = null;
 
         /**
          * The taxation.
          */
-        private Money theTaxation = null;
+        private JMoney theTaxation = null;
 
         /**
          * The rate.
          */
-        private Rate theRate = null;
+        private JRate theRate = null;
 
         /**
          * The parent.
@@ -3406,7 +3406,7 @@ public class Analysis implements JDataContents {
          * Obtain the amount.
          * @return the amount
          */
-        public Money getAmount() {
+        public JMoney getAmount() {
             return theAmount;
         }
 
@@ -3414,7 +3414,7 @@ public class Analysis implements JDataContents {
          * Obtain the taxation.
          * @return the taxation
          */
-        public Money getTaxation() {
+        public JMoney getTaxation() {
             return theTaxation;
         }
 
@@ -3422,7 +3422,7 @@ public class Analysis implements JDataContents {
          * Obtain the rate.
          * @return the rate
          */
-        public Rate getRate() {
+        public JRate getRate() {
             return theRate;
         }
 
@@ -3495,12 +3495,12 @@ public class Analysis implements JDataContents {
          * @param pAmount Amount to set
          * @return the taxation on this bucket
          */
-        protected Money setAmount(final Money pAmount) {
+        protected JMoney setAmount(final JMoney pAmount) {
             /* Set the value */
-            theAmount = new Money(pAmount);
+            theAmount = new JMoney(pAmount);
 
             /* Calculate the tax if we have a rate */
-            theTaxation = (theRate != null) ? theAmount.valueAtRate(theRate) : new Money(0);
+            theTaxation = (theRate != null) ? theAmount.valueAtRate(theRate) : new JMoney();
 
             /* Return the taxation amount */
             return theTaxation;
@@ -3510,9 +3510,9 @@ public class Analysis implements JDataContents {
          * Set explicit taxation value.
          * @param pAmount Amount to set
          */
-        protected void setTaxation(final Money pAmount) {
+        protected void setTaxation(final JMoney pAmount) {
             /* Set the value */
-            theTaxation = new Money(pAmount);
+            theTaxation = new JMoney(pAmount);
         }
 
         /**
@@ -3528,7 +3528,7 @@ public class Analysis implements JDataContents {
          * Set a tax rate.
          * @param pRate Amount to set
          */
-        protected void setRate(final Rate pRate) {
+        protected void setRate(final JRate pRate) {
             /* Set the value */
             theRate = pRate;
         }

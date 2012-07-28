@@ -25,10 +25,12 @@ package net.sourceforge.JFinanceApp.data;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
 import net.sourceforge.JFinanceApp.data.AccountRate.AccountRateList;
@@ -50,6 +52,11 @@ import net.sourceforge.JGordianKnot.SecureManager;
  * @author Tony Washer
  */
 public class FinanceData extends DataSet<FinanceData> {
+    /**
+     * Money accounting format width.
+     */
+    private static final int ACCOUNTING_WIDTH = 10;
+
     /**
      * Report fields.
      */
@@ -264,6 +271,16 @@ public class FinanceData extends DataSet<FinanceData> {
     private LoadState theLoadState = LoadState.INITIAL;
 
     /**
+     * Decimal parser.
+     */
+    private final JDecimalParser theParser;
+
+    /**
+     * General formatter.
+     */
+    private final JDataFormatter theFormatter;
+
+    /**
      * Obtain AccountTypes.
      * @return the Account types
      */
@@ -392,6 +409,22 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
+     * Obtain the decimal parser.
+     * @return the parser
+     */
+    public JDecimalParser getDecimalParser() {
+        return theParser;
+    }
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    public JDataFormatter getDataFormatter() {
+        return theFormatter;
+    }
+
+    /**
      * Standard constructor.
      * @param pSecurity the secure manager
      */
@@ -417,6 +450,11 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Declare the lists */
         declareLists();
+
+        /* Create decimal parser/formatter */
+        theParser = new JDecimalParser();
+        theFormatter = new JDataFormatter();
+        theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
     }
 
     /**
@@ -425,6 +463,10 @@ public class FinanceData extends DataSet<FinanceData> {
      */
     private FinanceData(final FinanceData pSource) {
         super(pSource);
+
+        /* Copy formatter and parser */
+        theParser = pSource.getDecimalParser();
+        theFormatter = pSource.getDataFormatter();
     }
 
     @Override

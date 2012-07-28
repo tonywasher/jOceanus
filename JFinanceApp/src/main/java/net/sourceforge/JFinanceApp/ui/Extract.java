@@ -40,6 +40,7 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
@@ -68,9 +69,10 @@ import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDateDay.DateDayRangeSelect;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
@@ -846,23 +848,23 @@ public class Extract extends JDataTable<Event> {
                     }
                     break;
                 case COLUMN_AMOUNT:
-                    pEvent.setAmount((Money) pValue);
+                    pEvent.setAmount((JMoney) pValue);
                     /* Determine new Tax Credit if required */
                     if (needsTaxCredit) {
                         pEvent.setTaxCredit(pEvent.calculateTaxCredit());
                     }
                     break;
                 case COLUMN_DILUTE:
-                    pEvent.setDilution((Dilution) pValue);
+                    pEvent.setDilution((JDilution) pValue);
                     break;
                 case COLUMN_TAXCRED:
-                    pEvent.setTaxCredit((Money) pValue);
+                    pEvent.setTaxCredit((JMoney) pValue);
                     break;
                 case COLUMN_YEARS:
                     pEvent.setYears((Integer) pValue);
                     break;
                 case COLUMN_UNITS:
-                    pEvent.setUnits((Units) pValue);
+                    pEvent.setUnits((JUnits) pValue);
                     break;
                 case COLUMN_CREDIT:
                     pEvent.setCredit((Account) pValue);
@@ -1003,7 +1005,7 @@ public class Extract extends JDataTable<Event> {
 
                 /* Access as event */
                 Event myEvent = (Event) myRow;
-                Money myTax = myEvent.getTaxCredit();
+                JMoney myTax = myEvent.getTaxCredit();
                 TransactionType myTrans = myEvent.getTransType();
 
                 /* If we have a calculable tax credit that is null/zero */
@@ -1162,7 +1164,7 @@ public class Extract extends JDataTable<Event> {
                 /* Access the event */
                 Event myEvent = (Event) myRow;
                 TransactionType myTrans = myEvent.getTransType();
-                Money myTax = myEvent.getTaxCredit();
+                JMoney myTax = myEvent.getTaxCredit();
 
                 /* Ignore rows with invalid transaction type */
                 if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
@@ -1285,17 +1287,22 @@ public class Extract extends JDataTable<Event> {
             /* call constructor */
             super(theTable);
 
+            /* Access parser and formatter */
+            FinanceData myData = theView.getData();
+            JDecimalParser myParser = myData.getDecimalParser();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
             /* Create the relevant formatters/editors */
             theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
-            theMoneyEditor = new MoneyEditor();
-            theUnitsEditor = new UnitsEditor();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theMoneyEditor = new MoneyEditor(myParser);
+            theUnitsEditor = new UnitsEditor(myParser);
             theIntegerRenderer = theRenderMgr.allocateIntegerRenderer();
             theIntegerEditor = new IntegerEditor();
             theStringRenderer = theRenderMgr.allocateStringRenderer();
             theStringEditor = new StringEditor();
-            theDiluteEditor = new DilutionEditor();
+            theDiluteEditor = new DilutionEditor(myParser);
             theComboEditor = new ComboBoxEditor();
 
             /* Create the columns */

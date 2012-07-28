@@ -110,6 +110,11 @@ public final class JDataHTML {
     private final Color theColorChgLink;
 
     /**
+     * Data formatter.
+     */
+    private final JDataFormatter theFormatter;
+
+    /**
      * Constructor.
      */
     protected JDataHTML() {
@@ -132,6 +137,9 @@ public final class JDataHTML {
         theColorChanged = pChanged;
         theColorLink = pLink;
         theColorChgLink = pChgLink;
+
+        /* Allocate the formatter */
+        theFormatter = new JDataFormatter();
     }
 
     /**
@@ -230,8 +238,8 @@ public final class JDataHTML {
      * @param pObject the object to describe
      * @return the HTML table
      */
-    public static StringBuilder formatHTMLObject(final JDataDetail pDetail,
-                                                 final Object pObject) {
+    public StringBuilder formatHTMLObject(final JDataDetail pDetail,
+                                          final Object pObject) {
         /* Switch on object type */
         Object o = pObject;
         switch (getDataType(o)) {
@@ -298,8 +306,8 @@ public final class JDataHTML {
      * @param pObject the ReportObject to describe
      * @return the HTML table
      */
-    private static StringBuilder formatHTMLDetail(final JDataDetail pDetail,
-                                                  final Object pObject) {
+    private StringBuilder formatHTMLDetail(final JDataDetail pDetail,
+                                           final Object pObject) {
         JDataContents myDetail = JDataContents.class.cast(pObject);
         StringBuilder myResults = new StringBuilder(BUFFER_LEN);
         StringBuilder myEntries = new StringBuilder(BUFFER_LEN);
@@ -371,10 +379,10 @@ public final class JDataHTML {
      * @param pValue the value to format
      * @return the formatted value
      */
-    private static String formatHTMLValue(final JDataDetail pDetail,
-                                          final Object pValue) {
+    private String formatHTMLValue(final JDataDetail pDetail,
+                                   final Object pValue) {
         /* Format the value */
-        String myFormat = JDataObject.formatField(pValue);
+        String myFormat = theFormatter.formatObject(pValue);
 
         /* Perform special formatting for a long byte[] */
         if (needsWrapping(pValue) && (myFormat.length() > WRAP_HEXSTRING)) {
@@ -444,8 +452,8 @@ public final class JDataHTML {
      * @param pMap the map to describe
      * @return the HTML table
      */
-    private static StringBuilder formatHTMLMap(final JDataDetail pDetail,
-                                               final Object pMap) {
+    private StringBuilder formatHTMLMap(final JDataDetail pDetail,
+                                        final Object pMap) {
         Map<?, ?> myMap = Map.class.cast(pMap);
         StringBuilder myResults = new StringBuilder(BUFFER_LEN);
         StringBuilder myEntries = new StringBuilder(BUFFER_LEN);
@@ -464,7 +472,7 @@ public final class JDataHTML {
             myEntries.append("\">");
 
             /* Format the key */
-            myFormat = JDataObject.formatField(myKey);
+            myFormat = theFormatter.formatObject(myKey);
             if (getDataType(myKey) != JDataType.None) {
                 myFormat = pDetail.addDataLink(myKey, myFormat);
             }
@@ -473,7 +481,7 @@ public final class JDataHTML {
             myEntries.append("</td><td>");
 
             /* Format the value */
-            myFormat = JDataObject.formatField(myValue);
+            myFormat = theFormatter.formatObject(myValue);
             if (getDataType(myValue) != JDataType.None) {
                 myFormat = pDetail.addDataLink(myValue, myFormat);
             }

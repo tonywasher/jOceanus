@@ -32,9 +32,9 @@ import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.DilutedPrice;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.JDilutedPrice;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
 import net.sourceforge.JFinanceApp.data.FinanceData;
@@ -84,7 +84,7 @@ public class ViewPrice extends AccountPrice {
      * Obtain dilution.
      * @return the dilution
      */
-    public Dilution getDilution() {
+    public JDilution getDilution() {
         return getDilution(getValueSet());
     }
 
@@ -92,7 +92,7 @@ public class ViewPrice extends AccountPrice {
      * Obtain diluted price.
      * @return the diluted price
      */
-    public DilutedPrice getDilutedPrice() {
+    public JDilutedPrice getDilutedPrice() {
         return getDilutedPrice(getValueSet());
     }
 
@@ -101,8 +101,8 @@ public class ViewPrice extends AccountPrice {
      * @param pValueSet the valueSet
      * @return the dilution
      */
-    public static Dilution getDilution(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DILUTION, Dilution.class);
+    public static JDilution getDilution(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DILUTION, JDilution.class);
     }
 
     /**
@@ -110,15 +110,15 @@ public class ViewPrice extends AccountPrice {
      * @param pValueSet the valueSet
      * @return the diluted price
      */
-    public static DilutedPrice getDilutedPrice(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DILUTEDPRICE, DilutedPrice.class);
+    public static JDilutedPrice getDilutedPrice(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DILUTEDPRICE, JDilutedPrice.class);
     }
 
     /**
      * Set dilution.
      * @param pValue the dilution
      */
-    private void setValueDilution(final Dilution pValue) {
+    private void setValueDilution(final JDilution pValue) {
         getValueSet().setValue(FIELD_DILUTION, pValue);
     }
 
@@ -126,7 +126,7 @@ public class ViewPrice extends AccountPrice {
      * Set diluted price.
      * @param pValue the diluted price
      */
-    private void setValueDilutedPrice(final DilutedPrice pValue) {
+    private void setValueDilutedPrice(final JDilutedPrice pValue) {
         getValueSet().setValue(FIELD_DILUTEDPRICE, pValue);
     }
 
@@ -148,13 +148,13 @@ public class ViewPrice extends AccountPrice {
 
         /* Access Price and date */
         DateDay myDate = getDate();
-        Price myPrice = getPrice();
+        JPrice myPrice = getPrice();
         Account myAccount = getAccount();
 
         /* If we have can look at dilutions */
         if ((hasDilutions) && (myDate != null) && (myPrice != null)) {
             /* Determine the dilution factor for the date */
-            Dilution myDilution = myList.getDilutions().getDilutionFactor(myAccount, myDate);
+            JDilution myDilution = myList.getDilutions().getDilutionFactor(myAccount, myDate);
 
             /* If we have a dilution factor */
             if (myDilution != null) {
@@ -194,7 +194,7 @@ public class ViewPrice extends AccountPrice {
     }
 
     @Override
-    public void setPrice(final Price pPrice) throws JDataException {
+    public void setPrice(final JPrice pPrice) throws JDataException {
         super.setPrice(pPrice);
         calculateDiluted();
     }

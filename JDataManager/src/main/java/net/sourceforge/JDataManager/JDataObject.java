@@ -22,25 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.JDataManager;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Decimal;
 
 /**
  * Data object formatting and interfaces.
  * @author Tony Washer
  */
 public final class JDataObject {
-    /**
-     * Private constructor to avoid instantiation.
-     */
-    private JDataObject() {
-    }
-
     /**
      * Format object interface.
      */
@@ -154,93 +142,5 @@ public final class JDataObject {
             theObject = pObject;
             theDifference = pDifference;
         }
-    }
-
-    /**
-     * Format a field value.
-     * @param pValue the value of the field
-     * @return the formatted value
-     */
-    public static String formatField(final Object pValue) {
-        /* Handle null value */
-        if (pValue == null) {
-            return null;
-        }
-
-        /* Handle ones that we can directly format */
-        if (JDataFormat.class.isInstance(pValue)) {
-            return ((JDataFormat) pValue).formatObject();
-        }
-
-        /* Access the class */
-        Class<?> myClass = pValue.getClass();
-
-        /* Handle Native classes */
-        if (myClass == String.class) {
-            return (String) pValue;
-        }
-        if (myClass == Boolean.class) {
-            return (((Boolean) pValue)) ? "true" : "false";
-        }
-        if (myClass == Short.class) {
-            return ((Short) pValue).toString();
-        }
-        if (myClass == Integer.class) {
-            return ((Integer) pValue).toString();
-        }
-        if (myClass == Long.class) {
-            return ((Long) pValue).toString();
-        }
-        if (myClass == Float.class) {
-            return ((Float) pValue).toString();
-        }
-        if (myClass == Double.class) {
-            return ((Double) pValue).toString();
-        }
-        if (myClass == BigInteger.class) {
-            return ((BigInteger) pValue).toString();
-        }
-        if (myClass == BigDecimal.class) {
-            return ((BigDecimal) pValue).toString();
-        }
-
-        /* Handle Enumerated classes */
-        if (Enum.class.isInstance(pValue)) {
-            return ((Enum<?>) pValue).toString();
-        }
-
-        /* Handle Class */
-        if (Class.class.isInstance(pValue)) {
-            return ((Class<?>) pValue).getCanonicalName();
-        }
-
-        /* Handle Native array classes */
-        if (myClass == byte[].class) {
-            return DataConverter.bytesToHexString((byte[]) pValue);
-        }
-        if (myClass == char[].class) {
-            return new String((char[]) pValue);
-        }
-
-        /* Handle date classes */
-        if (myClass == DateDay.class) {
-            return ((DateDay) pValue).toString();
-        }
-        if (myClass == DateDayRange.class) {
-            return ((DateDayRange) pValue).toString();
-        }
-
-        /* Handle decimal classes */
-        if (Decimal.class.isInstance(pValue)) {
-            return ((Decimal) pValue).format(true);
-        }
-
-        /* Handle difference class */
-        if (JDataDifference.class.isInstance(pValue)) {
-            return formatField(((JDataDifference) pValue).getObject());
-        }
-
-        /* Standard format option */
-        return pValue.getClass().getSimpleName();
     }
 }

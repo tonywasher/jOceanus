@@ -30,7 +30,7 @@ import net.sourceforge.JDataModels.data.PreferenceSet;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceSetChooser;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountType;
@@ -78,12 +78,12 @@ public class MetaAnalysis implements PreferenceSetChooser {
     /**
      * Allowance Quotient.
      */
-    private static final int ALLOWANCE_QUOTIENT = 200;
+    private static final JMoney ALLOWANCE_QUOTIENT = JMoney.getWholeUnits(2);
 
     /**
      * Allowance Multiplier.
      */
-    private static final int ALLOWANCE_MULTIPLIER = 100;
+    private static final JMoney ALLOWANCE_MULTIPLIER = JMoney.getWholeUnits(1);
 
     /**
      * Analysis.
@@ -326,14 +326,14 @@ public class MetaAnalysis implements PreferenceSetChooser {
         /*
          * Calculate basic market movement which is defined as currentValue - previousValue - amountInvested
          */
-        Money myMarket = new Money(pAsset.getValue());
+        JMoney myMarket = new JMoney(pAsset.getValue());
         if (pAsset.getBase() != null) {
             myMarket.subtractAmount(pAsset.getPrevValue());
         }
         myMarket.subtractAmount(pAsset.getInvested());
 
         /* Access the amount that has been gained in this period */
-        Money myGain = pAsset.getGains();
+        JMoney myGain = pAsset.getGains();
         Account myAccount = pAsset.getAccount();
 
         /* If there have been gains realised in this period */
@@ -370,7 +370,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
         }
 
         /* Determine the delta gained */
-        Money myDeltaGained = new Money(myGain);
+        JMoney myDeltaGained = new JMoney(myGain);
         myDeltaGained.addAmount(pAsset.getDividend());
 
         /* Record initial and delta gained */
@@ -521,8 +521,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
      */
     protected void calculateTax() {
         TaxBands myBands;
-        Money myIncome = new Money(0);
-        Money myTax = new Money(0);
+        JMoney myIncome = new JMoney();
+        JMoney myTax = new JMoney();
         TaxDetail myBucket;
         TransSummary mySrcBucket;
         AnalysisState myState;
@@ -598,7 +598,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
         /* Build the TaxProfitBucket */
         myBucket = theList.getTaxDetail(TaxClass.TAXPROFITLOSS);
-        myBucket.setAmount(new Money(0));
+        myBucket.setAmount(new JMoney());
         myBucket.setTaxation(myTax);
 
         /* Prune the analysis list */
@@ -889,10 +889,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
      * @param pBucket the bucket
      */
     private void adjustExternalTotals(final ExternalAccount pBucket) {
-        Money myMoney;
-
         /* If the expense is negative */
-        myMoney = pBucket.getExpense();
+        JMoney myMoney = pBucket.getExpense();
         if (!myMoney.isPositive()) {
             /* Swap it to the income side */
             pBucket.getIncome().subtractAmount(myMoney);
@@ -918,8 +916,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
         TaxDetail myBucket;
         TransSummary mySrcBucket;
         TransDetail myDtlBucket;
-        Money myIncome = new Money(0);
-        Money myChargeable;
+        JMoney myIncome = new JMoney();
+        JMoney myChargeable;
 
         /* Access the salary bucket and add to income */
         mySrcBucket = theList.getTransSummary(TaxClass.GROSSSALARY);
@@ -927,7 +925,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
         /* Access the rental bucket */
         mySrcBucket = theList.getTransSummary(TaxClass.GROSSRENTAL);
-        myChargeable = new Money(mySrcBucket.getAmount());
+        myChargeable = new JMoney(mySrcBucket.getAmount());
 
         /* If we have a chargeable element */
         if (myChargeable.compareTo(theYear.getRentalAllowance()) > 0) {
@@ -958,7 +956,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
         /* Access the capital gains bucket */
         mySrcBucket = theList.getTransSummary(TaxClass.GROSSCAPGAINS);
-        myChargeable = new Money(mySrcBucket.getAmount());
+        myChargeable = new JMoney(mySrcBucket.getAmount());
 
         /* If we have a chargeable element */
         if (myChargeable.compareTo(theYear.getCapitalAllow()) > 0) {
@@ -977,16 +975,10 @@ public class MetaAnalysis implements PreferenceSetChooser {
      * @return the taxBands
      */
     private TaxBands calculateAllowances() {
-        TaxBands myBands;
-        TaxDetail myBucket;
-        TaxDetail myParentBucket;
-        Money myGrossIncome;
-        Money myAdjust;
-        Money myAllowance;
-        long myValue;
-
         /* Allocate the tax bands class */
-        myBands = new TaxBands();
+        TaxBands myBands = new TaxBands();
+        JMoney myAllowance;
+        JMoney myAdjust;
 
         /* Access the taxation properties */
         TaxationPreferences myPreferences = (TaxationPreferences) PreferenceManager.getPreferenceSet(this);
@@ -1005,49 +997,34 @@ public class MetaAnalysis implements PreferenceSetChooser {
             myAllowance = theYear.getAllowance();
         }
 
-        /* Set Allowance and Tax Bands */
-        myBands.theAllowance = new Money(myAllowance);
-        myBands.theLoBand = new Money(theYear.getLoBand());
-        myBands.theBasicBand = new Money(theYear.getBasicBand());
-
         /* Record the Original allowance */
-        myParentBucket = theList.getTaxDetail(TaxClass.ORIGALLOW);
-        myParentBucket.setAmount(myBands.theAllowance);
+        TaxDetail myParentBucket = theList.getTaxDetail(TaxClass.ORIGALLOW);
+        myParentBucket.setAmount(myAllowance);
 
         /* Access the gross income */
-        myBucket = theList.getTaxDetail(TaxClass.GROSSINCOME);
-        myGrossIncome = myBucket.getAmount();
+        TaxDetail myBucket = theList.getTaxDetail(TaxClass.GROSSINCOME);
+        JMoney myGrossIncome = myBucket.getAmount();
         myBucket.setParent(myParentBucket);
 
         /* If we are using age allowance and the gross income is above the Age Allowance Limit */
         if ((hasAgeAllowance) && (myGrossIncome.compareTo(theYear.getAgeAllowLimit()) > 0)) {
-            /* Calculate the limit at which age allowance will disappear */
-            myValue = myBands.theAllowance.getValue();
-            myValue *= 2; /* £1 reduction for every £2 increase */
-            myAdjust = new Money(myValue);
-            myAdjust.addAmount(theYear.getAgeAllowLimit());
+            /* Calculate the margin by which we exceeded the limit */
+            myAdjust = new JMoney(myGrossIncome);
+            myAdjust.subtractAmount(theYear.getAgeAllowLimit());
 
-            /* If the gross income is above this limit */
-            if (myGrossIncome.compareTo(myAdjust) > 0) {
-                /* Personal allowance is reduced to standard allowance */
-                myBands.theAllowance = new Money(theYear.getAllowance());
+            /* Calculate the allowance reduction by dividing by £2 and then multiply up by £1 */
+            myAdjust.divide(ALLOWANCE_QUOTIENT.unscaledValue());
+            myAdjust.multiply(ALLOWANCE_MULTIPLIER.unscaledValue());
+
+            /* Adjust the allowance by this value */
+            myAllowance = new JMoney(myAllowance);
+            myAllowance.subtractAmount(myAdjust);
+
+            /* If we have reduced below the standard allowance */
+            if (myAllowance.compareTo(theYear.getAllowance()) < 0) {
+                /* Reset the allowance to the standard value */
+                myAllowance = theYear.getAllowance();
                 hasAgeAllowance = false;
-
-                /* else we need to reduce the personal allowance */
-            } else {
-                /* Calculate the margin */
-                myAdjust = new Money(myGrossIncome);
-                myAdjust.subtractAmount(theYear.getAgeAllowLimit());
-                myValue = myAdjust.getValue();
-
-                /* Divide by £2 and then multiply up to £1 */
-                myValue /= ALLOWANCE_QUOTIENT;
-                myValue *= ALLOWANCE_MULTIPLIER;
-                myAdjust = new Money(myValue);
-
-                /* Adjust the allowance by this value */
-                myBands.theAllowance = new Money(myBands.theAllowance);
-                myBands.theAllowance.subtractAmount(myAdjust);
             }
 
             /* Record the adjusted allowance */
@@ -1057,10 +1034,15 @@ public class MetaAnalysis implements PreferenceSetChooser {
             hasReducedAllow = true;
         }
 
+        /* Set Allowance and Tax Bands */
+        myBands.theAllowance = new JMoney(myAllowance);
+        myBands.theLoBand = new JMoney(theYear.getLoBand());
+        myBands.theBasicBand = new JMoney(theYear.getBasicBand());
+
         /* If we have an additional tax band */
         if (theYear.hasAdditionalTaxBand()) {
             /* Set the High tax band */
-            myBands.theHiBand = new Money(theYear.getAddIncBound());
+            myBands.theHiBand = new JMoney(theYear.getAddIncBound());
 
             /* Remove the basic band from this one */
             myBands.theHiBand.subtractAmount(myBands.theBasicBand);
@@ -1072,32 +1054,22 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
             /* If the gross income is above the Additional Allowance Limit */
             if (myGrossIncome.compareTo(theYear.getAddAllowLimit()) > 0) {
-                /* Calculate the limit at which personal allowance will disappear */
-                myValue = myBands.theAllowance.getValue();
-                myValue *= 2; /* £1 reduction for every £2 increase */
-                myAdjust = new Money(myValue);
-                myAdjust.addAmount(theYear.getAddAllowLimit());
+                /* Calculate the margin by which we exceeded the limit */
+                myAdjust = new JMoney(myGrossIncome);
+                myAdjust.subtractAmount(theYear.getAddAllowLimit());
 
-                /* If the gross income is above this limit */
-                if (myGrossIncome.compareTo(myAdjust) > 0) {
+                /* Calculate the allowance reduction by dividing by £2 and then multiply up by £1 */
+                myAdjust.divide(ALLOWANCE_QUOTIENT.unscaledValue());
+                myAdjust.multiply(ALLOWANCE_MULTIPLIER.unscaledValue());
+
+                /* Adjust the allowance by this value */
+                myAllowance = new JMoney(myAllowance);
+                myAllowance.subtractAmount(myAdjust);
+
+                /* If we have used up the entire allowance */
+                if (!myAllowance.isPositive()) {
                     /* Personal allowance is reduced to zero */
-                    myBands.theAllowance = new Money(0);
-
-                    /* else we need to reduce the personal allowance */
-                } else {
-                    /* Calculate the margin */
-                    myAdjust = new Money(myGrossIncome);
-                    myAdjust.subtractAmount(theYear.getAddAllowLimit());
-                    myValue = myAdjust.getValue();
-
-                    /* Divide by £2 and then multiply up to £1 */
-                    myValue /= ALLOWANCE_QUOTIENT;
-                    myValue *= ALLOWANCE_MULTIPLIER;
-                    myAdjust = new Money(myValue);
-
-                    /* Adjust the allowance by this value */
-                    myBands.theAllowance = new Money(myBands.theAllowance);
-                    myBands.theAllowance.subtractAmount(myAdjust);
+                    myBands.theAllowance = new JMoney();
                 }
 
                 /* Record the adjusted allowance */
@@ -1121,13 +1093,13 @@ public class MetaAnalysis implements PreferenceSetChooser {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
-        Money mySalary;
-        Money myTax = new Money(0);
+        JMoney mySalary;
+        JMoney myTax = new JMoney();
         boolean isFinished = false;
 
         /* Access Salary */
         mySrcBucket = theList.getTransSummary(TaxClass.GROSSSALARY);
-        mySalary = new Money(mySrcBucket.getAmount());
+        mySalary = new JMoney(mySrcBucket.getAmount());
 
         /* Store the total into the TaxDueSalary Bucket */
         myTopBucket = theList.getTaxDetail(TaxClass.TAXDUESALARY);
@@ -1280,14 +1252,14 @@ public class MetaAnalysis implements PreferenceSetChooser {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
-        Money myRental;
-        Money myAllowance;
-        Money myTax = new Money(0);
+        JMoney myRental;
+        JMoney myAllowance;
+        JMoney myTax = new JMoney();
         boolean isFinished = false;
 
         /* Access Rental */
         mySrcBucket = theList.getTransSummary(TaxClass.GROSSRENTAL);
-        myRental = new Money(mySrcBucket.getAmount());
+        myRental = new JMoney(mySrcBucket.getAmount());
 
         /* Store the total into the TaxDueRental Bucket */
         myTopBucket = theList.getTaxDetail(TaxClass.TAXDUERENTAL);
@@ -1462,8 +1434,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
-        Money myInterest;
-        Money myTax = new Money(0);
+        JMoney myInterest;
+        JMoney myTax = new JMoney();
         boolean isFinished = false;
 
         /* If we do not have a Low salary band */
@@ -1474,7 +1446,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
         /* Access Interest */
         mySrcBucket = theList.getTransSummary(TaxClass.GROSSINTEREST);
-        myInterest = new Money(mySrcBucket.getAmount());
+        myInterest = new JMoney(mySrcBucket.getAmount());
 
         /* Store the total into the TaxDueInterest Bucket */
         myTopBucket = theList.getTaxDetail(TaxClass.TAXDUEINTEREST);
@@ -1620,13 +1592,13 @@ public class MetaAnalysis implements PreferenceSetChooser {
         TransSummary mySrcBucket;
         TaxDetail myTaxBucket;
         TaxDetail myTopBucket;
-        Money myDividends;
-        Money myTax = new Money(0);
+        JMoney myDividends;
+        JMoney myTax = new JMoney();
         boolean isFinished = false;
 
         /* Access Dividends */
         mySrcBucket = theList.getTransSummary(TaxClass.GROSSDIVIDEND);
-        myDividends = new Money(mySrcBucket.getAmount());
+        myDividends = new JMoney(mySrcBucket.getAmount());
 
         /* Access Unit Trust Dividends */
         mySrcBucket = theList.getTransSummary(TaxClass.GROSSUTDIVS);
@@ -1713,21 +1685,14 @@ public class MetaAnalysis implements PreferenceSetChooser {
      * @return the taxable gains bucket
      */
     private TaxDetail calculateTaxableGainsTax(final TaxBands pBands) {
-        TransSummary mySrcBucket;
-        TaxDetail myTaxBucket;
-        TaxDetail myTopBucket;
-        TaxDetail mySliceBucket;
-        Money myGains;
-        Money mySlice;
-        Money myHiTax;
-        Money myTax = new Money(0);
-        boolean isFinished = false;
-
         /* Access Gains */
-        myGains = theCharges.getGainsTotal();
+        JMoney myGains = theCharges.getGainsTotal();
+        JMoney myTax = new JMoney();
+        boolean isFinished = false;
+        TaxDetail myTaxBucket;
 
         /* Store the total into the TaxDueTaxGains Bucket */
-        myTopBucket = theList.getTaxDetail(TaxClass.TAXDUETAXGAINS);
+        TaxDetail myTopBucket = theList.getTaxDetail(TaxClass.TAXDUETAXGAINS);
         myTopBucket.setAmount(myGains);
 
         /* If the gains are less than the available basic tax band */
@@ -1809,11 +1774,11 @@ public class MetaAnalysis implements PreferenceSetChooser {
         /* If we are not finished then we need top-slicing relief */
         if (!isFinished) {
             /* Access the taxable slice */
-            mySlice = theCharges.getSliceTotal();
+            JMoney mySlice = theCharges.getSliceTotal();
             hasGainsSlices = true;
 
             /* Access the TaxDueSlice Bucket */
-            mySliceBucket = theList.getTaxDetail(TaxClass.TAXDUESLICE);
+            TaxDetail mySliceBucket = theList.getTaxDetail(TaxClass.TAXDUESLICE);
             mySliceBucket.setAmount(mySlice);
 
             /* Access the BasicSliceBucket */
@@ -1853,7 +1818,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
                 myTaxBucket.setAmount(pBands.theBasicBand);
 
                 /* Remember this taxation amount to remove from HiTax bucket */
-                myHiTax = new Money(myTaxBucket.getTaxation());
+                JMoney myHiTax = new JMoney(myTaxBucket.getTaxation());
                 myHiTax.negate();
 
                 /* Access the HiSliceBucket */
@@ -1908,8 +1873,8 @@ public class MetaAnalysis implements PreferenceSetChooser {
             }
 
             /* Re-access the gains */
-            mySrcBucket = theList.getTransSummary(TaxClass.GROSSTAXGAINS);
-            myGains = new Money(mySrcBucket.getAmount());
+            TransSummary mySrcBucket = theList.getTransSummary(TaxClass.GROSSTAXGAINS);
+            myGains = new JMoney(mySrcBucket.getAmount());
 
             /* Subtract the gains from the tax bands */
             myGains.subtractAmount(pBands.theBasicBand);
@@ -1933,29 +1898,23 @@ public class MetaAnalysis implements PreferenceSetChooser {
      * @return the capital gains tax bucket
      */
     private TaxDetail calculateCapitalGainsTax(final TaxBands pBands) {
-        TransSummary mySrcBucket;
-        TaxDetail myTaxBucket;
-        TaxDetail myTopBucket;
-        Money myCapital;
-        Money myAllowance;
-        Money myTax = new Money(0);
-        TaxRegime myRegime = theYear.getTaxRegime();
-        boolean isFinished = false;
-
         /* Access Capital */
-        mySrcBucket = theList.getTransSummary(TaxClass.GROSSCAPGAINS);
-        myCapital = new Money(mySrcBucket.getAmount());
+        TransSummary mySrcBucket = theList.getTransSummary(TaxClass.GROSSCAPGAINS);
+        JMoney myCapital = new JMoney(mySrcBucket.getAmount());
 
         /* Store the total into the TaxDueCapital Bucket */
-        myTopBucket = theList.getTaxDetail(TaxClass.TAXDUECAPGAINS);
+        TaxDetail myTopBucket = theList.getTaxDetail(TaxClass.TAXDUECAPGAINS);
         myTopBucket.setAmount(myCapital);
 
         /* Access the FreeGainsBucket */
-        myTaxBucket = theList.getTaxDetail(TaxClass.CAPITALFREE);
+        TaxDetail myTaxBucket = theList.getTaxDetail(TaxClass.CAPITALFREE);
         myTaxBucket.setParent(myTopBucket);
 
         /* Pick up the capital allowance */
-        myAllowance = theYear.getCapitalAllow();
+        JMoney myAllowance = theYear.getCapitalAllow();
+        JMoney myTax = new JMoney();
+        TaxRegime myRegime = theYear.getTaxRegime();
+        boolean isFinished = false;
 
         /* If the gains is greater than the capital allowance */
         if (myCapital.compareTo(myAllowance) > 0) {
@@ -2031,21 +1990,21 @@ public class MetaAnalysis implements PreferenceSetChooser {
         /**
          * The allowance.
          */
-        private Money theAllowance = null;
+        private JMoney theAllowance = null;
 
         /**
          * The Lo Tax Band.
          */
-        private Money theLoBand = null;
+        private JMoney theLoBand = null;
 
         /**
          * The Basic Tax Band.
          */
-        private Money theBasicBand = null;
+        private JMoney theBasicBand = null;
 
         /**
          * The High Tax Band.
          */
-        private Money theHiBand = null;
+        private JMoney theHiBand = null;
     }
 }

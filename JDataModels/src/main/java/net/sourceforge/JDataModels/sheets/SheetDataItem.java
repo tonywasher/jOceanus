@@ -33,7 +33,7 @@ import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetWriter.CellStyleType;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Decimal;
+import net.sourceforge.JDecimal.JDecimal;
 
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
@@ -741,12 +741,12 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * @param pValue the number
      */
     protected void writeNumber(final int pOffset,
-                               final Decimal pValue) {
+                               final JDecimal pValue) {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */
             Cell myCell = theActiveRow.createCell(theBaseCol + pOffset);
-            myCell.setCellValue(pValue.convertToDouble());
+            myCell.setCellValue(pValue.doubleValue());
             myCell.setCellStyle(theWriter.getCellStyle(pValue));
         }
     }

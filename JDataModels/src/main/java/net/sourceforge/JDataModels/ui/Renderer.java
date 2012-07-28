@@ -33,7 +33,8 @@ import javax.swing.table.TableModel;
 import net.sourceforge.JDataModels.ui.RenderManager.PopulateRenderData;
 import net.sourceforge.JDataModels.ui.RenderManager.RenderData;
 import net.sourceforge.JDateDay.DateDayCellRenderer;
-import net.sourceforge.JDecimal.Decimal;
+import net.sourceforge.JDecimal.JDecimal;
+import net.sourceforge.JDecimal.JDecimalFormatter;
 
 /**
  * Cell renderers.
@@ -295,11 +296,27 @@ public final class Renderer {
         private static final long serialVersionUID = 6571410292897989673L;
 
         /**
+         * Decimal Parser.
+         */
+        private final transient JDecimalFormatter theFormatter;
+
+        /**
          * Constructor.
          * @param pManager the renderer manager
          */
         protected DecimalRenderer(final RenderManager pManager) {
+            this(pManager, new JDecimalFormatter());
+        }
+
+        /**
+         * Constructor.
+         * @param pManager the renderer manager
+         * @param pFormatter the formatter
+         */
+        protected DecimalRenderer(final RenderManager pManager,
+                                  final JDecimalFormatter pFormatter) {
             super(pManager.allocateRenderData(true), SwingConstants.RIGHT);
+            theFormatter = pFormatter;
         }
 
         @Override
@@ -307,9 +324,9 @@ public final class Renderer {
             Object o = pValue;
 
             /* If the value is a Decimal */
-            if (o instanceof Decimal) {
-                Decimal myDec = (Decimal) o;
-                o = myDec.format(true);
+            if (o instanceof JDecimal) {
+                /* Format it */
+                o = theFormatter.formatDecimal((JDecimal) o);
             }
 
             /* Pass value down */

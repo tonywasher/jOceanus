@@ -35,11 +35,11 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
@@ -134,12 +134,12 @@ public class EventAnalysis implements JDataContents {
     /**
      * The Amount Tax threshold for "small" transactions (£3000).
      */
-    private static final Money LIMIT_VALUE = new Money(Money.convertToValue(3000));
+    private static final JMoney LIMIT_VALUE = JMoney.getWholeUnits(3000);
 
     /**
      * The Rate Tax threshold for "small" transactions (5%).
      */
-    private static final Rate LIMIT_RATE = new Rate(Rate.convertToValue(5));
+    private static final JRate LIMIT_RATE = JRate.getWholePercentage(5);
 
     /**
      * The dataSet being analysed.
@@ -951,7 +951,7 @@ public class EventAnalysis implements JDataContents {
     private void processStockSplit(final Event pEvent) {
         /* Stock split has identical credit/debit and always has Units */
         Account myAccount = pEvent.getCredit();
-        Units myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getUnits();
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
@@ -976,8 +976,8 @@ public class EventAnalysis implements JDataContents {
         /* Transfer in is to the credit account and may or may not have units */
         Account myAccount = pEvent.getCredit();
         Account myDebit = pEvent.getDebit();
-        Units myUnits = pEvent.getUnits();
-        Money myAmount = pEvent.getAmount();
+        JUnits myUnits = pEvent.getUnits();
+        JMoney myAmount = pEvent.getAmount();
         TransactionType myTrans = pEvent.getTransType();
 
         /* Access the Asset Account Bucket */
@@ -1038,9 +1038,9 @@ public class EventAnalysis implements JDataContents {
         Account myCredit = pEvent.getCredit();
         TransactionType myTrans = pEvent.getTransType();
         TransTypeList myTranList = theData.getTransTypes();
-        Money myAmount = pEvent.getAmount();
-        Money myTaxCredit = pEvent.getTaxCredit();
-        Units myUnits = pEvent.getUnits();
+        JMoney myAmount = pEvent.getAmount();
+        JMoney myTaxCredit = pEvent.getTaxCredit();
+        JUnits myUnits = pEvent.getUnits();
         Account myDebit;
 
         /* If the account is tax free */
@@ -1111,7 +1111,7 @@ public class EventAnalysis implements JDataContents {
             /* else we are paying out to another account */
         } else {
             /* Adjust the gains total for this asset */
-            Money myDividends = new Money(myAmount);
+            JMoney myDividends = new JMoney(myAmount);
 
             /* Any tax credit is viewed as a realised gain from the account */
             if (myTaxCredit != null) {
@@ -1151,13 +1151,13 @@ public class EventAnalysis implements JDataContents {
         /* Transfer out is from the debit account and may or may not have units */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        Money myAmount = pEvent.getAmount();
-        Units myUnits = pEvent.getUnits();
+        JMoney myAmount = pEvent.getAmount();
+        JUnits myUnits = pEvent.getUnits();
         TransactionType myTrans = pEvent.getTransType();
-        Money myReduction;
-        Money myDeltaCost;
-        Money myDeltaGains;
-        Money myCost;
+        JMoney myReduction;
+        JMoney myDeltaCost;
+        JMoney myDeltaGains;
+        JMoney myCost;
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
@@ -1175,7 +1175,7 @@ public class EventAnalysis implements JDataContents {
         myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Assume the the cost reduction is the full value */
-        myReduction = new Money(myAmount);
+        myReduction = new JMoney(myAmount);
         myCost = myAsset.getCost();
 
         /* If we are reducing units in the account */
@@ -1185,13 +1185,13 @@ public class EventAnalysis implements JDataContents {
         }
 
         /* If the reduction is greater than the total cost */
-        if (myReduction.getValue() > myCost.getValue()) {
+        if (myReduction.compareTo(myCost) > 0) {
             /* Reduction is the total cost */
-            myReduction = new Money(myCost);
+            myReduction = new JMoney(myCost);
         }
 
         /* Determine the delta to the cost */
-        myDeltaCost = new Money(myReduction);
+        myDeltaCost = new JMoney(myReduction);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
@@ -1206,7 +1206,7 @@ public class EventAnalysis implements JDataContents {
         }
 
         /* Determine the delta to the gains */
-        myDeltaGains = new Money(myAmount);
+        myDeltaGains = new JMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
@@ -1223,7 +1223,7 @@ public class EventAnalysis implements JDataContents {
         /* If we have reduced units */
         if (myUnits != null) {
             /* Access units as negative value */
-            Units myDeltaUnits = new Units(myUnits);
+            JUnits myDeltaUnits = new JUnits(myUnits);
             myDeltaUnits.negate();
 
             /* Record current and delta units */
@@ -1252,13 +1252,13 @@ public class EventAnalysis implements JDataContents {
         /* Transfer in is from the debit account and may or may not have units */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        Money myAmount = pEvent.getAmount();
-        Units myUnits = pEvent.getUnits();
+        JMoney myAmount = pEvent.getAmount();
+        JUnits myUnits = pEvent.getUnits();
         TransactionType myTrans = pEvent.getTransType();
-        Money myReduction;
-        Money myDeltaCost;
-        Money myDeltaGains;
-        Money myCost;
+        JMoney myReduction;
+        JMoney myDeltaCost;
+        JMoney myDeltaGains;
+        JMoney myCost;
         Account myDebit;
 
         /* Access the Asset Account Bucket */
@@ -1277,7 +1277,7 @@ public class EventAnalysis implements JDataContents {
         myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Assume the the cost reduction is the full value */
-        myReduction = new Money(myAmount);
+        myReduction = new JMoney(myAmount);
         myCost = myAsset.getCost();
 
         /* If we are reducing units in the account */
@@ -1287,13 +1287,13 @@ public class EventAnalysis implements JDataContents {
         }
 
         /* If the reduction is greater than the total cost */
-        if (myReduction.getValue() > myCost.getValue()) {
+        if (myReduction.compareTo(myCost) > 0) {
             /* Reduction is the total cost */
-            myReduction = new Money(myCost);
+            myReduction = new JMoney(myCost);
         }
 
         /* Determine the delta to the cost */
-        myDeltaCost = new Money(myReduction);
+        myDeltaCost = new JMoney(myReduction);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
@@ -1308,7 +1308,7 @@ public class EventAnalysis implements JDataContents {
         }
 
         /* Determine the delta to the gains */
-        myDeltaGains = new Money(myAmount);
+        myDeltaGains = new JMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
@@ -1325,7 +1325,7 @@ public class EventAnalysis implements JDataContents {
         /* If we have reduced units */
         if (myUnits != null) {
             /* Access units as negative value */
-            Units myDeltaUnits = new Units(myUnits);
+            JUnits myDeltaUnits = new JUnits(myUnits);
             myDeltaUnits.negate();
 
             /* Record current and delta units */
@@ -1370,16 +1370,16 @@ public class EventAnalysis implements JDataContents {
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
-        Money myAmount = pEvent.getAmount();
+        JMoney myAmount = pEvent.getAmount();
         TransactionType myTrans = pEvent.getTransType();
         AccountPrice myActPrice;
-        Price myPrice;
-        Money myValue;
-        Money myCost;
-        Money myReduction;
-        Money myPortion;
-        Money myDeltaCost;
-        Money myDeltaGains;
+        JPrice myPrice;
+        JMoney myValue;
+        JMoney myCost;
+        JMoney myReduction;
+        JMoney myPortion;
+        JMoney myDeltaCost;
+        JMoney myDeltaGains;
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
@@ -1412,9 +1412,9 @@ public class EventAnalysis implements JDataContents {
         myPortion = myValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large stock waiver (> both valueLimit and rateLimit of value) */
-        if ((myAmount.getValue() > LIMIT_VALUE.getValue()) && (myAmount.getValue() > myPortion.getValue())) {
+        if ((myAmount.compareTo(LIMIT_VALUE) > 0) && (myAmount.compareTo(myPortion) > 0)) {
             /* Determine the total value of rights plus share value */
-            Money myTotalValue = new Money(myAmount);
+            JMoney myTotalValue = new JMoney(myAmount);
             myTotalValue.addAmount(myValue);
 
             /* Determine the reduction as a proportion of the total value */
@@ -1423,17 +1423,17 @@ public class EventAnalysis implements JDataContents {
             /* else this is viewed as small and is taken out of the cost */
         } else {
             /* Set the reduction to be the entire amount */
-            myReduction = new Money(myAmount);
+            myReduction = new JMoney(myAmount);
         }
 
         /* If the reduction is greater than the total cost */
-        if (myReduction.getValue() > myCost.getValue()) {
+        if (myReduction.compareTo(myCost) > 0) {
             /* Reduction is the total cost */
-            myReduction = new Money(myCost);
+            myReduction = new JMoney(myCost);
         }
 
         /* Calculate the delta cost */
-        myDeltaCost = new Money(myReduction);
+        myDeltaCost = new JMoney(myReduction);
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
@@ -1445,7 +1445,7 @@ public class EventAnalysis implements JDataContents {
         myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCost);
 
         /* Calculate the delta gains */
-        myDeltaGains = new Money(myAmount);
+        myDeltaGains = new JMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* Record the current/delta gains */
@@ -1473,11 +1473,11 @@ public class EventAnalysis implements JDataContents {
     private void processStockDeMerger(final Event pEvent) {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        Dilution myDilution = pEvent.getDilution();
-        Units myUnits = pEvent.getUnits();
-        Money myCost;
-        Money myDeltaCost;
-        Money myNewCost;
+        JDilution myDilution = pEvent.getDilution();
+        JUnits myUnits = pEvent.getUnits();
+        JMoney myCost;
+        JMoney myDeltaCost;
+        JMoney myNewCost;
 
         /* Access the Debit Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
@@ -1488,10 +1488,10 @@ public class EventAnalysis implements JDataContents {
 
         /* Calculate the diluted value of the Debit account */
         myCost = myAsset.getCost();
-        myNewCost = myCost.getDilutedAmount(myDilution);
+        myNewCost = myCost.getDilutedMoney(myDilution);
 
         /* Calculate the delta to the cost */
-        myDeltaCost = new Money(myNewCost);
+        myDeltaCost = new JMoney(myNewCost);
         myDeltaCost.subtractAmount(myCost);
 
         /* Record the current/delta cost */
@@ -1517,7 +1517,7 @@ public class EventAnalysis implements JDataContents {
         myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* The deltaCost is transferred to the credit account */
-        myDeltaCost = new Money(myDeltaCost);
+        myDeltaCost = new JMoney(myDeltaCost);
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
@@ -1554,17 +1554,17 @@ public class EventAnalysis implements JDataContents {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
-        Money myAmount = pEvent.getAmount();
+        JMoney myAmount = pEvent.getAmount();
         TransactionType myTrans = pEvent.getTransType();
         AccountPrice myActPrice;
-        Price myPrice;
-        Money myValue;
-        Money myPortion;
-        Money myReduction;
-        Money myCost;
-        Money myResidualCost;
-        Money myDeltaCost;
-        Money myDeltaGains;
+        JPrice myPrice;
+        JMoney myValue;
+        JMoney myPortion;
+        JMoney myReduction;
+        JMoney myCost;
+        JMoney myResidualCost;
+        JMoney myDeltaCost;
+        JMoney myDeltaGains;
 
         /* Access the Debit Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
@@ -1597,23 +1597,23 @@ public class EventAnalysis implements JDataContents {
         myPortion = myValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large cash takeover portion (> both valueLimit and rateLimit of value) */
-        if ((myAmount.getValue() > LIMIT_VALUE.getValue()) && (myAmount.getValue() > myPortion.getValue())) {
+        if ((myAmount.compareTo(LIMIT_VALUE) > 0) && (myAmount.compareTo(myPortion) > 0)) {
             /* We have to defer the allocation of cost until we know of the Stock TakeOver part */
             myEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERCASH, myAmount);
 
             /* else this is viewed as small and is taken out of the cost */
         } else {
             /* Set the reduction to be the entire amount */
-            myReduction = new Money(myAmount);
+            myReduction = new JMoney(myAmount);
 
             /* If the reduction is greater than the total cost */
-            if (myReduction.getValue() > myCost.getValue()) {
+            if (myReduction.compareTo(myCost) > 0) {
                 /* Reduction is the total cost */
-                myReduction = new Money(myCost);
+                myReduction = new JMoney(myCost);
             }
 
             /* Calculate the residual cost */
-            myResidualCost = new Money(myReduction);
+            myResidualCost = new JMoney(myReduction);
             myResidualCost.negate();
             myResidualCost.addAmount(myCost);
 
@@ -1621,7 +1621,7 @@ public class EventAnalysis implements JDataContents {
             myEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERCOST, myResidualCost);
 
             /* Calculate the delta cost */
-            myDeltaCost = new Money(myCost);
+            myDeltaCost = new JMoney(myCost);
             myDeltaCost.negate();
 
             /* Record the current/delta cost */
@@ -1633,7 +1633,7 @@ public class EventAnalysis implements JDataContents {
             myEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myCost);
 
             /* Calculate the gains */
-            myDeltaGains = new Money(myAmount);
+            myDeltaGains = new JMoney(myAmount);
             myDeltaGains.addAmount(myDeltaCost);
 
             /* Record the current/delta cost */
@@ -1663,18 +1663,18 @@ public class EventAnalysis implements JDataContents {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
-        Units myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getUnits();
         TransactionType myTrans = pEvent.getTransType();
         AccountPrice myActPrice;
-        Price myPrice;
-        Money myValue;
-        Money myStockCost;
-        Money myCashCost;
-        Money myTotalCost;
-        Money myDeltaCost;
-        Money myDeltaGains;
-        Units myDeltaUnits;
-        Money myResidualCash = null;
+        JPrice myPrice;
+        JMoney myValue;
+        JMoney myStockCost;
+        JMoney myCashCost;
+        JMoney myTotalCost;
+        JMoney myDeltaCost;
+        JMoney myDeltaGains;
+        JUnits myDeltaUnits;
+        JMoney myResidualCash = null;
         CapitalEvent myCredEvent;
         CapitalEvent myDebEvent;
 
@@ -1689,7 +1689,7 @@ public class EventAnalysis implements JDataContents {
         /* If we have had a cash takeover event */
         if (myDebEvent != null) {
             /* Access the residual cost/cash */
-            myResidualCash = (Money) myDebEvent.findAttribute(CapitalEvent.CAPITAL_TAKEOVERCASH);
+            myResidualCash = myDebEvent.findAttribute(CapitalEvent.CAPITAL_TAKEOVERCASH, JMoney.class);
         }
 
         /* Allocate new Capital events */
@@ -1708,12 +1708,12 @@ public class EventAnalysis implements JDataContents {
             myDebEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERVALUE, myValue);
 
             /* Calculate the total cost of the takeover */
-            myTotalCost = new Money(myResidualCash);
+            myTotalCost = new JMoney(myResidualCash);
             myTotalCost.addAmount(myValue);
 
             /* Split the total cost of the takeover between stock and cash */
             myStockCost = myTotalCost.valueAtWeight(myValue, myTotalCost);
-            myCashCost = new Money(myTotalCost);
+            myCashCost = new JMoney(myTotalCost);
             myCashCost.subtractAmount(myStockCost);
 
             /* Record the values */
@@ -1722,7 +1722,7 @@ public class EventAnalysis implements JDataContents {
             myDebEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERTOTAL, myTotalCost);
 
             /* The Delta Gains is the Amount minus the CashCost */
-            myDeltaGains = new Money(myResidualCash);
+            myDeltaGains = new JMoney(myResidualCash);
             myDeltaGains.subtractAmount(myCashCost);
 
             /* Record the gains */
@@ -1748,7 +1748,7 @@ public class EventAnalysis implements JDataContents {
         }
 
         /* Calculate the delta cost */
-        myDeltaCost = new Money(myDebAsset.getCost());
+        myDeltaCost = new JMoney(myDebAsset.getCost());
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
@@ -1760,7 +1760,7 @@ public class EventAnalysis implements JDataContents {
         myDebEvent.addAttribute(CapitalEvent.CAPITAL_FINALCOST, myDebAsset.getCost());
 
         /* Calculate the delta units */
-        myDeltaUnits = new Units(myDebAsset.getUnits());
+        myDeltaUnits = new JUnits(myDebAsset.getUnits());
         myDeltaUnits.negate();
 
         /* Record the current/delta units */

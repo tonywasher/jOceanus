@@ -62,8 +62,8 @@ import net.sourceforge.JDataModels.ui.ValueField.ValueClass;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.TaxRegime;
 import net.sourceforge.JFinanceApp.data.TaxRegime.TaxRegimeList;
@@ -149,7 +149,7 @@ public class MaintTaxYear extends JPanelWithEvents {
     private final JPanel theStdRates;
 
     /**
-     * The Xtra Rates panel.
+     * The Extra Rates panel.
      */
     private final JPanel theXtraRates;
 
@@ -1008,121 +1008,121 @@ public class MaintTaxYear extends JPanelWithEvents {
                 /* If this is our the Allowance */
                 if (theAllowance.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theAllowance.getValue();
+                    JMoney myValue = (JMoney) theAllowance.getValue();
                     theTaxYear.setAllowance(myValue);
 
                     /* If this is our LoAge Allowance */
                 } else if (theLoAgeAllow.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theLoAgeAllow.getValue();
+                    JMoney myValue = (JMoney) theLoAgeAllow.getValue();
                     theTaxYear.setLoAgeAllow(myValue);
 
                     /* If this is our HiAge Allowance */
                 } else if (theHiAgeAllow.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theHiAgeAllow.getValue();
+                    JMoney myValue = (JMoney) theHiAgeAllow.getValue();
                     theTaxYear.setHiAgeAllow(myValue);
 
                     /* If this is our Rental */
                 } else if (theRental.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theRental.getValue();
+                    JMoney myValue = (JMoney) theRental.getValue();
                     theTaxYear.setRentalAllowance(myValue);
 
                     /* If this is our Capital Allowance */
                 } else if (theCapitalAllow.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theCapitalAllow.getValue();
+                    JMoney myValue = (JMoney) theCapitalAllow.getValue();
                     theTaxYear.setCapitalAllow(myValue);
 
                     /* If this is our Age Allowance Limit */
                 } else if (theAgeAllowLimit.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theAgeAllowLimit.getValue();
+                    JMoney myValue = (JMoney) theAgeAllowLimit.getValue();
                     theTaxYear.setAgeAllowLimit(myValue);
 
                     /* If this is our Additional Allowance Limit */
                 } else if (theAddAllowLimit.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theAddAllowLimit.getValue();
+                    JMoney myValue = (JMoney) theAddAllowLimit.getValue();
                     theTaxYear.setAddAllowLimit(myValue);
 
                     /* If this is our Additional Income Boundary */
                 } else if (theAddIncomeBndry.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theAddIncomeBndry.getValue();
+                    JMoney myValue = (JMoney) theAddIncomeBndry.getValue();
                     theTaxYear.setAddIncBound(myValue);
 
                     /* If this is our LoTaxBand */
                 } else if (theLoTaxBand.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theLoTaxBand.getValue();
+                    JMoney myValue = (JMoney) theLoTaxBand.getValue();
                     theTaxYear.setLoBand(myValue);
 
                     /* If this is our Basic Tax Band */
                 } else if (theBasicTaxBand.equals(o)) {
                     /* Update the Tax Year */
-                    Money myValue = (Money) theBasicTaxBand.getValue();
+                    JMoney myValue = (JMoney) theBasicTaxBand.getValue();
                     theTaxYear.setBasicBand(myValue);
 
                     /* If this is our Low Tax Rate */
                 } else if (theLoTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theLoTaxRate.getValue();
+                    JRate myValue = (JRate) theLoTaxRate.getValue();
                     theTaxYear.setLoTaxRate(myValue);
 
                     /* If this is our Basic Tax Rate */
                 } else if (theBasicTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theBasicTaxRate.getValue();
+                    JRate myValue = (JRate) theBasicTaxRate.getValue();
                     theTaxYear.setBasicTaxRate(myValue);
 
                     /* If this is our High Tax Rate */
                 } else if (theHiTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theHiTaxRate.getValue();
+                    JRate myValue = (JRate) theHiTaxRate.getValue();
                     theTaxYear.setHiTaxRate(myValue);
 
                     /* If this is our Additional Tax Rate */
                 } else if (theAddTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theAddTaxRate.getValue();
+                    JRate myValue = (JRate) theAddTaxRate.getValue();
                     theTaxYear.setAddTaxRate(myValue);
 
                     /* If this is our Interest Tax Rate */
                 } else if (theIntTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theIntTaxRate.getValue();
+                    JRate myValue = (JRate) theIntTaxRate.getValue();
                     theTaxYear.setIntTaxRate(myValue);
 
                     /* If this is our Dividend Tax Rate */
                 } else if (theDivTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theDivTaxRate.getValue();
+                    JRate myValue = (JRate) theDivTaxRate.getValue();
                     theTaxYear.setDivTaxRate(myValue);
 
                     /* If this is our High Dividend Tax Rate */
                 } else if (theHiDivTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theHiDivTaxRate.getValue();
+                    JRate myValue = (JRate) theHiDivTaxRate.getValue();
                     theTaxYear.setHiDivTaxRate(myValue);
 
                     /* If this is our Additional Tax Rate */
                 } else if (theAddDivTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theAddDivTaxRate.getValue();
+                    JRate myValue = (JRate) theAddDivTaxRate.getValue();
                     theTaxYear.setAddDivTaxRate(myValue);
 
                     /* If this is our Capital Tax Rate */
                 } else if (theCapTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theCapTaxRate.getValue();
+                    JRate myValue = (JRate) theCapTaxRate.getValue();
                     theTaxYear.setCapTaxRate(myValue);
 
                     /* If this is our High Capital Tax Rate */
                 } else if (theHiCapTaxRate.equals(o)) {
                     /* Update the Tax Year */
-                    Rate myValue = (Rate) theHiCapTaxRate.getValue();
+                    JRate myValue = (JRate) theHiCapTaxRate.getValue();
                     theTaxYear.setHiCapTaxRate(myValue);
                 }
 

@@ -33,9 +33,10 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.DilutedPrice;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JDilutedPrice;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
@@ -128,7 +129,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
     /**
      * The Dilution.
      */
-    private final Dilution theDilution;
+    private final JDilution theDilution;
 
     /**
      * The Event.
@@ -155,7 +156,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
      * Obtain the Dilution.
      * @return the dilution
      */
-    public Dilution getDilution() {
+    public JDilution getDilution() {
         return theDilution;
     }
 
@@ -272,7 +273,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
     private DilutionEvent(final int pId,
                           final Account pAccount,
                           final DateDay pDate,
-                          final Dilution pDilution) {
+                          final JDilution pDilution) {
         /* Store the values */
         theId = pId;
         theAccount = pAccount;
@@ -316,7 +317,12 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
         /**
          * The DataSet.
          */
-        private FinanceData theData = null;
+        private final FinanceData theData;
+
+        /**
+         * The Decimal parser.
+         */
+        private final JDecimalParser theParser;
 
         /**
          * The next Id.
@@ -330,6 +336,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
         public DilutionEventList(final FinanceData pData) {
             super(DilutionEvent.class);
             theData = pData;
+            theParser = theData.getDecimalParser();
         }
 
         /**
@@ -369,7 +376,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             DateDay myDate = new DateDay(pDate);
 
             /* Record the dilution */
-            Dilution myDilution = Dilution.parseString(pDilution);
+            JDilution myDilution = theParser.parseDilutionValue(pDilution);
             if (myDilution == null) {
                 throw new JDataException(ExceptionClass.DATA, "Invalid Dilution: " + pDilution);
             }
@@ -411,8 +418,8 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
          * @param pDate the date of the price
          * @return the dilution factor
          */
-        public Dilution getDilutionFactor(final Account pAccount,
-                                          final DateDay pDate) {
+        public JDilution getDilutionFactor(final Account pAccount,
+                                           final DateDay pDate) {
             /* No factor if the account has no dilutions */
             if (!hasDilution(pAccount)) {
                 return null;
@@ -420,7 +427,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
             /* Create the iterator */
             Iterator<DilutionEvent> myIterator = listIterator();
-            Dilution myDilution = new Dilution(Dilution.MAX_VALUE);
+            JDilution myDilution = new JDilution(JDilution.MAX_DILUTION);
 
             /* Loop through the items */
             while (myIterator.hasNext()) {
@@ -434,7 +441,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             }
 
             /* If there is no dilution at all */
-            if (myDilution.getValue() == Dilution.MAX_VALUE) {
+            if (myDilution.compareTo(JDilution.MAX_DILUTION) == 0) {
                 myDilution = null;
             }
 
@@ -464,27 +471,27 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
             /* Create the date */
             DateDay myDate = new DateDay(pDate);
-            Price myPrice;
+            JPrice myPrice;
 
-            /* If the account has diluted prices for this date */
-            Dilution myDilution = getDilutionFactor(myAccount, myDate);
-            if (myDilution != null) {
-                /* Obtain the diluted price */
-                DilutedPrice myDilutedPrice = DilutedPrice.parseString(pPrice);
-                if (myDilutedPrice == null) {
-                    throw new JDataException(ExceptionClass.DATA, "Invalid DilutedPrice: " + pPrice);
+            /* Protect against exceptions */
+            try {
+                /* If the account has diluted prices for this date */
+                JDilution myDilution = getDilutionFactor(myAccount, myDate);
+                if (myDilution != null) {
+                    /* Obtain the diluted price */
+                    JDilutedPrice myDilutedPrice = theParser.parseDilutedPriceValue(pPrice);
+
+                    /* Obtain the undiluted price */
+                    myPrice = myDilutedPrice.getPrice(myDilution);
+
+                    /* Else this is just a price */
+                } else {
+                    /* Obtain the the price */
+                    myPrice = theParser.parsePriceValue(pPrice);
                 }
-
-                /* Obtain the undiluted price */
-                myPrice = myDilutedPrice.getPrice(myDilution);
-
-                /* Else this is just a price */
-            } else {
-                /* Obtain the the price */
-                myPrice = Price.parseString(pPrice);
-                if (myPrice == null) {
-                    throw new JDataException(ExceptionClass.DATA, "Invalid Price: " + pPrice);
-                }
+                /* Catch exceptions */
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.DATA, "Invalid Price: " + pPrice, e);
             }
 
             /* Add the item to the list */

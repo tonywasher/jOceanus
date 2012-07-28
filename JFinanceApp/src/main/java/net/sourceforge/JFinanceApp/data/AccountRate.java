@@ -30,7 +30,6 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
@@ -38,10 +37,13 @@ import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedRate;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
+
+import org.apache.poi.ss.formula.functions.Rate;
 
 /**
  * AccountRate data type.
@@ -92,7 +94,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * Obtain Rate.
      * @return the rate
      */
-    public Rate getRate() {
+    public JRate getRate() {
         return getRate(getValueSet());
     }
 
@@ -116,7 +118,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * Obtain Bonus.
      * @return the bonus rate
      */
-    public Rate getBonus() {
+    public JRate getBonus() {
         return getBonus(getValueSet());
     }
 
@@ -174,8 +176,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValueSet the valueSet
      * @return the Rate
      */
-    public static Rate getRate(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_RATE, Rate.class);
+    public static JRate getRate(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_RATE, JRate.class);
     }
 
     /**
@@ -201,8 +203,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValueSet the valueSet
      * @return the Bonus
      */
-    public static Rate getBonus(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_BONUS, Rate.class);
+    public static JRate getBonus(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_BONUS, JRate.class);
     }
 
     /**
@@ -261,16 +263,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValue the rate
      * @throws JDataException on error
      */
-    private void setValueRate(final String pValue) throws JDataException {
-        setValueRate(new Rate(pValue));
-    }
-
-    /**
-     * Set the rate.
-     * @param pValue the rate
-     * @throws JDataException on error
-     */
-    private void setValueRate(final Rate pValue) throws JDataException {
+    private void setValueRate(final JRate pValue) throws JDataException {
         setEncryptedValue(FIELD_RATE, pValue);
     }
 
@@ -296,16 +289,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValue the bonus rate
      * @throws JDataException on error
      */
-    private void setValueBonus(final String pValue) throws JDataException {
-        setValueBonus(new Rate(pValue));
-    }
-
-    /**
-     * Set the bonus rate.
-     * @param pValue the bonus rate
-     * @throws JDataException on error
-     */
-    private void setValueBonus(final Rate pValue) throws JDataException {
+    private void setValueBonus(final JRate pValue) throws JDataException {
         setEncryptedValue(FIELD_BONUS, pValue);
     }
 
@@ -368,7 +352,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * Constructor.
      * @param pList the list
      * @param uId the id
-     * @param uAccountId the account id
+     * @param pAccount the account
      * @param pEndDate the end date
      * @param pRate the rate
      * @param pBonus the bonus
@@ -376,7 +360,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      */
     private AccountRate(final AccountRateList pList,
                         final int uId,
-                        final int uAccountId,
+                        final Account pAccount,
                         final Date pEndDate,
                         final String pRate,
                         final String pBonus) throws JDataException {
@@ -385,17 +369,12 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
 
         /* Protect against exceptions */
         try {
-            /* Record the Id */
-            setValueAccount(uAccountId);
-
-            /* Look up the Account */
+            /* Access the parser */
             FinanceData myData = getDataSet();
-            AccountList myAccounts = myData.getAccounts();
-            Account myAccount = myAccounts.findItemById(uAccountId);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
-            }
-            setValueAccount(myAccount);
+            JDecimalParser myParser = myData.getDecimalParser();
+
+            /* Record the account */
+            setValueAccount(pAccount);
 
             /* Record the date */
             if (pEndDate != null) {
@@ -403,8 +382,13 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             }
 
             /* Set the encrypted objects */
-            setValueRate(pRate);
-            setValueBonus(pBonus);
+            setValueRate(myParser.parseRateValue(pRate));
+            setValueBonus(myParser.parseRateValue(pBonus));
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException e) {
+            /* Pass on exception */
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -567,7 +551,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pRate the rate
      * @throws JDataException on error
      */
-    public void setRate(final Rate pRate) throws JDataException {
+    public void setRate(final JRate pRate) throws JDataException {
         setValueRate(pRate);
     }
 
@@ -576,7 +560,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pBonus the rate
      * @throws JDataException on error
      */
-    public void setBonus(final Rate pBonus) throws JDataException {
+    public void setBonus(final JRate pBonus) throws JDataException {
         setValueBonus(pBonus);
     }
 
@@ -870,36 +854,19 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
                             final Date pDate,
                             final String pBonus) throws JDataException {
             /* Access the Accounts */
-            AccountList myAccounts = getDataSet().getAccounts();
+            FinanceData myData = getDataSet();
+            AccountList myAccounts = myData.getAccounts();
 
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Rate on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Account [" + pAccount
-                        + "]");
+                        + myData.getDataFormatter().formatObject(new DateDay(pDate))
+                        + "] has invalid Account [" + pAccount + "]");
             }
 
-            /* Add the rate */
-            addItem(uId, myAccount.getId(), pRate, pDate, pBonus);
-        }
-
-        /**
-         * Load an Extract Rate.
-         * @param uId the id
-         * @param uAccountId the account id
-         * @param pRate the Rate
-         * @param pDate the end date
-         * @param pBonus the Bonus
-         * @throws JDataException on error
-         */
-        private void addItem(final int uId,
-                             final int uAccountId,
-                             final String pRate,
-                             final Date pDate,
-                             final String pBonus) throws JDataException {
-            /* Create the period */
-            AccountRate myRate = new AccountRate(this, uId, uAccountId, pDate, pRate, pBonus);
+            /* Create the ratePeriod */
+            AccountRate myRate = new AccountRate(this, uId, myAccount, pDate, pRate, pBonus);
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(myRate.getId())) {

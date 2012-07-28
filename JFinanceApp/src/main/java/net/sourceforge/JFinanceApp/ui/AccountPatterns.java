@@ -34,6 +34,7 @@ import javax.swing.JPopupMenu;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
@@ -53,7 +54,8 @@ import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
@@ -632,7 +634,7 @@ public class AccountPatterns extends JDataTable<Pattern> {
                     break;
                 case COLUMN_CREDIT:
                 case COLUMN_DEBIT:
-                    pPattern.setAmount((Money) pValue);
+                    pPattern.setAmount((JMoney) pValue);
                     break;
                 case COLUMN_PARTNER:
                     pPattern.setPartner((Account) pValue);
@@ -831,11 +833,16 @@ public class AccountPatterns extends JDataTable<Pattern> {
             /* call constructor */
             super(theTable);
 
+            /* Access parser and formatter */
+            FinanceData myData = theView.getData();
+            JDecimalParser myParser = myData.getDecimalParser();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
             /* Create the relevant formatters/editors */
             theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
-            theMoneyEditor = new MoneyEditor();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theMoneyEditor = new MoneyEditor(myParser);
             theStringRenderer = theRenderMgr.allocateStringRenderer();
             theStringEditor = new StringEditor();
             theComboEditor = new ComboBoxEditor();

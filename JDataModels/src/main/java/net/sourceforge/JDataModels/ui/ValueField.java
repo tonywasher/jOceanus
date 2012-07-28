@@ -32,12 +32,13 @@ import java.util.Arrays;
 import javax.swing.JTextField;
 
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 
 /**
  * ValueField provides a JTextField which is geared to a particular type of data.
@@ -58,6 +59,11 @@ public class ValueField extends JTextField {
      * The Data Model.
      */
     private transient DataModel theModel = null;
+
+    /**
+     * The Data Model.
+     */
+    private final transient JDataFormatter theFormatter;
 
     /**
      * The Cached foreground colour.
@@ -89,6 +95,19 @@ public class ValueField extends JTextField {
      * @param pClass the value class
      */
     public ValueField(final ValueClass pClass) {
+        this(pClass, new JDataFormatter());
+    }
+
+    /**
+     * Constructor.
+     * @param pClass the value class
+     * @param pFormatter the date formatter
+     */
+    public ValueField(final ValueClass pClass,
+                      final JDataFormatter pFormatter) {
+        /* Store the formatter */
+        theFormatter = pFormatter;
+
         /* Switch on requested class */
         switch (pClass) {
         /* Create appropriate model class */
@@ -128,7 +147,7 @@ public class ValueField extends JTextField {
     }
 
     /**
-     * Set Standard display string.
+     * Set Special display string.
      * @param pValue the value
      */
     public void setDisplay(final RendererFieldValue pValue) {
@@ -473,7 +492,7 @@ public class ValueField extends JTextField {
     /**
      * The Money Data Model class.
      */
-    private static class MoneyModel extends DataModel {
+    private class MoneyModel extends DataModel {
         /**
          * Cached display string value.
          */
@@ -485,20 +504,20 @@ public class ValueField extends JTextField {
         private String theEditString = "";
 
         @Override
-        protected Money getValue() {
-            return (Money) super.getValue();
+        protected JMoney getValue() {
+            return (JMoney) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            Money myNew = (Money) pValue;
+            JMoney myNew = (JMoney) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new Money(myNew));
+            super.setValue((pValue == null) ? null : new JMoney(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : myNew.format(true));
-            theEditString = ((myNew == null) ? "" : myNew.format(false));
+            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null) ? "" : myNew.toString());
             establishStrings();
         }
 
@@ -512,13 +531,13 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(final String pValue) {
             /* Return the parsed value */
-            return Money.parseString(pValue);
+            return new JMoney(pValue);
         }
 
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-money */
-            if (!(pValue instanceof Money)) {
+            if (!(pValue instanceof JMoney)) {
                 throw new IllegalArgumentException();
             }
         }
@@ -533,7 +552,7 @@ public class ValueField extends JTextField {
     /**
      * The Rate Data Model class.
      */
-    private static class RateModel extends DataModel {
+    private class RateModel extends DataModel {
         /**
          * Cached display string value.
          */
@@ -545,20 +564,20 @@ public class ValueField extends JTextField {
         private String theEditString = "";
 
         @Override
-        protected Rate getValue() {
-            return (Rate) super.getValue();
+        protected JRate getValue() {
+            return (JRate) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            Rate myNew = (Rate) pValue;
+            JRate myNew = (JRate) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new Rate(myNew));
+            super.setValue((pValue == null) ? null : new JRate(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : myNew.format(true));
-            theEditString = ((myNew == null) ? "" : myNew.format(false));
+            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null) ? "" : myNew.toString());
             establishStrings();
         }
 
@@ -572,13 +591,13 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(final String pValue) {
             /* Return the parsed value */
-            return Rate.parseString(pValue);
+            return new JRate(pValue);
         }
 
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-rate */
-            if (!(pValue instanceof Rate)) {
+            if (!(pValue instanceof JRate)) {
                 throw new IllegalArgumentException();
             }
         }
@@ -593,7 +612,7 @@ public class ValueField extends JTextField {
     /**
      * The Units Data Model class.
      */
-    private static class UnitsModel extends DataModel {
+    private class UnitsModel extends DataModel {
         /**
          * Cached display string value.
          */
@@ -605,20 +624,20 @@ public class ValueField extends JTextField {
         private String theEditString = "";
 
         @Override
-        protected Units getValue() {
-            return (Units) super.getValue();
+        protected JUnits getValue() {
+            return (JUnits) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            Units myNew = (Units) pValue;
+            JUnits myNew = (JUnits) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new Units(myNew));
+            super.setValue((pValue == null) ? null : new JUnits(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : myNew.format(true));
-            theEditString = ((myNew == null) ? "" : myNew.format(false));
+            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null) ? "" : myNew.toString());
             establishStrings();
         }
 
@@ -632,13 +651,13 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(final String pValue) {
             /* Return the parsed value */
-            return Units.parseString(pValue);
+            return new JUnits(pValue);
         }
 
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-rate */
-            if (!(pValue instanceof Units)) {
+            if (!(pValue instanceof JUnits)) {
                 throw new IllegalArgumentException();
             }
         }
@@ -653,7 +672,7 @@ public class ValueField extends JTextField {
     /**
      * The Price Data Model class.
      */
-    private static class PriceModel extends DataModel {
+    private class PriceModel extends DataModel {
         /**
          * Cached display string value.
          */
@@ -665,20 +684,20 @@ public class ValueField extends JTextField {
         private String theEditString = "";
 
         @Override
-        protected Price getValue() {
-            return (Price) super.getValue();
+        protected JPrice getValue() {
+            return (JPrice) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            Price myNew = (Price) pValue;
+            JPrice myNew = (JPrice) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new Price(myNew));
+            super.setValue((pValue == null) ? null : new JPrice(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : myNew.format(true));
-            theEditString = ((myNew == null) ? "" : myNew.format(false));
+            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null) ? "" : myNew.toString());
             establishStrings();
         }
 
@@ -692,13 +711,13 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(final String pValue) {
             /* Return the parsed value */
-            return Price.parseString(pValue);
+            return new JPrice(pValue);
         }
 
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-rate */
-            if (!(pValue instanceof Price)) {
+            if (!(pValue instanceof JPrice)) {
                 throw new IllegalArgumentException();
             }
         }
@@ -713,7 +732,7 @@ public class ValueField extends JTextField {
     /**
      * The Dilution Data Model class.
      */
-    private static class DilutionModel extends DataModel {
+    private class DilutionModel extends DataModel {
         /**
          * Cached display string value.
          */
@@ -725,20 +744,20 @@ public class ValueField extends JTextField {
         private String theEditString = "";
 
         @Override
-        protected Dilution getValue() {
-            return (Dilution) super.getValue();
+        protected JDilution getValue() {
+            return (JDilution) super.getValue();
         }
 
         @Override
         protected void setValue(final Object pValue) {
-            Dilution myNew = (Dilution) pValue;
+            JDilution myNew = (JDilution) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new Dilution(myNew));
+            super.setValue((pValue == null) ? null : new JDilution(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : myNew.format(true));
-            theEditString = ((myNew == null) ? "" : myNew.format(false));
+            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null) ? "" : myNew.toString());
             establishStrings();
         }
 
@@ -752,13 +771,13 @@ public class ValueField extends JTextField {
         @Override
         protected Object parseValue(final String pValue) {
             /* Return the parsed value */
-            return Dilution.parseString(pValue);
+            return new JDilution(pValue);
         }
 
         @Override
         protected void validateObject(final Object pValue) {
             /* Reject non-rate */
-            if (!(pValue instanceof Dilution)) {
+            if (!(pValue instanceof JDilution)) {
                 throw new IllegalArgumentException();
             }
         }

@@ -26,15 +26,15 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.EncryptedItem;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedDilution;
@@ -102,7 +102,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * Obtain Units.
      * @return the Units
      */
-    public Units getUnits() {
+    public JUnits getUnits() {
         return getUnits(getValueSet());
     }
 
@@ -110,7 +110,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * Obtain Money.
      * @return the Money
      */
-    public Money getMoney() {
+    public JMoney getMoney() {
         return getMoney(getValueSet());
     }
 
@@ -118,7 +118,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * Obtain Dilution.
      * @return the Dilution
      */
-    public Dilution getDilution() {
+    public JDilution getDilution() {
         return getDilution(getValueSet());
     }
 
@@ -153,12 +153,12 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValueSet the valueSet
      * @return the Units
      */
-    public static Units getUnits(final EncryptedValueSet pValueSet) {
+    public static JUnits getUnits(final EncryptedValueSet pValueSet) {
         Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
         if (!(myField instanceof EncryptedUnits)) {
             return null;
         }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, Units.class);
+        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, JUnits.class);
     }
 
     /**
@@ -166,12 +166,12 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValueSet the valueSet
      * @return the Money
      */
-    public static Money getMoney(final EncryptedValueSet pValueSet) {
+    public static JMoney getMoney(final EncryptedValueSet pValueSet) {
         Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
         if (!(myField instanceof EncryptedMoney)) {
             return null;
         }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, Money.class);
+        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, JMoney.class);
     }
 
     /**
@@ -179,12 +179,12 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValueSet the valueSet
      * @return the Dilution
      */
-    public static Dilution getDilution(final EncryptedValueSet pValueSet) {
+    public static JDilution getDilution(final EncryptedValueSet pValueSet) {
         Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
         if (!(myField instanceof EncryptedDilution)) {
             return null;
         }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, Dilution.class);
+        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, JDilution.class);
     }
 
     /**
@@ -233,7 +233,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValue the units
      * @throws JDataException on error
      */
-    private void setValueUnits(final Units pValue) throws JDataException {
+    private void setValueUnits(final JUnits pValue) throws JDataException {
         setEncryptedValue(FIELD_VALUE, pValue);
     }
 
@@ -242,7 +242,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValue the money
      * @throws JDataException on error
      */
-    private void setValueMoney(final Money pValue) throws JDataException {
+    private void setValueMoney(final JMoney pValue) throws JDataException {
         setEncryptedValue(FIELD_VALUE, pValue);
     }
 
@@ -251,7 +251,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValue the dilution
      * @throws JDataException on error
      */
-    private void setValueDilution(final Dilution pValue) throws JDataException {
+    private void setValueDilution(final JDilution pValue) throws JDataException {
         setEncryptedValue(FIELD_VALUE, pValue);
     }
 
@@ -261,7 +261,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @throws JDataException on error
      */
     private void setValueUnits(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, Units.class);
+        setEncryptedValue(FIELD_VALUE, pBytes, JUnits.class);
     }
 
     /**
@@ -270,7 +270,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @throws JDataException on error
      */
     private void setValueMoney(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, Money.class);
+        setEncryptedValue(FIELD_VALUE, pBytes, JMoney.class);
     }
 
     /**
@@ -279,7 +279,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @throws JDataException on error
      */
     private void setValueDilution(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, Dilution.class);
+        setEncryptedValue(FIELD_VALUE, pBytes, JDilution.class);
     }
 
     @Override
@@ -476,7 +476,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
                 case TaxCredit:
                 case NatInsurance:
                 case Benefit:
-                    Money myMoney = getMoney();
+                    JMoney myMoney = getMoney();
                     if (myMoney == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
                     } else if (!myMoney.isPositive()) {
@@ -484,7 +484,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
                     }
                     break;
                 case Dilution:
-                    Dilution myDilution = getDilution();
+                    JDilution myDilution = getDilution();
                     if (myDilution == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
                     } else if (myDilution.outOfRange()) {
@@ -493,7 +493,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
                     break;
                 case CreditUnits:
                 case DebitUnits:
-                    Units myUnits = getUnits();
+                    JUnits myUnits = getUnits();
                     if (myUnits == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
                     } else if (!myUnits.isPositive()) {
@@ -514,17 +514,20 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
 
     @Override
     public String formatObject() {
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Switch on type of Data */
         switch (getInfoType().getInfoClass()) {
             case TaxCredit:
             case NatInsurance:
             case Benefit:
-                return JDataObject.formatField(getMoney());
+                return myFormatter.formatObject(getMoney());
             case CreditUnits:
             case DebitUnits:
-                return JDataObject.formatField(getUnits());
+                return myFormatter.formatObject(getUnits());
             case Dilution:
-                return JDataObject.formatField(getDilution());
+                return myFormatter.formatObject(getDilution());
             default:
                 return "null";
         }
@@ -535,7 +538,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValue the Value
      * @throws JDataException on error
      */
-    protected void setMoney(final Money pValue) throws JDataException {
+    protected void setMoney(final JMoney pValue) throws JDataException {
         /* Switch on Info type */
         switch (getInfoType().getInfoClass()) {
             case TaxCredit:
@@ -554,7 +557,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValue the Value
      * @throws JDataException on error
      */
-    protected void setUnits(final Units pValue) throws JDataException {
+    protected void setUnits(final JUnits pValue) throws JDataException {
         /* Switch on Info type */
         switch (getInfoType().getInfoClass()) {
             case CreditUnits:
@@ -572,7 +575,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @param pValue the Value
      * @throws JDataException on error
      */
-    protected void setDilution(final Dilution pValue) throws JDataException {
+    protected void setDilution(final JDilution pValue) throws JDataException {
         /* Switch on Info type */
         switch (getInfoType().getInfoClass()) {
             case Dilution:

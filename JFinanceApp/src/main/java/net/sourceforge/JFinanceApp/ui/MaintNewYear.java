@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.EditState;
@@ -501,9 +502,13 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
             /* call constructor */
             super(theTable);
 
+            /* Access parser and formatter */
+            FinanceData myData = theView.getData();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
             /* Create the relevant formatters/editors */
             theDateRenderer = theRenderMgr.allocateCalendarRenderer();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
             theStringRenderer = theRenderMgr.allocateStringRenderer();
 
             /* Create the columns */

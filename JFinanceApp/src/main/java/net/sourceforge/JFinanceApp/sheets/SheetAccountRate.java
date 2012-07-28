@@ -283,13 +283,13 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
 
                     /* Handle Rate */
                     myCell = myRow.getCell(myCol + iAdjust++);
-                    String myRate = pHelper.formatRateCell(myCell);
+                    String myRate = pHelper.formatNumericCell(myCell);
 
                     /* Handle bonus which may be missing */
                     myCell = myRow.getCell(myCol + iAdjust++);
                     String myBonus = null;
                     if (myCell != null) {
-                        myBonus = pHelper.formatRateCell(myCell);
+                        myBonus = pHelper.formatNumericCell(myCell);
                     }
 
                     /* Handle expiration which may be missing */

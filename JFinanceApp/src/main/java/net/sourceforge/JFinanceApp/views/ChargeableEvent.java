@@ -30,7 +30,7 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JSortedList.OrderedIdItem;
 import net.sourceforge.JSortedList.OrderedIdList;
@@ -96,17 +96,17 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
     /**
      * The Gains.
      */
-    private final Money theGains;
+    private final JMoney theGains;
 
     /**
      * The Slice.
      */
-    private final Money theSlice;
+    private final JMoney theSlice;
 
     /**
      * The Taxation.
      */
-    private Money theTaxation = null;
+    private JMoney theTaxation = null;
 
     /**
      * The Event.
@@ -117,7 +117,7 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
      * Obtain the amount.
      * @return the amount
      */
-    public Money getAmount() {
+    public JMoney getAmount() {
         return theGains;
     }
 
@@ -125,7 +125,7 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
      * Obtain the slice.
      * @return the slice
      */
-    public Money getSlice() {
+    public JMoney getSlice() {
         return theSlice;
     }
 
@@ -133,7 +133,7 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
      * Obtain the taxation.
      * @return the taxation
      */
-    public Money getTaxation() {
+    public JMoney getTaxation() {
         return theTaxation;
     }
 
@@ -170,7 +170,7 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
      * Obtain the tax credit.
      * @return the tax credit
      */
-    public Money getTaxCredit() {
+    public JMoney getTaxCredit() {
         return getEvent().getTaxCredit();
     }
 
@@ -188,17 +188,13 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
      * @param pGains the Gains
      */
     private ChargeableEvent(final Event pEvent,
-                            final Money pGains) {
-        /* Local variables */
-        long myValue;
-
+                            final JMoney pGains) {
         /* Calculate slice */
-        myValue = pGains.getAmount();
-        myValue /= pEvent.getYears();
+        theSlice = new JMoney(pGains);
+        theSlice.divide(pEvent.getYears());
 
         /* Store the values */
         theGains = pGains;
-        theSlice = new Money(myValue);
         theEvent = pEvent;
     }
 
@@ -257,14 +253,14 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
      * @param pTax the calculated taxation for the slice
      * @param pTotal the slice total of the event list
      */
-    protected void applyTax(final Money pTax,
-                            final Money pTotal) {
+    protected void applyTax(final JMoney pTax,
+                            final JMoney pTotal) {
         /* Calculate the portion of tax that applies to this slice */
-        Money myPortion = pTax.valueAtWeight(getSlice(), pTotal);
+        JMoney myPortion = pTax.valueAtWeight(getSlice(), pTotal);
 
         /* Multiply by the number of years */
-        long myValue = myPortion.getValue() * getYears();
-        theTaxation = new Money(myValue);
+        theTaxation = new JMoney(myPortion);
+        theTaxation.multiply(getYears());
     }
 
     /**
@@ -314,7 +310,7 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
          * @param pGains the gains
          */
         public void addEvent(final Event pEvent,
-                             final Money pGains) {
+                             final JMoney pGains) {
             /* Create the chargeable event */
             ChargeableEvent myEvent = new ChargeableEvent(pEvent, pGains);
 
@@ -327,12 +323,12 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
          * the number of years that the charge is to be sliced over
          * @return the slice total of the chargeable event list
          */
-        public Money getSliceTotal() {
+        public JMoney getSliceTotal() {
             /* Access the iterator */
             Iterator<ChargeableEvent> myIterator = iterator();
 
             /* Initialise the total */
-            Money myTotal = new Money(0);
+            JMoney myTotal = new JMoney();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
@@ -351,12 +347,12 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
          * apportioned to each slice
          * @return the tax total of the chargeable event list
          */
-        public Money getTaxTotal() {
+        public JMoney getTaxTotal() {
             /* Access the iterator */
             Iterator<ChargeableEvent> myIterator = iterator();
 
             /* Initialise the total */
-            Money myTotal = new Money(0);
+            JMoney myTotal = new JMoney();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
@@ -375,12 +371,12 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
          * the number of years that the charge is to be sliced over
          * @return the slice total of the chargeable event list
          */
-        public Money getGainsTotal() {
+        public JMoney getGainsTotal() {
             /* Access the iterator */
             Iterator<ChargeableEvent> myIterator = iterator();
 
             /* Initialise the total */
-            Money myTotal = new Money(0);
+            JMoney myTotal = new JMoney();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
@@ -400,8 +396,8 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
          * @param pTax the calculated taxation for the slice
          * @param pTotal the slice total of the event list
          */
-        public void applyTax(final Money pTax,
-                             final Money pTotal) {
+        public void applyTax(final JMoney pTax,
+                             final JMoney pTotal) {
             /* Access the iterator */
             Iterator<ChargeableEvent> myIterator = iterator();
 

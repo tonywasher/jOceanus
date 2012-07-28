@@ -26,7 +26,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
@@ -408,6 +408,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
 
     @Override
     public String formatObject() {
+        /* Access formatter and value */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
         Integer myValue = getValue();
 
         /* If we have null, return it */
@@ -419,10 +421,10 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         switch (getInfoType().getInfoClass()) {
         // case ThirdParty:
             case CashAccount:
-                return JDataObject.formatField(getAccount());
+                return myFormatter.formatObject(getAccount());
             case QualifyYears:
             case XferDelay:
-                return JDataObject.formatField(myValue);
+                return myFormatter.formatObject(myValue);
             default:
                 return "null";
         }

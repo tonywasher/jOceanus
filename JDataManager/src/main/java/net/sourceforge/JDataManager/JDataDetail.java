@@ -98,6 +98,11 @@ public class JDataDetail {
     private final StringBuilder theBuilder;
 
     /**
+     * HTML formatter.
+     */
+    private JDataHTML theFormatter = null;
+
+    /**
      * The iterator.
      */
     private final ListIterator<?> theIterator;
@@ -174,17 +179,22 @@ public class JDataDetail {
 
     /**
      * Constructor for standard object.
+     * @param pFormatter the formatter
      * @param pObject the object represented
      */
-    protected JDataDetail(final Object pObject) {
+    protected JDataDetail(final JDataHTML pFormatter,
+                          final Object pObject) {
         /* Clear child fields */
         thePartnerDetail = null;
         isChild = false;
         theIndex = -1;
 
+        /* Record the formatter */
+        theFormatter = pFormatter;
+
         /* Obtain the detail for this object */
         if (pObject != null) {
-            theBuilder = JDataHTML.formatHTMLObject(this, pObject);
+            theBuilder = theFormatter.formatHTMLObject(this, pObject);
             isList = (pObject instanceof List);
         } else {
             theBuilder = null;
@@ -206,12 +216,13 @@ public class JDataDetail {
                           final Object pObject) {
         /* Obtain the detail for this object */
         thePartnerDetail = pList;
+        theFormatter = pList.theFormatter;
         theLinks = pList.theLinks;
         theList = pList.theList;
         theIndex = theList.indexOf(pObject);
         theIterator = null;
         isChild = true;
-        theBuilder = JDataHTML.formatHTMLObject(this, pObject);
+        theBuilder = theFormatter.formatHTMLObject(this, pObject);
         isList = true;
     }
 
@@ -330,7 +341,7 @@ public class JDataDetail {
         /* If we have a forward link */
         if (myLink != null) {
             /* Record and return the object */
-            setForwardLink(new JDataDetail(myLink.theObject));
+            setForwardLink(new JDataDetail(theFormatter, myLink.theObject));
             theForward.setBackwardLink(this);
             return theForward;
         }

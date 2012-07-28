@@ -508,17 +508,17 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
                             .getCell(i));
                     String myRentalAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
                             .getCell(i));
-                    String myLoTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                    String myLoTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
                             .getCell(i));
-                    String myBasicTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                    String myBasicTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
                             .getCell(i));
-                    String myIntTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                    String myIntTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
                             .getCell(i));
-                    String myDivTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                    String myDivTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
                             .getCell(i));
-                    String myHiTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                    String myHiTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
                             .getCell(i));
-                    String myHiDivTaxRate = pHelper.formatRateCell(mySheet.getRow(myAllRow + iAdjust++)
+                    String myHiDivTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow + iAdjust++)
                             .getCell(i));
                     String myTaxRegime = mySheet.getRow(myAllRow + iAdjust++).getCell(i).getStringCellValue();
 
@@ -526,14 +526,14 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
                     Cell myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
                     String myAddTaxRate = null;
                     if (myCell != null) {
-                        myAddTaxRate = pHelper.formatRateCell(myCell);
+                        myAddTaxRate = pHelper.formatNumericCell(myCell);
                     }
 
                     /* Handle AddDivTaxRate which may be missing */
                     myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
                     String myAddDivTaxRate = null;
                     if (myCell != null) {
-                        myAddDivTaxRate = pHelper.formatRateCell(myCell);
+                        myAddDivTaxRate = pHelper.formatNumericCell(myCell);
                     }
 
                     /* Access the values */
@@ -566,14 +566,14 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
                     myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
                     String myCapTaxRate = null;
                     if (myCell != null) {
-                        myCapTaxRate = pHelper.formatRateCell(myCell);
+                        myCapTaxRate = pHelper.formatNumericCell(myCell);
                     }
 
                     /* Handle HiCapTaxRate which may be missing */
                     myCell = mySheet.getRow(myAllRow + iAdjust++).getCell(i);
                     String myHiCapTaxRate = null;
                     if (myCell != null) {
-                        myHiCapTaxRate = pHelper.formatRateCell(myCell);
+                        myHiCapTaxRate = pHelper.formatNumericCell(myCell);
                     }
 
                     /* Add the Tax Year */

@@ -31,7 +31,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
@@ -797,6 +797,7 @@ public class Pattern extends Event {
                             final boolean isCredit) throws JDataException {
             /* Access the Lists */
             FinanceData myData = getDataSet();
+            JDataFormatter myFormatter = myData.getDataFormatter();
             AccountList myAccounts = myData.getAccounts();
             TransTypeList myTranTypes = myData.getTransTypes();
             FrequencyList myFrequencies = myData.getFrequencys();
@@ -805,7 +806,7 @@ public class Pattern extends Event {
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Account [" + pAccount
+                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Account [" + pAccount
                         + "]");
             }
 
@@ -813,7 +814,7 @@ public class Pattern extends Event {
             Account myPartner = myAccounts.findItemByName(pPartner);
             if (myPartner == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Partner [" + pPartner
+                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Partner [" + pPartner
                         + "]");
             }
 
@@ -821,7 +822,7 @@ public class Pattern extends Event {
             TransactionType myTransType = myTranTypes.findItemByName(pTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid TransType ["
+                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid TransType ["
                         + pTransType + "]");
             }
 
@@ -829,7 +830,7 @@ public class Pattern extends Event {
             Frequency myFrequency = myFrequencies.findItemByName(pFrequency);
             if (myFrequency == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Frequency ["
+                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Frequency ["
                         + pFrequency + "]");
             }
 

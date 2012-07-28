@@ -43,9 +43,9 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.DataState;
@@ -898,11 +898,8 @@ public class MaintAccount extends JPanelWithEvents {
      * Show the account.
      */
     private void showAccount() {
-        AccountType myType;
-        boolean isClosed;
-
         /* Access the type from the selection */
-        myType = theSelect.getType();
+        AccountType myType = theSelect.getType();
 
         /* If we have an active account */
         if (theAccount != null) {
@@ -910,7 +907,7 @@ public class MaintAccount extends JPanelWithEvents {
             refreshingData = true;
 
             /* Access details */
-            isClosed = theAccount.isClosed();
+            boolean isClosed = theAccount.isClosed();
             myType = theAccount.getActType();
 
             /* Set the name */
@@ -1035,14 +1032,17 @@ public class MaintAccount extends JPanelWithEvents {
             /* Render all fields in the set */
             theFieldSet.renderSet(theAccount);
 
+            /* Access the formatter */
+            FinanceData myData = theView.getData();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
             /* Set the First Event */
-            theFirst.setText((theAccount.getEarliest() != null) ? JDataObject.formatField(theAccount
-                    .getEarliest()) : "N/A");
+            theFirst.setText((theAccount.getEarliest() != null) ? myFormatter.formatObject(theAccount
+                    .getEarliest().getDate()) : "N/A");
 
             /* Set the Last Event */
-            theLast.setText((theAccount.getLatest() != null)
-                                                            ? JDataObject.formatField(theAccount.getLatest())
-                                                            : "N/A");
+            theLast.setText((theAccount.getLatest() != null) ? myFormatter.formatObject(theAccount
+                    .getLatest().getDate()) : "N/A");
 
             /* Set text for close button */
             theClsButton.setText((isClosed) ? "ReOpen" : "Close");

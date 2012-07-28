@@ -30,7 +30,6 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
@@ -38,7 +37,8 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.views.SpotPrices;
 import net.sourceforge.JFinanceApp.views.SpotPrices.SpotList;
@@ -90,7 +90,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * Obtain Price.
      * @return the price
      */
-    public Price getPrice() {
+    public JPrice getPrice() {
         return getPrice(getValueSet());
     }
 
@@ -149,8 +149,8 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pValueSet the valueSet
      * @return the Price
      */
-    public static Price getPrice(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_PRICE, Price.class);
+    public static JPrice getPrice(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_PRICE, JPrice.class);
     }
 
     /**
@@ -200,16 +200,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pValue the price
      * @throws JDataException on error
      */
-    private void setValuePrice(final String pValue) throws JDataException {
-        setValuePrice(new Price(pValue));
-    }
-
-    /**
-     * Set the price.
-     * @param pValue the price
-     * @throws JDataException on error
-     */
-    private void setValuePrice(final Price pValue) throws JDataException {
+    private void setValuePrice(final JPrice pValue) throws JDataException {
         setEncryptedValue(FIELD_PRICE, pValue);
     }
 
@@ -219,7 +210,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @throws JDataException on error
      */
     private void setValuePrice(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_PRICE, pBytes, Price.class);
+        setEncryptedValue(FIELD_PRICE, pBytes, JPrice.class);
     }
 
     /**
@@ -275,14 +266,14 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * Constructor.
      * @param pList the list
      * @param uId the id
-     * @param uAccountId the account id
+     * @param pAccount the account
      * @param pDate the date
      * @param pPrice the price
      * @throws JDataException on error
      */
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final int uId,
-                         final int uAccountId,
+                         final Account pAccount,
                          final Date pDate,
                          final String pPrice) throws JDataException {
         /* Initialise the item */
@@ -290,23 +281,19 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
 
         /* Protect against exceptions */
         try {
-            /* Access the DataSet */
-            FinanceData myData = getDataSet();
+            /* Access the DataSet and parser */
+            FinanceData myDataSet = getDataSet();
+            JDecimalParser myParser = myDataSet.getDecimalParser();
 
-            /* Record the Id */
-            setValueAccount(uAccountId);
-
-            /* Look up the Account */
-            AccountList myAccounts = myData.getAccounts();
-            Account myAccount = myAccounts.findItemById(uAccountId);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
-            }
-            setValueAccount(myAccount);
-
-            /* Record the date and price */
+            /* Record account, date and price */
+            setValueAccount(pAccount);
             setValueDate(new DateDay(pDate));
-            setValuePrice(pPrice);
+            setValuePrice(myParser.parsePriceValue(pPrice));
+
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException e) {
+            /* Pass on exception */
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -375,7 +362,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final Account pAccount,
                          final DateDay pDate,
-                         final Price pPrice) throws JDataException {
+                         final JPrice pPrice) throws JDataException {
         /* Initialise the item */
         super(pList, 0);
 
@@ -470,7 +457,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @param pPrice the price
      * @throws JDataException on error
      */
-    public void setPrice(final Price pPrice) throws JDataException {
+    public void setPrice(final JPrice pPrice) throws JDataException {
         setValuePrice(pPrice);
     }
 
@@ -778,34 +765,19 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
                             final String pAccount,
                             final String pPrice) throws JDataException {
             /* Access the Accounts */
-            AccountList myAccounts = getDataSet().getAccounts();
+            FinanceData myData = getDataSet();
+            AccountList myAccounts = myData.getAccounts();
 
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Price on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Account [" + pAccount
-                        + "]");
+                        + myData.getDataFormatter().formatObject(new DateDay(pDate))
+                        + "] has invalid Account [" + pAccount + "]");
             }
 
-            /* Add the price */
-            addItem(uId, pDate, myAccount.getId(), pPrice);
-        }
-
-        /**
-         * Allow a price to be added.
-         * @param uId the id
-         * @param pDate the date
-         * @param uAccountId the account
-         * @param pPrice the price
-         * @throws JDataException on error
-         */
-        public void addItem(final int uId,
-                            final Date pDate,
-                            final int uAccountId,
-                            final String pPrice) throws JDataException {
-            /* Create the price and PricePoint */
-            AccountPrice myPrice = new AccountPrice(this, uId, uAccountId, pDate, pPrice);
+            /* Create the PricePoint */
+            AccountPrice myPrice = new AccountPrice(this, uId, myAccount, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
@@ -869,7 +841,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
          */
         public AccountPrice addItem(final Account pAccount,
                                     final DateDay pDate,
-                                    final Price pPrice) throws JDataException {
+                                    final JPrice pPrice) throws JDataException {
             /* Create the price and PricePoint */
             AccountPrice myPrice = new AccountPrice(this, pAccount, pDate, pPrice);
 

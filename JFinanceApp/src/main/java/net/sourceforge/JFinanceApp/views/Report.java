@@ -22,12 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.views;
 
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 
 /**
  * Report Classes.
@@ -40,9 +40,23 @@ public final class Report {
     private static final int BUFFER_LEN = 100;
 
     /**
-     * Disable instantiation.
+     * The data formatter.
      */
-    private Report() {
+    private final JDataFormatter theFormatter;
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    public JDataFormatter getDataFormatter() {
+        return theFormatter;
+    }
+
+    /**
+     * Constructor.
+     */
+    protected Report() {
+        theFormatter = new JDataFormatter();
     }
 
     /**
@@ -50,7 +64,7 @@ public final class Report {
      * @param pAmount the money amount
      * @return the Cell
      */
-    protected static StringBuilder makeMoneyItem(final Money pAmount) {
+    protected StringBuilder makeMoneyItem(final JMoney pAmount) {
         return makeMoneyCell(pAmount, false, 1);
     }
 
@@ -59,7 +73,7 @@ public final class Report {
      * @param pAmount the money amount
      * @return the Cell
      */
-    protected static StringBuilder makeMoneyTotal(final Money pAmount) {
+    protected StringBuilder makeMoneyTotal(final JMoney pAmount) {
         return makeMoneyCell(pAmount, true, 1);
     }
 
@@ -68,7 +82,7 @@ public final class Report {
      * @param pAmount the money amount
      * @return the Cell
      */
-    protected static StringBuilder makeMoneyProfit(final Money pAmount) {
+    protected StringBuilder makeMoneyProfit(final JMoney pAmount) {
         return makeMoneyCell(pAmount, true, 2);
     }
 
@@ -79,9 +93,9 @@ public final class Report {
      * @param numCols number of columns to span
      * @return the Cell
      */
-    protected static StringBuilder makeMoneyCell(final Money pAmount,
-                                                 final boolean isHighlighted,
-                                                 final int numCols) {
+    protected StringBuilder makeMoneyCell(final JMoney pAmount,
+                                          final boolean isHighlighted,
+                                          final int numCols) {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         String myColour;
         String myHighlight = (isHighlighted) ? "h" : "d";
@@ -102,7 +116,7 @@ public final class Report {
         }
         myOutput.append(">");
         if ((pAmount != null) && (pAmount.isNonZero())) {
-            myOutput.append(pAmount.format(true));
+            myOutput.append(theFormatter.formatObject(pAmount));
         }
         myOutput.append("</t");
         myOutput.append(myHighlight);
@@ -117,13 +131,13 @@ public final class Report {
      * @param pUnits the units
      * @return the Cell
      */
-    protected static StringBuilder makeUnitsItem(final Units pUnits) {
+    protected StringBuilder makeUnitsItem(final JUnits pUnits) {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Build the cell */
         myOutput.append("<td align=\"right\" color=\"blue\">");
         if ((pUnits != null) && (pUnits.isNonZero())) {
-            myOutput.append(pUnits.format(true));
+            myOutput.append(theFormatter.formatObject(pUnits));
         }
         myOutput.append("</td>");
 
@@ -136,13 +150,13 @@ public final class Report {
      * @param pPrice the price
      * @return the Cell
      */
-    protected static StringBuilder makePriceItem(final Price pPrice) {
+    protected StringBuilder makePriceItem(final JPrice pPrice) {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Build the cell */
         myOutput.append("<td align=\"right\" color=\"blue\">");
         if (pPrice.isNonZero()) {
-            myOutput.append(pPrice.format(true));
+            myOutput.append(theFormatter.formatObject(pPrice));
         }
         myOutput.append("</td>");
 
@@ -155,13 +169,13 @@ public final class Report {
      * @param pRate the rate
      * @return the Cell
      */
-    protected static StringBuilder makeRateItem(final Rate pRate) {
+    protected StringBuilder makeRateItem(final JRate pRate) {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Build the cell */
         myOutput.append("<td align=\"right\" color=\"blue\">");
         if ((pRate != null) && (pRate.isNonZero())) {
-            myOutput.append(pRate.format(true));
+            myOutput.append(theFormatter.formatObject(pRate));
         }
         myOutput.append("</td>");
 
@@ -174,13 +188,13 @@ public final class Report {
      * @param pDate the date
      * @return the Cell
      */
-    protected static StringBuilder makeDateItem(final DateDay pDate) {
+    protected StringBuilder makeDateItem(final DateDay pDate) {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Build the cell */
         myOutput.append("<td align=\"right\" color=\"blue\">");
         if (pDate != null) {
-            myOutput.append(JDataObject.formatField(pDate));
+            myOutput.append(theFormatter.formatObject(pDate));
         }
         myOutput.append("</td>");
 

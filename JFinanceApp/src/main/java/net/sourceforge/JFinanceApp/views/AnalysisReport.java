@@ -25,10 +25,10 @@ package net.sourceforge.JFinanceApp.views;
 import java.util.Iterator;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.data.Event;
@@ -90,6 +90,16 @@ public class AnalysisReport {
     private final TaxYear theYear;
 
     /**
+     * Report formatter.
+     */
+    private final Report theReport;
+
+    /**
+     * Data formatter.
+     */
+    private final JDataFormatter theFormatter;
+
+    /**
      * Constructor.
      * @param pAnalysis the analysis
      */
@@ -99,6 +109,8 @@ public class AnalysisReport {
         theDate = theAnalysis.getDate();
         theYear = null;
         theAnalysisYear = null;
+        theReport = new Report();
+        theFormatter = theReport.getDataFormatter();
 
         /* Produce totals */
         pAnalysis.getMetaAnalysis().produceTotals();
@@ -114,6 +126,8 @@ public class AnalysisReport {
         theAnalysis = pAnalysisYear.getAnalysis();
         theDate = theAnalysis.getDate();
         theYear = pAnalysisYear.getTaxYear();
+        theReport = new Report();
+        theFormatter = theReport.getDataFormatter();
 
         /* Produce totals for the analysis year */
         pAnalysisYear.produceTotals();
@@ -165,8 +179,8 @@ public class AnalysisReport {
             myOutput.append("\">");
             myOutput.append(mySummary.getName());
             myOutput.append("</a></th>");
-            myOutput.append(Report.makeMoneyItem(mySummary.getValue()));
-            myOutput.append(Report.makeMoneyItem(mySummary.getPrevValue()));
+            myOutput.append(theReport.makeMoneyItem(mySummary.getValue()));
+            myOutput.append(theReport.makeMoneyItem(mySummary.getPrevValue()));
             myOutput.append("</tr>");
 
             /* Format the detail */
@@ -178,13 +192,13 @@ public class AnalysisReport {
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th>");
-        myOutput.append(Report.makeMoneyTotal(myTotal.getValue()));
-        myOutput.append(Report.makeMoneyTotal(myTotal.getPrevValue()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getValue()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getPrevValue()));
         myOutput.append("</tr>");
 
         /* Format the profit */
         myOutput.append("<tr><th>Profit</th>");
-        myOutput.append(Report.makeMoneyProfit(myTotal.getProfit()));
+        myOutput.append(theReport.makeMoneyProfit(myTotal.getProfit()));
         myOutput.append("</tr></tbody></table>");
 
         /* Add the detail */
@@ -210,7 +224,7 @@ public class AnalysisReport {
         /* Format the header */
         myOutput.append("<html><body><a name=\"Top\">");
         myOutput.append("<h1 align=\"center\">Instant Asset Report for ");
-        myOutput.append(JDataObject.formatField(theDate));
+        myOutput.append(theFormatter.formatObject(theDate));
         myOutput.append("</h1></a>");
         myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
         myOutput.append("<thead><th>Class</th><th>Value</th></thead>");
@@ -238,7 +252,7 @@ public class AnalysisReport {
             myOutput.append("\">");
             myOutput.append(mySummary.getName());
             myOutput.append("</a></th>");
-            myOutput.append(Report.makeMoneyItem(mySummary.getValue()));
+            myOutput.append(theReport.makeMoneyItem(mySummary.getValue()));
             myOutput.append("</tr>");
 
             /* Access the type */
@@ -259,7 +273,7 @@ public class AnalysisReport {
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th>");
-        myOutput.append(Report.makeMoneyTotal(myTotal.getValue()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getValue()));
         myOutput.append("</tr></tbody></table>");
 
         /* Add the detail */
@@ -285,7 +299,7 @@ public class AnalysisReport {
         /* Format the header */
         myOutput.append("<html><body><a name=\"Top\">");
         myOutput.append("<h1 align=\"center\">Market Report for ");
-        myOutput.append(JDataObject.formatField(theDate));
+        myOutput.append(theFormatter.formatObject(theDate));
         myOutput.append("</h1></a>");
         myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
         myOutput.append("<thead><th>Name</th><th>Cost</th>");
@@ -323,10 +337,10 @@ public class AnalysisReport {
             myOutput.append("\">");
             myOutput.append(myAsset.getName());
             myOutput.append("</th>");
-            myOutput.append(Report.makeMoneyItem(myAsset.getCost()));
-            myOutput.append(Report.makeMoneyItem(myAsset.getValue()));
-            myOutput.append(Report.makeMoneyItem(myAsset.getGained()));
-            myOutput.append(Report.makeMoneyItem(myAsset.getProfit()));
+            myOutput.append(theReport.makeMoneyItem(myAsset.getCost()));
+            myOutput.append(theReport.makeMoneyItem(myAsset.getValue()));
+            myOutput.append(theReport.makeMoneyItem(myAsset.getGained()));
+            myOutput.append(theReport.makeMoneyItem(myAsset.getProfit()));
             myOutput.append("</tr>");
 
             /* If this is not an Endowment */
@@ -341,10 +355,10 @@ public class AnalysisReport {
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th>");
-        myOutput.append(Report.makeMoneyTotal(myTotal.getCost()));
-        myOutput.append(Report.makeMoneyTotal(myTotal.getValue()));
-        myOutput.append(Report.makeMoneyTotal(myTotal.getGained()));
-        myOutput.append(Report.makeMoneyTotal(myTotal.getProfit()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getCost()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getValue()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getGained()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getProfit()));
         myOutput.append("</tr></tbody></table>");
 
         /* Add the detail */
@@ -402,10 +416,10 @@ public class AnalysisReport {
             myOutput.append("<tr><th align=\"center\">");
             myOutput.append(myExternal.getName());
             myOutput.append("</th>");
-            myOutput.append(Report.makeMoneyItem(myExternal.getIncome()));
-            myOutput.append(Report.makeMoneyItem(myExternal.getExpense()));
-            myOutput.append(Report.makeMoneyItem(myExternal.getPrevIncome()));
-            myOutput.append(Report.makeMoneyItem(myExternal.getPrevExpense()));
+            myOutput.append(theReport.makeMoneyItem(myExternal.getIncome()));
+            myOutput.append(theReport.makeMoneyItem(myExternal.getExpense()));
+            myOutput.append(theReport.makeMoneyItem(myExternal.getPrevIncome()));
+            myOutput.append(theReport.makeMoneyItem(myExternal.getPrevExpense()));
             myOutput.append("</tr>");
         }
 
@@ -414,16 +428,16 @@ public class AnalysisReport {
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th>");
-        myOutput.append(Report.makeMoneyTotal(myTotal.getIncome()));
-        myOutput.append(Report.makeMoneyTotal(myTotal.getExpense()));
-        myOutput.append(Report.makeMoneyTotal(myTotal.getPrevIncome()));
-        myOutput.append(Report.makeMoneyTotal(myTotal.getPrevExpense()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getIncome()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getExpense()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getPrevIncome()));
+        myOutput.append(theReport.makeMoneyTotal(myTotal.getPrevExpense()));
         myOutput.append("</tr>");
 
         /* Format the profit */
         myOutput.append("<tr><th>Profit</th>");
-        myOutput.append(Report.makeMoneyProfit(myTotal.getProfit()));
-        myOutput.append(Report.makeMoneyProfit(myTotal.getPrevProfit()));
+        myOutput.append(theReport.makeMoneyProfit(myTotal.getProfit()));
+        myOutput.append(theReport.makeMoneyProfit(myTotal.getPrevProfit()));
         myOutput.append("</tr></tbody></table></body></html>");
 
         /* Return the output */
@@ -483,14 +497,14 @@ public class AnalysisReport {
             myOutput.append("<tr><th align=\"center\">");
             myOutput.append(myValue.getName());
             myOutput.append("</th>");
-            myOutput.append(Report.makeMoneyItem(myValue.getValue()));
-            myOutput.append(Report.makeMoneyItem(myValue.getPrevValue()));
+            myOutput.append(theReport.makeMoneyItem(myValue.getValue()));
+            myOutput.append(theReport.makeMoneyItem(myValue.getPrevValue()));
             myOutput.append("</tr>");
         }
 
         myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append(Report.makeMoneyTotal(pSummary.getValue()));
-        myOutput.append(Report.makeMoneyTotal(pSummary.getPrevValue()));
+        myOutput.append(theReport.makeMoneyTotal(pSummary.getValue()));
+        myOutput.append(theReport.makeMoneyTotal(pSummary.getPrevValue()));
         myOutput.append("</tr></tbody></table>");
 
         /* Return the output */
@@ -546,14 +560,14 @@ public class AnalysisReport {
             myOutput.append("<tr><th align=\"center\">");
             myOutput.append(myMoney.getName());
             myOutput.append("</th>");
-            myOutput.append(Report.makeMoneyItem(myMoney.getValue()));
-            myOutput.append(Report.makeRateItem(myMoney.getRate()));
-            myOutput.append(Report.makeDateItem(myMoney.getMaturity()));
+            myOutput.append(theReport.makeMoneyItem(myMoney.getValue()));
+            myOutput.append(theReport.makeRateItem(myMoney.getRate()));
+            myOutput.append(theReport.makeDateItem(myMoney.getMaturity()));
             myOutput.append("</tr>");
         }
 
         myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append(Report.makeMoneyTotal(pSummary.getValue()));
+        myOutput.append(theReport.makeMoneyTotal(pSummary.getValue()));
         myOutput.append("<td/><td/>");
         myOutput.append("</tr></tbody></table>");
 
@@ -609,12 +623,12 @@ public class AnalysisReport {
             myOutput.append("<tr><th align=\"center\">");
             myOutput.append(myDebt.getName());
             myOutput.append("</th>");
-            myOutput.append(Report.makeMoneyItem(myDebt.getValue()));
+            myOutput.append(theReport.makeMoneyItem(myDebt.getValue()));
             myOutput.append("</tr>");
         }
 
         myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append(Report.makeMoneyTotal(pSummary.getValue()));
+        myOutput.append(theReport.makeMoneyTotal(pSummary.getValue()));
         myOutput.append("</tr></tbody></table>");
 
         /* Return the output */
@@ -675,15 +689,15 @@ public class AnalysisReport {
             myOutput.append("<tr><th align=\"center\">");
             myOutput.append(myAsset.getName());
             myOutput.append("</th>");
-            myOutput.append(Report.makeUnitsItem(myAsset.getUnits()));
-            myOutput.append(Report.makePriceItem(myAsset.getPrice()));
-            myOutput.append(Report.makeMoneyItem(myAsset.getValue()));
+            myOutput.append(theReport.makeUnitsItem(myAsset.getUnits()));
+            myOutput.append(theReport.makePriceItem(myAsset.getPrice()));
+            myOutput.append(theReport.makeMoneyItem(myAsset.getValue()));
             myOutput.append("</tr>");
         }
 
         myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
         myOutput.append("<td/><td/>");
-        myOutput.append(Report.makeMoneyTotal(pSummary.getValue()));
+        myOutput.append(theReport.makeMoneyTotal(pSummary.getValue()));
         myOutput.append("</tr></tbody></table>");
 
         /* Return the output */
@@ -726,23 +740,23 @@ public class AnalysisReport {
 
             /* Format the detail */
             myOutput.append("<tr><th>");
-            myOutput.append(JDataObject.formatField(myEvent.getDate()));
+            myOutput.append(theFormatter.formatObject(myEvent.getDate()));
             myOutput.append("</th>");
-            myOutput.append(Report.makeUnitsItem((Units) myEvent
-                    .findAttribute(CapitalEvent.CAPITAL_DELTAUNITS)));
-            myOutput.append(Report.makeMoneyItem((Money) myEvent
-                    .findAttribute(CapitalEvent.CAPITAL_DELTACOST)));
-            myOutput.append(Report.makeMoneyItem((Money) myEvent
-                    .findAttribute(CapitalEvent.CAPITAL_DELTAGAINS)));
-            myOutput.append(Report.makeMoneyItem((Money) myEvent
-                    .findAttribute(CapitalEvent.CAPITAL_DELTADIVIDEND)));
+            myOutput.append(theReport.makeUnitsItem(myEvent.findAttribute(CapitalEvent.CAPITAL_DELTAUNITS,
+                                                                          JUnits.class)));
+            myOutput.append(theReport.makeMoneyItem(myEvent.findAttribute(CapitalEvent.CAPITAL_DELTACOST,
+                                                                          JMoney.class)));
+            myOutput.append(theReport.makeMoneyItem(myEvent.findAttribute(CapitalEvent.CAPITAL_DELTAGAINS,
+                                                                          JMoney.class)));
+            myOutput.append(theReport.makeMoneyItem(myEvent.findAttribute(CapitalEvent.CAPITAL_DELTADIVIDEND,
+                                                                          JMoney.class)));
             myOutput.append("</tr>");
         }
 
         myOutput.append("<tr><th><a href=\"#Top\">Totals</a></th>");
-        myOutput.append(Report.makeUnitsItem(pAsset.getUnits()));
-        myOutput.append(Report.makeMoneyItem(pAsset.getCost()));
-        myOutput.append(Report.makeMoneyItem(pAsset.getGained()));
+        myOutput.append(theReport.makeUnitsItem(pAsset.getUnits()));
+        myOutput.append(theReport.makeMoneyItem(pAsset.getCost()));
+        myOutput.append(theReport.makeMoneyItem(pAsset.getGained()));
         myOutput.append("<td/></tr></tbody></table>");
 
         /* Return the output */
@@ -788,8 +802,8 @@ public class AnalysisReport {
 
                     /* Format the detail */
                     myOutput.append("<tr><th align=\"center\">" + mySummary.getName() + "</th>");
-                    myOutput.append(Report.makeMoneyItem(mySummary.getAmount()));
-                    myOutput.append(Report.makeMoneyItem(mySummary.getPrevAmount()));
+                    myOutput.append(theReport.makeMoneyItem(mySummary.getAmount()));
+                    myOutput.append(theReport.makeMoneyItem(mySummary.getPrevAmount()));
                     myOutput.append("</tr>");
                     break;
                 /* Total */
@@ -798,8 +812,8 @@ public class AnalysisReport {
 
                     /* Format the detail */
                     myOutput.append("<tr><th align=\"center\">" + myTotal.getName() + "</th>");
-                    myOutput.append(Report.makeMoneyItem(myTotal.getAmount()));
-                    myOutput.append(Report.makeMoneyItem(myTotal.getPrevAmount()));
+                    myOutput.append(theReport.makeMoneyItem(myTotal.getAmount()));
+                    myOutput.append(theReport.makeMoneyItem(myTotal.getPrevAmount()));
                     myOutput.append("</tr>");
                     break;
                 default:
@@ -839,10 +853,10 @@ public class AnalysisReport {
             myOutput.append("<tr><th align=\"center\">");
             myOutput.append(myDetail.getName());
             myOutput.append("</th>");
-            myOutput.append(Report.makeMoneyItem(myDetail.getAmount()));
-            myOutput.append(Report.makeMoneyItem(myDetail.getTaxCredit()));
-            myOutput.append(Report.makeMoneyItem(myDetail.getPrevAmount()));
-            myOutput.append(Report.makeMoneyItem(myDetail.getPrevTax()));
+            myOutput.append(theReport.makeMoneyItem(myDetail.getAmount()));
+            myOutput.append(theReport.makeMoneyItem(myDetail.getTaxCredit()));
+            myOutput.append(theReport.makeMoneyItem(myDetail.getPrevAmount()));
+            myOutput.append(theReport.makeMoneyItem(myDetail.getPrevTax()));
             myOutput.append("</tr>");
         }
 
@@ -902,8 +916,8 @@ public class AnalysisReport {
             myOutput.append("\">");
             myOutput.append(myTax.getName());
             myOutput.append("</a></th>");
-            myOutput.append(Report.makeMoneyItem(myTax.getAmount()));
-            myOutput.append(Report.makeMoneyItem(myTax.getTaxation()));
+            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
+            myOutput.append(theReport.makeMoneyItem(myTax.getTaxation()));
             myOutput.append("</tr>");
 
             /* Format the detail */
@@ -915,8 +929,8 @@ public class AnalysisReport {
         myOutput.append("<tr><th align=\"center\">");
         myOutput.append(myTax.getName());
         myOutput.append("</th>");
-        myOutput.append(Report.makeMoneyTotal(myTax.getAmount()));
-        myOutput.append(Report.makeMoneyTotal(myTax.getTaxation()));
+        myOutput.append(theReport.makeMoneyTotal(myTax.getAmount()));
+        myOutput.append(theReport.makeMoneyTotal(myTax.getTaxation()));
         myOutput.append("</tr>");
 
         /* Access the Tax Paid bucket */
@@ -924,8 +938,8 @@ public class AnalysisReport {
         myOutput.append("<tr><th align=\"center\">");
         myOutput.append(myTrans.getName());
         myOutput.append("</th>");
-        myOutput.append(Report.makeMoneyTotal(new Money(0)));
-        myOutput.append(Report.makeMoneyTotal(myTrans.getAmount()));
+        myOutput.append(theReport.makeMoneyTotal(new JMoney()));
+        myOutput.append(theReport.makeMoneyTotal(myTrans.getAmount()));
         myOutput.append("</tr>");
 
         /* Access the Tax Profit bucket */
@@ -933,8 +947,8 @@ public class AnalysisReport {
         myOutput.append("<tr><th align=\"center\">");
         myOutput.append(myTax.getName());
         myOutput.append("</th>");
-        myOutput.append(Report.makeMoneyTotal(myTax.getAmount()));
-        myOutput.append(Report.makeMoneyTotal(myTax.getTaxation()));
+        myOutput.append(theReport.makeMoneyTotal(myTax.getAmount()));
+        myOutput.append(theReport.makeMoneyTotal(myTax.getTaxation()));
         myOutput.append("</tr>");
 
         /* Finish the table */
@@ -949,26 +963,26 @@ public class AnalysisReport {
         myOutput.append("<thead><th>Name</th><th>Value</th></thead>");
         myOutput.append("<tbody>");
         myOutput.append("<tr><th>PersonalAllowance</th>");
-        myOutput.append(Report.makeMoneyItem(theYear.getAllowance()));
+        myOutput.append(theReport.makeMoneyItem(theYear.getAllowance()));
         myOutput.append("</tr>");
         myOutput.append("<tr><th>Age 65-74 PersonalAllowance</th>");
-        myOutput.append(Report.makeMoneyItem(theYear.getLoAgeAllow()));
+        myOutput.append(theReport.makeMoneyItem(theYear.getLoAgeAllow()));
         myOutput.append("</tr>");
         myOutput.append("<tr><th>Age 75+ PersonalAllowance</th>");
-        myOutput.append(Report.makeMoneyItem(theYear.getHiAgeAllow()));
+        myOutput.append(theReport.makeMoneyItem(theYear.getHiAgeAllow()));
         myOutput.append("</tr>");
         myOutput.append("<tr><th>RentalAllowance</th>");
-        myOutput.append(Report.makeMoneyItem(theYear.getRentalAllowance()));
+        myOutput.append(theReport.makeMoneyItem(theYear.getRentalAllowance()));
         myOutput.append("</tr>");
         myOutput.append("<tr><th>CapitalAllowance</th>");
-        myOutput.append(Report.makeMoneyItem(theYear.getCapitalAllow()));
+        myOutput.append(theReport.makeMoneyItem(theYear.getCapitalAllow()));
         myOutput.append("</tr>");
         myOutput.append("<tr><th>Income Limit for AgeAllowance</th>");
-        myOutput.append(Report.makeMoneyItem(theYear.getAgeAllowLimit()));
+        myOutput.append(theReport.makeMoneyItem(theYear.getAgeAllowLimit()));
         myOutput.append("</tr>");
         if (theYear.hasAdditionalTaxBand()) {
             myOutput.append("<tr><th>Income Limit for PersonalAllowance</th>");
-            myOutput.append(Report.makeMoneyItem(theYear.getAddAllowLimit()));
+            myOutput.append(theReport.makeMoneyItem(theYear.getAddAllowLimit()));
             myOutput.append("</tr>");
         }
         myOutput.append("</tbody></table>");
@@ -983,43 +997,43 @@ public class AnalysisReport {
         }
         myOutput.append("</thead><tbody>");
         myOutput.append("<tr><th>Salary/Rental</th>");
-        myOutput.append(Report.makeRateItem(theYear.hasLoSalaryBand() ? theYear.getLoTaxRate() : null));
-        myOutput.append(Report.makeRateItem(theYear.getBasicTaxRate()));
-        myOutput.append(Report.makeRateItem(theYear.getHiTaxRate()));
+        myOutput.append(theReport.makeRateItem(theYear.hasLoSalaryBand() ? theYear.getLoTaxRate() : null));
+        myOutput.append(theReport.makeRateItem(theYear.getBasicTaxRate()));
+        myOutput.append(theReport.makeRateItem(theYear.getHiTaxRate()));
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(Report.makeRateItem(theYear.getAddTaxRate()));
+            myOutput.append(theReport.makeRateItem(theYear.getAddTaxRate()));
         }
         myOutput.append("</tr>");
         myOutput.append("<tr><th>Interest</th>");
-        myOutput.append(Report.makeRateItem(theYear.getLoTaxRate()));
-        myOutput.append(Report.makeRateItem(theYear.getIntTaxRate()));
-        myOutput.append(Report.makeRateItem(theYear.getHiTaxRate()));
+        myOutput.append(theReport.makeRateItem(theYear.getLoTaxRate()));
+        myOutput.append(theReport.makeRateItem(theYear.getIntTaxRate()));
+        myOutput.append(theReport.makeRateItem(theYear.getHiTaxRate()));
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(Report.makeRateItem(theYear.getAddTaxRate()));
+            myOutput.append(theReport.makeRateItem(theYear.getAddTaxRate()));
         }
         myOutput.append("</tr>");
         myOutput.append("<tr><th>Dividends</th>");
-        myOutput.append(Report.makeRateItem(null));
-        myOutput.append(Report.makeRateItem(theYear.getDivTaxRate()));
-        myOutput.append(Report.makeRateItem(theYear.getHiDivTaxRate()));
+        myOutput.append(theReport.makeRateItem(null));
+        myOutput.append(theReport.makeRateItem(theYear.getDivTaxRate()));
+        myOutput.append(theReport.makeRateItem(theYear.getHiDivTaxRate()));
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(Report.makeRateItem(theYear.getAddDivTaxRate()));
+            myOutput.append(theReport.makeRateItem(theYear.getAddDivTaxRate()));
         }
         myOutput.append("</tr>");
         myOutput.append("<tr><th>TaxableGains</th>");
-        myOutput.append(Report.makeRateItem(null));
-        myOutput.append(Report.makeRateItem(theYear.getBasicTaxRate()));
-        myOutput.append(Report.makeRateItem(theYear.getHiTaxRate()));
+        myOutput.append(theReport.makeRateItem(null));
+        myOutput.append(theReport.makeRateItem(theYear.getBasicTaxRate()));
+        myOutput.append(theReport.makeRateItem(theYear.getHiTaxRate()));
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(Report.makeRateItem(theYear.getAddTaxRate()));
+            myOutput.append(theReport.makeRateItem(theYear.getAddTaxRate()));
         }
         myOutput.append("</tr>");
         myOutput.append("<tr><th>CapitalGains</th>");
-        myOutput.append(Report.makeRateItem(null));
-        myOutput.append(Report.makeRateItem(theYear.getCapTaxRate()));
-        myOutput.append(Report.makeRateItem(theYear.getHiCapTaxRate()));
+        myOutput.append(theReport.makeRateItem(null));
+        myOutput.append(theReport.makeRateItem(theYear.getCapTaxRate()));
+        myOutput.append(theReport.makeRateItem(theYear.getHiCapTaxRate()));
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(Report.makeRateItem(null));
+            myOutput.append(theReport.makeRateItem(null));
         }
         myOutput.append("</tr>");
         myOutput.append("</tbody></table>");
@@ -1037,7 +1051,7 @@ public class AnalysisReport {
         /* Access the original allowance */
         myTax = myList.getTaxDetail(TaxClass.ORIGALLOW);
         myOutput.append("<tr><th>Personal Allowance</th>");
-        myOutput.append(Report.makeMoneyItem(myTax.getAmount()));
+        myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
         myOutput.append("</tr>");
 
         /* if we have adjusted the allowance */
@@ -1045,26 +1059,26 @@ public class AnalysisReport {
             /* Access the gross income */
             myTax = myList.getTaxDetail(TaxClass.GROSSINCOME);
             myOutput.append("<tr><th>Gross Taxable Income</th>");
-            myOutput.append(Report.makeMoneyItem(myTax.getAmount()));
+            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
             myOutput.append("</tr>");
 
             /* Access the gross income */
             myTax = myList.getTaxDetail(TaxClass.ADJALLOW);
             myOutput.append("<tr><th>Adjusted Allowance</th>");
-            myOutput.append(Report.makeMoneyItem(myTax.getAmount()));
+            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
             myOutput.append("</tr>");
         }
 
         /* Access the Low Tax Band */
         if (theYear.getLoBand() != null) {
             myOutput.append("<tr><th>Low Tax Band</th>");
-            myOutput.append(Report.makeMoneyItem(theYear.getLoBand()));
+            myOutput.append(theReport.makeMoneyItem(theYear.getLoBand()));
             myOutput.append("</tr>");
         }
 
         /* Access the Basic Tax Band */
         myOutput.append("<tr><th>Basic Tax Band</th>");
-        myOutput.append(Report.makeMoneyItem(theYear.getBasicBand()));
+        myOutput.append(theReport.makeMoneyItem(theYear.getBasicBand()));
         myOutput.append("</tr>");
 
         /* If we have a high tax band */
@@ -1072,7 +1086,7 @@ public class AnalysisReport {
             /* Access the gross income */
             myTax = myList.getTaxDetail(TaxClass.HITAXBAND);
             myOutput.append("<tr><th>High Tax Band</th>");
-            myOutput.append(Report.makeMoneyItem(myTax.getAmount()));
+            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
             myOutput.append("</tr>");
         }
         myOutput.append("</tbody></table>");
@@ -1138,16 +1152,16 @@ public class AnalysisReport {
             myOutput.append("<tr><th align=\"center\">");
             myOutput.append(myTax.getName());
             myOutput.append("</th>");
-            myOutput.append(Report.makeMoneyItem(myTax.getAmount()));
-            myOutput.append(Report.makeRateItem(myTax.getRate()));
-            myOutput.append(Report.makeMoneyItem(myTax.getTaxation()));
+            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
+            myOutput.append(theReport.makeRateItem(myTax.getRate()));
+            myOutput.append(theReport.makeMoneyItem(myTax.getTaxation()));
             myOutput.append("</tr>");
         }
 
         myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append(Report.makeMoneyTotal(pSummary.getAmount()));
-        myOutput.append(Report.makeRateItem(null));
-        myOutput.append(Report.makeMoneyTotal(pSummary.getTaxation()));
+        myOutput.append(theReport.makeMoneyTotal(pSummary.getAmount()));
+        myOutput.append(theReport.makeRateItem(null));
+        myOutput.append(theReport.makeMoneyTotal(pSummary.getTaxation()));
         myOutput.append("</tr></tbody></table>");
 
         /* Return the output */
@@ -1182,26 +1196,26 @@ public class AnalysisReport {
 
             /* Format the detail */
             myOutput.append("<tr><td>");
-            myOutput.append(JDataObject.formatField(myCharge.getDate()));
+            myOutput.append(theFormatter.formatObject(myCharge.getDate()));
             myOutput.append("</td><td>");
             myOutput.append(myCharge.getDesc());
             myOutput.append("</td>");
-            myOutput.append(Report.makeMoneyItem(myCharge.getAmount()));
-            myOutput.append(Report.makeMoneyItem(myCharge.getTaxCredit()));
+            myOutput.append(theReport.makeMoneyItem(myCharge.getAmount()));
+            myOutput.append(theReport.makeMoneyItem(myCharge.getTaxCredit()));
             myOutput.append("<td>");
             myOutput.append(myCharge.getYears());
             myOutput.append("</td>");
-            myOutput.append(Report.makeMoneyItem(myCharge.getSlice()));
-            myOutput.append(Report.makeMoneyItem(myCharge.getTaxation()));
+            myOutput.append(theReport.makeMoneyItem(myCharge.getSlice()));
+            myOutput.append(theReport.makeMoneyItem(myCharge.getTaxation()));
             myOutput.append("</tr>");
         }
 
         /* Format the totals */
         myOutput.append("<tr><th>Totals</th><td/><td/>");
-        myOutput.append(Report.makeMoneyTotal(myCharges.getGainsTotal()));
+        myOutput.append(theReport.makeMoneyTotal(myCharges.getGainsTotal()));
         myOutput.append("<td/>");
-        myOutput.append(Report.makeMoneyTotal(myCharges.getSliceTotal()));
-        myOutput.append(Report.makeMoneyTotal(myCharges.getTaxTotal()));
+        myOutput.append(theReport.makeMoneyTotal(myCharges.getSliceTotal()));
+        myOutput.append(theReport.makeMoneyTotal(myCharges.getTaxTotal()));
         myOutput.append("</tr></tbody></table>");
 
         /* Access the Summary Tax Due Slice */
@@ -1281,9 +1295,9 @@ public class AnalysisReport {
 
             /* Format the totals */
             IncomeTotals myTotals = myAccount.getTotals();
-            myOutput.append(Report.makeMoneyItem(myTotals.getGrossIncome()));
-            myOutput.append(Report.makeMoneyItem(myTotals.getNetIncome()));
-            myOutput.append(Report.makeMoneyItem(myTotals.getTaxCredit()));
+            myOutput.append(theReport.makeMoneyItem(myTotals.getGrossIncome()));
+            myOutput.append(theReport.makeMoneyItem(myTotals.getNetIncome()));
+            myOutput.append(theReport.makeMoneyItem(myTotals.getTaxCredit()));
             myOutput.append("</tr>");
 
             /* If we have events */
@@ -1309,9 +1323,9 @@ public class AnalysisReport {
             myOutput.append("Total");
         }
         myOutput.append("</th>");
-        myOutput.append(Report.makeMoneyTotal(myTotals.getGrossIncome()));
-        myOutput.append(Report.makeMoneyTotal(myTotals.getNetIncome()));
-        myOutput.append(Report.makeMoneyTotal(myTotals.getTaxCredit()));
+        myOutput.append(theReport.makeMoneyTotal(myTotals.getGrossIncome()));
+        myOutput.append(theReport.makeMoneyTotal(myTotals.getNetIncome()));
+        myOutput.append(theReport.makeMoneyTotal(myTotals.getTaxCredit()));
         myOutput.append("</tr></tbody></table>");
 
         /* Append the detail */
@@ -1352,29 +1366,29 @@ public class AnalysisReport {
 
             /* Format the detail */
             myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(JDataObject.formatField(myEvent.getDate()));
+            myOutput.append(theFormatter.formatObject(myEvent.getDate()));
             myOutput.append("</th><td>");
             myOutput.append(myEvent.getDesc());
             myOutput.append("</td>");
 
             /* Calculate Gross */
             TransactionType myTrans = myEvent.getTransType();
-            Money myGross = new Money(myEvent.getAmount());
-            Money myNet = myEvent.getAmount();
+            JMoney myGross = new JMoney(myEvent.getAmount());
+            JMoney myNet = myEvent.getAmount();
 
             /* If we are NatInsurance/Benefit */
             if ((myTrans.getTranClass() == TransClass.NATINSURANCE)
                     || (myTrans.getTranClass() == TransClass.BENEFIT)) {
                 /* Just add to gross */
-                myNet = new Money(0);
+                myNet = new JMoney();
             } else if (myEvent.getTaxCredit() != null) {
                 myGross.addAmount(myEvent.getTaxCredit());
             }
 
             /* Report the values */
-            myOutput.append(Report.makeMoneyItem(myGross));
-            myOutput.append(Report.makeMoneyItem(myNet));
-            myOutput.append(Report.makeMoneyItem(myEvent.getTaxCredit()));
+            myOutput.append(theReport.makeMoneyItem(myGross));
+            myOutput.append(theReport.makeMoneyItem(myNet));
+            myOutput.append(theReport.makeMoneyItem(myEvent.getTaxCredit()));
             myOutput.append("</tr>");
         }
 
@@ -1383,9 +1397,9 @@ public class AnalysisReport {
         myOutput.append("<tr><th><a href=\"#");
         myOutput.append(pReturn);
         myOutput.append("\">Total</a></th><td/>");
-        myOutput.append(Report.makeMoneyTotal(myTotals.getGrossIncome()));
-        myOutput.append(Report.makeMoneyTotal(myTotals.getNetIncome()));
-        myOutput.append(Report.makeMoneyTotal(myTotals.getTaxCredit()));
+        myOutput.append(theReport.makeMoneyTotal(myTotals.getGrossIncome()));
+        myOutput.append(theReport.makeMoneyTotal(myTotals.getNetIncome()));
+        myOutput.append(theReport.makeMoneyTotal(myTotals.getTaxCredit()));
         myOutput.append("</tr></tbody></table>");
 
         /* Return the output */

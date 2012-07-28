@@ -279,15 +279,12 @@ public class DateDay implements Comparable<DateDay> {
                    final Locale pLocale,
                    final String pFormat) {
         try {
-            /* Access the parsed date */
-            Date myDate = null;
-
             /* Access the date format */
             theFormat = pFormat;
             theDateFormat = new SimpleDateFormat(theFormat, pLocale);
 
             /* Parse and build the date */
-            myDate = theDateFormat.parse(pValue);
+            Date myDate = theDateFormat.parse(pValue);
             buildDateDay(myDate, pLocale);
         } catch (ParseException e) {
             throw new IllegalArgumentException("Invalid Date string " + pValue, e);

@@ -37,11 +37,11 @@ import javax.swing.SortOrder;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 
 /**
  * Column definition classes handling data-type specifics.
@@ -933,10 +933,10 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final Money pValue) {
+        protected void setValue(final JMoney pValue) {
             String myString = null;
             if (pValue != null) {
-                myString = pValue.format(false);
+                myString = pValue.toString();
             }
             super.setObject(myString);
         }
@@ -972,17 +972,17 @@ public abstract class ColumnDefinition {
         protected void buildColumnType(final StringBuilder pBuilder) {
             /* Add the column type */
             pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
-            pBuilder.append("(18,2)");
+            pBuilder.append("(18,4)");
         }
 
         /**
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final Rate pValue) {
+        protected void setValue(final JRate pValue) {
             String myString = null;
             if (pValue != null) {
-                myString = pValue.format(false);
+                myString = pValue.toString();
             }
             super.setObject(myString);
         }
@@ -1025,10 +1025,10 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final Price pValue) {
+        protected void setValue(final JPrice pValue) {
             String myString = null;
             if (pValue != null) {
-                myString = pValue.format(false);
+                myString = pValue.toString();
             }
             super.setObject(myString);
         }
@@ -1060,10 +1060,10 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final Units pValue) {
+        protected void setValue(final JUnits pValue) {
             String myString = null;
             if (pValue != null) {
-                myString = pValue.format(false);
+                myString = pValue.toString();
             }
             super.setObject(myString);
         }
@@ -1095,10 +1095,10 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final Dilution pValue) {
+        protected void setValue(final JDilution pValue) {
             String myString = null;
             if (pValue != null) {
-                myString = pValue.format(false);
+                myString = pValue.toString();
             }
             super.setObject(myString);
         }

@@ -34,16 +34,16 @@ import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataObject.JDataDiffers;
 import net.sourceforge.JDataManager.JDataObject.JDataFormat;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Decimal;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDecimal;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 
 /**
  * Encrypted data types.
@@ -131,15 +131,23 @@ public final class EncryptedData {
         private T theDecrypted = null;
 
         /**
+         * Data formatter.
+         */
+        private final JDataFormatter theFormatter;
+
+        /**
          * Constructor.
          * @param pCipherSet the cipher set
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         private EncryptedField(final CipherSet pCipherSet,
+                               final JDataFormatter pFormatter,
                                final byte[] pEncrypted) throws JDataException {
-            /* Store the cipherSet */
+            /* Store the cipherSet and formatter */
             theCipherSet = pCipherSet;
+            theFormatter = pFormatter;
 
             /* Store the encrypted value */
             theEncrypted = Arrays.copyOf(pEncrypted, pEncrypted.length);
@@ -176,13 +184,16 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the CipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         private EncryptedField(final CipherSet pCipherSet,
+                               final JDataFormatter pFormatter,
                                final T pUnencrypted) throws JDataException {
-            /* Store the control */
+            /* Store the cipherSet and formatter */
             theCipherSet = pCipherSet;
+            theFormatter = pFormatter;
 
             /* Store the value */
             theDecrypted = pUnencrypted;
@@ -223,7 +234,7 @@ public final class EncryptedData {
         @Override
         public String formatObject() {
             /* Format the unencrypted field */
-            return JDataObject.formatField(theDecrypted);
+            return theFormatter.formatObject(theDecrypted);
         }
 
         /**
@@ -353,23 +364,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedString(final CipherSet pCipherSet,
+                                  final JDataFormatter pFormatter,
                                   final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedString(final CipherSet pCipherSet,
+                                  final JDataFormatter pFormatter,
                                   final String pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -406,23 +421,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedShort(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedShort(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final Short pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -459,23 +478,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedInteger(final CipherSet pCipherSet,
+                                   final JDataFormatter pFormatter,
                                    final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedInteger(final CipherSet pCipherSet,
+                                   final JDataFormatter pFormatter,
                                    final Integer pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -512,23 +535,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedLong(final CipherSet pCipherSet,
+                                final JDataFormatter pFormatter,
                                 final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedLong(final CipherSet pCipherSet,
+                                final JDataFormatter pFormatter,
                                 final Long pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -565,23 +592,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedFloat(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedFloat(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final Float pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -618,23 +649,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedDouble(final CipherSet pCipherSet,
+                                  final JDataFormatter pFormatter,
                                   final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedDouble(final CipherSet pCipherSet,
+                                  final JDataFormatter pFormatter,
                                   final Double pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -671,23 +706,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedBoolean(final CipherSet pCipherSet,
+                                   final JDataFormatter pFormatter,
                                    final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedBoolean(final CipherSet pCipherSet,
+                                   final JDataFormatter pFormatter,
                                    final Boolean pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -741,24 +780,28 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedDate(final CipherSet pCipherSet,
+                                final JDataFormatter pFormatter,
                                 final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
 
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedDate(final CipherSet pCipherSet,
+                                final JDataFormatter pFormatter,
                                 final Date pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -797,23 +840,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedDateDay(final CipherSet pCipherSet,
+                                   final JDataFormatter pFormatter,
                                    final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedDateDay(final CipherSet pCipherSet,
+                                   final JDataFormatter pFormatter,
                                    final DateDay pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -850,23 +897,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedCharArray(final CipherSet pCipherSet,
+                                     final JDataFormatter pFormatter,
                                      final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedCharArray(final CipherSet pCipherSet,
+                                     final JDataFormatter pFormatter,
                                      final char[] pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -887,23 +938,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedBigInteger(final CipherSet pCipherSet,
+                                      final JDataFormatter pFormatter,
                                       final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedBigInteger(final CipherSet pCipherSet,
+                                      final JDataFormatter pFormatter,
                                       final BigInteger pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -924,23 +979,27 @@ public final class EncryptedData {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedBigDecimal(final CipherSet pCipherSet,
+                                      final JDataFormatter pFormatter,
                                       final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedBigDecimal(final CipherSet pCipherSet,
+                                      final JDataFormatter pFormatter,
                                       final BigDecimal pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -958,27 +1017,31 @@ public final class EncryptedData {
      * The encrypted Decimal class.
      * @param <X> the decimal type
      */
-    public abstract static class EncryptedDecimal<X extends Decimal> extends EncryptedField<X> {
+    public abstract static class EncryptedDecimal<X extends JDecimal> extends EncryptedField<X> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         private EncryptedDecimal(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         private EncryptedDecimal(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final X pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
@@ -1007,7 +1070,7 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Format the value */
-                String myValue = getValue().format(false);
+                String myValue = getValue().toString();
 
                 /* Convert the string to a byte array */
                 return DataConverter.stringToByteArray(myValue);
@@ -1022,160 +1085,180 @@ public final class EncryptedData {
     /**
      * The encrypted Money class.
      */
-    public static final class EncryptedMoney extends EncryptedDecimal<Money> {
+    public static final class EncryptedMoney extends EncryptedDecimal<JMoney> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedMoney(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedMoney(final CipherSet pCipherSet,
-                                 final Money pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+                                 final JDataFormatter pFormatter,
+                                 final JMoney pUnencrypted) throws JDataException {
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Money parseValue(final String pValue) throws JDataException {
-            return new Money(pValue);
+        protected JMoney parseValue(final String pValue) throws JDataException {
+            return new JMoney(pValue);
         }
     }
 
     /**
      * The encrypted Units class.
      */
-    public static final class EncryptedUnits extends EncryptedDecimal<Units> {
+    public static final class EncryptedUnits extends EncryptedDecimal<JUnits> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedUnits(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedUnits(final CipherSet pCipherSet,
-                                 final Units pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+                                 final JDataFormatter pFormatter,
+                                 final JUnits pUnencrypted) throws JDataException {
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Units parseValue(final String pValue) throws JDataException {
-            return new Units(pValue);
+        protected JUnits parseValue(final String pValue) throws JDataException {
+            return new JUnits(pValue);
         }
     }
 
     /**
      * The encrypted Rate class.
      */
-    public static final class EncryptedRate extends EncryptedDecimal<Rate> {
+    public static final class EncryptedRate extends EncryptedDecimal<JRate> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedRate(final CipherSet pCipherSet,
+                                final JDataFormatter pFormatter,
                                 final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedRate(final CipherSet pCipherSet,
-                                final Rate pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+                                final JDataFormatter pFormatter,
+                                final JRate pUnencrypted) throws JDataException {
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Rate parseValue(final String pValue) throws JDataException {
-            return new Rate(pValue);
+        protected JRate parseValue(final String pValue) throws JDataException {
+            return new JRate(pValue);
         }
     }
 
     /**
      * The encrypted Price class.
      */
-    public static final class EncryptedPrice extends EncryptedDecimal<Price> {
+    public static final class EncryptedPrice extends EncryptedDecimal<JPrice> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedPrice(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
                                  final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedPrice(final CipherSet pCipherSet,
-                                 final Price pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+                                 final JDataFormatter pFormatter,
+                                 final JPrice pUnencrypted) throws JDataException {
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Price parseValue(final String pValue) throws JDataException {
-            return new Price(pValue);
+        protected JPrice parseValue(final String pValue) throws JDataException {
+            return new JPrice(pValue);
         }
     }
 
     /**
      * The encrypted Dilution class.
      */
-    public static final class EncryptedDilution extends EncryptedDecimal<Dilution> {
+    public static final class EncryptedDilution extends EncryptedDecimal<JDilution> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pEncrypted the encrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedDilution(final CipherSet pCipherSet,
+                                    final JDataFormatter pFormatter,
                                     final byte[] pEncrypted) throws JDataException {
-            super(pCipherSet, pEncrypted);
+            super(pCipherSet, pFormatter, pEncrypted);
         }
 
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
          * @param pUnencrypted the unencrypted value of the field
          * @throws JDataException on error
          */
         protected EncryptedDilution(final CipherSet pCipherSet,
-                                    final Dilution pUnencrypted) throws JDataException {
-            super(pCipherSet, pUnencrypted);
+                                    final JDataFormatter pFormatter,
+                                    final JDilution pUnencrypted) throws JDataException {
+            super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected Dilution parseValue(final String pValue) throws JDataException {
-            return new Dilution(pValue);
+        protected JDilution parseValue(final String pValue) throws JDataException {
+            return new JDilution(pValue);
         }
     }
 }

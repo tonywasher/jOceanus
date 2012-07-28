@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
 import net.sourceforge.JDataModels.ui.Editor.PriceEditor;
@@ -45,9 +46,11 @@ import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
+import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.views.View;
 import net.sourceforge.JFinanceApp.views.ViewPrice;
 import net.sourceforge.JFinanceApp.views.ViewPrice.ViewPriceList;
@@ -435,7 +438,7 @@ public class AccountPrices extends JDataTable<ViewPrice> {
                     pPrice.setDate((DateDay) pValue);
                     break;
                 case COLUMN_PRICE:
-                    pPrice.setPrice((Price) pValue);
+                    pPrice.setPrice((JPrice) pValue);
                     break;
                 default:
                     break;
@@ -508,11 +511,16 @@ public class AccountPrices extends JDataTable<ViewPrice> {
             /* call constructor */
             super(theTable);
 
+            /* Access parser and formatter */
+            FinanceData myData = theView.getData();
+            JDecimalParser myParser = myData.getDecimalParser();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
             /* Create the relevant formatters/editors */
             theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
-            thePriceEditor = new PriceEditor();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            thePriceEditor = new PriceEditor(myParser);
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));

@@ -33,9 +33,9 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
 import net.sourceforge.JFinanceApp.data.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
@@ -291,8 +291,8 @@ public class EventInfoSet implements JDataContents {
         TransactionType myTrans = theEvent.getTransType();
 
         /* Access Units */
-        Units myDebUnits = getUnits(EventInfoClass.DebitUnits);
-        Units myCredUnits = getUnits(EventInfoClass.CreditUnits);
+        JUnits myDebUnits = getUnits(EventInfoClass.DebitUnits);
+        JUnits myCredUnits = getUnits(EventInfoClass.CreditUnits);
 
         /* If we have Credit/Debit Units */
         if ((myDebUnits != null) || (myCredUnits != null)) {
@@ -369,7 +369,7 @@ public class EventInfoSet implements JDataContents {
         }
 
         /* Access Dilution */
-        Dilution myDilution = getDilution(EventInfoClass.Dilution);
+        JDilution myDilution = getDilution(EventInfoClass.Dilution);
 
         /* If we have a dilution */
         if (myDilution != null) {
@@ -390,7 +390,7 @@ public class EventInfoSet implements JDataContents {
 
         /* Access Years and Tax Credit */
         Integer myYears = getValue(EventInfoClass.QualifyYears);
-        Money myTax = getMoney(EventInfoClass.TaxCredit);
+        JMoney myTax = getMoney(EventInfoClass.TaxCredit);
 
         /* If we are a taxable gain */
         if ((myTrans != null) && (myTrans.isTaxableGain())) {
@@ -525,7 +525,7 @@ public class EventInfoSet implements JDataContents {
      * @param pType the Value Type
      * @return the money
      */
-    protected Money getMoney(final EventInfoClass pType) {
+    protected JMoney getMoney(final EventInfoClass pType) {
         /* Obtain the Map value */
         EventData myData = theDataMap.get(pType);
 
@@ -538,7 +538,7 @@ public class EventInfoSet implements JDataContents {
      * @param pType the Value Type
      * @return the units
      */
-    protected Units getUnits(final EventInfoClass pType) {
+    protected JUnits getUnits(final EventInfoClass pType) {
         /* Obtain the Map value */
         EventData myData = theDataMap.get(pType);
 
@@ -551,7 +551,7 @@ public class EventInfoSet implements JDataContents {
      * @param pType the Value Type
      * @return the dilution
      */
-    protected Dilution getDilution(final EventInfoClass pType) {
+    protected JDilution getDilution(final EventInfoClass pType) {
         /* Obtain the Map value */
         EventData myData = theDataMap.get(pType);
 
@@ -614,7 +614,7 @@ public class EventInfoSet implements JDataContents {
      * @throws JDataException on error
      */
     protected void setMoney(final EventInfoType pType,
-                            final Money pValue) throws JDataException {
+                            final JMoney pValue) throws JDataException {
         /* Obtain the Map data */
         EventData myData = theDataMap.get(pType.getInfoClass());
 
@@ -638,7 +638,7 @@ public class EventInfoSet implements JDataContents {
      * @throws JDataException on error
      */
     protected void setUnits(final EventInfoType pType,
-                            final Units pValue) throws JDataException {
+                            final JUnits pValue) throws JDataException {
         /* Obtain the Map data */
         EventData myData = theDataMap.get(pType.getInfoClass());
 
@@ -662,7 +662,7 @@ public class EventInfoSet implements JDataContents {
      * @throws JDataException on error
      */
     protected void setDilution(final EventInfoType pType,
-                               final Dilution pValue) throws JDataException {
+                               final JDilution pValue) throws JDataException {
         /* Obtain the Map data */
         EventData myData = theDataMap.get(pType.getInfoClass());
 

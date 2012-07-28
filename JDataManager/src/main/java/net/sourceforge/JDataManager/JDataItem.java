@@ -128,6 +128,11 @@ public class JDataItem {
     private final JEditorPane theEditor;
 
     /**
+     * HTML formatter.
+     */
+    private JDataHTML theFormatter = null;
+
+    /**
      * Get the panel.
      * @return the panel
      */
@@ -140,6 +145,9 @@ public class JDataItem {
      * @param pFormatter the formatter
      */
     protected JDataItem(final JDataHTML pFormatter) {
+        /* Record the formatter */
+        theFormatter = pFormatter;
+
         /* Create the slider */
         theSlider = new JSlider(SwingConstants.HORIZONTAL);
         theSlider.setMinimum(0);
@@ -207,6 +215,9 @@ public class JDataItem {
      * @param pFormatter the formatter
      */
     protected void setFormatter(final JDataHTML pFormatter) {
+        /* Record the formatter */
+        theFormatter = pFormatter;
+
         /* Use the new formatter */
         buildEditorStyleSheet(pFormatter);
     }
@@ -238,7 +249,7 @@ public class JDataItem {
         theEntry = pEntry;
 
         /* Display the object */
-        displayDetail(new JDataDetail(pEntry.getObject()));
+        displayDetail(new JDataDetail(theFormatter, pEntry.getObject()));
     }
 
     /**
@@ -249,7 +260,7 @@ public class JDataItem {
         /* If we are updating the active object */
         if (theEntry.getIndex() == pEntry.getIndex()) {
             /* Display the object */
-            displayDetail(new JDataDetail(pEntry.getObject()));
+            displayDetail(new JDataDetail(theFormatter, pEntry.getObject()));
         }
     }
 

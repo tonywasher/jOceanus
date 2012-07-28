@@ -36,6 +36,7 @@ import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
@@ -55,9 +56,11 @@ import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
 import net.sourceforge.JFinanceApp.data.AccountType;
+import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.ui.controls.SpotSelect;
 import net.sourceforge.JFinanceApp.views.SpotPrices;
 import net.sourceforge.JFinanceApp.views.SpotPrices.SpotList;
@@ -643,7 +646,7 @@ public class PricePoint extends JDataTable<SpotPrice> {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_PRICE:
-                    pSpot.setPrice((Price) pValue);
+                    pSpot.setPrice((JPrice) pValue);
                     break;
                 default:
                     break;
@@ -701,10 +704,15 @@ public class PricePoint extends JDataTable<SpotPrice> {
             /* call constructor */
             super(theTable);
 
+            /* Access parser and formatter */
+            FinanceData myData = theView.getData();
+            JDecimalParser myParser = myData.getDecimalParser();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
             /* Create the relevant formatters/editors */
             theDateRenderer = theRenderMgr.allocateCalendarRenderer();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
-            thePriceEditor = new PriceEditor();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            thePriceEditor = new PriceEditor(myParser);
             theStringRenderer = theRenderMgr.allocateStringRenderer();
 
             /* Create the columns */

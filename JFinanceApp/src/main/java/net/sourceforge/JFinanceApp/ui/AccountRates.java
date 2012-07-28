@@ -33,6 +33,7 @@ import javax.swing.JPopupMenu;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
@@ -50,7 +51,8 @@ import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountRate;
 import net.sourceforge.JFinanceApp.data.AccountRate.AccountRateList;
@@ -427,10 +429,10 @@ public class AccountRates extends JDataTable<AccountRate> {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_RATE:
-                    pRate.setRate((Rate) pValue);
+                    pRate.setRate((JRate) pValue);
                     break;
                 case COLUMN_BONUS:
-                    pRate.setBonus((Rate) pValue);
+                    pRate.setBonus((JRate) pValue);
                     break;
                 case COLUMN_DATE:
                     pRate.setEndDate((DateDay) pValue);
@@ -585,11 +587,16 @@ public class AccountRates extends JDataTable<AccountRate> {
             /* call constructor */
             super(theTable);
 
+            /* Access parser and formatter */
+            FinanceData myData = theView.getData();
+            JDecimalParser myParser = myData.getDecimalParser();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
             /* Create the relevant formatters/editors */
             theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theRateRenderer = theRenderMgr.allocateDecimalRenderer();
-            theRateEditor = new RateEditor();
+            theRateRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theRateEditor = new RateEditor(myParser);
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_RATE, WIDTH_RATE, theRateRenderer, theRateEditor));

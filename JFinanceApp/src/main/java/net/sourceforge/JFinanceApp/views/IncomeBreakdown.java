@@ -27,7 +27,7 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDecimal.Money;
+import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
@@ -330,23 +330,23 @@ public class IncomeBreakdown implements JDataContents {
         /**
          * The Gross income.
          */
-        private Money theGrossIncome = new Money(0);
+        private JMoney theGrossIncome = new JMoney();
 
         /**
          * The Net income.
          */
-        private Money theNetIncome = new Money(0);
+        private JMoney theNetIncome = new JMoney();
 
         /**
          * The Tax Credit.
          */
-        private Money theTaxCredit = new Money(0);
+        private JMoney theTaxCredit = new JMoney();
 
         /**
          * Obtain the Gross Income.
          * @return the gross income
          */
-        protected Money getGrossIncome() {
+        protected JMoney getGrossIncome() {
             return theGrossIncome;
         }
 
@@ -354,7 +354,7 @@ public class IncomeBreakdown implements JDataContents {
          * Obtain the Net Income.
          * @return the net income
          */
-        protected Money getNetIncome() {
+        protected JMoney getNetIncome() {
             return theNetIncome;
         }
 
@@ -362,7 +362,7 @@ public class IncomeBreakdown implements JDataContents {
          * Obtain the Tax Credit.
          * @return the tax credit
          */
-        protected Money getTaxCredit() {
+        protected JMoney getTaxCredit() {
             return theTaxCredit;
         }
     }
@@ -542,8 +542,8 @@ public class IncomeBreakdown implements JDataContents {
             // theEvents.addNewItem(pEvent);
 
             /* Access values */
-            Money myAmount = pEvent.getAmount();
-            Money myTax = pEvent.getTaxCredit();
+            JMoney myAmount = pEvent.getAmount();
+            JMoney myTax = pEvent.getTaxCredit();
             Account myDebit = pEvent.getDebit();
             TransactionType myTrans = pEvent.getTransType();
 

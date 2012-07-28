@@ -32,9 +32,10 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Price;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDecimal;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JPrice;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
@@ -378,9 +379,9 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
      * @param pValue the value of the attribute
      */
     protected void addAttribute(final String pName,
-                                final Money pValue) {
+                                final JMoney pValue) {
         /* Create the attribute and add to the list */
-        MoneyAttribute myAttr = new MoneyAttribute(pName, new Money(pValue));
+        MoneyAttribute myAttr = new MoneyAttribute(pName, new JMoney(pValue));
         theAttributes.add(myAttr);
         theLocalFields.declareLocalField(pName);
     }
@@ -391,9 +392,9 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
      * @param pValue the value of the attribute
      */
     protected void addAttribute(final String pName,
-                                final Units pValue) {
+                                final JUnits pValue) {
         /* Create the attribute and add to the list */
-        UnitsAttribute myAttr = new UnitsAttribute(pName, new Units(pValue));
+        UnitsAttribute myAttr = new UnitsAttribute(pName, new JUnits(pValue));
         theAttributes.add(myAttr);
         theLocalFields.declareLocalField(pName);
     }
@@ -404,11 +405,24 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
      * @param pValue the value of the attribute
      */
     protected void addAttribute(final String pName,
-                                final Price pValue) {
+                                final JPrice pValue) {
         /* Create the attribute and add to the list */
-        PriceAttribute myAttr = new PriceAttribute(pName, new Price(pValue));
+        PriceAttribute myAttr = new PriceAttribute(pName, new JPrice(pValue));
         theAttributes.add(myAttr);
         theLocalFields.declareLocalField(pName);
+    }
+
+    /**
+     * Find an attribute.
+     * @param <X> the data type
+     * @param pName the name of the attribute
+     * @param pClass the class of the attribute
+     * @return the value of the attribute or null
+     */
+    public <X extends JDecimal> X findAttribute(final String pName,
+                                                final Class<X> pClass) {
+        /* Search for the attribute */
+        return pClass.cast(findAttribute(pName));
     }
 
     /**
@@ -416,7 +430,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
      * @param pName the name of the attribute
      * @return the value of the attribute or null
      */
-    public Object findAttribute(final String pName) {
+    private Object findAttribute(final String pName) {
         /* Search for the attribute */
         return theAttributes.findAttribute(pName);
     }
@@ -579,8 +593,9 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
 
     /**
      * Attribute class.
+     * @param <T> the data type for the attribute
      */
-    private abstract class Attribute {
+    private abstract class Attribute<T extends JDecimal> {
         /**
          * The Name.
          */
@@ -589,7 +604,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
         /**
          * The value.
          */
-        private final Object theValue;
+        private final T theValue;
 
         /**
          * Obtain the name.
@@ -603,7 +618,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
          * Obtain the value.
          * @return the value
          */
-        public Object getValue() {
+        public T getValue() {
             return theValue;
         }
 
@@ -613,7 +628,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
          * @param pValue the value
          */
         private Attribute(final String pName,
-                          final Object pValue) {
+                          final T pValue) {
             /* Store the values */
             theName = pName;
             theValue = pValue;
@@ -640,7 +655,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
             }
 
             /* Access the object as an Attribute */
-            Attribute myThat = (Attribute) pThat;
+            Attribute<?> myThat = (Attribute<?>) pThat;
 
             /* Compare the year */
             return theName.compareTo(myThat.theName);
@@ -662,7 +677,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
             }
 
             /* Access the object as an Attribute */
-            Attribute myThat = (Attribute) pThat;
+            Attribute<?> myThat = (Attribute<?>) pThat;
 
             /* Compare the year */
             return theName.equals(myThat.theName);
@@ -672,118 +687,70 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
         public int hashCode() {
             return theName.hashCode();
         }
-
-        /**
-         * Format the element.
-         * @return the formatted element
-         */
-        public abstract String format();
     }
 
     /**
      * MoneyAttribute class.
      */
-    public final class MoneyAttribute extends Attribute {
-        @Override
-        public Money getValue() {
-            return (Money) super.getValue();
-        }
-
+    public final class MoneyAttribute extends Attribute<JMoney> {
         /**
          * Constructor.
          * @param pName the name
          * @param pValue the value
          */
         private MoneyAttribute(final String pName,
-                               final Money pValue) {
+                               final JMoney pValue) {
             /* Store the values */
             super(pName, pValue);
-        }
-
-        /**
-         * Format the element.
-         * @return the formatted element
-         */
-        @Override
-        public String format() {
-            return getValue().format(true);
         }
     }
 
     /**
      * UnitsAttribute class.
      */
-    public final class UnitsAttribute extends Attribute {
-        @Override
-        public Units getValue() {
-            return (Units) super.getValue();
-        }
-
+    public final class UnitsAttribute extends Attribute<JUnits> {
         /**
          * Constructor.
          * @param pName the name
          * @param pValue the value
          */
         private UnitsAttribute(final String pName,
-                               final Units pValue) {
+                               final JUnits pValue) {
             /* Store the values */
             super(pName, pValue);
-        }
-
-        /**
-         * Format the element.
-         * @return the formatted element
-         */
-        @Override
-        public String format() {
-            return getValue().format(true);
         }
     }
 
     /**
      * PriceAttribute class.
      */
-    public final class PriceAttribute extends Attribute {
-        @Override
-        public Price getValue() {
-            return (Price) super.getValue();
-        }
-
+    public final class PriceAttribute extends Attribute<JPrice> {
         /**
          * Constructor.
          * @param pName the name
          * @param pValue the value
          */
         private PriceAttribute(final String pName,
-                               final Price pValue) {
+                               final JPrice pValue) {
             /* Store the values */
             super(pName, pValue);
-        }
-
-        /**
-         * Format the element.
-         * @return the formatted element
-         */
-        @Override
-        public String format() {
-            return getValue().format(true);
         }
     }
 
     /**
      * List of Attributes.
      */
-    public static final class AttributeList {
+    private static final class AttributeList {
         /**
          * List of attributes.
          */
-        private List<Attribute> theAttributes;
+        private List<Attribute<?>> theAttributes;
 
         /**
          * Construct a list.
          */
         private AttributeList() {
-            theAttributes = new ArrayList<Attribute>();
+            theAttributes = new ArrayList<Attribute<?>>();
         }
 
         /**
@@ -792,8 +759,8 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
          * @return the value of the attribute or null
          */
         protected Object findAttribute(final String pName) {
-            Iterator<Attribute> myIterator;
-            Attribute myCurr;
+            Iterator<Attribute<?>> myIterator;
+            Attribute<?> myCurr;
 
             /* Access the iterator */
             myIterator = theAttributes.iterator();
@@ -815,7 +782,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
          * Add an attribute to the list.
          * @param pAttr the attribute to add
          */
-        private void add(final Attribute pAttr) {
+        private void add(final Attribute<?> pAttr) {
             /* Add the attribute */
             theAttributes.add(pAttr);
         }

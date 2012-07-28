@@ -58,11 +58,6 @@ import org.apache.poi.ss.util.AreaReference;
  */
 public abstract class SheetReader<T extends DataSet<T>> {
     /**
-     * Rate conversion factor.
-     */
-    private static final int RATE_CONVERSION = 100;
-
-    /**
      * Task control.
      */
     private final TaskControl<T> theTask;
@@ -440,27 +435,6 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
             /* Return the value as an integer */
             return (int) myDouble;
-        }
-
-        /**
-         * Parse the cell to return an integer.
-         * @param pCell the cell to parse
-         * @return the parsed cell
-         */
-        public String formatRateCell(final Cell pCell) {
-            double myDouble;
-            /* If this is a formula cell ensure that it is evaluated */
-            if (pCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-                CellValue myValue = theEvaluator.evaluate(pCell);
-                myDouble = myValue.getNumberValue();
-
-                /* else just extract the value directly */
-            } else {
-                myDouble = pCell.getNumericCellValue();
-            }
-
-            /* return the formatted string */
-            return Double.toString(RATE_CONVERSION * myDouble);
         }
     }
 }

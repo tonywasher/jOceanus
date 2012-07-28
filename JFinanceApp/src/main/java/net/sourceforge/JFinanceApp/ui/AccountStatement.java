@@ -39,6 +39,7 @@ import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.ui.Editor.CalendarEditor;
@@ -64,12 +65,14 @@ import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
 import net.sourceforge.JDateDay.DateDayRangeSelect;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.data.Event;
+import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.TransactionType;
 import net.sourceforge.JFinanceApp.ui.MainTab.ActionRequest;
 import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
@@ -927,9 +930,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 case COLUMN_CREDIT:
                 case COLUMN_DEBIT:
                     if (theStateType == StatementType.Units) {
-                        pLine.setUnits((Units) pValue);
+                        pLine.setUnits((JUnits) pValue);
                     } else {
-                        pLine.setAmount((Money) pValue);
+                        pLine.setAmount((JMoney) pValue);
                         if (needsTaxCredit) {
                             pLine.setTaxCredit(pLine.calculateTaxCredit());
                         }
@@ -939,10 +942,10 @@ public class AccountStatement extends JDataTable<StatementLine> {
                     pLine.setPartner((Account) pValue);
                     break;
                 case COLUMN_DILUTION:
-                    pLine.setDilution((Dilution) pValue);
+                    pLine.setDilution((JDilution) pValue);
                     break;
                 case COLUMN_TAXCREDIT:
-                    pLine.setTaxCredit((Money) pValue);
+                    pLine.setTaxCredit((JMoney) pValue);
                     break;
                 case COLUMN_YEARS:
                     pLine.setYears((Integer) pValue);
@@ -1066,7 +1069,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
         protected void addSpecialCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
             StatementLine myLine;
-            Money myTax;
+            JMoney myTax;
             TransactionType myTrans;
             boolean enableCalcTax = false;
             boolean enablePattern = false;
@@ -1362,7 +1365,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 /* Access the line */
                 StatementLine myLine = (StatementLine) myRow;
                 TransactionType myTrans = myLine.getTransType();
-                Money myTax = myLine.getTaxCredit();
+                JMoney myTax = myLine.getTaxCredit();
 
                 /* Ignore rows with invalid transaction type */
                 if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
@@ -1543,15 +1546,20 @@ public class AccountStatement extends JDataTable<StatementLine> {
             /* call constructor */
             super(theTable);
 
+            /* Access parser and formatter */
+            FinanceData myData = theView.getData();
+            JDecimalParser myParser = myData.getDecimalParser();
+            JDataFormatter myFormatter = myData.getDataFormatter();
+
             /* Create the relevant formatters/editors */
             theDateRenderer = theRenderMgr.allocateCalendarRenderer();
             theDateEditor = new CalendarEditor();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer();
-            theMoneyEditor = new MoneyEditor();
-            theUnitsEditor = new UnitsEditor();
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theMoneyEditor = new MoneyEditor(myParser);
+            theUnitsEditor = new UnitsEditor(myParser);
             theStringRenderer = theRenderMgr.allocateStringRenderer();
             theStringEditor = new StringEditor();
-            theDilutionEditor = new DilutionEditor();
+            theDilutionEditor = new DilutionEditor(myParser);
             theIntegerRenderer = theRenderMgr.allocateIntegerRenderer();
             theIntegerEditor = new IntegerEditor();
             theComboEditor = new ComboBoxEditor();

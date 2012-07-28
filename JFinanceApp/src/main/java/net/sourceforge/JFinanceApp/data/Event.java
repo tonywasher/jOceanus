@@ -30,7 +30,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
@@ -39,10 +39,11 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.DateDay;
 import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Dilution;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Rate;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JDilution;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
 import net.sourceforge.JFinanceApp.data.StaticClass.EventInfoClass;
@@ -192,7 +193,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Obtain Amount.
      * @return the amount
      */
-    public Money getAmount() {
+    public JMoney getAmount() {
         return getAmount(getValueSet());
     }
 
@@ -232,7 +233,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Obtain Units.
      * @return the units
      */
-    public Units getUnits() {
+    public JUnits getUnits() {
         return getUnits(getValueSet());
     }
 
@@ -256,7 +257,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Obtain Tax Credit.
      * @return the tax credit
      */
-    public Money getTaxCredit() {
+    public JMoney getTaxCredit() {
         return getTaxCredit(getValueSet());
     }
 
@@ -280,7 +281,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Obtain Dilution.
      * @return the dilution
      */
-    public Dilution getDilution() {
+    public JDilution getDilution() {
         return getDilution(getValueSet());
     }
 
@@ -358,8 +359,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValueSet the valueSet
      * @return the Amount
      */
-    public static Money getAmount(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_AMOUNT, Money.class);
+    public static JMoney getAmount(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_AMOUNT, JMoney.class);
     }
 
     /**
@@ -403,8 +404,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValueSet the valueSet
      * @return the Units
      */
-    public static Units getUnits(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_UNITS, Units.class);
+    public static JUnits getUnits(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_UNITS, JUnits.class);
     }
 
     /**
@@ -430,8 +431,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValueSet the valueSet
      * @return the Account
      */
-    public static Money getTaxCredit(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_TAXCREDIT, Money.class);
+    public static JMoney getTaxCredit(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_TAXCREDIT, JMoney.class);
     }
 
     /**
@@ -457,8 +458,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValueSet the valueSet
      * @return the Dilution
      */
-    public static Dilution getDilution(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_DILUTION, Dilution.class);
+    public static JDilution getDilution(final EncryptedValueSet pValueSet) {
+        return pValueSet.getEncryptedFieldValue(FIELD_DILUTION, JDilution.class);
     }
 
     /**
@@ -543,7 +544,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      * @throws JDataException on error
      */
-    private void setValueAmount(final Money pValue) throws JDataException {
+    private void setValueAmount(final JMoney pValue) throws JDataException {
         setEncryptedValue(FIELD_AMOUNT, pValue);
     }
 
@@ -553,7 +554,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @throws JDataException on error
      */
     private void setValueAmount(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_AMOUNT, pBytes, Money.class);
+        setEncryptedValue(FIELD_AMOUNT, pBytes, JMoney.class);
     }
 
     /**
@@ -601,7 +602,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      * @throws JDataException on error
      */
-    private void setValueUnits(final Units pValue) throws JDataException {
+    private void setValueUnits(final JUnits pValue) throws JDataException {
         setEncryptedValue(FIELD_UNITS, pValue);
     }
 
@@ -611,7 +612,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @throws JDataException on error
      */
     private void setValueUnits(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_UNITS, pBytes, Units.class);
+        setEncryptedValue(FIELD_UNITS, pBytes, JUnits.class);
     }
 
     /**
@@ -627,7 +628,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      * @throws JDataException on error
      */
-    private void setValueTaxCredit(final Money pValue) throws JDataException {
+    private void setValueTaxCredit(final JMoney pValue) throws JDataException {
         setEncryptedValue(FIELD_TAXCREDIT, pValue);
     }
 
@@ -637,7 +638,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @throws JDataException on error
      */
     private void setValueTaxCredit(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_TAXCREDIT, pBytes, Money.class);
+        setEncryptedValue(FIELD_TAXCREDIT, pBytes, JMoney.class);
     }
 
     /**
@@ -653,7 +654,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValue the value
      * @throws JDataException on error
      */
-    private void setValueDilution(final Dilution pValue) throws JDataException {
+    private void setValueDilution(final JDilution pValue) throws JDataException {
         setEncryptedValue(FIELD_DILUTION, pValue);
     }
 
@@ -663,7 +664,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @throws JDataException on error
      */
     private void setValueDilution(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_DILUTION, pBytes, Dilution.class);
+        setEncryptedValue(FIELD_DILUTION, pBytes, JDilution.class);
     }
 
     /**
@@ -895,24 +896,27 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 theInfoSet = new EventInfoSet(this);
             }
 
-            /* Record the encrypted values */
+            /* Access the parser */
+            FinanceData myDataSet = getDataSet();
+            JDecimalParser myParser = myDataSet.getDecimalParser();
+
+            /* Record the standard values */
             setValueDesc(pDesc);
             setValueDebit(pDebit);
             setValueCredit(pCredit);
             setValueTransType(pTransType);
             setValueDate(new DateDay(pDate));
-
-            setValueAmount(new Money(pAmount));
+            setValueAmount(myParser.parseMoneyValue(pAmount));
 
             /* If Units exist */
             if (pUnits != null) {
                 /* Create the data */
-                Units myUnits = new Units(pUnits);
-                Units myValue = myUnits;
+                JUnits myUnits = myParser.parseUnitsValue(pUnits);
+                JUnits myValue = myUnits;
                 setValueUnits(myUnits);
                 boolean isCredit = pCredit.isPriced();
                 if ((isStockSplit() || isAdminCharge()) && (!myUnits.isPositive())) {
-                    myValue = new Units(myValue);
+                    myValue = new JUnits(myValue);
                     myValue.negate();
                     isCredit = false;
                 }
@@ -925,7 +929,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             /* If TaxCredit exist */
             if (pTaxCredit != null) {
                 /* Create the data */
-                Money myTaxCredit = new Money(pTaxCredit);
+                JMoney myTaxCredit = myParser.parseMoneyValue(pTaxCredit);
                 setValueTaxCredit(myTaxCredit);
 
                 /* Create the data */
@@ -936,7 +940,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             /* If Dilution exist */
             if (pDilution != null) {
                 /* Create the data */
-                Dilution myDilution = new Dilution(pDilution);
+                JDilution myDilution = myParser.parseDilutionValue(pDilution);
                 setValueDilution(myDilution);
 
                 /* Create the data */
@@ -953,6 +957,10 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 EventValue myValue = theInfoSet.getNewValue(EventInfoClass.QualifyYears);
                 myValue.setValue(pYears);
             }
+            /* Catch Exceptions */
+        } catch (IllegalArgumentException e) {
+            /* Pass on exception */
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -1269,12 +1277,12 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         String myDesc = getDesc();
         Account myDebit = getDebit();
         Account myCredit = getCredit();
-        Money myAmount = getAmount();
+        JMoney myAmount = getAmount();
         TransactionType myTransType = getTransType();
-        Units myUnits = getUnits();
-        Money myTaxCred = getTaxCredit();
+        JUnits myUnits = getUnits();
+        JMoney myTaxCred = getTaxCredit();
         Integer myYears = getYears();
-        Dilution myDilution = getDilution();
+        JDilution myDilution = getDilution();
 
         /* Header is always valid */
         if (isHeader()) {
@@ -1325,7 +1333,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         /* Debit account must be non-null */
         if (myDebit == null) {
             addError("Debit account must be non-null", FIELD_DEBIT);
-            /* And valid for transactiuon type */
+            /* And valid for transaction type */
         } else if ((myTransType != null) && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
             addError("Invalid debit account for transaction", FIELD_DEBIT);
         }
@@ -1628,7 +1636,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Calculate the tax credit for an event.
      * @return the calculated tax credit
      */
-    public Money calculateTaxCredit() {
+    public JMoney calculateTaxCredit() {
         FinanceData myData = getDataSet();
         TaxYearList myList = myData.getTaxYears();
 
@@ -1646,7 +1654,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         TaxYear myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
-        Rate myRate = (getTransType().isInterest()) ? myTax.getIntTaxRate() : myTax.getDivTaxRate();
+        JRate myRate = (getTransType().isInterest()) ? myTax.getIntTaxRate() : myTax.getDivTaxRate();
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);
@@ -1690,7 +1698,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pAmount the amount
      * @throws JDataException on error
      */
-    public void setAmount(final Money pAmount) throws JDataException {
+    public void setAmount(final JMoney pAmount) throws JDataException {
         setValueAmount(pAmount);
     }
 
@@ -1699,7 +1707,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pUnits the units
      * @throws JDataException on error
      */
-    public void setUnits(final Units pUnits) throws JDataException {
+    public void setUnits(final JUnits pUnits) throws JDataException {
         setValueUnits(pUnits);
     }
 
@@ -1716,7 +1724,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pAmount the tax credit amount
      * @throws JDataException on error
      */
-    public void setTaxCredit(final Money pAmount) throws JDataException {
+    public void setTaxCredit(final JMoney pAmount) throws JDataException {
         setValueTaxCredit(pAmount);
     }
 
@@ -1733,7 +1741,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pDilution the dilution
      * @throws JDataException on error
      */
-    public void setDilution(final Dilution pDilution) throws JDataException {
+    public void setDilution(final JDilution pDilution) throws JDataException {
         setValueDilution(pDilution);
     }
 
@@ -2071,13 +2079,14 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                             final Integer pYears) throws JDataException {
             /* Access the accounts */
             FinanceData myData = getDataSet();
+            JDataFormatter myFormatter = myData.getDataFormatter();
             AccountList myAccounts = myData.getAccounts();
 
             /* Look up the Transaction Type */
             TransactionType myTransType = myData.getTransTypes().findItemByName(pTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Transact Type ["
+                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Transact Type ["
                         + pTransType + "]");
             }
 
@@ -2085,7 +2094,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             Account myCredit = myAccounts.findItemByName(pCredit);
             if (myCredit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Credit account ["
+                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Credit account ["
                         + pCredit + "]");
             }
 
@@ -2093,7 +2102,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             Account myDebit = myAccounts.findItemByName(pDebit);
             if (myDebit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + JDataObject.formatField(new DateDay(pDate)) + "] has invalid Debit account ["
+                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Debit account ["
                         + pDebit + "]");
             }
 

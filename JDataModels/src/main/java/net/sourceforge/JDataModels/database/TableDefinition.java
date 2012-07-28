@@ -48,8 +48,8 @@ import net.sourceforge.JDataModels.database.ColumnDefinition.RateColumn;
 import net.sourceforge.JDataModels.database.ColumnDefinition.ReferenceColumn;
 import net.sourceforge.JDataModels.database.ColumnDefinition.StringColumn;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Rate;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JGordianKnot.CipherSet;
 import net.sourceforge.JGordianKnot.SymmetricKey;
 
@@ -820,7 +820,7 @@ public class TableDefinition {
      * @throws JDataException on error
      */
     public void setMoneyValue(final JDataField pId,
-                              final Money pValue) throws JDataException {
+                              final JMoney pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 
@@ -841,7 +841,7 @@ public class TableDefinition {
      * @throws JDataException on error
      */
     public void setRateValue(final JDataField pId,
-                             final Rate pValue) throws JDataException {
+                             final JRate pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 

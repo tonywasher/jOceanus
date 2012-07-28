@@ -34,7 +34,7 @@ import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EditState;
 import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDecimal.Price;
+import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
@@ -567,13 +567,13 @@ public class SpotPrices implements JDataContents {
         /**
          * the previous price.
          */
-        private Price thePrevPrice;
+        private JPrice thePrevPrice;
 
         /**
          * Obtain previous price.
          * @return the price.
          */
-        public Price getPrevPrice() {
+        public JPrice getPrevPrice() {
             return thePrevPrice;
         }
 
@@ -628,7 +628,7 @@ public class SpotPrices implements JDataContents {
         }
 
         @Override
-        public Price getPrice() {
+        public JPrice getPrice() {
             /* Switch on state */
             switch (getState()) {
                 case NEW:

@@ -33,8 +33,8 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDecimal.Money;
-import net.sourceforge.JDecimal.Units;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.data.Event;
@@ -157,22 +157,22 @@ public class Statement implements JDataContents {
     /**
      * The starting balance.
      */
-    private Money theStartBalance = null;
+    private JMoney theStartBalance = null;
 
     /**
      * The ending balance.
      */
-    private Money theEndBalance = null;
+    private JMoney theEndBalance = null;
 
     /**
      * The starting units.
      */
-    private Units theStartUnits = null;
+    private JUnits theStartUnits = null;
 
     /**
      * The ending units.
      */
-    private Units theEndUnits = null;
+    private JUnits theEndUnits = null;
 
     /**
      * The analysis.
@@ -204,7 +204,7 @@ public class Statement implements JDataContents {
      * Obtain the starting balance.
      * @return the balance
      */
-    public Money getStartBalance() {
+    public JMoney getStartBalance() {
         return theStartBalance;
     }
 
@@ -212,7 +212,7 @@ public class Statement implements JDataContents {
      * Obtain the ending balance.
      * @return the balance
      */
-    public Money getEndBalance() {
+    public JMoney getEndBalance() {
         return theEndBalance;
     }
 
@@ -220,7 +220,7 @@ public class Statement implements JDataContents {
      * Obtain the starting units.
      * @return the units
      */
-    public Units getStartUnits() {
+    public JUnits getStartUnits() {
         return theStartUnits;
     }
 
@@ -228,7 +228,7 @@ public class Statement implements JDataContents {
      * Obtain the ending units.
      * @return the units
      */
-    public Units getEndUnits() {
+    public JUnits getEndUnits() {
         return theEndUnits;
     }
 
@@ -279,13 +279,13 @@ public class Statement implements JDataContents {
         /* If the bucket has a balance */
         if (hasBalance()) {
             /* Set starting balance */
-            theStartBalance = new Money(((ValueAccount) theBucket).getValue());
+            theStartBalance = new JMoney(((ValueAccount) theBucket).getValue());
         }
 
         /* If the bucket has units */
         if (hasUnits()) {
             /* Set starting units */
-            theStartUnits = new Units(((AssetAccount) theBucket).getUnits());
+            theStartUnits = new JUnits(((AssetAccount) theBucket).getUnits());
         }
     }
 
@@ -296,13 +296,13 @@ public class Statement implements JDataContents {
         /* If the bucket has a balance */
         if (hasBalance()) {
             /* Set ending balance */
-            theEndBalance = new Money(((ValueAccount) theBucket).getValue());
+            theEndBalance = new JMoney(((ValueAccount) theBucket).getValue());
         }
 
         /* If the bucket has units */
         if (hasUnits()) {
             /* Set ending units */
-            theEndUnits = new Units(((AssetAccount) theBucket).getUnits());
+            theEndUnits = new JUnits(((AssetAccount) theBucket).getUnits());
         }
     }
 
@@ -556,12 +556,12 @@ public class Statement implements JDataContents {
         /**
          * The running balance.
          */
-        private Money theBalance = null;
+        private JMoney theBalance = null;
 
         /**
          * The running units balance.
          */
-        private Units theBalUnits = null;
+        private JUnits theBalUnits = null;
 
         /**
          * The statement.
@@ -572,7 +572,7 @@ public class Statement implements JDataContents {
          * Obtain the balance.
          * @return the balance
          */
-        public Money getBalance() {
+        public JMoney getBalance() {
             return theBalance;
         }
 
@@ -580,7 +580,7 @@ public class Statement implements JDataContents {
          * Obtain the units balance.
          * @return the balance
          */
-        public Units getBalanceUnits() {
+        public JUnits getBalanceUnits() {
             return theBalUnits;
         }
 
@@ -659,13 +659,13 @@ public class Statement implements JDataContents {
             /* If the bucket has a balance */
             if (theStatement.hasBalance()) {
                 /* Set current balance */
-                theBalance = new Money(((ValueAccount) getBucket()).getValue());
+                theBalance = new JMoney(((ValueAccount) getBucket()).getValue());
             }
 
             /* If the bucket has units */
             if (theStatement.hasUnits()) {
                 /* Set current units */
-                theBalUnits = new Units(((AssetAccount) getBucket()).getUnits());
+                theBalUnits = new JUnits(((AssetAccount) getBucket()).getUnits());
             }
         }
 
