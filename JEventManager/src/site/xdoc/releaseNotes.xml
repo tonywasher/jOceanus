@@ -1,0 +1,16 @@
+<document>
+  <properties>
+    <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    <title>JEventManager Release Notes</title>
+  </properties>
+  <body>
+    <section name="Overview">
+      <p>This project was started to provide a simple EventManager. The driver for the project was the absence of the ability to fire ActionEvents from standard JPanels</p>
+    </section>
+    <section name="Build History">
+      <dl>
+        <dt>v1.0.0-b1</dt> <dd>initial upload of code</dd>
+      </dl>
+    </section>
+  </body>
+</document>

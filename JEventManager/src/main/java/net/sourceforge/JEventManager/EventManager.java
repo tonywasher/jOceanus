@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.JEventManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

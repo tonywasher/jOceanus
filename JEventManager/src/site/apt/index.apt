@@ -1,0 +1,5 @@
+JEventManager Project
+
+  JEventManager provides a generic EventManager. In particular it is useful for Java Swing panels that only have the capability of firing PropertyChangeEvents.
+  
+
