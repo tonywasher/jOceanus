@@ -33,7 +33,7 @@ import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EditState;
 import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
@@ -128,7 +128,7 @@ public class SpotPrices implements JDataContents {
     /**
      * The date.
      */
-    private final DateDay theDate;
+    private final JDateDay theDate;
 
     /**
      * The prices.
@@ -163,7 +163,7 @@ public class SpotPrices implements JDataContents {
      * Obtain date.
      * @return the date
      */
-    public DateDay getDate() {
+    public JDateDay getDate() {
         return theDate;
     }
 
@@ -171,7 +171,7 @@ public class SpotPrices implements JDataContents {
      * Obtain next date.
      * @return the date
      */
-    public DateDay getNext() {
+    public JDateDay getNext() {
         return thePrices.getNext();
     }
 
@@ -179,7 +179,7 @@ public class SpotPrices implements JDataContents {
      * Obtain previous date.
      * @return the date
      */
-    public DateDay getPrev() {
+    public JDateDay getPrev() {
         return thePrices.getPrev();
     }
 
@@ -208,7 +208,7 @@ public class SpotPrices implements JDataContents {
      */
     public SpotPrices(final View pView,
                       final AccountType pType,
-                      final DateDay pDate) {
+                      final JDateDay pDate) {
         /* Create a copy of the date and initiate the list */
         theView = pView;
         theDate = pDate;
@@ -281,7 +281,7 @@ public class SpotPrices implements JDataContents {
         /**
          * The date.
          */
-        private final DateDay theDate;
+        private final JDateDay theDate;
 
         /**
          * The view.
@@ -296,18 +296,18 @@ public class SpotPrices implements JDataContents {
         /**
          * The next date.
          */
-        private DateDay theNext = null;
+        private JDateDay theNext = null;
 
         /**
          * The previous date.
          */
-        private DateDay thePrev = null;
+        private JDateDay thePrev = null;
 
         /**
          * Obtain the next date.
          * @return the date
          */
-        public DateDay getNext() {
+        public JDateDay getNext() {
             return theNext;
         }
 
@@ -315,7 +315,7 @@ public class SpotPrices implements JDataContents {
          * Obtain the previous date.
          * @return the date
          */
-        public DateDay getPrev() {
+        public JDateDay getPrev() {
             return thePrev;
         }
 
@@ -345,7 +345,7 @@ public class SpotPrices implements JDataContents {
                 /* Create a SpotPrice entry */
                 SpotPrice mySpot = new SpotPrice(this, myAccount);
                 mySpot.setId(myAccount.getId());
-                mySpot.setDate(new DateDay(theDate));
+                mySpot.setDate(new JDateDay(theDate));
                 add(mySpot);
 
                 /* If the account is closed then hide the entry */
@@ -562,7 +562,7 @@ public class SpotPrices implements JDataContents {
         /**
          * the previous date.
          */
-        private DateDay thePrevDate;
+        private JDateDay thePrevDate;
 
         /**
          * the previous price.
@@ -581,7 +581,7 @@ public class SpotPrices implements JDataContents {
          * Obtain previous date.
          * @return the date.
          */
-        public DateDay getPrevDate() {
+        public JDateDay getPrevDate() {
             return thePrevDate;
         }
 

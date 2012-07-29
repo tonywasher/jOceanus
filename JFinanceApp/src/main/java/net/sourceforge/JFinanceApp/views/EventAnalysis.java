@@ -33,8 +33,8 @@ import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JPrice;
@@ -169,7 +169,7 @@ public class EventAnalysis implements JDataContents {
     /**
      * The date for the analysis.
      */
-    private DateDay theDate = null;
+    private JDateDay theDate = null;
 
     /**
      * The dilutions.
@@ -234,7 +234,7 @@ public class EventAnalysis implements JDataContents {
      * @throws JDataException on error
      */
     public EventAnalysis(final FinanceData pData,
-                         final DateDay pDate) throws JDataException {
+                         final JDateDay pDate) throws JDataException {
         /* Store the parameters */
         theData = pData;
         theDate = pDate;
@@ -285,7 +285,7 @@ public class EventAnalysis implements JDataContents {
     public EventAnalysis(final FinanceData pData,
                          final Statement pStatement) throws JDataException {
         /* Access key points of the statement */
-        DateDayRange myRange = pStatement.getDateRange();
+        JDateDayRange myRange = pStatement.getDateRange();
         Account myAccount = pStatement.getAccount();
         StatementLines myList = pStatement.getLines();
 
@@ -437,7 +437,7 @@ public class EventAnalysis implements JDataContents {
         /* Access the Event iterator */
         Iterator<Event> myIterator = theData.getEvents().listIterator();
         TaxYear myTax = null;
-        DateDay myDate = null;
+        JDateDay myDate = null;
         IncomeBreakdown myBreakdown = null;
         int myResult = -1;
 
@@ -598,7 +598,7 @@ public class EventAnalysis implements JDataContents {
          * Obtain the Date.
          * @return the date.
          */
-        public DateDay getDate() {
+        public JDateDay getDate() {
             return theYear.getTaxYear();
         }
 

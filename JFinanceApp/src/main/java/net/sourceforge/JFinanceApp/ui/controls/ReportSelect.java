@@ -41,9 +41,9 @@ import javax.swing.JLabel;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateButton.JDateButton;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayButton;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayButton;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.TaxYear;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
@@ -120,7 +120,7 @@ public class ReportSelect extends JPanelWithEvents {
     /**
      * Date button.
      */
-    private final DateDayButton theDateButton;
+    private final JDateDayButton theDateButton;
 
     /**
      * Reports comboBox.
@@ -182,7 +182,7 @@ public class ReportSelect extends JPanelWithEvents {
      * Obtain the report date.
      * @return the report date.
      */
-    public DateDay getReportDate() {
+    public JDateDay getReportDate() {
         return theState.getDate();
     }
 
@@ -203,7 +203,7 @@ public class ReportSelect extends JPanelWithEvents {
         theYearsBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
 
         /* Create the DateButton */
-        theDateButton = new DateDayButton();
+        theDateButton = new JDateDayButton();
 
         /* Create initial state */
         theState = new ReportState();
@@ -256,7 +256,7 @@ public class ReportSelect extends JPanelWithEvents {
         /* Add the listener for item changes */
         theReportBox.addItemListener(myListener);
         theYearsBox.addItemListener(myListener);
-        theDateButton.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, myListener);
+        theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
     }
 
     /**
@@ -266,7 +266,7 @@ public class ReportSelect extends JPanelWithEvents {
     public final void refreshData(final EventAnalysis pAnalysis) {
         /* Access the data */
         FinanceData myData = theView.getData();
-        DateDayRange myRange = theView.getRange();
+        JDateDayRange myRange = theView.getRange();
         TaxYear myTaxYear = theState.getYear();
 
         /* Access tax Years */
@@ -324,9 +324,9 @@ public class ReportSelect extends JPanelWithEvents {
      * Set the range for the date box.
      * @param pRange the date range
      */
-    public final void setRange(final DateDayRange pRange) {
-        DateDay myStart = (pRange == null) ? null : pRange.getStart();
-        DateDay myEnd = (pRange == null) ? null : pRange.getEnd();
+    public final void setRange(final JDateDayRange pRange) {
+        JDateDay myStart = (pRange == null) ? null : pRange.getStart();
+        JDateDay myEnd = (pRange == null) ? null : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);
@@ -428,7 +428,7 @@ public class ReportSelect extends JPanelWithEvents {
         /**
          * The selected date.
          */
-        private DateDay theDate = null;
+        private JDateDay theDate = null;
 
         /**
          * The selected tax year.
@@ -444,7 +444,7 @@ public class ReportSelect extends JPanelWithEvents {
          * Obtain the selected date.
          * @return the date
          */
-        private DateDay getDate() {
+        private JDateDay getDate() {
             return theDate;
         }
 
@@ -468,7 +468,7 @@ public class ReportSelect extends JPanelWithEvents {
          * Constructor.
          */
         private ReportState() {
-            theDate = new DateDay();
+            theDate = new JDateDay();
             theYear = null;
             theType = ReportType.INSTANT;
         }
@@ -478,7 +478,7 @@ public class ReportSelect extends JPanelWithEvents {
          * @param pState state to copy from
          */
         private ReportState(final ReportState pState) {
-            theDate = new DateDay(pState.getDate());
+            theDate = new JDateDay(pState.getDate());
             theYear = pState.getYear();
             theType = pState.getType();
         }
@@ -490,7 +490,7 @@ public class ReportSelect extends JPanelWithEvents {
          */
         private boolean setDate(final JDateButton pButton) {
             /* Adjust the date and build the new range */
-            DateDay myDate = new DateDay(pButton.getSelectedDate());
+            JDateDay myDate = new JDateDay(pButton.getSelectedDate());
             if (!Difference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;

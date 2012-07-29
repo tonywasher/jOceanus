@@ -55,7 +55,7 @@ import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
@@ -125,7 +125,7 @@ public class PricePoint extends JDataTable<SpotPrice> {
     /**
      * The selected date.
      */
-    private transient DateDay theDate = null;
+    private transient JDateDay theDate = null;
 
     /**
      * The Account type.
@@ -336,7 +336,7 @@ public class PricePoint extends JDataTable<SpotPrice> {
      * @throws JDataException on error
      */
     public void setSelection(final AccountType pType,
-                             final DateDay pDate) throws JDataException {
+                             final JDateDay pDate) throws JDataException {
         /* Record selection */
         theDate = pDate;
         theAccountType = pType;
@@ -457,7 +457,7 @@ public class PricePoint extends JDataTable<SpotPrice> {
 
                 /* Access selection */
                 AccountType myType = theSelect.getAccountType();
-                DateDay myDate = theSelect.getDate();
+                JDateDay myDate = theSelect.getDate();
 
                 /* If the selection differs */
                 if (((!Difference.isEqual(theDate, myDate))) || (!Difference.isEqual(theAccountType, myType))) {

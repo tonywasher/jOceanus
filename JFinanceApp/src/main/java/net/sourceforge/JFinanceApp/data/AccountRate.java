@@ -36,7 +36,7 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.EncryptedItem;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
@@ -142,7 +142,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * Obtain date.
      * @return the date
      */
-    public DateDay getDate() {
+    public JDateDay getDate() {
         return getEndDate();
     }
 
@@ -150,7 +150,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * Obtain End Date.
      * @return the End Date
      */
-    public DateDay getEndDate() {
+    public JDateDay getEndDate() {
         return getEndDate(getValueSet());
     }
 
@@ -230,8 +230,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @param pValueSet the valueSet
      * @return the End Date
      */
-    public static DateDay getEndDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ENDDATE, DateDay.class);
+    public static JDateDay getEndDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ENDDATE, JDateDay.class);
     }
 
     /**
@@ -314,7 +314,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * Set the end date rate.
      * @param pValue the date
      */
-    private void setValueEndDate(final DateDay pValue) {
+    private void setValueEndDate(final JDateDay pValue) {
         getValueSet().setValue(FIELD_ENDDATE, pValue);
     }
 
@@ -378,7 +378,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
 
             /* Record the date */
             if (pEndDate != null) {
-                setValueEndDate(new DateDay(pEndDate));
+                setValueEndDate(new JDateDay(pEndDate));
             }
 
             /* Set the encrypted objects */
@@ -437,7 +437,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
 
             /* Record the date */
             if (pEndDate != null) {
-                setValueEndDate(new DateDay(pEndDate));
+                setValueEndDate(new JDateDay(pEndDate));
             }
 
             /* Set the encrypted objects */
@@ -503,7 +503,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      */
     @Override
     public void validate() {
-        DateDay myDate = getEndDate();
+        JDateDay myDate = getEndDate();
         AccountRateList myList = (AccountRateList) getList();
         FinanceData mySet = getDataSet();
 
@@ -568,8 +568,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * Set a new date.
      * @param pDate the new date
      */
-    public void setEndDate(final DateDay pDate) {
-        setValueEndDate(new DateDay(pDate));
+    public void setEndDate(final JDateDay pDate) {
+        setValueEndDate(new JDateDay(pDate));
     }
 
     /**
@@ -773,7 +773,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          * @param pAccount the account
          * @return The Item if present (or null)
          */
-        protected int countInstances(final DateDay pDate,
+        protected int countInstances(final JDateDay pDate,
                                      final Account pAccount) {
             /* Access the list iterator */
             Iterator<AccountRate> myIterator = iterator();
@@ -814,7 +814,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          * @return The relevant Rate record
          */
         public AccountRate getLatestRate(final Account pAccount,
-                                         final DateDay pDate) {
+                                         final JDateDay pDate) {
             /* Access the list iterator */
             Iterator<AccountRate> myIterator = listIterator();
 
@@ -827,7 +827,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
                 }
 
                 /* Access the date */
-                DateDay myDate = myCurr.getDate();
+                JDateDay myDate = myCurr.getDate();
 
                 /* break loop if we have the correct record */
                 if ((myDate == null) || (myDate.compareTo(pDate) >= 0)) {
@@ -861,7 +861,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Rate on ["
-                        + myData.getDataFormatter().formatObject(new DateDay(pDate))
+                        + myData.getDataFormatter().formatObject(new JDateDay(pDate))
                         + "] has invalid Account [" + pAccount + "]");
             }
 

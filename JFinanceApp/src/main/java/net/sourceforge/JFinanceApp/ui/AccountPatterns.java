@@ -53,7 +53,7 @@ import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -624,7 +624,7 @@ public class AccountPatterns extends JDataTable<Pattern> {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    pPattern.setDate((DateDay) pValue);
+                    pPattern.setDate((JDateDay) pValue);
                     break;
                 case COLUMN_DESC:
                     pPattern.setDescription((String) pValue);

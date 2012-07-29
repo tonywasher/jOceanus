@@ -43,7 +43,7 @@ import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDateDay.DateDayRangeSelect;
+import net.sourceforge.JDateDay.JDateDayRangeSelect;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.Event;
@@ -464,7 +464,7 @@ public class AccountTab extends JPanelWithEvents {
      * @param pSource the period source
      */
     public void selectAccount(final Account pAccount,
-                              final DateDayRangeSelect pSource) {
+                              final JDateDayRangeSelect pSource) {
         /* Protect against exceptions */
         try {
             /* If we have a source period */

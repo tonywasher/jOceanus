@@ -40,7 +40,7 @@ import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.EventManager;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 
 /**
  * Wrapper class for java preferences.
@@ -250,7 +250,7 @@ public abstract class PreferenceSet {
      * @return the preference item
      */
     protected DatePreference defineDatePreference(final String pName,
-                                                  final DateDay pDefault) {
+                                                  final JDateDay pDefault) {
         /* Define the preference */
         DatePreference myPref = new DatePreference(pName, pDefault);
 
@@ -410,7 +410,7 @@ public abstract class PreferenceSet {
      * @param pName the name of the preference
      * @return the Date
      */
-    public DateDay getDateValue(final String pName) {
+    public JDateDay getDateValue(final String pName) {
         /* Access preference */
         PreferenceItem myPref = getPreference(pName);
 
@@ -948,8 +948,8 @@ public abstract class PreferenceSet {
          * Obtain the value of the preference.
          * @return the value of the preference
          */
-        public DateDay getValue() {
-            return (DateDay) super.getValue();
+        public JDateDay getValue() {
+            return (JDateDay) super.getValue();
         }
 
         /**
@@ -958,7 +958,7 @@ public abstract class PreferenceSet {
          * @param pDefault the default value
          */
         public DatePreference(final String pName,
-                              final DateDay pDefault) {
+                              final JDateDay pDefault) {
             /* Store name */
             super(pName, pDefault, PreferenceType.Date);
 
@@ -973,7 +973,7 @@ public abstract class PreferenceSet {
                     bExists = false;
                 } else {
                     /* Parse the Date */
-                    DateDay myDate = new DateDay(myValue);
+                    JDateDay myDate = new JDateDay(myValue);
 
                     /* Set as initial value */
                     super.setValue(myDate);
@@ -991,12 +991,12 @@ public abstract class PreferenceSet {
          * Set value.
          * @param pNewValue the new value
          */
-        public void setValue(final DateDay pNewValue) {
-            DateDay myNewValue = pNewValue;
+        public void setValue(final JDateDay pNewValue) {
+            JDateDay myNewValue = pNewValue;
 
             /* Take a copy if not null */
             if (myNewValue != null) {
-                myNewValue = new DateDay(myNewValue);
+                myNewValue = new JDateDay(myNewValue);
             }
 
             /* Set the new value */
@@ -1006,7 +1006,7 @@ public abstract class PreferenceSet {
         @Override
         protected void storeThePreference(final Object pNewValue) {
             /* Store the value */
-            theHandle.put(getName(), ((DateDay) pNewValue).toString());
+            theHandle.put(getName(), ((JDateDay) pNewValue).toString());
         }
     }
 

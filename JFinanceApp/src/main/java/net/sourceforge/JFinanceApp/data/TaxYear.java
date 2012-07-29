@@ -36,8 +36,8 @@ import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JRate;
@@ -206,7 +206,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * Obtain TaxYear.
      * @return the taxYear date
      */
-    public DateDay getTaxYear() {
+    public JDateDay getTaxYear() {
         return getTaxYear(getValueSet());
     }
 
@@ -383,8 +383,8 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static DateDay getTaxYear(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TAXYEAR, DateDay.class);
+    public static JDateDay getTaxYear(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_TAXYEAR, JDateDay.class);
     }
 
     /**
@@ -604,7 +604,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * Set Tax Year value.
      * @param pValue the value
      */
-    private void setValueTaxYear(final DateDay pValue) {
+    private void setValueTaxYear(final JDateDay pValue) {
         getValueSet().setValue(FIELD_TAXYEAR, pValue);
     }
 
@@ -863,7 +863,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
         try {
             /* Record the Id */
             setValueTaxRegime(uRegimeId);
-            setValueTaxYear(new DateDay(pDate));
+            setValueTaxYear(new JDateDay(pDate));
 
             /* Look up the Regime */
             FinanceData myData = getDataSet();
@@ -957,7 +957,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      */
     @Override
     public void validate() {
-        DateDay myDate = getTaxYear();
+        JDateDay myDate = getTaxYear();
         TaxYearList myList = (TaxYearList) getList();
         TaxYear myPrev;
 
@@ -1119,13 +1119,13 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * Extract the date range represented by the tax years.
      * @return the range of tax years
      */
-    public DateDayRange getRange() {
-        DateDay myStart;
-        DateDay myEnd;
-        DateDayRange myRange;
+    public JDateDayRange getRange() {
+        JDateDay myStart;
+        JDateDay myEnd;
+        JDateDayRange myRange;
 
         /* Access start date */
-        myStart = new DateDay(getTaxYear());
+        myStart = new JDateDay(getTaxYear());
 
         /* Move back to start of year */
         myStart.adjustYear(-1);
@@ -1135,7 +1135,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
         myEnd = getTaxYear();
 
         /* Create the range */
-        myRange = new DateDayRange(myStart, myEnd);
+        myRange = new JDateDayRange(myStart, myEnd);
 
         /* Return the range */
         return myRange;
@@ -1145,7 +1145,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * Set a new tax regime.
      * @param pTaxYear the TaxYear
      */
-    protected void setTaxYear(final DateDay pTaxYear) {
+    protected void setTaxYear(final JDateDay pTaxYear) {
         setValueTaxYear(pTaxYear);
     }
 
@@ -1551,7 +1551,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             myYear.setId(0);
 
             /* Adjust the year and add to list */
-            myYear.setTaxYear(new DateDay(myBase.getTaxYear()));
+            myYear.setTaxYear(new JDateDay(myBase.getTaxYear()));
             myYear.getTaxYear().adjustYear(1);
             myList.add(myYear);
 
@@ -1593,7 +1593,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @param pDate Date of item
          * @return The TaxYear if present (or null)
          */
-        public TaxYear findTaxYearForDate(final DateDay pDate) {
+        public TaxYear findTaxYearForDate(final JDateDay pDate) {
             /* Access the iterator */
             Iterator<TaxYear> myIterator = iterator();
             TaxYear myCurr = null;
@@ -1603,7 +1603,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
                 myCurr = myIterator.next();
 
                 /* Access the range for this tax year */
-                DateDayRange myRange = myCurr.getRange();
+                JDateDayRange myRange = myCurr.getRange();
 
                 /* Determine whether the date is owned by the tax year */
                 int iDiff = myRange.compareTo(pDate);
@@ -1621,7 +1621,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @param pDate the date
          * @return The Item if present (or null)
          */
-        protected int countInstances(final DateDay pDate) {
+        protected int countInstances(final JDateDay pDate) {
             /* Access the iterator */
             Iterator<TaxYear> myIterator = listIterator();
             int iCount = 0;
@@ -1643,17 +1643,17 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * Extract the date range represented by the tax years.
          * @return the range of tax years
          */
-        public DateDayRange getRange() {
+        public JDateDayRange getRange() {
             /* Access the iterator */
             OrderedListIterator<TaxYear> myIterator = listIterator();
-            DateDay myStart = null;
-            DateDay myEnd = null;
+            JDateDay myStart = null;
+            JDateDay myEnd = null;
 
             /* Extract the first item */
             TaxYear myCurr = myIterator.peekFirst();
             if (myCurr != null) {
                 /* Access start date */
-                myStart = new DateDay(myCurr.getTaxYear());
+                myStart = new JDateDay(myCurr.getTaxYear());
 
                 /* Move back to start of year */
                 myStart.adjustYear(-1);
@@ -1665,7 +1665,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             }
 
             /* Create the range */
-            return new DateDayRange(myStart, myEnd);
+            return new JDateDayRange(myStart, myEnd);
         }
 
         /**
@@ -1742,8 +1742,8 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             TaxRegime myTaxRegime = myList.findItemByName(pRegime);
             if (myTaxRegime == null) {
                 throw new JDataException(ExceptionClass.DATA, "TaxYear on <"
-                        + myFormatter.formatObject(new DateDay(pDate)) + "> has invalid TaxRegime <" + pRegime
-                        + ">");
+                        + myFormatter.formatObject(new JDateDay(pDate)) + "> has invalid TaxRegime <"
+                        + pRegime + ">");
             }
 
             /* Create the tax year */
@@ -1816,7 +1816,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             }
 
             /* Check that this TaxYear has not been previously added */
-            if (findTaxYearForDate(new DateDay(pDate)) != null) {
+            if (findTaxYearForDate(new JDateDay(pDate)) != null) {
                 throw new JDataException(ExceptionClass.DATA, myTaxYear, "Duplicate TaxYear");
             }
 

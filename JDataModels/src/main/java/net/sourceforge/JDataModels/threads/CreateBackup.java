@@ -31,7 +31,7 @@ import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JDataModels.sheets.BackupPreferences;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
 import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 
 /**
  * Thread to create an encrypted backup of a data set.
@@ -106,7 +106,7 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
                 /* else we need to generate a time-stamp (day only) */
             } else {
                 /* Obtain the current date/time */
-                DateDay myNow = new DateDay();
+                JDateDay myNow = new JDateDay();
 
                 /* Create the name of the file */
                 StringBuilder myName = new StringBuilder(BUFFER_LEN);

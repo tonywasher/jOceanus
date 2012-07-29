@@ -27,7 +27,7 @@ import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
 import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.database.FinanceDatabase;
 import net.sourceforge.JFinanceApp.sheets.FinanceSheet;
@@ -47,7 +47,7 @@ public class View extends DataControl<FinanceData> {
     /**
      * The Date range for the view.
      */
-    private DateDayRange theRange = null;
+    private JDateDayRange theRange = null;
 
     /**
      * The Main window.
@@ -81,7 +81,7 @@ public class View extends DataControl<FinanceData> {
      * Obtain the date range.
      * @return the date range
      */
-    public DateDayRange getRange() {
+    public JDateDayRange getRange() {
         return theRange;
     }
 

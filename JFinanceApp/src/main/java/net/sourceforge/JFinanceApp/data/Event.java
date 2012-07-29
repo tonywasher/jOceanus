@@ -37,8 +37,8 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.EncryptedItem;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
@@ -153,7 +153,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Obtain Date.
      * @return the date
      */
-    public DateDay getDate() {
+    public JDateDay getDate() {
         return getDate(getValueSet());
     }
 
@@ -314,8 +314,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @param pValueSet the valueSet
      * @return the Date
      */
-    public static DateDay getDate(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DATE, DateDay.class);
+    public static JDateDay getDate(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DATE, JDateDay.class);
     }
 
     /**
@@ -493,7 +493,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Set date value.
      * @param pValue the value
      */
-    private void setValueDate(final DateDay pValue) {
+    private void setValueDate(final JDateDay pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
     }
 
@@ -818,7 +818,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             setControlKey(uControlId);
 
             /* Create the date */
-            setValueDate(new DateDay(pDate));
+            setValueDate(new JDateDay(pDate));
 
             /* Look up the Debit Account */
             Account myAccount = myAccounts.findItemById(uDebit);
@@ -905,7 +905,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             setValueDebit(pDebit);
             setValueCredit(pCredit);
             setValueTransType(pTransType);
-            setValueDate(new DateDay(pDate));
+            setValueDate(new JDateDay(pDate));
             setValueAmount(myParser.parseMoneyValue(pAmount));
 
             /* If Units exist */
@@ -1273,7 +1273,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      */
     @Override
     public void validate() {
-        DateDay myDate = getDate();
+        JDateDay myDate = getDate();
         String myDesc = getDesc();
         Account myDebit = getDebit();
         Account myCredit = getCredit();
@@ -1291,7 +1291,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         }
 
         /* Determine date range to check for */
-        DateDayRange myRange = (this instanceof Pattern) ? Pattern.RANGE_PATTERN : getDataSet()
+        JDateDayRange myRange = (this instanceof Pattern) ? Pattern.RANGE_PATTERN : getDataSet()
                 .getDateRange();
 
         /* The date must be non-null */
@@ -1715,8 +1715,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Set a new date.
      * @param pDate the new date
      */
-    public void setDate(final DateDay pDate) {
-        setValueDate((pDate == null) ? null : new DateDay(pDate));
+    public void setDate(final JDateDay pDate) {
+        setValueDate((pDate == null) ? null : new JDateDay(pDate));
     }
 
     /**
@@ -1854,7 +1854,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         /**
          * DataSet range.
          */
-        private DateDayRange theRange = null;
+        private JDateDayRange theRange = null;
 
         @Override
         public FinanceData getDataSet() {
@@ -1865,7 +1865,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * Obtain the range.
          * @return the range
          */
-        protected DateDayRange getRange() {
+        protected JDateDayRange getRange() {
             return theRange;
         }
 
@@ -1873,7 +1873,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * Set the range.
          * @param pRange the range
          */
-        protected void setRange(final DateDayRange pRange) {
+        protected void setRange(final JDateDayRange pRange) {
             theRange = pRange;
         }
 
@@ -1931,7 +1931,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @param pRange the range
          * @return the edit list
          */
-        public EventList deriveEditList(final DateDayRange pRange) {
+        public EventList deriveEditList(final JDateDayRange pRange) {
             /* Build an empty List */
             EventList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
@@ -1983,7 +1983,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 Pattern myCurr = (Pattern) myIterator.next();
 
                 /* Access a copy of the base date */
-                DateDay myDate = new DateDay(myCurr.getDate());
+                JDateDay myDate = new JDateDay(myCurr.getDate());
 
                 /* Loop while we have an event to add */
                 while ((myEvent = myCurr.nextEvent(myList, pTaxYear, myDate)) != null) {
@@ -2086,7 +2086,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             TransactionType myTransType = myData.getTransTypes().findItemByName(pTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Transact Type ["
+                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Transact Type ["
                         + pTransType + "]");
             }
 
@@ -2094,7 +2094,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             Account myCredit = myAccounts.findItemByName(pCredit);
             if (myCredit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Credit account ["
+                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Credit account ["
                         + pCredit + "]");
             }
 
@@ -2102,7 +2102,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             Account myDebit = myAccounts.findItemByName(pDebit);
             if (myDebit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Debit account ["
+                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Debit account ["
                         + pDebit + "]");
             }
 

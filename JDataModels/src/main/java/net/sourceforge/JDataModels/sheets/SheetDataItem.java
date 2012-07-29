@@ -32,7 +32,7 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetWriter.CellStyleType;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDecimal;
 
 import org.apache.poi.hssf.usermodel.DVConstraint;
@@ -725,7 +725,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * @param pValue the date
      */
     protected void writeDate(final int pOffset,
-                             final DateDay pValue) {
+                             final JDateDay pValue) {
         /* If we have non-null value */
         if (pValue != null) {
             /* Create the cell and set its value */

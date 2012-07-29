@@ -23,7 +23,7 @@
 package net.sourceforge.JFinanceApp.views;
 
 import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JDecimal.JRate;
@@ -188,7 +188,7 @@ public final class Report {
      * @param pDate the date
      * @return the Cell
      */
-    protected StringBuilder makeDateItem(final DateDay pDate) {
+    protected StringBuilder makeDateItem(final JDateDay pDate) {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Build the cell */

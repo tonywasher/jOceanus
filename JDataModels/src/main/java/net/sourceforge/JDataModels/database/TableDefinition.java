@@ -47,7 +47,7 @@ import net.sourceforge.JDataModels.database.ColumnDefinition.MoneyColumn;
 import net.sourceforge.JDataModels.database.ColumnDefinition.RateColumn;
 import net.sourceforge.JDataModels.database.ColumnDefinition.ReferenceColumn;
 import net.sourceforge.JDataModels.database.ColumnDefinition.StringColumn;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JGordianKnot.CipherSet;
@@ -757,7 +757,7 @@ public class TableDefinition {
      * @throws JDataException on error
      */
     public void setDateValue(final JDataField pId,
-                             final DateDay pValue) throws JDataException {
+                             final JDateDay pValue) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 

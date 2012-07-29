@@ -44,7 +44,7 @@ import javax.swing.JPanel;
  * Selection panel to select a standard DatePeriod from within a range of dates.
  * @author Tony Washer
  */
-public class DateDayRangeSelect extends JPanel {
+public class JDateDayRangeSelect extends JPanel {
     /**
      * SerialId.
      */
@@ -73,7 +73,7 @@ public class DateDayRangeSelect extends JPanel {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DateDayRangeSelect.class
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDateDayRangeSelect.class
             .getName());
 
     /**
@@ -104,7 +104,7 @@ public class DateDayRangeSelect extends JPanel {
     /**
      * The Date button.
      */
-    private final DateDayButton theDateButton;
+    private final JDateDayButton theDateButton;
 
     /**
      * The Period ComboBox.
@@ -124,27 +124,27 @@ public class DateDayRangeSelect extends JPanel {
     /**
      * The published range.
      */
-    private transient DateDayRange thePublishedRange = null;
+    private transient JDateDayRange thePublishedRange = null;
 
     /**
      * The First select-able date.
      */
-    private transient DateDay theFirstDate = null;
+    private transient JDateDay theFirstDate = null;
 
     /**
      * The Last select-able date.
      */
-    private transient DateDay theFinalDate = null;
+    private transient JDateDay theFinalDate = null;
 
     /**
      * The Active state.
      */
-    private transient DateRangeState theState = null;
+    private transient JDateRangeState theState = null;
 
     /**
      * The Saved state.
      */
-    private transient DateRangeState theSavePoint = null;
+    private transient JDateRangeState theSavePoint = null;
 
     /**
      * Are we refreshing data.
@@ -160,14 +160,14 @@ public class DateDayRangeSelect extends JPanel {
      * Obtain selected DateRange.
      * @return the selected date range
      */
-    public DateDayRange getRange() {
+    public JDateDayRange getRange() {
         return theState.getRange();
     }
 
     /**
      * Constructor.
      */
-    public DateDayRangeSelect() {
+    public JDateDayRangeSelect() {
         /* Create the listener */
         DateListener myListener = new DateListener();
 
@@ -176,13 +176,13 @@ public class DateDayRangeSelect extends JPanel {
         thePeriodBox.setMaximumSize(new Dimension(PERIOD_WIDTH, PERIOD_HEIGHT));
 
         /* Create the DateButton */
-        theDateButton = new DateDayButton();
+        theDateButton = new JDateDayButton();
 
         /* Set the locale */
         setLocale(Locale.getDefault());
 
         /* Add the PeriodTypes to the period box */
-        for (DatePeriod myPeriod : DatePeriod.values()) {
+        for (JDatePeriod myPeriod : JDatePeriod.values()) {
             thePeriodBox.addItem(myPeriod);
         }
 
@@ -213,7 +213,7 @@ public class DateDayRangeSelect extends JPanel {
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
 
         /* Create initial state and limit the selection to the Range */
-        theState = new DateRangeState();
+        theState = new JDateRangeState();
         setInitialRange();
         theState.buildRange();
 
@@ -221,7 +221,7 @@ public class DateDayRangeSelect extends JPanel {
         thePeriodBox.addItemListener(myListener);
         theNextButton.addActionListener(myListener);
         thePrevButton.addActionListener(myListener);
-        theDateButton.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, myListener);
+        theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
     }
 
     @Override
@@ -262,7 +262,7 @@ public class DateDayRangeSelect extends JPanel {
      * Set the overall range for the control.
      * @param pRange the range
      */
-    public final void setOverallRange(final DateDayRange pRange) {
+    public final void setOverallRange(final JDateDayRange pRange) {
         /* Record total possible range */
         theFirstDate = (pRange == null) ? null : pRange.getStart();
         theFinalDate = (pRange == null) ? null : pRange.getEnd();
@@ -280,15 +280,15 @@ public class DateDayRangeSelect extends JPanel {
      * Copy date selection from other box.
      * @param pSource the source box
      */
-    public void setSelection(final DateDayRangeSelect pSource) {
+    public void setSelection(final JDateDayRangeSelect pSource) {
         /* Access the state */
-        DateRangeState myState = pSource.theState;
+        JDateRangeState myState = pSource.theState;
 
         /* Set the refreshing data flag */
         refreshingData = true;
 
         /* Accept this state */
-        theState = new DateRangeState(myState);
+        theState = new JDateRangeState(myState);
 
         /* Build the range */
         theState.buildRange();
@@ -303,7 +303,7 @@ public class DateDayRangeSelect extends JPanel {
      */
     public void createSavePoint() {
         /* Create the savePoint */
-        theSavePoint = new DateRangeState(theState);
+        theSavePoint = new JDateRangeState(theState);
     }
 
     /**
@@ -314,7 +314,7 @@ public class DateDayRangeSelect extends JPanel {
         refreshingData = true;
 
         /* Restore the savePoint */
-        theState = new DateRangeState(theSavePoint);
+        theState = new JDateRangeState(theSavePoint);
 
         /* Build the range and apply the state */
         theState.buildRange();
@@ -338,15 +338,15 @@ public class DateDayRangeSelect extends JPanel {
      */
     private void notifyChangedRange() {
         /* Determine whether a change has occurred */
-        DateDayRange myNew = getRange();
-        if (!DateDayRange.isDifferent(thePublishedRange, myNew)) {
+        JDateDayRange myNew = getRange();
+        if (!JDateDayRange.isDifferent(thePublishedRange, myNew)) {
             return;
         }
 
         /* Record the new range and create a copy */
-        DateDayRange myOld = thePublishedRange;
+        JDateDayRange myOld = thePublishedRange;
         thePublishedRange = myNew;
-        myNew = new DateDayRange(myNew);
+        myNew = new JDateDayRange(myNew);
 
         /* Fire the property change */
         firePropertyChange(PROPERTY_RANGE, myOld, myNew);
@@ -358,7 +358,7 @@ public class DateDayRangeSelect extends JPanel {
     private final class DateListener implements ActionListener, PropertyChangeListener, ItemListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
-            DatePeriod myPeriod = null;
+            JDatePeriod myPeriod = null;
 
             /* Ignore selection if refreshing data */
             if (refreshingData) {
@@ -368,7 +368,7 @@ public class DateDayRangeSelect extends JPanel {
             /* If this event relates to the period box */
             if ((thePeriodBox.equals(evt.getSource())) && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Determine the new period */
-                myPeriod = (DatePeriod) evt.getItem();
+                myPeriod = (JDatePeriod) evt.getItem();
 
                 /* Apply period and build the range */
                 theState.setPeriod(myPeriod);
@@ -408,21 +408,21 @@ public class DateDayRangeSelect extends JPanel {
     /**
      * SavePoint values.
      */
-    private final class DateRangeState {
+    private final class JDateRangeState {
         /**
          * The start Date.
          */
-        private DateDay theStartDate = null;
+        private JDateDay theStartDate = null;
 
         /**
          * The Date Period.
          */
-        private DatePeriod thePeriod = null;
+        private JDatePeriod thePeriod = null;
 
         /**
          * The calculated Range.
          */
-        private DateDayRange theRange = null;
+        private JDateDayRange theRange = null;
 
         /**
          * Can we select a next period within the available range.
@@ -438,7 +438,7 @@ public class DateDayRangeSelect extends JPanel {
          * Get the start date.
          * @return the start date
          */
-        private DateDay getStartDate() {
+        private JDateDay getStartDate() {
             return theStartDate;
         }
 
@@ -446,7 +446,7 @@ public class DateDayRangeSelect extends JPanel {
          * Get the DatePeriod.
          * @return the date period
          */
-        private DatePeriod getPeriod() {
+        private JDatePeriod getPeriod() {
             return thePeriod;
         }
 
@@ -454,7 +454,7 @@ public class DateDayRangeSelect extends JPanel {
          * Get the selected range.
          * @return the selected range
          */
-        private DateDayRange getRange() {
+        private JDateDayRange getRange() {
             return theRange;
         }
 
@@ -477,9 +477,9 @@ public class DateDayRangeSelect extends JPanel {
         /**
          * Constructor.
          */
-        private DateRangeState() {
-            theStartDate = new DateDay(theLocale);
-            thePeriod = DatePeriod.OneMonth;
+        private JDateRangeState() {
+            theStartDate = new JDateDay(theLocale);
+            thePeriod = JDatePeriod.OneMonth;
 
             /* Make sure that we do not go beyond the date range */
             if ((theFinalDate != null) && (theStartDate.compareTo(theFinalDate) > 0)) {
@@ -494,8 +494,8 @@ public class DateDayRangeSelect extends JPanel {
          * Constructor.
          * @param pState state to copy from
          */
-        private DateRangeState(final DateRangeState pState) {
-            theStartDate = new DateDay(pState.getStartDate());
+        private JDateRangeState(final JDateRangeState pState) {
+            theStartDate = new JDateDay(pState.getStartDate());
             thePeriod = pState.getPeriod();
         }
 
@@ -503,7 +503,7 @@ public class DateDayRangeSelect extends JPanel {
          * Set new Period.
          * @param pPeriod the new period
          */
-        private void setPeriod(final DatePeriod pPeriod) {
+        private void setPeriod(final JDatePeriod pPeriod) {
             /* Adjust the period and build the new range */
             thePeriod = pPeriod;
             buildRange();
@@ -513,9 +513,9 @@ public class DateDayRangeSelect extends JPanel {
          * Set new Date.
          * @param pButton the Button with the new date
          */
-        private void setDate(final DateDayButton pButton) {
+        private void setDate(final JDateDayButton pButton) {
             /* Adjust the date and build the new range */
-            DateDay myDate = pButton.getSelectedDateDay();
+            JDateDay myDate = pButton.getSelectedDateDay();
             theStartDate = myDate;
             buildRange();
         }
@@ -558,13 +558,13 @@ public class DateDayRangeSelect extends JPanel {
          * Build the range represented by the selection.
          */
         private void buildRange() {
-            DateDay myEnd;
+            JDateDay myEnd;
 
             /* Previous is only allowed if we have not hit the first date */
             isPrevOK = (theFirstDate == null) || (theFirstDate.compareTo(theStartDate) != 0);
 
             /* If we are unlimited */
-            if (thePeriod == DatePeriod.Unlimited) {
+            if (thePeriod == JDatePeriod.Unlimited) {
                 /* Set end date as last possible date */
                 myEnd = theFinalDate;
 
@@ -574,7 +574,7 @@ public class DateDayRangeSelect extends JPanel {
                 /* else we have to calculate the date */
             } else {
                 /* Initialise the end date */
-                myEnd = new DateDay(theStartDate);
+                myEnd = new JDateDay(theStartDate);
 
                 /* Adjust the date to cover the relevant period */
                 myEnd.adjustForwardByPeriod(thePeriod);
@@ -592,7 +592,7 @@ public class DateDayRangeSelect extends JPanel {
             }
 
             /* Create the range */
-            theRange = new DateDayRange(theStartDate, myEnd);
+            theRange = new JDateDayRange(theStartDate, myEnd);
 
             /* Apply the state */
             applyState();
@@ -603,7 +603,7 @@ public class DateDayRangeSelect extends JPanel {
          */
         private void nextPeriod() {
             /* Initialise the date */
-            DateDay myDate = new DateDay(theStartDate);
+            JDateDay myDate = new JDateDay(theStartDate);
 
             /* Adjust the date appropriately */
             myDate.adjustForwardByPeriod(thePeriod);
@@ -622,10 +622,10 @@ public class DateDayRangeSelect extends JPanel {
          */
         private void previousPeriod() {
             /* Initialise the date */
-            DateDay myDate = new DateDay(theStartDate);
+            JDateDay myDate = new JDateDay(theStartDate);
 
             /* If the period is unlimited */
-            if (thePeriod == DatePeriod.Unlimited) {
+            if (thePeriod == JDatePeriod.Unlimited) {
                 /* Shift back to first date if required */
                 myDate = theFirstDate;
 

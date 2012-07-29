@@ -32,7 +32,7 @@ import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -152,7 +152,7 @@ public class Statement implements JDataContents {
     /**
      * The date range.
      */
-    private final DateDayRange theRange;
+    private final JDateDayRange theRange;
 
     /**
      * The starting balance.
@@ -196,7 +196,7 @@ public class Statement implements JDataContents {
      * Obtain the Date range.
      * @return the range
      */
-    public DateDayRange getDateRange() {
+    public JDateDayRange getDateRange() {
         return theRange;
     }
 
@@ -257,7 +257,7 @@ public class Statement implements JDataContents {
      */
     public Statement(final View pView,
                      final Account pAccount,
-                     final DateDayRange pRange) throws JDataException {
+                     final JDateDayRange pRange) throws JDataException {
         /* Create a copy of the account (plus surrounding list) */
         theView = pView;
         theAccount = pAccount;

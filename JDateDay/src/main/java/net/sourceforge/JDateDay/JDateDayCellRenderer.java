@@ -25,10 +25,10 @@ package net.sourceforge.JDateDay;
 import net.sourceforge.JDateButton.JDateCellRenderer;
 
 /**
- * Cell renderer for a {@link DateDay} object extending {@link JDateCellRenderer}.
+ * Cell renderer for a {@link JDateDay} object extending {@link JDateCellRenderer}.
  * @author Tony Washer
  */
-public class DateDayCellRenderer extends JDateCellRenderer {
+public class JDateDayCellRenderer extends JDateCellRenderer {
     /**
      * Serial Id.
      */
@@ -37,19 +37,28 @@ public class DateDayCellRenderer extends JDateCellRenderer {
     /**
      * The Date Configuration.
      */
-    private final transient DateDayConfig theConfig;
+    private final transient JDateDayConfig theConfig;
 
     /**
      * Constructor.
      */
-    public DateDayCellRenderer() {
+    public JDateDayCellRenderer() {
         /* Create a new configuration */
-        super(new DateDayConfig());
-        theConfig = (DateDayConfig) super.getDateConfig();
+        this(new JDateDayFormatter());
+    }
+
+    /**
+     * Constructor.
+     * @param pFormatter the formatter
+     */
+    public JDateDayCellRenderer(final JDateDayFormatter pFormatter) {
+        /* Create a new configuration */
+        super(new JDateDayConfig(pFormatter));
+        theConfig = (JDateDayConfig) super.getDateConfig();
     }
 
     @Override
-    public DateDayConfig getDateConfig() {
+    public JDateDayConfig getDateConfig() {
         return theConfig;
     }
 
@@ -63,8 +72,8 @@ public class DateDayCellRenderer extends JDateCellRenderer {
         Object o = value;
 
         /* Handle DateDay values */
-        if (value instanceof DateDay) {
-            DateDay d = (DateDay) value;
+        if (value instanceof JDateDay) {
+            JDateDay d = (JDateDay) value;
             o = d.getCalendar();
         }
 

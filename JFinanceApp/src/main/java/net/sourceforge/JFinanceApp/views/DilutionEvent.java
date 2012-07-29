@@ -32,7 +32,7 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JDilutedPrice;
 import net.sourceforge.JDecimal.JDilution;
@@ -124,7 +124,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
     /**
      * The Date.
      */
-    private final DateDay theDate;
+    private final JDateDay theDate;
 
     /**
      * The Dilution.
@@ -148,7 +148,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
      * Obtain the Date.
      * @return the date
      */
-    public DateDay getDate() {
+    public JDateDay getDate() {
         return theDate;
     }
 
@@ -272,7 +272,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
      */
     private DilutionEvent(final int pId,
                           final Account pAccount,
-                          final DateDay pDate,
+                          final JDateDay pDate,
                           final JDilution pDilution) {
         /* Store the values */
         theId = pId;
@@ -373,7 +373,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             }
 
             /* Create the date */
-            DateDay myDate = new DateDay(pDate);
+            JDateDay myDate = new JDateDay(pDate);
 
             /* Record the dilution */
             JDilution myDilution = theParser.parseDilutionValue(pDilution);
@@ -419,7 +419,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
          * @return the dilution factor
          */
         public JDilution getDilutionFactor(final Account pAccount,
-                                           final DateDay pDate) {
+                                           final JDateDay pDate) {
             /* No factor if the account has no dilutions */
             if (!hasDilution(pAccount)) {
                 return null;
@@ -470,7 +470,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             }
 
             /* Create the date */
-            DateDay myDate = new DateDay(pDate);
+            JDateDay myDate = new JDateDay(pDate);
             JPrice myPrice;
 
             /* Protect against exceptions */

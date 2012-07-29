@@ -28,7 +28,7 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JDecimal.JRate;
@@ -155,7 +155,7 @@ public class Analysis implements JDataContents {
     /**
      * The Date.
      */
-    private final DateDay theDate;
+    private final JDateDay theDate;
 
     /**
      * The account.
@@ -213,7 +213,7 @@ public class Analysis implements JDataContents {
      * Obtain the date.
      * @return the date
      */
-    public DateDay getDate() {
+    public JDateDay getDate() {
         return theDate;
     }
 
@@ -295,7 +295,7 @@ public class Analysis implements JDataContents {
      * @param pDate the Date for the analysis
      */
     public Analysis(final FinanceData pData,
-                    final DateDay pDate) {
+                    final JDateDay pDate) {
         /* Store the data */
         theData = pData;
         theDate = pDate;
@@ -315,7 +315,7 @@ public class Analysis implements JDataContents {
      */
     public Analysis(final FinanceData pData,
                     final Account pAccount,
-                    final DateDay pDate) {
+                    final JDateDay pDate) {
         /* Store the data */
         theData = pData;
         theDate = pDate;
@@ -1030,7 +1030,7 @@ public class Analysis implements JDataContents {
          * Restore a Save Point.
          * @param pDate the date to restore.
          */
-        protected void restoreSavePoint(final DateDay pDate) {
+        protected void restoreSavePoint(final JDateDay pDate) {
             restoreSavePoint();
         }
     }
@@ -1452,7 +1452,7 @@ public class Analysis implements JDataContents {
         /**
          * The maturity.
          */
-        private DateDay theMaturity = null;
+        private JDateDay theMaturity = null;
 
         /**
          * The savePoint.
@@ -1476,7 +1476,7 @@ public class Analysis implements JDataContents {
          * Obtain the maturity.
          * @return the maturity
          */
-        public DateDay getMaturity() {
+        public JDateDay getMaturity() {
             return theMaturity;
         }
 
@@ -1515,7 +1515,7 @@ public class Analysis implements JDataContents {
                 myClone.theRate = new JRate(getRate());
             }
             if (getMaturity() != null) {
-                myClone.theMaturity = new DateDay(getMaturity());
+                myClone.theMaturity = new JDateDay(getMaturity());
             }
 
             /* Return the clone */
@@ -1528,11 +1528,11 @@ public class Analysis implements JDataContents {
          * @param pDate the date of valuation
          */
         protected void recordRate(final FinanceData pData,
-                                  final DateDay pDate) {
+                                  final JDateDay pDate) {
             /* Obtain the appropriate price record */
             AccountRateList myRates = pData.getRates();
             AccountRate myRate = myRates.getLatestRate(getAccount(), pDate);
-            DateDay myDate = getAccount().getMaturity();
+            JDateDay myDate = getAccount().getMaturity();
 
             /* If we have a rate */
             if (myRate != null) {
@@ -2013,7 +2013,7 @@ public class Analysis implements JDataContents {
          * value the asset at a particular date.
          * @param pDate the date of valuation
          */
-        protected void valueAsset(final DateDay pDate) {
+        protected void valueAsset(final JDateDay pDate) {
             AccountPriceList myPrices = theData.getPrices();
             AccountPrice myActPrice;
 
@@ -2083,7 +2083,7 @@ public class Analysis implements JDataContents {
         }
 
         @Override
-        protected void restoreSavePoint(final DateDay pDate) {
+        protected void restoreSavePoint(final JDateDay pDate) {
             /* If we have a Save point */
             if (theSavePoint != null) {
                 /* Restore original value */

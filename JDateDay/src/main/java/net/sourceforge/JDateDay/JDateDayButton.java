@@ -27,10 +27,10 @@ import java.util.Calendar;
 import net.sourceforge.JDateButton.JDateButton;
 
 /**
- * Extension class for a {@link JDateButton} to handle {@link DateDay} objects.
+ * Extension class for a {@link JDateButton} to handle {@link JDateDay} objects.
  * @author Tony Washer
  */
-public class DateDayButton extends JDateButton {
+public class JDateDayButton extends JDateButton {
     /**
      * Serial Id.
      */
@@ -44,26 +44,38 @@ public class DateDayButton extends JDateButton {
     /**
      * DateDayConfig.
      */
-    private transient DateDayConfig theConfig = new DateDayConfig();
+    private transient JDateDayConfig theConfig = new JDateDayConfig();
 
     /**
      * Published DateDay value.
      */
-    private transient DateDay thePublishedDate = null;
+    private transient JDateDay thePublishedDate = null;
 
     /**
      * Constructor.
      */
-    public DateDayButton() {
+    public JDateDayButton() {
         /* Call super constructor */
-        super(new DateDayConfig());
+        super(new JDateDayConfig());
 
         /* Access reference for the configuration */
-        theConfig = (DateDayConfig) super.getDateConfig();
+        theConfig = (JDateDayConfig) super.getDateConfig();
+    }
+
+    /**
+     * Constructor.
+     * @param pFormatter the formatter
+     */
+    public JDateDayButton(final JDateDayFormatter pFormatter) {
+        /* Call super constructor */
+        super(new JDateDayConfig(pFormatter));
+
+        /* Access reference for the configuration */
+        theConfig = (JDateDayConfig) super.getDateConfig();
     }
 
     @Override
-    public DateDayConfig getDateConfig() {
+    public JDateDayConfig getDateConfig() {
         return theConfig;
     }
 
@@ -71,7 +83,7 @@ public class DateDayButton extends JDateButton {
      * Obtain the selected DateDay.
      * @return the selected DateDay
      */
-    public DateDay getSelectedDateDay() {
+    public JDateDay getSelectedDateDay() {
         return theConfig.getSelectedDateDay();
     }
 
@@ -79,7 +91,7 @@ public class DateDayButton extends JDateButton {
      * Set selected DateDay.
      * @param pDate the selected date
      */
-    public void setSelectedDateDay(final DateDay pDate) {
+    public void setSelectedDateDay(final JDateDay pDate) {
         theConfig.setSelectedDateDay(pDate);
     }
 
@@ -87,7 +99,7 @@ public class DateDayButton extends JDateButton {
      * Set earliest DateDay.
      * @param pDate the earliest date
      */
-    public void setEarliestDateDay(final DateDay pDate) {
+    public void setEarliestDateDay(final JDateDay pDate) {
         theConfig.setEarliestDateDay(pDate);
     }
 
@@ -95,7 +107,7 @@ public class DateDayButton extends JDateButton {
      * Set latest DateDay.
      * @param pDate the latest date
      */
-    public void setLatestDateDay(final DateDay pDate) {
+    public void setLatestDateDay(final JDateDay pDate) {
         theConfig.setLatestDateDay(pDate);
     }
 
@@ -103,18 +115,18 @@ public class DateDayButton extends JDateButton {
     protected void fireDatePropertyChange(final Calendar pOldValue,
                                           final Calendar pNewValue) {
         /* Access new value as DateDay */
-        DateDay myNew = null;
+        JDateDay myNew = null;
         if (pNewValue != null) {
-            myNew = new DateDay(pNewValue, getLocale());
+            myNew = new JDateDay(pNewValue, getLocale());
         }
 
         /* Determine whether a change has occurred */
-        if (!DateDay.isDifferent(thePublishedDate, myNew)) {
+        if (!JDateDay.isDifferent(thePublishedDate, myNew)) {
             return;
         }
 
         /* Record the new date and create a copy */
-        DateDay myOld = thePublishedDate;
+        JDateDay myOld = thePublishedDate;
         thePublishedDate = myNew;
 
         /* Fire the property change */

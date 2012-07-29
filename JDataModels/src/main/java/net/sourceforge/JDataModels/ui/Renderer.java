@@ -32,7 +32,7 @@ import javax.swing.table.TableModel;
 
 import net.sourceforge.JDataModels.ui.RenderManager.PopulateRenderData;
 import net.sourceforge.JDataModels.ui.RenderManager.RenderData;
-import net.sourceforge.JDateDay.DateDayCellRenderer;
+import net.sourceforge.JDateDay.JDateDayCellRenderer;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDecimalFormatter;
 
@@ -244,7 +244,7 @@ public final class Renderer {
     /**
      * Calendar Cell Renderer.
      */
-    public static class CalendarRenderer extends DateDayCellRenderer {
+    public static class CalendarRenderer extends JDateDayCellRenderer {
         /**
          * Serial Id.
          */

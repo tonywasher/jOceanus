@@ -31,7 +31,7 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDilutedPrice;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JPrice;
@@ -147,7 +147,7 @@ public class ViewPrice extends AccountPrice {
         setValueDilutedPrice(null);
 
         /* Access Price and date */
-        DateDay myDate = getDate();
+        JDateDay myDate = getDate();
         JPrice myPrice = getPrice();
         Account myAccount = getAccount();
 
@@ -200,7 +200,7 @@ public class ViewPrice extends AccountPrice {
     }
 
     @Override
-    public void setDate(final DateDay pDate) {
+    public void setDate(final JDateDay pDate) {
         /* Store date */
         super.setDate(pDate);
         calculateDiluted();

@@ -28,10 +28,10 @@ import javax.swing.JTable;
 import net.sourceforge.JDateButton.JDateCellEditor;
 
 /**
- * Cell editor for a {@link DateDay} object extending {@link JDateCellEditor}.
+ * Cell editor for a {@link JDateDay} object extending {@link JDateCellEditor}.
  * @author Tony Washer
  */
-public class DateDayCellEditor extends JDateCellEditor {
+public class JDateDayCellEditor extends JDateCellEditor {
     /**
      * Serial Id.
      */
@@ -40,19 +40,19 @@ public class DateDayCellEditor extends JDateCellEditor {
     /**
      * The Date Button.
      */
-    private final DateDayButton theButton;
+    private final JDateDayButton theButton;
 
     /**
      * Constructor.
      */
-    public DateDayCellEditor() {
+    public JDateDayCellEditor() {
         /* Create a new configuration */
-        super(new DateDayButton());
-        theButton = (DateDayButton) super.getDateButton();
+        super(new JDateDayButton());
+        theButton = (JDateDayButton) super.getDateButton();
     }
 
     @Override
-    public DateDayConfig getDateConfig() {
+    public JDateDayConfig getDateConfig() {
         return theButton.getDateConfig();
     }
 
@@ -60,7 +60,7 @@ public class DateDayCellEditor extends JDateCellEditor {
      * Obtain the selected DateDay.
      * @return the selected DateDay
      */
-    public DateDay getSelectedDateDay() {
+    public JDateDay getSelectedDateDay() {
         return theButton.getSelectedDateDay();
     }
 
@@ -68,7 +68,7 @@ public class DateDayCellEditor extends JDateCellEditor {
      * Set selected DateDay.
      * @param pDate the selected date
      */
-    public void setSelectedDateDay(final DateDay pDate) {
+    public void setSelectedDateDay(final JDateDay pDate) {
         theButton.setSelectedDateDay(pDate);
     }
 
@@ -76,7 +76,7 @@ public class DateDayCellEditor extends JDateCellEditor {
      * Set earliest DateDay.
      * @param pDate the earliest date
      */
-    public void setEarliestDateDay(final DateDay pDate) {
+    public void setEarliestDateDay(final JDateDay pDate) {
         theButton.setEarliestDateDay(pDate);
     }
 
@@ -84,7 +84,7 @@ public class DateDayCellEditor extends JDateCellEditor {
      * Set latest DateDay.
      * @param pDate the latest date
      */
-    public void setLatestDateDay(final DateDay pDate) {
+    public void setLatestDateDay(final JDateDay pDate) {
         theButton.setLatestDateDay(pDate);
     }
 
@@ -100,8 +100,8 @@ public class DateDayCellEditor extends JDateCellEditor {
                                                   final int row,
                                                   final int column) {
         /* If the value is the date */
-        if (value instanceof DateDay) {
-            DateDay myDate = (DateDay) value;
+        if (value instanceof JDateDay) {
+            JDateDay myDate = (JDateDay) value;
             /* Set the selected date */
             theButton.setSelectedDateDay(myDate);
 

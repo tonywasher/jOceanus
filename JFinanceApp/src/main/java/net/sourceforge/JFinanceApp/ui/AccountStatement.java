@@ -62,9 +62,9 @@ import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDateDay.DateDayRangeSelect;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
+import net.sourceforge.JDateDay.JDateDayRangeSelect;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
@@ -151,12 +151,12 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * Selected range.
      */
-    private transient DateDayRange theRange = null;
+    private transient JDateDayRange theRange = null;
 
     /**
      * Range selection panel.
      */
-    private DateDayRangeSelect theSelect = null;
+    private JDateDayRangeSelect theSelect = null;
 
     /**
      * Statement type selection panel.
@@ -456,12 +456,12 @@ public class AccountStatement extends JDataTable<StatementLine> {
         addMouseListener(myMouse);
 
         /* Create the sub panels */
-        theSelect = new DateDayRangeSelect();
+        theSelect = new JDateDayRangeSelect();
         theStateBox = new StatementSelect();
 
         /* Create listeners */
         StatementListener myListener = new StatementListener();
-        theSelect.addPropertyChangeListener(DateDayRangeSelect.PROPERTY_RANGE, myListener);
+        theSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theStateBox.addChangeListener(myListener);
 
         /* Create a small panel for selection */
@@ -566,7 +566,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
         theComboList = pCombo;
 
         /* Update the possible date range */
-        DateDayRange myRange = theView.getRange();
+        JDateDayRange myRange = theView.getRange();
         theSelect.setOverallRange(myRange);
 
         /* Create SavePoint */
@@ -620,7 +620,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
      * @param pRange the Date range for the extract
      * @throws JDataException on error
      */
-    public void setSelection(final DateDayRange pRange) throws JDataException {
+    public void setSelection(final JDateDayRange pRange) throws JDataException {
         theStatement = null;
         theLines = null;
         if (theAccount != null) {
@@ -642,7 +642,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
      * Set selection to the period designated by the referenced control.
      * @param pSource the source control
      */
-    public void selectPeriod(final DateDayRangeSelect pSource) {
+    public void selectPeriod(final JDateDayRangeSelect pSource) {
         /* Adjust the period selection */
         theSelect.setSelection(pSource);
     }
@@ -907,7 +907,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    pLine.setDate((DateDay) pValue);
+                    pLine.setDate((JDateDay) pValue);
                     break;
                 case COLUMN_DESC:
                     pLine.setDescription((String) pValue);
@@ -1592,7 +1592,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
          * Set the date editor range.
          * @param pRange the range
          */
-        private void setDateEditorRange(final DateDayRange pRange) {
+        private void setDateEditorRange(final JDateDayRange pRange) {
             /* Set the range */
             theDateEditor.setRange(pRange);
         }

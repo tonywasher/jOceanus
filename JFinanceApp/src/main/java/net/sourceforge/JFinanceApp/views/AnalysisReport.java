@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -82,7 +82,7 @@ public class AnalysisReport {
     /**
      * The reporting date.
      */
-    private final DateDay theDate;
+    private final JDateDay theDate;
 
     /**
      * The reporting TaxYear.

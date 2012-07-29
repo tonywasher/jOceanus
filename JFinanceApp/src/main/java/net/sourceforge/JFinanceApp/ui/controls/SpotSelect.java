@@ -43,9 +43,9 @@ import javax.swing.JLabel;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateButton.JDateButton;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayButton;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayButton;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountType;
@@ -121,7 +121,7 @@ public class SpotSelect extends JPanelWithEvents {
     /**
      * The date button.
      */
-    private final DateDayButton theDateButton;
+    private final JDateDayButton theDateButton;
 
     /**
      * The showClosed checkBox.
@@ -167,7 +167,7 @@ public class SpotSelect extends JPanelWithEvents {
      * Get the selected date.
      * @return the date
      */
-    public DateDay getDate() {
+    public JDateDay getDate() {
         return theState.getDate();
     }
 
@@ -207,7 +207,7 @@ public class SpotSelect extends JPanelWithEvents {
         theShowClosed.setSelected(doShowClosed);
 
         /* Create the DateButton */
-        theDateButton = new DateDayButton();
+        theDateButton = new JDateDayButton();
 
         /* Create the Buttons */
         theNext = new JButton(NLS_NEXT);
@@ -248,7 +248,7 @@ public class SpotSelect extends JPanelWithEvents {
         theState.applyState();
 
         /* Add the listener for item changes */
-        theDateButton.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, myListener);
+        theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
         theShowClosed.addItemListener(myListener);
         theNext.addActionListener(myListener);
         thePrev.addActionListener(myListener);
@@ -263,7 +263,7 @@ public class SpotSelect extends JPanelWithEvents {
         AccountType myFirst = null;
 
         /* Access the data */
-        DateDayRange myRange = theView.getRange();
+        JDateDayRange myRange = theView.getRange();
 
         /* Set the range for the Date Button */
         setRange(myRange);
@@ -340,9 +340,9 @@ public class SpotSelect extends JPanelWithEvents {
      * Set the range for the date box.
      * @param pRange the Range to set
      */
-    public final void setRange(final DateDayRange pRange) {
-        DateDay myStart = (pRange == null) ? null : pRange.getStart();
-        DateDay myEnd = (pRange == null) ? null : pRange.getEnd();
+    public final void setRange(final JDateDayRange pRange) {
+        JDateDay myStart = (pRange == null) ? null : pRange.getStart();
+        JDateDay myEnd = (pRange == null) ? null : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);
@@ -381,8 +381,8 @@ public class SpotSelect extends JPanelWithEvents {
      * @param pPrev the previous Date
      * @param pNext the next Date
      */
-    public void setAdjacent(final DateDay pPrev,
-                            final DateDay pNext) {
+    public void setAdjacent(final JDateDay pPrev,
+                            final JDateDay pNext) {
         /* Record the dates */
         theState.setAdjacent(pPrev, pNext);
     }
@@ -456,17 +456,17 @@ public class SpotSelect extends JPanelWithEvents {
         /**
          * Selected date.
          */
-        private DateDay theDate = null;
+        private JDateDay theDate = null;
 
         /**
          * Next date.
          */
-        private DateDay theNextDate = null;
+        private JDateDay theNextDate = null;
 
         /**
          * Previous date.
          */
-        private DateDay thePrevDate = null;
+        private JDateDay thePrevDate = null;
 
         /**
          * Get the account type.
@@ -480,7 +480,7 @@ public class SpotSelect extends JPanelWithEvents {
          * Get the selected date.
          * @return the date
          */
-        private DateDay getDate() {
+        private JDateDay getDate() {
             return theDate;
         }
 
@@ -488,7 +488,7 @@ public class SpotSelect extends JPanelWithEvents {
          * Get the next date.
          * @return the date
          */
-        private DateDay getNextDate() {
+        private JDateDay getNextDate() {
             return theNextDate;
         }
 
@@ -496,7 +496,7 @@ public class SpotSelect extends JPanelWithEvents {
          * Get the previous date.
          * @return the date
          */
-        private DateDay getPrevDate() {
+        private JDateDay getPrevDate() {
             return thePrevDate;
         }
 
@@ -504,7 +504,7 @@ public class SpotSelect extends JPanelWithEvents {
          * Constructor.
          */
         private SpotState() {
-            theDate = new DateDay();
+            theDate = new JDateDay();
         }
 
         /**
@@ -513,12 +513,12 @@ public class SpotSelect extends JPanelWithEvents {
          */
         private SpotState(final SpotState pState) {
             theType = pState.getAccountType();
-            theDate = new DateDay(pState.getDate());
+            theDate = new JDateDay(pState.getDate());
             if (pState.getNextDate() != null) {
-                theNextDate = new DateDay(pState.getNextDate());
+                theNextDate = new JDateDay(pState.getNextDate());
             }
             if (pState.getPrevDate() != null) {
-                thePrevDate = new DateDay(pState.getPrevDate());
+                thePrevDate = new JDateDay(pState.getPrevDate());
             }
         }
 
@@ -543,7 +543,7 @@ public class SpotSelect extends JPanelWithEvents {
          */
         private boolean setDate(final JDateButton pButton) {
             /* Adjust the date and build the new range */
-            DateDay myDate = new DateDay(pButton.getSelectedDate());
+            JDateDay myDate = new JDateDay(pButton.getSelectedDate());
             if (!Difference.isEqual(myDate, theDate)) {
                 theDate = myDate;
                 return true;
@@ -556,7 +556,7 @@ public class SpotSelect extends JPanelWithEvents {
          */
         private void setNext() {
             /* Copy date */
-            theDate = new DateDay(theNextDate);
+            theDate = new JDateDay(theNextDate);
             applyState();
         }
 
@@ -565,7 +565,7 @@ public class SpotSelect extends JPanelWithEvents {
          */
         private void setPrev() {
             /* Copy date */
-            theDate = new DateDay(thePrevDate);
+            theDate = new JDateDay(thePrevDate);
             applyState();
         }
 
@@ -574,8 +574,8 @@ public class SpotSelect extends JPanelWithEvents {
          * @param pPrev the previous Date
          * @param pNext the next Date
          */
-        private void setAdjacent(final DateDay pPrev,
-                                 final DateDay pNext) {
+        private void setAdjacent(final JDateDay pPrev,
+                                 final JDateDay pNext) {
             /* Record the dates */
             thePrevDate = pPrev;
             theNextDate = pNext;

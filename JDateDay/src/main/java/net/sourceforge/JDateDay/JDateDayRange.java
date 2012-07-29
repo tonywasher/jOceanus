@@ -25,22 +25,32 @@ package net.sourceforge.JDateDay;
 /**
  * Represents a contiguous Range of dates.
  */
-public class DateDayRange implements Comparable<DateDayRange> {
+public class JDateDayRange implements Comparable<JDateDayRange> {
+    /**
+     * Unbounded range description.
+     */
+    protected static final String DESC_UNBOUNDED = "Unbounded";
+
+    /**
+     * link range description.
+     */
+    protected static final String DESC_LINK = " to ";
+
     /**
      * The Start Date for the range.
      */
-    private DateDay theStart = null;
+    private JDateDay theStart = null;
 
     /**
      * The End Date for the range.
      */
-    private DateDay theEnd = null;
+    private JDateDay theEnd = null;
 
     /**
      * Get the start date for the range.
      * @return the Start date
      */
-    public DateDay getStart() {
+    public JDateDay getStart() {
         return theStart;
     }
 
@@ -48,7 +58,7 @@ public class DateDayRange implements Comparable<DateDayRange> {
      * Get the end date for the range.
      * @return the End date
      */
-    public DateDay getEnd() {
+    public JDateDay getEnd() {
         return theEnd;
     }
 
@@ -57,13 +67,13 @@ public class DateDayRange implements Comparable<DateDayRange> {
      * @param pStart the start date
      * @param pEnd the end date
      */
-    public DateDayRange(final DateDay pStart,
-                        final DateDay pEnd) {
+    public JDateDayRange(final JDateDay pStart,
+                         final JDateDay pEnd) {
         if (pStart != null) {
-            theStart = new DateDay(pStart);
+            theStart = new JDateDay(pStart);
         }
         if (pEnd != null) {
-            theEnd = new DateDay(pEnd);
+            theEnd = new JDateDay(pEnd);
         }
     }
 
@@ -71,7 +81,7 @@ public class DateDayRange implements Comparable<DateDayRange> {
      * Construct a range from another range.
      * @param pRange the range to copy from
      */
-    public DateDayRange(final DateDayRange pRange) {
+    public JDateDayRange(final JDateDayRange pRange) {
         this(pRange.getStart(), pRange.getEnd());
     }
 
@@ -80,7 +90,7 @@ public class DateDayRange implements Comparable<DateDayRange> {
      * @param pDate the date to test
      * @return -1, 0, 1 if early, in range or late
      */
-    public short compareTo(final DateDay pDate) {
+    public short compareTo(final JDateDay pDate) {
         if ((theStart != null) && (theStart.compareTo(pDate) > 0)) {
             return 1;
         }
@@ -91,7 +101,7 @@ public class DateDayRange implements Comparable<DateDayRange> {
     }
 
     @Override
-    public int compareTo(final DateDayRange that) {
+    public int compareTo(final JDateDayRange that) {
         int result;
 
         /* Handle the trivial cases */
@@ -140,13 +150,10 @@ public class DateDayRange implements Comparable<DateDayRange> {
 
     @Override
     public String toString() {
-        String myFormat;
-        String myUnBounded = "Unbounded";
-
         /* Build range description */
-        myFormat = (theStart == null) ? myUnBounded : theStart.toString();
-        myFormat += " to ";
-        myFormat += (theEnd == null) ? myUnBounded : theEnd.toString();
+        String myFormat = (theStart == null) ? DESC_UNBOUNDED : theStart.toString();
+        myFormat += DESC_LINK;
+        myFormat += (theEnd == null) ? DESC_UNBOUNDED : theEnd.toString();
 
         /* return the format */
         return myFormat;
@@ -162,13 +169,13 @@ public class DateDayRange implements Comparable<DateDayRange> {
             return false;
         }
 
-        /* Make sure that the object is a DateDayRange */
+        /* Make sure that the object is a JDateDayRange */
         if (pThat.getClass() != this.getClass()) {
             return false;
         }
 
-        /* Access the object as a DateDayRange */
-        DateDayRange myThat = (DateDayRange) pThat;
+        /* Access the object as a JDateDayRange */
+        JDateDayRange myThat = (JDateDayRange) pThat;
 
         /* Check components */
         if (theStart == null) {
@@ -194,11 +201,11 @@ public class DateDayRange implements Comparable<DateDayRange> {
         /* Calculate hash based on Start/End */
         int iHash = 1;
         if (theStart != null) {
-            iHash *= DateDay.HASH_PRIME;
+            iHash *= JDateDay.HASH_PRIME;
             iHash += theStart.hashCode();
         }
         if (theEnd != null) {
-            iHash *= DateDay.HASH_PRIME;
+            iHash *= JDateDay.HASH_PRIME;
             iHash += theEnd.hashCode();
         }
         return iHash;
@@ -210,8 +217,8 @@ public class DateDayRange implements Comparable<DateDayRange> {
      * @param pNew The new Date
      * @return <code>true</code> if the objects differ, <code>false</code> otherwise
      */
-    public static boolean isDifferent(final DateDayRange pCurr,
-                                      final DateDayRange pNew) {
+    public static boolean isDifferent(final JDateDayRange pCurr,
+                                      final JDateDayRange pNew) {
         /* Handle case where current value is null */
         if (pCurr == null) {
             return (pNew != null);

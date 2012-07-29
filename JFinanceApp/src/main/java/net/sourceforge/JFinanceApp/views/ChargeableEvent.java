@@ -29,7 +29,7 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JSortedList.OrderedIdItem;
@@ -154,7 +154,7 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
      * Obtain the date.
      * @return the date
      */
-    public DateDay getDate() {
+    public JDateDay getDate() {
         return getEvent().getDate();
     }
 

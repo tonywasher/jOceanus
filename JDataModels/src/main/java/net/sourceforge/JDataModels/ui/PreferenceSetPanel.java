@@ -62,8 +62,8 @@ import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceItem;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceType;
 import net.sourceforge.JDataModels.data.PreferenceSet.StringPreference;
 import net.sourceforge.JDataModels.ui.ValueField.ValueClass;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayButton;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayButton;
 
 /**
  * Preference Set panel.
@@ -733,7 +733,7 @@ public class PreferenceSetPanel extends JPanelWithEvents {
             /**
              * The underlying button field.
              */
-            private final DateDayButton theField;
+            private final JDateDayButton theField;
 
             /**
              * The preference as a datePreference.
@@ -747,10 +747,10 @@ public class PreferenceSetPanel extends JPanelWithEvents {
             private DateField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theDate = (DatePreference) pPreference;
-                theField = new DateDayButton();
+                theField = new JDateDayButton();
 
                 /* Add property change listener */
-                theField.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, new PreferenceListener());
+                theField.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, new PreferenceListener());
             }
 
             @Override
@@ -780,7 +780,7 @@ public class PreferenceSetPanel extends JPanelWithEvents {
                     /* If this is our preference */
                     if (theField.equals(o)) {
                         /* Set the new value of the preference */
-                        DateDay myValue = new DateDay(theField.getSelectedDate());
+                        JDateDay myValue = new JDateDay(theField.getSelectedDate());
                         theDate.setValue(myValue);
 
                         /* Note if we have any changes */

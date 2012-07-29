@@ -36,7 +36,7 @@ import javax.swing.SortOrder;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JPrice;
@@ -753,7 +753,7 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final DateDay pValue) {
+        protected void setValue(final JDateDay pValue) {
             super.setObject((pValue == null) ? null : pValue.getDate());
         }
 

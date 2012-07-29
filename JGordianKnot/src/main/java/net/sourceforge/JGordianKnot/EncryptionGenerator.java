@@ -30,7 +30,7 @@ import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JPrice;
@@ -146,8 +146,8 @@ public class EncryptionGenerator {
         }
 
         /* Handle decimal instances */
-        if (DateDay.class.isInstance(pValue)) {
-            return new EncryptedDateDay(theCipherSet, theFormatter, (DateDay) pValue);
+        if (JDateDay.class.isInstance(pValue)) {
+            return new EncryptedDateDay(theCipherSet, theFormatter, (JDateDay) pValue);
         }
         if (JMoney.class.isInstance(pValue)) {
             return new EncryptedMoney(theCipherSet, theFormatter, (JMoney) pValue);
@@ -222,7 +222,7 @@ public class EncryptionGenerator {
         }
 
         /* Handle decimal instances */
-        if (DateDay.class == pClass) {
+        if (JDateDay.class == pClass) {
             return new EncryptedDateDay(theCipherSet, theFormatter, pEncrypted);
         }
         if (JMoney.class == pClass) {

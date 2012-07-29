@@ -28,7 +28,7 @@ import java.util.Calendar;
  * DatePeriod class representing standard date ranges.
  * @author Tony Washer
  */
-public enum DatePeriod {
+public enum JDatePeriod {
     /**
      * OneWeek.
      */
@@ -96,8 +96,8 @@ public enum DatePeriod {
      * @param pField the Calendar field
      * @param pAmount the adjustment value
      */
-    private DatePeriod(final int pField,
-                       final int pAmount) {
+    private JDatePeriod(final int pField,
+                        final int pAmount) {
         /* Store values */
         theField = pField;
         theAmount = pAmount;

@@ -39,7 +39,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.MainWindow;
 import net.sourceforge.JDataModels.threads.ThreadStatus;
-import net.sourceforge.JDateDay.DateDayRangeSelect;
+import net.sourceforge.JDateDay.JDateDayRangeSelect;
 import net.sourceforge.JFinanceApp.core.LoadArchive;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
@@ -336,7 +336,7 @@ public class MainTab extends MainWindow<FinanceData> {
      * @param pSource the range
      */
     private void selectAccount(final Account pAccount,
-                               final DateDayRangeSelect pSource) {
+                               final JDateDayRangeSelect pSource) {
         /* Pass through to the Account control */
         theAccountCtl.selectAccount(pAccount, pSource);
 
@@ -348,7 +348,7 @@ public class MainTab extends MainWindow<FinanceData> {
      * Select an explicit extract period.
      * @param pSource the range
      */
-    private void selectExtract(final DateDayRangeSelect pSource) {
+    private void selectExtract(final JDateDayRangeSelect pSource) {
         /* Pass through to the Extract */
         theExtract.selectPeriod(pSource);
 
@@ -577,7 +577,7 @@ public class MainTab extends MainWindow<FinanceData> {
         /**
          * The selected range.
          */
-        private final DateDayRangeSelect theRange;
+        private final JDateDayRangeSelect theRange;
 
         /**
          * The base Event.
@@ -596,7 +596,7 @@ public class MainTab extends MainWindow<FinanceData> {
          * Obtain the selected range.
          * @return the range
          */
-        protected DateDayRangeSelect getRange() {
+        protected JDateDayRangeSelect getRange() {
             return theRange;
         }
 
@@ -622,7 +622,7 @@ public class MainTab extends MainWindow<FinanceData> {
          * Constructor.
          * @param pRange the requested range
          */
-        protected ActionRequest(final DateDayRangeSelect pRange) {
+        protected ActionRequest(final JDateDayRangeSelect pRange) {
             theAccount = null;
             theRange = pRange;
             theEvent = null;
@@ -634,7 +634,7 @@ public class MainTab extends MainWindow<FinanceData> {
          * @param pRange the requested range
          */
         protected ActionRequest(final Account pAccount,
-                                final DateDayRangeSelect pRange) {
+                                final JDateDayRangeSelect pRange) {
             theAccount = pAccount;
             theRange = pRange;
             theEvent = null;

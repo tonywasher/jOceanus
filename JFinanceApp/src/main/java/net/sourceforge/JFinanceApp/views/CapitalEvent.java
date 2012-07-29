@@ -31,7 +31,7 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JPrice;
@@ -235,7 +235,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
     /**
      * The Date of the event.
      */
-    private final DateDay theDate;
+    private final JDateDay theDate;
 
     /**
      * Date field id.
@@ -251,7 +251,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
      * Obtain the date.
      * @return the date.
      */
-    public DateDay getDate() {
+    public JDateDay getDate() {
         return theDate;
     }
 
@@ -309,7 +309,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
      * Constructor.
      * @param pDate the date of the event
      */
-    private CapitalEvent(final DateDay pDate) {
+    private CapitalEvent(final JDateDay pDate) {
         /* declare local fields */
         theLocalFields = declareFields();
 
@@ -540,7 +540,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
          * @param pDate the Date for the event
          * @return the Capital Event
          */
-        protected CapitalEvent addEvent(final DateDay pDate) {
+        protected CapitalEvent addEvent(final JDateDay pDate) {
             CapitalEvent myEvent;
 
             /* Create the Capital Event and add to list */
@@ -576,7 +576,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
          * Purge events after date.
          * @param pDate date from which to purge events
          */
-        protected void purgeAfterDate(final DateDay pDate) {
+        protected void purgeAfterDate(final JDateDay pDate) {
             /* Access the iterator */
             Iterator<CapitalEvent> myIterator = listIterator();
 

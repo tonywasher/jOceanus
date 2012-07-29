@@ -29,7 +29,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.PreferenceSet;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceSetChooser;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
@@ -103,7 +103,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
     /**
      * The date of the analysis.
      */
-    private final DateDay theDate;
+    private final JDateDay theDate;
 
     /**
      * The TaxYear of the analysis.
@@ -202,7 +202,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
         /**
          * Default value for BirthDate.
          */
-        private static final DateDay DEFAULT_BIRTHDATE = new DateDay(1970, Calendar.JANUARY, 1);
+        private static final JDateDay DEFAULT_BIRTHDATE = new JDateDay(1970, Calendar.JANUARY, 1);
 
         /**
          * Constructor.

@@ -38,7 +38,7 @@ import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EncryptedItem;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
@@ -461,7 +461,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * Obtain Maturity.
      * @return the date
      */
-    public DateDay getMaturity() {
+    public JDateDay getMaturity() {
         return getMaturity(getValueSet());
     }
 
@@ -469,7 +469,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * Obtain Close.
      * @return the date
      */
-    public DateDay getClose() {
+    public JDateDay getClose() {
         return getClose(getValueSet());
     }
 
@@ -756,8 +756,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValueSet the valueSet
      * @return the Maturity
      */
-    public static DateDay getMaturity(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_MATURITY, DateDay.class);
+    public static JDateDay getMaturity(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_MATURITY, JDateDay.class);
     }
 
     /**
@@ -765,8 +765,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pValueSet the valueSet
      * @return the date
      */
-    public static DateDay getClose(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CLOSE, DateDay.class);
+    public static JDateDay getClose(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CLOSE, JDateDay.class);
     }
 
     /**
@@ -1061,7 +1061,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * Set maturity value.
      * @param pValue the value
      */
-    private void setValueMaturity(final DateDay pValue) {
+    private void setValueMaturity(final JDateDay pValue) {
         getValueSet().setValue(FIELD_MATURITY, pValue);
     }
 
@@ -1069,7 +1069,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * Set close value.
      * @param pValue the value
      */
-    private void setValueClose(final DateDay pValue) {
+    private void setValueClose(final JDateDay pValue) {
         getValueSet().setValue(FIELD_CLOSE, pValue);
     }
 
@@ -1371,12 +1371,12 @@ public class Account extends EncryptedItem implements Comparable<Account> {
 
             /* Parse the maturity date if it exists */
             if (pMaturity != null) {
-                setValueMaturity(new DateDay(pMaturity));
+                setValueMaturity(new JDateDay(pMaturity));
             }
 
             /* Parse the closed date if it exists */
             if (pClose != null) {
-                setValueClose(new DateDay(pClose));
+                setValueClose(new JDateDay(pClose));
             }
 
             /* Record the encrypted values */
@@ -1461,12 +1461,12 @@ public class Account extends EncryptedItem implements Comparable<Account> {
 
             /* Parse the maturity date if it exists */
             if (pMaturity != null) {
-                setValueMaturity(new DateDay(pMaturity));
+                setValueMaturity(new JDateDay(pMaturity));
             }
 
             /* Parse the closed date if it exists */
             if (pClose != null) {
-                setValueClose(new DateDay(pClose));
+                setValueClose(new JDateDay(pClose));
             }
 
             /* Catch Exceptions */
@@ -1918,7 +1918,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pDate The date of the valuation
      * @return Valuation of account
      */
-    public JMoney getValue(final DateDay pDate) {
+    public JMoney getValue(final JDateDay pDate) {
         /* Initialise money */
         JMoney myValue = new JMoney();
 
@@ -2103,7 +2103,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * Set a new maturity date.
      * @param pDate the new date
      */
-    public void setMaturity(final DateDay pDate) {
+    public void setMaturity(final JDateDay pDate) {
         setValueMaturity(pDate);
     }
 
@@ -2111,7 +2111,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * Set a new close date.
      * @param pDate the new date
      */
-    public void setClose(final DateDay pDate) {
+    public void setClose(final JDateDay pDate) {
         setValueClose(pDate);
     }
 

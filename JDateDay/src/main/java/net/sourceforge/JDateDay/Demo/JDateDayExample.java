@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.BorderFactory;
 import javax.swing.JApplet;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -52,20 +53,21 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.JDateButton.JDateConfig;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayButton;
-import net.sourceforge.JDateDay.DateDayCellEditor;
-import net.sourceforge.JDateDay.DateDayCellRenderer;
-import net.sourceforge.JDateDay.DateDayConfig;
-import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDateDay.DateDayRangeSelect;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayButton;
+import net.sourceforge.JDateDay.JDateDayCellEditor;
+import net.sourceforge.JDateDay.JDateDayCellRenderer;
+import net.sourceforge.JDateDay.JDateDayConfig;
+import net.sourceforge.JDateDay.JDateDayFormatter;
+import net.sourceforge.JDateDay.JDateDayRange;
+import net.sourceforge.JDateDay.JDateDayRangeSelect;
 
 /**
  * <p>
  * Provides a simple application that illustrates the features of JDateDay.
  * @author Tony Washer
  */
-public class DateDayExample extends JApplet {
+public class JDateDayExample extends JApplet {
     /**
      * Serial Id.
      */
@@ -104,37 +106,37 @@ public class DateDayExample extends JApplet {
     /**
      * Start sample date.
      */
-    private static final DateDay DATE_START = makeDate(2007, Calendar.JANUARY, 25);
+    private static final JDateDay DATE_START = makeDate(2007, Calendar.JANUARY, 25);
 
     /**
      * End sample date.
      */
-    private static final DateDay DATE_END = makeDate(2014, Calendar.AUGUST, 9);
+    private static final JDateDay DATE_END = makeDate(2014, Calendar.AUGUST, 9);
 
     /**
      * First sample date.
      */
-    private static final DateDay DATE_FIRST = makeDate(2011, Calendar.JULY, 1);
+    private static final JDateDay DATE_FIRST = makeDate(2011, Calendar.JULY, 1);
 
     /**
      * Second sample date.
      */
-    private static final DateDay DATE_SECOND = makeDate(2012, Calendar.MARCH, 14);
+    private static final JDateDay DATE_SECOND = makeDate(2012, Calendar.MARCH, 14);
 
     /**
      * Third sample date.
      */
-    private static final DateDay DATE_THIRD = makeDate(2012, Calendar.NOVEMBER, 19);
+    private static final JDateDay DATE_THIRD = makeDate(2012, Calendar.NOVEMBER, 19);
 
     /**
      * Fourth sample date.
      */
-    private static final DateDay DATE_FOURTH = makeDate(2013, Calendar.MAY, 31);
+    private static final JDateDay DATE_FOURTH = makeDate(2013, Calendar.MAY, 31);
 
     /**
      * Fifth sample date.
      */
-    private static final DateDay DATE_FIFTH = makeDate(2014, Calendar.FEBRUARY, 28);
+    private static final JDateDay DATE_FIFTH = makeDate(2014, Calendar.FEBRUARY, 28);
 
     /**
      * Logger.
@@ -169,7 +171,7 @@ public class DateDayExample extends JApplet {
             JFrame myFrame = new JFrame("DateDayButton Demo");
 
             /* Create the Example program */
-            DateDayExample myProgram = new DateDayExample();
+            JDateDayExample myProgram = new JDateDayExample();
 
             /* Create the panel */
             JPanel myPanel = myProgram.makePanel();
@@ -209,12 +211,12 @@ public class DateDayExample extends JApplet {
     /**
      * The cell renderer.
      */
-    private DateDayCellRenderer theRenderer = null;
+    private JDateDayCellRenderer theRenderer = null;
 
     /**
      * The cell editor.
      */
-    private DateDayCellEditor theEditor = null;
+    private JDateDayCellEditor theEditor = null;
 
     /**
      * The list of locales.
@@ -229,12 +231,12 @@ public class DateDayExample extends JApplet {
     /**
      * The start date.
      */
-    private DateDayButton theStartDate = null;
+    private JDateDayButton theStartDate = null;
 
     /**
      * The end date.
      */
-    private DateDayButton theEndDate = null;
+    private JDateDayButton theEndDate = null;
 
     /**
      * The selected range.
@@ -274,7 +276,12 @@ public class DateDayExample extends JApplet {
     /**
      * The range selection.
      */
-    private DateDayRangeSelect theRangeSelect = null;
+    private JDateDayRangeSelect theRangeSelect = null;
+
+    /**
+     * The formatter
+     */
+    private JDateDayFormatter theFormatter = new JDateDayFormatter();
 
     /**
      * Create the panel.
@@ -307,7 +314,7 @@ public class DateDayExample extends JApplet {
         /* Create a Range sub-panel */
         JPanel myRange = new JPanel(new GridBagLayout());
         GridBagConstraints myConstraints = new GridBagConstraints();
-        myRange.setBorder(javax.swing.BorderFactory.createTitledBorder("Range Selection"));
+        myRange.setBorder(BorderFactory.createTitledBorder("Range Selection"));
         myConstraints.gridx = 0;
         myConstraints.gridy = 0;
         myConstraints.gridwidth = 1;
@@ -336,7 +343,7 @@ public class DateDayExample extends JApplet {
 
         /* Create a Style sub-panel */
         JPanel myStyle = new JPanel(new GridBagLayout());
-        myStyle.setBorder(javax.swing.BorderFactory.createTitledBorder("Format Selection"));
+        myStyle.setBorder(BorderFactory.createTitledBorder("Format Selection"));
         myConstraints = new GridBagConstraints();
         myConstraints.gridx = 0;
         myConstraints.gridy = 0;
@@ -460,7 +467,7 @@ public class DateDayExample extends JApplet {
         @Override
         public Class<?> getColumnClass(final int columnIndex) {
             if (columnIndex == 0) {
-                return DateDay.class;
+                return JDateDay.class;
             }
             return String.class;
         }
@@ -494,8 +501,8 @@ public class DateDayExample extends JApplet {
         theTable = new JTable(myModel);
 
         /* Create the renderer and editor */
-        theRenderer = new DateDayCellRenderer();
-        theEditor = new DateDayCellEditor();
+        theRenderer = new JDateDayCellRenderer(theFormatter);
+        theEditor = new JDateDayCellEditor();
 
         /* Set sorting on the table */
         theTable.setAutoCreateRowSorter(true);
@@ -556,16 +563,16 @@ public class DateDayExample extends JApplet {
      */
     private void makeRangeButtons() {
         /* Create the buttons */
-        theStartDate = new DateDayButton();
-        theEndDate = new DateDayButton();
+        theStartDate = new JDateDayButton(theFormatter);
+        theEndDate = new JDateDayButton(theFormatter);
 
         /* Create the range selection */
-        theRangeSelect = new DateDayRangeSelect();
-        theRangeSelect.addPropertyChangeListener(DateDayRangeSelect.PROPERTY_RANGE, theListener);
+        theRangeSelect = new JDateDayRangeSelect();
+        theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, theListener);
 
         /* Initialise the values */
-        DateDay myStart = DATE_START;
-        DateDay myEnd = DATE_END;
+        JDateDay myStart = DATE_START;
+        JDateDay myEnd = DATE_END;
 
         /* Set the values */
         theStartDate.setSelectedDateDay(myStart);
@@ -575,8 +582,8 @@ public class DateDayExample extends JApplet {
         applyRange();
 
         /* Add Listener to buttons */
-        theStartDate.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, theListener);
-        theEndDate.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, theListener);
+        theStartDate.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, theListener);
+        theEndDate.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, theListener);
     }
 
     /**
@@ -586,10 +593,10 @@ public class DateDayExample extends JApplet {
      * @param pDay the day
      * @return the requested date
      */
-    private static DateDay makeDate(final int pYear,
-                                    final int pMonth,
-                                    final int pDay) {
-        return new DateDay(pYear, pMonth, pDay);
+    private static JDateDay makeDate(final int pYear,
+                                     final int pMonth,
+                                     final int pDay) {
+        return new JDateDay(pYear, pMonth, pDay);
     }
 
     /**
@@ -597,7 +604,7 @@ public class DateDayExample extends JApplet {
      */
     private void applyOptions() {
         /* Set Null Date options */
-        DateDayConfig myConfig = theEditor.getDateConfig();
+        JDateDayConfig myConfig = theEditor.getDateConfig();
         myConfig.setAllowNullDateSelection(false);
         myConfig = theStartDate.getDateConfig();
         myConfig.setAllowNullDateSelection(true);
@@ -621,7 +628,7 @@ public class DateDayExample extends JApplet {
         theRangeSelect.setLocale(theLocale);
 
         /* Set format options */
-        DateDayConfig myConfig = theEditor.getDateConfig();
+        JDateDayConfig myConfig = theEditor.getDateConfig();
         myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
         myConfig = theStartDate.getDateConfig();
         myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
@@ -656,8 +663,8 @@ public class DateDayExample extends JApplet {
      */
     private void applyRange() {
         /* Access the Start/End Dates */
-        DateDay myStart = theStartDate.getSelectedDateDay();
-        DateDay myEnd = theEndDate.getSelectedDateDay();
+        JDateDay myStart = theStartDate.getSelectedDateDay();
+        JDateDay myEnd = theEndDate.getSelectedDateDay();
 
         /* Set the select-able range for the start/end buttons */
         theStartDate.setLatestDateDay(myEnd);
@@ -668,7 +675,7 @@ public class DateDayExample extends JApplet {
         theEditor.setLatestDateDay(myEnd);
 
         /* set the range select range */
-        theRangeSelect.setOverallRange(new DateDayRange(myStart, myEnd));
+        theRangeSelect.setOverallRange(new JDateDayRange(myStart, myEnd));
     }
 
     /**
@@ -688,7 +695,7 @@ public class DateDayExample extends JApplet {
                 /* If this is the selectable range */
             } else if (theRangeSelect.equals(o)) {
                 /* Apply the new range */
-                DateDayRange myRange = theRangeSelect.getRange();
+                JDateDayRange myRange = theRangeSelect.getRange();
                 if (theSelectedRange != null) {
                     theSelectedRange.setText(myRange.toString());
                 }

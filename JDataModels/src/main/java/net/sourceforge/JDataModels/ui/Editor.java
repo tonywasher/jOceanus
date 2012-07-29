@@ -41,9 +41,9 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayCellEditor;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayCellEditor;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDecimalParser;
 
@@ -339,7 +339,7 @@ public class Editor {
     /**
      * Calendar Cell Editor.
      */
-    public static class CalendarEditor extends DateDayCellEditor {
+    public static class CalendarEditor extends JDateDayCellEditor {
         /**
          * Serial Id.
          */
@@ -348,13 +348,13 @@ public class Editor {
         /**
          * The Selectable range.
          */
-        private transient DateDayRange theRange = null;
+        private transient JDateDayRange theRange = null;
 
         /**
          * Set the selectable range.
          * @param pRange the range
          */
-        public void setRange(final DateDayRange pRange) {
+        public void setRange(final JDateDayRange pRange) {
             theRange = pRange;
         }
 
@@ -365,15 +365,15 @@ public class Editor {
                                                       final int pRowIndex,
                                                       final int pColIndex) {
             /* Access the range */
-            DateDay myStart = (theRange == null) ? null : theRange.getStart();
-            DateDay myEnd = (theRange == null) ? null : theRange.getEnd();
-            DateDay myCurr;
+            JDateDay myStart = (theRange == null) ? null : theRange.getStart();
+            JDateDay myEnd = (theRange == null) ? null : theRange.getEnd();
+            JDateDay myCurr;
 
             /* If the value is null */
             if ((pValue == null) || (RendererFieldValue.Error.equals(pValue))) {
-                myCurr = new DateDay();
+                myCurr = new JDateDay();
             } else {
-                myCurr = (DateDay) pValue;
+                myCurr = (JDateDay) pValue;
             }
 
             /* Set up initial values and range */
@@ -391,7 +391,7 @@ public class Editor {
 
         @Override
         public boolean stopCellEditing() {
-            DateDay myDate = (DateDay) getCellEditorValue();
+            JDateDay myDate = (JDateDay) getCellEditorValue();
             if ((Object) myDate == null) {
                 fireEditingCanceled();
                 return false;

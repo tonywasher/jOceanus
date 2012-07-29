@@ -28,8 +28,8 @@ import java.util.Locale;
 
 import net.sourceforge.JDataManager.JDataObject.JDataDifference;
 import net.sourceforge.JDataManager.JDataObject.JDataFormat;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDecimalFormatter;
 
@@ -41,14 +41,14 @@ public class JDataFormatter {
     /**
      * The Decimal formatter
      */
-    private final JDecimalFormatter theFormatter;
+    private final JDecimalFormatter theDecimalFormatter;
 
     /**
-     * Obtain the Formatter
-     * @return the formatter
+     * Obtain the DecimalFormatter
+     * @return the decimal formatter
      */
     public JDecimalFormatter getDecimalFormatter() {
-        return theFormatter;
+        return theDecimalFormatter;
     }
 
     /**
@@ -57,7 +57,7 @@ public class JDataFormatter {
      */
     public void setAccountingWidth(final int pWidth) {
         /* Set accounting width on decimal formatter */
-        theFormatter.setAccountingWidth(pWidth);
+        theDecimalFormatter.setAccountingWidth(pWidth);
     }
 
     /**
@@ -65,7 +65,7 @@ public class JDataFormatter {
      */
     public void clearAccounting() {
         /* Clear the accounting mode flag */
-        theFormatter.clearAccounting();
+        theDecimalFormatter.clearAccounting();
     }
 
     /**
@@ -80,7 +80,7 @@ public class JDataFormatter {
      * @param pLocale the locale
      */
     public JDataFormatter(final Locale pLocale) {
-        theFormatter = new JDecimalFormatter(pLocale);
+        theDecimalFormatter = new JDecimalFormatter(pLocale);
     }
 
     /**
@@ -150,16 +150,16 @@ public class JDataFormatter {
         }
 
         /* Handle date classes */
-        if (myClass == DateDay.class) {
-            return ((DateDay) pValue).toString();
+        if (myClass == JDateDay.class) {
+            return ((JDateDay) pValue).toString();
         }
-        if (myClass == DateDayRange.class) {
-            return ((DateDayRange) pValue).toString();
+        if (myClass == JDateDayRange.class) {
+            return ((JDateDayRange) pValue).toString();
         }
 
         /* Handle decimal classes */
         if (JDecimal.class.isInstance(pValue)) {
-            return theFormatter.formatDecimal((JDecimal) pValue);
+            return theDecimalFormatter.formatDecimal((JDecimal) pValue);
         }
 
         /* Handle difference class */

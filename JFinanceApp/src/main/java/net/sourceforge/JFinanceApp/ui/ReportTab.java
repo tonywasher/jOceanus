@@ -42,7 +42,7 @@ import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JFinanceApp.data.TaxYear;
 import net.sourceforge.JFinanceApp.ui.controls.ReportSelect;
 import net.sourceforge.JFinanceApp.ui.controls.ReportSelect.ReportType;
@@ -239,7 +239,7 @@ public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
 
         /* Access the values from the selection */
         ReportType myReportType = theSelect.getReportType();
-        DateDay myDate = theSelect.getReportDate();
+        JDateDay myDate = theSelect.getReportDate();
         TaxYear myYear = theSelect.getTaxYear();
 
         /* set lockdown of selection */

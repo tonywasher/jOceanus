@@ -37,7 +37,7 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataObject.JDataDiffers;
 import net.sourceforge.JDataManager.JDataObject.JDataFormat;
-import net.sourceforge.JDateDay.DateDay;
+import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
@@ -836,7 +836,7 @@ public final class EncryptedData {
     /**
      * The encrypted DateDay class.
      */
-    public static final class EncryptedDateDay extends EncryptedField<DateDay> {
+    public static final class EncryptedDateDay extends EncryptedField<JDateDay> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -859,16 +859,16 @@ public final class EncryptedData {
          */
         protected EncryptedDateDay(final CipherSet pCipherSet,
                                    final JDataFormatter pFormatter,
-                                   final DateDay pUnencrypted) throws JDataException {
+                                   final JDateDay pUnencrypted) throws JDataException {
             super(pCipherSet, pFormatter, pUnencrypted);
         }
 
         @Override
-        protected DateDay parseBytes(final byte[] pBytes) throws JDataException {
+        protected JDateDay parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
-                return new DateDay(DataConverter.byteArrayToString(pBytes));
+                return new JDateDay(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
             } catch (JDataException e) {

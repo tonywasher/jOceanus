@@ -37,8 +37,8 @@ import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.Frequency.FrequencyList;
 import net.sourceforge.JFinanceApp.data.StaticClass.FreqClass;
@@ -73,8 +73,8 @@ public class Pattern extends Event {
     /**
      * The interesting date range.
      */
-    public static final DateDayRange RANGE_PATTERN = new DateDayRange(new DateDay(BASE_TAXYEAR - 1,
-            Calendar.APRIL, TaxYear.END_OF_MONTH_DAY + 1), new DateDay(BASE_TAXYEAR, Calendar.APRIL,
+    public static final JDateDayRange RANGE_PATTERN = new JDateDayRange(new JDateDay(BASE_TAXYEAR - 1,
+            Calendar.APRIL, TaxYear.END_OF_MONTH_DAY + 1), new JDateDay(BASE_TAXYEAR, Calendar.APRIL,
             TaxYear.END_OF_MONTH_DAY));
 
     /**
@@ -252,7 +252,7 @@ public class Pattern extends Event {
         super(pList, pLine);
 
         /* Adjust the date so that it is in the correct range */
-        DateDay myDate = new DateDay(getDate());
+        JDateDay myDate = new JDateDay(getDate());
         while (myDate.compareTo(RANGE_PATTERN.getEnd()) > 0) {
             myDate.adjustYear(-1);
         }
@@ -390,10 +390,10 @@ public class Pattern extends Event {
      */
     public Event nextEvent(final EventList pEvents,
                            final TaxYear pTaxYear,
-                           final DateDay pDate) throws JDataException {
+                           final JDateDay pDate) throws JDataException {
         /* Access the frequency */
         FreqClass myFreq = getFrequency().getFrequency();
-        DateDay myDate;
+        JDateDay myDate;
         int iAdjust;
 
         /* Access the Tax Year list */
@@ -453,7 +453,7 @@ public class Pattern extends Event {
 
             /* If this is a ten month repeat */
             if (myFreq == FreqClass.TENMONTHS) {
-                myDate = new DateDay(getDate());
+                myDate = new JDateDay(getDate());
 
                 /* Calculate the difference in years */
                 iAdjust = pTaxYear.getTaxYear().getYear() - RANGE_PATTERN.getEnd().getYear();
@@ -476,7 +476,7 @@ public class Pattern extends Event {
         Event myEvent = new Event(pEvents, this);
 
         /* Set the date for this event */
-        myEvent.setDate(new DateDay(pDate));
+        myEvent.setDate(new JDateDay(pDate));
 
         /* Return the new event */
         return myEvent;
@@ -806,23 +806,23 @@ public class Pattern extends Event {
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Account [" + pAccount
-                        + "]");
+                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Account ["
+                        + pAccount + "]");
             }
 
             /* Look up the Partner */
             Account myPartner = myAccounts.findItemByName(pPartner);
             if (myPartner == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Partner [" + pPartner
-                        + "]");
+                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Partner ["
+                        + pPartner + "]");
             }
 
             /* Look up the TransType */
             TransactionType myTransType = myTranTypes.findItemByName(pTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid TransType ["
+                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid TransType ["
                         + pTransType + "]");
             }
 
@@ -830,7 +830,7 @@ public class Pattern extends Event {
             Frequency myFrequency = myFrequencies.findItemByName(pFrequency);
             if (myFrequency == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + myFormatter.formatObject(new DateDay(pDate)) + "] has invalid Frequency ["
+                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Frequency ["
                         + pFrequency + "]");
             }
 

@@ -44,8 +44,8 @@ import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -88,7 +88,7 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     /**
      * DataSet range.
      */
-    private transient DateDayRange theRange = null;
+    private transient JDateDayRange theRange = null;
 
     /**
      * Account.
@@ -435,7 +435,7 @@ public class AccountPrices extends JDataTable<ViewPrice> {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    pPrice.setDate((DateDay) pValue);
+                    pPrice.setDate((JDateDay) pValue);
                     break;
                 case COLUMN_PRICE:
                     pPrice.setPrice((JPrice) pValue);
@@ -536,7 +536,7 @@ public class AccountPrices extends JDataTable<ViewPrice> {
          * Set the date editor range.
          * @param pRange the range
          */
-        private void setDateEditorRange(final DateDayRange pRange) {
+        private void setDateEditorRange(final JDateDayRange pRange) {
             /* Set the range */
             theDateEditor.setRange(pRange);
         }

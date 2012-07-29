@@ -29,7 +29,7 @@ import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
@@ -263,7 +263,7 @@ public class FinanceData extends DataSet<FinanceData> {
     /**
      * DataSet range.
      */
-    private DateDayRange theDateRange = null;
+    private JDateDayRange theDateRange = null;
 
     /**
      * LoadState.
@@ -396,7 +396,7 @@ public class FinanceData extends DataSet<FinanceData> {
      * Obtain Date range.
      * @return the Date Range
      */
-    public DateDayRange getDateRange() {
+    public JDateDayRange getDateRange() {
         return theDateRange;
     }
 

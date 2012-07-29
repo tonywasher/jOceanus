@@ -66,9 +66,9 @@ import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
-import net.sourceforge.JDateDay.DateDayRangeSelect;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
+import net.sourceforge.JDateDay.JDateDayRangeSelect;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
@@ -230,12 +230,12 @@ public class Extract extends JDataTable<Event> {
     /**
      * Selected range.
      */
-    private transient DateDayRange theRange = null;
+    private transient JDateDayRange theRange = null;
 
     /**
      * Range selection panel.
      */
-    private DateDayRangeSelect theSelect = null;
+    private JDateDayRangeSelect theSelect = null;
 
     /**
      * Save Buttons.
@@ -421,7 +421,7 @@ public class Extract extends JDataTable<Event> {
         addMouseListener(myMouse);
 
         /* Create the sub panels */
-        theSelect = new DateDayRangeSelect();
+        theSelect = new JDateDayRangeSelect();
         theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Create the error panel for this view */
@@ -429,7 +429,7 @@ public class Extract extends JDataTable<Event> {
 
         /* Create listener */
         ExtractListener myListener = new ExtractListener();
-        theSelect.addPropertyChangeListener(DateDayRangeSelect.PROPERTY_RANGE, myListener);
+        theSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theError.addChangeListener(myListener);
         theSaveButtons.addActionListener(myListener);
 
@@ -465,7 +465,7 @@ public class Extract extends JDataTable<Event> {
         theComboList = pCombo;
 
         /* Access range */
-        DateDayRange myRange = theView.getRange();
+        JDateDayRange myRange = theView.getRange();
         theSelect.setOverallRange(myRange);
         theRange = theSelect.getRange();
         setSelection(theRange);
@@ -500,7 +500,7 @@ public class Extract extends JDataTable<Event> {
      * @param pRange the Date range for the extract
      * @throws JDataException on error
      */
-    public void setSelection(final DateDayRange pRange) throws JDataException {
+    public void setSelection(final JDateDayRange pRange) throws JDataException {
         theRange = pRange;
         theEvents = null;
         if (theRange != null) {
@@ -525,7 +525,7 @@ public class Extract extends JDataTable<Event> {
      * Set selection to the period designated by the referenced control.
      * @param pSource the source control
      */
-    public void selectPeriod(final DateDayRangeSelect pSource) {
+    public void selectPeriod(final JDateDayRangeSelect pSource) {
         /* Protect against exceptions */
         try {
             /* Adjust the period selection (this will not call back) */
@@ -830,7 +830,7 @@ public class Extract extends JDataTable<Event> {
             /* Store the appropriate value */
             switch (pColIndex) {
                 case COLUMN_DATE:
-                    pEvent.setDate((DateDay) pValue);
+                    pEvent.setDate((JDateDay) pValue);
                     break;
                 case COLUMN_DESC:
                     pEvent.setDescription((String) pValue);
@@ -1322,7 +1322,7 @@ public class Extract extends JDataTable<Event> {
          * Set the date editor range.
          * @param pRange the range
          */
-        private void setDateEditorRange(final DateDayRange pRange) {
+        private void setDateEditorRange(final JDateDayRange pRange) {
             /* Set the range */
             theDateEditor.setRange(pRange);
         }

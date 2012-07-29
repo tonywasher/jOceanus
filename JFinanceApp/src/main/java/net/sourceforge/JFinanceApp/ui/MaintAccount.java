@@ -61,8 +61,8 @@ import net.sourceforge.JDataModels.ui.ValueField.ValueClass;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayButton;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayButton;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountType;
@@ -189,7 +189,7 @@ public class MaintAccount extends JPanelWithEvents {
     /**
      * The maturity button.
      */
-    private final DateDayButton theMatButton;
+    private final JDateDayButton theMatButton;
 
     /**
      * The Account type label.
@@ -367,7 +367,7 @@ public class MaintAccount extends JPanelWithEvents {
         theTypesBox.setPrototypeDisplayValue(myDefValue);
 
         /* Create the Maturity Button */
-        theMatButton = new DateDayButton();
+        theMatButton = new JDateDayButton();
         theFieldSet.addItemField(theMatButton, Account.FIELD_MATURITY);
 
         /* Create the buttons */
@@ -390,7 +390,7 @@ public class MaintAccount extends JPanelWithEvents {
         theTypesBox.addItemListener(myListener);
         theParentBox.addItemListener(myListener);
         theAliasBox.addItemListener(myListener);
-        theMatButton.addPropertyChangeListener(DateDayButton.PROPERTY_DATE, myListener);
+        theMatButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
         theInsButton.addActionListener(myListener);
         theDelButton.addActionListener(myListener);
         theClsButton.addActionListener(myListener);
@@ -1156,7 +1156,7 @@ public class MaintAccount extends JPanelWithEvents {
                         /* If it doesn't have a maturity */
                         if (theAccount.getMaturity() == null) {
                             /* Create a default maturity */
-                            theAccount.setMaturity(new DateDay());
+                            theAccount.setMaturity(new JDateDay());
                             theAccount.getMaturity().adjustYear(1);
                         }
 
@@ -1354,7 +1354,7 @@ public class MaintAccount extends JPanelWithEvents {
                     /* If this event relates to the maturity box */
                 } else if (theMatButton.equals(o)) {
                     /* Access the value */
-                    DateDay myDate = new DateDay(theMatButton.getSelectedDate());
+                    JDateDay myDate = new JDateDay(theMatButton.getSelectedDate());
                     theAccount.setMaturity(myDate);
                 }
 

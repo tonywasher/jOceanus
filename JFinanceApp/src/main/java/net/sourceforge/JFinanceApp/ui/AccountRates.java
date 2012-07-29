@@ -49,8 +49,8 @@ import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
-import net.sourceforge.JDateDay.DateDay;
-import net.sourceforge.JDateDay.DateDayRange;
+import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -255,8 +255,8 @@ public class AccountRates extends JDataTable<AccountRate> {
      * Refresh views/controls after a load/update of underlying data.
      */
     public void refreshData() {
-        DateDayRange myRange = theView.getRange();
-        myRange = new DateDayRange(myRange.getStart(), null);
+        JDateDayRange myRange = theView.getRange();
+        myRange = new JDateDayRange(myRange.getStart(), null);
         theColumns.setDateEditorRange(myRange);
     }
 
@@ -310,7 +310,7 @@ public class AccountRates extends JDataTable<AccountRate> {
             AccountRate myCurr = myIterator.previous();
 
             /* Break loop if we have a date */
-            DateDay myDate = myCurr.getDate();
+            JDateDay myDate = myCurr.getDate();
             if (myDate != null) {
                 break;
             }
@@ -435,7 +435,7 @@ public class AccountRates extends JDataTable<AccountRate> {
                     pRate.setBonus((JRate) pValue);
                     break;
                 case COLUMN_DATE:
-                    pRate.setEndDate((DateDay) pValue);
+                    pRate.setEndDate((JDateDay) pValue);
                     break;
                 default:
                     break;
@@ -608,7 +608,7 @@ public class AccountRates extends JDataTable<AccountRate> {
          * Set the date editor range.
          * @param pRange the range
          */
-        private void setDateEditorRange(final DateDayRange pRange) {
+        private void setDateEditorRange(final JDateDayRange pRange) {
             /* Set the range */
             theDateEditor.setRange(pRange);
         }
