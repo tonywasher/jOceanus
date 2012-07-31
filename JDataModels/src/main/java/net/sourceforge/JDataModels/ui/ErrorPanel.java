@@ -37,14 +37,14 @@ import javax.swing.JLabel;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.JEventManager.JEventPanel;
 
 /**
  * Error panel.
  * @author Tony Washer
  */
-public class ErrorPanel extends JPanelWithEvents {
+public class ErrorPanel extends JEventPanel {
     /**
      * Serial Id.
      */

@@ -32,7 +32,7 @@ import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JPanelWithEvents;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.views.View;
 
@@ -40,7 +40,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Maintenance Tab panel.
  * @author Tony Washer
  */
-public class MaintenanceTab extends JPanelWithEvents {
+public class MaintenanceTab extends JEventPanel {
     /**
      * The serial Id.
      */

@@ -43,6 +43,7 @@ import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
 import net.sourceforge.JDataModels.ui.Renderer.RowCell;
 import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
+import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimalFormatter;
 
 /**
@@ -213,20 +214,12 @@ public class RenderManager {
 
     /**
      * Allocate a CalendarRenderer object.
+     * @param pFormatter the date formatter
      * @return the calendar renderer
      */
-    public CalendarRenderer allocateCalendarRenderer() {
+    public CalendarRenderer allocateCalendarRenderer(final JDateDayFormatter pFormatter) {
         /* Return a new CalendarRenderer object */
-        return new CalendarRenderer(this);
-    }
-
-    /**
-     * Allocate a DecimalRenderer object.
-     * @return the decimal renderer
-     */
-    public DecimalRenderer allocateDecimalRenderer() {
-        /* Return a new DecimalRenderer object */
-        return new DecimalRenderer(this);
+        return new CalendarRenderer(this, pFormatter);
     }
 
     /**

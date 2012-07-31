@@ -24,6 +24,9 @@ package net.sourceforge.JDateDay;
 
 import java.util.Calendar;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import net.sourceforge.JDateButton.JDateConfig;
 
 /**
@@ -73,6 +76,7 @@ public class JDateDayConfig extends JDateConfig {
      */
     public JDateDayConfig(final JDateDayFormatter pFormatter) {
         super(pFormatter);
+        pFormatter.addChangeListener(new LocaleListener(pFormatter));
     }
 
     /**
@@ -168,6 +172,30 @@ public class JDateDayConfig extends JDateConfig {
             setLatestDate(null);
         } else {
             setLatestDate(pDate.getCalendar());
+        }
+    }
+
+    /**
+     * Locale Listener class
+     */
+    private class LocaleListener implements ChangeListener {
+        /**
+         * The formatter.
+         */
+        private final JDateDayFormatter theFormatter;
+
+        /**
+         * Constructor.
+         * @param pFormatter the formatter
+         */
+        private LocaleListener(final JDateDayFormatter pFormatter) {
+            theFormatter = pFormatter;
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent e) {
+            setTheLocale(theFormatter.getLocale());
+            refreshText();
         }
     }
 }

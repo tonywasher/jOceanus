@@ -47,7 +47,16 @@ public class JDateDayCellEditor extends JDateCellEditor {
      */
     public JDateDayCellEditor() {
         /* Create a new configuration */
-        super(new JDateDayButton());
+        this(new JDateDayFormatter());
+    }
+
+    /**
+     * Constructor.
+     * @param pFormatter the formatter
+     */
+    public JDateDayCellEditor(final JDateDayFormatter pFormatter) {
+        /* Create a new configuration */
+        super(new JDateDayButton(pFormatter));
         theButton = (JDateDayButton) super.getDateButton();
     }
 

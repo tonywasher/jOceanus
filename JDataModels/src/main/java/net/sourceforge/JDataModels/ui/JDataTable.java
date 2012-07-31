@@ -25,7 +25,6 @@ package net.sourceforge.JDataModels.ui;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.lang.reflect.Array;
 
@@ -35,11 +34,8 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 
-import net.sourceforge.JDataManager.EventManager;
-import net.sourceforge.JDataManager.EventManager.ActionDetailEvent;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
@@ -47,6 +43,7 @@ import net.sourceforge.JDataModels.data.EditState;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.JDataModels.views.UpdateSet;
+import net.sourceforge.JEventManager.JEventTable;
 import net.sourceforge.JTableFilter.TableFilter;
 
 /**
@@ -54,7 +51,7 @@ import net.sourceforge.JTableFilter.TableFilter;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class JDataTable<T extends DataItem & Comparable<? super T>> extends JTable {
+public abstract class JDataTable<T extends DataItem & Comparable<? super T>> extends JEventTable {
     /**
      * Serial Id.
      */
@@ -114,84 +111,6 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
      * Is Enabled?
      */
     private boolean isEnabled = false;
-
-    /**
-     * The Event Manager.
-     */
-    private final transient EventManager theManager = new EventManager(this);
-
-    /**
-     * Add change Listener to list.
-     * @param pListener the listener to add
-     */
-    public void addChangeListener(final ChangeListener pListener) {
-        /* Add the change listener */
-        theManager.addChangeListener(pListener);
-    }
-
-    /**
-     * Add action Listener to list.
-     * @param pListener the listener to add
-     */
-    public void addActionListener(final ActionListener pListener) {
-        /* Add the action listener */
-        theManager.addActionListener(pListener);
-    }
-
-    /**
-     * Remove Change Listener.
-     * @param pListener the listener to remove
-     */
-    public void removeChangeListener(final ChangeListener pListener) {
-        /* Remove the change listener */
-        theManager.removeChangeListener(pListener);
-    }
-
-    /**
-     * Remove Action Listener.
-     * @param pListener the listener to remove
-     */
-    public void removeActionListener(final ActionListener pListener) {
-        /* Remove the action listener */
-        theManager.removeActionListener(pListener);
-    }
-
-    /**
-     * Fire State Changed Event to all registered listeners.
-     */
-    protected void fireStateChanged() {
-        /* Fire the standard event */
-        theManager.fireStateChanged();
-    }
-
-    /**
-     * Fire Action Performed Event to all registered listeners.
-     * @param pCommand the action command
-     */
-    protected void fireActionPerformed(final String pCommand) {
-        /* Fire standard action performed event */
-        theManager.fireActionPerformed(pCommand);
-    }
-
-    /**
-     * Fire Action Detail Event to all registered listeners.
-     * @param pSubId the SubId of the event.
-     * @param pDetails the action details
-     */
-    protected void fireActionEvent(final int pSubId,
-                                   final Object pDetails) {
-        /* Fire action detail event */
-        theManager.fireActionEvent(this, pSubId, pDetails);
-    }
-
-    /**
-     * Cascade action event.
-     * @param pEvent the event to cascade
-     */
-    protected void cascadeActionEvent(final ActionDetailEvent pEvent) {
-        /* Fire action detail event */
-        theManager.cascadeActionEvent(this, pEvent);
-    }
 
     /**
      * Does the table have a header row?

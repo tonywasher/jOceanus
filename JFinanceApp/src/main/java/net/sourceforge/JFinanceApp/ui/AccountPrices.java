@@ -45,7 +45,9 @@ import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
+import net.sourceforge.JDecimal.JDecimalFormatter;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -513,13 +515,15 @@ public class AccountPrices extends JDataTable<ViewPrice> {
 
             /* Access parser and formatter */
             FinanceData myData = theView.getData();
-            JDecimalParser myParser = myData.getDecimalParser();
             JDataFormatter myFormatter = myData.getDataFormatter();
+            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
+            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
-            theDateEditor = new CalendarEditor();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
+            theDateEditor = new CalendarEditor(myDateFormatter);
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
             thePriceEditor = new PriceEditor(myParser);
 
             /* Create the columns */

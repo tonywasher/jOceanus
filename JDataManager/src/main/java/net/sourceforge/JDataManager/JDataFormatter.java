@@ -24,14 +24,18 @@ package net.sourceforge.JDataManager;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 import net.sourceforge.JDataManager.JDataObject.JDataDifference;
 import net.sourceforge.JDataManager.JDataObject.JDataFormat;
 import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDecimalFormatter;
+import net.sourceforge.JDecimal.JDecimalParser;
 
 /**
  * Generic Data object formatter.
@@ -44,11 +48,37 @@ public class JDataFormatter {
     private final JDecimalFormatter theDecimalFormatter;
 
     /**
+     * The Decimal parser
+     */
+    private final JDecimalParser theDecimalParser;
+
+    /**
+     * The Date formatter
+     */
+    private final JDateDayFormatter theDateFormatter;
+
+    /**
+     * Obtain the DecimalParser
+     * @return the decimal parser
+     */
+    public JDecimalParser getDecimalParser() {
+        return theDecimalParser;
+    }
+
+    /**
      * Obtain the DecimalFormatter
      * @return the decimal formatter
      */
     public JDecimalFormatter getDecimalFormatter() {
         return theDecimalFormatter;
+    }
+
+    /**
+     * Obtain the Date formatter
+     * @return the date formatter
+     */
+    public JDateDayFormatter getDateFormatter() {
+        return theDateFormatter;
     }
 
     /**
@@ -69,6 +99,26 @@ public class JDataFormatter {
     }
 
     /**
+     * Set the date format.
+     * @param pFormat the format string
+     */
+    public final void setFormat(final String pFormat) {
+        /* Tell the formatters about the format */
+        theDateFormatter.setFormat(pFormat);
+    }
+
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* Tell the formatters about the locale */
+        theDateFormatter.setLocale(pLocale);
+        theDecimalFormatter.setLocale(pLocale);
+        theDecimalParser.setLocale(pLocale);
+    }
+
+    /**
      * Constructor
      */
     public JDataFormatter() {
@@ -81,6 +131,8 @@ public class JDataFormatter {
      */
     public JDataFormatter(final Locale pLocale) {
         theDecimalFormatter = new JDecimalFormatter(pLocale);
+        theDecimalParser = new JDecimalParser(pLocale);
+        theDateFormatter = new JDateDayFormatter(pLocale);
     }
 
     /**
@@ -150,11 +202,17 @@ public class JDataFormatter {
         }
 
         /* Handle date classes */
+        if (myClass == Date.class) {
+            return theDateFormatter.formatDate((Date) pValue);
+        }
+        if (myClass == Calendar.class) {
+            return theDateFormatter.formatCalendarDay((Calendar) pValue);
+        }
         if (myClass == JDateDay.class) {
-            return ((JDateDay) pValue).toString();
+            return theDateFormatter.formatDateDay((JDateDay) pValue);
         }
         if (myClass == JDateDayRange.class) {
-            return ((JDateDayRange) pValue).toString();
+            return theDateFormatter.formatDateDayRange((JDateDayRange) pValue);
         }
 
         /* Handle decimal classes */

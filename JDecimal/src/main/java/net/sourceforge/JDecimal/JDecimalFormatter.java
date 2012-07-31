@@ -46,7 +46,7 @@ public class JDecimalFormatter {
     /**
      * The locale.
      */
-    private final Locale theLocale;
+    private Locale theLocale;
 
     /**
      * The grouping size.
@@ -121,6 +121,15 @@ public class JDecimalFormatter {
         thePerMille = mySymbols.getPerMill();
         theDecimal = Character.toString(mySymbols.getDecimalSeparator());
         theMoneyDecimal = Character.toString(mySymbols.getMonetaryDecimalSeparator());
+    }
+
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* Store the locale */
+        theLocale = pLocale;
     }
 
     /**

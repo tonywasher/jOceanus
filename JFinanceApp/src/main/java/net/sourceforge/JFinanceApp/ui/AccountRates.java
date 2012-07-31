@@ -50,7 +50,9 @@ import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
+import net.sourceforge.JDecimal.JDecimalFormatter;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -589,13 +591,15 @@ public class AccountRates extends JDataTable<AccountRate> {
 
             /* Access parser and formatter */
             FinanceData myData = theView.getData();
-            JDecimalParser myParser = myData.getDecimalParser();
             JDataFormatter myFormatter = myData.getDataFormatter();
+            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
+            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
-            theDateEditor = new CalendarEditor();
-            theRateRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
+            theDateEditor = new CalendarEditor(myDateFormatter);
+            theRateRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
             theRateEditor = new RateEditor(myParser);
 
             /* Create the columns */

@@ -294,7 +294,7 @@ public class ValueSet {
             }
 
             /* Adjust existing hash */
-            iHashCode *= EventManager.HASH_PRIME;
+            iHashCode *= JDataManager.HASH_PRIME;
 
             /* Access value and add hash if non-null */
             Object o = theValues[myField.getIndex()];

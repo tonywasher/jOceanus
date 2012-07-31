@@ -36,7 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JPanelWithEvents;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountType;
@@ -48,7 +48,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Account selection panel.
  * @author Tony Washer
  */
-public class AccountSelect extends JPanelWithEvents {
+public class AccountSelect extends JEventPanel {
     /**
      * Serial Id.
      */

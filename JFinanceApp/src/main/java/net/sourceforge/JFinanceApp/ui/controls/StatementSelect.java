@@ -33,14 +33,14 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-import net.sourceforge.JDataManager.JPanelWithEvents;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.Account;
 
 /**
  * Statement type selection panel.
  * @author Tony Washer
  */
-public class StatementSelect extends JPanelWithEvents {
+public class StatementSelect extends JEventPanel {
     /**
      * Serial Id.
      */

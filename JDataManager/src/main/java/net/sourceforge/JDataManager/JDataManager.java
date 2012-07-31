@@ -41,6 +41,11 @@ import net.sourceforge.JDataManager.JDataObject.JDataValues;
  */
 public class JDataManager {
     /**
+     * Hash Prime.
+     */
+    public static final int HASH_PRIME = 19;
+
+    /**
      * HTML formatter.
      */
     private JDataHTML theFormatter = null;

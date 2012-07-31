@@ -47,6 +47,8 @@ import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
+import net.sourceforge.JDateDay.JDateDayFormatter;
+import net.sourceforge.JDecimal.JDecimalFormatter;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
@@ -505,10 +507,12 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
             /* Access parser and formatter */
             FinanceData myData = theView.getData();
             JDataFormatter myFormatter = myData.getDataFormatter();
+            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
+            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
             theStringRenderer = theRenderMgr.allocateStringRenderer();
 
             /* Create the columns */

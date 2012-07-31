@@ -866,11 +866,12 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             setValueTaxYear(new JDateDay(pDate));
 
             /* Look up the Regime */
-            FinanceData myData = getDataSet();
-            JDecimalParser myParser = myData.getDecimalParser();
+            FinanceData myDataSet = getDataSet();
+            JDataFormatter myFormatter = myDataSet.getDataFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Look up the Regime */
-            TaxRegimeList myRegimes = myData.getTaxRegimes();
+            TaxRegimeList myRegimes = myDataSet.getTaxRegimes();
             TaxRegime myRegime = myRegimes.findItemById(uRegimeId);
             if (myRegime == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Tax Regime Id");

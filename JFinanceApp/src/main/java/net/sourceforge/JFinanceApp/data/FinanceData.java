@@ -30,7 +30,6 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
 import net.sourceforge.JFinanceApp.data.AccountRate.AccountRateList;
@@ -271,11 +270,6 @@ public class FinanceData extends DataSet<FinanceData> {
     private LoadState theLoadState = LoadState.INITIAL;
 
     /**
-     * Decimal parser.
-     */
-    private final JDecimalParser theParser;
-
-    /**
      * General formatter.
      */
     private final JDataFormatter theFormatter;
@@ -409,14 +403,6 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
-     * Obtain the decimal parser.
-     * @return the parser
-     */
-    public JDecimalParser getDecimalParser() {
-        return theParser;
-    }
-
-    /**
      * Obtain the data formatter.
      * @return the formatter
      */
@@ -451,8 +437,7 @@ public class FinanceData extends DataSet<FinanceData> {
         /* Declare the lists */
         declareLists();
 
-        /* Create decimal parser/formatter */
-        theParser = new JDecimalParser();
+        /* Create data formatter */
         theFormatter = new JDataFormatter();
         theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
     }
@@ -464,8 +449,7 @@ public class FinanceData extends DataSet<FinanceData> {
     private FinanceData(final FinanceData pSource) {
         super(pSource);
 
-        /* Copy formatter and parser */
-        theParser = pSource.getDecimalParser();
+        /* Copy formatter */
         theFormatter = pSource.getDataFormatter();
     }
 

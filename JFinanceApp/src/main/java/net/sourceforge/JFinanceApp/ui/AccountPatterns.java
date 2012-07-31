@@ -54,6 +54,8 @@ import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayFormatter;
+import net.sourceforge.JDecimal.JDecimalFormatter;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -835,13 +837,15 @@ public class AccountPatterns extends JDataTable<Pattern> {
 
             /* Access parser and formatter */
             FinanceData myData = theView.getData();
-            JDecimalParser myParser = myData.getDecimalParser();
             JDataFormatter myFormatter = myData.getDataFormatter();
+            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
+            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
-            theDateEditor = new CalendarEditor();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
+            theDateEditor = new CalendarEditor(myDateFormatter);
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
             theMoneyEditor = new MoneyEditor(myParser);
             theStringRenderer = theRenderMgr.allocateStringRenderer();
             theStringEditor = new StringEditor();

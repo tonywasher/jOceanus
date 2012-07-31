@@ -24,25 +24,23 @@ package net.sourceforge.JEventManager;
 
 import java.awt.event.ActionListener;
 
-import javax.swing.JPanel;
+import javax.swing.JTable;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.EventManager.ActionDetailEvent;
-
 /**
- * Extension of JPanel with Event Manager to provide support for Action and Change Events.
+ * Extension of JTable with Event Manager to provide support for Action and Change Events.
  * @author Tony Washer
  */
-public class JPanelWithEvents extends JPanel {
+public class JEventTable extends JTable {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 7292826347310656362L;
+    private static final long serialVersionUID = -3037090797611288045L;
 
     /**
      * The Event Manager.
      */
-    private final transient EventManager theManager = new EventManager(this);
+    private final transient JEventManager theTableManager = new JEventManager(this);
 
     /**
      * Add change Listener to list.
@@ -50,7 +48,7 @@ public class JPanelWithEvents extends JPanel {
      */
     public void addChangeListener(final ChangeListener pListener) {
         /* Add the change listener */
-        theManager.addChangeListener(pListener);
+        theTableManager.addChangeListener(pListener);
     }
 
     /**
@@ -59,7 +57,7 @@ public class JPanelWithEvents extends JPanel {
      */
     public void addActionListener(final ActionListener pListener) {
         /* Add the action listener */
-        theManager.addActionListener(pListener);
+        theTableManager.addActionListener(pListener);
     }
 
     /**
@@ -68,7 +66,7 @@ public class JPanelWithEvents extends JPanel {
      */
     public void removeChangeListener(final ChangeListener pListener) {
         /* Remove the change listener */
-        theManager.removeChangeListener(pListener);
+        theTableManager.removeChangeListener(pListener);
     }
 
     /**
@@ -77,7 +75,7 @@ public class JPanelWithEvents extends JPanel {
      */
     public void removeActionListener(final ActionListener pListener) {
         /* Remove the action listener */
-        theManager.removeActionListener(pListener);
+        theTableManager.removeActionListener(pListener);
     }
 
     /**
@@ -85,7 +83,7 @@ public class JPanelWithEvents extends JPanel {
      */
     protected void fireStateChanged() {
         /* Fire the standard event */
-        theManager.fireStateChanged();
+        theTableManager.fireStateChanged();
     }
 
     /**
@@ -94,7 +92,7 @@ public class JPanelWithEvents extends JPanel {
      */
     protected void fireActionPerformed(final String pCommand) {
         /* Fire standard action performed event */
-        theManager.fireActionPerformed(pCommand);
+        theTableManager.fireActionPerformed(pCommand);
     }
 
     /**
@@ -105,7 +103,7 @@ public class JPanelWithEvents extends JPanel {
     protected void fireActionEvent(final int pSubId,
                                    final Object pDetails) {
         /* Fire action detail event */
-        theManager.fireActionEvent(this, pSubId, pDetails);
+        theTableManager.fireActionEvent(this, pSubId, pDetails);
     }
 
     /**
@@ -114,6 +112,6 @@ public class JPanelWithEvents extends JPanel {
      */
     protected void cascadeActionEvent(final ActionDetailEvent pEvent) {
         /* Fire action detail event */
-        theManager.cascadeActionEvent(this, pEvent);
+        theTableManager.cascadeActionEvent(this, pEvent);
     }
 }

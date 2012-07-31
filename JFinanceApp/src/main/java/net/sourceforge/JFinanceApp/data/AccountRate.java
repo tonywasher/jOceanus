@@ -30,6 +30,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
@@ -370,8 +371,9 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
         /* Protect against exceptions */
         try {
             /* Access the parser */
-            FinanceData myData = getDataSet();
-            JDecimalParser myParser = myData.getDecimalParser();
+            FinanceData myDataSet = getDataSet();
+            JDataFormatter myFormatter = myDataSet.getDataFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Record the account */
             setValueAccount(pAccount);

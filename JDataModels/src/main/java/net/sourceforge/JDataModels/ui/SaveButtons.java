@@ -31,14 +31,14 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.views.UpdateSet;
+import net.sourceforge.JEventManager.JEventPanel;
 
 /**
  * Save buttons panel.
  * @author Tony Washer
  */
-public class SaveButtons extends JPanelWithEvents {
+public class SaveButtons extends JEventPanel {
     /**
      * Serial Id.
      */

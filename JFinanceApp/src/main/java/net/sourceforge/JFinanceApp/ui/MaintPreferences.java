@@ -42,18 +42,18 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.data.PreferenceSet;
 import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JDataModels.ui.PreferenceSetPanel;
 import net.sourceforge.JDataModels.ui.RenderManager;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.views.View;
 
 /**
  * Preference maintenance panel.
  * @author Tony Washer
  */
-public class MaintPreferences extends JPanelWithEvents {
+public class MaintPreferences extends JEventPanel {
     /**
      * The serial Id.
      */

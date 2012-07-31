@@ -56,6 +56,8 @@ import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayFormatter;
+import net.sourceforge.JDecimal.JDecimalFormatter;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
@@ -706,12 +708,14 @@ public class PricePoint extends JDataTable<SpotPrice> {
 
             /* Access parser and formatter */
             FinanceData myData = theView.getData();
-            JDecimalParser myParser = myData.getDecimalParser();
             JDataFormatter myFormatter = myData.getDataFormatter();
+            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
+            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer();
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myFormatter.getDecimalFormatter());
+            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
+            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
             thePriceEditor = new PriceEditor(myParser);
             theStringRenderer = theRenderMgr.allocateStringRenderer();
 

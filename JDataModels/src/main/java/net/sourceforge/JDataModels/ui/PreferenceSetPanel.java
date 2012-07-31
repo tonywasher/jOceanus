@@ -51,7 +51,6 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.data.PreferenceSet;
 import net.sourceforge.JDataModels.data.PreferenceSet.BooleanPreference;
 import net.sourceforge.JDataModels.data.PreferenceSet.ColorPreference;
@@ -64,12 +63,13 @@ import net.sourceforge.JDataModels.data.PreferenceSet.StringPreference;
 import net.sourceforge.JDataModels.ui.ValueField.ValueClass;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayButton;
+import net.sourceforge.JEventManager.JEventPanel;
 
 /**
  * Preference Set panel.
  * @author Tony Washer
  */
-public class PreferenceSetPanel extends JPanelWithEvents {
+public class PreferenceSetPanel extends JEventPanel {
     /**
      * Serial Id.
      */

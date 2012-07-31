@@ -39,10 +39,10 @@ import javax.swing.text.html.StyleSheet;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.TaxYear;
 import net.sourceforge.JFinanceApp.ui.controls.ReportSelect;
 import net.sourceforge.JFinanceApp.ui.controls.ReportSelect.ReportType;
@@ -55,7 +55,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Report Panel.
  * @author Tony Washer
  */
-public class ReportTab extends JPanelWithEvents implements HyperlinkListener {
+public class ReportTab extends JEventPanel implements HyperlinkListener {
     /**
      * Serial Id.
      */

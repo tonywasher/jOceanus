@@ -42,12 +42,12 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.data.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.EventInfoType;
@@ -66,7 +66,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Top level panel for static data.
  * @author Tony Washer
  */
-public class MaintStatic extends JPanelWithEvents {
+public class MaintStatic extends JEventPanel {
     /**
      * Serial Id.
      */

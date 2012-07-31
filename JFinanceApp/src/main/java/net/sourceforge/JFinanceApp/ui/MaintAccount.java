@@ -46,7 +46,6 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.EditState;
@@ -63,6 +62,7 @@ import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayButton;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountType;
@@ -75,7 +75,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Account maintenance panel.
  * @author Tony Washer
  */
-public class MaintAccount extends JPanelWithEvents {
+public class MaintAccount extends JEventPanel {
     /**
      * The Serial Id.
      */

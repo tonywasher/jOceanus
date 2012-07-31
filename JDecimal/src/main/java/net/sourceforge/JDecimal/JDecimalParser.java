@@ -49,7 +49,7 @@ public class JDecimalParser {
     /**
      * The locale.
      */
-    private final Locale theLocale;
+    private Locale theLocale;
 
     /**
      * The grouping separator.
@@ -115,6 +115,15 @@ public class JDecimalParser {
 
         /* Access the default currency */
         theCurrency = mySymbols.getCurrency();
+    }
+
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* Store the locale */
+        theLocale = pLocale;
     }
 
     /**

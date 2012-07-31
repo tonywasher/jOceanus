@@ -168,18 +168,27 @@ public class JDateDayRangeSelect extends JPanel {
      * Constructor.
      */
     public JDateDayRangeSelect() {
+        /* Call standard constructor */
+        this(new JDateDayFormatter());
+    }
+
+    /**
+     * Constructor.
+     * @param pFormatter the formatter
+     */
+    public JDateDayRangeSelect(final JDateDayFormatter pFormatter) {
         /* Create the listener */
         DateListener myListener = new DateListener();
+
+        /* Determine the locale */
+        theLocale = pFormatter.getLocale();
 
         /* Create the boxes */
         thePeriodBox = new JComboBox();
         thePeriodBox.setMaximumSize(new Dimension(PERIOD_WIDTH, PERIOD_HEIGHT));
 
         /* Create the DateButton */
-        theDateButton = new JDateDayButton();
-
-        /* Set the locale */
-        setLocale(Locale.getDefault());
+        theDateButton = new JDateDayButton(pFormatter);
 
         /* Add the PeriodTypes to the period box */
         for (JDatePeriod myPeriod : JDatePeriod.values()) {
@@ -224,22 +233,12 @@ public class JDateDayRangeSelect extends JPanel {
         theDateButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
     }
 
-    @Override
-    public final void setLocale(final Locale pLocale) {
-        /* Record the locale */
-        theLocale = pLocale;
-        theDateButton.setLocale(pLocale);
-
-        /* Pass the call onwards */
-        super.setLocale(pLocale);
-    }
-
     /**
-     * Set the date format.
-     * @param pFormat the format string
+     * Obtain the date configuration
+     * @return the Date configuration
      */
-    public void setFormat(final String pFormat) {
-        theDateButton.setFormat(pFormat);
+    public JDateDayConfig getDateConfig() {
+        return theDateButton.getDateConfig();
     }
 
     /**

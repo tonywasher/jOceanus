@@ -30,6 +30,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
@@ -283,7 +284,8 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         try {
             /* Access the DataSet and parser */
             FinanceData myDataSet = getDataSet();
-            JDecimalParser myParser = myDataSet.getDecimalParser();
+            JDataFormatter myFormatter = myDataSet.getDataFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Record account, date and price */
             setValueAccount(pAccount);

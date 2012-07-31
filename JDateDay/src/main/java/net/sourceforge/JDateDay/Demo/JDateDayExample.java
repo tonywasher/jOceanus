@@ -309,7 +309,6 @@ public class JDateDayExample extends JApplet {
         JLabel myStart = new JLabel("Start:");
         JLabel myEnd = new JLabel("End:");
         JLabel mySelRange = new JLabel("SelectedRange:");
-        theSelectedRange = new JLabel(theRangeSelect.getRange().toString());
 
         /* Create a Range sub-panel */
         JPanel myRange = new JPanel(new GridBagLayout());
@@ -502,7 +501,7 @@ public class JDateDayExample extends JApplet {
 
         /* Create the renderer and editor */
         theRenderer = new JDateDayCellRenderer(theFormatter);
-        theEditor = new JDateDayCellEditor();
+        theEditor = new JDateDayCellEditor(theFormatter);
 
         /* Set sorting on the table */
         theTable.setAutoCreateRowSorter(true);
@@ -567,7 +566,7 @@ public class JDateDayExample extends JApplet {
         theEndDate = new JDateDayButton(theFormatter);
 
         /* Create the range selection */
-        theRangeSelect = new JDateDayRangeSelect();
+        theRangeSelect = new JDateDayRangeSelect(theFormatter);
         theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, theListener);
 
         /* Initialise the values */
@@ -584,6 +583,9 @@ public class JDateDayExample extends JApplet {
         /* Add Listener to buttons */
         theStartDate.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, theListener);
         theEndDate.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, theListener);
+
+        /* Create the range report label */
+        theSelectedRange = new JLabel(theRangeSelect.getRange().toString());
     }
 
     /**
@@ -616,16 +618,20 @@ public class JDateDayExample extends JApplet {
      * Apply Locale to underlying objects.
      */
     private void applyLocale() {
+        /* Set locale for formatter */
+        theFormatter.setLocale(theLocale);
+
         /* Set the Renderer and Editor Locale */
-        theRenderer.setLocale(theLocale);
-        theEditor.setLocale(theLocale);
+        // theRenderer.setLocale(theLocale);
+        // theEditor.setLocale(theLocale);
 
         /* Set the Start/End Date button locale */
-        theStartDate.setLocale(theLocale);
-        theEndDate.setLocale(theLocale);
+        // theStartDate.setLocale(theLocale);
+        // theEndDate.setLocale(theLocale);
 
         /* Set range locale */
-        theRangeSelect.setLocale(theLocale);
+        // theRangeSelect.setLocale(theLocale);
+        theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Set format options */
         JDateDayConfig myConfig = theEditor.getDateConfig();
@@ -633,6 +639,8 @@ public class JDateDayExample extends JApplet {
         myConfig = theStartDate.getDateConfig();
         myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
         myConfig = theEndDate.getDateConfig();
+        myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
+        myConfig = theRangeSelect.getDateConfig();
         myConfig.setFormatOptions(theMaxDayLen, doShrinkFromRight, doPretty);
 
         /* Note that we should redraw the table */
@@ -643,16 +651,20 @@ public class JDateDayExample extends JApplet {
      * Apply format to underlying objects.
      */
     private void applyFormat() {
+        /* Set format for formatter */
+        theFormatter.setFormat(theFormat);
+
         /* Set the Renderer and Editor Format */
-        theRenderer.setFormat(theFormat);
-        theEditor.setFormat(theFormat);
+        // theRenderer.setFormat(theFormat);
+        // theEditor.setFormat(theFormat);
 
         /* Set the Start/End Date button format */
-        theStartDate.setFormat(theFormat);
-        theEndDate.setFormat(theFormat);
+        // theStartDate.setFormat(theFormat);
+        // theEndDate.setFormat(theFormat);
 
         /* Set range format */
-        theRangeSelect.setFormat(theFormat);
+        // theRangeSelect.setFormat(theFormat);
+        theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */
         theTable.repaint();
@@ -697,7 +709,7 @@ public class JDateDayExample extends JApplet {
                 /* Apply the new range */
                 JDateDayRange myRange = theRangeSelect.getRange();
                 if (theSelectedRange != null) {
-                    theSelectedRange.setText(myRange.toString());
+                    theSelectedRange.setText(theFormatter.formatDateDayRange(myRange));
                 }
             }
         }

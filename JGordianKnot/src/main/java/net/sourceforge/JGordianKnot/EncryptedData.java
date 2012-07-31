@@ -24,11 +24,9 @@ package net.sourceforge.JGordianKnot;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Locale;
 
 import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
@@ -38,6 +36,7 @@ import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataObject.JDataDiffers;
 import net.sourceforge.JDataManager.JDataObject.JDataFormat;
 import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
@@ -763,19 +762,7 @@ public final class EncryptedData {
         /**
          * Date Formatter.
          */
-        private DateFormat theFormat = null;
-
-        /**
-         * Obtain the Date format.
-         * @return the format
-         */
-        private DateFormat getDateFormat() {
-            /* Allocate format if it does not exist */
-            if (theFormat == null) {
-                theFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.US);
-            }
-            return theFormat;
-        }
+        private final JDateDayFormatter theFormatter;
 
         /**
          * Constructor.
@@ -788,7 +775,7 @@ public final class EncryptedData {
                                 final JDataFormatter pFormatter,
                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pFormatter, pEncrypted);
-
+            theFormatter = pFormatter.getDateFormatter();
         }
 
         /**
@@ -802,14 +789,15 @@ public final class EncryptedData {
                                 final JDataFormatter pFormatter,
                                 final Date pUnencrypted) throws JDataException {
             super(pCipherSet, pFormatter, pUnencrypted);
+            theFormatter = pFormatter.getDateFormatter();
         }
 
         @Override
         protected Date parseBytes(final byte[] pBytes) throws JDataException {
             /* Protect against exceptions */
             try {
-                /* Convert the byte array to a string and then an integer */
-                return getDateFormat().parse(DataConverter.byteArrayToString(pBytes));
+                /* Convert the byte array to a string and then a date */
+                return theFormatter.parseDate(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
@@ -824,7 +812,7 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
-                return DataConverter.stringToByteArray(getDateFormat().format(getValue()));
+                return DataConverter.stringToByteArray(theFormatter.formatDate(getValue()));
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
@@ -838,6 +826,11 @@ public final class EncryptedData {
      */
     public static final class EncryptedDateDay extends EncryptedField<JDateDay> {
         /**
+         * Date Formatter.
+         */
+        private final JDateDayFormatter theFormatter;
+
+        /**
          * Constructor.
          * @param pCipherSet the cipherSet
          * @param pFormatter the data formatter
@@ -848,6 +841,7 @@ public final class EncryptedData {
                                    final JDataFormatter pFormatter,
                                    final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pFormatter, pEncrypted);
+            theFormatter = pFormatter.getDateFormatter();
         }
 
         /**
@@ -861,6 +855,7 @@ public final class EncryptedData {
                                    final JDataFormatter pFormatter,
                                    final JDateDay pUnencrypted) throws JDataException {
             super(pCipherSet, pFormatter, pUnencrypted);
+            theFormatter = pFormatter.getDateFormatter();
         }
 
         @Override
@@ -868,9 +863,11 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
-                return new JDateDay(DataConverter.byteArrayToString(pBytes));
+                return theFormatter.parseDateDay(DataConverter.byteArrayToString(pBytes));
 
                 /* Catch Exceptions */
+            } catch (ParseException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
@@ -881,7 +878,7 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
-                return DataConverter.stringToByteArray(getValue().toString());
+                return DataConverter.stringToByteArray(theFormatter.formatDateDay(getValue()));
 
                 /* Catch Exceptions */
             } catch (JDataException e) {

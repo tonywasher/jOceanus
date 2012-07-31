@@ -39,11 +39,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateButton.JDateButton;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayButton;
 import net.sourceforge.JDateDay.JDateDayRange;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.TaxYear;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
@@ -56,7 +56,7 @@ import net.sourceforge.JSortedList.OrderedListIterator;
  * Report selection panel.
  * @author Tony Washer
  */
-public class ReportSelect extends JPanelWithEvents {
+public class ReportSelect extends JEventPanel {
     /**
      * Serial Id.
      */

@@ -898,7 +898,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
 
             /* Access the parser */
             FinanceData myDataSet = getDataSet();
-            JDecimalParser myParser = myDataSet.getDecimalParser();
+            JDataFormatter myFormatter = myDataSet.getDataFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Record the standard values */
             setValueDesc(pDesc);

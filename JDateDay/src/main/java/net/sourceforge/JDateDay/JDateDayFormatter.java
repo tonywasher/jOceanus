@@ -22,18 +22,20 @@
  ******************************************************************************/
 package net.sourceforge.JDateDay;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
 import net.sourceforge.JDateButton.JDateFormatter;
+import net.sourceforge.JEventManager.JEventObject;
 
 /**
  * Formatter for Date objects.
  * @author Tony Washer
  */
-public class JDateDayFormatter implements JDateFormatter {
+public class JDateDayFormatter extends JEventObject implements JDateFormatter {
     /**
      * The default format.
      */
@@ -42,7 +44,12 @@ public class JDateDayFormatter implements JDateFormatter {
     /**
      * The locale.
      */
-    private final Locale theLocale;
+    private Locale theLocale;
+
+    /**
+     * The Simple Date format for the locale and format string.
+     */
+    private String theFormat = null;
 
     /**
      * The Simple Date format for the locale and format string.
@@ -72,8 +79,34 @@ public class JDateDayFormatter implements JDateFormatter {
      * @param pFormat the format string
      */
     public final void setFormat(final String pFormat) {
+        /* If the locale is the same */
+        if (theFormat.equals(pFormat)) {
+            /* Ignore */
+            return;
+        }
+
         /* Create the simple date format */
+        theFormat = pFormat;
         theDateFormat = new SimpleDateFormat(pFormat, theLocale);
+
+        /* Notify of the change */
+        fireStateChanged();
+    }
+
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* If the locale is the same */
+        if (theLocale.equals(pLocale)) {
+            /* Ignore */
+            return;
+        }
+
+        /* Store the locale */
+        theLocale = pLocale;
+        setFormat(theFormat);
     }
 
     @Override
@@ -139,6 +172,40 @@ public class JDateDayFormatter implements JDateFormatter {
 
         /* return the format */
         return myFormat;
+    }
+
+    /**
+     * Parse Date.
+     * @param pValue Formatted Date
+     * @return the Date
+     * @throws ParseException on error
+     */
+    public Date parseDate(final String pValue) throws ParseException {
+        return theDateFormat.parse(pValue);
+    }
+
+    /**
+     * Parse CalendarDay.
+     * @param pValue Formatted CalendarDay
+     * @return the CalendarDay
+     * @throws ParseException on error
+     */
+    public Calendar parseCalendarDay(final String pValue) throws ParseException {
+        Date myDate = parseDate(pValue);
+        Calendar myCalendar = Calendar.getInstance(theLocale);
+        myCalendar.setTime(myDate);
+        return myCalendar;
+    }
+
+    /**
+     * Parse DateDay.
+     * @param pValue Formatted DateDay
+     * @return the DateDay
+     * @throws ParseException on error
+     */
+    public JDateDay parseDateDay(final String pValue) throws ParseException {
+        Date myDate = parseDate(pValue);
+        return new JDateDay(myDate);
     }
 
     @Override

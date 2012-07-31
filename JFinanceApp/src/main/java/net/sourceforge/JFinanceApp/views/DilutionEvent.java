@@ -336,7 +336,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
         public DilutionEventList(final FinanceData pData) {
             super(DilutionEvent.class);
             theData = pData;
-            theParser = theData.getDecimalParser();
+            theParser = theData.getDataFormatter().getDecimalParser();
         }
 
         /**

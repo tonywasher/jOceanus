@@ -43,6 +43,7 @@ import javax.swing.table.TableCellEditor;
 import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayCellEditor;
+import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDecimalParser;
@@ -349,6 +350,15 @@ public class Editor {
          * The Selectable range.
          */
         private transient JDateDayRange theRange = null;
+
+        /**
+         * Constructor.
+         * @param pFormatter the formatter
+         */
+        public CalendarEditor(final JDateDayFormatter pFormatter) {
+            /* Create a new configuration */
+            super(pFormatter);
+        }
 
         /**
          * Set the selectable range.

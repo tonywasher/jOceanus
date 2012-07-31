@@ -25,12 +25,14 @@ package net.sourceforge.JEventManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 import java.util.ListIterator;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+
+import net.sourceforge.JEventManager.JEventRegistration.ActionRegistration;
+import net.sourceforge.JEventManager.JEventRegistration.ChangeRegistration;
 
 /**
  * EventManager implementation. This maintains a list of ChangeListeners/ActionListeners and allows the caller
@@ -38,12 +40,7 @@ import javax.swing.event.ChangeListener;
  * non-Swing components and also to enable improved control over the contents of the ChangeEvents and
  * ActionEvents that are fired
  */
-public class EventManager {
-    /**
-     * Hash Prime.
-     */
-    public static final int HASH_PRIME = 19;
-
+public class JEventManager {
     /**
      * The Owner of the events.
      */
@@ -52,85 +49,18 @@ public class EventManager {
     /**
      * The list of registrations.
      */
-    private volatile List<Registration> theRegistrations = null;
-
-    /**
-     * Registration enumeration.
-     */
-    private enum RegistrationType {
-        /**
-         * Change Listener.
-         */
-        Change,
-
-        /**
-         * Action Listener.
-         */
-        Action;
-    }
-
-    /**
-     * Registration class.
-     */
-    private static final class Registration {
-        /**
-         * Registration Type.
-         */
-        private final RegistrationType theType;
-
-        /**
-         * Listener.
-         */
-        private final EventListener theListener;
-
-        /**
-         * Constructor.
-         * @param pType the Registration Type
-         * @param pListener the Listener
-         */
-        private Registration(final RegistrationType pType,
-                             final EventListener pListener) {
-            /* Store value */
-            theType = pType;
-            theListener = pListener;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            /* Handle trivial cases */
-            if (o == null) {
-                return false;
-            }
-            if (o.getClass() != this.getClass()) {
-                return false;
-            }
-
-            /* Cast as Registration */
-            Registration myReg = (Registration) o;
-
-            /* Compare fields */
-            return ((theType == myReg.theType) && (theListener == myReg.theListener));
-        }
-
-        @Override
-        public int hashCode() {
-            /* Calculate hashCode and return it */
-            int myHash = HASH_PRIME * (theType.ordinal() + 1);
-            myHash += theListener.hashCode();
-            return myHash;
-        }
-    }
+    private volatile List<JEventRegistration> theRegistrations = null;
 
     /**
      * Constructor.
      * @param pOwner the owner object
      */
-    public EventManager(final Object pOwner) {
+    public JEventManager(final Object pOwner) {
         /* Store the owner */
         theOwner = pOwner;
 
         /* Allocate the list */
-        theRegistrations = new ArrayList<Registration>();
+        theRegistrations = new ArrayList<JEventRegistration>();
     }
 
     /**
@@ -139,7 +69,7 @@ public class EventManager {
      */
     public void addChangeListener(final ChangeListener pListener) {
         /* Create the registration */
-        Registration myReg = new Registration(RegistrationType.Change, pListener);
+        JEventRegistration myReg = new ChangeRegistration(pListener);
 
         /* Add it to the list */
         adjustListenerList(myReg, true);
@@ -151,7 +81,7 @@ public class EventManager {
      */
     public void addActionListener(final ActionListener pListener) {
         /* Create the registration */
-        Registration myReg = new Registration(RegistrationType.Action, pListener);
+        JEventRegistration myReg = new ActionRegistration(pListener);
 
         /* Add it to the list */
         adjustListenerList(myReg, true);
@@ -163,7 +93,7 @@ public class EventManager {
      */
     public void removeChangeListener(final ChangeListener pListener) {
         /* Create the registration */
-        Registration myReg = new Registration(RegistrationType.Change, pListener);
+        JEventRegistration myReg = new ChangeRegistration(pListener);
 
         /* Remove it from the list */
         adjustListenerList(myReg, false);
@@ -175,7 +105,7 @@ public class EventManager {
      */
     public void removeActionListener(final ActionListener pListener) {
         /* Create the registration */
-        Registration myReg = new Registration(RegistrationType.Action, pListener);
+        JEventRegistration myReg = new ActionRegistration(pListener);
 
         /* Remove it from the list */
         adjustListenerList(myReg, false);
@@ -186,7 +116,7 @@ public class EventManager {
      * @param pRegistration the relevant registration
      * @param isMember should this registration be in the list
      */
-    private synchronized void adjustListenerList(final Registration pRegistration,
+    private synchronized void adjustListenerList(final JEventRegistration pRegistration,
                                                  final boolean isMember) {
         /* If the listener is already in the correct state, return */
         if (theRegistrations.contains(pRegistration) == isMember) {
@@ -194,7 +124,7 @@ public class EventManager {
         }
 
         /* Create a new list to avoid affecting any currently firing iterations */
-        List<Registration> myNew = new ArrayList<Registration>(theRegistrations);
+        List<JEventRegistration> myNew = new ArrayList<JEventRegistration>(theRegistrations);
 
         /* Adjust the list */
         if (isMember) {
@@ -224,22 +154,20 @@ public class EventManager {
         ChangeEvent myEvent = new ChangeEvent(pOwner);
 
         /* Obtain a reference to the registrations */
-        List<Registration> myList = theRegistrations;
+        List<JEventRegistration> myList = theRegistrations;
 
         /* Loop backwards through the list to notify most recently registered first */
-        ListIterator<Registration> myIterator = myList.listIterator(myList.size());
+        ListIterator<JEventRegistration> myIterator = myList.listIterator(myList.size());
         while (myIterator.hasPrevious()) {
             /* Access the registration */
-            Registration myReg = myIterator.previous();
+            JEventRegistration myReg = myIterator.previous();
 
-            /* Ignore if not a Change registration */
-            if (myReg.theType != RegistrationType.Change) {
-                continue;
+            /* If this is a change registration */
+            if (myReg instanceof ChangeRegistration) {
+                /* Fire the event */
+                ChangeRegistration myChange = (ChangeRegistration) myReg;
+                myChange.processEvent(myEvent);
             }
-
-            /* Fire the event */
-            ChangeListener myListener = (ChangeListener) myReg.theListener;
-            myListener.stateChanged(myEvent);
         }
     }
 
@@ -288,110 +216,20 @@ public class EventManager {
      */
     private void fireActionEvent(final ActionEvent pEvent) {
         /* Obtain a reference to the registrations */
-        List<Registration> myList = theRegistrations;
+        List<JEventRegistration> myList = theRegistrations;
 
         /* Loop backwards through the list to notify most recently registered first */
-        ListIterator<Registration> myIterator = myList.listIterator(myList.size());
+        ListIterator<JEventRegistration> myIterator = myList.listIterator(myList.size());
         while (myIterator.hasPrevious()) {
             /* Access the registration */
-            Registration myReg = myIterator.previous();
+            JEventRegistration myReg = myIterator.previous();
 
-            /* Ignore if not an Action registration */
-            if (myReg.theType != RegistrationType.Action) {
-                continue;
+            /* If this is an action registration */
+            if (myReg instanceof ActionRegistration) {
+                /* Fire the event */
+                ActionRegistration myAction = (ActionRegistration) myReg;
+                myAction.processEvent(pEvent);
             }
-
-            /* Fire the event */
-            ActionListener myListener = (ActionListener) myReg.theListener;
-            myListener.actionPerformed(pEvent);
-        }
-    }
-
-    /**
-     * The extended action event. This allows the definition of multiple ActionIds by providing an additional
-     * subId field. The original Action Event is restricted to a single Id <b>ACTION_PERFORMED</b>. In
-     * addition, rather than using the command string, this is set to NULL and a user defined object is
-     * available to provide details about the event that do not have to be parsed from a string.
-     */
-    public static class ActionDetailEvent extends ActionEvent {
-        /**
-         * Serial Id.
-         */
-        private static final long serialVersionUID = -556484648311704973L;
-
-        /**
-         * The first available Event SubId.
-         */
-        private static final int ACTION_RANGE = 100;
-
-        /**
-         * The first available Event SubId.
-         */
-        public static final int ACTION_FIRST = ACTION_PERFORMED;
-
-        /**
-         * The last available Event SubId.
-         */
-        public static final int ACTION_LAST = ACTION_PERFORMED + ACTION_RANGE - 1;
-
-        /**
-         * The subId of the event.
-         */
-        private final int theSubId;
-
-        /**
-         * The details of the event.
-         */
-        private final Object theDetails;
-
-        /**
-         * Obtain the subId.
-         * @return the subId
-         */
-        public int getSubId() {
-            return theSubId;
-        }
-
-        /**
-         * Obtain the details.
-         * @return the details
-         */
-        public Object getDetails() {
-            return theDetails;
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source of the event
-         * @param pId the id of the event
-         * @param pSubId the subId for the event
-         * @param pDetails the details of the event
-         */
-        public ActionDetailEvent(final Object pSource,
-                                 final int pId,
-                                 final int pSubId,
-                                 final Object pDetails) {
-            /* Call super-constructor */
-            super(pSource, pId, (pDetails instanceof String) ? ((String) pDetails) : null);
-
-            /* Set the details */
-            theSubId = pSubId;
-            theDetails = pDetails;
-        }
-
-        /**
-         * Constructor.
-         * @param pSource the source of the event
-         * @param pEvent the source event
-         */
-        public ActionDetailEvent(final Object pSource,
-                                 final ActionDetailEvent pEvent) {
-            /* Call super-constructor */
-            super(pSource, pEvent.getID(), pEvent.getActionCommand());
-
-            /* Set the details */
-            theSubId = pEvent.getSubId();
-            theDetails = pEvent.getDetails();
         }
     }
 }

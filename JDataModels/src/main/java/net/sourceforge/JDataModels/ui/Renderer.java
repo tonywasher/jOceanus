@@ -33,6 +33,7 @@ import javax.swing.table.TableModel;
 import net.sourceforge.JDataModels.ui.RenderManager.PopulateRenderData;
 import net.sourceforge.JDataModels.ui.RenderManager.RenderData;
 import net.sourceforge.JDateDay.JDateDayCellRenderer;
+import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDecimalFormatter;
 
@@ -258,8 +259,10 @@ public final class Renderer {
         /**
          * Constructor.
          * @param pManager the renderer manager
+         * @param pFormatter the formatter
          */
-        protected CalendarRenderer(final RenderManager pManager) {
+        protected CalendarRenderer(final RenderManager pManager,
+                                   final JDateDayFormatter pFormatter) {
             theData = pManager.allocateRenderData(true);
             setHorizontalAlignment(SwingConstants.LEFT);
         }
@@ -299,14 +302,6 @@ public final class Renderer {
          * Decimal Parser.
          */
         private final transient JDecimalFormatter theFormatter;
-
-        /**
-         * Constructor.
-         * @param pManager the renderer manager
-         */
-        protected DecimalRenderer(final RenderManager pManager) {
-            this(pManager, new JDecimalFormatter());
-        }
 
         /**
          * Constructor.

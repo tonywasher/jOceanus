@@ -49,7 +49,6 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDataManager.SpringUtilities;
 import net.sourceforge.JDataModels.data.EditState;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
@@ -64,6 +63,7 @@ import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.TaxRegime;
 import net.sourceforge.JFinanceApp.data.TaxRegime.TaxRegimeList;
@@ -76,7 +76,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * TaxYear maintenance panel.
  * @author Tony Washer
  */
-public class MaintTaxYear extends JPanelWithEvents {
+public class MaintTaxYear extends JEventPanel {
     /**
      * Serial Id.
      */

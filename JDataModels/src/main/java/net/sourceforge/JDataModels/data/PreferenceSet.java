@@ -33,20 +33,19 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import javax.swing.event.ChangeListener;
-
 import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.EventManager;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDateDay.JDateDay;
+import net.sourceforge.JEventManager.JEventManager;
+import net.sourceforge.JEventManager.JEventObject;
 
 /**
  * Wrapper class for java preferences.
  * @author Tony Washer
  */
-public abstract class PreferenceSet {
+public abstract class PreferenceSet extends JEventObject {
     /**
      * Unknown preference string.
      */
@@ -61,11 +60,6 @@ public abstract class PreferenceSet {
      * Font separator.
      */
     private static final String FONT_SEPARATOR = ":";
-
-    /**
-     * Event Manager for this set.
-     */
-    private final EventManager theManager = new EventManager(this);
 
     /**
      * The Preference node for this set.
@@ -88,32 +82,6 @@ public abstract class PreferenceSet {
      */
     public Collection<PreferenceItem> getPreferences() {
         return theMap.values();
-    }
-
-    /**
-     * Add change Listener to list.
-     * @param pListener the listener to add
-     */
-    public void addChangeListener(final ChangeListener pListener) {
-        /* Add the change listener */
-        theManager.addChangeListener(pListener);
-    }
-
-    /**
-     * Remove Change Listener.
-     * @param pListener the listener to remove
-     */
-    public void removeChangeListener(final ChangeListener pListener) {
-        /* Remove the change listener */
-        theManager.removeChangeListener(pListener);
-    }
-
-    /**
-     * Fire State Changed Event to all registered listeners.
-     */
-    protected final void fireStateChanged() {
-        /* Fire the standard event */
-        theManager.fireStateChanged();
     }
 
     /**
@@ -1347,7 +1315,7 @@ public abstract class PreferenceSet {
         /**
          * Listener manager.
          */
-        private static EventManager theListeners = new EventManager(PreferenceManager.class);
+        private static JEventManager theListeners = new JEventManager(PreferenceManager.class);
 
         /**
          * Add action Listener to list.

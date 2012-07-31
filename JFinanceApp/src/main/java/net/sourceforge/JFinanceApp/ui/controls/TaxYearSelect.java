@@ -36,7 +36,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JPanelWithEvents;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.TaxYear;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
@@ -46,7 +46,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * TaxYear selection panel.
  * @author Tony Washer
  */
-public class TaxYearSelect extends JPanelWithEvents {
+public class TaxYearSelect extends JEventPanel {
     /**
      * Serial Id.
      */

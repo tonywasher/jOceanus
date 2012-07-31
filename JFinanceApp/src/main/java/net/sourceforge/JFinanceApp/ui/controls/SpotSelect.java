@@ -41,11 +41,11 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JPanelWithEvents;
 import net.sourceforge.JDateButton.JDateButton;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayButton;
 import net.sourceforge.JDateDay.JDateDayRange;
+import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountType;
@@ -57,7 +57,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * SpotPrice Date selection panel.
  * @author Tony Washer
  */
-public class SpotSelect extends JPanelWithEvents {
+public class SpotSelect extends JEventPanel {
     /**
      * Serial Id.
      */
