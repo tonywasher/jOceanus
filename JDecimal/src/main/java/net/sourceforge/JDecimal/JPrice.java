@@ -28,24 +28,11 @@ import java.util.Currency;
 /**
  * Represents a Price object.
  */
-public class JPrice extends JDecimal {
+public class JPrice extends JMoney {
     /**
      * Additional number of decimals for Price.
      */
     protected static final int XTRA_DECIMALS = 2;
-
-    /**
-     * Currency for price.
-     */
-    private final Currency theCurrency;
-
-    /**
-     * Access the currency.
-     * @return the currency
-     */
-    public Currency getCurrency() {
-        return theCurrency;
-    }
 
     /**
      * Constructor for price of value zero in the default currency.
@@ -59,8 +46,8 @@ public class JPrice extends JDecimal {
      * @param pCurrency the currency
      */
     public JPrice(final Currency pCurrency) {
-        theCurrency = pCurrency;
-        recordScale(theCurrency.getDefaultFractionDigits() + XTRA_DECIMALS);
+        super(pCurrency);
+        recordScale(pCurrency.getDefaultFractionDigits() + XTRA_DECIMALS);
     }
 
     /**
@@ -68,8 +55,8 @@ public class JPrice extends JDecimal {
      * @param pPrice the Price to copy
      */
     public JPrice(final JPrice pPrice) {
-        super(pPrice.unscaledValue(), pPrice.scale());
-        theCurrency = pPrice.getCurrency();
+        super(pPrice.getCurrency());
+        setValue(pPrice.unscaledValue(), pPrice.scale());
     }
 
     /**
@@ -82,7 +69,7 @@ public class JPrice extends JDecimal {
 
         /* Parse the string and correct the scale */
         JDecimalParser.parseDecimalValue(pSource.trim(), this);
-        adjustToScale(theCurrency.getDefaultFractionDigits() + XTRA_DECIMALS);
+        adjustToScale(getCurrency().getDefaultFractionDigits() + XTRA_DECIMALS);
     }
 
     /**
@@ -96,16 +83,6 @@ public class JPrice extends JDecimal {
         calculateQuotient(pDilutedPrice, pDilution);
     }
 
-    @Override
-    public void addValue(final JDecimal pValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void subtractValue(final JDecimal pValue) {
-        throw new UnsupportedOperationException();
-    }
-
     /**
      * obtain a Diluted price.
      * @param pDilution the dilution factor
@@ -114,37 +91,5 @@ public class JPrice extends JDecimal {
     public JDilutedPrice getDilutedPrice(final JDilution pDilution) {
         /* Calculate diluted price */
         return new JDilutedPrice(this, pDilution);
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-
-        /* Make sure that the object is the same class */
-        if (getClass() != pThat.getClass()) {
-            return false;
-        }
-
-        /* Cast as price */
-        JPrice myThat = (JPrice) pThat;
-
-        /* Check currency */
-        if (!theCurrency.equals(myThat.getCurrency())) {
-            return false;
-        }
-
-        /* Check value and scale */
-        return super.equals(pThat);
-    }
-
-    @Override
-    public int hashCode() {
-        return theCurrency.hashCode() ^ super.hashCode();
     }
 }

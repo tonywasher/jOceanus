@@ -27,27 +27,19 @@ import java.util.Currency;
 /**
  * Represents a Diluted Price object.
  */
-public class JDilutedPrice extends JDecimal {
+public class JDilutedPrice extends JMoney {
     /**
-     * Currency for price.
+     * Additional number of decimals for Price.
      */
-    private final Currency theCurrency;
-
-    /**
-     * Access the currency.
-     * @return the currency
-     */
-    public Currency getCurrency() {
-        return theCurrency;
-    }
+    protected static final int XTRA_DECIMALS = JPrice.XTRA_DECIMALS;
 
     /**
      * Constructor.
      * @param pCurrency the currency
      */
     protected JDilutedPrice(final Currency pCurrency) {
-        theCurrency = pCurrency;
-        recordScale(theCurrency.getDefaultFractionDigits() + JPrice.XTRA_DECIMALS);
+        super(pCurrency);
+        recordScale(pCurrency.getDefaultFractionDigits() + XTRA_DECIMALS);
     }
 
     /**
@@ -55,8 +47,8 @@ public class JDilutedPrice extends JDecimal {
      * @param pPrice the Price to copy
      */
     public JDilutedPrice(final JDilutedPrice pPrice) {
-        super(pPrice.unscaledValue(), pPrice.scale());
-        theCurrency = pPrice.getCurrency();
+        super(pPrice.getCurrency());
+        setValue(pPrice.unscaledValue(), pPrice.scale());
     }
 
     /**
@@ -66,18 +58,8 @@ public class JDilutedPrice extends JDecimal {
      */
     protected JDilutedPrice(final JPrice pPrice,
                             final JDilution pDilution) {
-        this(pPrice.getCurrency());
+        super(pPrice.getCurrency());
         calculateProduct(pPrice, pDilution);
-    }
-
-    @Override
-    public void addValue(final JDecimal pValue) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void subtractValue(final JDecimal pValue) {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -88,37 +70,5 @@ public class JDilutedPrice extends JDecimal {
     public JPrice getPrice(final JDilution pDilution) {
         /* Calculate original base price */
         return new JPrice(this, pDilution);
-    }
-
-    @Override
-    public boolean equals(final Object pThat) {
-        /* Handle trivial cases */
-        if (this == pThat) {
-            return true;
-        }
-        if (pThat == null) {
-            return false;
-        }
-
-        /* Make sure that the object is the same class */
-        if (getClass() != pThat.getClass()) {
-            return false;
-        }
-
-        /* Cast as diluted price */
-        JDilutedPrice myThat = (JDilutedPrice) pThat;
-
-        /* Check currency */
-        if (!theCurrency.equals(myThat.getCurrency())) {
-            return false;
-        }
-
-        /* Check value and scale */
-        return super.equals(pThat);
-    }
-
-    @Override
-    public int hashCode() {
-        return theCurrency.hashCode() ^ super.hashCode();
     }
 }

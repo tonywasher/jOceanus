@@ -44,6 +44,26 @@ public class JDecimalFormatter {
     protected static final char CHAR_BLANK = ' ';
 
     /**
+     * The Zero character.
+     */
+    protected static final char CHAR_ZERO = '0';
+
+    /**
+     * The Minus character.
+     */
+    protected static final char CHAR_MINUS = '-';
+
+    /**
+     * The Decimal character.
+     */
+    protected static final String STR_DEC = ".";
+
+    /**
+     * The Currency separator.
+     */
+    protected static final String STR_CURRSEP = ":";
+
+    /**
      * The locale.
      */
     private Locale theLocale;
@@ -173,22 +193,40 @@ public class JDecimalFormatter {
         /* Add leading zeroes */
         int myLen = myString.length();
         while (myLen < (myScale + 1)) {
-            myString.insert(0, '0');
+            myString.insert(0, CHAR_ZERO);
             myLen++;
         }
 
         /* Insert the decimal into correct position if needed */
         if (myScale > 0) {
-            myString.insert(myLen - myScale, '.');
+            myString.insert(myLen - myScale, STR_DEC);
         }
 
         /* Add minus sign if required */
         if (isNegative) {
-            myString.insert(0, '-');
+            myString.insert(0, CHAR_MINUS);
         }
 
         /* Return the string */
         return myString.toString();
+    }
+
+    /**
+     * Format a money value with currency code.
+     * @param pValue the value to format
+     * @return the formatted value
+     */
+    public String toCurrencyString(final JMoney pValue) {
+        /* Format the basic value */
+        StringBuilder myWork = new StringBuilder(toString(pValue));
+
+        /* Add the currency symbol */
+        Currency myCurrency = pValue.getCurrency();
+        myWork.insert(0, STR_CURRSEP);
+        myWork.insert(0, myCurrency.getCurrencyCode());
+
+        /* Return the string */
+        return myWork.toString();
     }
 
     /**
@@ -222,7 +260,7 @@ public class JDecimalFormatter {
         /* Add leading zeroes */
         int myLen = myString.length();
         while (myLen < (pScale + 1)) {
-            myString.insert(0, '0');
+            myString.insert(0, CHAR_ZERO);
             myLen++;
         }
 
@@ -296,39 +334,8 @@ public class JDecimalFormatter {
      * @return the formatted value
      */
     public String formatPrice(final JPrice pPrice) {
-        /* If we are using accounting and have zero */
-        if ((useAccounting) && (pPrice.isZero())) {
-            /* Format the zero */
-            return formatZeroAccounting(pPrice.getCurrency());
-        }
-
-        /* Format the basic value */
-        StringBuilder myWork = formatDecimal(pPrice.unscaledValue(), pPrice.scale(), theMoneyDecimal);
-
-        /* If we have a leading minus sign */
-        boolean isNegative = (myWork.charAt(0) == theMinusSign);
-        if (isNegative) {
-            /* Remove the minus sign */
-            myWork = myWork.deleteCharAt(0);
-        }
-
-        /* If we are using accounting mode */
-        if (useAccounting) {
-            /* Format for accounting */
-            formatForAccounting(myWork);
-        }
-
-        /* Add the currency symbol */
-        Currency myCurrency = pPrice.getCurrency();
-        myWork.insert(0, myCurrency.getSymbol(theLocale));
-
-        /* Re-Add the minus sign */
-        if (isNegative) {
-            myWork.insert(0, theMinusSign);
-        }
-
         /* return the formatted value */
-        return myWork.toString();
+        return formatMoney(pPrice);
     }
 
     /**
@@ -337,40 +344,8 @@ public class JDecimalFormatter {
      * @return the formatted value
      */
     public String formatDilutedPrice(final JDilutedPrice pDilutedPrice) {
-        /* If we are using accounting and have zero */
-        if ((useAccounting) && (pDilutedPrice.isZero())) {
-            /* Format the zero */
-            return formatZeroAccounting(pDilutedPrice.getCurrency());
-        }
-
-        /* Format the basic value */
-        StringBuilder myWork = formatDecimal(pDilutedPrice.unscaledValue(), pDilutedPrice.scale(),
-                                             theMoneyDecimal);
-
-        /* If we have a leading minus sign */
-        boolean isNegative = (myWork.charAt(0) == theMinusSign);
-        if (isNegative) {
-            /* Remove the minus sign */
-            myWork = myWork.deleteCharAt(0);
-        }
-
-        /* If we are using accounting mode */
-        if (useAccounting) {
-            /* Format for accounting */
-            formatForAccounting(myWork);
-        }
-
-        /* Add the currency symbol */
-        Currency myCurrency = pDilutedPrice.getCurrency();
-        myWork.insert(0, myCurrency.getSymbol(theLocale));
-
-        /* Re-Add the minus sign */
-        if (isNegative) {
-            myWork.insert(0, theMinusSign);
-        }
-
         /* return the formatted value */
-        return myWork.toString();
+        return formatMoney(pDilutedPrice);
     }
 
     /**
@@ -446,10 +421,6 @@ public class JDecimalFormatter {
         /* Split out special cases */
         if (pDecimal instanceof JMoney) {
             return formatMoney((JMoney) pDecimal);
-        } else if (pDecimal instanceof JPrice) {
-            return formatPrice((JPrice) pDecimal);
-        } else if (pDecimal instanceof JDilutedPrice) {
-            return formatDilutedPrice((JDilutedPrice) pDecimal);
         } else if (pDecimal instanceof JRate) {
             return formatRate((JRate) pDecimal);
         }
@@ -498,7 +469,7 @@ public class JDecimalFormatter {
         int myScale = pCurrency.getDefaultFractionDigits();
 
         /* Create a buffer build */
-        StringBuilder myWork = new StringBuilder("-");
+        StringBuilder myWork = new StringBuilder(Character.toString(CHAR_MINUS));
 
         /* If we have decimals */
         if (myScale > 0) {
