@@ -475,42 +475,6 @@ public class SpotPrices implements JDataContents {
             /* Return no updates */
             return false;
         }
-
-        /**
-         * Reset changes in an edit view.
-         */
-        @Override
-        public void resetChanges() {
-            /* Create an iterator for the list */
-            Iterator<SpotPrice> myIterator = iterator();
-
-            /* Loop through the elements */
-            while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
-                /* Switch on the state */
-                switch (myCurr.getState()) {
-                /* If this is a changed or DELCHG item */
-                    case NEW:
-                    case CHANGED:
-                    case DELCHG:
-                        /* Clear changes and fall through */
-                        myCurr.resetHistory();
-
-                        /* If this is a deleted or recovered item */
-                    case DELETED:
-                    case RECOVERED:
-                        /* Clear errors and mark the item as clean */
-                        myCurr.clearErrors();
-                        break;
-
-                    /* If this is a clean item, just ignore */
-                    case CLEAN:
-                    case DELNEW:
-                    default:
-                        break;
-                }
-            }
-        }
     }
 
     /**

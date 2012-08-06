@@ -89,7 +89,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                                      final byte[] pName,
                                      final byte[] pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                                      final String pName,
                                      final String pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, isEnabled, iOrder, pName, pDesc);
+        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -161,6 +161,9 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
         } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load EventInfoTypes", e);

@@ -180,8 +180,8 @@ public class SheetEvent extends SheetDataItem<Event> {
             byte[] myDilution = loadBytes(COL_DILUTION);
 
             /* Load the item */
-            theList.addItem(myID, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myUnits,
-                            myTranId, myTaxCredit, myDilution, myYears);
+            theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId,
+                                  myUnits, myTranId, myTaxCredit, myDilution, myYears);
 
             /* else this is a load from an edit-able spreadsheet */
         } else {
@@ -203,8 +203,8 @@ public class SheetEvent extends SheetDataItem<Event> {
             String myDilution = loadString(COL_DILUTION - 1);
 
             /* Load the item */
-            theList.addItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myUnits, myTransType,
-                            myTaxCredit, myDilution, myYears);
+            theList.addOpenItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myUnits, myTransType,
+                                myTaxCredit, myDilution, myYears);
         }
     }
 
@@ -405,8 +405,8 @@ public class SheetEvent extends SheetDataItem<Event> {
                         }
 
                         /* Add the event */
-                        myList.addItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myUnits, myTranType,
-                                       myTaxCredit, myDilution, myYears);
+                        myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myUnits,
+                                           myTranType, myTaxCredit, myDilution, myYears);
 
                         /* Report the progress */
                         myCount++;
@@ -414,6 +414,9 @@ public class SheetEvent extends SheetDataItem<Event> {
                             return false;
                         }
                     }
+
+                    /* Sort the list */
+                    myList.reSort();
                 }
             }
         } catch (JDataException e) {

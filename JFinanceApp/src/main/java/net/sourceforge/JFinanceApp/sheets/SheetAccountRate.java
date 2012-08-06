@@ -138,7 +138,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
             Date myEndDate = loadDate(COL_ENDDATE);
 
             /* Load the item */
-            theList.addItem(myID, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
+            theList.addSecureItem(myID, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
 
             /* else this is a load from an edit-able spreadsheet */
         } else {
@@ -152,7 +152,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
             Date myEndDate = loadDate(COL_ENDDATE - 1);
 
             /* Load the item */
-            theList.addItem(myID, myAccount, myRate, myEndDate, myBonus);
+            theList.addOpenItem(myID, myAccount, myRate, myEndDate, myBonus);
         }
     }
 
@@ -300,7 +300,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
                     }
 
                     /* Add the value into the finance tables */
-                    myList.addItem(0, myAccount, myRate, myExpiry, myBonus);
+                    myList.addOpenItem(0, myAccount, myRate, myExpiry, myBonus);
 
                     /* Report the progress */
                     myCount++;
@@ -308,6 +308,9 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
 
             /* Handle exceptions */

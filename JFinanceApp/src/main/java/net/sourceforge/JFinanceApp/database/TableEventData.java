@@ -86,7 +86,7 @@ public class TableEventData extends TableEncrypted<EventData> {
         byte[] myValue = myTableDef.getBinaryValue(EventData.FIELD_VALUE);
 
         /* Add into the list */
-        theList.addItem(pId, pControlId, myInfoTypId, myEventId, myValue);
+        theList.addSecureItem(pId, pControlId, myInfoTypId, myEventId, myValue);
     }
 
     @Override

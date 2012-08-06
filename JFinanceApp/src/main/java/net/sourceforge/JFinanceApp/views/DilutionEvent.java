@@ -495,7 +495,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             }
 
             /* Add the item to the list */
-            myPrices.addItem(myAccount, myDate, myPrice);
+            myPrices.addOpenItem(myAccount, myDate, myPrice);
         }
     }
 }

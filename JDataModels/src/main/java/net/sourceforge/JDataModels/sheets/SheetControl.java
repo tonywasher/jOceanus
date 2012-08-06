@@ -108,7 +108,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
             int myControl = loadInteger(COL_CONTROL);
 
             /* Add the Control */
-            theList.addItem(myID, myVersion, myControl);
+            theList.addSecureItem(myID, myVersion, myControl);
 
             /* else this is plain text */
         } else {
@@ -117,7 +117,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
             int myVersion = loadInteger(COL_VERSION);
 
             /* Add the Control */
-            theList.addItem(myID, myVersion);
+            theList.addOpenItem(myID, myVersion);
         }
     }
 

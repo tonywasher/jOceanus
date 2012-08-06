@@ -166,7 +166,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
             ControlDataList myStatic = pData.getControlData();
 
             /* Add the value into the finance tables (with no security as yet) */
-            myStatic.addItem(0, 0);
+            myStatic.addOpenItem(0, 0);
         }
 
         /* Calculate the number of stages */

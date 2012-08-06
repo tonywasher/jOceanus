@@ -555,10 +555,10 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
          * @param pValue the value
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uInfoTypeId,
-                            final int uEventId,
-                            final Integer pValue) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final int uInfoTypeId,
+                                final int uEventId,
+                                final Integer pValue) throws JDataException {
             /* Create the info */
             EventValue myInfo = new EventValue(this, uId, uInfoTypeId, uEventId, pValue);
 
@@ -576,7 +576,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
             }
 
             /* Add to the list */
-            add(myInfo);
+            append(myInfo);
         }
 
         /**
@@ -591,7 +591,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
             EventValue myValue = new EventValue(this, pType, pEvent);
 
             /* Add it to the list and return */
-            addAtEnd(myValue);
+            append(myValue);
             return myValue;
         }
 

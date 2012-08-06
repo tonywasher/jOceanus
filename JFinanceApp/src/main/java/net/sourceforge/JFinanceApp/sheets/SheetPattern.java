@@ -173,8 +173,8 @@ public class SheetPattern extends SheetDataItem<Pattern> {
             byte[] myAmount = loadBytes(COL_AMOUNT);
 
             /* Load the item */
-            theList.addItem(myID, myControlId, myDate, myDesc, myAmount, myActId, myPartId, myTranId,
-                            myFreqId, isCredit);
+            theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myActId, myPartId, myTranId,
+                                  myFreqId, isCredit);
 
             /* else this is a load from an edit-able spreadsheet */
         } else {
@@ -194,8 +194,8 @@ public class SheetPattern extends SheetDataItem<Pattern> {
             String myAmount = loadString(COL_AMOUNT - 1);
 
             /* Load the item */
-            theList.addItem(myID, myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency,
-                            isCredit);
+            theList.addOpenItem(myID, myDate, myDesc, myAmount, myAccount, myPartner, myTransType,
+                                myFrequency, isCredit);
         }
     }
 
@@ -355,8 +355,8 @@ public class SheetPattern extends SheetDataItem<Pattern> {
                     String myFrequency = myRow.getCell(myCol + iAdjust++).getStringCellValue();
 
                     /* Add the value into the finance tables */
-                    myList.addItem(0, myDate, myDesc, myAmount, myAccount, myPartner, myTransType,
-                                   myFrequency, isCredit);
+                    myList.addOpenItem(0, myDate, myDesc, myAmount, myAccount, myPartner, myTransType,
+                                       myFrequency, isCredit);
 
                     /* Report the progress */
                     myCount++;
@@ -364,6 +364,9 @@ public class SheetPattern extends SheetDataItem<Pattern> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
 
             /* Handle exceptions */

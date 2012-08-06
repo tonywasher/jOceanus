@@ -68,6 +68,6 @@ public class TableTaxRegime extends TableStaticData<TaxRegime> {
                                final byte[] pRegime,
                                final byte[] pDesc) throws JDataException {
         /* Add into the list */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pRegime, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pRegime, pDesc);
     }
 }

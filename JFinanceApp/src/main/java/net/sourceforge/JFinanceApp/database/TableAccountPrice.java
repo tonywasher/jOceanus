@@ -89,7 +89,7 @@ public class TableAccountPrice extends TableEncrypted<AccountPrice> {
         byte[] myPrice = myTableDef.getBinaryValue(AccountPrice.FIELD_PRICE);
 
         /* Add into the list */
-        theList.addItem(pId, pControlId, myDate, myAccountId, myPrice);
+        theList.addSecureItem(pId, pControlId, myDate, myAccountId, myPrice);
     }
 
     @Override

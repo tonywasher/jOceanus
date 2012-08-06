@@ -68,6 +68,6 @@ public class TableAccountType extends TableStaticData<AccountType> {
                                final byte[] pType,
                                final byte[] pDesc) throws JDataException {
         /* Add into the list */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pType, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pType, pDesc);
     }
 }

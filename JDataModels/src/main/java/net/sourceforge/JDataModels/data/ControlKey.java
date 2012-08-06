@@ -394,7 +394,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
         /* Loop through the SymKeyType values */
         for (SymKeyType myType : SymKeyType.values()) {
             /* Create a new DataKey for this ControlKey */
-            DataKey myKey = myKeys.addItem(this, myType);
+            DataKey myKey = myKeys.createNewKey(this, myType);
             myKey.setNewVersion();
 
             /* Store the DataKey into the map */
@@ -548,14 +548,14 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
         }
 
         /**
-         * Add a ControlKey item from a Database/Backup.
+         * Add a ControlKey item from a secure store.
          * @param uId the id of the ControlKey
          * @param pHashBytes the HashBytes
          * @return the new item
          * @throws JDataException on error
          */
-        public ControlKey addItem(final int uId,
-                                  final byte[] pHashBytes) throws JDataException {
+        public ControlKey addSecureItem(final int uId,
+                                        final byte[] pHashBytes) throws JDataException {
             /* Create the ControlKey */
             ControlKey myKey = new ControlKey(this, uId, pHashBytes);
 
@@ -570,11 +570,11 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
         }
 
         /**
-         * Add a new ControlKey (with associated DataKeys).
+         * Create a new ControlKey (with associated DataKeys).
          * @return the new item
          * @throws JDataException on error
          */
-        public ControlKey addItem() throws JDataException {
+        public ControlKey createNewKeySet() throws JDataException {
             /* Create the key */
             ControlKey myKey = new ControlKey(this);
 
@@ -589,7 +589,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
          * @return the new item
          * @throws JDataException on error
          */
-        public ControlKey addItem(final ControlKey pSource) throws JDataException {
+        public ControlKey cloneItem(final ControlKey pSource) throws JDataException {
             /* Create the key */
             ControlKey myKey = new ControlKey(pSource);
 
@@ -617,7 +617,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
                 /* else create a new security set */
             } else {
                 /* Create the new security set */
-                myKey = addItem();
+                myKey = createNewKeySet();
             }
 
             /* Declare the Control Key */
@@ -652,7 +652,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
          */
         private ControlKey cloneControlKey(final ControlKey pControlKey) throws JDataException {
             /* Clone the control key */
-            ControlKey myControl = addItem(pControlKey.getId(), pControlKey.getHashBytes());
+            ControlKey myControl = addSecureItem(pControlKey.getId(), pControlKey.getHashBytes());
 
             /* Access the DataKey List */
             DataSet<?> myData = getDataSet();
@@ -664,7 +664,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
                 DataKey mySrcKey = pControlKey.theMap.get(myType);
 
                 /* Create a new DataKey for this ControlKey */
-                DataKey myKey = myKeys.addItem(myControl, mySrcKey);
+                DataKey myKey = myKeys.cloneItem(myControl, mySrcKey);
 
                 /* Store the DataKey into the map */
                 myControl.theMap.put(myType, myKey);

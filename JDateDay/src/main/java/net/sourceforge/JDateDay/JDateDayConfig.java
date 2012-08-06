@@ -176,9 +176,9 @@ public class JDateDayConfig extends JDateConfig {
     }
 
     /**
-     * Locale Listener class
+     * Locale Listener class.
      */
-    private class LocaleListener implements ChangeListener {
+    private final class LocaleListener implements ChangeListener {
         /**
          * The formatter.
          */

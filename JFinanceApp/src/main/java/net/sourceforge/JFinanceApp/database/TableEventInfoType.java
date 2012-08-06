@@ -68,6 +68,6 @@ public class TableEventInfoType extends TableStaticData<EventInfoType> {
                                final byte[] pFreq,
                                final byte[] pDesc) throws JDataException {
         /* Add into the list */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pFreq, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pFreq, pDesc);
     }
 }

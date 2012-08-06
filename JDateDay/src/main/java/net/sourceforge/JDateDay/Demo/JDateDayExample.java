@@ -279,7 +279,7 @@ public class JDateDayExample extends JApplet {
     private JDateDayRangeSelect theRangeSelect = null;
 
     /**
-     * The formatter
+     * The formatter.
      */
     private JDateDayFormatter theFormatter = new JDateDayFormatter();
 

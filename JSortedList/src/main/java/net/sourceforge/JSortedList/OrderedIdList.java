@@ -27,14 +27,14 @@ import java.util.Map;
 /**
  * Ordered Id list. This provides an improved ordered list implementation for items that have a non-mutable
  * identity, and is the preferred implementation. Care should be taken to ensure that the identity is part of
- * the natural ordering to prevent duplicates.
+ * the natural ordering to ensure consistency.
  * <p>
- * The identity is used to directly look up the linked list node for the items via a HashMap. This provides
+ * The identity is used to directly look up the linked list node for the item via a HashMap. This provides
  * significant performance improvements over {@link OrderedList}, and also solves the problems associated with
  * <b>dirty</b> lists.
  * <ol>
  * <li>{@link #remove(Object)}, {@link #contains} and {@link #indexOf} are all accurate on a dirty list.
- * <li>{@link #add} will accurately reject duplicates in a dirty list
+ * <li>{@link #add} will reject entries for which the identity is already in the list
  * </ol>
  * <p>
  * The {@link #add} method will still add objects in a best can do fashion, and the {@link #reSort} method
@@ -95,5 +95,92 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
     public Map<I, T> getIdMap() {
         /* Return the map */
         return getIndex().getElementMap();
+    }
+
+    /**
+     * Peek at the next item.
+     * @param pItem the item from which to find the next item
+     * @return the next item or <code>null</code>
+     */
+    public T peekNext(final T pItem) {
+        /* Reject if the object is null */
+        if (pItem == null) {
+            throw new IllegalArgumentException(NULL_DISALLOWED);
+        }
+
+        /* Access the node of the item */
+        OrderedNode<T> myNode = getIndex().findNodeForObject(pItem);
+
+        /* If the node does not belong to the list then ignore */
+        if (myNode == null) {
+            return null;
+        }
+
+        /* Access the next node */
+        myNode = myNode.getNext();
+
+        /* Return the next object */
+        return (myNode == null) ? null : myNode.getObject();
+    }
+
+    /**
+     * Peek at the previous item.
+     * @param pItem the item from which to find the previous item
+     * @return the previous item or <code>null</code>
+     */
+    public T peekPrevious(final T pItem) {
+        /* Reject if the object is null */
+        if (pItem == null) {
+            throw new IllegalArgumentException(NULL_DISALLOWED);
+        }
+
+        /* Access the node of the item */
+        OrderedNode<T> myNode = getIndex().findNodeForObject(pItem);
+
+        /* If the node does not belong to the list then ignore */
+        if (myNode == null) {
+            return null;
+        }
+
+        /* Access the previous node */
+        myNode = myNode.getPrev();
+
+        /* Return the previous object */
+        return (myNode == null) ? null : myNode.getObject();
+    }
+
+    /**
+     * Add item into correct sort order in the list. If the list is not currently sorted, then the item will
+     * not be correctly placed into the list. If the item has the same Id as an existing item in the list it
+     * will not be added.
+     * @param pItem the item to add
+     * @return true if the item was added to the list.
+     */
+    @Override
+    public boolean add(final T pItem) {
+        /* Reject if the object is already a link member of this list */
+        if ((pItem != null) && (getIndex().findNodeForObject(pItem) != null)) {
+            return false;
+        }
+
+        /* Pass call down */
+        return super.append(pItem);
+    }
+
+    /**
+     * Append item directly to the end of the list. The list needs to be sorted after this operation. If the
+     * item has the same Id as an existing item in the list it will not be added.
+     * @param pItem the item to add
+     * @return true if the item was added to the list.
+     */
+    @Override
+    public boolean append(final T pItem) {
+        /* Reject if the object is already a link member of this list */
+        if ((pItem != null) && (getIndex().findNodeForObject(pItem) != null)) {
+            return false;
+        }
+
+        /* Pass call down */
+        return super.append(pItem);
     }
 }

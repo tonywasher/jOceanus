@@ -99,7 +99,7 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
         byte[] myKey = loadBytes(COL_KEYDATA);
 
         /* Add the DataKey */
-        theList.addItem(myID, myControl, myKeyType, myKey);
+        theList.addSecureItem(myID, myControl, myKeyType, myKey);
     }
 
     @Override

@@ -265,6 +265,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                     }
                 }
 
+                /* Sort the list */
+                theList.reSort();
+
                 /* Post process the load */
                 postProcessOnLoad();
             }

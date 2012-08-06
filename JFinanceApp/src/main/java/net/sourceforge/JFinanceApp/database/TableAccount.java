@@ -107,8 +107,8 @@ public class TableAccount extends TableEncrypted<Account> {
         byte[] myNotes = myTableDef.getBinaryValue(Account.FIELD_NOTES);
 
         /* Add into the list */
-        theList.addItem(pId, pControlId, myName, myActTypeId, myDesc, myMaturity, myClosed, myParentId,
-                        myAliasId, myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
+        theList.addSecureItem(pId, pControlId, myName, myActTypeId, myDesc, myMaturity, myClosed, myParentId,
+                              myAliasId, myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
     }
 
     @Override

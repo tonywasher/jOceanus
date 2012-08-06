@@ -67,7 +67,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
         byte[] myHash = myTableDef.getBinaryValue(ControlKey.FIELD_PASSHASH);
 
         /* Add into the list */
-        theList.addItem(pId, myHash);
+        theList.addSecureItem(pId, myHash);
     }
 
     @Override

@@ -71,7 +71,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
         byte[] myKey = myTableDef.getBinaryValue(DataKey.FIELD_KEY);
 
         /* Add into the list */
-        theList.addItem(pId, myControl, myKeyType, myKey);
+        theList.addSecureItem(pId, myControl, myKeyType, myKey);
     }
 
     @Override

@@ -558,10 +558,10 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          * @return the new item
          * @throws JDataException on error
          */
-        public DataKey addItem(final int uId,
-                               final int uControlId,
-                               final int uKeyTypeId,
-                               final byte[] pSecurityKey) throws JDataException {
+        public DataKey addSecureItem(final int uId,
+                                     final int uControlId,
+                                     final int uKeyTypeId,
+                                     final byte[] pSecurityKey) throws JDataException {
             /* Create the DataKey */
             DataKey myKey = new DataKey(this, uId, uControlId, uKeyTypeId, pSecurityKey);
 
@@ -582,8 +582,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          * @return the new DataKey
          * @throws JDataException on error
          */
-        public DataKey addItem(final ControlKey pControlKey,
-                               final SymKeyType pKeyType) throws JDataException {
+        public DataKey createNewKey(final ControlKey pControlKey,
+                                    final SymKeyType pKeyType) throws JDataException {
             /* Create the key */
             DataKey myKey = new DataKey(this, pControlKey, pKeyType);
 
@@ -599,8 +599,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          * @return the new DataKey
          * @throws JDataException on error
          */
-        public DataKey addItem(final ControlKey pControlKey,
-                               final DataKey pDataKey) throws JDataException {
+        public DataKey cloneItem(final ControlKey pControlKey,
+                                 final DataKey pDataKey) throws JDataException {
             /* Create the key */
             DataKey myKey = new DataKey(this, pControlKey, pDataKey);
 

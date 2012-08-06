@@ -234,7 +234,7 @@ public class JDateDayRangeSelect extends JPanel {
     }
 
     /**
-     * Obtain the date configuration
+     * Obtain the date configuration.
      * @return the Date configuration
      */
     public JDateDayConfig getDateConfig() {

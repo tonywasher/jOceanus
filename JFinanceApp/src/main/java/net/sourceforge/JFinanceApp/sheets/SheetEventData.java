@@ -125,7 +125,7 @@ public class SheetEventData extends SheetDataItem<EventData> {
             byte[] myValue = loadBytes(COL_DATA);
 
             /* Load the item */
-            theList.addItem(myID, myControlId, myInfoId, myEventId, myValue);
+            theList.addSecureItem(myID, myControlId, myInfoId, myEventId, myValue);
 
             /* else this is a load from an edit-able spreadsheet */
             // } else {

@@ -326,6 +326,9 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             /* Close the Statement */
             closeStmt();
 
+            /* Sort the list */
+            theList.reSort();
+
             /* Perform post process */
             postProcessOnLoad();
 

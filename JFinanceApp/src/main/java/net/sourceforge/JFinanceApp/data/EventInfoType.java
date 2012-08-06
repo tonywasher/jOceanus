@@ -242,7 +242,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
             }
 
             /* Add the Type to the list */
-            add(myType);
+            append(myType);
 
             /* Validate the EventInfoType */
             myType.validate();
@@ -262,11 +262,11 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * @param pDesc the Description of the InfoType
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final String pInfoType,
-                            final String pDesc) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final boolean isEnabled,
+                                final int uOrder,
+                                final String pInfoType,
+                                final String pDesc) throws JDataException {
             /* Create a new InfoType */
             EventInfoType myType = new EventInfoType(this, uId, isEnabled, uOrder, pInfoType, pDesc);
 
@@ -276,7 +276,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
             }
 
             /* Add the InfoType to the list */
-            add(myType);
+            append(myType);
 
             /* Validate the TaxRegime */
             myType.validate();
@@ -297,12 +297,12 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * @param pDesc the Encrypted Description of the InfoType
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final byte[] pInfoType,
-                            final byte[] pDesc) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final boolean isEnabled,
+                                  final int uOrder,
+                                  final byte[] pInfoType,
+                                  final byte[] pDesc) throws JDataException {
             /* Create a new InfoType */
             EventInfoType myType = new EventInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType,
                     pDesc);
@@ -313,7 +313,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
             }
 
             /* Add the InfoType to the list */
-            addAtEnd(myType);
+            append(myType);
 
             /* Validate the InfoType */
             myType.validate();

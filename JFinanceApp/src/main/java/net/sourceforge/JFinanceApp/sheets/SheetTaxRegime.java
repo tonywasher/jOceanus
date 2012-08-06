@@ -101,7 +101,7 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
                                      final byte[] pName,
                                      final byte[] pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -120,7 +120,7 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
                                      final String pName,
                                      final String pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, isEnabled, iOrder, pName, pDesc);
+        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -182,6 +182,9 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
         } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Tax Regimes", e);

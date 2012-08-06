@@ -694,7 +694,7 @@ public class Pattern extends Event {
             /* Access the list iterator */
             Iterator<Pattern> myIterator = listIterator();
 
-            /* Loop through the Prices */
+            /* Loop through the Patterns */
             while (myIterator.hasNext()) {
                 Pattern myCurr = myIterator.next();
 
@@ -705,8 +705,11 @@ public class Pattern extends Event {
 
                 /* Copy the item */
                 Pattern myItem = new Pattern(myList, myCurr);
-                myList.addAtEnd(myItem);
+                myList.append(myItem);
             }
+
+            /* Sort the list */
+            myList.reSort();
 
             /* Return the List */
             return myList;
@@ -786,15 +789,15 @@ public class Pattern extends Event {
          * @param isCredit true/false
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final Date pDate,
-                            final String pDesc,
-                            final String pAmount,
-                            final String pAccount,
-                            final String pPartner,
-                            final String pTransType,
-                            final String pFrequency,
-                            final boolean isCredit) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final Date pDate,
+                                final String pDesc,
+                                final String pAmount,
+                                final String pAccount,
+                                final String pPartner,
+                                final String pTransType,
+                                final String pFrequency,
+                                final boolean isCredit) throws JDataException {
             /* Access the Lists */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
@@ -847,7 +850,7 @@ public class Pattern extends Event {
             }
 
             /* Add to the list */
-            add(myPattern);
+            append(myPattern);
         }
 
         /**
@@ -864,16 +867,16 @@ public class Pattern extends Event {
          * @param isCredit true/false
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final Date pDate,
-                            final byte[] pDesc,
-                            final byte[] pAmount,
-                            final int uAccountId,
-                            final int uPartnerId,
-                            final int uTransId,
-                            final int uFreqId,
-                            final boolean isCredit) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final Date pDate,
+                                  final byte[] pDesc,
+                                  final byte[] pAmount,
+                                  final int uAccountId,
+                                  final int uPartnerId,
+                                  final int uTransId,
+                                  final int uFreqId,
+                                  final boolean isCredit) throws JDataException {
             /* Create the new pattern */
             Pattern myPattern = new Pattern(this, uId, uControlId, uAccountId, pDate, pDesc, pAmount,
                     uPartnerId, uTransId, uFreqId, isCredit);
@@ -892,7 +895,7 @@ public class Pattern extends Event {
             }
 
             /* Add to the list */
-            addAtEnd(myPattern);
+            append(myPattern);
         }
     }
 }

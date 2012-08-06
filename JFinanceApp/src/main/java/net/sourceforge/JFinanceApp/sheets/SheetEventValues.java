@@ -113,7 +113,7 @@ public class SheetEventValues extends SheetDataItem<EventValue> {
             int myValue = loadInteger(COL_VALUE);
 
             /* Add the Value */
-            theList.addItem(myID, myInfoId, myEventId, myValue);
+            theList.addOpenItem(myID, myInfoId, myEventId, myValue);
 
             /* else this is a load from an edit-able spreadsheet */
             // } else {

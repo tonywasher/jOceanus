@@ -80,7 +80,7 @@ public class JDateDayFormatter extends JEventObject implements JDateFormatter {
      */
     public final void setFormat(final String pFormat) {
         /* If the locale is the same */
-        if (theFormat.equals(pFormat)) {
+        if (pFormat.equals(theFormat)) {
             /* Ignore */
             return;
         }
@@ -121,7 +121,7 @@ public class JDateDayFormatter extends JEventObject implements JDateFormatter {
     }
 
     /**
-     * Format a Date
+     * Format a Date.
      * @param pDate the date to format
      * @return the formatted date
      */
@@ -136,7 +136,7 @@ public class JDateDayFormatter extends JEventObject implements JDateFormatter {
     }
 
     /**
-     * Format a DateDay
+     * Format a DateDay,
      * @param pDate the date to format
      * @return the formatted date
      */
@@ -151,7 +151,7 @@ public class JDateDayFormatter extends JEventObject implements JDateFormatter {
     }
 
     /**
-     * Format a DateDayRange
+     * Format a DateDayRange.
      * @param pRange the range to format
      * @return the formatted date
      */

@@ -529,7 +529,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
 
             /* Create the Capital Event and add to list */
             myEvent = new CapitalEvent(pEvent);
-            addAtEnd(myEvent);
+            append(myEvent);
 
             /* return the new event */
             return myEvent;
@@ -545,7 +545,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
 
             /* Create the Capital Event and add to list */
             myEvent = new CapitalEvent(pDate);
-            addAtEnd(myEvent);
+            append(myEvent);
 
             /* return the new event */
             return myEvent;

@@ -586,7 +586,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
             }
 
             /* Add the Account Type to the list */
-            add(myActType);
+            append(myActType);
 
             /* Validate the ActType */
             myActType.validate();
@@ -606,11 +606,11 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * @param pDesc the Description of the account type
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final String pActType,
-                            final String pDesc) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final boolean isEnabled,
+                                final int uOrder,
+                                final String pActType,
+                                final String pDesc) throws JDataException {
             /* Create a new Account Type */
             AccountType myActType = new AccountType(this, uId, isEnabled, uOrder, pActType, pDesc);
 
@@ -620,7 +620,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
             }
 
             /* Add the Account Type to the list */
-            add(myActType);
+            append(myActType);
 
             /* Validate the AccountType */
             myActType.validate();
@@ -641,12 +641,12 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * @param pDesc the Encrypted Description of the account type
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final byte[] pActType,
-                            final byte[] pDesc) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final boolean isEnabled,
+                                  final int uOrder,
+                                  final byte[] pActType,
+                                  final byte[] pDesc) throws JDataException {
             /* Create a new Account Type */
             AccountType myActType = new AccountType(this, uId, uControlId, isEnabled, uOrder, pActType, pDesc);
 
@@ -656,7 +656,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
             }
 
             /* Add the Account Type to the list */
-            addAtEnd(myActType);
+            append(myActType);
 
             /* Validate the AccountType */
             myActType.validate();

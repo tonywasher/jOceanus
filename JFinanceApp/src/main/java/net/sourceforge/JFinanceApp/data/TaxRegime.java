@@ -286,7 +286,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             }
 
             /* Add the TaxRegime to the list */
-            add(myTaxRegime);
+            append(myTaxRegime);
 
             /* Validate the TaxRegime */
             myTaxRegime.validate();
@@ -306,11 +306,11 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @param pDesc the Description of the tax regime
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final String pTaxRegime,
-                            final String pDesc) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final boolean isEnabled,
+                                final int uOrder,
+                                final String pTaxRegime,
+                                final String pDesc) throws JDataException {
             /* Create a new Tax Regime */
             TaxRegime myTaxReg = new TaxRegime(this, uId, isEnabled, uOrder, pTaxRegime, pDesc);
 
@@ -320,7 +320,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             }
 
             /* Add the Tax Regime to the list */
-            add(myTaxReg);
+            append(myTaxReg);
 
             /* Validate the TaxRegime */
             myTaxReg.validate();
@@ -341,12 +341,12 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @param pDesc the Encrypted Description of the tax regime
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final byte[] pTaxRegime,
-                            final byte[] pDesc) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final boolean isEnabled,
+                                  final int uOrder,
+                                  final byte[] pTaxRegime,
+                                  final byte[] pDesc) throws JDataException {
             /* Create a new tax regime */
             TaxRegime myTaxReg = new TaxRegime(this, uId, uControlId, isEnabled, uOrder, pTaxRegime, pDesc);
 
@@ -356,7 +356,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
             }
 
             /* Add the TaxRegime to the list */
-            addAtEnd(myTaxReg);
+            append(myTaxReg);
 
             /* Validate the TaxRegime */
             myTaxReg.validate();

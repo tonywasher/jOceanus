@@ -315,7 +315,7 @@ public final class ChargeableEvent implements OrderedIdItem<Integer>, JDataConte
             ChargeableEvent myEvent = new ChargeableEvent(pEvent, pGains);
 
             /* Add it to the list */
-            addAtEnd(myEvent);
+            append(myEvent);
         }
 
         /**

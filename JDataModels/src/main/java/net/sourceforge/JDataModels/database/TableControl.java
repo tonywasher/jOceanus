@@ -69,7 +69,7 @@ public class TableControl extends DatabaseTable<ControlData> {
         int myControl = myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY);
 
         /* Add into the list */
-        theList.addItem(pId, myVers, myControl);
+        theList.addSecureItem(pId, myVers, myControl);
     }
 
     @Override

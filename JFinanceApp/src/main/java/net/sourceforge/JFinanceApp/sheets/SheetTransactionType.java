@@ -106,7 +106,7 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
                                      final byte[] pName,
                                      final byte[] pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -125,7 +125,7 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
                                      final String pName,
                                      final String pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, isEnabled, iOrder, pName, pDesc);
+        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -187,6 +187,9 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
 
             /* Handle exceptions */

@@ -1748,10 +1748,10 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             }
 
             /* Create the tax year */
-            addItem(uId, myTaxRegime.getId(), pDate, pAllowance, pRentalAllow, pLoAgeAllow, pHiAgeAllow,
-                    pCapAllow, pAgeAllowLimit, pAddAllowLimit, pLoTaxBand, pBasicTaxBand, pAddIncBound,
-                    pLoTaxRate, pBasicTaxRate, pHiTaxRate, pIntTaxRate, pDivTaxRate, pHiDivTaxRate,
-                    pAddTaxRate, pAddDivTaxRate, pCapTaxRate, pHiCapTaxRate);
+            addOpenItem(uId, myTaxRegime.getId(), pDate, pAllowance, pRentalAllow, pLoAgeAllow, pHiAgeAllow,
+                        pCapAllow, pAgeAllowLimit, pAddAllowLimit, pLoTaxBand, pBasicTaxBand, pAddIncBound,
+                        pLoTaxRate, pBasicTaxRate, pHiTaxRate, pIntTaxRate, pDivTaxRate, pHiDivTaxRate,
+                        pAddTaxRate, pAddDivTaxRate, pCapTaxRate, pHiCapTaxRate);
         }
 
         /**
@@ -1782,29 +1782,29 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @throws JDataException on error
          * @throws JDataException
          */
-        public void addItem(final int uId,
-                            final int uRegimeId,
-                            final Date pDate,
-                            final String pAllowance,
-                            final String pRentalAllow,
-                            final String pLoAgeAllow,
-                            final String pHiAgeAllow,
-                            final String pCapAllow,
-                            final String pAgeAllowLimit,
-                            final String pAddAllowLimit,
-                            final String pLoTaxBand,
-                            final String pBasicTaxBand,
-                            final String pAddIncBound,
-                            final String pLoTaxRate,
-                            final String pBasicTaxRate,
-                            final String pHiTaxRate,
-                            final String pIntTaxRate,
-                            final String pDivTaxRate,
-                            final String pHiDivTaxRate,
-                            final String pAddTaxRate,
-                            final String pAddDivTaxRate,
-                            final String pCapTaxRate,
-                            final String pHiCapTaxRate) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final int uRegimeId,
+                                final Date pDate,
+                                final String pAllowance,
+                                final String pRentalAllow,
+                                final String pLoAgeAllow,
+                                final String pHiAgeAllow,
+                                final String pCapAllow,
+                                final String pAgeAllowLimit,
+                                final String pAddAllowLimit,
+                                final String pLoTaxBand,
+                                final String pBasicTaxBand,
+                                final String pAddIncBound,
+                                final String pLoTaxRate,
+                                final String pBasicTaxRate,
+                                final String pHiTaxRate,
+                                final String pIntTaxRate,
+                                final String pDivTaxRate,
+                                final String pHiDivTaxRate,
+                                final String pAddTaxRate,
+                                final String pAddDivTaxRate,
+                                final String pCapTaxRate,
+                                final String pHiCapTaxRate) throws JDataException {
             /* Create the tax year */
             TaxYear myTaxYear = new TaxYear(this, uId, uRegimeId, pDate, pAllowance, pRentalAllow,
                     pLoAgeAllow, pHiAgeAllow, pCapAllow, pAgeAllowLimit, pAddAllowLimit, pLoTaxBand,
@@ -1830,7 +1830,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             }
 
             /* Add the TaxYear to the end of the list */
-            addAtEnd(myTaxYear);
+            append(myTaxYear);
         }
     }
 }

@@ -103,18 +103,29 @@ public class OrderedNode<T extends Comparable<? super T>> {
     }
 
     /**
-     * add Node to the tail of the list (note that we cannot be an empty list at this point).
+     * add Node to the tail of the list.
      */
     protected void addToTail() {
         /* Set values for the new node */
         thePrev = theList.getLast();
         theNext = null;
 
-        /* Set new index */
-        theIndex = thePrev.theIndex + 1;
+        /* If the list is empty */
+        if (thePrev == null) {
+            /* Set new index */
+            theIndex = 0;
 
-        /* Add to the list */
-        thePrev.theNext = this;
+            /* Record this node as first in the list */
+            theList.setFirst(this);
+
+            /* else we have a preceding node */
+        } else {
+            /* Set new index */
+            theIndex = thePrev.theIndex + 1;
+
+            /* Add to the list */
+            thePrev.theNext = this;
+        }
 
         /* Set node as last in list */
         theList.setLast(this);
@@ -314,28 +325,69 @@ public class OrderedNode<T extends Comparable<? super T>> {
     }
 
     /**
+     * Obtain first item in sequence of similar items.
+     * @param pNode the node to check
+     * @param <X> the data type
+     * @return the first item
+     */
+    protected static <X extends Comparable<? super X>> OrderedNode<X> getFirstNodeInSequence(final OrderedNode<X> pNode) {
+        /* While we have a preceding item that is equal */
+        OrderedNode<X> myNode = pNode;
+        while ((myNode.thePrev != null) && (myNode.compareTo(myNode.thePrev) == 0)) {
+            /* Shift node */
+            myNode = myNode.thePrev;
+        }
+
+        /* Return the first in the sequence */
+        return myNode;
+    }
+
+    /**
+     * Obtain last item in sequence of similar items.
+     * @param pNode the node to check
+     * @param <X> the data type
+     * @return the first item
+     */
+    protected static <X extends Comparable<? super X>> OrderedNode<X> getLastNodeInSequence(final OrderedNode<X> pNode) {
+        /* While we have a following item that is equal */
+        OrderedNode<X> myNode = pNode;
+        while ((myNode.theNext != null) && (myNode.compareTo(myNode.theNext) == 0)) {
+            /* Shift node */
+            myNode = myNode.theNext;
+        }
+
+        /* Return the last in the sequence */
+        return myNode;
+    }
+
+    /**
      * Swap node with previous node.
      */
     protected void swapWithPrevious() {
-        /* Access previous node */
+        /* Access previous node and following node */
         OrderedNode<T> myPrev = thePrev;
+        OrderedNode<T> myNext = theNext;
 
         /* Swap linkages */
         thePrev = myPrev.thePrev;
-        myPrev.theNext = theNext;
-        theNext = myPrev;
         myPrev.thePrev = this;
+        myPrev.theNext = myNext;
+        theNext = myPrev;
 
         /* Adjust indices */
         theIndex--;
         myPrev.theIndex++;
 
-        /* Adjust first and last nodes if necessary */
+        /* Adjust nodes above and below the pair */
         if (thePrev == null) {
             theList.setFirst(this);
+        } else {
+            thePrev.theNext = this;
         }
-        if (myPrev.theNext == null) {
+        if (myNext == null) {
             theList.setLast(myPrev);
+        } else {
+            myNext.thePrev = myPrev;
         }
     }
 }

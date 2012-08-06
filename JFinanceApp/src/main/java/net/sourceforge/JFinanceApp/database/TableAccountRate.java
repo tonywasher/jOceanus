@@ -91,7 +91,7 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
         Date myEndDate = myTableDef.getDateValue(AccountRate.FIELD_ENDDATE);
 
         /* Add into the list */
-        theList.addItem(pId, pControlId, myAccountId, myRate, myEndDate, myBonus);
+        theList.addSecureItem(pId, pControlId, myAccountId, myRate, myEndDate, myBonus);
     }
 
     @Override

@@ -201,8 +201,9 @@ public class SheetAccount extends SheetDataItem<Account> {
             byte[] myNotes = loadBytes(COL_NOTES);
 
             /* Load the item */
-            theList.addItem(myID, myControlId, myName, myActTypeId, myDesc, myMaturity, myClose, myParentId,
-                            myAliasId, myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
+            theList.addSecureItem(myID, myControlId, myName, myActTypeId, myDesc, myMaturity, myClose,
+                                  myParentId, myAliasId, myWebSite, myCustNo, myUserId, myPassword,
+                                  myAccount, myNotes);
 
             /* else this is a load from an edit-able spreadsheet */
         } else {
@@ -227,8 +228,8 @@ public class SheetAccount extends SheetDataItem<Account> {
             char[] myNotes = loadChars(COL_NOTES - 1);
 
             /* Load the item */
-            theList.addItem(myID, myName, myActType, myDesc, myMaturity, myClose, myParent, myAlias,
-                            myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
+            theList.addOpenItem(myID, myName, myActType, myDesc, myMaturity, myClose, myParent, myAlias,
+                                myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
         }
     }
 
@@ -429,8 +430,8 @@ public class SheetAccount extends SheetDataItem<Account> {
                     }
 
                     /* Add the value into the finance tables */
-                    myList.addItem(0, myAccount, myAcType, null, myMaturity, myClosed, myParent, myAlias,
-                                   null, null, null, null, null, null);
+                    myList.addOpenItem(0, myAccount, myAcType, null, myMaturity, myClosed, myParent, myAlias,
+                                       null, null, null, null, null, null);
 
                     /* Report the progress */
                     myCount++;
@@ -438,6 +439,9 @@ public class SheetAccount extends SheetDataItem<Account> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
 
             /* Handle exceptions */

@@ -43,22 +43,22 @@ import net.sourceforge.JDecimal.JDecimalParser;
  */
 public class JDataFormatter {
     /**
-     * The Decimal formatter
+     * The Decimal formatter.
      */
     private final JDecimalFormatter theDecimalFormatter;
 
     /**
-     * The Decimal parser
+     * The Decimal parser.
      */
     private final JDecimalParser theDecimalParser;
 
     /**
-     * The Date formatter
+     * The Date formatter.
      */
     private final JDateDayFormatter theDateFormatter;
 
     /**
-     * Obtain the DecimalParser
+     * Obtain the DecimalParser.
      * @return the decimal parser
      */
     public JDecimalParser getDecimalParser() {
@@ -66,7 +66,7 @@ public class JDataFormatter {
     }
 
     /**
-     * Obtain the DecimalFormatter
+     * Obtain the DecimalFormatter.
      * @return the decimal formatter
      */
     public JDecimalFormatter getDecimalFormatter() {
@@ -74,7 +74,7 @@ public class JDataFormatter {
     }
 
     /**
-     * Obtain the Date formatter
+     * Obtain the Date formatter.
      * @return the date formatter
      */
     public JDateDayFormatter getDateFormatter() {
@@ -119,7 +119,7 @@ public class JDataFormatter {
     }
 
     /**
-     * Constructor
+     * Constructor.
      */
     public JDataFormatter() {
         this(Locale.getDefault());

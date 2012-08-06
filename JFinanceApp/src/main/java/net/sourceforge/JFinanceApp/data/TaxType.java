@@ -280,7 +280,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
             }
 
             /* Add the Tax Type to the list */
-            add(myTaxType);
+            append(myTaxType);
 
             /* Validate the TaxType */
             myTaxType.validate();
@@ -300,11 +300,11 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @param pDesc the Description of the tax type
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final String pTaxType,
-                            final String pDesc) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final boolean isEnabled,
+                                final int uOrder,
+                                final String pTaxType,
+                                final String pDesc) throws JDataException {
             /* Create a new Tax Type */
             TaxType myTaxType = new TaxType(this, uId, isEnabled, uOrder, pTaxType, pDesc);
 
@@ -314,7 +314,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
             }
 
             /* Add the Tax Type to the list */
-            add(myTaxType);
+            append(myTaxType);
 
             /* Validate the TaxType */
             myTaxType.validate();
@@ -335,12 +335,12 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @param pDesc the Encrypted Description of the tax type
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final byte[] pTaxType,
-                            final byte[] pDesc) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final boolean isEnabled,
+                                  final int uOrder,
+                                  final byte[] pTaxType,
+                                  final byte[] pDesc) throws JDataException {
             /* Create a new Tax Type */
             TaxType myTaxType = new TaxType(this, uId, uControlId, isEnabled, uOrder, pTaxType, pDesc);
 
@@ -350,7 +350,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
             }
 
             /* Add the Tax Type to the list */
-            addAtEnd(myTaxType);
+            append(myTaxType);
 
             /* Validate the TaxType */
             myTaxType.validate();

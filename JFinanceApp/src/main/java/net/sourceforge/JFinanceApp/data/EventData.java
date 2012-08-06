@@ -664,11 +664,11 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
          * @param pValue the data
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final int uInfoTypeId,
-                            final int uEventId,
-                            final byte[] pValue) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final int uInfoTypeId,
+                                  final int uEventId,
+                                  final byte[] pValue) throws JDataException {
             /* Create the info */
             EventData myInfo = new EventData(this, uId, uControlId, uInfoTypeId, uEventId, pValue);
 
@@ -686,7 +686,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
             }
 
             /* Add to the list */
-            addAtEnd(myInfo);
+            append(myInfo);
         }
 
         /**

@@ -639,7 +639,7 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         ControlData myControl = getControl();
 
         /* Clone the control key */
-        ControlKey myKey = theControlKeys.addItem(myControl.getControlKey());
+        ControlKey myKey = theControlKeys.cloneItem(myControl.getControlKey());
 
         /* Declare the New Control Key */
         myControl.setControlKey(myKey);

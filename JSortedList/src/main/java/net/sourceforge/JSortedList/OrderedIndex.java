@@ -369,37 +369,6 @@ public class OrderedIndex<T extends Comparable<? super T>> {
     }
 
     /**
-     * Locate the insert point (note that we cannot be an empty list at this point). This can be a slow
-     * algorithm, and should only be used if we are nearly certain that the insert point is close to the end
-     * of the list, i.e. that we are inserting very nearly in sort order.
-     * @param pNode the node to insert
-     * @return the node after which the item should be inserted (or null to insert at head of list)
-     */
-    protected OrderedNode<T> findNodeBefore(final OrderedNode<T> pNode) {
-        OrderedNode<T> myCurr;
-
-        /* Access first and last nodes */
-        OrderedNode<T> myFirst = theList.getFirst();
-        OrderedNode<T> myLast = theList.getLast();
-
-        /* Check whether we should add at the head */
-        if (myFirst.compareTo(pNode) > 0) {
-            return null;
-        }
-
-        /* Loop through the current items */
-        for (myCurr = myLast; myCurr != null; myCurr = myCurr.getPrev()) {
-            /* Break if we have found an element that should be earlier */
-            if (myCurr.compareTo(pNode) <= 0) {
-                break;
-            }
-        }
-
-        /* Return the node */
-        return myCurr;
-    }
-
-    /**
      * Register link between object and node to allow fast lookup of node from object. Standard implementation
      * is a stub.
      * @param pNode the Node
@@ -521,10 +490,12 @@ public class OrderedIndex<T extends Comparable<? super T>> {
 
     /**
      * ReSort the list.
+     * @return did the list change order true/false
      */
-    protected void reSort() {
+    protected boolean reSort() {
         /* Access first element in list */
         OrderedNode<T> myNode = theList.getFirst();
+        boolean bChanged = false;
 
         /* Access the second node */
         if (myNode != null) {
@@ -557,14 +528,23 @@ public class OrderedIndex<T extends Comparable<? super T>> {
 
                 /* Swap Nodes */
                 myNode.swapWithPrevious();
+                bChanged = true;
 
                 /* Adjust elements */
                 myPrev = myNode.getPrev();
                 iIndex--;
+
+                /* Break loop if we have reached the top */
+                if (myPrev == null) {
+                    break;
+                }
             }
 
             /* Move to next node */
             myNode = myNext;
         }
+
+        /* Return status */
+        return bChanged;
     }
 }

@@ -100,7 +100,7 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
                                      final byte[] pName,
                                      final byte[] pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -119,7 +119,7 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
                                      final String pName,
                                      final String pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(uId, isEnabled, iOrder, pName, pDesc);
+        theList.addOpenItem(uId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -181,6 +181,9 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
             /* Handle exceptions */
         } catch (JDataException e) {

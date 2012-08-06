@@ -84,7 +84,7 @@ public class TableEventValues extends DatabaseTable<EventValue> {
         int myValue = myTableDef.getIntegerValue(EventValue.FIELD_VALUE);
 
         /* Add into the list */
-        theList.addItem(pId, myInfoType, myEvent, myValue);
+        theList.addOpenItem(pId, myInfoType, myEvent, myValue);
     }
 
     @Override

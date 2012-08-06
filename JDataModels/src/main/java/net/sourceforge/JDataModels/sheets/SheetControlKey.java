@@ -87,7 +87,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
         byte[] myHash = loadBytes(COL_KEYDATA);
 
         /* Add the Control */
-        theList.addItem(myID, myHash);
+        theList.addSecureItem(myID, myHash);
     }
 
     @Override

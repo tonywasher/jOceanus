@@ -100,7 +100,7 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
                                      final byte[] pName,
                                      final byte[] pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -119,7 +119,7 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
                                      final String pName,
                                      final String pDesc) throws JDataException {
         /* Create the item */
-        theList.addItem(pId, isEnabled, iOrder, pName, pDesc);
+        theList.addOpenItem(pId, isEnabled, iOrder, pName, pDesc);
     }
 
     /**
@@ -181,6 +181,9 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
 
             /* Handle exceptions */

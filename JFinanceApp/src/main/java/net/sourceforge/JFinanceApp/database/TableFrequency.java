@@ -68,6 +68,6 @@ public class TableFrequency extends TableStaticData<Frequency> {
                                final byte[] pFreq,
                                final byte[] pDesc) throws JDataException {
         /* Add into the list */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pFreq, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pFreq, pDesc);
     }
 }

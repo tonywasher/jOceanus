@@ -727,7 +727,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
 
                 /* Copy the item */
                 AccountRate myItem = new AccountRate(myList, myCurr);
-                myList.addAtEnd(myItem);
+                myList.append(myItem);
             }
 
             /* Return the List */
@@ -850,11 +850,11 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          * @param pBonus the Bonus
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final String pAccount,
-                            final String pRate,
-                            final Date pDate,
-                            final String pBonus) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final String pAccount,
+                                final String pRate,
+                                final Date pDate,
+                                final String pBonus) throws JDataException {
             /* Access the Accounts */
             FinanceData myData = getDataSet();
             AccountList myAccounts = myData.getAccounts();
@@ -884,7 +884,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             }
 
             /* Add to the list */
-            add(myRate);
+            append(myRate);
         }
 
         /**
@@ -897,12 +897,12 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          * @param pBonus the Bonus
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final int uAccountId,
-                            final byte[] pRate,
-                            final Date pDate,
-                            final byte[] pBonus) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final int uAccountId,
+                                  final byte[] pRate,
+                                  final Date pDate,
+                                  final byte[] pBonus) throws JDataException {
             /* Create the period */
             AccountRate myRate = new AccountRate(this, uId, uControlId, uAccountId, pDate, pRate, pBonus);
 
@@ -920,7 +920,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             }
 
             /* Add to the list */
-            addAtEnd(myRate);
+            append(myRate);
         }
     }
 }

@@ -251,10 +251,10 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
             String myAddBound = loadString(COL_ADDINCBND);
 
             /* Add the Tax Year */
-            theList.addItem(myID, myRegimeId, myYear, myAllowance, myRental, myLoAgeAllw, myHiAgeAllw,
-                            myCapAllow, myAgeLimit, myAddLimit, myLoBand, myBasicBand, myAddBound, myLoTax,
-                            myBasicTax, myHiTax, myIntTax, myDivTax, myHiDivTax, myAddTax, myAddDivTax,
-                            myCapTax, myHiCapTax);
+            theList.addOpenItem(myID, myRegimeId, myYear, myAllowance, myRental, myLoAgeAllw, myHiAgeAllw,
+                                myCapAllow, myAgeLimit, myAddLimit, myLoBand, myBasicBand, myAddBound,
+                                myLoTax, myBasicTax, myHiTax, myIntTax, myDivTax, myHiDivTax, myAddTax,
+                                myAddDivTax, myCapTax, myHiCapTax);
 
             /* else this is a load from an edit-able spreadsheet */
         } else {
@@ -589,6 +589,9 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
                         return false;
                     }
                 }
+
+                /* Sort the list */
+                myList.reSort();
             }
 
             /* Handle exceptions */

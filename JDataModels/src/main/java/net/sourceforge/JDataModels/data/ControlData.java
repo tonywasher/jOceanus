@@ -352,15 +352,15 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
         }
 
         /**
-         * Add a ControlData item.
+         * Add a ControlData item from secure store.
          * @param uId the id
          * @param uVersion the version
          * @param uControlId the controlId
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uVersion,
-                            final int uControlId) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uVersion,
+                                  final int uControlId) throws JDataException {
             ControlData myControl;
 
             /* Create the ControlData */
@@ -376,19 +376,19 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
                 throw new JDataException(ExceptionClass.DATA, myControl, "Control record already exists");
             }
 
-            /* Add to the list */
+            /* Add to the list by appending */
             theControl = myControl;
-            add(myControl);
+            append(myControl);
         }
 
         /**
-         * Add a ControlData item (with no security as yet).
+         * Add a ControlData item from insecure store.
          * @param uId the id
          * @param uVersion the version
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uVersion) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final int uVersion) throws JDataException {
             ControlData myControl;
 
             /* Create the ControlData */
@@ -399,9 +399,9 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
                 throw new JDataException(ExceptionClass.DATA, myControl, "Control record already exists");
             }
 
-            /* Add to the list */
+            /* Add to the list by appending */
             theControl = myControl;
-            add(myControl);
+            append(myControl);
         }
     }
 }

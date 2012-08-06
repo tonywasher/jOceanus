@@ -339,7 +339,7 @@ public class EventAnalysis implements JDataContents {
 
         /* Add the opening balance to the statement */
         StatementLine myLine = new StatementLine(pStatement);
-        myList.addAtEnd(myLine);
+        myList.append(myLine);
 
         /* Continue looping through the Events extracting relevant elements */
         while (myIterator.hasNext()) {
@@ -358,7 +358,7 @@ public class EventAnalysis implements JDataContents {
 
             /* Add a statement line to the statement */
             myLine = new StatementLine(myList, myCurr);
-            myList.addAtEnd(myLine);
+            myList.append(myLine);
         }
 
         /* Reset the statement balances */
@@ -802,7 +802,7 @@ public class EventAnalysis implements JDataContents {
                                               final Analysis pAnalysis) {
             /* Locate the bucket in the list */
             AnalysisYear myYear = new AnalysisYear(theEvents.theData, pYear, pAnalysis);
-            addAtEnd(myYear);
+            append(myYear);
             return myYear;
         }
 

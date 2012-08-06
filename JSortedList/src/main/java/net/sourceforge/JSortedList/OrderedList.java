@@ -25,7 +25,7 @@ package net.sourceforge.JSortedList;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -33,10 +33,11 @@ import java.util.List;
 import java.util.RandomAccess;
 
 /**
- * Sorted Linked list. Extension of {@link java.util.List} that provides a sorted linked list implementation.
+ * Ordered Linked list. Extension of {@link java.util.List} that provides a sorted list implementation. The
+ * underlying implementation is that of a linked list, but the {@link java.util.LinkedList} interface is not
+ * implemented.
  * <ul>
  * <li>Null objects are not allowed.
- * <li>Duplicate objects are not allowed
  * <li>The semantics of the {@link #add} method are changed such that the element is added at its natural
  * position in the list rather than at the end of the list. Methods that attempt to specify the position of an
  * object are disallowed.
@@ -45,22 +46,25 @@ import java.util.RandomAccess;
  * <p>
  * Because the elements in the list are mutable, changes can be made to the items themselves that result in
  * the list being incorrectly sorted, since the list is unaware of these changes. When this occurs the list is
- * referred to as <b>dirty</b>. The {@link #reSort} method is provided to clean up the list and repair the
- * sort order. A dirty list has the following implications.
+ * referred to as being <b>dirty</b>, as opposed to <b>clean</b>. The {@link #reSort} method is provided to
+ * clean up the list and repair the sort order.
+ * <p>
+ * A dirty list has the following implications.
  * <ol>
  * <li>If an element is added to a dirty list, the element may not be inserted in the correct position. It
  * will be inserted into <i>a valid</i> position in that it will be correctly positioned with respect to its
- * previous and following element.
+ * previous and following element. However, these elements may not be in the correct order.
+ * <li>If duplicate items are added to the list, the most recently added item will be added last in the
+ * sequence of equal items.
  * <li>If an element is searched for in a dirty list, it may not be found, since the search may be aborted
  * early if the item is not found in its expected location. To alleviate this, the {@link #remove(Object)}
  * method will assume that it is searching a dirty list. The {@link #contains} and {@link #indexOf(Object)}
  * methods assume a clean list, and so may give incorrect results on a dirty list.
- * <li>The add method cannot check for duplicate entries, hence a dirty list may contain duplicate items.
- * Similarly, changes made to elements may result in previously dissimilar items becoming equal as far as the
- * natural ordering is concerned. TODO The {@link #reSort} method will remove such duplicate items.
+ * <li>The {@link #append} method is provided to insert items explicitly at the end of the list, and hence is
+ * likely to produce a dirty list. It should be used for bulk additions to the list, followed by a single call
+ * to {@link #reSort}.
  * </ol>
  * <p>
- * TODO relax duplicate object requirement and impose on {@link OrderedIdList}
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
@@ -73,7 +77,7 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
     /**
      * Null Argument message.
      */
-    private static final String NULL_DISALLOWED = "Null elements not allowed";
+    protected static final String NULL_DISALLOWED = "Null elements not allowed";
 
     /**
      * The first node in the list.
@@ -165,11 +169,6 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
             throw new IllegalArgumentException(NULL_DISALLOWED);
         }
 
-        /* Reject if the object is already a link member of this list */
-        if (theIndexMap.findNodeForObject(pItem) != null) {
-            return false;
-        }
-
         /* Increment the modification count */
         theModCount++;
 
@@ -180,27 +179,21 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         theIndexMap.registerLink(myNode);
 
         /* Insert the node into the list */
-        insertNode(myNode, false);
+        insertNode(myNode);
 
         /* Return to caller */
         return true;
     }
 
     /**
-     * Variant on add that looks to add at the end of the list. Used in order to optimise adding of elements
-     * that are already in sort order.
-     * @param pItem the item to add
+     * Append item directly to the end of the list. The list needs to be sorted after this operation.
+     * @param pItem the item to append.
      * @return true
      */
-    public boolean addAtEnd(final T pItem) {
+    public boolean append(final T pItem) {
         /* Reject if the object is null */
         if (pItem == null) {
             throw new IllegalArgumentException(NULL_DISALLOWED);
-        }
-
-        /* Reject if the object is already a link member of this list */
-        if (theIndexMap.findNodeForObject(pItem) != null) {
-            return false;
         }
 
         /* Increment the modification count */
@@ -213,7 +206,8 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         theIndexMap.registerLink(myNode);
 
         /* Insert the node into the list */
-        insertNode(myNode, true);
+        myNode.addToTail();
+        theIndexMap.insertNode(myNode);
 
         /* Return to caller */
         return true;
@@ -222,28 +216,12 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
     /**
      * Insert node.
      * @param pNode - node to insert into list
-     * @param atEnd - optimise insert at end
      */
-    protected void insertNode(final OrderedNode<T> pNode,
-                              final boolean atEnd) {
+    protected void insertNode(final OrderedNode<T> pNode) {
         /* If we are adding to an empty list */
         if (isEmpty()) {
             /* Add to head of list */
             pNode.addToHead();
-
-            /* else if we are adding at the end */
-        } else if (atEnd) {
-            /* Search for insert point */
-            OrderedNode<T> myPoint = theIndexMap.findNodeBefore(pNode);
-
-            /* If we have an insert point, insert there */
-            if (myPoint != null) {
-                pNode.addAfterNode(myPoint);
-
-                /* else add to head of list */
-            } else {
-                pNode.addToHead();
-            }
 
             /* If we are adding normally */
         } else {
@@ -527,17 +505,56 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
 
     /**
      * Re-sort the list.
+     * @return did the list change order true/false
      */
-    public void reSort() {
+    public boolean reSort() {
         /* Increment the modification count */
         theModCount++;
 
         /* Perform sort via the indexMap */
-        theIndexMap.reSort();
+        return theIndexMap.reSort();
     }
 
     @Override
     public int indexOf(final Object o) {
+        /* Access the node of the item */
+        OrderedNode<T> myNode = getNodeForObject(o);
+
+        /* If the node does not belong to the list then ignore */
+        if (myNode == null) {
+            return -1;
+        }
+
+        /* Ensure that we have the first such object */
+        myNode = OrderedNode.getFirstNodeInSequence(myNode);
+
+        /* Access the index of the item */
+        return myNode.getIndex();
+    }
+
+    @Override
+    public int lastIndexOf(final Object o) {
+        /* Access the node of the item */
+        OrderedNode<T> myNode = getNodeForObject(o);
+
+        /* If the node does not belong to the list then ignore */
+        if (myNode == null) {
+            return -1;
+        }
+
+        /* Ensure that we have the last such object */
+        myNode = OrderedNode.getLastNodeInSequence(myNode);
+
+        /* Access the index of the item */
+        return myNode.getIndex();
+    }
+
+    /**
+     * Get the Node of an object.
+     * @param o the object
+     * @return the Node
+     */
+    private OrderedNode<T> getNodeForObject(final Object o) {
         /* Reject if the object is null */
         if (o == null) {
             throw new IllegalArgumentException(NULL_DISALLOWED);
@@ -552,21 +569,7 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         T myItem = theClass.cast(o);
 
         /* Access the node of the item */
-        OrderedNode<T> myNode = theIndexMap.findNodeForObject(myItem);
-
-        /* If the node does not belong to the list then ignore */
-        if (myNode == null) {
-            return -1;
-        }
-
-        /* Access the index of the item */
-        return myNode.getIndex();
-    }
-
-    @Override
-    public int lastIndexOf(final Object o) {
-        /* Objects cannot be duplicate so redirect to indexOf */
-        return indexOf(o);
+        return theIndexMap.findNodeForObject(myItem);
     }
 
     @Override
@@ -620,58 +623,6 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         return (myNode == null) ? null : myNode.getObject();
     }
 
-    /**
-     * Peek at the next item.
-     * @param pItem the item from which to find the next item
-     * @return the next item or <code>null</code>
-     */
-    public T peekNext(final T pItem) {
-        /* Reject if the object is null */
-        if (pItem == null) {
-            throw new IllegalArgumentException(NULL_DISALLOWED);
-        }
-
-        /* Access the node of the item */
-        OrderedNode<T> myNode = theIndexMap.findNodeForObject(pItem);
-
-        /* If the node does not belong to the list then ignore */
-        if (myNode == null) {
-            return null;
-        }
-
-        /* Access the next node */
-        myNode = myNode.getNext();
-
-        /* Return the next object */
-        return (myNode == null) ? null : myNode.getObject();
-    }
-
-    /**
-     * Peek at the previous item.
-     * @param pItem the item from which to find the previous item
-     * @return the previous item or <code>null</code>
-     */
-    public T peekPrevious(final T pItem) {
-        /* Reject if the object is null */
-        if (pItem == null) {
-            throw new IllegalArgumentException(NULL_DISALLOWED);
-        }
-
-        /* Access the node of the item */
-        OrderedNode<T> myNode = theIndexMap.findNodeForObject(pItem);
-
-        /* If the node does not belong to the list then ignore */
-        if (myNode == null) {
-            return null;
-        }
-
-        /* Access the previous node */
-        myNode = myNode.getPrev();
-
-        /* Return the previous object */
-        return (myNode == null) ? null : myNode.getObject();
-    }
-
     @Override
     public boolean containsAll(final Collection<?> pCollection) {
         /* Reject if the collection is null */
@@ -711,6 +662,7 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <X> X[] toArray(final X[] a) {
         /* Determine the size of the array */
         int iSize = size();
@@ -719,24 +671,37 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         if (a == null) {
             throw new IllegalArgumentException("Null array not allowed");
         }
-        Class<?> myClass = a[0].getClass();
+
+        /* Get the component type and check we can assign to it */
+        Class<?> myClass = a.getClass().getComponentType();
         if (!myClass.isAssignableFrom(theClass)) {
             throw new ArrayStoreException();
         }
 
-        /* Allocate an array list of the estimated size */
-        List<X> myList = new ArrayList<X>(iSize);
+        /* Allocate the new array if required */
+        X[] myRows = a;
+        if (a.length < iSize) {
+            myRows = (X[]) Array.newInstance(myClass, iSize);
+        }
+
+        /* Access the array as an object array */
+        Object[] myArray = myRows;
 
         /* Loop through the list */
-        for (Object myObj : toArray()) {
+        OrderedListIterator<?> myIterator = listIterator();
+        for (int i = 0; i < iSize; i++) {
             /* Store the next item */
-            @SuppressWarnings("unchecked")
-            X myAdd = (X) myObj;
-            myList.add(myAdd);
+            myArray[i] = myIterator.next();
+        }
+
+        /* If we have space left in the target array */
+        if (iSize < myRows.length) {
+            /* Set trailing element to null */
+            myRows[iSize] = null;
         }
 
         /* Return the array */
-        return myList.toArray(a);
+        return myRows;
     }
 
     /**
@@ -794,11 +759,18 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
             T myItem = myIterator.next();
 
             /* Add it to the list */
-            add(myItem);
+            append(myItem);
+        }
+
+        /* Did we make a change */
+        boolean bChanged = (theModCount != myModCount);
+        if (bChanged) {
+            /* Sort the list */
+            reSort();
         }
 
         /* Return indication of change */
-        return (theModCount != myModCount);
+        return bChanged;
     }
 
     /**
@@ -811,17 +783,24 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         int myModCount = theModCount;
 
         /* Obtain an iterator over the collection */
-        OrderedListIterator<? extends T> myIterator = pList.listIterator();
+        Iterator<? extends T> myIterator = pList.iterator();
         while (myIterator.hasNext()) {
             /* Access the item */
             T myItem = myIterator.next();
 
             /* Add it to the list */
-            addAtEnd(myItem);
+            append(myItem);
+        }
+
+        /* Did we make a change */
+        boolean bChanged = (theModCount != myModCount);
+        if (bChanged) {
+            /* Sort the list */
+            reSort();
         }
 
         /* Return indication of change */
-        return (theModCount != myModCount);
+        return bChanged;
     }
 
     /**
@@ -859,7 +838,7 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
             }
 
             /* Remove it from the list */
-            remove(myItem);
+            myIterator.remove();
         }
 
         /* Return indication of change */
@@ -888,7 +867,7 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
             }
 
             /* Remove it from the list */
-            remove(myItem);
+            myIterator.remove();
         }
 
         /* Return indication of change */
@@ -998,7 +977,7 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
             T myItem = (T) pInput.readObject();
 
             /* Add to list */
-            addAtEnd(myItem);
+            append(myItem);
         }
     }
 }

@@ -134,10 +134,11 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
         String myHiCapTaxRate = myTableDef.getStringValue(TaxYear.FIELD_HCPTAX);
 
         /* Add into the list */
-        theList.addItem(pId, myRegime, myYear, myAllowance, myRentalAllow, myLoAgeAllow, myHiAgeAllow,
-                        myCapitalAllow, myAgeAllowLimit, myAddAllowLimit, myLoBand, myBasicBand,
-                        myAddIncBound, myLoTaxRate, myBasicTaxRate, myHiTaxRate, myIntTaxRate, myDivTaxRate,
-                        myHiDivTaxRate, myAddTaxRate, myAddDivTaxRate, myCapTaxRate, myHiCapTaxRate);
+        theList.addOpenItem(pId, myRegime, myYear, myAllowance, myRentalAllow, myLoAgeAllow, myHiAgeAllow,
+                            myCapitalAllow, myAgeAllowLimit, myAddAllowLimit, myLoBand, myBasicBand,
+                            myAddIncBound, myLoTaxRate, myBasicTaxRate, myHiTaxRate, myIntTaxRate,
+                            myDivTaxRate, myHiDivTaxRate, myAddTaxRate, myAddDivTaxRate, myCapTaxRate,
+                            myHiCapTaxRate);
     }
 
     @Override

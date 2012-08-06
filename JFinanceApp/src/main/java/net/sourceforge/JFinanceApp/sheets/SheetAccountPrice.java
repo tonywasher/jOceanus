@@ -138,7 +138,7 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
             byte[] myPriceBytes = loadBytes(COL_PRICE);
 
             /* Load the item */
-            theList.addItem(myID, myControlId, myDate, myActId, myPriceBytes);
+            theList.addSecureItem(myID, myControlId, myDate, myActId, myPriceBytes);
 
             /* else this is a load from an edit-able spreadsheet */
         } else {
@@ -151,7 +151,7 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
             String myPrice = loadString(COL_PRICE - 1);
 
             /* Load the item */
-            theList.addItem(myID, myDate, myAccount, myPrice);
+            theList.addOpenItem(myID, myDate, myAccount, myPrice);
         }
     }
 
@@ -305,6 +305,9 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
                         }
                     }
                 }
+
+                /* Sort the list */
+                pData.getPrices().reSort();
             }
 
             /* Handle exceptions */

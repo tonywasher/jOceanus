@@ -537,7 +537,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             }
 
             /* Add the Transaction Type to the list */
-            add(myTransType);
+            append(myTransType);
 
             /* Validate the TransType */
             myTransType.validate();
@@ -557,11 +557,11 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @param pDesc the Description of the transaction type
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final String pTranType,
-                            final String pDesc) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final boolean isEnabled,
+                                final int uOrder,
+                                final String pTranType,
+                                final String pDesc) throws JDataException {
             /* Create a new Transaction Type */
             TransactionType myTransType = new TransactionType(this, uId, isEnabled, uOrder, pTranType, pDesc);
 
@@ -571,7 +571,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             }
 
             /* Add the Transaction Type to the list */
-            add(myTransType);
+            append(myTransType);
 
             /* Validate the TransType */
             myTransType.validate();
@@ -592,12 +592,12 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @param pDesc the Encrypted Description of the transaction type
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final byte[] pTransType,
-                            final byte[] pDesc) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final boolean isEnabled,
+                                  final int uOrder,
+                                  final byte[] pTransType,
+                                  final byte[] pDesc) throws JDataException {
             /* Create a new Transaction Type */
             TransactionType myTransType = new TransactionType(this, uId, uControlId, isEnabled, uOrder,
                     pTransType, pDesc);
@@ -608,7 +608,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
             }
 
             /* Add the Transaction Type to the list */
-            addAtEnd(myTransType);
+            append(myTransType);
 
             /* Validate the TransType */
             myTransType.validate();

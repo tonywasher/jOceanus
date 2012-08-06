@@ -245,7 +245,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
             }
 
             /* Add the Frequency to the list */
-            add(myFrequency);
+            append(myFrequency);
 
             /* Validate the Frequency */
             myFrequency.validate();
@@ -265,11 +265,11 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @param pDesc the Description of the frequency
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final String pFrequency,
-                            final String pDesc) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final boolean isEnabled,
+                                final int uOrder,
+                                final String pFrequency,
+                                final String pDesc) throws JDataException {
             /* Create a new Frequency */
             Frequency myFreq = new Frequency(this, uId, isEnabled, uOrder, pFrequency, pDesc);
 
@@ -279,7 +279,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
             }
 
             /* Add the Frequency to the list */
-            add(myFreq);
+            append(myFreq);
 
             /* Validate the Frequency */
             myFreq.validate();
@@ -300,12 +300,12 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @param pDesc the Encrypted Description of the frequency
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
-                            final byte[] pFrequency,
-                            final byte[] pDesc) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final boolean isEnabled,
+                                  final int uOrder,
+                                  final byte[] pFrequency,
+                                  final byte[] pDesc) throws JDataException {
             /* Create a new Frequency */
             Frequency myFreq = new Frequency(this, uId, uControlId, isEnabled, uOrder, pFrequency, pDesc);
 
@@ -315,7 +315,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
             }
 
             /* Add the Frequency to the list */
-            addAtEnd(myFreq);
+            append(myFreq);
 
             /* Validate the Frequency */
             myFreq.validate();

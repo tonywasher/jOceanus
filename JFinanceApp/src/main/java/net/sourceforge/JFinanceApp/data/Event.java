@@ -1955,7 +1955,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
 
                 /* Build the new linked event and add it to the extract */
                 Event myEvent = new Event(myList, myCurr);
-                myList.addAtEnd(myEvent);
+                myList.append(myEvent);
             }
 
             /* Return the List */
@@ -1989,9 +1989,12 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 /* Loop while we have an event to add */
                 while ((myEvent = myCurr.nextEvent(myList, pTaxYear, myDate)) != null) {
                     /* Add it to the extract */
-                    myList.add(myEvent);
+                    myList.append(myEvent);
                 }
             }
+
+            /* Sort the list */
+            myList.reSort();
 
             /* Return the List */
             return myList;
@@ -2067,17 +2070,17 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @param pYears the years
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final Date pDate,
-                            final String pDesc,
-                            final String pAmount,
-                            final String pDebit,
-                            final String pCredit,
-                            final String pUnits,
-                            final String pTransType,
-                            final String pTaxCredit,
-                            final String pDilution,
-                            final Integer pYears) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final Date pDate,
+                                final String pDesc,
+                                final String pAmount,
+                                final String pDebit,
+                                final String pCredit,
+                                final String pUnits,
+                                final String pTransType,
+                                final String pTaxCredit,
+                                final String pDilution,
+                                final Integer pYears) throws JDataException {
             /* Access the accounts */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
@@ -2120,7 +2123,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             }
 
             /* Add the Event to the list */
-            add(myEvent);
+            append(myEvent);
         }
 
         /**
@@ -2139,18 +2142,18 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @param pYears the years
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final Date pDate,
-                            final byte[] pDesc,
-                            final byte[] pAmount,
-                            final int uDebitId,
-                            final int uCreditId,
-                            final byte[] pUnits,
-                            final int uTransId,
-                            final byte[] pTaxCredit,
-                            final byte[] pDilution,
-                            final Integer pYears) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final Date pDate,
+                                  final byte[] pDesc,
+                                  final byte[] pAmount,
+                                  final int uDebitId,
+                                  final int uCreditId,
+                                  final byte[] pUnits,
+                                  final int uTransId,
+                                  final byte[] pTaxCredit,
+                                  final byte[] pDilution,
+                                  final Integer pYears) throws JDataException {
             /* Create the new Event */
             Event myEvent = new Event(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId,
                     pAmount, pUnits, pTaxCredit, pDilution, pYears);
@@ -2169,7 +2172,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             }
 
             /* Add the Event to the list */
-            addAtEnd(myEvent);
+            append(myEvent);
         }
 
         @Override

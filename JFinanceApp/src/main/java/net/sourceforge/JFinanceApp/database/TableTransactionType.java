@@ -68,6 +68,6 @@ public class TableTransactionType extends TableStaticData<TransactionType> {
                                final byte[] pTrans,
                                final byte[] pDesc) throws JDataException {
         /* Add into the list */
-        theList.addItem(pId, pControlId, isEnabled, iOrder, pTrans, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, iOrder, pTrans, pDesc);
     }
 }

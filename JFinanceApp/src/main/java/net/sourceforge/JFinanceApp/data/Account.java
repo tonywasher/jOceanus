@@ -2606,20 +2606,20 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @param pNotes notes
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final String pName,
-                            final String pAcType,
-                            final String pDesc,
-                            final Date pMaturity,
-                            final Date pClosed,
-                            final String pParent,
-                            final String pAlias,
-                            final char[] pWebSite,
-                            final char[] pCustNo,
-                            final char[] pUserId,
-                            final char[] pPassword,
-                            final char[] pAccount,
-                            final char[] pNotes) throws JDataException {
+        public void addOpenItem(final int uId,
+                                final String pName,
+                                final String pAcType,
+                                final String pDesc,
+                                final Date pMaturity,
+                                final Date pClosed,
+                                final String pParent,
+                                final String pAlias,
+                                final char[] pWebSite,
+                                final char[] pCustNo,
+                                final char[] pUserId,
+                                final char[] pPassword,
+                                final char[] pAccount,
+                                final char[] pNotes) throws JDataException {
             /* Access the account types and accounts */
             FinanceData myData = getDataSet();
             AccountTypeList myActTypes = myData.getAccountTypes();
@@ -2665,7 +2665,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             }
 
             /* Add the Account to the list */
-            add(myAccount);
+            append(myAccount);
         }
 
         /**
@@ -2687,21 +2687,21 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @param pNotes the Encrypted Notes for the account
          * @throws JDataException on error
          */
-        public void addItem(final int uId,
-                            final int uControlId,
-                            final byte[] pName,
-                            final int uAcTypeId,
-                            final byte[] pDesc,
-                            final Date pMaturity,
-                            final Date pClosed,
-                            final Integer pParentId,
-                            final Integer pAliasId,
-                            final byte[] pWebSite,
-                            final byte[] pCustNo,
-                            final byte[] pUserId,
-                            final byte[] pPassword,
-                            final byte[] pAccount,
-                            final byte[] pNotes) throws JDataException {
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final byte[] pName,
+                                  final int uAcTypeId,
+                                  final byte[] pDesc,
+                                  final Date pMaturity,
+                                  final Date pClosed,
+                                  final Integer pParentId,
+                                  final Integer pAliasId,
+                                  final byte[] pWebSite,
+                                  final byte[] pCustNo,
+                                  final byte[] pUserId,
+                                  final byte[] pPassword,
+                                  final byte[] pAccount,
+                                  final byte[] pNotes) throws JDataException {
             /* Create the new account */
             Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, pMaturity,
                     pClosed, pParentId, pAliasId, pWebSite, pCustNo, pUserId, pPassword, pAccount, pNotes);
@@ -2717,7 +2717,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             }
 
             /* Add the Account to the list */
-            addAtEnd(myAccount);
+            append(myAccount);
         }
 
         /**

@@ -102,8 +102,8 @@ public class TableEvent extends TableEncrypted<Event> {
         Integer myYears = myTableDef.getIntegerValue(Event.FIELD_YEARS);
 
         /* Add into the list */
-        theList.addItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myUnits,
-                        myTranType, myTaxCred, myDilution, myYears);
+        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myUnits,
+                              myTranType, myTaxCred, myDilution, myYears);
     }
 
     @Override

@@ -739,7 +739,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
     public abstract T addNewItem();
 
     /**
-     * Rewind items to the require version.
+     * Rewind items to the required version.
      * @param pVersion the version to rewind to
      */
     public void rewindToVersion(final int pVersion) {
@@ -765,62 +765,20 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
                 continue;
             }
 
-            /* Adjust values and reSort */
+            /* Adjust values */
             myCurr.rewindToVersion(pVersion);
-            myIterator.reSort();
         }
 
         /* Adjust list value */
         setVersion(pVersion);
 
+        /* ReSort the list unless we are an edit list */
+        if (theStyle != ListStyle.EDIT) {
+            reSort();
+        }
+
         /* Validate the list */
         validate();
-    }
-
-    /**
-     * Reset changes in an edit view.
-     */
-    public void resetChanges() {
-        /* Create an iterator for the list */
-        OrderedListIterator<T> myIterator = listIterator();
-
-        /* Loop through the elements */
-        while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-
-            /* Switch on the state */
-            switch (myCurr.getState()) {
-            /* Delete the item if it is new or a deleted new item */
-                case NEW:
-                case DELNEW:
-                    myIterator.remove();
-                    break;
-
-                /* If this is a clean item, just ignore */
-                case CLEAN:
-                    break;
-
-                /* If this is a changed or DELCHG item */
-                case CHANGED:
-                case DELCHG:
-                    /* Clear changes and fall through */
-                    myCurr.resetHistory();
-                    myCurr.clearErrors();
-                    myIterator.reSort();
-                    break;
-
-                /* If this is a deleted or recovered item */
-                case DELETED:
-                case RECOVERED:
-                    /* Clear errors and mark the item as clean */
-                    myCurr.clearErrors();
-                    // myCurr.setState(DataState.CLEAN);
-                    myIterator.reSort();
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     /**

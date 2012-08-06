@@ -112,8 +112,8 @@ public class TablePattern extends TableEncrypted<Pattern> {
         int myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
         /* Add into the list */
-        theList.addItem(pId, pControlId, myDate, myDesc, myAmount, myAccountId, myPartnerId, myTranType,
-                        myFreq, isCredit);
+        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myAccountId, myPartnerId,
+                              myTranType, myFreq, isCredit);
     }
 
     @Override
