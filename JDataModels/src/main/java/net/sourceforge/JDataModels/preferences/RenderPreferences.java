@@ -20,12 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JDataModels.preferences;
 
 import java.awt.Color;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.PreferenceSet;
+import net.sourceforge.JFieldSet.RenderConfig;
+import net.sourceforge.JPreferenceSet.PreferenceSet;
 
 /**
  * Preferences for rendering.
@@ -109,7 +110,7 @@ public class RenderPreferences extends PreferenceSet {
     /**
      * Display name for Recovered foreground.
      */
-    private static final String DISPLAY_RECOVERED = "Reovered Colour";
+    private static final String DISPLAY_RECOVERED = "Recovered Colour";
 
     /**
      * Display name for Link foreground.
@@ -127,6 +128,29 @@ public class RenderPreferences extends PreferenceSet {
      */
     public RenderPreferences() throws JDataException {
         super();
+    }
+
+    /**
+     * Obtain configuration.
+     * @return the render configuration
+     */
+    public RenderConfig getConfiguration() {
+        /* Allocate the configuration */
+        RenderConfig myConfig = new RenderConfig();
+
+        /* Set the values */
+        myConfig.setBackgroundColor(getColorValue(NAME_BACKGROUND));
+        myConfig.setChangedColor(getColorValue(NAME_CHANGED));
+        myConfig.setDeletedColor(getColorValue(NAME_DELETED));
+        myConfig.setErrorColor(getColorValue(NAME_ERROR));
+        myConfig.setNewColor(getColorValue(NAME_NEW));
+        myConfig.setRecoveredColor(getColorValue(NAME_RECOVERED));
+        myConfig.setStandardColor(getColorValue(NAME_STANDARD));
+        myConfig.setLinkColor(getColorValue(NAME_LINK));
+        myConfig.setChgLinkColor(getColorValue(NAME_CHGLINK));
+
+        /* Return the configuration */
+        return myConfig;
     }
 
     @Override

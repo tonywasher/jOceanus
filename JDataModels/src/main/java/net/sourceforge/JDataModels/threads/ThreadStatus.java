@@ -24,14 +24,14 @@ package net.sourceforge.JDataModels.threads;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.PreferenceSet;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceSetChooser;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.ui.StatusBar;
 import net.sourceforge.JDataModels.ui.StatusBar.StatusData;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
 
 /**
  * Thread Status.

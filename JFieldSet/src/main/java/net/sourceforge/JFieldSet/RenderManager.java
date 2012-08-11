@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JFieldSet: Java Swing Field Set
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,31 +20,23 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JFieldSet;
 
 import java.awt.Color;
 import java.awt.Font;
 
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.table.JTableHeader;
 
-import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataState;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceItem;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceType;
-import net.sourceforge.JDataModels.ui.Renderer.BooleanRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.CalendarRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.DecimalRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.IntegerRenderer;
-import net.sourceforge.JDataModels.ui.Renderer.RowCell;
-import net.sourceforge.JDataModels.ui.Renderer.StringRenderer;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimalFormatter;
+import net.sourceforge.JFieldSet.Renderer.BooleanRenderer;
+import net.sourceforge.JFieldSet.Renderer.CalendarRenderer;
+import net.sourceforge.JFieldSet.Renderer.DecimalRenderer;
+import net.sourceforge.JFieldSet.Renderer.IntegerRenderer;
+import net.sourceforge.JFieldSet.Renderer.RowCell;
+import net.sourceforge.JFieldSet.Renderer.StringRenderer;
 
 /**
  * Class to determine rendering details for an item.
@@ -77,49 +69,14 @@ public class RenderManager {
     private final JDataManager theDataManager;
 
     /**
-     * The Preferences.
+     * The Configuration.
      */
-    private final RenderPreferences thePreferences;
-
-    /**
-     * The error colour.
-     */
-    private Color theErrorColor;
-
-    /**
-     * The changed colour.
-     */
-    private Color theChangedColor;
-
-    /**
-     * The new colour.
-     */
-    private Color theNewColor;
-
-    /**
-     * The deleted colour.
-     */
-    private Color theDeletedColor;
-
-    /**
-     * The recovered colour.
-     */
-    private Color theRecoveredColor;
-
-    /**
-     * The standard colour.
-     */
-    private Color theStandardColor;
-
-    /**
-     * The background colour.
-     */
-    private Color theBackgroundColor;
+    private RenderConfig theConfig;
 
     /**
      * Populate RenderData interface.
      */
-    protected interface PopulateRenderData {
+    public interface PopulateRenderData {
         /**
          * Get render data for row.
          * @param pData the Render details
@@ -130,59 +87,61 @@ public class RenderManager {
     /**
      * Constructor.
      * @param pManager the data manager
-     * @throws JDataException on error
+     * @param pConfig the render configuration
      */
-    public RenderManager(final JDataManager pManager) throws JDataException {
+    public RenderManager(final JDataManager pManager,
+                         final RenderConfig pConfig) {
         /* Store the parameters */
         theDataManager = pManager;
+        theConfig = pConfig;
 
-        /* Access the preferences */
-        thePreferences = PreferenceManager.getPreferenceSet(RenderPreferences.class);
-
-        /* Process the preferences */
-        processPreferences();
-
-        /* Add a listener */
-        thePreferences.addChangeListener(new RenderListener());
+        /* Process the configuration */
+        processConfiguration();
     }
 
     /**
-     * Process Preferences.
+     * Set configuration.
+     * @param pConfig the render configuration
      */
-    private void processPreferences() {
-        /* Record the preferences */
-        theStandardColor = thePreferences.getColorValue(RenderPreferences.NAME_STANDARD);
-        theBackgroundColor = thePreferences.getColorValue(RenderPreferences.NAME_BACKGROUND);
-        theErrorColor = thePreferences.getColorValue(RenderPreferences.NAME_CHANGED);
-        theNewColor = thePreferences.getColorValue(RenderPreferences.NAME_NEW);
-        theChangedColor = thePreferences.getColorValue(RenderPreferences.NAME_CHANGED);
-        theDeletedColor = thePreferences.getColorValue(RenderPreferences.NAME_DELETED);
-        theRecoveredColor = thePreferences.getColorValue(RenderPreferences.NAME_RECOVERED);
-        Color myLinkColor = thePreferences.getColorValue(RenderPreferences.NAME_LINK);
-        Color myChgLinkColor = thePreferences.getColorValue(RenderPreferences.NAME_CHGLINK);
+    public void setConfig(final RenderConfig pConfig) {
+        /* Store the parameters */
+        theConfig = pConfig;
+
+        /* Process the configuration */
+        processConfiguration();
+    }
+
+    /**
+     * Process Configuration.
+     */
+    private void processConfiguration() {
+        Color myStdColor = theConfig.getStandardColor();
+        Color myChgColor = theConfig.getChangedColor();
+        Color myLinkColor = theConfig.getLinkColor();
+        Color myChgLinkColor = theConfig.getChangedLinkColor();
 
         /* Declare preferences to data manager */
-        theDataManager.setFormatter(theStandardColor, theChangedColor, myLinkColor, myChgLinkColor);
+        theDataManager.setFormatter(myStdColor, myChgColor, myLinkColor, myChgLinkColor);
     }
 
     /**
      * Listener class.
      */
-    private final class RenderListener implements ChangeListener {
-
-        @Override
-        public void stateChanged(final ChangeEvent evt) {
-            /* Process preferences */
-            processPreferences();
-        }
-    }
+    // private final class RenderListener implements ChangeListener {
+    //
+    // @Override
+    // public void stateChanged(final ChangeEvent evt) {
+    // /* Process preferences */
+    // processPreferences();
+    // }
+    // }
 
     /**
      * Initialise DataManager.
      */
-    public void initialiseDataManager() {
-
-    }
+    // public void initialiseDataManager() {
+    //
+    // }
 
     /**
      * Allocate a RenderData object.
@@ -267,12 +226,12 @@ public class RenderManager {
         /**
          * The foreground colour.
          */
-        private Color theForeGround = theStandardColor;
+        private Color theForeGround = theConfig.getStandardColor();
 
         /**
          * The background colour.
          */
-        private Color theBackGround = theBackgroundColor;
+        private Color theBackGround = getStandardBackground();
 
         /**
          * The row.
@@ -385,8 +344,8 @@ public class RenderManager {
          */
         public void setDefaults() {
             /* Set the data */
-            theForeGround = theStandardColor;
-            theBackGround = theBackgroundColor;
+            theForeGround = theConfig.getStandardColor();
+            theBackGround = getStandardBackground();
             theFont = (isFixed) ? FONT_NUMERIC : FONT_STANDARD;
             theToolTipText = null;
         }
@@ -394,32 +353,19 @@ public class RenderManager {
         /**
          * Process Table Row.
          * @param pRow the Table row
-         * @param iField the field id
+         * @param pField the field id
          */
-        public void processTableRow(final DataItem pRow,
-                                    final JDataField iField) {
-            /* Default is black on white */
-            Color myFore = getForeground(pRow, iField);
+        public void processTableRow(final JFieldSetItem pRow,
+                                    final JDataField pField) {
+            /* Obtain the render state */
+            RenderState myState = pRow.getRenderState(pField);
+
+            /* Obtain the foreground and background for the state */
+            Color myFore = getForeground(myState);
             Color myBack = getStandardBackground();
-            String myTip = null;
-            Font myFont;
 
-            /* Has the field changed */
-            boolean isChanged = pRow.fieldChanged(iField).isDifferent();
-
-            /* Determine the colour */
-            if (pRow.isDeleted()) {
-                myFore = theDeletedColor;
-            } else if ((pRow.hasErrors()) && (pRow.hasErrors(iField))) {
-                myFore = theErrorColor;
-                myTip = pRow.getFieldErrors(iField);
-            } else if (isChanged) {
-                myFore = theChangedColor;
-            } else if (pRow.getState() == DataState.NEW) {
-                myFore = theNewColor;
-            } else if (pRow.getState() == DataState.RECOVERED) {
-                myFore = theRecoveredColor;
-            }
+            /* Determine toolTip */
+            String myTip = myState.isError() ? pRow.getFieldErrors(pField) : null;
 
             /* For selected items flip the foreground/background */
             if (isSelected()) {
@@ -429,10 +375,11 @@ public class RenderManager {
             }
 
             /* Select the font */
+            Font myFont;
             if (isFixed) {
-                myFont = isChanged ? FONT_NUMCHANGED : FONT_NUMERIC;
+                myFont = myState.isChanged() ? FONT_NUMCHANGED : FONT_NUMERIC;
             } else {
-                myFont = isChanged ? FONT_CHANGED : FONT_STANDARD;
+                myFont = myState.isChanged() ? FONT_CHANGED : FONT_STANDARD;
             }
 
             /* Set the data */
@@ -455,75 +402,57 @@ public class RenderManager {
         /**
          * Process Table Row.
          * @param pRow the Table row
-         * @param iFields the field IDs
+         * @param pFields the field IDs
          */
-        public void processRowHeader(final DataItem pRow,
-                                     final JDataField[] iFields) {
+        public void processRowHeader(final JFieldSetItem pRow,
+                                     final JDataField[] pFields) {
+            /* Initialise toolTip */
+            theToolTipText = null;
+
             /* Has the row changed */
-            boolean isChanged = pRow.hasHistory();
+            RenderState myState = pRow.getRenderState();
 
             /* Determine the colour */
-            if (pRow.isDeleted()) {
-                theForeGround = theDeletedColor;
-            } else if (pRow.hasErrors()) {
-                theForeGround = theStandardColor;
-                theBackGround = theErrorColor;
-                theToolTipText = pRow.getFieldErrors(iFields);
-            } else if (isChanged) {
-                theForeGround = theChangedColor;
-            } else if (pRow.getState() == DataState.NEW) {
-                theForeGround = theNewColor;
-            } else if (pRow.getState() == DataState.RECOVERED) {
-                theForeGround = theRecoveredColor;
+            Color myFore = getForeground(myState);
+            Color myBack = getStandardBackground();
+
+            /* If the item is an error */
+            if (myState.isError()) {
+                /* Flip foreground and background */
+                Color myTemp = myFore;
+                myFore = myBack;
+                myBack = myTemp;
+
+                /* Access toolTip */
+                theToolTipText = pRow.getFieldErrors(pFields);
             }
+
+            /* Record foreground and background */
+            theForeGround = myFore;
+            theBackGround = myBack;
         }
     }
 
     /**
      * Determine Standard foreground.
      * @param pItem the Item
-     * @param iField the Field number
+     * @param pField the Field number
      * @return the standard foreground for the item
      */
-    public Color getForeground(final DataItem pItem,
-                               final JDataField iField) {
-        /* Handle deleted items */
-        if (pItem.isDeleted()) {
-            return theDeletedColor;
-        }
-
-        /* If the field exists */
-        if (iField != null) {
-            /* Handle error items */
-            if ((pItem.hasErrors()) && (pItem.hasErrors(iField))) {
-                return theErrorColor;
-            }
-
-            /* Handle changed items */
-            if (pItem.fieldChanged(iField).isDifferent()) {
-                return theChangedColor;
-            }
-        }
-
-        /* Switch on Status */
-        switch (pItem.getState()) {
-            case NEW:
-                return theNewColor;
-            case RECOVERED:
-                return theRecoveredColor;
-            default:
-                return theStandardColor;
-        }
+    public Color getForeground(final JFieldSetItem pItem,
+                               final JDataField pField) {
+        /* Access foreground for item */
+        return getForeground(pItem.getRenderState(pField));
     }
 
     /**
-     * Determine Standard foreground.
-     * @param pPreference the preference
-     * @return the standard foreground for the item
+     * Determine foreground for the state.
+     * @param pState the render state
+     * @return the foreground colour
      */
-    protected Color getForeground(final PreferenceItem pPreference) {
+    protected Color getForeground(final RenderState pState) {
         /* Handle changed items */
-        return (pPreference.isChanged()) ? theChangedColor : theStandardColor;
+        return theConfig.getColorForState(pState);
     }
 
     /**
@@ -531,59 +460,42 @@ public class RenderManager {
      * @return the standard background
      */
     public Color getStandardBackground() {
-        return theBackgroundColor;
+        return theConfig.getBackgroundColor();
     }
 
     /**
      * Determine Standard Font.
      * @param pItem the Item
-     * @param iField the Field number
-     * @param isFixed is the field fixed width
+     * @param pField the Field
+     * @param isFixed is the item fixed width
      * @return the standard Font for the item
      */
-    public Font getFont(final DataItem pItem,
-                        final JDataField iField,
+    public Font getFont(final JFieldSetItem pItem,
+                        final JDataField pField,
                         final boolean isFixed) {
-        if (pItem.fieldChanged(iField).isDifferent()) {
-            return (isFixed ? FONT_NUMCHANGED : FONT_CHANGED);
-        } else {
-            return (isFixed ? FONT_NUMERIC : FONT_STANDARD);
-        }
-    }
-
-    /**
-     * Determine Standard Font.
-     * @param pPreference the Item
-     * @return the standard Font for the item
-     */
-    public Font getFont(final PreferenceItem pPreference) {
-        boolean isFixed = pPreference.getType() == PreferenceType.Integer;
-        if (pPreference.isChanged()) {
-            return (isFixed ? FONT_NUMCHANGED : FONT_CHANGED);
-        } else {
-            return (isFixed ? FONT_NUMERIC : FONT_STANDARD);
+        /* Switch on the state */
+        switch (pItem.getRenderState(pField)) {
+            case CHANGED:
+                return (isFixed ? FONT_NUMCHANGED : FONT_CHANGED);
+            default:
+                return (isFixed ? FONT_NUMERIC : FONT_STANDARD);
         }
     }
 
     /**
      * Determine Standard ToolTip.
      * @param pItem the Item
-     * @param iField the Field number
+     * @param pField the Field
      * @return the standard ToolTip for the item
      */
-    public String getToolTip(final DataItem pItem,
-                             final JDataField iField) {
-        /* Handle deleted items */
-        if (pItem.isDeleted()) {
-            return null;
+    public String getToolTip(final JFieldSetItem pItem,
+                             final JDataField pField) {
+        /* Switch on the state */
+        switch (pItem.getRenderState(pField)) {
+            case ERROR:
+                return pItem.getFieldErrors(pField);
+            default:
+                return null;
         }
-
-        /* Handle error items */
-        if ((pItem.hasErrors()) && (pItem.hasErrors(iField))) {
-            return pItem.getFieldErrors(iField);
-        }
-
-        /* Return no ToolTip */
-        return null;
     }
 }

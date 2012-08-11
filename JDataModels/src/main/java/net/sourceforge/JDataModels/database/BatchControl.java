@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataState;
+import net.sourceforge.JFieldSet.DataState;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.
@@ -36,7 +36,7 @@ public class BatchControl {
     /**
      * Default batch size for updates.
      */
-    protected static final int DEF_BATCH_SIZE = 50;
+    public static final int DEF_BATCH_SIZE = 50;
 
     /**
      * Batch size for updates.

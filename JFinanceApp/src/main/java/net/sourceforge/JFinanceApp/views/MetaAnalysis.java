@@ -26,9 +26,6 @@ import java.util.Calendar;
 import java.util.Iterator;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.PreferenceSet;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceSetChooser;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -59,6 +56,9 @@ import net.sourceforge.JFinanceApp.views.Analysis.TransSummary;
 import net.sourceforge.JFinanceApp.views.Analysis.TransTotal;
 import net.sourceforge.JFinanceApp.views.Analysis.ValueAccount;
 import net.sourceforge.JFinanceApp.views.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
 
 /**
  * Class to further analyse an analysis, primarily to calculate tax liability.

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.JFieldSet;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -72,22 +72,15 @@ public class ItemValidation implements JDataContents {
     }
 
     /**
-     * The list to which this Validation Control belongs.
-     */
-    private final DataList<?> theList;
-
-    /**
      * The first error in the list.
      */
     private final List<ErrorElement> theErrors;
 
     /**
      * Constructor.
-     * @param pItem the item to which this validation control belongs
      */
-    public ItemValidation(final DataItem pItem) {
+    public ItemValidation() {
         /* Store details */
-        theList = pItem.getList();
         theErrors = new ArrayList<ErrorElement>();
         allocateNewFields();
     }
@@ -115,9 +108,6 @@ public class ItemValidation implements JDataContents {
 
         /* Add to the end of the list */
         theErrors.add(myEl);
-
-        /* Note that the list has errors */
-        theList.setEditState(EditState.ERROR);
     }
 
     /**

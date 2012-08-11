@@ -31,8 +31,8 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.SecurityPreferences;
 import net.sourceforge.JDataModels.database.Database;
+import net.sourceforge.JDataModels.preferences.SecurityPreferences;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
 import net.sourceforge.JGordianKnot.SecureManager;
 

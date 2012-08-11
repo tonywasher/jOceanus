@@ -29,6 +29,8 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.JFieldSet.DataState;
+import net.sourceforge.JFieldSet.EditState;
 import net.sourceforge.JSortedList.OrderedIdList;
 import net.sourceforge.JSortedList.OrderedListIterator;
 

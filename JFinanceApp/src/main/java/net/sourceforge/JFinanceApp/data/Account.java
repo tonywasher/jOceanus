@@ -36,7 +36,7 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.DataState;
+import net.sourceforge.JFieldSet.DataState;
 import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JMoney;

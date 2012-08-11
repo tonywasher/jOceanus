@@ -35,7 +35,7 @@ import javax.xml.rpc.ServiceException;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 import net.sourceforge.JiraAccess.data.Security.Group;
 import net.sourceforge.JiraAccess.data.Security.Role;
 import net.sourceforge.JiraAccess.data.Security.User;

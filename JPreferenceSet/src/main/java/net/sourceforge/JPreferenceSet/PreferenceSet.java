@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.JPreferenceSet;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -37,15 +37,20 @@ import net.sourceforge.JDataManager.DataConverter;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JEventManager.JEventManager;
 import net.sourceforge.JEventManager.JEventObject;
+import net.sourceforge.JFieldSet.JFieldSetItem;
+import net.sourceforge.JFieldSet.RenderState;
 
 /**
  * Wrapper class for java preferences.
  * @author Tony Washer
  */
-public abstract class PreferenceSet extends JEventObject {
+public abstract class PreferenceSet extends JEventObject implements JFieldSetItem {
     /**
      * Unknown preference string.
      */
@@ -60,6 +65,16 @@ public abstract class PreferenceSet extends JEventObject {
      * Font separator.
      */
     private static final String FONT_SEPARATOR = ":";
+
+    /**
+     * Report fields.
+     */
+    private final JDataFields theFields = new JDataFields(PreferenceSet.class.getSimpleName());
+
+    @Override
+    public JDataFields getDataFields() {
+        return theFields;
+    }
 
     /**
      * The Preference node for this set.
@@ -585,6 +600,11 @@ public abstract class PreferenceSet extends JEventObject {
         private final String theName;
 
         /**
+         * New preference Value.
+         */
+        private final JDataField theField;
+
+        /**
          * default Value.
          */
         private final Object theDefault;
@@ -639,6 +659,14 @@ public abstract class PreferenceSet extends JEventObject {
         }
 
         /**
+         * Obtain the field for the preference.
+         * @return the field for the preference
+         */
+        public JDataField getDataField() {
+            return theField;
+        }
+
+        /**
          * Obtain the value of the preference.
          * @return the value of the preference
          */
@@ -669,6 +697,9 @@ public abstract class PreferenceSet extends JEventObject {
             theDefault = pDefault;
             theType = pType;
             theDisplay = getDisplayName(theName);
+
+            /* Create the DataField */
+            theField = theFields.declareLocalField(pName);
         }
 
         /**
@@ -1381,5 +1412,49 @@ public abstract class PreferenceSet extends JEventObject {
             /* Return the PreferenceSet */
             return (X) mySet;
         }
+    }
+
+    @Override
+    public String getFieldErrors(final JDataField pField) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getFieldErrors(final JDataField[] pFields) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RenderState getRenderState() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RenderState getRenderState(final JDataField pField) {
+        /* Access preference */
+        PreferenceItem myPref = getPreference(pField.getName());
+
+        /* If it is found */
+        if (myPref != null) {
+            /* Return the relevant state */
+            return myPref.isChanged() ? RenderState.CHANGED : RenderState.NORMAL;
+        }
+
+        /* Not recognised */
+        return RenderState.NORMAL;
+    }
+
+    @Override
+    public String formatObject() {
+        return theFields.getName();
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Access preference */
+        PreferenceItem myPref = getPreference(pField.getName());
+
+        /* Return the value */
+        return (myPref == null) ? JDataFieldValue.UnknownField : myPref.getValue();
     }
 }

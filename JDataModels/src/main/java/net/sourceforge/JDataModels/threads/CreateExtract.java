@@ -27,10 +27,10 @@ import java.io.File;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataModels.sheets.BackupPreferences;
+import net.sourceforge.JDataModels.preferences.BackupPreferences;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
 import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 
 /**
  * Thread to create a extract spreadsheet of a data set.

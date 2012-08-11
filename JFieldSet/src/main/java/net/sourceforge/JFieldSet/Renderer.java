@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JFieldSet: Java Swing Field Set
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JFieldSet;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -30,12 +30,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.JDataModels.ui.RenderManager.PopulateRenderData;
-import net.sourceforge.JDataModels.ui.RenderManager.RenderData;
 import net.sourceforge.JDateDay.JDateDayCellRenderer;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDecimalFormatter;
+import net.sourceforge.JFieldSet.RenderManager.PopulateRenderData;
+import net.sourceforge.JFieldSet.RenderManager.RenderData;
 
 /**
  * Cell renderers.

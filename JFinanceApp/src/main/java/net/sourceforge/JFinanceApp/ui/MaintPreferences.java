@@ -42,12 +42,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.PreferenceSet;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataModels.ui.PreferenceSetPanel;
-import net.sourceforge.JDataModels.ui.RenderManager;
 import net.sourceforge.JEventManager.JEventPanel;
+import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceSetPanel;
 
 /**
  * Preference maintenance panel.

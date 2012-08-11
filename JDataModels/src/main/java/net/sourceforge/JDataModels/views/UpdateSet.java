@@ -33,9 +33,9 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.EditState;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.SaveButtons;
+import net.sourceforge.JFieldSet.EditState;
 
 /**
  * Provides control of a set of update-able DataLists.

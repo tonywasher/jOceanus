@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JFieldSet: Java Swing Field Set
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +20,56 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-/**
- * Preference Set definitions.
- */
-package net.sourceforge.JDataModels.preferences;
+package net.sourceforge.JFieldSet;
 
+/**
+ * Enumeration of render states.
+ * @author Tony Washer
+ */
+public enum RenderState {
+    /**
+     * Normal state.
+     */
+    NORMAL,
+
+    /**
+     * Changed state.
+     */
+    CHANGED,
+
+    /**
+     * New state.
+     */
+    NEW,
+
+    /**
+     * Deleted state.
+     */
+    DELETED,
+
+    /**
+     * Restored state.
+     */
+    RESTORED,
+
+    /**
+     * Error state.
+     */
+    ERROR;
+
+    /**
+     * Is the state in error?
+     * @return true/false
+     */
+    public boolean isError() {
+        return this == ERROR;
+    }
+
+    /**
+     * Is the state changed?
+     * @return true/false
+     */
+    public boolean isChanged() {
+        return this == CHANGED;
+    }
+}

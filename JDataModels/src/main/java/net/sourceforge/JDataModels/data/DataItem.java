@@ -32,7 +32,12 @@ import net.sourceforge.JDataManager.JDataObject.JDataValues;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataManager.ValueSetHistory;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JDataModels.data.ItemValidation.ErrorElement;
+import net.sourceforge.JFieldSet.DataState;
+import net.sourceforge.JFieldSet.EditState;
+import net.sourceforge.JFieldSet.ItemValidation;
+import net.sourceforge.JFieldSet.ItemValidation.ErrorElement;
+import net.sourceforge.JFieldSet.JFieldSetItem;
+import net.sourceforge.JFieldSet.RenderState;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
 import net.sourceforge.JSortedList.OrderedIdItem;
 
@@ -41,7 +46,7 @@ import net.sourceforge.JSortedList.OrderedIdItem;
  * that this object can only be held in one list at a time and is unique within that list
  * @see DataList
  */
-public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
+public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
     /**
      * Report fields.
      */
@@ -619,24 +624,20 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
      */
     protected void addError(final String pError,
                             final JDataField pField) {
+        /* Set edit state and add the error */
         theEdit = EditState.ERROR;
         theErrors.addError(pError, pField);
+
+        /* Note that the list has errors */
+        theList.setEditState(EditState.ERROR);
     }
 
-    /**
-     * Get the error text for a field.
-     * @param pField the associated field
-     * @return the error text
-     */
+    @Override
     public String getFieldErrors(final JDataField pField) {
         return (pField != null) ? theErrors.getFieldErrors(pField) : null;
     }
 
-    /**
-     * Get the error text for a set of fields.
-     * @param pFields the set of fields
-     * @return the error text
-     */
+    @Override
     public String getFieldErrors(final JDataField[] pFields) {
         return theErrors.getFieldErrors(pFields);
     }
@@ -679,7 +680,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
         theFields = declareFields();
 
         /* Create validation control */
-        theErrors = new ItemValidation(theItem);
+        theErrors = new ItemValidation();
 
         /* Create history control */
         theHistory = new ValueSetHistory();
@@ -903,6 +904,60 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues {
     public void validate() {
         if (getEditState() == EditState.DIRTY) {
             setEditState(EditState.VALID);
+        }
+    }
+
+    @Override
+    public RenderState getRenderState(final JDataField pField) {
+        /* Determine DELETED state */
+        if (isDeleted()) {
+            return RenderState.DELETED;
+
+            /* Determine Error state */
+        } else if ((hasErrors()) && (hasErrors(pField))) {
+            return RenderState.ERROR;
+
+            /* Determine Changed state */
+        } else if (fieldChanged(pField).isDifferent()) {
+            return RenderState.CHANGED;
+
+            /* Determine standard states */
+        } else {
+            switch (getState()) {
+                case NEW:
+                    return RenderState.NEW;
+                case RECOVERED:
+                    return RenderState.RESTORED;
+                default:
+                    return RenderState.NORMAL;
+            }
+        }
+    }
+
+    @Override
+    public RenderState getRenderState() {
+        /* Determine DELETED state */
+        if (isDeleted()) {
+            return RenderState.DELETED;
+
+            /* Determine Error state */
+        } else if (hasErrors()) {
+            return RenderState.ERROR;
+
+            /* Determine Changed state */
+        } else if (hasHistory()) {
+            return RenderState.CHANGED;
+
+            /* Determine standard states */
+        } else {
+            switch (getState()) {
+                case NEW:
+                    return RenderState.NEW;
+                case RECOVERED:
+                    return RenderState.RESTORED;
+                default:
+                    return RenderState.NORMAL;
+            }
         }
     }
 }

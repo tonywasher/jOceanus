@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JFieldSet: Java Swing Field Set
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JFieldSet;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,19 +40,33 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayCellEditor;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimal;
 import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JFieldSet.Renderer.RendererFieldValue;
 
 /**
  * Cell editors.
  * @author Tony Washer
  */
 public class Editor {
+    /**
+     * ComboBoxSelector interface.
+     */
+    public interface ComboBoxSelector {
+        /**
+         * Get the combo box for the item at row and column.
+         * @param pRowIndex the row
+         * @param pColIndex the column
+         * @return the combo box
+         */
+        JComboBox getComboBox(final int pRowIndex,
+                              final int pColIndex);
+    }
+
     /**
      * String Cell Editor.
      */
@@ -268,10 +282,10 @@ public class Editor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            if (!(pTable instanceof JDataTable)) {
+            if (!(pTable instanceof ComboBoxSelector)) {
                 return null;
             }
-            JDataTable<?> myTable = (JDataTable<?>) pTable;
+            ComboBoxSelector myTable = (ComboBoxSelector) pTable;
             theCombo = myTable.getComboBox(pTable.convertRowIndexToModel(pRowIndex),
                                            pTable.convertColumnIndexToModel(pColIndex));
             if (pValue != null) {

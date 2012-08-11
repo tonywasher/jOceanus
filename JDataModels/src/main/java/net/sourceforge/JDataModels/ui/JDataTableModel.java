@@ -32,9 +32,9 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.JDataModels.ui.RenderManager.PopulateRenderData;
-import net.sourceforge.JDataModels.ui.RenderManager.RenderData;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
+import net.sourceforge.JFieldSet.RenderManager.PopulateRenderData;
+import net.sourceforge.JFieldSet.RenderManager.RenderData;
+import net.sourceforge.JFieldSet.Renderer.RendererFieldValue;
 import net.sourceforge.JTableFilter.TableFilter;
 import net.sourceforge.JTableFilter.TableFilter.TableFilterModel;
 

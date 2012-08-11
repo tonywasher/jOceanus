@@ -149,9 +149,6 @@ public class EncryptionGenerator {
         if (JDateDay.class.isInstance(pValue)) {
             return new EncryptedDateDay(theCipherSet, theFormatter, (JDateDay) pValue);
         }
-        if (JMoney.class.isInstance(pValue)) {
-            return new EncryptedMoney(theCipherSet, theFormatter, (JMoney) pValue);
-        }
         if (JUnits.class.isInstance(pValue)) {
             return new EncryptedUnits(theCipherSet, theFormatter, (JUnits) pValue);
         }
@@ -160,6 +157,9 @@ public class EncryptionGenerator {
         }
         if (JPrice.class.isInstance(pValue)) {
             return new EncryptedPrice(theCipherSet, theFormatter, (JPrice) pValue);
+        }
+        if (JMoney.class.isInstance(pValue)) {
+            return new EncryptedMoney(theCipherSet, theFormatter, (JMoney) pValue);
         }
         if (JDilution.class.isInstance(pValue)) {
             return new EncryptedDilution(theCipherSet, theFormatter, (JDilution) pValue);

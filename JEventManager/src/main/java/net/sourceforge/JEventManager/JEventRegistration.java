@@ -42,7 +42,7 @@ public abstract class JEventRegistration {
         private final ActionListener theListener;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pListener the listener
          */
         protected ActionRegistration(final ActionListener pListener) {
@@ -90,7 +90,7 @@ public abstract class JEventRegistration {
         private final ChangeListener theListener;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pListener the listener
          */
         protected ChangeRegistration(final ChangeListener pListener) {

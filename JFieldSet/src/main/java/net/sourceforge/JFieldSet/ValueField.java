@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JFieldSet;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -33,12 +33,12 @@ import javax.swing.JTextField;
 
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JPrice;
 import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JDecimal.JUnits;
+import net.sourceforge.JFieldSet.Renderer.RendererFieldValue;
 
 /**
  * ValueField provides a JTextField which is geared to a particular type of data.

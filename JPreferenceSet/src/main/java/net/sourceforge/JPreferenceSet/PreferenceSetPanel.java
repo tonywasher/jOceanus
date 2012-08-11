@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JPreferenceSet;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -51,19 +51,20 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.PreferenceSet;
-import net.sourceforge.JDataModels.data.PreferenceSet.BooleanPreference;
-import net.sourceforge.JDataModels.data.PreferenceSet.ColorPreference;
-import net.sourceforge.JDataModels.data.PreferenceSet.DatePreference;
-import net.sourceforge.JDataModels.data.PreferenceSet.EnumPreference;
-import net.sourceforge.JDataModels.data.PreferenceSet.IntegerPreference;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceItem;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceType;
-import net.sourceforge.JDataModels.data.PreferenceSet.StringPreference;
-import net.sourceforge.JDataModels.ui.ValueField.ValueClass;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayButton;
 import net.sourceforge.JEventManager.JEventPanel;
+import net.sourceforge.JFieldSet.RenderManager;
+import net.sourceforge.JFieldSet.ValueField;
+import net.sourceforge.JFieldSet.ValueField.ValueClass;
+import net.sourceforge.JPreferenceSet.PreferenceSet.BooleanPreference;
+import net.sourceforge.JPreferenceSet.PreferenceSet.ColorPreference;
+import net.sourceforge.JPreferenceSet.PreferenceSet.DatePreference;
+import net.sourceforge.JPreferenceSet.PreferenceSet.EnumPreference;
+import net.sourceforge.JPreferenceSet.PreferenceSet.IntegerPreference;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceItem;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceType;
+import net.sourceforge.JPreferenceSet.PreferenceSet.StringPreference;
 
 /**
  * Preference Set panel.
@@ -520,8 +521,8 @@ public class PreferenceSetPanel extends JEventPanel {
                 theField.setValue(theString.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(theString));
-                theField.setFont(theRenderMgr.getFont(theString));
+                theField.setForeground(theRenderMgr.getForeground(thePreferences, theString.getDataField()));
+                theField.setFont(theRenderMgr.getFont(thePreferences, theString.getDataField(), false));
             }
 
             @Override
@@ -633,8 +634,8 @@ public class PreferenceSetPanel extends JEventPanel {
                 theField.setValue(theInteger.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(theInteger));
-                theField.setFont(theRenderMgr.getFont(theInteger));
+                theField.setForeground(theRenderMgr.getForeground(thePreferences, theInteger.getDataField()));
+                theField.setFont(theRenderMgr.getFont(thePreferences, theInteger.getDataField(), true));
             }
 
             @Override
@@ -696,8 +697,8 @@ public class PreferenceSetPanel extends JEventPanel {
                 theField.setSelected(theBoolean.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(theBoolean));
-                theField.setFont(theRenderMgr.getFont(theBoolean));
+                theField.setForeground(theRenderMgr.getForeground(thePreferences, theBoolean.getDataField()));
+                theField.setFont(theRenderMgr.getFont(thePreferences, theBoolean.getDataField(), false));
             }
 
             @Override
@@ -759,8 +760,8 @@ public class PreferenceSetPanel extends JEventPanel {
                 theField.setSelectedDateDay(theDate.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(theDate));
-                theField.setFont(theRenderMgr.getFont(theDate));
+                theField.setForeground(theRenderMgr.getForeground(thePreferences, theDate.getDataField()));
+                theField.setFont(theRenderMgr.getFont(thePreferences, theDate.getDataField(), false));
             }
 
             @Override
@@ -842,7 +843,7 @@ public class PreferenceSetPanel extends JEventPanel {
 
                 /* Set font and foreground */
                 theField.setForeground(theColor.getValue());
-                theField.setFont(theRenderMgr.getFont(theColor));
+                theField.setFont(theRenderMgr.getFont(thePreferences, theColor.getDataField(), false));
             }
 
             @Override
@@ -922,8 +923,8 @@ public class PreferenceSetPanel extends JEventPanel {
                 theField.setSelectedItem(theEnum.getValue().name());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(theEnum));
-                theField.setFont(theRenderMgr.getFont(theEnum));
+                theField.setForeground(theRenderMgr.getForeground(thePreferences, theEnum.getDataField()));
+                theField.setFont(theRenderMgr.getFont(thePreferences, theEnum.getDataField(), false));
             }
 
             @Override

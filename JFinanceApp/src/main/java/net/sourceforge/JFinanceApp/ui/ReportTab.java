@@ -22,12 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.Document;
@@ -37,6 +42,7 @@ import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
@@ -55,7 +61,7 @@ import net.sourceforge.JFinanceApp.views.View;
  * Report Panel.
  * @author Tony Washer
  */
-public class ReportTab extends JEventPanel implements HyperlinkListener {
+public class ReportTab extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -118,10 +124,13 @@ public class ReportTab extends JEventPanel implements HyperlinkListener {
         theSpotEntry.addAsChildOf(theDataReport);
         theSpotEntry.hideEntry();
 
+        /* Create listener */
+        ReportListener myListener = new ReportListener();
+
         /* Create the editor pane as non-editable */
         theEditor = new JEditorPane();
         theEditor.setEditable(false);
-        theEditor.addHyperlinkListener(this);
+        theEditor.addHyperlinkListener(myListener);
 
         /* Add an editor kit to the editor */
         HTMLEditorKit myKit = new HTMLEditorKit();
@@ -142,9 +151,12 @@ public class ReportTab extends JEventPanel implements HyperlinkListener {
 
         /* Create the Report Selection panel */
         theSelect = new ReportSelect(theView);
+        theSelect.addChangeListener(myListener);
+        theSelect.addActionListener(myListener);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataReport);
+        theError.addChangeListener(myListener);
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -171,61 +183,16 @@ public class ReportTab extends JEventPanel implements HyperlinkListener {
     }
 
     /**
-     * Lock on error.
-     * @param isError is there an error (True/False)
-     */
-    // @Override
-    // public void lockOnError(final boolean isError) {
-    /* Hide selection panel */
-    // theSelect.setVisible(!isError);
-
-    /* Lock scroll-able area */
-    // theScroll.setEnabled(!isError);
-    // }
-
-    /**
-     * Notify window that there has been a change in selection by an underlying control.
-     * @param obj the underlying control that has changed selection
-     */
-    // @Override
-    // public void notifySelection(final Object obj) {
-    /* If this is a change from the report selection */
-    // if (theSelect.equals(obj)) {
-    // /* Protect against exceptions */
-    // try {
-    // /* Build the report */
-    // buildReport();
-
-    /* Create SavePoint */
-    // theSelect.createSavePoint();
-
-    /* Catch Exceptions */
-    // } catch (JDataException e) {
-    /* Build the error */
-    // JDataException myError = new JDataException(ExceptionClass.DATA,
-    // "Failed to change selection", e);
-
-    /* Show the error */
-    // theError.setError(myError);
-
-    /* Restore SavePoint */
-    // theSelect.restoreSavePoint();
-    // }
-    // }
-    // }
-
-    /**
      * Print the report.
      */
-    // @Override
-    // public void printIt() {
-    /* Print the current report */
-    // try {
-    // theEditor.print();
-    // } catch (PrinterException e) {
-    // e = null;
-    // }
-    // }
+    private void printIt() {
+        /* Print the current report */
+        try {
+            theEditor.print();
+        } catch (PrinterException e) {
+            e = null;
+        }
+    }
 
     /**
      * Build the report.
@@ -308,29 +275,79 @@ public class ReportTab extends JEventPanel implements HyperlinkListener {
     }
 
     /**
-     * Handle a HyperLink event.
-     * @param e the event
+     * Listener class.
      */
-    @Override
-    public void hyperlinkUpdate(final HyperlinkEvent e) {
-        /* If this is an activated event */
-        if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            if (e instanceof HTMLFrameHyperlinkEvent) {
-                HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
-                HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
-                doc.processHTMLFrameHyperlinkEvent(evt);
-            } else {
-                try {
-                    URL url = e.getURL();
-                    String desc = e.getDescription();
-                    if ((url == null) && (desc.startsWith("#"))) {
-                        theEditor.scrollToReference(desc.substring(1));
-                    } else {
-                        theEditor.setPage(e.getURL());
+    private class ReportListener implements ChangeListener, ActionListener, HyperlinkListener {
+        @Override
+        public void hyperlinkUpdate(final HyperlinkEvent e) {
+            /* If this is an activated event */
+            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                if (e instanceof HTMLFrameHyperlinkEvent) {
+                    HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
+                    HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
+                    doc.processHTMLFrameHyperlinkEvent(evt);
+                } else {
+                    try {
+                        URL url = e.getURL();
+                        String desc = e.getDescription();
+                        if ((url == null) && (desc.startsWith("#"))) {
+                            theEditor.scrollToReference(desc.substring(1));
+                        } else {
+                            theEditor.setPage(e.getURL());
+                        }
+                    } catch (IOException t) {
+                        t = null;
                     }
-                } catch (IOException t) {
-                    t = null;
                 }
+            }
+        }
+
+        @Override
+        public void stateChanged(final ChangeEvent evt) {
+            Object o = evt.getSource();
+
+            /* If this is the error panel */
+            if (theError.equals(o)) {
+                /* Determine whether we have an error */
+                boolean isError = theError.hasError();
+
+                /* Hide selection panel on error */
+                theSelect.setVisible(!isError);
+
+                /* Lock scroll area */
+                theScroll.setEnabled(!isError);
+
+                /* If this is the select panel */
+            } else if (theSelect.equals(o)) {
+                /* Protect against exceptions */
+                try {
+                    /* build the report */
+                    buildReport();
+
+                    /* Create SavePoint */
+                    theSelect.createSavePoint();
+
+                    /* Catch Exceptions */
+                } catch (JDataException e) {
+                    /* Build the error */
+                    JDataException myError = new JDataException(ExceptionClass.DATA,
+                            "Failed to change selection", e);
+
+                    /* Show the error */
+                    theError.setError(myError);
+
+                    /* Restore SavePoint */
+                    theSelect.restoreSavePoint();
+                }
+            }
+        }
+
+        @Override
+        public void actionPerformed(final ActionEvent evt) {
+            /* If this is the error panel */
+            if (theSelect.equals(evt.getSource())) {
+                /* Print the report */
+                printIt();
             }
         }
     }

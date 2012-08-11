@@ -7,6 +7,13 @@
   <description>Generic Java Swing Field Set Manager</description>
   <inceptionYear>2012</inceptionYear>
   <!--<url>http://sourceforge.net/projects/jdatebutton/</url>-->
+  <dependencies>
+    <dependency>
+      <groupId>net.sourceforge.JDataManager</groupId>
+      <artifactId>JDataManager</artifactId>
+      <version>v1.0.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>

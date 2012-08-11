@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JPreferenceSet: PreferenceSet Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JPreferenceSet;
 
 import java.awt.Component;
 import java.io.File;

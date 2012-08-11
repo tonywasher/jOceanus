@@ -25,7 +25,7 @@ package net.sourceforge.JSvnManager.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.wc.SVNClientManager;

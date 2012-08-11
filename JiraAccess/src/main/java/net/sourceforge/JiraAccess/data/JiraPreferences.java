@@ -23,7 +23,7 @@
 package net.sourceforge.JiraAccess.data;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.PreferenceSet;
+import net.sourceforge.JPreferenceSet.PreferenceSet;
 
 /**
  * Jira Preferences.

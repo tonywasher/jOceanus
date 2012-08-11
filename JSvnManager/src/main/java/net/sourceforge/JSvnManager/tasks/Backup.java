@@ -30,12 +30,12 @@ import java.util.Date;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
 import net.sourceforge.JDataModels.data.TaskControl;
-import net.sourceforge.JDataModels.sheets.BackupPreferences;
+import net.sourceforge.JDataModels.preferences.BackupPreferences;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.SubVersionPreferences;
 
 import org.tmatesoft.svn.core.SVNCancelException;

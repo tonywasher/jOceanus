@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JFieldSet: Java Swing Field Set
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@
  * $Date$
  ******************************************************************************/
 /**
- * Preference Set definitions.
+ * Java Swing Field Set.
  */
-package net.sourceforge.JDataModels.preferences;
+package net.sourceforge.JFieldSet;
 

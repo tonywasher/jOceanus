@@ -22,45 +22,38 @@
  ******************************************************************************/
 package net.sourceforge.JFieldSet;
 
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+
 /**
- * Enumeration of edit states of DataItem and DataList objects in a view.
+ * Basic Field interface.
+ * @author Tony Washer
  */
-public enum EditState {
+public interface JFieldSetItem extends JDataContents {
     /**
-     * No changes made.
+     * Get the render state for the item.
+     * @return the render state
      */
-    CLEAN,
+    RenderState getRenderState();
 
     /**
-     * Non-validated changes made.
+     * Get the render state for the field.
+     * @param pField the field
+     * @return the render state
      */
-    DIRTY,
+    RenderState getRenderState(final JDataField pField);
 
     /**
-     * Only valid changes made.
+     * Get the Errors for the field.
+     * @param pField the field
+     * @return the error text
      */
-    VALID,
+    String getFieldErrors(final JDataField pField);
 
     /**
-     * Object is in error.
+     * Get the Errors for the fields.
+     * @param pFields the fields
+     * @return the error text
      */
-    ERROR;
-
-    /**
-     * Combine With another edit state.
-     * @param pState edit state to combine with
-     * @return the combined state
-     */
-    public EditState combineState(final EditState pState) {
-        if ((this == ERROR) || (pState == ERROR)) {
-            return ERROR;
-        }
-        if ((this == DIRTY) || (pState == DIRTY)) {
-            return DIRTY;
-        }
-        if ((this == VALID) || (pState == VALID)) {
-            return VALID;
-        }
-        return CLEAN;
-    }
+    String getFieldErrors(final JDataField[] pFields);
 }

@@ -36,9 +36,10 @@ import net.sourceforge.JDataModels.data.ControlKey.ControlKeyList;
 import net.sourceforge.JDataModels.data.DataKey.DataKeyList;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
+import net.sourceforge.JDataModels.preferences.DataListPreferences;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.

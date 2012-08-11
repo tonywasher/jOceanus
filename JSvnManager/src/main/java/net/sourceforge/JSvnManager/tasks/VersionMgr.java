@@ -26,7 +26,7 @@ import java.io.File;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Branch;
 import net.sourceforge.JSvnManager.data.Branch.BranchList;
 import net.sourceforge.JSvnManager.data.Component;

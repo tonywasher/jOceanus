@@ -29,7 +29,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.ui.Renderer.RowCell;
+import net.sourceforge.JFieldSet.Renderer.RowCell;
 
 /**
  * TableColumn extension class.

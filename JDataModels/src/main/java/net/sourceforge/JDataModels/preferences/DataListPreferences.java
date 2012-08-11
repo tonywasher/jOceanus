@@ -20,9 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.JDataModels.preferences;
 
 import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JPreferenceSet.PreferenceSet;
 
 /**
  * DataList preferences.

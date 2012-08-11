@@ -34,10 +34,11 @@ import java.util.Properties;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.PreferenceSet;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceSetChooser;
 import net.sourceforge.JDataModels.data.TaskControl;
+import net.sourceforge.JDataModels.preferences.DatabasePreferences;
+import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
 
 /**
  * Class that encapsulates a database connection.

@@ -21,7 +21,7 @@
  * $Date$
  ******************************************************************************/
 /**
- * Preference Set definitions.
+ * Preference Set Manager.
  */
-package net.sourceforge.JDataModels.preferences;
+package net.sourceforge.JPreferenceSet;
 

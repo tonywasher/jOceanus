@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataModels: Data models
+ * JFieldSet: Java Swing Field Set
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.JFieldSet;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -33,8 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.ui.Renderer.RendererFieldValue;
+import net.sourceforge.JFieldSet.Renderer.RendererFieldValue;
 
 /**
  * Extension of ValueField to handle a DataItem field.
@@ -151,7 +150,7 @@ public class ItemField extends ValueField {
      * @param pItem the item to use for rendering
      */
     private void renderField(final RenderManager pRenderMgr,
-                             final DataItem pItem) {
+                             final JFieldSetItem pItem) {
         /* Determine the standard colours */
         Color myFore = pRenderMgr.getForeground(pItem, theField);
         Color myBack = pRenderMgr.getStandardBackground();
@@ -168,7 +167,7 @@ public class ItemField extends ValueField {
         theComponent.setFont(myFont);
 
         /* If we have an error */
-        if (pItem.hasErrors(theField)) {
+        if (pItem.getRenderState(theField).isError()) {
             /* If the component is an ItemField */
             if (theComponent instanceof ItemField) {
                 ItemField myField = (ItemField) theComponent;
@@ -243,7 +242,7 @@ public class ItemField extends ValueField {
          * Render the FieldSet.
          * @param pItem the item to use for rendering
          */
-        public void renderSet(final DataItem pItem) {
+        public void renderSet(final JFieldSetItem pItem) {
             /* List Iterator */
             Iterator<ItemField> myIterator = theList.iterator();
             ItemField myField;

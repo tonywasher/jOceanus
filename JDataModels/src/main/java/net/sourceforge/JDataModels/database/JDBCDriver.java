@@ -23,6 +23,7 @@
 package net.sourceforge.JDataModels.database;
 
 import net.sourceforge.JDataModels.database.ColumnDefinition.ColumnType;
+import net.sourceforge.JDataModels.preferences.DatabasePreferences;
 
 /**
  * Database Drivers. Also code that encapsulates differences between databases.

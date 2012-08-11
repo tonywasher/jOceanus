@@ -36,8 +36,8 @@ import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.DataState;
 import net.sourceforge.JDataModels.data.TaskControl;
+import net.sourceforge.JFieldSet.DataState;
 
 /**
  * Database Table class. This controls should be extended for each DataType/Table.

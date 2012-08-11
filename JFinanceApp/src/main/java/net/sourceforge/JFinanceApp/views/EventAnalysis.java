@@ -580,16 +580,6 @@ public class EventAnalysis implements JDataContents {
         private final TaxYear theYear;
 
         /**
-         * The list data entry.
-         */
-        private JDataEntry theListDebug = null;
-
-        /**
-         * The charge data entry.
-         */
-        private JDataEntry theChargeDebug = null;
-
-        /**
          * The dataSet.
          */
         private final FinanceData theData;
@@ -713,9 +703,6 @@ public class EventAnalysis implements JDataContents {
             if (theAnalysis.getState() == AnalysisState.VALUED) {
                 /* call the meta analyser to produce totals */
                 theMetaAnalysis.produceTotals();
-
-                /* Declare a change in the debug entry */
-                theListDebug.setChanged();
             }
         }
 
@@ -727,12 +714,6 @@ public class EventAnalysis implements JDataContents {
             if (theAnalysis.getState() != AnalysisState.TAXED) {
                 /* call the meta analyser to calculate tax */
                 theMetaAnalysis.calculateTax();
-
-                /* Declare a change in the debug entry */
-                theListDebug.setChanged();
-
-                /* Show the charges */
-                theChargeDebug.showEntry();
             }
         }
     }

@@ -39,11 +39,13 @@ import javax.swing.event.ListSelectionEvent;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.EditState;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JEventManager.JEventTable;
+import net.sourceforge.JFieldSet.EditState;
+import net.sourceforge.JFieldSet.Editor.ComboBoxSelector;
+import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JTableFilter.TableFilter;
 
 /**
@@ -51,7 +53,8 @@ import net.sourceforge.JTableFilter.TableFilter;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class JDataTable<T extends DataItem & Comparable<? super T>> extends JEventTable {
+public abstract class JDataTable<T extends DataItem & Comparable<? super T>> extends JEventTable implements
+        ComboBoxSelector {
     /**
      * Serial Id.
      */
@@ -213,12 +216,7 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
         fireStateChanged();
     }
 
-    /**
-     * Get the combo box for the item at row and column.
-     * @param pRowIndex the row
-     * @param pColIndex the column
-     * @return the combo box
-     */
+    @Override
     public JComboBox getComboBox(final int pRowIndex,
                                  final int pColIndex) {
         return null;

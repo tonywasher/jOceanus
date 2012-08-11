@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Component.ComponentList;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
 
