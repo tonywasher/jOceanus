@@ -263,6 +263,7 @@ public final class Renderer {
          */
         protected CalendarRenderer(final RenderManager pManager,
                                    final JDateDayFormatter pFormatter) {
+            super(pFormatter);
             theData = pManager.allocateRenderData(true);
             setHorizontalAlignment(SwingConstants.LEFT);
         }

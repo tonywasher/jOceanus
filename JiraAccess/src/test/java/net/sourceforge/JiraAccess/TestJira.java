@@ -22,6 +22,7 @@
 package net.sourceforge.JiraAccess;
 
 import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JiraAccess.data.Server;
 
 public class TestJira {
@@ -30,7 +31,7 @@ public class TestJira {
      */
     public static void main(String[] args) {
         try {
-            Server myServer = new Server();
+            Server myServer = new Server(new PreferenceManager());
             myServer.loadIssuesFromFilter("AllIssues");
         } catch (JDataException e) {
         }

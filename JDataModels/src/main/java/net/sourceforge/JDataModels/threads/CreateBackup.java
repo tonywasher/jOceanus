@@ -31,7 +31,7 @@ import net.sourceforge.JDataModels.preferences.BackupPreferences;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 
 /**
  * Thread to create an encrypted backup of a data set.
@@ -91,7 +91,8 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
             theStatus.initTask("Creating Backup");
 
             /* Access the Backup preferences */
-            BackupPreferences myProperties = PreferenceManager.getPreferenceSet(BackupPreferences.class);
+            PreferenceManager myMgr = theControl.getPreferenceMgr();
+            BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
 
             /* Determine the archive name */
             File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));

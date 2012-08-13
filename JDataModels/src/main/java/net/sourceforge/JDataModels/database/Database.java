@@ -36,15 +36,12 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.preferences.DatabasePreferences;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
 
 /**
  * Class that encapsulates a database connection.
  * @param <T> the dataSet type.
  */
-public abstract class Database<T extends DataSet<T>> implements PreferenceSetChooser {
+public abstract class Database<T extends DataSet<T>> {
     /**
      * Number of update steps per table (INSERT/UPDATE/DELETE).
      */
@@ -80,11 +77,6 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
      */
     private final List<DatabaseTable<?>> theTables;
 
-    @Override
-    public Class<? extends PreferenceSet> getPreferenceSetClass() {
-        return DatabasePreferences.class;
-    }
-
     /**
      * Obtain the Driver.
      * @return the driver
@@ -95,26 +87,23 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
 
     /**
      * Construct a new Database class.
+     * @param pPreferences the preferences
      * @throws JDataException on error
      */
-    public Database() throws JDataException {
+    public Database(final DatabasePreferences pPreferences) throws JDataException {
         /* Create the connection */
         try {
-            /* Access the database preferences */
-            DatabasePreferences myPreferences = (DatabasePreferences) PreferenceManager
-                    .getPreferenceSet(this);
-
             /* Access the batch size */
-            theBatchSize = myPreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
+            theBatchSize = pPreferences.getIntegerValue(DatabasePreferences.NAME_DBBATCH);
 
             /* Access the JDBC Driver */
-            theDriver = myPreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER, JDBCDriver.class);
+            theDriver = pPreferences.getEnumValue(DatabasePreferences.NAME_DBDRIVER, JDBCDriver.class);
 
             /* Load the database driver */
             Class.forName(theDriver.getDriver());
 
             /* Obtain the connection */
-            String myConnString = theDriver.getConnectionString(myPreferences);
+            String myConnString = theDriver.getConnectionString(pPreferences);
 
             /* If we are using integrated security */
             if (theDriver.useIntegratedSecurity()) {
@@ -125,8 +114,8 @@ public abstract class Database<T extends DataSet<T>> implements PreferenceSetCho
             } else {
                 /* Create the properties and record user */
                 Properties myProperties = new Properties();
-                String myUser = myPreferences.getStringValue(DatabasePreferences.NAME_DBUSER);
-                String myPass = myPreferences.getStringValue(DatabasePreferences.NAME_DBPASS);
+                String myUser = pPreferences.getStringValue(DatabasePreferences.NAME_DBUSER);
+                String myPass = pPreferences.getStringValue(DatabasePreferences.NAME_DBPASS);
                 myProperties.setProperty(PROPERTY_USER, myUser);
                 myProperties.setProperty(PROPERTY_PASS, myPass);
 

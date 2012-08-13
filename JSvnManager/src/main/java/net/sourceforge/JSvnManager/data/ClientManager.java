@@ -25,8 +25,6 @@ package net.sourceforge.JSvnManager.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
-
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
@@ -53,17 +51,15 @@ public class ClientManager {
 
     /**
      * Constructor.
+     * @param pPreferences the preferences
      */
-    protected ClientManager() {
+    protected ClientManager(final SubVersionPreferences pPreferences) {
         /* Allocate the pool */
         thePool = new ArrayList<SVNClientManager>();
 
-        /* Access the SubVersion preferences */
-        SubVersionPreferences myPreferences = PreferenceManager.getPreferenceSet(SubVersionPreferences.class);
-
         /* Access UserId and password */
-        theUser = myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER);
-        thePass = myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS);
+        theUser = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER);
+        thePass = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS);
     }
 
     /**

@@ -24,6 +24,7 @@ package net.sourceforge.JFinanceApp.database;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.database.Database;
+import net.sourceforge.JDataModels.preferences.DatabasePreferences;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 
 /**
@@ -33,9 +34,13 @@ import net.sourceforge.JFinanceApp.data.FinanceData;
 public class FinanceDatabase extends Database<FinanceData> {
     /**
      * Construct a new Database class for load.
+     * @param pPreferences the preferences
      * @throws JDataException on error
      */
-    public FinanceDatabase() throws JDataException {
+    public FinanceDatabase(final DatabasePreferences pPreferences) throws JDataException {
+        /* Call super-constructor */
+        super(pPreferences);
+
         /* Add additional tables */
         declareTables();
     }

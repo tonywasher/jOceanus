@@ -42,11 +42,15 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataManager;
+import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.JEventManager.ActionDetailEvent;
 import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 import net.sourceforge.JPreferenceSet.PreferenceSetPanel;
 
 /**
@@ -109,6 +113,11 @@ public class MaintPreferences extends JEventPanel {
      * The render manager.
      */
     private final transient RenderManager theRenderMgr;
+
+    /**
+     * The Data entry.
+     */
+    private final transient JDataEntry theDataEntry;
 
     /**
      * The OK button.
@@ -192,15 +201,18 @@ public class MaintPreferences extends JEventPanel {
         theLayout = new CardLayout();
         theProperties.setLayout(theLayout);
 
+        /* Access the preference manager */
+        PreferenceManager myMgr = pView.getPreferenceMgr();
+
         /* Loop through the existing property sets */
-        for (PreferenceSet mySet : PreferenceManager.getPreferenceSets()) {
+        for (PreferenceSet mySet : myMgr.getPreferenceSets()) {
             /* Register the Set */
             registerSet(mySet);
         }
 
         /* Add a listener for the addition of subsequent propertySets */
         PropertySetListener mySetListener = new PropertySetListener();
-        PreferenceManager.addActionListener(mySetListener);
+        myMgr.addActionListener(mySetListener);
 
         /* Create a new Scroll Pane and add this table to it */
         JScrollPane myScroll = new JScrollPane();
@@ -221,6 +233,24 @@ public class MaintPreferences extends JEventPanel {
         theOKButton.addActionListener(theListener);
         theResetButton.addActionListener(theListener);
         theSelect.addItemListener(theListener);
+
+        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
+        JDataManager myDataMgr = pView.getDataMgr();
+        JDataEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
+        theDataEntry = myDataMgr.new JDataEntry("Preferences");
+        theDataEntry.addAsChildOf(mySection);
+        theDataEntry.setObject(myMgr);
+    }
+
+    /**
+     * Determine Focus.
+     */
+    protected void determineFocus() {
+        /* Request the focus */
+        requestFocusInWindow();
+
+        /* Set the required focus */
+        theDataEntry.setFocus();
     }
 
     /**
@@ -337,16 +367,26 @@ public class MaintPreferences extends JEventPanel {
      */
     private final class PropertySetListener implements ActionListener {
         @Override
-        public void actionPerformed(final ActionEvent evt) {
-            /* Source is the property set that has been added */
-            PreferenceSet mySet = (PreferenceSet) evt.getSource();
+        public void actionPerformed(final ActionEvent e) {
+            /* If this is an ActionDetailEvent */
+            if (e instanceof ActionDetailEvent) {
+                /* Access event and obtain details */
+                ActionDetailEvent evt = (ActionDetailEvent) e;
+                Object o = evt.getDetails();
 
-            /* Register the set */
-            registerSet(mySet);
+                /* If the details is a preference set */
+                if (o instanceof PreferenceSet) {
+                    /* Details is the property set that has been added */
+                    PreferenceSet mySet = (PreferenceSet) o;
 
-            /* Note that the panel should be re-displayed */
-            setVisibility();
-            theProperties.invalidate();
+                    /* Register the set */
+                    registerSet(mySet);
+
+                    /* Note that the panel should be re-displayed */
+                    setVisibility();
+                    theProperties.invalidate();
+                }
+            }
         }
     }
 }

@@ -379,7 +379,7 @@ public class SpotPrices implements JDataContents {
 
                 /* Access the Spot Price */
                 Account myAccount = myPrice.getAccount();
-                SpotPrice mySpot = (SpotPrice) findItemById(myAccount.getId());
+                SpotPrice mySpot = findItemById(myAccount.getId());
 
                 /* If we are exactly the date */
                 if (iDiff == 0) {

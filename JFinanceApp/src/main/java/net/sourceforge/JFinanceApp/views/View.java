@@ -24,17 +24,16 @@ package net.sourceforge.JFinanceApp.views;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.database.Database;
-import net.sourceforge.JDataModels.preferences.RenderPreferences;
+import net.sourceforge.JDataModels.preferences.DatabasePreferences;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.database.FinanceDatabase;
 import net.sourceforge.JFinanceApp.sheets.FinanceSheet;
 import net.sourceforge.JFinanceApp.ui.MainTab;
 import net.sourceforge.JFinanceApp.views.DilutionEvent.DilutionEventList;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 
 /**
  * Data Control for FinanceApp.
@@ -65,11 +64,6 @@ public class View extends DataControl<FinanceData> {
      * The dilution event list.
      */
     private DilutionEventList theDilutions = null;
-
-    /**
-     * The render manager.
-     */
-    private final RenderManager theRenderMgr;
 
     /**
      * Obtain the main window.
@@ -104,14 +98,6 @@ public class View extends DataControl<FinanceData> {
     }
 
     /**
-     * Obtain the render manager.
-     * @return the render manager
-     */
-    public RenderManager getRenderMgr() {
-        return theRenderMgr;
-    }
-
-    /**
      * Constructor.
      * @param pCtl the main window.
      * @throws JDataException on error
@@ -119,15 +105,6 @@ public class View extends DataControl<FinanceData> {
     public View(final MainTab pCtl) throws JDataException {
         /* Store access to the main window */
         theCtl = pCtl;
-
-        /* Store access to the Debug Manager */
-        setDataMgr(pCtl.getDataMgr());
-
-        /* Access the Render Properties */
-        RenderPreferences myPreferences = PreferenceManager.getPreferenceSet(RenderPreferences.class);
-
-        /* Allocate the RenderManager */
-        theRenderMgr = new RenderManager(getDataMgr(), myPreferences.getConfiguration());
 
         /* Create an empty data set */
         setData(getNewData());
@@ -139,12 +116,13 @@ public class View extends DataControl<FinanceData> {
      */
     @Override
     public final FinanceData getNewData() {
-        return new FinanceData(getSecurity());
+        return new FinanceData(getSecurity(), getPreferenceMgr());
     }
 
     @Override
     public Database<FinanceData> getDatabase() throws JDataException {
-        return new FinanceDatabase();
+        PreferenceManager myMgr = getPreferenceMgr();
+        return new FinanceDatabase(myMgr.getPreferenceSet(DatabasePreferences.class));
     }
 
     /**

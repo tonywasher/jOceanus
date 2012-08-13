@@ -60,6 +60,7 @@ import net.sourceforge.JFinanceApp.views.Analysis.TransDetail;
 import net.sourceforge.JFinanceApp.views.DilutionEvent.DilutionEventList;
 import net.sourceforge.JFinanceApp.views.Statement.StatementLine;
 import net.sourceforge.JFinanceApp.views.Statement.StatementLines;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSortedList.OrderedIdItem;
 import net.sourceforge.JSortedList.OrderedIdList;
 import net.sourceforge.JSortedList.OrderedListIterator;
@@ -426,7 +427,7 @@ public class EventAnalysis implements JDataContents {
         JDataEntry mySection = pView.getDataEntry(DataControl.DATA_ANALYSIS);
 
         /* Create a list of AnalysisYears */
-        theYears = new AnalysisYearList(this);
+        theYears = new AnalysisYearList(this, pView.getPreferenceMgr());
 
         /* Create the Dilution Event List */
         theDilutions = new DilutionEventList(theData);
@@ -575,6 +576,11 @@ public class EventAnalysis implements JDataContents {
         private final IncomeBreakdown theBreakdown;
 
         /**
+         * The preference manager.
+         */
+        private final PreferenceManager thePreferenceMgr;
+
+        /**
          * The taxYear.
          */
         private final TaxYear theYear;
@@ -632,14 +638,17 @@ public class EventAnalysis implements JDataContents {
         /**
          * Constructor for the Analysis Year.
          * @param pData the DataSet
+         * @param pManager the preference manager
          * @param pYear the Tax Year
          * @param pPrevious the previous analysis
          */
         private AnalysisYear(final FinanceData pData,
+                             final PreferenceManager pManager,
                              final TaxYear pYear,
                              final Analysis pPrevious) {
             /* Store data */
             theData = pData;
+            thePreferenceMgr = pManager;
 
             /* Store tax year */
             theYear = pYear;
@@ -713,7 +722,7 @@ public class EventAnalysis implements JDataContents {
             /* If we are not in taxed state */
             if (theAnalysis.getState() != AnalysisState.TAXED) {
                 /* call the meta analyser to calculate tax */
-                theMetaAnalysis.calculateTax();
+                theMetaAnalysis.calculateTax(thePreferenceMgr);
             }
         }
     }
@@ -764,13 +773,21 @@ public class EventAnalysis implements JDataContents {
         private final EventAnalysis theEvents;
 
         /**
+         * The preference manager.
+         */
+        private final PreferenceManager thePreferenceMgr;
+
+        /**
          * Construct a top-level List.
          * @param pEvents the events
+         * @param pManager the preference manager
          */
-        public AnalysisYearList(final EventAnalysis pEvents) {
+        public AnalysisYearList(final EventAnalysis pEvents,
+                                final PreferenceManager pManager) {
             /* Call super constructor */
             super(AnalysisYear.class);
             theEvents = pEvents;
+            thePreferenceMgr = pManager;
         }
 
         /**
@@ -782,7 +799,7 @@ public class EventAnalysis implements JDataContents {
         protected AnalysisYear getNewAnalysis(final TaxYear pYear,
                                               final Analysis pAnalysis) {
             /* Locate the bucket in the list */
-            AnalysisYear myYear = new AnalysisYear(theEvents.theData, pYear, pAnalysis);
+            AnalysisYear myYear = new AnalysisYear(theEvents.theData, thePreferenceMgr, pYear, pAnalysis);
             append(myYear);
             return myYear;
         }

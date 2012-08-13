@@ -26,7 +26,7 @@ import java.io.File;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Branch;
 import net.sourceforge.JSvnManager.data.Branch.BranchList;
 import net.sourceforge.JSvnManager.data.Component;
@@ -63,6 +63,16 @@ public class VersionMgr {
     private static final String DIR_SVNWORK = "svnTempWork";
 
     /**
+     * The Preference Manager.
+     */
+    private final PreferenceManager thePreferenceMgr;
+
+    /**
+     * The Preferences.
+     */
+    private final SubVersionPreferences thePreferences;
+
+    /**
      * The Client Manager.
      */
     private final SVNClientManager theMgr;
@@ -79,7 +89,9 @@ public class VersionMgr {
     public VersionMgr(final Repository pRepository) {
         /* Store Parameters */
         theRepository = pRepository;
+        thePreferenceMgr = theRepository.getPreferenceMgr();
         theMgr = theRepository.getClientManager();
+        thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
     }
 
     @Override
@@ -265,7 +277,7 @@ public class VersionMgr {
         /* Protect against exceptions */
         try {
             /* Access the work and target */
-            File myWork = prepareWorkDir();
+            File myWork = prepareWorkDir(thePreferences);
             File myTarget = new File(myWork, pTarget.getBranchName());
 
             /* Determine the URL for the branches path */
@@ -333,7 +345,7 @@ public class VersionMgr {
         /* Protect against exceptions */
         try {
             /* Access the work and target */
-            File myWork = prepareWorkDir();
+            File myWork = prepareWorkDir(thePreferences);
             File myTarget = new File(myWork, pTarget.getTagName());
 
             /* Determine the URL for the tags path */
@@ -381,14 +393,12 @@ public class VersionMgr {
 
     /**
      * Prepare temporary work directory.
+     * @param pPreferences the preferences
      * @return the work directory
      */
-    private static File prepareWorkDir() {
-        /* Access the SubVersion preferences */
-        SubVersionPreferences myPreferences = PreferenceManager.getPreferenceSet(SubVersionPreferences.class);
-
+    private static File prepareWorkDir(final SubVersionPreferences pPreferences) {
         /* Determine the name of the work directory */
-        String myBase = myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD);
+        String myBase = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD);
         File myWork = new File(myBase + File.separator + DIR_SVNWORK);
 
         /* Remove the directory */

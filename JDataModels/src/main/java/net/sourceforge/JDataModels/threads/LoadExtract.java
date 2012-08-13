@@ -32,7 +32,7 @@ import net.sourceforge.JDataModels.preferences.BackupPreferences;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JPreferenceSet.FileSelector;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 
 /**
  * Thread to load data from a spreadsheet. Once the backup is loaded, the current database is loaded and the
@@ -81,7 +81,8 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
         theStatus.initTask("Loading Extract");
 
         /* Access the Sheet preferences */
-        BackupPreferences myProperties = PreferenceManager.getPreferenceSet(BackupPreferences.class);
+        PreferenceManager myMgr = theControl.getPreferenceMgr();
+        BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
 
         /* Determine the archive name */
         File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));

@@ -35,7 +35,7 @@ import javax.xml.rpc.ServiceException;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JiraAccess.data.Security.Group;
 import net.sourceforge.JiraAccess.data.Security.Role;
 import net.sourceforge.JiraAccess.data.Security.User;
@@ -61,6 +61,11 @@ public class Server {
      * Jira Soap location.
      */
     private static final String LOCATION = "/rpc/soap/jirasoapservice-v2";
+
+    /**
+     * The preference manager.
+     */
+    private final PreferenceManager thePreferenceMgr;
 
     /**
      * Authorization Token.
@@ -122,9 +127,13 @@ public class Server {
 
     /**
      * Constructor.
+     * @param pManager the preference manager
      * @throws JDataException on error
      */
-    public Server() throws JDataException {
+    public Server(final PreferenceManager pManager) throws JDataException {
+        /* Store parameters */
+        thePreferenceMgr = pManager;
+
         /* Configure log4j */
         Properties myLogProp = new Properties();
         myLogProp.setProperty("log4j.rootLogger", "ERROR, A1");
@@ -148,7 +157,7 @@ public class Server {
         /* Protect against exceptions */
         try {
             /* Access the Jira preferences */
-            JiraPreferences myPreferences = PreferenceManager.getPreferenceSet(JiraPreferences.class);
+            JiraPreferences myPreferences = thePreferenceMgr.getPreferenceSet(JiraPreferences.class);
             String baseUrl = myPreferences.getStringValue(JiraPreferences.NAME_SERVER) + LOCATION;
 
             /* Locate the service */
@@ -187,7 +196,7 @@ public class Server {
         /* Protect against exceptions */
         try {
             /* Access the Jira preferences */
-            JiraPreferences myPreferences = PreferenceManager.getPreferenceSet(JiraPreferences.class);
+            JiraPreferences myPreferences = thePreferenceMgr.getPreferenceSet(JiraPreferences.class);
 
             /* Login to the service */
             theAuthToken = theService.login(myPreferences.getStringValue(JiraPreferences.NAME_USER),

@@ -39,7 +39,6 @@ import net.sourceforge.JDataModels.sheets.SheetWriter;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.views.DilutionEvent.DilutionEventList;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -179,18 +178,16 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
     /**
      * Load an Archive Workbook.
      * @param pTask Task Control for task
+     * @param pPreferences the backup preferences
      * @return the newly loaded data
      * @throws JDataException on error
      */
-    public static FinanceData loadArchive(final TaskControl<FinanceData> pTask) throws JDataException {
+    public static FinanceData loadArchive(final TaskControl<FinanceData> pTask,
+                                          final BackupPreferences pPreferences) throws JDataException {
         InputStream myStream = null;
 
-        /* Access the Backup properties */
-        BackupPreferences myPreferences = (BackupPreferences) PreferenceManager
-                .getPreferenceSet(BackupPreferences.class);
-
         /* Determine the archive name */
-        File myArchive = new File(myPreferences.getStringValue(BackupPreferences.NAME_ARCHIVE_FILE));
+        File myArchive = new File(pPreferences.getStringValue(BackupPreferences.NAME_ARCHIVE_FILE));
 
         /* Protect the workbook retrieval */
         try {

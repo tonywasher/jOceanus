@@ -91,6 +91,7 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
      * The Data entry.
      */
     private final transient JDataEntry theDataEntry;
+
     /**
      * The panel.
      */

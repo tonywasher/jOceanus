@@ -29,16 +29,15 @@ import net.sourceforge.JDataModels.ui.StatusBar;
 import net.sourceforge.JDataModels.ui.StatusBar.StatusData;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
 
 /**
  * Thread Status.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, PreferenceSetChooser {
+public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T> {
     /**
      * Default Number of steps/stages.
      */
@@ -117,8 +116,8 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
         theStatusBar = pStatusBar;
 
         /* Access the threadStatus properties */
-        ThreadStatusPreferences myPreferences = (ThreadStatusPreferences) PreferenceManager
-                .getPreferenceSet(this);
+        PreferenceManager myMgr = theControl.getPreferenceMgr();
+        ThreadStatusPreferences myPreferences = myMgr.getPreferenceSet(ThreadStatusPreferences.class);
         theSteps = myPreferences.getIntegerValue(ThreadStatusPreferences.NAME_REPSTEPS);
 
         /* Create the status */
@@ -132,11 +131,6 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T>, Prefe
     public void registerThread(final WorkerThread<?> pThread) {
         /* Store parameter */
         theThread = pThread;
-    }
-
-    @Override
-    public Class<? extends PreferenceSet> getPreferenceSetClass() {
-        return ThreadStatusPreferences.class;
     }
 
     @Override

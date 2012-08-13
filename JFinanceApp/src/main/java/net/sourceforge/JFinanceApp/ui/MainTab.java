@@ -325,7 +325,8 @@ public class MainTab extends MainWindow<FinanceData> {
         ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
 
         /* Create the worker thread */
-        SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus);
+        SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus,
+                theView.getPreferenceMgr());
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

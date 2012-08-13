@@ -45,6 +45,7 @@ import net.sourceforge.JFinanceApp.data.TaxType.TaxTypeList;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
 import net.sourceforge.JFinanceApp.data.TransactionType.TransTypeList;
 import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 
 /**
  * FinanceData dataSet.
@@ -413,10 +414,12 @@ public class FinanceData extends DataSet<FinanceData> {
     /**
      * Standard constructor.
      * @param pSecurity the secure manager
+     * @param pPreferenceMgr the preference manager
      */
-    public FinanceData(final SecureManager pSecurity) {
+    public FinanceData(final SecureManager pSecurity,
+                       final PreferenceManager pPreferenceMgr) {
         /* Call Super-constructor */
-        super(pSecurity);
+        super(pSecurity, pPreferenceMgr);
 
         /* Create the empty lists */
         theActTypes = new AccountTypeList(this);

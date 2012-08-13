@@ -28,7 +28,7 @@ import java.io.InputStream;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Component.ComponentList;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
 
@@ -58,6 +58,11 @@ public class Repository implements Comparable<Repository> {
      * The buffer length.
      */
     private static final int BUFFER_STREAM = 1000;
+
+    /**
+     * The Preference Manager.
+     */
+    private final PreferenceManager thePreferenceMgr;
 
     /**
      * Repository Name.
@@ -90,6 +95,14 @@ public class Repository implements Comparable<Repository> {
      */
     public String getName() {
         return theName;
+    }
+
+    /**
+     * Obtain the preference manager.
+     * @return the preference manager
+     */
+    public PreferenceManager getPreferenceMgr() {
+        return thePreferenceMgr;
     }
 
     /**
@@ -126,21 +139,22 @@ public class Repository implements Comparable<Repository> {
 
     /**
      * Constructor.
+     * @param pPreferenceMgr the preference manager
      * @param pName the Name of the repository
      * @throws JDataException on error
      */
-    public Repository(final String pName) throws JDataException {
-        /* Store the name */
+    public Repository(final PreferenceManager pPreferenceMgr,
+                      final String pName) throws JDataException {
+        /* Store the name and preference manager */
         theName = pName;
-
-        /* Access the SubVersion preferences */
-        SubVersionPreferences myPreferences = PreferenceManager.getPreferenceSet(SubVersionPreferences.class);
+        thePreferenceMgr = pPreferenceMgr;
 
         /* Access the Repository base */
+        SubVersionPreferences myPreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
         theBase = myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO);
 
         /* Create a client manager pool */
-        theClientMgrPool = new ClientManager();
+        theClientMgrPool = new ClientManager(myPreferences);
 
         /* Create component list */
         theComponents = new ComponentList(this);

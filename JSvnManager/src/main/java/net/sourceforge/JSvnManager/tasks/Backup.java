@@ -35,7 +35,7 @@ import net.sourceforge.JDataModels.preferences.BackupPreferences;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.SubVersionPreferences;
 
 import org.tmatesoft.svn.core.SVNCancelException;
@@ -62,6 +62,11 @@ public class Backup {
      * The Data file name.
      */
     public static final String DATA_NAME = "zipData";
+
+    /**
+     * The preference manager.
+     */
+    private final PreferenceManager thePreferenceMgr;
 
     /**
      * The Subversion preferences.
@@ -91,13 +96,16 @@ public class Backup {
     /**
      * Constructor.
      * @param pTask the task control
+     * @param pPreferenceMgr the preference manager
      */
-    public Backup(final TaskControl<?> pTask) {
+    public Backup(final TaskControl<?> pTask,
+                  final PreferenceManager pPreferenceMgr) {
         /* Store parameters */
         theTask = pTask;
+        thePreferenceMgr = pPreferenceMgr;
 
         /* Access the SubVersion preferences */
-        thePreferences = PreferenceManager.getPreferenceSet(SubVersionPreferences.class);
+        thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
 
         /* Access a default client manager */
         theAuth = SVNWCUtil.createDefaultAuthenticationManager(thePreferences
@@ -267,7 +275,7 @@ public class Backup {
         theAdminClient.setEventHandler(new SubversionHandler());
 
         /* Access the BackUp preferences */
-        BackupPreferences myBUPreferences = PreferenceManager.getPreferenceSet(BackupPreferences.class);
+        BackupPreferences myBUPreferences = thePreferenceMgr.getPreferenceSet(BackupPreferences.class);
 
         /* Determine the repository and backup directories directory */
         File myRepo = new File(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_DIR));

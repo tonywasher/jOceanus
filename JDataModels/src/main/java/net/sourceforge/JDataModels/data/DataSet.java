@@ -39,7 +39,7 @@ import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.JDataModels.preferences.DataListPreferences;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.
@@ -232,13 +232,15 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     /**
      * Constructor for new empty DataSet.
      * @param pSecurity the secure manager
+     * @param pPreferenceMgr the preference manager
      */
-    protected DataSet(final SecureManager pSecurity) {
+    protected DataSet(final SecureManager pSecurity,
+                      final PreferenceManager pPreferenceMgr) {
         /* Store the security manager and class */
         theSecurity = pSecurity;
 
         /* Access the DataListPreferences */
-        DataListPreferences myPreferences = PreferenceManager.getPreferenceSet(DataListPreferences.class);
+        DataListPreferences myPreferences = pPreferenceMgr.getPreferenceSet(DataListPreferences.class);
         theGranularity = myPreferences.getIntegerValue(DataListPreferences.NAME_GRANULARITY);
 
         /* Create the empty security lists */

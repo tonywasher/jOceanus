@@ -93,13 +93,13 @@ public class ProjectDefinition {
      */
     public ProjectDefinition(final File pFile) throws JDataException {
         FileInputStream myInFile;
-        BufferedInputStream myInBuffer;
         DocumentBuilderFactory myFactory;
         DocumentBuilder myBuilder;
         Element myElement;
 
         /* Store the file name */
         theFile = pFile;
+        BufferedInputStream myInBuffer = null;
 
         /* Protect against exceptions */
         try {
@@ -167,7 +167,16 @@ public class ProjectDefinition {
             /* Throw Exception */
             throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file for "
                     + pFile.getAbsolutePath(), e);
+        } finally {
+            if (myInBuffer != null) {
+                try {
+                    myInBuffer.close();
+                } catch (IOException i) {
+                    myInBuffer = null;
+                }
+            }
         }
+
     }
 
     /**

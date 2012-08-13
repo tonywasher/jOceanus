@@ -24,8 +24,6 @@ package net.sourceforge.JPreferenceSet;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,7 +39,6 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JEventManager.JEventManager;
 import net.sourceforge.JEventManager.JEventObject;
 import net.sourceforge.JFieldSet.JFieldSetItem;
 import net.sourceforge.JFieldSet.RenderState;
@@ -106,6 +103,7 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
     public PreferenceSet() throws JDataException {
         /* Access the handle */
         theHandle = Preferences.userNodeForPackage(this.getClass());
+        theHandle = theHandle.node(this.getClass().getSimpleName());
 
         /* Allocate the preference map */
         theMap = new HashMap<String, PreferenceItem>();
@@ -1313,105 +1311,6 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
          * Font.
          */
         Font;
-    }
-
-    /**
-     * Interface to determine relevant preference set.
-     */
-    public interface PreferenceSetChooser {
-        /**
-         * Determine class of relevant preference set.
-         * @return the preferenceSet class
-         */
-        Class<? extends PreferenceSet> getPreferenceSetClass();
-    }
-
-    /**
-     * preferenceSetManager class.
-     */
-    public static class PreferenceManager {
-        /**
-         * Map of preferenceSets.
-         */
-        private static Map<Class<?>, PreferenceSet> theMap = new HashMap<Class<?>, PreferenceSet>();
-
-        /**
-         * Obtain the collection of preference sets.
-         * @return the preference sets
-         */
-        public static Collection<PreferenceSet> getPreferenceSets() {
-            return theMap.values();
-        }
-
-        /**
-         * Listener manager.
-         */
-        private static JEventManager theListeners = new JEventManager(PreferenceManager.class);
-
-        /**
-         * Add action Listener to list.
-         * @param pListener the listener to add
-         */
-        public static void addActionListener(final ActionListener pListener) {
-            /* Add the Action Listener to the list */
-            theListeners.addActionListener(pListener);
-        }
-
-        /**
-         * Remove action Listener from list.
-         * @param pListener the listener to remove
-         */
-        public static void removeActionListener(final ActionListener pListener) {
-            /* Remove the Action Listener from the list */
-            theListeners.removeActionListener(pListener);
-        }
-
-        /**
-         * Obtain the preference set for the calling class.
-         * @param pOwner the owning class
-         * @return the relevant preferenceSet
-         */
-        public static PreferenceSet getPreferenceSet(final PreferenceSetChooser pOwner) {
-            /* Determine the required preferenceSet class */
-            Class<? extends PreferenceSet> myClass = pOwner.getPreferenceSetClass();
-
-            /* Return the PreferenceSet */
-            return getPreferenceSet(myClass);
-        }
-
-        /**
-         * Obtain the preference set for the calling class.
-         * @param <X> the preference set type
-         * @param pClass the class of the preference set
-         * @return the relevant preferenceSet
-         */
-        @SuppressWarnings("unchecked")
-        public static synchronized <X extends PreferenceSet> X getPreferenceSet(final Class<X> pClass) {
-            /* Locate a cached PreferenceSet */
-            PreferenceSet mySet = theMap.get(pClass);
-
-            /* If we have not seen this set before */
-            if (mySet == null) {
-                /* Protect against exceptions */
-                try {
-                    /* Access the new set */
-                    mySet = pClass.newInstance();
-
-                    /* Cache the set */
-                    theMap.put(pClass, mySet);
-
-                    /* Fire the action performed */
-                    theListeners.fireActionEvent(mySet, ActionEvent.ACTION_PERFORMED, null);
-                } catch (IllegalAccessException e) {
-                    mySet = null;
-                } catch (InstantiationException e) {
-                    mySet = null;
-                }
-            }
-
-            /* Return the PreferenceSet */
-            return (X) mySet;
-        }
     }
 
     @Override

@@ -29,6 +29,7 @@ import net.sourceforge.JDataModels.threads.WorkerThread;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.tasks.Backup;
 
 /**
@@ -53,16 +54,24 @@ public class SubversionBackup<T extends DataSet<T>> extends WorkerThread<Void> {
     private final ThreadStatus<?> theStatus;
 
     /**
+     * The preference manager.
+     */
+    private final PreferenceManager thePreferenceMgr;
+
+    /**
      * Constructor (Event Thread).
      * @param pStatus the thread status
+     * @param pPreferenceMgr the preference manager
      */
-    public SubversionBackup(final ThreadStatus<T> pStatus) {
+    public SubversionBackup(final ThreadStatus<T> pStatus,
+                            final PreferenceManager pPreferenceMgr) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 
         /* Store passed parameters */
         theStatus = pStatus;
         theControl = pStatus.getControl();
+        thePreferenceMgr = pPreferenceMgr;
 
         /* Show the status window */
         showStatusBar();
@@ -81,7 +90,7 @@ public class SubversionBackup<T extends DataSet<T>> extends WorkerThread<Void> {
         PasswordHash myBase = myData.getPasswordHash();
 
         /* Create backup */
-        myAccess = new Backup(theStatus);
+        myAccess = new Backup(theStatus, thePreferenceMgr);
         myAccess.backUpRepositories(mySecure, myBase);
 
         /* Return nothing */

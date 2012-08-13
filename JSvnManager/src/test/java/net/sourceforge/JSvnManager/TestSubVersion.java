@@ -22,6 +22,7 @@
 package net.sourceforge.JSvnManager;
 
 import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Branch;
 import net.sourceforge.JSvnManager.data.Repository;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
@@ -33,7 +34,7 @@ public class TestSubVersion {
      */
     public static void main(String[] args) {
         try {
-            Repository myRepository = new Repository("Finance");
+            Repository myRepository = new Repository(new PreferenceManager(), "Finance");
             WorkingCopySet myWorkingSet = myRepository.getWorkingSet();
             VersionMgr myVersionMgr = new VersionMgr(myRepository);
             Branch myBranch = myWorkingSet.getActiveBranch("JDateButton");

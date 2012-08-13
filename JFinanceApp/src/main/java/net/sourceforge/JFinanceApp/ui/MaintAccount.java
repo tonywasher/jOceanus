@@ -961,7 +961,7 @@ public class MaintAccount extends JEventPanel {
             /* Handle parent */
             if (myType.isChild()) {
                 if (theAccount.getParent() != null) {
-                    theParentBox.setSelectedItem(theAccount.getParent().getName());
+                    theParentBox.setSelectedItem(theAccount.getParent());
                 } else {
                     theParentBox.setSelectedItem(null);
                 }
@@ -1198,12 +1198,8 @@ public class MaintAccount extends JEventPanel {
 
             /* Check for changes */
             if (theAccount.checkForHistory()) {
-                /* Note that the item has changed */
-                // theAccount.setState(DataState.CHANGED);
-
-                /* validate it */
-                theAccount.clearErrors();
-                theAccount.validate();
+                /* Increment the updateSet */
+                theUpdateSet.incrementVersion();
 
                 /* Note that changes have occurred */
                 notifyChanges();
@@ -1281,12 +1277,8 @@ public class MaintAccount extends JEventPanel {
 
             /* Check for changes */
             if (theAccount.checkForHistory()) {
-                /* Note that the item has changed */
-                // theAccount.setState(DataState.CHANGED);
-
-                /* validate it */
-                theAccount.clearErrors();
-                theAccount.validate();
+                /* Increment the updateSet */
+                theUpdateSet.incrementVersion();
 
                 /* Note that changes have occurred */
                 notifyChanges();
@@ -1373,12 +1365,8 @@ public class MaintAccount extends JEventPanel {
 
             /* Check for changes */
             if (theAccount.checkForHistory()) {
-                /* Note that the item has changed */
-                // theAccount.setState(DataState.CHANGED);
-
-                /* validate it */
-                theAccount.clearErrors();
-                theAccount.validate();
+                /* Increment the updateSet */
+                theUpdateSet.incrementVersion();
 
                 /* Note that changes have occurred */
                 notifyChanges();

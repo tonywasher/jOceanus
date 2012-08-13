@@ -317,14 +317,6 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
     }
 
     /**
-     * Get the data manager.
-     * @return the data manager
-     */
-    public JDataManager getDataMgr() {
-        return theDataMgr;
-    }
-
-    /**
      * Build the main panel.
      * @return the main panel
      */
@@ -348,9 +340,6 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
      * @throws JDataException on error
      */
     protected MainWindow() throws JDataException {
-        /* Create the data manager */
-        theDataMgr = new JDataManager();
-
         /* Create the Executor service */
         theExecutor = Executors.newSingleThreadExecutor();
     }
@@ -363,6 +352,7 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
     public void buildMainWindow(final DataControl<T> pView) throws JDataException {
         /* Store the view */
         theView = pView;
+        theDataMgr = theView.getDataMgr();
 
         /* Create the new status bar */
         theStatusBar = new StatusBar(this, theView);

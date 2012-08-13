@@ -26,15 +26,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.database.Database;
+import net.sourceforge.JDataModels.preferences.RenderPreferences;
 import net.sourceforge.JDataModels.preferences.SecurityPreferences;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
+import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 
 /**
  * Provides top-level control of data.
@@ -107,6 +112,21 @@ public abstract class DataControl<T extends DataSet<T>> {
     private JDataManager theDataMgr = null;
 
     /**
+     * The Render Manager.
+     */
+    private final RenderManager theRenderMgr;
+
+    /**
+     * The Render Preferences.
+     */
+    private final RenderPreferences theRenderPreferences;
+
+    /**
+     * The Render Manager.
+     */
+    private final PreferenceManager thePreferenceMgr;
+
+    /**
      * The Data Entry hashMap.
      */
     private final Map<String, JDataEntry> theMap;
@@ -115,23 +135,28 @@ public abstract class DataControl<T extends DataSet<T>> {
      * Constructor for default preferences.
      */
     protected DataControl() {
-        /* Create the Secure Manager */
-        theSecurity = new SecureManager();
-
         /* Create the Debug Map */
         theMap = new HashMap<String, JDataEntry>();
-    }
 
-    /**
-     * Constructor for security preferences.
-     * @param pPreferences the security preferences
-     */
-    protected DataControl(final SecurityPreferences pPreferences) {
+        /* Create the data manager */
+        theDataMgr = new JDataManager();
+        initDataMgr();
+
+        /* Create the Preference manager */
+        thePreferenceMgr = new PreferenceManager();
+
+        /* Access the Security Preferences */
+        SecurityPreferences mySecurity = thePreferenceMgr.getPreferenceSet(SecurityPreferences.class);
+
         /* Create the Secure Manager */
-        theSecurity = pPreferences.getSecurity();
+        theSecurity = mySecurity.getSecurity();
 
-        /* Create the Debug Map */
-        theMap = new HashMap<String, JDataEntry>();
+        /* Access the Render Preferences */
+        theRenderPreferences = thePreferenceMgr.getPreferenceSet(RenderPreferences.class);
+
+        /* Allocate the RenderManager */
+        theRenderMgr = new RenderManager(getDataMgr(), theRenderPreferences.getConfiguration());
+        theRenderPreferences.addChangeListener(new PreferenceListener());
     }
 
     /**
@@ -230,13 +255,25 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Set Data Manager.
-     * @param pDataMgr the Data Manager
+     * Obtain the render manager.
+     * @return the render manager
      */
-    protected void setDataMgr(final JDataManager pDataMgr) {
-        /* Store the Manager */
-        theDataMgr = pDataMgr;
+    public RenderManager getRenderMgr() {
+        return theRenderMgr;
+    }
 
+    /**
+     * Obtain the preference manager.
+     * @return the preference manager
+     */
+    public PreferenceManager getPreferenceMgr() {
+        return thePreferenceMgr;
+    }
+
+    /**
+     * Initialise Data Manager.
+     */
+    private void initDataMgr() {
         /* Create Debug Entries */
         JDataEntry myViews = getDataEntry(DATA_VIEWS);
         JDataEntry myData = getDataEntry(DATA_DATASET);
@@ -317,4 +354,16 @@ public abstract class DataControl<T extends DataSet<T>> {
      * @return success true/false
      */
     protected abstract boolean analyseData(final boolean bPreserve);
+
+    /**
+     * Preference listener class.
+     */
+    private final class PreferenceListener implements ChangeListener {
+
+        @Override
+        public void stateChanged(final ChangeEvent evt) {
+            /* Store new configuration */
+            theRenderMgr.setConfig(theRenderPreferences.getConfiguration());
+        }
+    }
 }

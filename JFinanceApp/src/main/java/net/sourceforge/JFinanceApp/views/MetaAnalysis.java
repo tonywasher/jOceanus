@@ -56,15 +56,14 @@ import net.sourceforge.JFinanceApp.views.Analysis.TransSummary;
 import net.sourceforge.JFinanceApp.views.Analysis.TransTotal;
 import net.sourceforge.JFinanceApp.views.Analysis.ValueAccount;
 import net.sourceforge.JFinanceApp.views.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceSetChooser;
 
 /**
  * Class to further analyse an analysis, primarily to calculate tax liability.
  * @author Tony Washer
  */
-public class MetaAnalysis implements PreferenceSetChooser {
+public class MetaAnalysis {
     /**
      * Low Age Limit.
      */
@@ -179,11 +178,6 @@ public class MetaAnalysis implements PreferenceSetChooser {
      * Age of User.
      */
     private int theAge = 0;
-
-    @Override
-    public Class<? extends PreferenceSet> getPreferenceSetClass() {
-        return TaxationPreferences.class;
-    }
 
     /**
      * Taxation Preferences.
@@ -518,8 +512,9 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
     /**
      * Calculate tax.
+     * @param pManager the preference manager
      */
-    protected void calculateTax() {
+    protected void calculateTax(final PreferenceManager pManager) {
         TaxBands myBands;
         JMoney myIncome = new JMoney();
         JMoney myTax = new JMoney();
@@ -553,7 +548,7 @@ public class MetaAnalysis implements PreferenceSetChooser {
         calculateGrossIncome();
 
         /* Calculate the allowances and tax bands */
-        myBands = calculateAllowances();
+        myBands = calculateAllowances(pManager);
 
         /* Calculate the salary taxation */
         myBucket = calculateSalaryTax(myBands);
@@ -972,16 +967,17 @@ public class MetaAnalysis implements PreferenceSetChooser {
 
     /**
      * Calculate the allowances and tax bands.
+     * @param pManager the preference manager
      * @return the taxBands
      */
-    private TaxBands calculateAllowances() {
+    private TaxBands calculateAllowances(final PreferenceManager pManager) {
         /* Allocate the tax bands class */
         TaxBands myBands = new TaxBands();
         JMoney myAllowance;
         JMoney myAdjust;
 
         /* Access the taxation properties */
-        TaxationPreferences myPreferences = (TaxationPreferences) PreferenceManager.getPreferenceSet(this);
+        TaxationPreferences myPreferences = pManager.getPreferenceSet(TaxationPreferences.class);
 
         /* Determine the relevant age for this tax year */
         theAge = myPreferences.getDateValue(TaxationPreferences.NAME_BIRTHDATE).ageOn(theYear.getTaxYear());

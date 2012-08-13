@@ -137,7 +137,7 @@ public class MaintenanceTab extends JEventPanel {
      * @return the manager
      */
     public JDataManager getDataManager() {
-        return theParent.getDataMgr();
+        return theView.getDataMgr();
     }
 
     /**
@@ -314,6 +314,11 @@ public class MaintenanceTab extends JEventPanel {
             /* Set the debug focus */
             theTaxYearTab.determineFocus();
 
+            /* If the selected component is Preferences */
+        } else if (myComponent.equals(thePreferences)) {
+            /* Set the debug focus */
+            thePreferences.determineFocus();
+
             /* If the selected component is NewYear */
         } else if (myComponent.equals(thePatternYear.getPanel())) {
             /* Set the debug focus */
@@ -338,8 +343,7 @@ public class MaintenanceTab extends JEventPanel {
             if (theTabs.equals(o)) {
                 /* Determine the focus */
                 determineFocus();
-            } else if ((thePreferences.equals(o)) || (theStatic.equals(o)) || (theTaxYearTab.equals(o))
-                    || (theAccountTab.equals(o))) {
+            } else {
                 /* Set the visibility */
                 setVisibility();
             }

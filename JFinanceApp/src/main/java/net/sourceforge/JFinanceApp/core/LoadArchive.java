@@ -24,11 +24,13 @@ package net.sourceforge.JFinanceApp.core;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.database.Database;
+import net.sourceforge.JDataModels.preferences.BackupPreferences;
 import net.sourceforge.JDataModels.threads.LoaderThread;
 import net.sourceforge.JDataModels.threads.ThreadStatus;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.sheets.FinanceSheet;
 import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.JPreferenceSet.PreferenceManager;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.
@@ -72,7 +74,9 @@ public class LoadArchive extends LoaderThread<FinanceData> {
         theStatus.initTask("Loading Extract");
 
         /* Load workbook */
-        FinanceData myData = FinanceSheet.loadArchive(theStatus);
+        PreferenceManager myMgr = theControl.getPreferenceMgr();
+        FinanceData myData = FinanceSheet.loadArchive(theStatus,
+                                                      myMgr.getPreferenceSet(BackupPreferences.class));
 
         /* Initialise the status window */
         theStatus.initTask("Accessing DataStore");
