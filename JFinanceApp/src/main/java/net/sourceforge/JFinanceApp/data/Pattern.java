@@ -474,6 +474,7 @@ public class Pattern extends Event {
 
         /* Build the new linked event */
         Event myEvent = new Event(pEvents, this);
+        myEvent.setNewVersion();
 
         /* Set the date for this event */
         myEvent.setDate(new JDateDay(pDate));

@@ -1551,6 +1551,9 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
             myYear.setBase(null);
             myYear.setId(0);
 
+            /* Make sure that it is new */
+            myYear.setNewVersion();
+
             /* Adjust the year and add to list */
             myYear.setTaxYear(new JDateDay(myBase.getTaxYear()));
             myYear.getTaxYear().adjustYear(1);

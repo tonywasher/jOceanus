@@ -868,7 +868,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 case COLUMN_PARTNER:
                     return pLine.getPartner();
                 case COLUMN_BALANCE:
-                    if ((myNext != null) && (Difference.isEqual(myNext.getDate(), pLine.getDate()))) {
+                    if ((myNext != null) && (!pLine.isHeader())
+                            && (Difference.isEqual(myNext.getDate(), pLine.getDate()))) {
                         return null;
                     } else {
                         return (isUnits) ? pLine.getBalanceUnits() : pLine.getBalance();

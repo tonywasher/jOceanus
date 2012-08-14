@@ -734,7 +734,6 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         if (requiredInfoSet()) {
             theInfoSet = new EventInfoSet(this);
         }
-
     }
 
     /**
