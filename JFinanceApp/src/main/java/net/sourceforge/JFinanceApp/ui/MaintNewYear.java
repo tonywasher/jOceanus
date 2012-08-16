@@ -40,8 +40,8 @@ import net.sourceforge.JDataModels.ui.JDataTableColumn;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel;
 import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimalFormatter;
 import net.sourceforge.JFieldSet.EditState;
@@ -98,6 +98,11 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
     private final JPanel thePanel;
 
     /**
+     * Table Model.
+     */
+    private final PatternYearModel theModel;
+
+    /**
      * Column Model.
      */
     private final YearColumnModel theColumns;
@@ -115,12 +120,12 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
     /**
      * Year View.
      */
-    private final transient UpdateEntry theYearEntry;
+    private final transient UpdateEntry<TaxYear> theYearEntry;
 
     /**
      * Event View.
      */
-    private final transient UpdateEntry theEventEntry;
+    private final transient UpdateEntry<Event> theEventEntry;
 
     /**
      * Obtain the panel.
@@ -250,8 +255,8 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
         theEventEntry = theUpdateSet.registerClass(Event.class);
 
         /* Set the table model */
-        PatternYearModel myModel = new PatternYearModel();
-        setModel(myModel);
+        theModel = new PatternYearModel();
+        setModel(theModel);
 
         /* Create the data column model and declare it */
         theColumns = new YearColumnModel();
@@ -267,6 +272,7 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
         /* Create the button */
         thePattern = new JButton("Apply");
         thePattern.addActionListener(this);
+        theUpdateSet.addActionListener(this);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -316,14 +322,19 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
-        FinanceData myData = theView.getData();
-        TaxYear.TaxYearList myList = myData.getTaxYears();
+    protected void refreshData() {
+        /* Protect against exceptions */
+        try {
+            FinanceData myData = theView.getData();
+            TaxYearList myList = myData.getTaxYears();
 
-        OrderedListIterator<TaxYear> myIterator = myList.listIterator();
-        setSelection(myIterator.peekLast());
+            OrderedListIterator<TaxYear> myIterator = myList.listIterator();
+            setSelection(myIterator.peekLast());
+        } catch (JDataException e) {
+            /* TODO Show the error */
+            // setError(e);
+        }
     }
 
     /**
@@ -354,10 +365,17 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
      */
     @Override
     public void actionPerformed(final ActionEvent evt) {
+        Object o = evt.getSource();
+
         /* If this event relates to the pattern button */
-        if (thePattern.equals(evt.getSource())) {
+        if (thePattern.equals(o)) {
             /* Apply the extract changes */
             theUpdateSet.applyChanges();
+
+            /* If we have failed an update */
+        } else if (theUpdateSet.equals(o)) {
+            /* Refresh the model */
+            theModel.fireNewDataEvents();
         }
     }
 
@@ -425,8 +443,22 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
         @Override
         public JDataField getFieldForCell(final Event pEvent,
                                           final int pColIndex) {
-            /* Always null */
-            return null;
+            switch (pColIndex) {
+                case COLUMN_DATE:
+                    return Event.FIELD_DATE;
+                case COLUMN_DESC:
+                    return Event.FIELD_DESC;
+                case COLUMN_TRANTYP:
+                    return Event.FIELD_TRNTYP;
+                case COLUMN_AMOUNT:
+                    return Event.FIELD_AMOUNT;
+                case COLUMN_CREDIT:
+                    return Event.FIELD_CREDIT;
+                case COLUMN_DEBIT:
+                    return Event.FIELD_DEBIT;
+                default:
+                    return null;
+            }
         }
 
         @Override

@@ -51,8 +51,8 @@ import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayButton;
 import net.sourceforge.JEventManager.JEventPanel;
@@ -279,7 +279,7 @@ public class MaintAccount extends JEventPanel {
     /**
      * The view list.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<Account> theUpdateEntry;
 
     /**
      * Obtain the account.
@@ -687,6 +687,9 @@ public class MaintAccount extends JEventPanel {
 
         /* Set initial display */
         showAccount();
+
+        /* Add listener to updateSet */
+        theUpdateSet.addActionListener(myListener);
     }
 
     /**
@@ -1220,13 +1223,18 @@ public class MaintAccount extends JEventPanel {
                 notifyChanges();
                 return;
 
+                /* If we are performing a rewind */
+            } else if (theUpdateSet.equals(o)) {
+                /* Refresh the account */
+                showAccount();
+
                 /* If this event relates to the new button */
             } else if (theInsButton.equals(o)) {
                 /* Create the new account */
                 newAccount();
                 return;
 
-                /* If this event relates to the del button */
+                /* If this event relates to the delete button */
             } else if (theDelButton.equals(o)) {
                 /* else if this is a new account */
                 if (theAccount.getState() == DataState.NEW) {

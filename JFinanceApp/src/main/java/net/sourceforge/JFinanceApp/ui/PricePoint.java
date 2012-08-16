@@ -48,8 +48,8 @@ import net.sourceforge.JDataModels.ui.JDataTableModel;
 import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimalFormatter;
@@ -97,7 +97,7 @@ public class PricePoint extends JDataTable<SpotPrice> {
     /**
      * The update entry.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<SpotPrice> theUpdateEntry;
 
     /**
      * The Spot prices.
@@ -108,6 +108,11 @@ public class PricePoint extends JDataTable<SpotPrice> {
      * The account price list.
      */
     private transient SpotList thePrices = null;
+
+    /**
+     * Table Model.
+     */
+    private final SpotViewModel theModel;
 
     /**
      * The panel.
@@ -250,8 +255,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
         theDataPrice.setObject(theUpdateSet);
 
         /* Create the model and declare it to our superclass */
-        SpotViewModel myModel = new SpotViewModel();
-        setModel(myModel);
+        theModel = new SpotViewModel();
+        setModel(theModel);
 
         /* Create the data column model and declare it */
         theColumns = new SpotViewColumnModel();
@@ -280,6 +285,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
         theSelect.addChangeListener(myListener);
         theError.addChangeListener(myListener);
         theSaveButtons.addActionListener(myListener);
+        theUpdateSet.addActionListener(myListener);
+        theView.addChangeListener(myListener);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -305,17 +312,25 @@ public class PricePoint extends JDataTable<SpotPrice> {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
-        /* Refresh the data */
-        theSelect.refreshData();
+    private void refreshData() {
+        /* Protect against exceptions */
+        try {
+            /* Refresh the data */
+            theSelect.refreshData();
 
-        /* Access the selection details */
-        setSelection(theSelect.getAccountType(), theSelect.getDate());
+            /* Access the selection details */
+            setSelection(theSelect.getAccountType(), theSelect.getDate());
 
-        /* Create SavePoint */
-        theSelect.createSavePoint();
+            /* Create SavePoint */
+            theSelect.createSavePoint();
+        } catch (JDataException e) {
+            /* TODO Show the error */
+            // setError(e);
+
+            /* Restore SavePoint */
+            theSelect.restoreSavePoint();
+        }
     }
 
     /**
@@ -485,6 +500,11 @@ public class PricePoint extends JDataTable<SpotPrice> {
                     }
                 }
 
+                /* If this is the data view */
+            } else if (theView.equals(o)) {
+                /* Refresh Data */
+                refreshData();
+
                 /* If this is the error panel */
             } else if (theError.equals(o)) {
                 /* Determine whether we have an error */
@@ -503,8 +523,10 @@ public class PricePoint extends JDataTable<SpotPrice> {
 
         @Override
         public void actionPerformed(final ActionEvent evt) {
+            Object o = evt.getSource();
+
             /* If this event relates to the save buttons */
-            if (theSaveButtons.equals(evt.getSource())) {
+            if (theSaveButtons.equals(o)) {
                 /* Cancel Editing */
                 cancelEditing();
 
@@ -513,6 +535,11 @@ public class PricePoint extends JDataTable<SpotPrice> {
 
                 /* Notify listeners of changes */
                 notifyChanges();
+
+                /* If we are performing a rewind */
+            } else if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireTableDataChanged();
             }
         }
     }

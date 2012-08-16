@@ -53,6 +53,11 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
     private static final String AREA_RATES = AccountRate.LIST_NAME;
 
     /**
+     * NamedArea for Archive Rates.
+     */
+    private static final String AREA_RATES1 = "Rates";
+
+    /**
      * Number of columns.
      */
     private static final int NUM_COLS = 6;
@@ -241,7 +246,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_RATES);
+            AreaReference myRange = pHelper.resolveAreaReference(AREA_RATES1);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();

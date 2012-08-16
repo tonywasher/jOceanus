@@ -37,6 +37,7 @@ import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.preferences.RenderPreferences;
 import net.sourceforge.JDataModels.preferences.SecurityPreferences;
 import net.sourceforge.JDataModels.sheets.SpreadSheet;
+import net.sourceforge.JEventManager.JEventObject;
 import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
@@ -45,7 +46,12 @@ import net.sourceforge.JPreferenceSet.PreferenceManager;
  * Provides top-level control of data.
  * @param <T> the DataSet type
  */
-public abstract class DataControl<T extends DataSet<T>> {
+public abstract class DataControl<T extends DataSet<T>> extends JEventObject {
+    /**
+     * Rewind action.
+     */
+    public static final String ACTION_UPDATE = "DataUpdate";
+
     /**
      * Debug View Name.
      */
@@ -155,7 +161,7 @@ public abstract class DataControl<T extends DataSet<T>> {
         theRenderPreferences = thePreferenceMgr.getPreferenceSet(RenderPreferences.class);
 
         /* Allocate the RenderManager */
-        theRenderMgr = new RenderManager(getDataMgr(), theRenderPreferences.getConfiguration());
+        theRenderMgr = new RenderManager(theDataMgr, theRenderPreferences.getConfiguration());
         theRenderPreferences.addChangeListener(new PreferenceListener());
     }
 
@@ -176,14 +182,24 @@ public abstract class DataControl<T extends DataSet<T>> {
         /* Update the Data entry */
         JDataEntry myData = getDataEntry(DATA_DATASET);
         myData.setObject(pData);
+
+        /* Analyse the data */
+        analyseData(false);
+
+        /* Refresh the views */
+        refreshViews();
     }
 
     /**
      * Increment data version.
      */
     public void incrementVersion() {
+        /* Increment data versions */
         int myVersion = theData.getVersion();
         theData.setVersion(myVersion + 1);
+
+        /* Alert listeners */
+        fireActionPerformed(ACTION_UPDATE);
     }
 
     /**
@@ -223,8 +239,8 @@ public abstract class DataControl<T extends DataSet<T>> {
     }
 
     /**
-     * Obtain current updates.
-     * @return the current Updates
+     * Obtain current error.
+     * @return the current Error
      */
     public JDataException getError() {
         return theError;
@@ -309,7 +325,7 @@ public abstract class DataControl<T extends DataSet<T>> {
      * @param pName the Name of the entry
      * @return the Debug Entry
      */
-    public JDataEntry getDataEntry(final String pName) {
+    public final JDataEntry getDataEntry(final String pName) {
         /* Access any existing entry */
         JDataEntry myEntry = theMap.get(pName);
 
@@ -344,16 +360,19 @@ public abstract class DataControl<T extends DataSet<T>> {
     public abstract T getNewData();
 
     /**
-     * Refresh the Windows.
-     */
-    protected abstract void refreshWindow();
-
-    /**
      * Analyse the data in the view.
      * @param bPreserve preserve any error
      * @return success true/false
      */
     protected abstract boolean analyseData(final boolean bPreserve);
+
+    /**
+     * refresh the data view.
+     */
+    protected final void refreshViews() {
+        /* Refresh the Control */
+        fireStateChanged();
+    }
 
     /**
      * Preference listener class.

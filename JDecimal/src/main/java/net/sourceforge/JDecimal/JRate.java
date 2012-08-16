@@ -76,13 +76,19 @@ public class JRate extends JDecimal {
      * @return the remaining rate
      */
     public JRate getRemainingRate() {
-        /* Create a negated copy of this rate */
+        /* Create a copy of this rate and reverse it */
         JRate myRate = new JRate(this);
-        myRate.negate();
-
-        /* Add one hundred percent and return the result */
-        myRate.addValue(RATE_ONEHUNDREDPERCENT);
+        myRate.reverseRate();
         return myRate;
+    }
+
+    /**
+     * Obtain remaining rate of this rate (i.e. 100% - this rate).
+     */
+    private void reverseRate() {
+        /* Negate the value and add 100% */
+        negate();
+        super.addValue(RATE_ONEHUNDREDPERCENT);
     }
 
     /**

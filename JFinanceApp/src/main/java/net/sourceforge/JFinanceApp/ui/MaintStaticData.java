@@ -23,6 +23,8 @@
 package net.sourceforge.JFinanceApp.ui;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
@@ -40,8 +42,8 @@ import net.sourceforge.JDataModels.ui.JDataTable;
 import net.sourceforge.JDataModels.ui.JDataTableColumn;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JFieldSet.Editor.BooleanEditor;
 import net.sourceforge.JFieldSet.Editor.StringEditor;
 import net.sourceforge.JFieldSet.RenderManager;
@@ -217,7 +219,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * The UpdateEntry.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<T> theUpdateEntry;
 
     /**
      * The Error panel.
@@ -242,23 +244,26 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
      * @param pView the view
      * @param pUpdateSet the update set
      * @param pError the error panel
-     * @param pClass the list class
+     * @param pListClass the list class
+     * @param pItemClass the item class
      */
     public MaintStaticData(final View pView,
                            final UpdateSet pUpdateSet,
                            final ErrorPanel pError,
-                           final Class<L> pClass) {
+                           final Class<L> pListClass,
+                           final Class<T> pItemClass) {
         /* Record the passed details */
         theError = pError;
-        theClass = pClass;
+        theClass = pListClass;
         theView = pView;
         theRenderMgr = theView.getRenderMgr();
         setRenderMgr(theRenderMgr);
 
         /* Build the Update set and List */
         theUpdateSet = pUpdateSet;
-        theUpdateEntry = theUpdateSet.registerClass(pClass);
+        theUpdateEntry = theUpdateSet.registerClass(pItemClass);
         setUpdateSet(theUpdateSet);
+        theUpdateSet.addActionListener(new StaticListener());
 
         /* Set the table model */
         theModel = new StaticModel();
@@ -308,9 +313,8 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
+    protected void refreshData() {
         /* Access data */
         FinanceData myData = theView.getData();
 
@@ -321,6 +325,23 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         /* Update the Data View */
         setList(theStatic);
         theUpdateEntry.setDataList(theStatic);
+    }
+
+    /**
+     * The listener class.
+     */
+    private final class StaticListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireTableDataChanged();
+            }
+        }
     }
 
     /**

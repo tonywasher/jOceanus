@@ -445,17 +445,18 @@ public class EventAnalysis implements JDataContents {
         /* Loop through the Events extracting relevant elements */
         while (myIterator.hasNext()) {
             Event myCurr = myIterator.next();
+            JDateDay myCurrDay = myCurr.getDate();
 
             /* If we have a current tax year */
-            if (myTax != null) {
+            if (myDate != null) {
                 /* Check that this event is still in the tax year */
-                myResult = myDate.compareTo(myCurr.getDate());
+                myResult = myDate.compareTo(myCurrDay);
             }
 
             /* If we have exhausted the tax year or else this is the first tax year */
-            if (myResult == -1) {
+            if (myResult < 0) {
                 /* Access the relevant tax year */
-                myTax = myList.findTaxYearForDate(myCurr.getDate());
+                myTax = myList.findTaxYearForDate(myCurrDay);
                 myDate = myTax.getTaxYear();
 
                 /* If we have an existing meta analysis year */

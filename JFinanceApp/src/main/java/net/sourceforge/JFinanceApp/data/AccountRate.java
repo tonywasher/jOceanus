@@ -44,8 +44,6 @@ import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedRate;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
 
-import org.apache.poi.ss.formula.functions.Rate;
-
 /**
  * AccountRate data type.
  * @author Tony Washer
@@ -274,7 +272,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @throws JDataException on error
      */
     private void setValueRate(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_RATE, pBytes, Rate.class);
+        setEncryptedValue(FIELD_RATE, pBytes, JRate.class);
     }
 
     /**
@@ -300,7 +298,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @throws JDataException on error
      */
     private void setValueBonus(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_BONUS, pBytes, Rate.class);
+        setEncryptedValue(FIELD_BONUS, pBytes, JRate.class);
     }
 
     /**

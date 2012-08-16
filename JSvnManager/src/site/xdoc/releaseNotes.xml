@@ -1,22 +1,16 @@
 <document>
   <properties>
     <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
-    <title>JDateButton Release Notes</title>
+    <title>JSvnManager Release Notes</title>
   </properties>
   <body>
     <section name="Overview">
-      <p>This project was started because I was in need of this feature for my program, but I could not find a suitable openSource option. The main problem was my desire to limit the range of selectable dates. So I built my own, and have released it in case anyone else has the same requirements that I did.</p>
+      <p>This project was started to simplify tasks such as tagging and branching while maintaining pom version information.</p>
     </section>
 
     <section name="Build History">
       <dl>
-<dt>v1.0.0-b1</dt> <dd>initial upload of code</dd>
-<dt>v1.0.0-b2</dt> <dd>moved example program from test jar into main jar and made main jar executable such that the sample program is invoked if the jar file is executed</dd>
-<dt>v1.1.0-SNAPSHOT</dt> <dd><ul>
-<li>Provided applet support for demo program</li>
-<li>Provided Maven-generated WebSite</li>
-<li>Restructured to enable subclassing</li>
-</ul></dd>
+<dt>v1.0.0-b1</dt> <dd>initial upload of code</dd> <dd></dd>
       </dl>
     </section>
   </body>

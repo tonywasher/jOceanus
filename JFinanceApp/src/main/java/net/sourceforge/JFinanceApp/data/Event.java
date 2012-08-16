@@ -740,15 +740,22 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * Construct a new event from an Account pattern.
      * @param pList the list to build into
      * @param pLine The Line to copy
+     * @throws JDataException on error
      */
     protected Event(final EncryptedList<? extends Event> pList,
-                    final Pattern pLine) {
+                    final Pattern pLine) throws JDataException {
         /* Set standard values */
         super(pList, pLine);
 
         /* Create a new EventInfoSet if required */
         if (requiredInfoSet()) {
             theInfoSet = new EventInfoSet(this);
+        }
+
+        /* If we need a tax Credit */
+        if (needsTaxCredit(getTransType(), getDebit())) {
+            /* Calculate the tax credit */
+            setTaxCredit(calculateTaxCredit());
         }
     }
 
@@ -1269,6 +1276,17 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
+     * EventDateRange interface.
+     */
+    public interface EventDateRange {
+        /**
+         * Obtain valid date range.
+         * @return the valid date range.
+         */
+        JDateDayRange getValidDateRange();
+    }
+
+    /**
      * Validate the event.
      */
     @Override
@@ -1291,8 +1309,16 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         }
 
         /* Determine date range to check for */
-        JDateDayRange myRange = (this instanceof Pattern) ? Pattern.RANGE_PATTERN : getDataSet()
-                .getDateRange();
+        DataList<?> myList = getList();
+        JDateDayRange myRange;
+        if (myList instanceof EventDateRange) {
+            /* Access valid range */
+            EventDateRange myValid = (EventDateRange) myList;
+            myRange = myValid.getValidDateRange();
+        } else {
+            /* Use default range */
+            myRange = getDataSet().getDateRange();
+        }
 
         /* The date must be non-null */
         if (myDate == null) {
@@ -1826,7 +1852,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     /**
      * List class for Events.
      */
-    public static class EventList extends EncryptedList<Event> {
+    public static class EventList extends EncryptedList<Event> implements EventDateRange {
         /**
          * Local Report fields.
          */
@@ -1861,11 +1887,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             return (FinanceData) super.getDataSet();
         }
 
-        /**
-         * Obtain the range.
-         * @return the range
-         */
-        protected JDateDayRange getRange() {
+        @Override
+        public JDateDayRange getValidDateRange() {
             return theRange;
         }
 

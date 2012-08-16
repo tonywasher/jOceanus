@@ -210,16 +210,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
     private boolean isHeader = false;
 
     /**
-     * Is the item in the process of being changed.
-     */
-    private boolean isChangeing = false;
-
-    /**
-     * Is the item in the process of being restored.
-     */
-    private boolean isRestoring = false;
-
-    /**
      * The id number of the item.
      */
     private Integer theId = 0;
@@ -330,22 +320,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
     }
 
     /**
-     * Determine whether the item is in the process of being changed.
-     * @param bChangeing <code>true/false</code>
-     */
-    protected void setChangeing(final boolean bChangeing) {
-        isChangeing = bChangeing;
-    }
-
-    /**
-     * Determine whether the item is in the process of being restored.
-     * @param bRestoring <code>true/false</code>
-     */
-    protected void setRestoring(final boolean bRestoring) {
-        isRestoring = bRestoring;
-    }
-
-    /**
      * Set the Edit State.
      * @param pState the Edit Status
      */
@@ -367,22 +341,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
      */
     public boolean isHeader() {
         return isHeader;
-    }
-
-    /**
-     * Determine whether the item is in the process of being changed.
-     * @return <code>true/false</code>
-     */
-    protected boolean isChangeing() {
-        return isChangeing;
-    }
-
-    /**
-     * Determine whether the item is in the process of being restored.
-     * @return <code>true/false</code>
-     */
-    protected boolean isRestoring() {
-        return isRestoring;
     }
 
     /**
@@ -542,7 +500,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
      * Rewind item to the required version.
      * @param pVersion the version to rewind to
      */
-    protected void rewindToVersion(final int pVersion) {
+    public void rewindToVersion(final int pVersion) {
         /* Loop while version is too high */
         while (theValueSet.getVersion() > pVersion) {
             /* Pop history */

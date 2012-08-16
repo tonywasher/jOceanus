@@ -209,11 +209,6 @@ public class JDateDayExample extends JApplet {
     private JTable theTable = null;
 
     /**
-     * The cell renderer.
-     */
-    private JDateDayCellRenderer theRenderer = null;
-
-    /**
      * The cell editor.
      */
     private JDateDayCellEditor theEditor = null;
@@ -281,7 +276,7 @@ public class JDateDayExample extends JApplet {
     /**
      * The formatter.
      */
-    private JDateDayFormatter theFormatter = new JDateDayFormatter();
+    private transient JDateDayFormatter theFormatter = new JDateDayFormatter();
 
     /**
      * Create the panel.
@@ -500,7 +495,7 @@ public class JDateDayExample extends JApplet {
         theTable = new JTable(myModel);
 
         /* Create the renderer and editor */
-        theRenderer = new JDateDayCellRenderer(theFormatter);
+        JDateDayCellRenderer myRenderer = new JDateDayCellRenderer(theFormatter);
         theEditor = new JDateDayCellEditor(theFormatter);
 
         /* Set sorting on the table */
@@ -514,7 +509,7 @@ public class JDateDayExample extends JApplet {
         myFirstCol.setPreferredWidth(COL_1_WIDTH);
 
         /* Set the renderer */
-        myFirstCol.setCellRenderer(theRenderer);
+        myFirstCol.setCellRenderer(myRenderer);
         myFirstCol.setCellEditor(theEditor);
 
         /* Set the width of the column */
@@ -621,16 +616,7 @@ public class JDateDayExample extends JApplet {
         /* Set locale for formatter */
         theFormatter.setLocale(theLocale);
 
-        /* Set the Renderer and Editor Locale */
-        // theRenderer.setLocale(theLocale);
-        // theEditor.setLocale(theLocale);
-
-        /* Set the Start/End Date button locale */
-        // theStartDate.setLocale(theLocale);
-        // theEndDate.setLocale(theLocale);
-
         /* Set range locale */
-        // theRangeSelect.setLocale(theLocale);
         theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Set format options */
@@ -654,16 +640,7 @@ public class JDateDayExample extends JApplet {
         /* Set format for formatter */
         theFormatter.setFormat(theFormat);
 
-        /* Set the Renderer and Editor Format */
-        // theRenderer.setFormat(theFormat);
-        // theEditor.setFormat(theFormat);
-
-        /* Set the Start/End Date button format */
-        // theStartDate.setFormat(theFormat);
-        // theEndDate.setFormat(theFormat);
-
         /* Set range format */
-        // theRangeSelect.setFormat(theFormat);
         theSelectedRange.setText(theFormatter.formatDateDayRange(theRangeSelect.getRange()));
 
         /* Note that we should redraw the table */

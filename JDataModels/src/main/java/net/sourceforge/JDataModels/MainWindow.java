@@ -499,6 +499,9 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
         theFrame.addWindowListener(new WindowClose());
         theView.setFrame(theFrame);
 
+        /* Set visibility */
+        setVisibility();
+
         /* Load data from the database */
         // loadDatabase();
     }

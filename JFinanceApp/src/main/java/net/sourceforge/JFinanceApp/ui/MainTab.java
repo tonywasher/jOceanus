@@ -154,7 +154,7 @@ public class MainTab extends MainWindow<FinanceData> {
     /**
      * The comboList.
      */
-    private ComboSelect theComboList = null;
+    private final ComboSelect theComboList;
 
     /**
      * The Load Sheet menus.
@@ -203,13 +203,13 @@ public class MainTab extends MainWindow<FinanceData> {
      */
     public MainTab() throws JDataException {
         /* Create the view */
-        theView = new View(this);
+        theView = new View();
+
+        /* Create the combo list */
+        theComboList = new ComboSelect(theView);
 
         /* Build the main window */
         buildMainWindow(theView);
-
-        /* Initialise the data */
-        refreshData();
     }
 
     /**
@@ -222,11 +222,11 @@ public class MainTab extends MainWindow<FinanceData> {
         theTabs = new JTabbedPane();
 
         /* Create the extract table and add to tabbed pane */
-        theExtract = new Extract(theView);
+        theExtract = new Extract(theView, theComboList);
         theTabs.addTab(TITLE_EXTRACT, theExtract.getPanel());
 
         /* Create the accounts control and add to tabbed pane */
-        theAccountCtl = new AccountTab(theView);
+        theAccountCtl = new AccountTab(theView, theComboList);
         theTabs.addTab(TITLE_ACCOUNT, theAccountCtl);
 
         /* Create the Report Tab */
@@ -243,6 +243,7 @@ public class MainTab extends MainWindow<FinanceData> {
 
         /* Add listeners */
         MainListener myListener = new MainListener();
+        theView.addChangeListener(myListener);
         theTabs.addChangeListener(myListener);
         theExtract.addChangeListener(myListener);
         theAccountCtl.addChangeListener(myListener);
@@ -393,30 +394,6 @@ public class MainTab extends MainWindow<FinanceData> {
         theTabs.setSelectedIndex(iIndex);
     }
 
-    /**
-     * refresh data.
-     * @throws JDataException on error
-     */
-    public final void refreshData() throws JDataException {
-        /* Skip if no view yet */
-        if (theView == null) {
-            return;
-        }
-
-        /* Create the combo list */
-        theComboList = new ComboSelect(theView);
-
-        /* Refresh the windows */
-        theExtract.refreshData(theComboList);
-        theAccountCtl.refreshData(theComboList);
-        theReportTab.refreshData();
-        theSpotView.refreshData();
-        theMaint.refreshData();
-
-        /* Sort out visible tabs */
-        setVisibility();
-    }
-
     @Override
     public final void setVisibility() {
         /* Sort out underlying visibility */
@@ -519,6 +496,12 @@ public class MainTab extends MainWindow<FinanceData> {
 
                 /* Determine the focus */
                 determineFocus();
+
+                /* If this is the data view */
+            } else if (theView.equals(o)) {
+                /* Set Visibility and refresh the combo list */
+                setVisibility();
+                theComboList.refreshData();
 
                 /* else if it is one of the sub-panels */
             } else if (theExtract.equals(o) || theAccountCtl.equals(o) || theMaint.equals(o)

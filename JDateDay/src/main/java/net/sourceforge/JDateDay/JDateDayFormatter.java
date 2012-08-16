@@ -136,7 +136,7 @@ public class JDateDayFormatter extends JEventObject implements JDateFormatter {
     }
 
     /**
-     * Format a DateDay,
+     * Format a DateDay.
      * @param pDate the date to format
      * @return the formatted date
      */

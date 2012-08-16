@@ -23,6 +23,7 @@
 package net.sourceforge.JFinanceApp.ui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ResourceBundle;
@@ -48,8 +49,8 @@ import net.sourceforge.JDataModels.ui.JDataTableColumn;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel;
 import net.sourceforge.JDataModels.ui.JDataTableMouse;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
@@ -123,7 +124,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * Update Entry.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<StatementLine> theUpdateEntry;
 
     /**
      * Statement.
@@ -173,7 +174,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * ComboSelect.
      */
-    private transient ComboSelect theComboList = null;
+    private final transient ComboSelect theComboList;
 
     /**
      * Statement Type.
@@ -428,13 +429,16 @@ public class AccountStatement extends JDataTable<StatementLine> {
      * Constructor for Statement Window.
      * @param pView the view
      * @param pUpdateSet the update set
+     * @param pCombo the combo manager
      * @param pError the error panel
      */
     public AccountStatement(final View pView,
                             final UpdateSet pUpdateSet,
+                            final ComboSelect pCombo,
                             final ErrorPanel pError) {
         /* Store passed details */
         theView = pView;
+        theComboList = pCombo;
         theRenderMgr = theView.getRenderMgr();
         setRenderMgr(theRenderMgr);
         theError = pError;
@@ -465,6 +469,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
         StatementListener myListener = new StatementListener();
         theSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theStateBox.addChangeListener(myListener);
+        theUpdateSet.addActionListener(myListener);
 
         /* Create a small panel for selection */
         JPanel myTop = new JPanel();
@@ -516,7 +521,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * The listener class.
      */
-    private final class StatementListener implements PropertyChangeListener, ChangeListener {
+    private final class StatementListener implements PropertyChangeListener, ChangeListener, ActionListener {
 
         @Override
         public void stateChanged(final ChangeEvent evt) {
@@ -557,16 +562,23 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 }
             }
         }
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireTableDataChanged();
+            }
+        }
     }
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @param pCombo the combo select.
      */
-    public void refreshData(final ComboSelect pCombo) {
-        /* Access the combo list from parent */
-        theComboList = pCombo;
-
+    protected void refreshData() {
         /* Update the possible date range */
         JDateDayRange myRange = theView.getRange();
         theSelect.setOverallRange(myRange);

@@ -332,27 +332,6 @@ public class Statement implements JDataContents {
     }
 
     /**
-     * Prepare changes in a statement back into the underlying finance objects.
-     */
-    protected void prepareChanges() {
-        /* Prepare the changes from this list */
-        theLines.prepareChanges();
-    }
-
-    /**
-     * Commit/RollBack changes in a statement back into the underlying finance objects.
-     * @param bCommit <code>true/false</code>
-     */
-    protected void commitChanges(final boolean bCommit) {
-        /* Commit/RollBack the changes */
-        if (bCommit) {
-            theLines.commitChanges();
-        } else {
-            theLines.rollBackChanges();
-        }
-    }
-
-    /**
      * The Statement Lines.
      */
     public static class StatementLines extends EncryptedList<StatementLine> {

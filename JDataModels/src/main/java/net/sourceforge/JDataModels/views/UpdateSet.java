@@ -32,15 +32,22 @@ import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.SaveButtons;
+import net.sourceforge.JEventManager.JEventObject;
 import net.sourceforge.JFieldSet.EditState;
 
 /**
  * Provides control of a set of update-able DataLists.
  */
-public class UpdateSet implements JDataContents {
+public class UpdateSet extends JEventObject implements JDataContents {
+    /**
+     * Rewind action.
+     */
+    public static final String ACTION_REWIND = "ReWind";
+
     /**
      * Report fields.
      */
@@ -86,7 +93,7 @@ public class UpdateSet implements JDataContents {
     /**
      * The list.
      */
-    private final List<UpdateEntry> theList;
+    private final List<UpdateEntry<?>> theList;
 
     /**
      * The DataControl.
@@ -110,37 +117,40 @@ public class UpdateSet implements JDataContents {
         theLocalFields = new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
 
         /* Create the list */
-        theList = new ArrayList<UpdateEntry>();
+        theList = new ArrayList<UpdateEntry<?>>();
     }
 
     /**
      * Register an entry for a class.
+     * @param <T> the data type
      * @param pClass the class
      * @return the list class entry
      */
-    public UpdateEntry registerClass(final Class<?> pClass) {
-        Iterator<UpdateEntry> myIterator;
-        UpdateEntry myList;
+    @SuppressWarnings("unchecked")
+    public <T extends DataItem & Comparable<? super T>> UpdateEntry<T> registerClass(final Class<T> pClass) {
+        Iterator<UpdateEntry<?>> myIterator;
+        UpdateEntry<?> myEntry;
+        UpdateEntry<T> myResult;
 
         /* Loop through the items in the list */
         myIterator = theList.iterator();
         while (myIterator.hasNext()) {
-            /* Access list */
-            myList = myIterator.next();
+            /* Access entry */
+            myEntry = myIterator.next();
 
             /* If we have found the class */
-            if (myList.theClass == pClass) {
+            if (myEntry.isClass(pClass)) {
                 /* Update list to null and return */
-                myList.theDataList = null;
-                return myList;
+                myEntry.setDataList(null);
+                return (UpdateEntry<T>) myEntry;
             }
         }
 
         /* Not found , so add it */
-        myList = new UpdateEntry(pClass);
-        theList.add(myList);
-        theLocalFields.declareLocalField(myList.getName());
-        return myList;
+        myResult = new UpdateEntry<T>(pClass);
+        theList.add(myResult);
+        theLocalFields.declareLocalField(myResult.getName());
+        return myResult;
     }
 
     /**
@@ -149,19 +159,20 @@ public class UpdateSet implements JDataContents {
      * @return the value
      */
     private Object findEntryValue(final String pName) {
-        Iterator<UpdateEntry> myIterator;
-        UpdateEntry myList;
+        Iterator<UpdateEntry<?>> myIterator;
+        UpdateEntry<?> myEntry;
 
         /* Loop through the items in the list */
         myIterator = theList.iterator();
         while (myIterator.hasNext()) {
-            /* Access list */
-            myList = myIterator.next();
+            /* Access entry */
+            myEntry = myIterator.next();
 
             /* If we have found the entry */
-            if (pName.equals(myList.getName())) {
+            if (pName.equals(myEntry.getName())) {
                 /* Return the value */
-                return (myList.theDataList == null) ? JDataFieldValue.SkipField : myList.theDataList;
+                DataList<?> myList = myEntry.getDataList();
+                return (myList == null) ? JDataFieldValue.SkipField : myList;
             }
         }
 
@@ -177,11 +188,11 @@ public class UpdateSet implements JDataContents {
         theVersion++;
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?>> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry myList = myIterator.next();
-            DataList<?> myDataList = myList.theDataList;
+            UpdateEntry<?> myEntry = myIterator.next();
+            DataList<?> myDataList = myEntry.getDataList();
 
             /* Increment the version if the list exists */
             if (myDataList != null) {
@@ -202,11 +213,11 @@ public class UpdateSet implements JDataContents {
         theVersion = pVersion;
 
         /* Loop through the items in the list */
-        Iterator<UpdateEntry> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?>> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry myList = myIterator.next();
-            DataList<?> myDataList = myList.theDataList;
+            UpdateEntry<?> myEntry = myIterator.next();
+            DataList<?> myDataList = myEntry.getDataList();
 
             /* If the list exists */
             if (myDataList != null) {
@@ -215,6 +226,9 @@ public class UpdateSet implements JDataContents {
                 myDataList.findEditState();
             }
         }
+
+        /* Fire that we have rewound the updateSet */
+        fireActionPerformed(ACTION_REWIND);
     }
 
     /**
@@ -258,6 +272,8 @@ public class UpdateSet implements JDataContents {
 
         /* Reject request if there are errors */
         if (hasErrors()) {
+            /* Fire that we have rewound the updateSet */
+            fireActionPerformed(ACTION_REWIND);
             return;
         }
 
@@ -272,8 +288,8 @@ public class UpdateSet implements JDataContents {
             /* Commit the changes */
             commitChanges();
 
-            /* Refresh windows */
-            theControl.refreshWindow();
+            /* Refresh views */
+            theControl.refreshViews();
 
             /* else we failed */
         } else {
@@ -290,16 +306,11 @@ public class UpdateSet implements JDataContents {
      */
     private void prepareChanges() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?>> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
-            /* Access list */
-            UpdateEntry myList = myIterator.next();
-            DataList<?> myDataList = myList.theDataList;
-
-            /* Prepare the changes */
-            if (myDataList != null) {
-                myDataList.prepareChanges();
-            }
+            /* Prepare changes for the entry */
+            UpdateEntry<?> myEntry = myIterator.next();
+            myEntry.prepareChanges();
         }
     }
 
@@ -307,21 +318,16 @@ public class UpdateSet implements JDataContents {
      * Commit changes in a ViewSet back into the core data.
      */
     private void commitChanges() {
-        /* Increment the version */
-        theControl.incrementVersion();
-
         /* Loop through the items in the list */
-        Iterator<UpdateEntry> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?>> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
-            /* Access list */
-            UpdateEntry myList = myIterator.next();
-            DataList<?> myDataList = myList.theDataList;
-
-            /* commit the changes */
-            if (myDataList != null) {
-                myDataList.commitChanges();
-            }
+            /* Commit changes for the entry */
+            UpdateEntry<?> myEntry = myIterator.next();
+            myEntry.commitChanges();
         }
+
+        /* Increment the version and notify listeners */
+        theControl.incrementVersion();
     }
 
     /**
@@ -329,16 +335,11 @@ public class UpdateSet implements JDataContents {
      */
     private void rollBackChanges() {
         /* Loop backwards through the items in the list */
-        ListIterator<UpdateEntry> myIterator = theList.listIterator(theList.size());
+        ListIterator<UpdateEntry<?>> myIterator = theList.listIterator(theList.size());
         while (myIterator.hasPrevious()) {
-            /* Access list */
-            UpdateEntry myList = myIterator.previous();
-            DataList<?> myDataList = myList.theDataList;
-
-            /* rollback the changes */
-            if (myDataList != null) {
-                myDataList.rollBackChanges();
-            }
+            /* Rollback changes for the entry */
+            UpdateEntry<?> myEntry = myIterator.previous();
+            myEntry.rollBackChanges();
         }
     }
 
@@ -348,11 +349,11 @@ public class UpdateSet implements JDataContents {
      */
     public boolean hasUpdates() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry> myIterator = theList.iterator();
+        Iterator<UpdateEntry<?>> myIterator = theList.iterator();
         while (myIterator.hasNext()) {
-            /* Access list */
-            UpdateEntry myList = myIterator.next();
-            DataList<?> myDataList = myList.theDataList;
+            /* Access the list */
+            UpdateEntry<?> myEntry = myIterator.next();
+            DataList<?> myDataList = myEntry.getDataList();
 
             /* Determine whether there are updates */
             if ((myDataList != null) && (myDataList.hasUpdates())) {
@@ -370,11 +371,11 @@ public class UpdateSet implements JDataContents {
      */
     public boolean hasErrors() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry> myIterator = theList.listIterator();
+        Iterator<UpdateEntry<?>> myIterator = theList.listIterator();
         while (myIterator.hasNext()) {
-            /* Access list */
-            UpdateEntry myList = myIterator.next();
-            DataList<?> myDataList = myList.theDataList;
+            /* Access entry */
+            UpdateEntry<?> myEntry = myIterator.next();
+            DataList<?> myDataList = myEntry.getDataList();
 
             /* Determine whether there are errors */
             if ((myDataList != null) && (myDataList.hasErrors())) {
@@ -391,11 +392,11 @@ public class UpdateSet implements JDataContents {
      */
     public void validate() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry> myIterator = theList.listIterator();
+        Iterator<UpdateEntry<?>> myIterator = theList.listIterator();
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry myList = myIterator.next();
-            DataList<?> myDataList = myList.theDataList;
+            UpdateEntry<?> myEntry = myIterator.next();
+            DataList<?> myDataList = myEntry.getDataList();
 
             /* Combine states if list exists */
             if (myDataList != null) {
@@ -412,12 +413,12 @@ public class UpdateSet implements JDataContents {
      */
     public EditState getEditState() {
         /* Loop through the items in the list */
-        Iterator<UpdateEntry> myIterator = theList.listIterator();
+        Iterator<UpdateEntry<?>> myIterator = theList.listIterator();
         EditState myState = EditState.CLEAN;
         while (myIterator.hasNext()) {
             /* Access list */
-            UpdateEntry myList = myIterator.next();
-            DataList<?> myDataList = myList.theDataList;
+            UpdateEntry<?> myEntry = myIterator.next();
+            DataList<?> myDataList = myEntry.getDataList();
 
             /* Combine states if list exists */
             if (myDataList != null) {
@@ -451,46 +452,6 @@ public class UpdateSet implements JDataContents {
         /* Show the error */
         if (myError != null) {
             pError.setError(myError);
-        }
-    }
-
-    /**
-     * Update entry items.
-     */
-    public static final class UpdateEntry {
-        /**
-         * The class.
-         */
-        private final Class<?> theClass;
-
-        /**
-         * The DataList.
-         */
-        private DataList<?> theDataList = null;
-
-        /**
-         * Obtain the name of the entry.
-         * @return the name
-         */
-        public String getName() {
-            return theClass.getSimpleName();
-        }
-
-        /**
-         * Set the Data list.
-         * @param pDataList the DataList
-         */
-        public void setDataList(final DataList<?> pDataList) {
-            theDataList = pDataList;
-        }
-
-        /**
-         * Constructor.
-         * @param pClass the class
-         */
-        private UpdateEntry(final Class<?> pClass) {
-            /* Store details */
-            theClass = pClass;
         }
     }
 }

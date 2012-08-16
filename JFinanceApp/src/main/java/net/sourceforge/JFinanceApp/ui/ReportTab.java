@@ -158,6 +158,9 @@ public class ReportTab extends JEventPanel {
         theError = new ErrorPanel(myDataMgr, theDataReport);
         theError.addChangeListener(myListener);
 
+        /* Add listener to data */
+        theView.addChangeListener(myListener);
+
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(theError);
@@ -167,19 +170,27 @@ public class ReportTab extends JEventPanel {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
-        /* Hide the instant debug since it is now invalid */
-        theSpotEntry.hideEntry();
+    private void refreshData() {
+        /* Protect against exceptions */
+        try {
+            /* Hide the instant debug since it is now invalid */
+            theSpotEntry.hideEntry();
 
-        /* Refresh the data */
-        theAnalysis = theView.getAnalysis();
-        theSelect.refreshData(theAnalysis);
-        buildReport();
+            /* Refresh the data */
+            theAnalysis = theView.getAnalysis();
+            theSelect.refreshData(theAnalysis);
+            buildReport();
 
-        /* Create SavePoint */
-        theSelect.createSavePoint();
+            /* Create SavePoint */
+            theSelect.createSavePoint();
+        } catch (JDataException e) {
+            /* TODO Show the error */
+            // setError(e);
+
+            /* Restore SavePoint */
+            theSelect.restoreSavePoint();
+        }
     }
 
     /**
@@ -316,6 +327,11 @@ public class ReportTab extends JEventPanel {
 
                 /* Lock scroll area */
                 theScroll.setEnabled(!isError);
+
+                /* If this is the data view */
+            } else if (theView.equals(o)) {
+                /* Refresh Data */
+                refreshData();
 
                 /* If this is the select panel */
             } else if (theSelect.equals(o)) {

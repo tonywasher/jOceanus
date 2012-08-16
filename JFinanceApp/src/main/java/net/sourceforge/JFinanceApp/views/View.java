@@ -31,7 +31,6 @@ import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.database.FinanceDatabase;
 import net.sourceforge.JFinanceApp.sheets.FinanceSheet;
-import net.sourceforge.JFinanceApp.ui.MainTab;
 import net.sourceforge.JFinanceApp.views.DilutionEvent.DilutionEventList;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
 
@@ -51,11 +50,6 @@ public class View extends DataControl<FinanceData> {
     private JDateDayRange theRange = null;
 
     /**
-     * The Main window.
-     */
-    private final MainTab theCtl;
-
-    /**
      * The event analysis.
      */
     private EventAnalysis theAnalysis = null;
@@ -64,14 +58,6 @@ public class View extends DataControl<FinanceData> {
      * The dilution event list.
      */
     private DilutionEventList theDilutions = null;
-
-    /**
-     * Obtain the main window.
-     * @return the main window.
-     */
-    public MainTab getControl() {
-        return theCtl;
-    }
 
     /**
      * Obtain the date range.
@@ -99,13 +85,9 @@ public class View extends DataControl<FinanceData> {
 
     /**
      * Constructor.
-     * @param pCtl the main window.
      * @throws JDataException on error
      */
-    public View(final MainTab pCtl) throws JDataException {
-        /* Store access to the main window */
-        theCtl = pCtl;
-
+    public View() throws JDataException {
         /* Create an empty data set */
         setData(getNewData());
     }
@@ -141,14 +123,8 @@ public class View extends DataControl<FinanceData> {
     @Override
     public final void setData(final FinanceData pData) {
         /* Record the data */
-        super.setData(pData);
         theData = pData;
-
-        /* Analyse the data */
-        analyseData(false);
-
-        /* Refresh the windows */
-        refreshWindow();
+        super.setData(pData);
     }
 
     /**
@@ -215,21 +191,5 @@ public class View extends DataControl<FinanceData> {
 
         /* Return whether there was success */
         return (getError() == null);
-    }
-
-    /**
-     * refresh the window view.
-     */
-    @Override
-    protected final void refreshWindow() {
-        /* Protect against exceptions */
-        try {
-            /* Refresh the Control */
-            theCtl.refreshData();
-
-            /* Catch any exceptions */
-        } catch (JDataException e) {
-            setError(e);
-        }
     }
 }

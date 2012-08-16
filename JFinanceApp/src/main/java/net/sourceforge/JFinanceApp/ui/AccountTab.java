@@ -156,8 +156,10 @@ public class AccountTab extends JEventPanel {
     /**
      * Constructor for Account Window.
      * @param pView the data view
+     * @param pCombo the combo manager
      */
-    public AccountTab(final View pView) {
+    public AccountTab(final View pView,
+                      final ComboSelect pCombo) {
         /* Record passed details */
         theView = pView;
 
@@ -178,12 +180,12 @@ public class AccountTab extends JEventPanel {
         theError = new ErrorPanel(myDataMgr, theDataEntry);
 
         /* Create the optional tables */
-        thePatterns = new AccountPatterns(theView, theUpdateSet, theError);
+        thePatterns = new AccountPatterns(theView, theUpdateSet, pCombo, theError);
         theRates = new AccountRates(theView, theUpdateSet, theError);
         thePrices = new AccountPrices(theView, theUpdateSet, theError);
 
         /* Create the Statement table and add to tabbed pane */
-        theStatement = new AccountStatement(theView, theUpdateSet, theError);
+        theStatement = new AccountStatement(theView, theUpdateSet, pCombo, theError);
         theTabs.addTab(TITLE_STATEMENT, theStatement.getPanel());
 
         /* Create the listener */
@@ -196,6 +198,7 @@ public class AccountTab extends JEventPanel {
         theStatement.addChangeListener(myListener);
         theTabs.addChangeListener(myListener);
         theStatement.addActionListener(myListener);
+        theView.addChangeListener(myListener);
 
         /* Create the Account selection panel */
         theSelect = new AccountSelect(theView, false);
@@ -217,26 +220,38 @@ public class AccountTab extends JEventPanel {
     /**
      * Refresh views/controls after a load/update of underlying data.
      * @param pCombo the combo list
-     * @throws JDataException on error
      */
-    public void refreshData(final ComboSelect pCombo) throws JDataException {
-        /* Refresh the account selection */
-        theSelect.refreshData();
+    private void refreshData(final ComboSelect pCombo) {
+        /* Protect against exceptions */
+        try {
+            /* Refresh the account selection */
+            theSelect.refreshData();
 
-        /* Refresh the child tables */
-        theRates.refreshData();
-        thePrices.refreshData();
-        thePatterns.refreshData(pCombo);
-        theStatement.refreshData(pCombo);
+            /* Refresh the child tables */
+            theRates.refreshData();
+            thePrices.refreshData();
+            thePatterns.refreshData();
+            theStatement.refreshData();
 
-        /* Redraw selection */
-        setSelection(theSelect.getSelected());
+            /* Redraw selection */
+            setSelection(theSelect.getSelected());
 
-        /* Create SavePoint */
-        theSelect.createSavePoint();
+            /* Create SavePoint */
+            theSelect.createSavePoint();
 
-        /* Touch the updateSet */
-        theDataEntry.setObject(theUpdateSet);
+            /* Touch the updateSet */
+            theDataEntry.setObject(theUpdateSet);
+
+            /* Set Visibility */
+            setVisibleTabs();
+
+        } catch (JDataException e) {
+            /* TODO Show the error */
+            // setError(e);
+
+            /* Restore SavePoint */
+            theSelect.restoreSavePoint();
+        }
     }
 
     /**
@@ -569,6 +584,13 @@ public class AccountTab extends JEventPanel {
 
                 /* Lock Save Buttons */
                 theSaveButtons.setEnabled(!isError);
+
+                /* If this is the data view */
+            } else if (theView.equals(o)) {
+                /* Refresh Data TODO */
+                refreshData(null);
+
+                /* If this is the account selection */
             } else if (theSelect.equals(o)) {
                 /* Protect against exceptions */
                 try {

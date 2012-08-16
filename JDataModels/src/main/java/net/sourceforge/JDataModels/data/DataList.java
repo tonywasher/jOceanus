@@ -255,6 +255,14 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
     }
 
     /**
+     * Get the Base of the list.
+     * @return the Base list
+     */
+    public DataList<?> getBaseList() {
+        return theBase;
+    }
+
+    /**
      * Determine whether the list got any errors.
      * @return <code>true/false</code>
      */
@@ -781,185 +789,6 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
 
         /* Validate the list */
         validate();
-    }
-
-    /**
-     * Prepare changes in an edit view back into the core data.
-     */
-    public void prepareChanges() {
-        /* Create an iterator for the changes list */
-        Iterator<T> myIterator = iterator();
-
-        /* Loop through the elements */
-        while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-            DataItem myBase;
-
-            /* Switch on the state */
-            switch (myCurr.getState()) {
-            /* Ignore the item if it is clean or DELNEW */
-                case CLEAN:
-                case DELNEW:
-                    break;
-
-                /* If this is a new item, add it to the list */
-                case NEW:
-                    /* Link this item to the new item */
-                    myBase = theBase.addNewItem(myCurr);
-                    myBase.setNewVersion();
-                    myCurr.setBase(myBase);
-                    break;
-
-                /* If this is a deleted or deleted-changed item */
-                case DELETED:
-                case DELCHG:
-                    /* Access the underlying item and mark as deleted */
-                    myBase = myCurr.getBase();
-                    // myBase.setState(DataState.DELETED);
-                    break;
-
-                /* If this is a recovered item */
-                case RECOVERED:
-                    /* Access the underlying item and mark as restored */
-                    myBase = myCurr.getBase();
-                    // myBase.setState(DataState.RECOVERED);
-                    myBase.setRestoring(true);
-                    break;
-
-                /* If this is a changed item */
-                case CHANGED:
-                    /* Access underlying item */
-                    myBase = myCurr.getBase();
-
-                    /* Apply changes and note if history has been applied */
-                    if (myBase.applyChanges(myCurr)) {
-                        myBase.setChangeing(true);
-                    }
-
-                    /* Note if we are restoring an item */
-                    if (myBase.isDeleted()) {
-                        myBase.setRestoring(true);
-                    }
-
-                    /* Set new state */
-                    // myBase.setState(DataState.CHANGED);
-
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /* Re-sort the underlying list */
-        theBase.reSort();
-    }
-
-    /**
-     * RollBack changes in an edit view that have been applied to core data.
-     */
-    public void rollBackChanges() {
-        /* Create an iterator for this list */
-        Iterator<T> myIterator = iterator();
-
-        /* Loop through the elements */
-        while (myIterator.hasNext()) {
-            T myCurr = myIterator.next();
-            DataItem myBase;
-
-            /* Switch on the state */
-            switch (myCurr.getState()) {
-            /* Ignore the item if it is clean or DelNew */
-                case CLEAN:
-                case DELNEW:
-                    break;
-
-                /* If this is a new item, remove the base item */
-                case NEW:
-                    /* Remove the base item and its reference */
-                    theBase.remove(myCurr.getBase());
-                    myCurr.setBase(null);
-                    break;
-
-                /* If this is a deleted or deleted-changed item */
-                case DELETED:
-                case DELCHG:
-                    /* Access the underlying item and mark as not deleted */
-                    // myBase = myCurr.getBase();
-                    // myBase.setState(DataState.RECOVERED);
-                    break;
-
-                /* If this is a recovered item */
-                case RECOVERED:
-                    /* Access the underlying item and mark as deleted */
-                    myBase = myCurr.getBase();
-                    // myBase.setState(DataState.DELETED);
-                    myBase.setRestoring(false);
-                    break;
-
-                /* If this is a changed item */
-                case CHANGED:
-                    /* Access underlying item */
-                    myBase = myCurr.getBase();
-
-                    /* If we were changing pop the changes */
-                    if (myBase.isChangeing()) {
-                        myBase.popHistory();
-                    }
-
-                    /* If we were restoring */
-                    if (myBase.isRestoring()) {
-                        /* Set the item to be deleted again */
-                        // myBase.setState(DataState.DELETED);
-                        myBase.setRestoring(false);
-
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        /* Re-sort the underlying list */
-        theBase.reSort();
-    }
-
-    /**
-     * Commit changes in an edit view that have been applied to the core data.
-     */
-    public void commitChanges() {
-        Iterator<T> myIterator;
-        DataItem myCurr;
-
-        /* Create an iterator for this list */
-        myIterator = iterator();
-
-        /* Loop through the elements */
-        while ((myCurr = myIterator.next()) != null) {
-            /* Switch on the state */
-            switch (myCurr.getState()) {
-            /* Ignore the item if it is clean */
-                case CLEAN:
-                    break;
-
-                /* Delete the item from the list if it is a deleted new item */
-                case DELNEW:
-                    myIterator.remove();
-                    break;
-
-                /* All other states clear history and, convert it to Clean */
-                case NEW:
-                case DELETED:
-                case DELCHG:
-                case RECOVERED:
-                case CHANGED:
-                    /* Clear history and set as a clean item */
-                    myCurr.clearHistory();
-                    myCurr.setRestoring(false);
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 
     /**

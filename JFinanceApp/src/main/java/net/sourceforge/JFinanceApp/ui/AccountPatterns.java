@@ -23,6 +23,7 @@
 package net.sourceforge.JFinanceApp.ui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
@@ -43,8 +44,8 @@ import net.sourceforge.JDataModels.ui.JDataTableColumn;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel;
 import net.sourceforge.JDataModels.ui.JDataTableMouse;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimalFormatter;
@@ -132,12 +133,12 @@ public class AccountPatterns extends JDataTable<Pattern> {
     /**
      * Update Entry.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<Pattern> theUpdateEntry;
 
     /**
      * ComboList.
      */
-    private transient ComboSelect theComboList = null;
+    private final transient ComboSelect theComboList;
 
     /**
      * Error Panel.
@@ -282,19 +283,23 @@ public class AccountPatterns extends JDataTable<Pattern> {
      * Constructor for Patterns Window.
      * @param pView the view
      * @param pUpdateSet the update set
+     * @param pCombo the combo manager
      * @param pError the error panel
      */
     public AccountPatterns(final View pView,
                            final UpdateSet pUpdateSet,
+                           final ComboSelect pCombo,
                            final ErrorPanel pError) {
         /* Store details */
         theView = pView;
+        theComboList = pCombo;
         theRenderMgr = theView.getRenderMgr();
         setRenderMgr(theRenderMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(Pattern.class);
         setUpdateSet(theUpdateSet);
+        theUpdateSet.addActionListener(new PatternsListener());
 
         /* Create the model and declare it to our superclass */
         theModel = new PatternsModel();
@@ -336,17 +341,13 @@ public class AccountPatterns extends JDataTable<Pattern> {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @param pCombo the combo select.
      */
-    public void refreshData(final ComboSelect pCombo) {
+    protected void refreshData() {
         /* Access the data */
         FinanceData myData = theView.getData();
 
         /* Access Frequencies, TransTypes and Accounts */
         FrequencyList myFreqs = myData.getFrequencys();
-
-        /* Access the combo list from parent */
-        theComboList = pCombo;
 
         /* If we have frequencies already populated */
         if (theFreqBox.getItemCount() > 0) {
@@ -455,6 +456,23 @@ public class AccountPatterns extends JDataTable<Pattern> {
 
         /* Notify of the insertion of the row */
         theModel.fireInsertRows(myRow);
+    }
+
+    /**
+     * The listener class.
+     */
+    private final class PatternsListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireTableDataChanged();
+            }
+        }
     }
 
     /**

@@ -30,7 +30,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.Account;
@@ -179,6 +178,7 @@ public class MaintenanceTab extends JEventPanel {
         theStatic = new MaintStatic(theView);
         theTabs.addTab(TITLE_STATIC, theStatic);
         theStatic.addChangeListener(myListener);
+        theView.addChangeListener(myListener);
 
         /* Create the layout for the panel */
         FlowLayout myLayout = new FlowLayout();
@@ -191,14 +191,16 @@ public class MaintenanceTab extends JEventPanel {
 
     /**
      * Refresh data.
-     * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
+    protected void refreshData() {
         /* Refresh sub-panels */
         theAccountTab.refreshData();
         theTaxYearTab.refreshData();
         thePatternYear.refreshData();
         theStatic.refreshData();
+
+        /* Determine visibility */
+        setVisibility();
     }
 
     /**
@@ -343,6 +345,9 @@ public class MaintenanceTab extends JEventPanel {
             if (theTabs.equals(o)) {
                 /* Determine the focus */
                 determineFocus();
+            } else if (theView.equals(o)) {
+                /* Refresh the data */
+                refreshData();
             } else {
                 /* Set the visibility */
                 setVisibility();

@@ -299,7 +299,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     /**
      * fire events for new data view.
      */
-    protected void fireNewDataEvents() {
+    public void fireNewDataEvents() {
         /* Note that the data for table and row header has changed */
         fireTableDataChanged();
         theRowHdrModel.fireTableDataChanged();

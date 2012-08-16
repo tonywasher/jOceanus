@@ -514,13 +514,7 @@ public class Analysis implements JDataContents {
             }
 
             /* Compare the bucket order */
-            int iDiff = getBucketType().compareTo(pThat.getBucketType());
-            if (iDiff != 0) {
-                return iDiff;
-            }
-
-            /* Compare Ids */
-            return (theId - pThat.theId);
+            return getBucketType().compareTo(pThat.getBucketType());
         }
 
         @Override

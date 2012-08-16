@@ -232,8 +232,10 @@ public class JDataItem {
         theEditor.setEditorKit(myKit);
 
         /* Create the style-sheet for the window */
-        StyleSheet myStyle = myKit.getStyleSheet();
+        StyleSheet myStyle = new StyleSheet();
+        myStyle.addStyleSheet(myKit.getStyleSheet());
         pFormatter.buildStylesheet(myStyle);
+        myKit.setStyleSheet(myStyle);
 
         /* Create the document for the window */
         Document myDoc = myKit.createDefaultDocument();

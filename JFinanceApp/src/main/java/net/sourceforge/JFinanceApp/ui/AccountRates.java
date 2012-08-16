@@ -23,6 +23,7 @@
 package net.sourceforge.JFinanceApp.ui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ListIterator;
 import java.util.ResourceBundle;
 
@@ -42,8 +43,8 @@ import net.sourceforge.JDataModels.ui.JDataTableColumn;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel;
 import net.sourceforge.JDataModels.ui.JDataTableMouse;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
@@ -119,7 +120,7 @@ public class AccountRates extends JDataTable<AccountRate> {
     /**
      * The Update Entry.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<AccountRate> theUpdateEntry;
 
     /**
      * The Error Panel.
@@ -216,6 +217,7 @@ public class AccountRates extends JDataTable<AccountRate> {
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(AccountRate.class);
         setUpdateSet(theUpdateSet);
+        theUpdateSet.addActionListener(new RatesListener());
 
         /* Create the table model and declare it to our superclass */
         theModel = new RatesModel();
@@ -256,7 +258,7 @@ public class AccountRates extends JDataTable<AccountRate> {
     /**
      * Refresh views/controls after a load/update of underlying data.
      */
-    public void refreshData() {
+    protected void refreshData() {
         JDateDayRange myRange = theView.getRange();
         myRange = new JDateDayRange(myRange.getStart(), null);
         theColumns.setDateEditorRange(myRange);
@@ -290,7 +292,7 @@ public class AccountRates extends JDataTable<AccountRate> {
         if (theAccount != null) {
             /* Get the Rates edit list */
             FinanceData myData = theView.getData();
-            AccountRate.AccountRateList myRates = myData.getRates();
+            AccountRateList myRates = myData.getRates();
             theRates = myRates.deriveEditList(pAccount);
         }
 
@@ -328,6 +330,23 @@ public class AccountRates extends JDataTable<AccountRate> {
 
         /* Calculate Edit state */
         theRates.findEditState();
+    }
+
+    /**
+     * The listener class.
+     */
+    private final class RatesListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireTableDataChanged();
+            }
+        }
     }
 
     /**

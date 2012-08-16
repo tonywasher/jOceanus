@@ -44,11 +44,19 @@ import java.util.Map;
  * @param <T> the data-type of the list
  */
 public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>> extends OrderedList<T> {
+    /**
+     * Get the index as an OrderedIdIndex.
+     * @return the index
+     */
     @SuppressWarnings("unchecked")
-    @Override
-    protected OrderedIdIndex<I, T> getIndex() {
+    private OrderedIdIndex<I, T> getTheIndex() {
         return (OrderedIdIndex<I, T>) super.getIndex();
     }
+
+    /**
+     * Ordered Index.
+     */
+    private final OrderedIdIndex<I, T> theIndex;
 
     /**
      * Construct a list.
@@ -56,6 +64,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
      */
     public OrderedIdList(final Class<T> pClass) {
         super(pClass, new OrderedIdIndex<I, T>());
+        theIndex = getTheIndex();
     }
 
     /**
@@ -66,6 +75,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
     public OrderedIdList(final Class<T> pClass,
                          final int pIndexGranularity) {
         super(pClass, new OrderedIdIndex<I, T>(pIndexGranularity));
+        theIndex = getTheIndex();
     }
 
     /**
@@ -76,6 +86,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
     protected OrderedIdList(final Class<T> pClass,
                             final OrderedIdIndex<I, T> pIndex) {
         super(pClass, pIndex);
+        theIndex = pIndex;
     }
 
     /**
@@ -85,7 +96,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
      */
     public T findItemById(final I pId) {
         /* Return results */
-        return getIndex().findItemById(pId);
+        return theIndex.findItemById(pId);
     }
 
     /**
@@ -94,7 +105,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
      */
     public Map<I, T> getIdMap() {
         /* Return the map */
-        return getIndex().getElementMap();
+        return theIndex.getElementMap();
     }
 
     /**
@@ -109,7 +120,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
         }
 
         /* Access the node of the item */
-        OrderedNode<T> myNode = getIndex().findNodeForObject(pItem);
+        OrderedNode<T> myNode = theIndex.findNodeForObject(pItem);
 
         /* If the node does not belong to the list then ignore */
         if (myNode == null) {
@@ -135,7 +146,7 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
         }
 
         /* Access the node of the item */
-        OrderedNode<T> myNode = getIndex().findNodeForObject(pItem);
+        OrderedNode<T> myNode = theIndex.findNodeForObject(pItem);
 
         /* If the node does not belong to the list then ignore */
         if (myNode == null) {
@@ -158,13 +169,18 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
      */
     @Override
     public boolean add(final T pItem) {
+        /* Reject if the object is null */
+        if (pItem == null) {
+            throw new IllegalArgumentException(NULL_DISALLOWED);
+        }
+
         /* Reject if the object is already a link member of this list */
-        if ((pItem != null) && (getIndex().findNodeForObject(pItem) != null)) {
+        if (theIndex.findNodeForObject(pItem) != null) {
             return false;
         }
 
         /* Pass call down */
-        return super.append(pItem);
+        return super.add(pItem);
     }
 
     /**
@@ -175,8 +191,13 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
      */
     @Override
     public boolean append(final T pItem) {
+        /* Reject if the object is null */
+        if (pItem == null) {
+            throw new IllegalArgumentException(NULL_DISALLOWED);
+        }
+
         /* Reject if the object is already a link member of this list */
-        if ((pItem != null) && (getIndex().findNodeForObject(pItem) != null)) {
+        if (theIndex.findNodeForObject(pItem) != null) {
             return false;
         }
 

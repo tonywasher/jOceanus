@@ -52,8 +52,8 @@ import net.sourceforge.JDataModels.ui.JDataTableModel;
 import net.sourceforge.JDataModels.ui.JDataTableMouse;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
@@ -202,7 +202,7 @@ public class Extract extends JDataTable<Event> {
     /**
      * Update Entry.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<Event> theUpdateEntry;
 
     /**
      * Table Model.
@@ -257,7 +257,7 @@ public class Extract extends JDataTable<Event> {
     /**
      * ComboList.
      */
-    private transient ComboSelect theComboList = null;
+    private final transient ComboSelect theComboList;
 
     /**
      * Obtain the panel.
@@ -385,10 +385,13 @@ public class Extract extends JDataTable<Event> {
     /**
      * Constructor for Extract Window.
      * @param pView the data view
+     * @param pCombo the combo manager
      */
-    public Extract(final View pView) {
+    public Extract(final View pView,
+                   final ComboSelect pCombo) {
         /* Record the passed details */
         theView = pView;
+        theComboList = pCombo;
         theRenderMgr = theView.getRenderMgr();
         setRenderMgr(theRenderMgr);
 
@@ -434,6 +437,8 @@ public class Extract extends JDataTable<Event> {
         theSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theError.addChangeListener(myListener);
         theSaveButtons.addActionListener(myListener);
+        theUpdateSet.addActionListener(myListener);
+        theView.addChangeListener(myListener);
 
         /* Create the panel */
         thePanel = new JPanel();
@@ -459,24 +464,28 @@ public class Extract extends JDataTable<Event> {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @param pCombo the combo select
-     * @throws JDataException on error
      */
-    public void refreshData(final ComboSelect pCombo) throws JDataException {
-        /* Access the combo list from parent */
-        theComboList = pCombo;
+    public void refreshData() {
+        /* Protect against exceptions */
+        try {
+            /* Access range */
+            JDateDayRange myRange = theView.getRange();
+            theSelect.setOverallRange(myRange);
+            theRange = theSelect.getRange();
+            setSelection(theRange);
 
-        /* Access range */
-        JDateDayRange myRange = theView.getRange();
-        theSelect.setOverallRange(myRange);
-        theRange = theSelect.getRange();
-        setSelection(theRange);
+            /* Create SavePoint */
+            theSelect.createSavePoint();
 
-        /* Create SavePoint */
-        theSelect.createSavePoint();
+            /* Touch the updateSet */
+            theDataExtract.setObject(theUpdateSet);
+        } catch (JDataException e) {
+            /* TODO Show the error */
+            // setError(e);
 
-        /* Touch the updateSet */
-        theDataExtract.setObject(theUpdateSet);
+            /* Restore SavePoint */
+            theSelect.restoreSavePoint();
+        }
     }
 
     /**
@@ -581,8 +590,10 @@ public class Extract extends JDataTable<Event> {
 
         @Override
         public void stateChanged(final ChangeEvent e) {
+            Object o = e.getSource();
+
             /* If this is the error panel */
-            if (theError.equals(e.getSource())) {
+            if (theError.equals(o)) {
                 /* Determine whether we have an error */
                 boolean isError = theError.hasError();
 
@@ -594,6 +605,11 @@ public class Extract extends JDataTable<Event> {
 
                 /* Lock Save Buttons */
                 theSaveButtons.setEnabled(!isError);
+
+                /* If this is the data view */
+            } else if (theView.equals(o)) {
+                /* Refresh Data */
+                refreshData();
             }
         }
 
@@ -626,8 +642,10 @@ public class Extract extends JDataTable<Event> {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
+
             /* If this event relates to the save buttons */
-            if (theSaveButtons.equals(e.getSource())) {
+            if (theSaveButtons.equals(o)) {
                 /* Cancel any editing */
                 cancelEditing();
 
@@ -636,6 +654,11 @@ public class Extract extends JDataTable<Event> {
 
                 /* Notify listeners of changes */
                 notifyChanges();
+
+                /* If we are performing a rewind */
+            } else if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireTableDataChanged();
             }
         }
     }

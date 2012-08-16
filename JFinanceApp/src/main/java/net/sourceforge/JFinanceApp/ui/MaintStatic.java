@@ -39,7 +39,6 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.StaticData;
@@ -201,17 +200,17 @@ public class MaintStatic extends JEventPanel {
 
         /* Build the child windows */
         theActTypes = new MaintStaticData<AccountTypeList, AccountType>(myView, theUpdateSet, theError,
-                AccountTypeList.class);
+                AccountTypeList.class, AccountType.class);
         theTranTypes = new MaintStaticData<TransTypeList, TransactionType>(myView, theUpdateSet, theError,
-                TransTypeList.class);
+                TransTypeList.class, TransactionType.class);
         theTaxTypes = new MaintStaticData<TaxTypeList, TaxType>(myView, theUpdateSet, theError,
-                TaxTypeList.class);
+                TaxTypeList.class, TaxType.class);
         theTaxRegimes = new MaintStaticData<TaxRegimeList, TaxRegime>(myView, theUpdateSet, theError,
-                TaxRegimeList.class);
+                TaxRegimeList.class, TaxRegime.class);
         theFrequencys = new MaintStaticData<FrequencyList, Frequency>(myView, theUpdateSet, theError,
-                FrequencyList.class);
+                FrequencyList.class, Frequency.class);
         theInfoTypes = new MaintStaticData<EventInfoTypeList, EventInfoType>(myView, theUpdateSet, theError,
-                EventInfoTypeList.class);
+                EventInfoTypeList.class, EventInfoType.class);
 
         /* Build the Static box */
         theSelectBox = new JComboBox();
@@ -318,9 +317,8 @@ public class MaintStatic extends JEventPanel {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @throws JDataException on error
      */
-    public void refreshData() throws JDataException {
+    public void refreshData() {
         /* Refresh the underlying children */
         theActTypes.refreshData();
         theTranTypes.refreshData();

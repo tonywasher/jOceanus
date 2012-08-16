@@ -47,20 +47,42 @@ public class ComboSelect {
     private final JComboBox theTranTypeBox;
 
     /**
+     * The View.
+     */
+    private final View theView;
+
+    /**
      * The DataSet.
      */
-    private final FinanceData theData;
+    private FinanceData theData;
 
     /**
      * Constructor.
      * @param pView the data view
      */
     public ComboSelect(final View pView) {
-        /* Store the data */
-        theData = pView.getData();
+        /* Store the view */
+        theView = pView;
 
-        /* Create the TransType box */
+        /* Allocate the transaction type box */
         theTranTypeBox = new JComboBox();
+
+        /* Refresh the data */
+        refreshData();
+    }
+
+    /**
+     * Refresh data after load/update
+     */
+    public void refreshData() {
+        /* Store the data */
+        theData = theView.getData();
+
+        /* If we have items in the list */
+        if (theTranTypeBox.getItemCount() > 0) {
+            /* Clear transaction types */
+            theTranTypeBox.removeAllItems();
+        }
 
         /* Access the transaction types */
         TransTypeList myList = theData.getTransTypes();

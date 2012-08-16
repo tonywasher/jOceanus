@@ -40,15 +40,14 @@ public class JDecimal implements Comparable<JDecimal> {
     public static final int RADIX_TEN = 10;
 
     /**
-     * Powers of Ten.
-     */
-    private static final long[] POWERS_OF_TEN = { 1L, 10L, 100L, 1000L, 10000L, 100000L, 1000000L, 10000000L,
-            100000000L, 1000000000L, 10000000000L };
-
-    /**
      * The Maximum # of Decimals.
      */
-    public static final int MAX_DECIMALS = POWERS_OF_TEN.length - 1;
+    public static final int MAX_DECIMALS = 10;
+
+    /**
+     * Powers of Ten.
+     */
+    private static final long[] POWERS_OF_TEN = getPowersOfTen(MAX_DECIMALS);
 
     /**
      * The Shift factor to move top part of long to an integer.
@@ -457,7 +456,7 @@ public class JDecimal implements Comparable<JDecimal> {
      * Move decimal point to the right.
      * @param pPlaces number of places to move the decimal point
      */
-    public void movePointRight(final int pPlaces) {
+    public final void movePointRight(final int pPlaces) {
         /* Calculate the new scale */
         int myNewScale = theScale + pPlaces;
 
@@ -909,5 +908,29 @@ public class JDecimal implements Comparable<JDecimal> {
 
         /* Equal to all intents and purposes */
         return 0;
+    }
+
+    /**
+     * Build powers of ten.
+     * @param pMax maximum power of ten
+     * @return array of powers of ten
+     */
+    private static long[] getPowersOfTen(final int pMax) {
+        /* Allocate the array */
+        long[] myArray = new long[pMax + 1];
+
+        /* Initialise array */
+        long myValue = 1;
+        myArray[0] = myValue;
+
+        /* Loop through array */
+        for (int i = 1; i <= pMax; i++) {
+            /* Adjust value and record it */
+            myValue *= RADIX_TEN;
+            myArray[i] = myValue;
+        }
+
+        /* Return the array */
+        return myArray;
     }
 }

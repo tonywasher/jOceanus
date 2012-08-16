@@ -53,8 +53,8 @@ import net.sourceforge.JDataManager.SpringUtilities;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JEventManager.JEventPanel;
@@ -336,7 +336,7 @@ public class MaintTaxYear extends JEventPanel {
     /**
      * The Update Entry.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<TaxYear> theUpdateEntry;
 
     /**
      * Obtain the tax Year.
@@ -630,6 +630,9 @@ public class MaintTaxYear extends JEventPanel {
 
         /* Set initial display */
         showTaxYear();
+
+        /* Add listener to updateSet */
+        theUpdateSet.addActionListener(myListener);
     }
 
     /**
@@ -993,6 +996,11 @@ public class MaintTaxYear extends JEventPanel {
 
                 /* Notify of any changes */
                 notifyChanges();
+
+                /* If we are performing a rewind */
+            } else if (theUpdateSet.equals(o)) {
+                /* Refresh the Tax Year */
+                showTaxYear();
             }
         }
 

@@ -427,7 +427,13 @@ public class Pattern extends Event {
         } else {
             /* switch on frequency type */
             switch (myFreq) {
-            /* Monthly etc add relevant months */
+            /* Weekly etc add relevant days */
+                case WEEKLY:
+                case FORTNIGHTLY:
+                    pDate.adjustDay(myFreq.getAdjustment());
+                    break;
+
+                /* Monthly etc add relevant months */
                 case MONTHLY:
                 case TENMONTHS:
                 case QUARTERLY:
@@ -597,7 +603,7 @@ public class Pattern extends Event {
     /**
      * The list.
      */
-    public static class PatternList extends EncryptedList<Pattern> {
+    public static class PatternList extends EncryptedList<Pattern> implements EventDateRange {
         /**
          * Local Report fields.
          */
@@ -643,6 +649,11 @@ public class Pattern extends Event {
          */
         public Account getAccount() {
             return theAccount;
+        }
+
+        @Override
+        public JDateDayRange getValidDateRange() {
+            return RANGE_PATTERN;
         }
 
         /**

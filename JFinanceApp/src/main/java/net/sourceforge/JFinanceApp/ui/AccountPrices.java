@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
@@ -37,8 +39,8 @@ import net.sourceforge.JDataModels.ui.JDataTableColumn;
 import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel;
 import net.sourceforge.JDataModels.ui.JDataTableMouse;
+import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDataModels.views.UpdateSet.UpdateEntry;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDateDay.JDateDayRange;
@@ -83,6 +85,11 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     private transient ViewPriceList thePrices = null;
 
     /**
+     * Table Model.
+     */
+    private final PricesModel theModel;
+
+    /**
      * The Panel.
      */
     private final JPanel thePanel;
@@ -105,7 +112,7 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     /**
      * UpdateEntry Class.
      */
-    private final transient UpdateEntry theUpdateEntry;
+    private final transient UpdateEntry<ViewPrice> theUpdateEntry;
 
     /**
      * Self Reference.
@@ -217,10 +224,11 @@ public class AccountPrices extends JDataTable<ViewPrice> {
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(ViewPrice.class);
         setUpdateSet(theUpdateSet);
+        theUpdateSet.addActionListener(new PricesListener());
 
         /* Create the model and declare it to our superclass */
-        PricesModel myModel = new PricesModel();
-        setModel(myModel);
+        theModel = new PricesModel();
+        setModel(theModel);
 
         /* Create the data column model and declare it */
         theColumns = new PricesColumnModel();
@@ -257,7 +265,7 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     /**
      * Refresh views/controls after a load/update of underlying data.
      */
-    public void refreshData() {
+    protected void refreshData() {
         theRange = theView.getRange();
         theColumns.setDateEditorRange(theRange);
     }
@@ -317,6 +325,23 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     @Override
     protected boolean isRowDuplicatable(final ViewPrice pRow) {
         return false;
+    }
+
+    /**
+     * The listener class.
+     */
+    private final class PricesListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
+
+            /* If we are performing a rewind */
+            if (theUpdateSet.equals(o)) {
+                /* Refresh the model */
+                theModel.fireTableDataChanged();
+            }
+        }
     }
 
     /**
