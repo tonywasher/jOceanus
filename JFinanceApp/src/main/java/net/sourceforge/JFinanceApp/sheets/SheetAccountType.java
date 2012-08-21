@@ -27,9 +27,9 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.JDataModels.sheets.SheetStaticData;
-import net.sourceforge.JFinanceApp.data.AccountType;
-import net.sourceforge.JFinanceApp.data.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.JFinanceApp.data.statics.AccountType;
+import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

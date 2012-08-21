@@ -28,8 +28,8 @@ import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.JDataModels.sheets.SheetStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.Frequency;
-import net.sourceforge.JFinanceApp.data.Frequency.FrequencyList;
+import net.sourceforge.JFinanceApp.data.statics.Frequency;
+import net.sourceforge.JFinanceApp.data.statics.Frequency.FrequencyList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

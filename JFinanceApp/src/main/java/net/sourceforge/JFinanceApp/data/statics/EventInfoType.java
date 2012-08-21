@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.JFinanceApp.data.statics;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -29,7 +29,7 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JFinanceApp.data.StaticClass.EventInfoClass;
+import net.sourceforge.JFinanceApp.data.FinanceData;
 
 /**
  * EventInfoType data type.
@@ -165,7 +165,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * Construct an empty CORE eventInfo list.
          * @param pData the DataSet for the list
          */
-        protected EventInfoTypeList(final FinanceData pData) {
+        public EventInfoTypeList(final FinanceData pData) {
             super(EventInfoType.class, pData, ListStyle.CORE);
         }
 

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.JFinanceApp.data.statics;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -29,7 +29,7 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JFinanceApp.data.StaticClass.TaxClass;
+import net.sourceforge.JFinanceApp.data.FinanceData;
 
 /**
  * TaxType data type.
@@ -194,7 +194,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * Construct an empty CORE tax type list.
          * @param pData the DataSet for the list
          */
-        protected TaxTypeList(final FinanceData pData) {
+        public TaxTypeList(final FinanceData pData) {
             super(TaxType.class, pData, ListStyle.CORE);
         }
 

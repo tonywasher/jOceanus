@@ -27,8 +27,8 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.Frequency;
-import net.sourceforge.JFinanceApp.data.Frequency.FrequencyList;
+import net.sourceforge.JFinanceApp.data.statics.Frequency;
+import net.sourceforge.JFinanceApp.data.statics.Frequency.FrequencyList;
 
 /**
  * TableStaticData extension for Frequency.

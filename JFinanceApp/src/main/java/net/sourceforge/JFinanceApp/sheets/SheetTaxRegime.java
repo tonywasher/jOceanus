@@ -28,8 +28,8 @@ import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.JDataModels.sheets.SheetStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TaxRegime;
-import net.sourceforge.JFinanceApp.data.TaxRegime.TaxRegimeList;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

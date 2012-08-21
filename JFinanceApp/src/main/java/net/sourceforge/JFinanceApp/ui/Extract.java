@@ -79,7 +79,7 @@ import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TransactionType;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 import net.sourceforge.JFinanceApp.ui.MainTab.ActionRequest;
 import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
 import net.sourceforge.JFinanceApp.views.View;

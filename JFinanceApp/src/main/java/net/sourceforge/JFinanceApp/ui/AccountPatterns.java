@@ -62,11 +62,11 @@ import net.sourceforge.JFieldSet.Renderer.StringRenderer;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.Frequency;
-import net.sourceforge.JFinanceApp.data.Frequency.FrequencyList;
 import net.sourceforge.JFinanceApp.data.Pattern;
 import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
-import net.sourceforge.JFinanceApp.data.TransactionType;
+import net.sourceforge.JFinanceApp.data.statics.Frequency;
+import net.sourceforge.JFinanceApp.data.statics.Frequency.FrequencyList;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
 import net.sourceforge.JFinanceApp.views.View;
 

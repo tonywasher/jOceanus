@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.JFinanceApp.data.statics;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -29,7 +29,7 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JFinanceApp.data.StaticClass.AccountClass;
+import net.sourceforge.JFinanceApp.data.FinanceData;
 
 /**
  * AccountType data type.
@@ -271,7 +271,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is debt.
      * @return <code>true</code> if the account is debt, <code>false</code> otherwise.
      */
-    protected boolean isDebt() {
+    public boolean isDebt() {
         switch (getAccountClass()) {
             case DEBTS:
             case CREDITCARD:
@@ -388,7 +388,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is cash.
      * @return <code>true</code> if the account is cash, <code>false</code> otherwise.
      */
-    protected boolean isCash() {
+    public boolean isCash() {
         return (getAccountClass() == AccountClass.CASH);
     }
 
@@ -396,7 +396,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is inheritance.
      * @return <code>true</code> if the account is inheritance, <code>false</code> otherwise.
      */
-    protected boolean isInheritance() {
+    public boolean isInheritance() {
         return (getAccountClass() == AccountClass.INHERITANCE);
     }
 
@@ -404,7 +404,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is WriteOff.
      * @return <code>true</code> if the account is WriteOff, <code>false</code> otherwise.
      */
-    protected boolean isWriteOff() {
+    public boolean isWriteOff() {
         return (getAccountClass() == AccountClass.WRITEOFF);
     }
 
@@ -412,7 +412,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is market.
      * @return <code>true</code> if the account is market, <code>false</code> otherwise.
      */
-    protected boolean isMarket() {
+    public boolean isMarket() {
         return (getAccountClass() == AccountClass.MARKET);
     }
 
@@ -420,7 +420,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is TaxMan.
      * @return <code>true</code> if the account is TaxMan, <code>false</code> otherwise.
      */
-    protected boolean isTaxMan() {
+    public boolean isTaxMan() {
         return (getAccountClass() == AccountClass.TAXMAN);
     }
 
@@ -428,7 +428,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is Employer.
      * @return <code>true</code> if the account is employer, <code>false</code> otherwise.
      */
-    protected boolean isEmployer() {
+    public boolean isEmployer() {
         return (getAccountClass() == AccountClass.EMPLOYER);
     }
 
@@ -444,7 +444,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is deferred.
      * @return <code>true</code> if the account is deferred, <code>false</code> otherwise.
      */
-    protected boolean isDeferred() {
+    public boolean isDeferred() {
         return (getAccountClass() == AccountClass.DEFERRED);
     }
 
@@ -452,7 +452,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * Determine whether the AccountType is benefit.
      * @return <code>true</code> if the account is benefit, <code>false</code> otherwise.
      */
-    protected boolean isBenefit() {
+    public boolean isBenefit() {
         return (getAccountClass() == AccountClass.BENEFIT);
     }
 
@@ -509,7 +509,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * Construct an empty CORE account type list.
          * @param pData the DataSet for the list
          */
-        protected AccountTypeList(final FinanceData pData) {
+        public AccountTypeList(final FinanceData pData) {
             super(AccountType.class, pData, ListStyle.CORE);
         }
 

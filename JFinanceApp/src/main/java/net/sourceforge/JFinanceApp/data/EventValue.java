@@ -33,7 +33,8 @@ import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
-import net.sourceforge.JFinanceApp.data.EventInfoType.EventInfoTypeList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 
 /**
  * EventValue data type.

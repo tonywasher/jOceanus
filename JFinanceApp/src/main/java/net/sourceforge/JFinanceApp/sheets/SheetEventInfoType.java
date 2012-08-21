@@ -26,9 +26,9 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.JDataModels.sheets.SheetStaticData;
-import net.sourceforge.JFinanceApp.data.EventInfoType;
-import net.sourceforge.JFinanceApp.data.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;

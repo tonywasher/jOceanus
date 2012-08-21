@@ -38,8 +38,8 @@ import net.sourceforge.JFieldSet.EditState;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
-import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.JFinanceApp.data.statics.AccountType;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
 
 /**

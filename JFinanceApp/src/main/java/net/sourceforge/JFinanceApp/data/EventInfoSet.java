@@ -37,9 +37,11 @@ import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
-import net.sourceforge.JFinanceApp.data.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
-import net.sourceforge.JFinanceApp.data.StaticClass.EventInfoClass;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoClass;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 
 /**
  * EventInfoSet data type.

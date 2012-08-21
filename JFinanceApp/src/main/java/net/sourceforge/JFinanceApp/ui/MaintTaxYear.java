@@ -65,10 +65,10 @@ import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JFieldSet.ValueField;
 import net.sourceforge.JFieldSet.ValueField.ValueClass;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TaxRegime;
-import net.sourceforge.JFinanceApp.data.TaxRegime.TaxRegimeList;
 import net.sourceforge.JFinanceApp.data.TaxYear;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.JFinanceApp.ui.controls.TaxYearSelect;
 import net.sourceforge.JFinanceApp.views.View;
 

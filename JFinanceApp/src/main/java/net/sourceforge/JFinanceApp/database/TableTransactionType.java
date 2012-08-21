@@ -27,8 +27,8 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TransactionType;
-import net.sourceforge.JFinanceApp.data.TransactionType.TransTypeList;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType.TransTypeList;
 
 /**
  * TableStaticData extension for TransactionType.

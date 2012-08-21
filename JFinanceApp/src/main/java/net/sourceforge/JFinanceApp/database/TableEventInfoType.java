@@ -26,9 +26,9 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
-import net.sourceforge.JFinanceApp.data.EventInfoType;
-import net.sourceforge.JFinanceApp.data.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 
 /**
  * TableStaticData extension for EventInfoType.

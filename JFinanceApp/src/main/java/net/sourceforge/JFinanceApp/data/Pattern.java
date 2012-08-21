@@ -40,10 +40,13 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.Frequency.FrequencyList;
-import net.sourceforge.JFinanceApp.data.StaticClass.FreqClass;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
-import net.sourceforge.JFinanceApp.data.TransactionType.TransTypeList;
+import net.sourceforge.JFinanceApp.data.statics.AccountType;
+import net.sourceforge.JFinanceApp.data.statics.FreqClass;
+import net.sourceforge.JFinanceApp.data.statics.Frequency;
+import net.sourceforge.JFinanceApp.data.statics.Frequency.FrequencyList;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType.TransTypeList;
 
 /**
  * Pattern data type.

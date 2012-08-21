@@ -32,8 +32,8 @@ import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.StaticClass.TransClass;
-import net.sourceforge.JFinanceApp.data.TransactionType;
+import net.sourceforge.JFinanceApp.data.statics.TransClass;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 import net.sourceforge.JSortedList.OrderedIdItem;
 import net.sourceforge.JSortedList.OrderedIdList;
 

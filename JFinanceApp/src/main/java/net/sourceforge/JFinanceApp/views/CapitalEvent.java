@@ -39,7 +39,7 @@ import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.StaticClass.TransClass;
+import net.sourceforge.JFinanceApp.data.statics.TransClass;
 import net.sourceforge.JSortedList.OrderedIdItem;
 import net.sourceforge.JSortedList.OrderedIdList;
 import net.sourceforge.JSortedList.OrderedListIterator;

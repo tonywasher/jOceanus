@@ -39,9 +39,9 @@ import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.AccountType;
-import net.sourceforge.JFinanceApp.data.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.JFinanceApp.data.statics.AccountType;
+import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.views.View;
 
 /**

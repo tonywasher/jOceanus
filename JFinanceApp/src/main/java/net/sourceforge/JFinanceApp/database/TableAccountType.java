@@ -26,9 +26,9 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
-import net.sourceforge.JFinanceApp.data.AccountType;
-import net.sourceforge.JFinanceApp.data.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.JFinanceApp.data.statics.AccountType;
+import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
 
 /**
  * TableStaticData extension for AccountType.

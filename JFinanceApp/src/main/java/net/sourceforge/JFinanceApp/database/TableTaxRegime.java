@@ -27,8 +27,8 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TaxRegime;
-import net.sourceforge.JFinanceApp.data.TaxRegime.TaxRegimeList;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
 
 /**
  * TableStaticData extension for TaxRegime.

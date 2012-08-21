@@ -65,9 +65,9 @@ import net.sourceforge.JFieldSet.ValueField;
 import net.sourceforge.JFieldSet.ValueField.ValueClass;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.AccountType;
-import net.sourceforge.JFinanceApp.data.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.JFinanceApp.data.statics.AccountType;
+import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.ui.controls.AccountSelect;
 import net.sourceforge.JFinanceApp.views.View;
 

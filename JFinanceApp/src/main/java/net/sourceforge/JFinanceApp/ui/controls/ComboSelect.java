@@ -29,11 +29,11 @@ import javax.swing.JComboBox;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.AccountType;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TransactionType;
-import net.sourceforge.JFinanceApp.data.TransactionType.TransTypeList;
+import net.sourceforge.JFinanceApp.data.statics.AccountType;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType.TransTypeList;
 import net.sourceforge.JFinanceApp.views.View;
 
 /**

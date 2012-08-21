@@ -41,7 +41,8 @@ import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JFinanceApp.data.TaxRegime.TaxRegimeList;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.JSortedList.OrderedListIterator;
 
 /**

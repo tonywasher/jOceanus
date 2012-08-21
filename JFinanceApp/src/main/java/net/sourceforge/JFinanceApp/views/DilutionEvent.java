@@ -42,7 +42,7 @@ import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TransactionType;
+import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 import net.sourceforge.JSortedList.OrderedIdItem;
 import net.sourceforge.JSortedList.OrderedIdList;
 
