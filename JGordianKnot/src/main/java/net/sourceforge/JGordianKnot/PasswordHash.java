@@ -429,7 +429,7 @@ public class PasswordHash implements JDataContents {
                 /* Add in Alternate Hash every so often */
                 if ((iPass % SAMPLE_PRIME) == 0) {
                     /* Add in the Alternate hash */
-                    myPrimeMac.update(myPrimeHash);
+                    myPrimeMac.update(myAlternateHash);
                 }
 
                 /* Update the alternate Mac */

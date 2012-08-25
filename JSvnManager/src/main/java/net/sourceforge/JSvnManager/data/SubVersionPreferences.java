@@ -31,9 +31,14 @@ import net.sourceforge.JPreferenceSet.PreferenceSet;
  */
 public class SubVersionPreferences extends PreferenceSet {
     /**
-     * Registry name for Subversion Repository.
+     * Registry name for Subversion Repository Base.
      */
-    public static final String NAME_SVN_REPO = "SubVersionRepo";
+    public static final String NAME_SVN_REPO = "SubVersionRepoBase";
+
+    /**
+     * Registry name for Subversion Repository Name.
+     */
+    public static final String NAME_SVN_NAME = "SubVersionRepoName";
 
     /**
      * Registry name for Subversion Repository User.
@@ -66,9 +71,14 @@ public class SubVersionPreferences extends PreferenceSet {
     public static final String NAME_REPO_PFIX = "RepoPrefix";
 
     /**
-     * Display name for SubversionRepository.
+     * Display name for SubversionRepository Base.
      */
-    protected static final String DISPLAY_SVN_REPO = "Subversion Repository";
+    protected static final String DISPLAY_SVN_REPO = "Subversion Repository Base";
+
+    /**
+     * Display name for SubversionRepository Name.
+     */
+    protected static final String DISPLAY_SVN_NAME = "Subversion Repository Name";
 
     /**
      * Display name for SubversionUser.
@@ -101,9 +111,14 @@ public class SubVersionPreferences extends PreferenceSet {
     protected static final String DISPLAY_REPO_PFIX = "Repository Prefix";
 
     /**
-     * Default value for SubversionRepository.
+     * Default value for SubversionRepository Base.
      */
-    private static final String DEFAULT_SVN_REPO = "http://localhost/svn";
+    private static final String DEFAULT_SVN_REPO = "http://localhost";
+
+    /**
+     * Default value for SubversionRepository Name.
+     */
+    private static final String DEFAULT_SVN_NAME = "Finance";
 
     /**
      * Default value for SubversionUser.
@@ -147,6 +162,7 @@ public class SubVersionPreferences extends PreferenceSet {
     protected void definePreferences() {
         /* Define the preferences */
         defineStringPreference(NAME_SVN_REPO, DEFAULT_SVN_REPO);
+        defineStringPreference(NAME_SVN_NAME, DEFAULT_SVN_NAME);
         defineStringPreference(NAME_SVN_USER, DEFAULT_SVN_USER);
         defineStringPreference(NAME_SVN_PASS, DEFAULT_SVN_PASS);
         defineDirectoryPreference(NAME_SVN_WORK, DEFAULT_SVN_WORK);
@@ -160,6 +176,9 @@ public class SubVersionPreferences extends PreferenceSet {
         /* Handle display names */
         if (pName.equals(NAME_SVN_REPO)) {
             return DISPLAY_SVN_REPO;
+        }
+        if (pName.equals(NAME_SVN_NAME)) {
+            return DISPLAY_SVN_NAME;
         }
         if (pName.equals(NAME_SVN_USER)) {
             return DISPLAY_SVN_USER;

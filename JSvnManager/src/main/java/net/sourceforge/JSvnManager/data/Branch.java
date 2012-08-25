@@ -22,12 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.JSvnManager.data;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.JSortedList.OrderedList;
 import net.sourceforge.JSvnManager.data.Tag.TagList;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
@@ -46,7 +49,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * Represents a branch of a component in the repository.
  * @author Tony Washer
  */
-public final class Branch implements Comparable<Branch> {
+public final class Branch implements JDataContents, Comparable<Branch> {
     /**
      * The branch prefix.
      */
@@ -66,6 +69,78 @@ public final class Branch implements Comparable<Branch> {
      * Number of version parts.
      */
     private static final int NUM_VERS_PARTS = 3;
+
+    /**
+     * Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(Branch.class.getSimpleName());
+
+    /**
+     * Repository field id.
+     */
+    private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+
+    /**
+     * Component field id.
+     */
+    private static final JDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
+
+    /**
+     * Name field id.
+     */
+    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+
+    /**
+     * Tags field id.
+     */
+    private static final JDataField FIELD_TAGS = FIELD_DEFS.declareLocalField("Tags");
+
+    /**
+     * Last Revision field id.
+     */
+    private static final JDataField FIELD_LREV = FIELD_DEFS.declareLocalField("LastRevision");
+
+    /**
+     * Last Tag Revision field id.
+     */
+    private static final JDataField FIELD_LTREV = FIELD_DEFS.declareLocalField("LastTagRevision");
+
+    @Override
+    public String formatObject() {
+        return getBranchName();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_REPO.equals(pField)) {
+            return theRepository;
+        }
+        if (FIELD_COMP.equals(pField)) {
+            return theComponent;
+        }
+        if (FIELD_NAME.equals(pField)) {
+            return getBranchName();
+        }
+        if (FIELD_TAGS.equals(pField)) {
+            return theTags;
+        }
+        if (FIELD_LREV.equals(pField)) {
+            return theLastRevision;
+        }
+        if (FIELD_LTREV.equals(pField)) {
+            long myRev = theTags.getLastRevision();
+            return (myRev < theLastRevision) ? myRev : JDataFieldValue.SkipField;
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UnknownField;
+    }
 
     /**
      * Parent Repository.
@@ -88,14 +163,19 @@ public final class Branch implements Comparable<Branch> {
     private final int theMinorVersion;
 
     /**
-     * Revision.
+     * Delta version.
      */
-    private final int theRevision;
+    private final int theDeltaVersion;
 
     /**
      * TagList.
      */
     private final TagList theTags;
+
+    /**
+     * Last Change Revision.
+     */
+    private long theLastRevision = -1;
 
     /**
      * Get the repository for this branch.
@@ -122,6 +202,14 @@ public final class Branch implements Comparable<Branch> {
     }
 
     /**
+     * Is this branch available for tagging.
+     * @return true if there are changes since last tag was created, false otherwise.
+     */
+    public boolean isTaggable() {
+        return theLastRevision > theTags.getLastRevision();
+    }
+
+    /**
      * Constructor.
      * @param pParent the Parent component
      * @param pVersion the version string
@@ -143,7 +231,7 @@ public final class Branch implements Comparable<Branch> {
         /* Determine values */
         theMajorVersion = Integer.parseInt(myParts[0]);
         theMinorVersion = Integer.parseInt(myParts[1]);
-        theRevision = Integer.parseInt(myParts[2]);
+        theDeltaVersion = Integer.parseInt(myParts[2]);
 
         /* Create tag list */
         theTags = new TagList(this);
@@ -154,12 +242,12 @@ public final class Branch implements Comparable<Branch> {
      * @param pParent the Parent component
      * @param pMajor the major version
      * @param pMinor the minor version
-     * @param pRevision the revision
+     * @param pDelta the delta version
      */
     private Branch(final Component pParent,
                    final int pMajor,
                    final int pMinor,
-                   final int pRevision) {
+                   final int pDelta) {
         /* Store values */
         theComponent = pParent;
         theRepository = pParent.getRepository();
@@ -167,7 +255,7 @@ public final class Branch implements Comparable<Branch> {
         /* Determine values */
         theMajorVersion = pMajor;
         theMinorVersion = pMinor;
-        theRevision = pRevision;
+        theDeltaVersion = pDelta;
 
         /* Create tag list */
         theTags = new TagList(this);
@@ -187,9 +275,29 @@ public final class Branch implements Comparable<Branch> {
         myBuilder.append(BRANCH_SEP);
         myBuilder.append(theMinorVersion);
         myBuilder.append(BRANCH_SEP);
-        myBuilder.append(theRevision);
+        myBuilder.append(theDeltaVersion);
 
         /* Return the branch name */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Obtain repository path without prefix.
+     * @return the Repository path for this branch
+     */
+    public String getPath() {
+        /* Build the underlying string */
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+
+        /* Build the initial path */
+        myBuilder.append(theComponent.getBranchesPath());
+        myBuilder.delete(0, theRepository.getBase().length());
+        myBuilder.append(Repository.SEP_URL);
+
+        /* Build the version directory */
+        myBuilder.append(getBranchName());
+
+        /* Create the repository path */
         return myBuilder.toString();
     }
 
@@ -197,7 +305,7 @@ public final class Branch implements Comparable<Branch> {
      * Obtain repository path.
      * @return the Repository path for this branch
      */
-    public String getPath() {
+    public String getURLPath() {
         /* Build the underlying string */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
@@ -219,7 +327,7 @@ public final class Branch implements Comparable<Branch> {
     public SVNURL getURL() {
         /* Build the URL */
         try {
-            return SVNURL.parseURIDecoded(getPath());
+            return SVNURL.parseURIDecoded(getURLPath());
         } catch (SVNException e) {
             return null;
         }
@@ -256,23 +364,88 @@ public final class Branch implements Comparable<Branch> {
         if (theMinorVersion > pThat.theMinorVersion) {
             return 1;
         }
-        if (theRevision < pThat.theRevision) {
+        if (theDeltaVersion < pThat.theDeltaVersion) {
             return -1;
         }
-        if (theRevision > pThat.theRevision) {
+        if (theDeltaVersion > pThat.theDeltaVersion) {
             return 1;
         }
         return 0;
     }
 
     /**
+     * Discover last change from repository.
+     * @throws JDataException on error
+     */
+    protected void discoverLastRevision() throws JDataException {
+        /* Access a LogClient */
+        SVNClientManager myMgr = theRepository.getClientManager();
+        SVNLogClient myClient = myMgr.getLogClient();
+
+        /* Protect against exceptions */
+        try {
+            /* Access the tags directory URL */
+            SVNURL myURL = getURL();
+
+            /* List the members directories */
+            myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.INFINITY,
+                            SVNDirEntry.DIRENT_ALL, new BranchDirHandler());
+
+            /* Release the client manager */
+            theRepository.releaseClientManager(myMgr);
+        } catch (SVNException e) {
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover lastRevision for "
+                    + getBranchName(), e);
+        }
+    }
+
+    /**
+     * The Directory Entry Handler.
+     */
+    private final class BranchDirHandler implements ISVNDirEntryHandler {
+
+        @Override
+        public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
+            /* Update the revision */
+            long myRev = pEntry.getRevision();
+            theLastRevision = Math.max(theLastRevision, myRev);
+        }
+    }
+
+    /**
      * List of branches.
      */
-    public static final class BranchList {
+    public static final class BranchList extends OrderedList<Branch> implements JDataContents {
         /**
-         * The list of branches.
+         * Report fields.
          */
-        private final List<Branch> theList;
+        private static final JDataFields FIELD_DEFS = new JDataFields(BranchList.class.getSimpleName());
+
+        /**
+         * Size field id.
+         */
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        @Override
+        public String formatObject() {
+            return "BranchList(" + size() + ")";
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+
+            /* Unknown */
+            return JDataFieldValue.UnknownField;
+        }
 
         /**
          * The parent component.
@@ -280,20 +453,12 @@ public final class Branch implements Comparable<Branch> {
         private final Component theComponent;
 
         /**
-         * Obtain the branch list.
-         * @return the branch list
-         */
-        public List<Branch> getList() {
-            return theList;
-        }
-
-        /**
          * Discover branch list from repository.
          * @param pParent the parent component
          */
         protected BranchList(final Component pParent) {
-            /* Create the list */
-            theList = new ArrayList<Branch>();
+            /* Call super constructor */
+            super(Branch.class);
 
             /* Store parent for use by entry handler */
             theComponent = pParent;
@@ -305,7 +470,7 @@ public final class Branch implements Comparable<Branch> {
          */
         public void discover() throws JDataException {
             /* Reset the list */
-            theList.clear();
+            clear();
 
             /* Access a LogClient */
             Repository myRepo = theComponent.getRepository();
@@ -319,7 +484,7 @@ public final class Branch implements Comparable<Branch> {
 
                 /* List the branch directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
-                                SVNDirEntry.DIRENT_ALL, new BranchHandler());
+                                SVNDirEntry.DIRENT_ALL, new ListDirHandler());
 
                 /* Release the client manager */
                 myRepo.releaseClientManager(myMgr);
@@ -336,7 +501,7 @@ public final class Branch implements Comparable<Branch> {
          */
         protected Branch locateBranch(final SVNURL pURL) {
             /* Access list iterator */
-            ListIterator<Branch> myIterator = theList.listIterator();
+            ListIterator<Branch> myIterator = listIterator();
 
             /* While we have entries */
             while (myIterator.hasNext()) {
@@ -365,7 +530,7 @@ public final class Branch implements Comparable<Branch> {
          */
         public Branch locateBranch(final Branch pBranch) {
             /* Access list iterator */
-            ListIterator<Branch> myIterator = theList.listIterator();
+            ListIterator<Branch> myIterator = listIterator();
 
             /* While we have entries */
             while (myIterator.hasNext()) {
@@ -393,7 +558,7 @@ public final class Branch implements Comparable<Branch> {
          */
         public Branch nextMajorBranch() {
             /* Access list iterator */
-            ListIterator<Branch> myIterator = theList.listIterator();
+            ListIterator<Branch> myIterator = listIterator();
             Branch myBranch = null;
 
             /* Loop to the last entry */
@@ -419,7 +584,7 @@ public final class Branch implements Comparable<Branch> {
             int myMajor = pBase.theMajorVersion;
 
             /* Access list iterator */
-            ListIterator<Branch> myIterator = theList.listIterator();
+            ListIterator<Branch> myIterator = listIterator();
             Branch myBranch = null;
 
             /* Loop to the last entry */
@@ -447,17 +612,17 @@ public final class Branch implements Comparable<Branch> {
         }
 
         /**
-         * Determine next revision branch.
+         * Determine next delta branch.
          * @param pBase the branch to base from
-         * @return the minor branch
+         * @return the delta branch
          */
-        public Branch nextRevisionBranch(final Branch pBase) {
+        public Branch nextDeltaBranch(final Branch pBase) {
             /* Access major/minor version */
             int myMajor = pBase.theMajorVersion;
             int myMinor = pBase.theMinorVersion;
 
             /* Access list iterator */
-            ListIterator<Branch> myIterator = theList.listIterator();
+            ListIterator<Branch> myIterator = listIterator();
             Branch myBranch = null;
 
             /* Loop to the last entry */
@@ -484,16 +649,16 @@ public final class Branch implements Comparable<Branch> {
             }
 
             /* Determine the largest current revision */
-            int myRev = (myBranch == null) ? 0 : myBranch.theRevision;
+            int myDelta = (myBranch == null) ? 0 : myBranch.theDeltaVersion;
 
             /* Create the minor revision */
-            return new Branch(theComponent, myMajor, myMinor, myRev + 1);
+            return new Branch(theComponent, myMajor, myMinor, myDelta + 1);
         }
 
         /**
          * The Directory Entry Handler.
          */
-        private final class BranchHandler implements ISVNDirEntryHandler {
+        private final class ListDirHandler implements ISVNDirEntryHandler {
 
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
@@ -516,9 +681,10 @@ public final class Branch implements Comparable<Branch> {
 
                     /* Create the branch and add to the list */
                     Branch myBranch = new Branch(theComponent, myName);
-                    theList.add(myBranch);
+                    add(myBranch);
 
-                    /* Discover tags */
+                    /* Discover tags and last revision */
+                    myBranch.discoverLastRevision();
                     myBranch.getTagList().discover();
                 } catch (JDataException e) {
                     /* Pass back as SVNException */

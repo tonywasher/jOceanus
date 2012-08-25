@@ -53,7 +53,7 @@ public class ClientManager {
      * Constructor.
      * @param pPreferences the preferences
      */
-    protected ClientManager(final SubVersionPreferences pPreferences) {
+    public ClientManager(final SubVersionPreferences pPreferences) {
         /* Allocate the pool */
         thePool = new ArrayList<SVNClientManager>();
 

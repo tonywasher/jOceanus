@@ -22,13 +22,17 @@
  ******************************************************************************/
 package net.sourceforge.JSvnManager.data;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.JSortedList.OrderedList;
 import net.sourceforge.JSvnManager.data.Branch.BranchList;
+import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -46,7 +50,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * Represents a component in the repository.
  * @author Tony Washer
  */
-public final class Component implements Comparable<Component> {
+public final class Component implements JDataContents, Comparable<Component> {
     /**
      * The branches directory.
      */
@@ -61,6 +65,53 @@ public final class Component implements Comparable<Component> {
      * The buffer length.
      */
     private static final int BUFFER_LEN = 100;
+
+    /**
+     * Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(Component.class.getSimpleName());
+
+    /**
+     * Repository field id.
+     */
+    private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+
+    /**
+     * Name field id.
+     */
+    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+
+    /**
+     * Branches field id.
+     */
+    private static final JDataField FIELD_BRAN = FIELD_DEFS.declareLocalField("Branches");
+
+    @Override
+    public String formatObject() {
+        return theName;
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_REPO.equals(pField)) {
+            return theRepository;
+        }
+        if (FIELD_NAME.equals(pField)) {
+            return theName;
+        }
+        if (FIELD_BRAN.equals(pField)) {
+            return theBranches;
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UnknownField;
+    }
 
     /**
      * Parent Repository.
@@ -125,7 +176,7 @@ public final class Component implements Comparable<Component> {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the branch path */
-        myBuilder.append(getPath());
+        myBuilder.append(getURLPath());
 
         /* Add the tags directory */
         myBuilder.append(Repository.SEP_URL);
@@ -144,7 +195,7 @@ public final class Component implements Comparable<Component> {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
         /* Access the branch path */
-        myBuilder.append(getPath());
+        myBuilder.append(getURLPath());
 
         /* Add the tags directory */
         myBuilder.append(Repository.SEP_URL);
@@ -158,7 +209,7 @@ public final class Component implements Comparable<Component> {
      * Obtain own path.
      * @return the path for this component
      */
-    public String getPath() {
+    public String getURLPath() {
         /* Build the underlying string */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
@@ -180,7 +231,7 @@ public final class Component implements Comparable<Component> {
     public SVNURL getURL() {
         /* Build the URL */
         try {
-            return SVNURL.parseURIDecoded(getPath());
+            return SVNURL.parseURIDecoded(getURLPath());
         } catch (SVNException e) {
             return null;
         }
@@ -211,11 +262,37 @@ public final class Component implements Comparable<Component> {
     /**
      * List of components.
      */
-    public static final class ComponentList {
+    public static final class ComponentList extends OrderedList<Component> implements JDataContents {
         /**
-         * The list of components.
+         * Report fields.
          */
-        private final List<Component> theList;
+        private static final JDataFields FIELD_DEFS = new JDataFields(ComponentList.class.getSimpleName());
+
+        /**
+         * Size field id.
+         */
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        @Override
+        public String formatObject() {
+            return "ComponentList(" + size() + ")";
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+
+            /* Unknown */
+            return JDataFieldValue.UnknownField;
+        }
 
         /**
          * Parent Repository.
@@ -223,20 +300,12 @@ public final class Component implements Comparable<Component> {
         private final Repository theRepository;
 
         /**
-         * Obtain the component list.
-         * @return the component list
-         */
-        public List<Component> getList() {
-            return theList;
-        }
-
-        /**
          * Constructor.
          * @param pParent the parent repository
          */
         public ComponentList(final Repository pParent) {
-            /* Create the list */
-            theList = new ArrayList<Component>();
+            /* Call super constructor */
+            super(Component.class);
 
             /* Store parent/manager for use by entry handler */
             theRepository = pParent;
@@ -244,11 +313,12 @@ public final class Component implements Comparable<Component> {
 
         /**
          * Discover component list from repository.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        public void discover() throws JDataException {
+        public void discover(final ReportStatus pReport) throws JDataException {
             /* Reset the list */
-            theList.clear();
+            clear();
 
             /* Access a LogClient */
             SVNClientManager myMgr = theRepository.getClientManager();
@@ -261,7 +331,7 @@ public final class Component implements Comparable<Component> {
 
                 /* List the component directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
-                                SVNDirEntry.DIRENT_ALL, new ComponentHandler());
+                                SVNDirEntry.DIRENT_ALL, new ListDirHandler(pReport));
 
                 /* Release the client manager */
                 theRepository.releaseClientManager(myMgr);
@@ -278,7 +348,7 @@ public final class Component implements Comparable<Component> {
          */
         protected Branch locateBranch(final SVNURL pURL) {
             /* Access list iterator */
-            ListIterator<Component> myIterator = theList.listIterator();
+            ListIterator<Component> myIterator = listIterator();
 
             /* While we have entries */
             while (myIterator.hasNext()) {
@@ -307,7 +377,19 @@ public final class Component implements Comparable<Component> {
         /**
          * The Directory Entry Handler.
          */
-        private final class ComponentHandler implements ISVNDirEntryHandler {
+        private final class ListDirHandler implements ISVNDirEntryHandler {
+            /**
+             * Report Object.
+             */
+            private final ReportStatus theReport;
+
+            /**
+             * Constructor.
+             * @param pReport the report object
+             */
+            private ListDirHandler(final ReportStatus pReport) {
+                theReport = pReport;
+            }
 
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
@@ -324,9 +406,12 @@ public final class Component implements Comparable<Component> {
                     /* Access the name */
                     String myName = pEntry.getName();
 
+                    /* Report discovery of component */
+                    theReport.reportStatus("Analysing component " + myName);
+
                     /* Create the tag and add to the list */
                     Component myComp = new Component(theRepository, myName);
-                    theList.add(myComp);
+                    add(myComp);
 
                     /* Discover tags */
                     myComp.getBranchList().discover();

@@ -32,47 +32,47 @@ public class RenderConfig {
     /**
      * The error colour.
      */
-    private Color theErrorColor;
+    private Color theErrorColor = Color.red;
 
     /**
      * The changed colour.
      */
-    private Color theChangedColor;
+    private Color theChangedColor = Color.magenta.darker();
 
     /**
      * The new colour.
      */
-    private Color theNewColor;
+    private Color theNewColor = Color.blue;
 
     /**
      * The deleted colour.
      */
-    private Color theDeletedColor;
+    private Color theDeletedColor = Color.lightGray;
 
     /**
      * The recovered colour.
      */
-    private Color theRecoveredColor;
+    private Color theRecoveredColor = Color.darkGray;
 
     /**
      * The standard colour.
      */
-    private Color theStandardColor;
+    private Color theStandardColor = Color.black;
 
     /**
      * The background colour.
      */
-    private Color theBackgroundColor;
+    private Color theBackgroundColor = Color.white;
 
     /**
      * The link colour.
      */
-    private Color theLinkColor;
+    private Color theLinkColor = Color.blue;
 
     /**
      * The changed link colour.
      */
-    private Color theChgLinkColor;
+    private Color theChgLinkColor = Color.blue;
 
     /**
      * Get colour for render state.

@@ -28,9 +28,13 @@ import java.io.InputStream;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Component.ComponentList;
-import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 
 import org.tmatesoft.svn.core.SVNErrorCode;
 import org.tmatesoft.svn.core.SVNException;
@@ -43,11 +47,16 @@ import org.tmatesoft.svn.core.wc.SVNWCClient;
  * Represents a repository.
  * @author Tony Washer
  */
-public class Repository implements Comparable<Repository> {
+public class Repository implements JDataContents, Comparable<Repository> {
     /**
      * URL separator character.
      */
     public static final char SEP_URL = '/';
+
+    /**
+     * URL prefix.
+     */
+    public static final String PFIX_URL = "svn";
 
     /**
      * The buffer length.
@@ -60,9 +69,61 @@ public class Repository implements Comparable<Repository> {
     private static final int BUFFER_STREAM = 1000;
 
     /**
+     * Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(Repository.class.getSimpleName());
+
+    /**
+     * Base field id.
+     */
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareEqualityField("Base");
+
+    /**
+     * Name field id.
+     */
+    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+
+    /**
+     * Components field id.
+     */
+    private static final JDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Components");
+
+    @Override
+    public String formatObject() {
+        return getPath();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_BASE.equals(pField)) {
+            return theBase;
+        }
+        if (FIELD_NAME.equals(pField)) {
+            return theName;
+        }
+        if (FIELD_COMP.equals(pField)) {
+            return theComponents;
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UnknownField;
+    }
+
+    /**
      * The Preference Manager.
      */
     private final PreferenceManager thePreferenceMgr;
+
+    /**
+     * The Preferences.
+     */
+    private final SubVersionPreferences thePreferences;
 
     /**
      * Repository Name.
@@ -85,9 +146,12 @@ public class Repository implements Comparable<Repository> {
     private final ComponentList theComponents;
 
     /**
-     * WorkingCopySet.
+     * Obtain the repository base.
+     * @return the name
      */
-    private final WorkingCopySet theWorkingSet;
+    public String getBase() {
+        return theBase;
+    }
 
     /**
      * Obtain the repository name.
@@ -103,6 +167,14 @@ public class Repository implements Comparable<Repository> {
      */
     public PreferenceManager getPreferenceMgr() {
         return thePreferenceMgr;
+    }
+
+    /**
+     * Obtain the preferences.
+     * @return the preferences
+     */
+    public SubVersionPreferences getPreferences() {
+        return thePreferences;
     }
 
     /**
@@ -130,41 +202,37 @@ public class Repository implements Comparable<Repository> {
     }
 
     /**
-     * Get the WorkingSet list for this repository.
-     * @return the working set list
-     */
-    public WorkingCopySet getWorkingSet() {
-        return theWorkingSet;
-    }
-
-    /**
      * Constructor.
      * @param pPreferenceMgr the preference manager
-     * @param pName the Name of the repository
+     * @param pReport the report object
      * @throws JDataException on error
      */
     public Repository(final PreferenceManager pPreferenceMgr,
-                      final String pName) throws JDataException {
-        /* Store the name and preference manager */
-        theName = pName;
+                      final ReportStatus pReport) throws JDataException {
+        /* Store the preference manager */
         thePreferenceMgr = pPreferenceMgr;
 
         /* Access the Repository base */
-        SubVersionPreferences myPreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
-        theBase = myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO);
+        thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+
+        /* Access the Repository base */
+        theBase = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO);
+        theName = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_NAME);
 
         /* Create a client manager pool */
-        theClientMgrPool = new ClientManager(myPreferences);
+        theClientMgrPool = new ClientManager(thePreferences);
 
         /* Create component list */
         theComponents = new ComponentList(this);
 
-        /* Discover components */
-        theComponents.discover();
+        /* Report start of analysis */
+        pReport.reportStatus("Analysing components");
 
-        /* Build the WorkingCopySet */
-        theWorkingSet = new WorkingCopySet(this,
-                myPreferences.getStringValue(SubVersionPreferences.NAME_SVN_WORK));
+        /* Discover components */
+        theComponents.discover(pReport);
+
+        /* Report completion of pass */
+        pReport.reportStatus("Component Analysis complete");
     }
 
     /**
@@ -177,6 +245,10 @@ public class Repository implements Comparable<Repository> {
 
         /* Build the repository */
         myBuilder.append(theBase);
+
+        /* Build the prefix directory */
+        myBuilder.append(SEP_URL);
+        myBuilder.append(PFIX_URL);
 
         /* Build the component directory */
         myBuilder.append(SEP_URL);

@@ -22,12 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.JSvnManager.data;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ListIterator;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.JSortedList.OrderedList;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -43,7 +46,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * Represents a tag of a branch.
  * @author Tony
  */
-public final class Tag implements Comparable<Tag> {
+public final class Tag implements JDataContents, Comparable<Tag> {
     /**
      * The tag prefix.
      */
@@ -53,6 +56,69 @@ public final class Tag implements Comparable<Tag> {
      * The buffer length.
      */
     private static final int BUFFER_LEN = 100;
+
+    /**
+     * Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(Tag.class.getSimpleName());
+
+    /**
+     * Repository field id.
+     */
+    private static final JDataField FIELD_REPO = FIELD_DEFS.declareEqualityField("Repository");
+
+    /**
+     * Component field id.
+     */
+    private static final JDataField FIELD_COMP = FIELD_DEFS.declareEqualityField("Component");
+
+    /**
+     * Branch field id.
+     */
+    private static final JDataField FIELD_BRAN = FIELD_DEFS.declareEqualityField("Branch");
+
+    /**
+     * Name field id.
+     */
+    private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
+
+    /**
+     * Revision field id.
+     */
+    private static final JDataField FIELD_LREV = FIELD_DEFS.declareLocalField("Revision");
+
+    @Override
+    public String formatObject() {
+        return getTagName();
+    }
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_REPO.equals(pField)) {
+            return theRepository;
+        }
+        if (FIELD_COMP.equals(pField)) {
+            return theComponent;
+        }
+        if (FIELD_BRAN.equals(pField)) {
+            return theBranch;
+        }
+        if (FIELD_NAME.equals(pField)) {
+            return getTagName();
+        }
+        if (FIELD_LREV.equals(pField)) {
+            return theRevision;
+        }
+
+        /* Unknown */
+        return JDataFieldValue.UnknownField;
+    }
 
     /**
      * Parent Repository.
@@ -75,17 +141,25 @@ public final class Tag implements Comparable<Tag> {
     private final int theTag;
 
     /**
+     * The Last Changed Revision.
+     */
+    private final long theRevision;
+
+    /**
      * Constructor.
      * @param pParent the Parent branch
      * @param pTag the tag number
+     * @param pRevision the revision that created this tag
      */
     private Tag(final Branch pParent,
-                final int pTag) {
+                final int pTag,
+                final long pRevision) {
         /* Store values */
         theBranch = pParent;
         theRepository = pParent.getRepository();
         theComponent = pParent.getComponent();
         theTag = pTag;
+        theRevision = pRevision;
     }
 
     /**
@@ -121,10 +195,18 @@ public final class Tag implements Comparable<Tag> {
     }
 
     /**
+     * Get the revision for this tag.
+     * @return the revision
+     */
+    public long getRevision() {
+        return theRevision;
+    }
+
+    /**
      * Obtain repository path for the tag.
      * @return the Repository path for this tag
      */
-    public String getPath() {
+    public String getURLPath() {
         /* Allocate a builder */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
@@ -146,7 +228,7 @@ public final class Tag implements Comparable<Tag> {
     public SVNURL getURL() {
         /* Build the URL */
         try {
-            return SVNURL.parseURIDecoded(getPath());
+            return SVNURL.parseURIDecoded(getURLPath());
         } catch (SVNException e) {
             return null;
         }
@@ -183,11 +265,45 @@ public final class Tag implements Comparable<Tag> {
     /**
      * List of tags.
      */
-    public static final class TagList {
+    public static final class TagList extends OrderedList<Tag> implements JDataContents {
         /**
-         * The list of tags.
+         * Report fields.
          */
-        private final List<Tag> theList;
+        private static final JDataFields FIELD_DEFS = new JDataFields(TagList.class.getSimpleName());
+
+        /**
+         * Size field id.
+         */
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        /**
+         * Last Revision field id.
+         */
+        private static final JDataField FIELD_LREV = FIELD_DEFS.declareLocalField("LastRevision");
+
+        @Override
+        public String formatObject() {
+            return "TagList(" + size() + ")";
+        }
+
+        @Override
+        public JDataFields getDataFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
+            }
+            if (FIELD_LREV.equals(pField)) {
+                return theLastRevision;
+            }
+
+            /* Unknown */
+            return JDataFieldValue.UnknownField;
+        }
 
         /**
          * Parent Component.
@@ -205,11 +321,16 @@ public final class Tag implements Comparable<Tag> {
         private final String thePrefix;
 
         /**
-         * Obtain the tag list.
-         * @return the tag list
+         * The last revision.
          */
-        public List<Tag> getList() {
-            return theList;
+        private long theLastRevision = -1;
+
+        /**
+         * Get the last revision for this tag list.
+         * @return the last revision
+         */
+        public long getLastRevision() {
+            return theLastRevision;
         }
 
         /**
@@ -217,8 +338,8 @@ public final class Tag implements Comparable<Tag> {
          * @param pParent the parent branch
          */
         protected TagList(final Branch pParent) {
-            /* Create the list */
-            theList = new ArrayList<Tag>();
+            /* Call super constructor */
+            super(Tag.class);
 
             /* Store parent for use by entry handler */
             theBranch = pParent;
@@ -234,7 +355,7 @@ public final class Tag implements Comparable<Tag> {
          */
         public void discover() throws JDataException {
             /* Reset the list */
-            theList.clear();
+            clear();
 
             /* Access a LogClient */
             Repository myRepo = theComponent.getRepository();
@@ -248,7 +369,7 @@ public final class Tag implements Comparable<Tag> {
 
                 /* List the tag directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
-                                SVNDirEntry.DIRENT_ALL, new TagHandler());
+                                SVNDirEntry.DIRENT_ALL, new ListDirHandler());
 
                 /* Release the client manager */
                 myRepo.releaseClientManager(myMgr);
@@ -265,7 +386,7 @@ public final class Tag implements Comparable<Tag> {
          */
         public Tag locateTag(final Tag pTag) {
             /* Access list iterator */
-            ListIterator<Tag> myIterator = theList.listIterator();
+            ListIterator<Tag> myIterator = listIterator();
 
             /* While we have entries */
             while (myIterator.hasNext()) {
@@ -293,7 +414,7 @@ public final class Tag implements Comparable<Tag> {
          */
         public Tag nextTag() {
             /* Access list iterator */
-            ListIterator<Tag> myIterator = theList.listIterator();
+            ListIterator<Tag> myIterator = listIterator();
             Tag myTag = null;
 
             /* Loop to the last entry */
@@ -305,14 +426,14 @@ public final class Tag implements Comparable<Tag> {
             /* Determine the largest current tag */
             int myTagNo = (myTag == null) ? 0 : myTag.theTag;
 
-            /* Create the major revision */
-            return new Tag(theBranch, myTagNo + 1);
+            /* Create the tag */
+            return new Tag(theBranch, myTagNo + 1, -1);
         }
 
         /**
          * The Directory Entry Handler.
          */
-        private final class TagHandler implements ISVNDirEntryHandler {
+        private final class ListDirHandler implements ISVNDirEntryHandler {
 
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
@@ -331,12 +452,16 @@ public final class Tag implements Comparable<Tag> {
                 }
                 myName = myName.substring(thePrefix.length());
 
-                /* Determine tag */
+                /* Determine tag and last revision */
                 int myTagNo = Integer.parseInt(myName);
+                long myRev = pEntry.getRevision();
+
+                /* Adjust last revision */
+                theLastRevision = Math.max(theLastRevision, myRev);
 
                 /* Create the tag and add to the list */
-                Tag myTag = new Tag(theBranch, myTagNo);
-                theList.add(myTag);
+                Tag myTag = new Tag(theBranch, myTagNo, myRev);
+                add(myTag);
             }
         }
     }

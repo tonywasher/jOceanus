@@ -154,20 +154,20 @@ public class VersionMgr {
     }
 
     /**
-     * Create revision branch.
+     * Create delta branch.
      * @param pSource the tag to base the branch on
      * @param pIssue the issue to make changes against
      * @return the new branch
      * @throws JDataException on error
      */
-    protected Branch createRevisionBranch(final Tag pSource,
-                                          final Issue pIssue) throws JDataException {
+    protected Branch createDeltaBranch(final Tag pSource,
+                                       final Issue pIssue) throws JDataException {
         /* Obtain the component that we are creating the branch in */
         Component myComponent = pSource.getComponent();
         BranchList myList = myComponent.getBranchList();
 
         /* Determine the branch to create */
-        Branch myBranch = myList.nextRevisionBranch(pSource.getBranch());
+        Branch myBranch = myList.nextDeltaBranch(pSource.getBranch());
 
         /* Create the branch */
         createBranch(myBranch, pSource, pIssue);
