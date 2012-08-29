@@ -158,12 +158,17 @@ public class JDataDetail {
     /**
      * Set forward link.
      * @param pLink the forward link
+     * @return the forward link
      */
-    private void setForwardLink(final JDataDetail pLink) {
-        theForward = pLink;
-        if (thePartnerDetail != null) {
-            thePartnerDetail.theForward = pLink;
+    private JDataDetail setForwardLink(final JDataDetail pLink) {
+        /* Pass call on if we are a child */
+        if (isChild) {
+            return thePartnerDetail.setForwardLink(pLink);
         }
+
+        /* Set forward link and return it */
+        theForward = pLink;
+        return theForward;
     }
 
     /**
@@ -171,10 +176,14 @@ public class JDataDetail {
      * @param pLink the backward link
      */
     private void setBackwardLink(final JDataDetail pLink) {
-        theBackward = pLink;
-        if (thePartnerDetail != null) {
-            thePartnerDetail.theBackward = pLink;
+        /* Pass call on if we are a child */
+        if (isChild) {
+            thePartnerDetail.setBackwardLink(pLink);
+            return;
         }
+
+        /* Set backward link */
+        theBackward = pLink;
     }
 
     /**
@@ -274,6 +283,12 @@ public class JDataDetail {
      * @return the formatted links
      */
     public StringBuilder getHistoryLinks() {
+        /* If we are a child */
+        if (isChild) {
+            /* Pass call on to parent */
+            return thePartnerDetail.getHistoryLinks();
+        }
+
         /* Ignore if no history */
         if ((theBackward == null) && (theForward == null)) {
             return null;
@@ -321,10 +336,10 @@ public class JDataDetail {
 
         /* Handle forward/backward links */
         if (myName.equals(LINK_FORWARD)) {
-            return theForward;
+            return (isChild) ? thePartnerDetail.theForward : theForward;
         }
         if (myName.equals(LINK_BACKWARD)) {
-            return theBackward;
+            return (isChild) ? thePartnerDetail.theBackward : theBackward;
         }
 
         /* Loop through the links */
@@ -341,9 +356,9 @@ public class JDataDetail {
         /* If we have a forward link */
         if (myLink != null) {
             /* Record and return the object */
-            setForwardLink(new JDataDetail(theFormatter, myLink.theObject));
-            theForward.setBackwardLink(this);
-            return theForward;
+            JDataDetail myDetail = setForwardLink(new JDataDetail(theFormatter, myLink.theObject));
+            myDetail.setBackwardLink(this);
+            return myDetail;
         }
 
         /* Return no link */

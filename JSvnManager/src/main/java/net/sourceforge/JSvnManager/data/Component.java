@@ -22,7 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JSvnManager.data;
 
-import java.util.ListIterator;
+import java.util.Iterator;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -37,8 +37,6 @@ import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNDirEntry;
-import org.tmatesoft.svn.core.SVNErrorCode;
-import org.tmatesoft.svn.core.SVNErrorMessage;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNURL;
@@ -331,7 +329,7 @@ public final class Component implements JDataContents, Comparable<Component> {
 
                 /* List the component directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
-                                SVNDirEntry.DIRENT_ALL, new ListDirHandler(pReport));
+                                SVNDirEntry.DIRENT_ALL, new ListDirHandler());
 
                 /* Release the client manager */
                 theRepository.releaseClientManager(myMgr);
@@ -339,6 +337,28 @@ public final class Component implements JDataContents, Comparable<Component> {
                 throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover components for "
                         + theRepository.getName(), e);
             }
+
+            /* Access list iterator */
+            Iterator<Component> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Component */
+                Component myComponent = myIterator.next();
+                BranchList myBranches = myComponent.getBranchList();
+
+                /* Report discovery of component */
+                pReport.reportStatus("Analysing component " + myComponent.getName());
+
+                /* Discover branches for the component */
+                myBranches.discover();
+            }
+
+            /* Register dependencies */
+            registerDependencies();
+
+            /* Propagate dependencies */
+            propagateDependencies();
         }
 
         /**
@@ -348,7 +368,7 @@ public final class Component implements JDataContents, Comparable<Component> {
          */
         protected Branch locateBranch(final SVNURL pURL) {
             /* Access list iterator */
-            ListIterator<Component> myIterator = listIterator();
+            Iterator<Component> myIterator = iterator();
 
             /* While we have entries */
             while (myIterator.hasNext()) {
@@ -375,50 +395,61 @@ public final class Component implements JDataContents, Comparable<Component> {
         }
 
         /**
+         * registerDependencies.
+         * @throws JDataException on error
+         */
+        private void registerDependencies() throws JDataException {
+            /* Access list iterator */
+            Iterator<Component> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Component */
+                Component myComponent = myIterator.next();
+
+                /* register dependencies */
+                BranchList myBranches = myComponent.getBranchList();
+                myBranches.registerDependencies();
+            }
+        }
+
+        /**
+         * propagateDependencies.
+         * @throws JDataException on error
+         */
+        protected void propagateDependencies() throws JDataException {
+            /* Access list iterator */
+            Iterator<Component> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Component and resolve dependencies */
+                Component myComp = myIterator.next();
+                BranchList myBranches = myComp.getBranchList();
+                myBranches.propagateDependencies();
+            }
+        }
+
+        /**
          * The Directory Entry Handler.
          */
         private final class ListDirHandler implements ISVNDirEntryHandler {
-            /**
-             * Report Object.
-             */
-            private final ReportStatus theReport;
-
-            /**
-             * Constructor.
-             * @param pReport the report object
-             */
-            private ListDirHandler(final ReportStatus pReport) {
-                theReport = pReport;
-            }
-
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
-                /* Protect against exceptions */
-                try {
-                    /* Ignore if not a directory and if it is top-level */
-                    if (pEntry.getKind() != SVNNodeKind.DIR) {
-                        return;
-                    }
-                    if (pEntry.getRelativePath().length() == 0) {
-                        return;
-                    }
-
-                    /* Access the name */
-                    String myName = pEntry.getName();
-
-                    /* Report discovery of component */
-                    theReport.reportStatus("Analysing component " + myName);
-
-                    /* Create the tag and add to the list */
-                    Component myComp = new Component(theRepository, myName);
-                    add(myComp);
-
-                    /* Discover tags */
-                    myComp.getBranchList().discover();
-                } catch (JDataException e) {
-                    /* Pass back as SVNException */
-                    throw new SVNException(SVNErrorMessage.create(SVNErrorCode.UNKNOWN), e);
+                /* Ignore if not a directory and if it is top-level */
+                if (pEntry.getKind() != SVNNodeKind.DIR) {
+                    return;
                 }
+                if (pEntry.getRelativePath().length() == 0) {
+                    return;
+                }
+
+                /* Access the name */
+                String myName = pEntry.getName();
+
+                /* Create the tag and add to the list */
+                Component myComp = new Component(theRepository, myName);
+                add(myComp);
             }
         }
     }

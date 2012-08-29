@@ -20,32 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.data;
-
 /**
- * Report Subversion events.
- * @author Tony Washer
+ * Package to handle user interface for JSvnManager.
  */
-public class JSvnReporter {
-    /**
-     * Report status.
-     */
-    public interface ReportStatus {
-        /**
-         * Report Status.
-         * @param pStatus the status
-         */
-        void reportStatus(final String pStatus);
-    }
-
-    /**
-     * Report Task.
-     */
-    public interface ReportTask extends ReportStatus {
-        /**
-         * Complete Task.
-         * @param pTask the task that has completed.
-         */
-        void completeTask(final Object pTask);
-    }
-}
+package net.sourceforge.JSvnManager.ui;

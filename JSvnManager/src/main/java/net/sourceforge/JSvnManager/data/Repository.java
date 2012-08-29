@@ -24,7 +24,10 @@ package net.sourceforge.JSvnManager.data;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -35,6 +38,8 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Component.ComponentList;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
+import net.sourceforge.JSvnManager.project.ProjectDefinition;
+import net.sourceforge.JSvnManager.project.ProjectId;
 
 import org.tmatesoft.svn.core.SVNErrorCode;
 import org.tmatesoft.svn.core.SVNException;
@@ -88,6 +93,16 @@ public class Repository implements JDataContents, Comparable<Repository> {
      */
     private static final JDataField FIELD_COMP = FIELD_DEFS.declareLocalField("Components");
 
+    /**
+     * BranchMap field id.
+     */
+    private static final JDataField FIELD_BRNMAP = FIELD_DEFS.declareLocalField("BranchMap");
+
+    /**
+     * TagMap field id.
+     */
+    private static final JDataField FIELD_TAGMAP = FIELD_DEFS.declareLocalField("TagMap");
+
     @Override
     public String formatObject() {
         return getPath();
@@ -109,6 +124,12 @@ public class Repository implements JDataContents, Comparable<Repository> {
         }
         if (FIELD_COMP.equals(pField)) {
             return theComponents;
+        }
+        if (FIELD_BRNMAP.equals(pField)) {
+            return theBranchMap;
+        }
+        if (FIELD_TAGMAP.equals(pField)) {
+            return theTagMap;
         }
 
         /* Unknown */
@@ -144,6 +165,16 @@ public class Repository implements JDataContents, Comparable<Repository> {
      * ComponentList.
      */
     private final ComponentList theComponents;
+
+    /**
+     * Branch Map.
+     */
+    private final Map<ProjectId, Branch> theBranchMap;
+
+    /**
+     * Tag Map.
+     */
+    private final Map<ProjectId, Tag> theTagMap;
 
     /**
      * Obtain the repository base.
@@ -211,6 +242,10 @@ public class Repository implements JDataContents, Comparable<Repository> {
                       final ReportStatus pReport) throws JDataException {
         /* Store the preference manager */
         thePreferenceMgr = pPreferenceMgr;
+
+        /* Allocate the maps */
+        theBranchMap = new HashMap<ProjectId, Branch>();
+        theTagMap = new HashMap<ProjectId, Tag>();
 
         /* Access the Repository base */
         thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
@@ -289,6 +324,97 @@ public class Repository implements JDataContents, Comparable<Repository> {
     }
 
     /**
+     * Locate branch.
+     * @param pId the project id for the branch
+     * @return the branch
+     */
+    protected Branch locateBranch(final ProjectId pId) {
+        /* Lookup mapping */
+        return theBranchMap.get(pId);
+    }
+
+    /**
+     * Locate tag.
+     * @param pId the project id for the tag
+     * @return the tag
+     */
+    protected Tag locateTag(final ProjectId pId) {
+        /* Lookup mapping */
+        return theTagMap.get(pId);
+    }
+
+    /**
+     * Register branch.
+     * @param pId the project id for the branch
+     * @param pBranch the branch
+     */
+    protected void registerBranch(final ProjectId pId,
+                                  final Branch pBranch) {
+        /* Store mapping */
+        theBranchMap.put(pId, pBranch);
+    }
+
+    /**
+     * Register tag.
+     * @param pId the project id for the branch
+     * @param pTag the tag
+     */
+    protected void registerTag(final ProjectId pId,
+                               final Tag pTag) {
+        /* Store mapping */
+        theTagMap.put(pId, pTag);
+    }
+
+    /**
+     * Get FileURL as input stream.
+     * @param pPath the base URL path
+     * @return the stream of null if file does not exists
+     * @throws JDataException on error
+     */
+    public ProjectDefinition parseProjectURL(final String pPath) throws JDataException {
+        InputStream myInput = null;
+        /* Build the URL */
+        try {
+            /* Build the underlying string */
+            StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+
+            /* Build the initial path */
+            myBuilder.append(pPath);
+            myBuilder.append(SEP_URL);
+
+            /* Build the POM name */
+            myBuilder.append(ProjectDefinition.POM_NAME);
+
+            /* Create the repository path */
+            SVNURL myURL = SVNURL.parseURIDecoded(myBuilder.toString());
+
+            /* Access URL as input stream */
+            myInput = getFileURLasInputStream(myURL);
+            if (myInput == null) {
+                return null;
+            }
+
+            /* Parse the project definition and return it */
+            ProjectDefinition myProject = new ProjectDefinition(myInput);
+
+            /* Return the definition */
+            return myProject;
+
+        } catch (SVNException e) {
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to parse project file for " + pPath,
+                    e);
+        } finally {
+            if (myInput != null) {
+                try {
+                    myInput.close();
+                } catch (IOException e) {
+                    myInput = null;
+                }
+            }
+        }
+    }
+
+    /**
      * Get FileURL as input stream.
      * @param pURL the URL to stream
      * @return the stream of null if file does not exists
@@ -312,8 +438,8 @@ public class Repository implements JDataContents, Comparable<Repository> {
             /* Access the error code */
             SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
 
-            /* Allow file/directory exists but is not WC */
-            if ((myCode != SVNErrorCode.WC_NOT_FILE) && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
+            /* Allow file not existing */
+            if (myCode != SVNErrorCode.FS_NOT_FOUND) {
                 throw new JDataException(ExceptionClass.SUBVERSION, "Unable to read File URL", e);
             }
 

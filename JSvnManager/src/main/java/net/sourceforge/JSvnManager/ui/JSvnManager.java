@@ -22,26 +22,41 @@
  ******************************************************************************/
 package net.sourceforge.JSvnManager.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import net.sourceforge.JDataManager.JDataWindow;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Repository;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
 import net.sourceforge.JSvnManager.threads.DiscoverData;
 
-public class JSvnManager {
+/**
+ * Top level JSvnManager window.
+ * @author Tony
+ * 
+ */
+public final class JSvnManager {
     /**
      * Logger.
      */
-    private static Logger theLogger = Logger.getAnonymousLogger();
+    // private static Logger theLogger = Logger.getAnonymousLogger();
+
+    /**
+     * The Frame.
+     */
+    private final JFrame theFrame;
 
     /**
      * The Data Manager.
@@ -61,7 +76,22 @@ public class JSvnManager {
     /**
      * The Thread executor.
      */
-    private ExecutorService theExecutor = Executors.newSingleThreadExecutor();
+    private final ExecutorService theExecutor = Executors.newSingleThreadExecutor();
+
+    /**
+     * The DataManager menuItem.
+     */
+    private final JMenuItem theShowDataMgr;
+
+    /**
+     * The Started data window.
+     */
+    private JDataWindow theDataWdw = null;
+
+    /**
+     * The Window Close handler.
+     */
+    private WindowClose theCloseHandler = new WindowClose();
 
     /**
      * The repository.
@@ -74,61 +104,41 @@ public class JSvnManager {
     private WorkingCopySet theWorkingSet;
 
     /**
-     * Create and show the GUI.
+     * Constructor.
      */
-    private static void createAndShowGUI() {
-        // try {
+    protected JSvnManager() {
         /* Create the frame */
-        JFrame myFrame = new JFrame(JSvnManager.class.getSimpleName());
-
-        /* Create the SvnManager program */
-        JSvnManager myManager = new JSvnManager();
+        theFrame = new JFrame(JSvnManager.class.getSimpleName());
 
         /* Create the panel */
-        JSvnStatusWindow myPanel = new JSvnStatusWindow(myManager);
+        JSvnStatusWindow myPanel = new JSvnStatusWindow(this);
+
+        /* Create the menu bar and listener */
+        JMenuBar myMainMenu = new JMenuBar();
+        MenuListener myMenuListener = new MenuListener();
+
+        /* Create the JDataWindow menuItem */
+        theShowDataMgr = new JMenuItem("DataManager");
+        theShowDataMgr.addActionListener(myMenuListener);
+        myMainMenu.add(theShowDataMgr);
+
+        /* Add the Menu bar */
+        theFrame.setJMenuBar(myMainMenu);
 
         /* Attach the panel to the frame */
         myPanel.setOpaque(true);
-        myFrame.setContentPane(myPanel);
-        myFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        theFrame.setContentPane(myPanel);
+        theFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        theFrame.addWindowListener(theCloseHandler);
 
         /* Show the frame */
-        myFrame.pack();
-        myFrame.setLocationRelativeTo(null);
-        myFrame.setVisible(true);
+        theFrame.pack();
+        theFrame.setLocationRelativeTo(null);
+        theFrame.setVisible(true);
 
         /* Create and run discoverData thread */
-        DiscoverData myThread = new DiscoverData(myManager.thePreferenceMgr, myPanel);
-        myManager.theExecutor.execute(myThread);
-
-        /* Create the data window */
-        // JDataWindow myDataWindow = new JDataWindow(myFrame, myManager.theDataMgr);
-
-        /* Display it */
-        // myDataWindow.showDialog();
-
-        // } catch (JDataException e) {
-        // theLogger.log(Level.SEVERE, "createGUI didn't complete successfully", e);
-        // }
-    }
-
-    /**
-     * Main function.
-     * @param args the arguments
-     */
-    public static void main(final String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                createAndShowGUI();
-            }
-        });
-    }
-
-    /**
-     * Constructor.
-     */
-    private JSvnManager() {
+        DiscoverData myThread = new DiscoverData(thePreferenceMgr, myPanel);
+        theExecutor.execute(myThread);
     }
 
     /**
@@ -150,5 +160,66 @@ public class JSvnManager {
         /* Build the WorkingCopySet */
         theWorkingSet = pData.getWorkingCopySet();
         mySetEntry.setObject(theWorkingSet);
+    }
+
+    /**
+     * MenuListener class.
+     */
+    private final class MenuListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(final ActionEvent evt) {
+            /* If this is the DataManager window */
+            if (theShowDataMgr.equals(evt.getSource())) {
+                /* Create the data window */
+                theDataWdw = new JDataWindow(theFrame, theDataMgr);
+
+                /* Listen for its closure */
+                theDataWdw.addWindowListener(theCloseHandler);
+
+                /* Disable the menu item */
+                theShowDataMgr.setEnabled(false);
+
+                /* Display it */
+                theDataWdw.showDialog();
+            }
+        }
+    }
+
+    /**
+     * Window Close Adapter.
+     */
+    private class WindowClose extends WindowAdapter {
+        @Override
+        public void windowClosing(final WindowEvent evt) {
+            Object o = evt.getSource();
+
+            /* If this is the frame that is closing down */
+            if (theFrame.equals(o)) {
+                /* terminate the executor */
+                theExecutor.shutdown();
+
+                /* Dispose of the data/help Windows if they exist */
+                if (theDataWdw != null) {
+                    theDataWdw.dispose();
+                }
+
+                /* Dispose of the frame */
+                theFrame.dispose();
+
+                /* Exit the application */
+                System.exit(0);
+
+                /* else if this is the Data Window shutting down */
+            } else if (o.equals(theDataWdw)) {
+                /* Re-enable the help menu item */
+                theShowDataMgr.setEnabled(true);
+                theDataWdw.dispose();
+                theDataWdw = null;
+
+                /* Notify data manager */
+                theDataMgr.declareWindow(null);
+            }
+        }
     }
 }

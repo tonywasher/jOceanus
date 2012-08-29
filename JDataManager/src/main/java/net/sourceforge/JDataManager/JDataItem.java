@@ -25,8 +25,6 @@ package net.sourceforge.JDataManager;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.net.URL;
 
@@ -38,7 +36,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -110,7 +107,7 @@ public class JDataItem {
     /**
      * The Toggle button.
      */
-    private final JToggleButton theToggle;
+    private final JButton theToggle;
 
     /**
      * The Slider.
@@ -157,7 +154,7 @@ public class JDataItem {
         thePrev = new JButton("-" + SHIFT_ONE);
 
         /* Create the toggle button */
-        theToggle = new JToggleButton("Show items");
+        theToggle = new JButton();
 
         /* Create the label */
         theLabel = new JLabel();
@@ -187,6 +184,7 @@ public class JDataItem {
         theListPanel.add(theSlider);
         theListPanel.add(Box.createHorizontalStrut(STRUT_WIDTH));
         theListPanel.add(theNext);
+        theListPanel.setVisible(false);
 
         /* Create the complete panel */
         thePanel = new JPanel(new BorderLayout());
@@ -202,9 +200,7 @@ public class JDataItem {
         /* Add action Listeners */
         theNext.addActionListener(myListener);
         thePrev.addActionListener(myListener);
-
-        /* Add item Listener */
-        theToggle.addItemListener(myListener);
+        theToggle.addActionListener(myListener);
 
         /* Add slider listener */
         theSlider.addChangeListener(myListener);
@@ -259,6 +255,11 @@ public class JDataItem {
      * @param pEntry the entry
      */
     protected void updateData(final JDataEntry pEntry) {
+        /* Take care if we have no active entry */
+        if (theEntry == null) {
+            return;
+        }
+
         /* If we are updating the active object */
         if (theEntry.getIndex() == pEntry.getIndex()) {
             /* Display the object */
@@ -334,21 +335,22 @@ public class JDataItem {
         int myPos = theDetail.getIndex();
 
         /* Show/hide movement buttons */
-        theNext.setVisible(true);
-        thePrev.setVisible(true);
-        theSlider.setVisible(mySize > 1);
+        boolean doShowSlider = (mySize > 1);
+        theNext.setVisible(doShowSlider);
+        thePrev.setVisible(doShowSlider);
+        theSlider.setVisible(doShowSlider);
         theLabel.setVisible(true);
 
         /* Enable movement buttons */
         theNext.setEnabled(myPos < mySize - SHIFT_ONE);
         thePrev.setEnabled(myPos >= SHIFT_ONE);
 
+        /* Handle tick spacing */
+        determineTickSpacing(mySize);
+
         /* Set the text detail */
         theLabel.setText("Item " + (myPos + 1) + " of " + mySize);
         theSlider.setValue(myPos);
-
-        /* Handle tick spacing */
-        determineTickSpacing(mySize);
 
         /* Set the text detail */
         theToggle.setText("Show header");
@@ -421,7 +423,7 @@ public class JDataItem {
     /**
      * Data Listener class.
      */
-    private class DataListener implements HyperlinkListener, ActionListener, ItemListener, ChangeListener {
+    private class DataListener implements HyperlinkListener, ActionListener, ChangeListener {
         @Override
         public void hyperlinkUpdate(final HyperlinkEvent pEvent) {
             /* If this is an activated event */
@@ -465,13 +467,7 @@ public class JDataItem {
                 JDataDetail myList = theDetail.getPartnerDetail();
                 myList.shiftIterator(-SHIFT_ONE);
                 displayDetail(myList.getPartnerDetail());
-            }
-        }
-
-        @Override
-        public void itemStateChanged(final ItemEvent pEvent) {
-            /* If the event was the toggle button */
-            if (theToggle.equals(pEvent.getSource())) {
+            } else if (theToggle.equals(o)) {
                 /* Toggle the item that we are displaying */
                 displayDetail(theDetail.getPartnerDetail());
             }

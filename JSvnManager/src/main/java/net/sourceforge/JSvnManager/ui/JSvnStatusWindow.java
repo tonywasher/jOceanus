@@ -36,7 +36,7 @@ import net.sourceforge.JSvnManager.data.JSvnReporter.ReportTask;
 import net.sourceforge.JSvnManager.threads.DiscoverData;
 
 /**
- * Status window for SubVersion operations
+ * Status window for SubVersion operations.
  * @author Tony Washer
  */
 public class JSvnStatusWindow extends JPanel implements ReportTask {
@@ -115,7 +115,7 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
     }
 
     /**
-     * Status Listener class
+     * Status Listener class.
      */
     private final class StatusListener implements ActionListener {
         @Override

@@ -34,6 +34,7 @@ import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JSortedList.OrderedList;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.JSvnManager.data.UpdateStatus.UpdateStatusList;
+import net.sourceforge.JSvnManager.project.ProjectDefinition;
 
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNErrorCode;
@@ -78,6 +79,11 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
     private static final JDataField FIELD_REVISION = FIELD_DEFS.declareLocalField("Revision");
 
     /**
+     * Project field id.
+     */
+    private static final JDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+
+    /**
      * Update list field id.
      */
     private static final JDataField FIELD_UPDATES = FIELD_DEFS.declareLocalField("Updates");
@@ -103,6 +109,9 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
         }
         if (FIELD_COMP.equals(pField)) {
             return theBranch.getComponent();
+        }
+        if (FIELD_PROJECT.equals(pField)) {
+            return theProject;
         }
         if (FIELD_REVISION.equals(pField)) {
             return theRevision;
@@ -221,7 +230,7 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
         /* Determine the location of the project definition */
         File myPom = ProjectDefinition.getProjectDefFile(theLocation);
         if (myPom != null) {
-            theProject = new ProjectDefinition(myPom);
+            theProject = ProjectDefinition.parseProjectFile(myPom);
         }
     }
 
@@ -259,7 +268,7 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
         private final WorkingCopy theCopy;
 
         /**
-         * Constructor
+         * Constructor.
          * @param pCopy the working copy
          */
         private UpdateHandler(final WorkingCopy pCopy) {

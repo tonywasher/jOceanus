@@ -34,7 +34,7 @@ import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;
 
 /**
- * Status record in Working Copy
+ * Status record in Working Copy.
  * @author Tony Washer
  */
 public class UpdateStatus implements JDataContents {
@@ -84,7 +84,7 @@ public class UpdateStatus implements JDataContents {
     }
 
     @Override
-    public Object getFieldValue(JDataField pField) {
+    public Object getFieldValue(final JDataField pField) {
         /* Handle fields */
         if (FIELD_NAME.equals(pField)) {
             return theName;
@@ -125,7 +125,7 @@ public class UpdateStatus implements JDataContents {
     private final SVNStatus theStatus;
 
     /**
-     * Constructor
+     * Constructor.
      * @param pCopy the working copy for the status
      * @param pStatus the underlying status
      */
@@ -174,7 +174,7 @@ public class UpdateStatus implements JDataContents {
         }
 
         @Override
-        public Object getFieldValue(JDataField pField) {
+        public Object getFieldValue(final JDataField pField) {
             /* Handle standard fields */
             if (FIELD_SIZE.equals(pField)) {
                 return size();

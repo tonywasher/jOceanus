@@ -24,6 +24,7 @@ package net.sourceforge.JTableFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.RowSorter;
@@ -32,7 +33,7 @@ import javax.swing.table.TableModel;
 import net.sourceforge.JTableFilter.TableFilter.TableFilterModel;
 
 /**
- * RowSorter to provide filtering capabilities without sort.
+ * RowSorter to provide filtering capabilities with natural sorting.
  * @param <T> row data type
  */
 public class TableFilter<T extends Comparable<? super T>> extends RowSorter<TableFilterModel<T>> {
@@ -683,5 +684,74 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     @Override
     public void toggleSortOrder(final int column) {
         /* No sort allowed */
+    }
+
+    /**
+     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot of the
+     * table mapping. It will not be affected or invalidated by subsequent changes.
+     * @return the iterator
+     */
+    public Iterator<T> modelIterator() {
+        /* Allocate iterator */
+        return new TableIterator(theModelToView);
+    }
+
+    /**
+     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot of the
+     * table mapping. It will not be affected or invalidated by subsequent changes.
+     * @return the iterator
+     */
+    public Iterator<T> viewIterator() {
+        /* Allocate iterator */
+        return new TableIterator(theViewToModel);
+    }
+
+    /**
+     * Iterator for rows. Note that this iterator is for a self-contained snapshot of the table mapping. It
+     * will not be affected or invalidated by subsequent changes.
+     */
+    private class TableIterator implements Iterator<T> {
+        /**
+         * List to iterate over.
+         */
+        private final RowEntry<T>[] theArray;
+
+        /**
+         * Size of index.
+         */
+        private int theSize;
+
+        /**
+         * Next index.
+         */
+        private int theIndex;
+
+        /**
+         * Constructor.
+         * @param pArray the array to iterate over
+         */
+        private TableIterator(RowEntry<T>[] pArray) {
+            /* Store the array */
+            theArray = pArray;
+            theSize = theArray.length;
+            theIndex = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            /* Determine whether we have further elements */
+            return (theSize > theIndex);
+        }
+
+        @Override
+        public T next() {
+            /* Return the element */
+            return theArray[theIndex++].theRow;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 }

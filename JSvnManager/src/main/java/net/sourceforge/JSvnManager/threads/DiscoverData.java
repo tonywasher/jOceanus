@@ -11,6 +11,10 @@ import net.sourceforge.JSvnManager.data.JSvnReporter.ReportTask;
 import net.sourceforge.JSvnManager.data.Repository;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
 
+/**
+ * Thread to handle analysis of repository.
+ * @author Tony Washer
+ */
 public class DiscoverData extends SwingWorker<Void, String> implements ReportStatus {
     /**
      * Preference Manager.
@@ -102,7 +106,7 @@ public class DiscoverData extends SwingWorker<Void, String> implements ReportSta
     }
 
     @Override
-    public void process(List<String> pStatus) {
+    public void process(final List<String> pStatus) {
         for (String myStatus : pStatus) {
             theReport.reportStatus(myStatus);
         }

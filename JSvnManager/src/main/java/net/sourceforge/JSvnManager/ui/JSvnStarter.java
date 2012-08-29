@@ -20,32 +20,46 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.data;
+package net.sourceforge.JSvnManager.ui;
+
+import javax.swing.SwingUtilities;
 
 /**
- * Report Subversion events.
+ * Top level JSvnManager starter.
  * @author Tony Washer
  */
-public class JSvnReporter {
+public final class JSvnStarter {
     /**
-     * Report status.
+     * Logger.
      */
-    public interface ReportStatus {
-        /**
-         * Report Status.
-         * @param pStatus the status
-         */
-        void reportStatus(final String pStatus);
+    private static JSvnManager theManager;
+
+    /**
+     * Obtain the manager.
+     * @return the manager
+     */
+    public static JSvnManager getManager() {
+        return theManager;
     }
 
     /**
-     * Report Task.
+     * Create and show the GUI.
      */
-    public interface ReportTask extends ReportStatus {
-        /**
-         * Complete Task.
-         * @param pTask the task that has completed.
-         */
-        void completeTask(final Object pTask);
+    private static void createAndShowGUI() {
+        /* Create the SvnManager program */
+        theManager = new JSvnManager();
+    }
+
+    /**
+     * Main function.
+     * @param args the arguments
+     */
+    public static void main(final String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                createAndShowGUI();
+            }
+        });
     }
 }

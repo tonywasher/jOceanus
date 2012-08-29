@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.JSvnManager.data;
 
-import java.util.ListIterator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -31,6 +33,9 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JSortedList.OrderedList;
+import net.sourceforge.JSvnManager.project.ProjectDefinition;
+import net.sourceforge.JSvnManager.project.ProjectId;
+import net.sourceforge.JSvnManager.project.ProjectId.ProjectStatus;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNDepth;
@@ -83,6 +88,16 @@ public final class Tag implements JDataContents, Comparable<Tag> {
     private static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityField("Name");
 
     /**
+     * Project definition field id.
+     */
+    private static final JDataField FIELD_PROJECT = FIELD_DEFS.declareLocalField("Project");
+
+    /**
+     * Dependencies field id.
+     */
+    private static final JDataField FIELD_DEPENDS = FIELD_DEFS.declareLocalField("Dependencies");
+
+    /**
      * Revision field id.
      */
     private static final JDataField FIELD_LREV = FIELD_DEFS.declareLocalField("Revision");
@@ -111,6 +126,12 @@ public final class Tag implements JDataContents, Comparable<Tag> {
         }
         if (FIELD_NAME.equals(pField)) {
             return getTagName();
+        }
+        if (FIELD_PROJECT.equals(pField)) {
+            return theProject;
+        }
+        if (FIELD_DEPENDS.equals(pField)) {
+            return (theDependencies.size() > 0) ? theDependencies : JDataFieldValue.SkipField;
         }
         if (FIELD_LREV.equals(pField)) {
             return theRevision;
@@ -141,6 +162,21 @@ public final class Tag implements JDataContents, Comparable<Tag> {
     private final int theTag;
 
     /**
+     * The project definition.
+     */
+    private ProjectDefinition theProject = null;
+
+    /**
+     * The dependency map.
+     */
+    private Map<Component, Tag> theDependencies;
+
+    /**
+     * Project status.
+     */
+    private ProjectStatus theProjectStatus = ProjectStatus.RAW;
+
+    /**
      * The Last Changed Revision.
      */
     private final long theRevision;
@@ -160,6 +196,7 @@ public final class Tag implements JDataContents, Comparable<Tag> {
         theComponent = pParent.getComponent();
         theTag = pTag;
         theRevision = pRevision;
+        theDependencies = new HashMap<Component, Tag>();
     }
 
     /**
@@ -192,6 +229,22 @@ public final class Tag implements JDataContents, Comparable<Tag> {
      */
     public Branch getBranch() {
         return theBranch;
+    }
+
+    /**
+     * Get Project Definition.
+     * @return the project definition
+     */
+    public ProjectDefinition getProjectDefinition() {
+        return theProject;
+    }
+
+    /**
+     * Get Dependencies.
+     * @return the dependencies
+     */
+    public Map<Component, Tag> getDependencies() {
+        return theDependencies;
     }
 
     /**
@@ -260,6 +313,65 @@ public final class Tag implements JDataContents, Comparable<Tag> {
             return 1;
         }
         return 0;
+    }
+
+    /**
+     * resolveDependencies
+     * @throws JDataException on error
+     */
+    private void resolveDependencies() throws JDataException {
+        /* Switch on status */
+        switch (theProjectStatus) {
+            case FINAL:
+                return;
+            case MERGING:
+                throw new JDataException(ExceptionClass.DATA, this, "IllegalState for Tag");
+            default:
+                break;
+        }
+
+        /* If we have no dependencies */
+        if (theDependencies.size() == 0) {
+            /* Set as merged and return */
+            theProjectStatus = ProjectStatus.FINAL;
+            return;
+        }
+
+        /* Set project status to merging to prevent circular dependency */
+        theProjectStatus = ProjectStatus.MERGING;
+
+        /* Allocate a new map */
+        Map<Component, Tag> myNew = new HashMap<Component, Tag>(theDependencies);
+
+        /* Loop through our dependencies */
+        for (Tag myDep : theDependencies.values()) {
+            /* Resolve dependencies */
+            myDep.resolveDependencies();
+
+            /* Loop through underlying dependencies */
+            for (Tag mySub : myDep.getDependencies().values()) {
+                /* Access underlying component */
+                Component myComp = mySub.getComponent();
+
+                /* Access existing dependency */
+                Tag myExisting = myNew.get(myComp);
+
+                /* If we have an existing dependency */
+                if (myExisting != null) {
+                    /* Check it is identical */
+                    if (!myExisting.equals(mySub)) {
+                        throw new JDataException(ExceptionClass.DATA, this, "Inconsistent dependency for Tag");
+                    }
+                } else {
+                    /* Add dependency */
+                    myNew.put(myComp, mySub);
+                }
+            }
+
+            /* Store new dependencies and mark as resolved */
+            theDependencies = myNew;
+            theProjectStatus = ProjectStatus.FINAL;
+        }
     }
 
     /**
@@ -343,10 +455,10 @@ public final class Tag implements JDataContents, Comparable<Tag> {
 
             /* Store parent for use by entry handler */
             theBranch = pParent;
-            theComponent = pParent.getComponent();
+            theComponent = (pParent == null) ? null : pParent.getComponent();
 
             /* Build prefix */
-            thePrefix = theBranch.getBranchName() + PREFIX_TAG;
+            thePrefix = (pParent == null) ? null : theBranch.getBranchName() + PREFIX_TAG;
         }
 
         /**
@@ -377,6 +489,86 @@ public final class Tag implements JDataContents, Comparable<Tag> {
                 throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover tags for "
                         + theBranch.getBranchName(), e);
             }
+
+            /* Access list iterator */
+            Iterator<Tag> myIterator = iterator();
+
+            /* Loop to the last entry */
+            while (myIterator.hasNext()) {
+                /* Access the next branch */
+                Tag myTag = myIterator.next();
+
+                /* Parse project file */
+                ProjectDefinition myProject = myRepo.parseProjectURL(myTag.getURLPath());
+                myTag.theProject = myProject;
+
+                /* Register the tag */
+                /* Register the branch */
+                if (myProject != null) {
+                    myRepo.registerTag(myProject.getDefinition(), myTag);
+                }
+            }
+        }
+
+        /**
+         * registerDependencies.
+         * @throws JDataException on error
+         */
+        protected void registerDependencies() throws JDataException {
+            /* Access list iterator */
+            Repository myRepo = theComponent.getRepository();
+            Iterator<Tag> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Tag */
+                Tag myTag = myIterator.next();
+                ProjectDefinition myDef = myTag.getProjectDefinition();
+                Map<Component, Tag> myDependencies = myTag.getDependencies();
+
+                /* If we have a project definition */
+                if (myDef != null) {
+                    /* Loop through the dependencies */
+                    Iterator<ProjectId> myProjIterator = myDef.getDependencies().iterator();
+                    while (myProjIterator.hasNext()) {
+                        /* Access project id */
+                        ProjectId myId = myProjIterator.next();
+
+                        /* Locate dependency branch */
+                        Tag myDependency = myRepo.locateTag(myId);
+                        if (myDependency != null) {
+                            /* Access component */
+                            Component myComponent = myDependency.getComponent();
+
+                            /* Check that the dependency does not already exist */
+                            if (myDependencies.get(myComponent) == null) {
+                                /* Add to the dependency map */
+                                myDependencies.put(myComponent, myDependency);
+                            } else {
+                                /* Throw exception */
+                                throw new JDataException(ExceptionClass.DATA, myTag,
+                                        "Duplicate component dependency");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * propagateDependencies.
+         * @throws JDataException on error
+         */
+        protected void propagateDependencies() throws JDataException {
+            /* Access list iterator */
+            Iterator<Tag> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Tag and resolve dependencies */
+                Tag myTag = myIterator.next();
+                myTag.resolveDependencies();
+            }
         }
 
         /**
@@ -386,7 +578,7 @@ public final class Tag implements JDataContents, Comparable<Tag> {
          */
         public Tag locateTag(final Tag pTag) {
             /* Access list iterator */
-            ListIterator<Tag> myIterator = listIterator();
+            Iterator<Tag> myIterator = iterator();
 
             /* While we have entries */
             while (myIterator.hasNext()) {
@@ -414,7 +606,7 @@ public final class Tag implements JDataContents, Comparable<Tag> {
          */
         public Tag nextTag() {
             /* Access list iterator */
-            ListIterator<Tag> myIterator = listIterator();
+            Iterator<Tag> myIterator = iterator();
             Tag myTag = null;
 
             /* Loop to the last entry */

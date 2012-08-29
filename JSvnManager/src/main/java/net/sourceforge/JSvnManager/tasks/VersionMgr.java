@@ -30,11 +30,11 @@ import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Branch;
 import net.sourceforge.JSvnManager.data.Branch.BranchList;
 import net.sourceforge.JSvnManager.data.Component;
-import net.sourceforge.JSvnManager.data.ProjectDefinition;
 import net.sourceforge.JSvnManager.data.Repository;
 import net.sourceforge.JSvnManager.data.SubVersionPreferences;
 import net.sourceforge.JSvnManager.data.Tag;
 import net.sourceforge.JSvnManager.data.Tag.TagList;
+import net.sourceforge.JSvnManager.project.ProjectDefinition;
 import net.sourceforge.JiraAccess.data.Issue;
 
 import org.tmatesoft.svn.core.ISVNDirEntryHandler;
@@ -306,7 +306,7 @@ public class VersionMgr {
             /* Determine the location of the project definition */
             File myPom = ProjectDefinition.getProjectDefFile(myTarget);
             if (myPom != null) {
-                ProjectDefinition myProject = new ProjectDefinition(myPom);
+                ProjectDefinition myProject = ProjectDefinition.parseProjectFile(myPom);
             }
 
             /* Commit the changes */
@@ -374,7 +374,7 @@ public class VersionMgr {
             /* Determine the location of the project definition */
             File myPom = ProjectDefinition.getProjectDefFile(myTarget);
             if (myPom != null) {
-                ProjectDefinition myProject = new ProjectDefinition(myPom);
+                ProjectDefinition myProject = ProjectDefinition.parseProjectFile(myPom);
             }
 
             /* Commit the changes */
