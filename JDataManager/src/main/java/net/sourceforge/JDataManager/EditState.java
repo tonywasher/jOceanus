@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFieldSet: Java Swing Field Set
+ * JDataManager: Java Data Manager
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFieldSet;
+package net.sourceforge.JDataManager;
 
 /**
  * Enumeration of edit states of DataItem and DataList objects in a view.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * JPreferenceSet: PreferenceSet Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui;
+package net.sourceforge.JPreferenceSet;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -44,14 +44,9 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JEventManager.ActionDetailEvent;
 import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JFinanceApp.views.View;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
-import net.sourceforge.JPreferenceSet.PreferenceSetPanel;
 
 /**
  * Preference maintenance panel.
