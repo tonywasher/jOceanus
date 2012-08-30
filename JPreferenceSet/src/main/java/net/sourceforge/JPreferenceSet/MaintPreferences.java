@@ -151,11 +151,17 @@ public class MaintPreferences extends JEventPanel {
 
     /**
      * Constructor.
-     * @param pView the data view
+     * @param pPreferenceMgr the preference manager
+     * @param pRenderMgr the render manager
+     * @param pDataMgr the data manager
+     * @param pSection the data section
      */
-    public MaintPreferences(final View pView) {
+    public MaintPreferences(final PreferenceManager pPreferenceMgr,
+                            final RenderManager pRenderMgr,
+                            final JDataManager pDataMgr,
+                            final JDataEntry pSection) {
         /* Access render manager */
-        theRenderMgr = pView.getRenderMgr();
+        theRenderMgr = pRenderMgr;
 
         /* Create the buttons */
         theOKButton = new JButton(NLS_OK);
@@ -196,18 +202,15 @@ public class MaintPreferences extends JEventPanel {
         theLayout = new CardLayout();
         theProperties.setLayout(theLayout);
 
-        /* Access the preference manager */
-        PreferenceManager myMgr = pView.getPreferenceMgr();
-
         /* Loop through the existing property sets */
-        for (PreferenceSet mySet : myMgr.getPreferenceSets()) {
+        for (PreferenceSet mySet : pPreferenceMgr.getPreferenceSets()) {
             /* Register the Set */
             registerSet(mySet);
         }
 
         /* Add a listener for the addition of subsequent propertySets */
         PropertySetListener mySetListener = new PropertySetListener();
-        myMgr.addActionListener(mySetListener);
+        pPreferenceMgr.addActionListener(mySetListener);
 
         /* Create a new Scroll Pane and add this table to it */
         JScrollPane myScroll = new JScrollPane();
@@ -229,18 +232,16 @@ public class MaintPreferences extends JEventPanel {
         theResetButton.addActionListener(theListener);
         theSelect.addItemListener(theListener);
 
-        /* Create the debug entry, attach to MaintenanceDebug entry and hide it */
-        JDataManager myDataMgr = pView.getDataMgr();
-        JDataEntry mySection = pView.getDataEntry(DataControl.DATA_MAINT);
-        theDataEntry = myDataMgr.new JDataEntry("Preferences");
-        theDataEntry.addAsChildOf(mySection);
-        theDataEntry.setObject(myMgr);
+        /* Create the debug entry, and attach to correct section */
+        theDataEntry = pDataMgr.new JDataEntry("Preferences");
+        theDataEntry.addAsChildOf(pSection);
+        theDataEntry.setObject(pDataMgr);
     }
 
     /**
      * Determine Focus.
      */
-    protected void determineFocus() {
+    public void determineFocus() {
         /* Request the focus */
         requestFocusInWindow();
 

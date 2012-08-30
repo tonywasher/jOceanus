@@ -29,6 +29,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+import net.sourceforge.JDataManager.DataState;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -37,7 +38,6 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.TaskControl;
-import net.sourceforge.JFieldSet.DataState;
 
 /**
  * Database Table class. This controls should be extended for each DataType/Table.

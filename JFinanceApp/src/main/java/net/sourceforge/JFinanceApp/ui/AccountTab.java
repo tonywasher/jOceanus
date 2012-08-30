@@ -32,6 +32,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.JDataManager.EditState;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
@@ -43,7 +44,6 @@ import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDateDay.JDateDayRangeSelect;
 import net.sourceforge.JEventManager.ActionDetailEvent;
 import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFieldSet.EditState;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.Event;

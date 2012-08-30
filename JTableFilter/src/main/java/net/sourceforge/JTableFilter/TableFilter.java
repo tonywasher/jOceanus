@@ -687,8 +687,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     }
 
     /**
-     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot of the
-     * table mapping. It will not be affected or invalidated by subsequent changes.
+     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot of the table mapping. It
+     * will not be affected or invalidated by subsequent changes.
      * @return the iterator
      */
     public Iterator<T> modelIterator() {
@@ -697,8 +697,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     }
 
     /**
-     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot of the
-     * table mapping. It will not be affected or invalidated by subsequent changes.
+     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot of the table mapping. It
+     * will not be affected or invalidated by subsequent changes.
      * @return the iterator
      */
     public Iterator<T> viewIterator() {

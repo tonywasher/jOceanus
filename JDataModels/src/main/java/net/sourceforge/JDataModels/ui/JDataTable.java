@@ -36,6 +36,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.event.ListSelectionEvent;
 
+import net.sourceforge.JDataManager.EditState;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
@@ -43,7 +44,6 @@ import net.sourceforge.JDataModels.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.JDataModels.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JEventManager.JEventTable;
-import net.sourceforge.JFieldSet.EditState;
 import net.sourceforge.JFieldSet.Editor.ComboBoxSelector;
 import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JTableFilter.TableFilter;

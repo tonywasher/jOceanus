@@ -41,6 +41,8 @@ import javax.swing.LayoutStyle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.JDataManager.DataState;
+import net.sourceforge.JDataManager.EditState;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFormatter;
@@ -56,8 +58,6 @@ import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDateDay.JDateDayButton;
 import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFieldSet.DataState;
-import net.sourceforge.JFieldSet.EditState;
 import net.sourceforge.JFieldSet.ItemField;
 import net.sourceforge.JFieldSet.ItemField.FieldSet;
 import net.sourceforge.JFieldSet.RenderManager;

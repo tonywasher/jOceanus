@@ -45,6 +45,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.JDataManager.EditState;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataManager;
@@ -58,7 +59,6 @@ import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFieldSet.EditState;
 import net.sourceforge.JFieldSet.ItemField;
 import net.sourceforge.JFieldSet.ItemField.FieldSet;
 import net.sourceforge.JFieldSet.RenderManager;

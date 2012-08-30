@@ -31,9 +31,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.JDataManager.JDataManager;
+import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.JPreferenceSet.MaintPreferences;
 
 /**
  * Maintenance Tab panel.
@@ -166,7 +168,8 @@ public class MaintenanceTab extends JEventPanel {
         theTaxYearTab.addChangeListener(myListener);
 
         /* Create the Preferences Tab */
-        thePreferences = new MaintPreferences(theView);
+        thePreferences = new MaintPreferences(theView.getPreferenceMgr(), theView.getRenderMgr(),
+                theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
         theTabs.addTab(TITLE_PREFERENCES, thePreferences);
         thePreferences.addChangeListener(myListener);
 

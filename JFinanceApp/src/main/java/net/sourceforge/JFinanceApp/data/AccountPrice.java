@@ -25,6 +25,7 @@ package net.sourceforge.JFinanceApp.data;
 import java.util.Date;
 import java.util.Iterator;
 
+import net.sourceforge.JDataManager.DataState;
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -39,7 +40,6 @@ import net.sourceforge.JDataModels.data.EncryptedItem;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JFieldSet.DataState;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.views.SpotPrices;
 import net.sourceforge.JFinanceApp.views.SpotPrices.SpotList;

@@ -30,6 +30,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import net.sourceforge.JDataManager.EditState;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataFormatter;
@@ -44,7 +45,6 @@ import net.sourceforge.JDataModels.views.UpdateEntry;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JDateDay.JDateDayFormatter;
 import net.sourceforge.JDecimal.JDecimalFormatter;
-import net.sourceforge.JFieldSet.EditState;
 import net.sourceforge.JFieldSet.RenderManager;
 import net.sourceforge.JFieldSet.Renderer.CalendarRenderer;
 import net.sourceforge.JFieldSet.Renderer.DecimalRenderer;

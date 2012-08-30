@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import net.sourceforge.JDataManager.EditState;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
@@ -37,7 +38,6 @@ import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JEventManager.JEventObject;
-import net.sourceforge.JFieldSet.EditState;
 
 /**
  * Provides control of a set of update-able DataLists.

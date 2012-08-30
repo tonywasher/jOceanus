@@ -24,7 +24,9 @@ package net.sourceforge.JFinanceApp.views;
 
 import java.util.Iterator;
 
+import net.sourceforge.JDataManager.DataState;
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.EditState;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
@@ -33,8 +35,6 @@ import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.JDateDay.JDateDay;
 import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JFieldSet.DataState;
-import net.sourceforge.JFieldSet.EditState;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;

@@ -24,7 +24,11 @@ package net.sourceforge.JDataModels.data;
 
 import java.util.Iterator;
 
+import net.sourceforge.JDataManager.DataState;
 import net.sourceforge.JDataManager.Difference;
+import net.sourceforge.JDataManager.EditState;
+import net.sourceforge.JDataManager.ItemValidation;
+import net.sourceforge.JDataManager.ItemValidation.ErrorElement;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
@@ -32,10 +36,6 @@ import net.sourceforge.JDataManager.JDataObject.JDataValues;
 import net.sourceforge.JDataManager.ValueSet;
 import net.sourceforge.JDataManager.ValueSetHistory;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JFieldSet.DataState;
-import net.sourceforge.JFieldSet.EditState;
-import net.sourceforge.JFieldSet.ItemValidation;
-import net.sourceforge.JFieldSet.ItemValidation.ErrorElement;
 import net.sourceforge.JFieldSet.JFieldSetItem;
 import net.sourceforge.JFieldSet.RenderState;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
