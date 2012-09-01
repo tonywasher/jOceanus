@@ -496,8 +496,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
         pEntry.setFocus(theUpdateEntry.getName());
     }
 
-    // @Override
-    public void validateAfterChange() {
+    @Override
+    public void updateAfterChange() {
         /* Reset the balance */
         if (theStatement != null) {
             /* Protect against exceptions */
@@ -571,6 +571,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
                 theModel.fireTableDataChanged();
+                notifyChanges();
             }
         }
     }
@@ -603,6 +604,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
         if (theAccount != null) {
             theStatement = new Statement(theView, pAccount, theRange);
             theLines = theStatement.getLines();
+            theStatement.setFilter(theModel.getFilter());
         }
         theColumns.setColumns();
         super.setList(theLines);
@@ -624,6 +626,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
         if (theLines != null) {
             theLines.findEditState();
         }
+
+        /* update after changes */
+        updateAfterChange();
 
         /* Notify listeners */
         fireStateChanged();
@@ -671,14 +676,14 @@ public class AccountStatement extends JDataTable<StatementLine> {
     public JComboBox getComboBox(final int row,
                                  final int column) {
         /* Access the line */
-        StatementLine myLine = theLines.get(row - 1);
+        StatementLine myLine = theLines.get(row);
 
         /* Switch on column */
         switch (column) {
             case COLUMN_TRANTYP:
                 return (myLine.isCredit())
-                                          ? theComboList.getCreditTranTypes(theStatement.getActType())
-                                          : theComboList.getDebitTranTypes(theStatement.getActType());
+                                          ? theComboList.getCreditTranTypes(theStatement.getAccount())
+                                          : theComboList.getDebitTranTypes(theStatement.getAccount());
             case COLUMN_PARTNER:
                 return (myLine.isCredit())
                                           ? theComboList.getDebitAccounts(myLine.getTransType(),
@@ -868,7 +873,6 @@ public class AccountStatement extends JDataTable<StatementLine> {
         public Object getItemValue(final StatementLine pLine,
                                    final int pColIndex) {
             /* Access the line */
-            StatementLine myNext = theLines.peekNext(pLine);
             boolean isUnits = (theStateType == StatementType.Units);
 
             /* Return the appropriate value */
@@ -880,6 +884,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 case COLUMN_PARTNER:
                     return pLine.getPartner();
                 case COLUMN_BALANCE:
+                    StatementLine myNext = theTable.getNextItem(pLine);
                     if ((myNext != null) && (!pLine.isHeader())
                             && (Difference.isEqual(myNext.getDate(), pLine.getDate()))) {
                         return null;

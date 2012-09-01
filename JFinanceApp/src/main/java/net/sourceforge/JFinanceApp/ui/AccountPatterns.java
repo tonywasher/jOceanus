@@ -426,9 +426,8 @@ public class AccountPatterns extends JDataTable<Pattern> {
             case COLUMN_FREQ:
                 return theFreqBox;
             case COLUMN_TRANTYP:
-                return (myPattern.isCredit())
-                                             ? theComboList.getCreditTranTypes(theAccount.getActType())
-                                             : theComboList.getDebitTranTypes(theAccount.getActType());
+                return (myPattern.isCredit()) ? theComboList.getCreditTranTypes(theAccount) : theComboList
+                        .getDebitTranTypes(theAccount);
             case COLUMN_PARTNER:
                 return (myPattern.isCredit()) ? theComboList.getDebitAccounts(myPattern.getTransType(),
                                                                               theAccount) : theComboList

@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.ui.controls;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.JComboBox;
 
@@ -57,6 +59,16 @@ public class ComboSelect {
     private FinanceData theData;
 
     /**
+     * The map of transactionTypes for a pair of accounts.
+     */
+    private final Map<String, JComboBox> theTranMap;
+
+    /**
+     * The map of accounts for a transactionType and account.
+     */
+    private final Map<String, JComboBox> theAccountMap;
+
+    /**
      * Constructor.
      * @param pView the data view
      */
@@ -66,6 +78,10 @@ public class ComboSelect {
 
         /* Allocate the transaction type box */
         theTranTypeBox = new JComboBox();
+
+        /* Allocate the maps */
+        theTranMap = new HashMap<String, JComboBox>();
+        theAccountMap = new HashMap<String, JComboBox>();
 
         /* Refresh the data */
         refreshData();
@@ -77,6 +93,10 @@ public class ComboSelect {
     public void refreshData() {
         /* Store the data */
         theData = theView.getData();
+
+        /* Clear the maps */
+        theTranMap.clear();
+        theAccountMap.clear();
 
         /* If we have items in the list */
         if (theTranTypeBox.getItemCount() > 0) {
@@ -114,17 +134,26 @@ public class ComboSelect {
     }
 
     /**
-     * Obtain the ComboBox of transaction types for a Credit to an AccountType.
-     * @param pType the account type
+     * Obtain the ComboBox of transaction types for a Credit to an Account.
+     * @param pAccount the account
      * @return the ComboBox
      */
-    public JComboBox getCreditTranTypes(final AccountType pType) {
+    public JComboBox getCreditTranTypes(final Account pAccount) {
+        /* Create the key */
+        String myKey = "*_" + pAccount.getName();
+
+        /* Look for the existing comboBox */
+        JComboBox myCombo = theTranMap.get(myKey);
+        if (myCombo != null) {
+            return myCombo;
+        }
+
         /* Create the iterator */
         TransTypeList myList = theData.getTransTypes();
         Iterator<TransactionType> myIterator = myList.iterator();
 
         /* Create the ComboBox */
-        JComboBox myCombo = new JComboBox();
+        myCombo = new JComboBox();
 
         /* Loop through the Transaction types */
         while (myIterator.hasNext()) {
@@ -135,29 +164,42 @@ public class ComboSelect {
                 continue;
             }
 
-            /* If this is OK for a credit to this account type */
-            if (Event.isValidEvent(myTrans, pType, true)) {
+            /* Obtain the debit comboList */
+            JComboBox mySubCombo = getDebitAccounts(myTrans, pAccount);
+
+            /* If there are valid combinations */
+            if (mySubCombo.getItemCount() > 0) {
                 /* Add the item to the list */
                 myCombo.addItem(myTrans);
             }
         }
 
-        /* return to caller */
+        /* Add to map and return to caller */
+        theTranMap.put(myKey, myCombo);
         return myCombo;
     }
 
     /**
-     * Obtain the ComboBox of transaction types for a Debit from an AccountType.
-     * @param pType the transaction type
+     * Obtain the ComboBox of transaction types for a Debit from an Account.
+     * @param pAccount the account
      * @return the ComboBox
      */
-    public JComboBox getDebitTranTypes(final AccountType pType) {
+    public JComboBox getDebitTranTypes(final Account pAccount) {
+        /* Create the key */
+        String myKey = pAccount.getName() + "_*";
+
+        /* Look for the existing comboBox */
+        JComboBox myCombo = theTranMap.get(myKey);
+        if (myCombo != null) {
+            return myCombo;
+        }
+
         /* Create the iterator */
         TransTypeList myList = theData.getTransTypes();
         Iterator<TransactionType> myIterator = myList.listIterator();
 
         /* Create the ComboBox */
-        JComboBox myCombo = new JComboBox();
+        myCombo = new JComboBox();
 
         /* Loop through the Transaction types */
         while (myIterator.hasNext()) {
@@ -168,14 +210,18 @@ public class ComboSelect {
                 continue;
             }
 
-            /* If this is OK for a debit from this account type */
-            if (Event.isValidEvent(myTrans, pType, false)) {
+            /* Obtain the credit comboList */
+            JComboBox mySubCombo = getCreditAccounts(myTrans, pAccount);
+
+            /* If there are valid combinations */
+            if (mySubCombo.getItemCount() > 0) {
                 /* Add the item to the list */
                 myCombo.addItem(myTrans);
             }
         }
 
-        /* return to caller */
+        /* Add to map and return to caller */
+        theTranMap.put(myKey, myCombo);
         return myCombo;
     }
 
@@ -185,6 +231,15 @@ public class ComboSelect {
      * @return the ComboBox
      */
     public JComboBox getDebitAccounts(final TransactionType pType) {
+        /* Create the key */
+        String myKey = pType.getName();
+
+        /* Look for the existing comboBox */
+        JComboBox myCombo = theAccountMap.get(myKey);
+        if (myCombo != null) {
+            return myCombo;
+        }
+
         AccountType myType = null;
         boolean isValid = false;
 
@@ -193,7 +248,7 @@ public class ComboSelect {
         Iterator<Account> myIterator = myList.listIterator();
 
         /* Create the ComboBox */
-        JComboBox myCombo = new JComboBox();
+        myCombo = new JComboBox();
 
         /* Loop through the accounts */
         while (myIterator.hasNext()) {
@@ -213,22 +268,38 @@ public class ComboSelect {
                 continue;
             }
 
-            /* Add the item to the list */
-            myCombo.addItem(myAccount);
+            /* Obtain the credit comboList */
+            JComboBox mySubCombo = getCreditAccounts(pType, myAccount);
+
+            /* If there are valid combinations */
+            if (mySubCombo.getItemCount() > 0) {
+                /* Add the item to the list */
+                myCombo.addItem(myAccount);
+            }
         }
 
-        /* return to caller */
+        /* Add to map and return to caller */
+        theAccountMap.put(myKey, myCombo);
         return myCombo;
     }
 
     /**
-     * Obtain the ComboBox of accounts for a Credit for a Transaction Type and Account.
+     * Obtain the ComboBox of accounts for a Credit for a Transaction Type and Debit Account.
      * @param pType the transaction type
      * @param pDebit the debit account
      * @return the ComboBox
      */
     public JComboBox getCreditAccounts(final TransactionType pType,
                                        final Account pDebit) {
+        /* Create the key */
+        String myKey = pType.getName() + "_" + pDebit.getName() + "_*";
+
+        /* Look for the existing comboBox */
+        JComboBox myCombo = theAccountMap.get(myKey);
+        if (myCombo != null) {
+            return myCombo;
+        }
+
         AccountType myType = null;
         boolean isValid = false;
 
@@ -237,7 +308,7 @@ public class ComboSelect {
         Iterator<Account> myIterator = myList.listIterator();
 
         /* Create the ComboBox */
-        JComboBox myCombo = new JComboBox();
+        myCombo = new JComboBox();
 
         /* Loop through the accounts */
         while (myIterator.hasNext()) {
@@ -275,18 +346,28 @@ public class ComboSelect {
             }
         }
 
-        /* return to caller */
+        /* Add to map and return to caller */
+        theAccountMap.put(myKey, myCombo);
         return myCombo;
     }
 
     /**
-     * Obtain the ComboBox of accounts for a Debit for a Transaction Type and Account.
+     * Obtain the ComboBox of accounts for a Debit for a Transaction Type and Credit Account.
      * @param pType the transaction type
      * @param pCredit the credit account
      * @return the ComboBox
      */
     public JComboBox getDebitAccounts(final TransactionType pType,
                                       final Account pCredit) {
+        /* Create the key */
+        String myKey = pType.getName() + "_*_" + pCredit.getName();
+
+        /* Look for the existing comboBox */
+        JComboBox myCombo = theAccountMap.get(myKey);
+        if (myCombo != null) {
+            return myCombo;
+        }
+
         AccountType myType = null;
         boolean isValid = false;
 
@@ -295,7 +376,7 @@ public class ComboSelect {
         Iterator<Account> myIterator = myList.listIterator();
 
         /* Create the ComboBox */
-        JComboBox myCombo = new JComboBox();
+        myCombo = new JComboBox();
 
         /* Loop through the accounts */
         while (myIterator.hasNext()) {
@@ -333,7 +414,8 @@ public class ComboSelect {
             }
         }
 
-        /* return to caller */
+        /* Add to map and return to caller */
+        theAccountMap.put(myKey, myCombo);
         return myCombo;
     }
 }

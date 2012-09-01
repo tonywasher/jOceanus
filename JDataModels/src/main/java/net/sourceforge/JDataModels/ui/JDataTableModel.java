@@ -81,6 +81,14 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     private transient TableFilter<T> theFilter = null;
 
     /**
+     * Obtain the table filter.
+     * @return the filter
+     */
+    public TableFilter<T> getFilter() {
+        return theFilter;
+    }
+
+    /**
      * Get showAll value.
      * @return true/false
      */

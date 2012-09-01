@@ -24,7 +24,6 @@ package net.sourceforge.JFinanceApp.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ListIterator;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
@@ -299,37 +298,6 @@ public class AccountRates extends JDataTable<AccountRate> {
         /* Declare the list to the underlying table and ViewList */
         setList(theRates);
         theUpdateEntry.setDataList(theRates);
-    }
-
-    /**
-     * Perform additional validation after change.
-     */
-    // @Override
-    protected void validateAfterChange() {
-        /* Access the list iterator */
-        ListIterator<AccountRate> myIterator = theRates.listIterator();
-
-        /* Loop through the Rates in reverse order */
-        while (myIterator.hasPrevious()) {
-            AccountRate myCurr = myIterator.previous();
-
-            /* Break loop if we have a date */
-            JDateDay myDate = myCurr.getDate();
-            if (myDate != null) {
-                break;
-            }
-
-            /* Validate rate */
-            myCurr.clearErrors();
-            myCurr.validate();
-
-            /* Fire row update */
-            int myIndex = myCurr.indexOf();
-            theModel.fireTableRowsUpdated(myIndex, myIndex);
-        }
-
-        /* Calculate Edit state */
-        theRates.findEditState();
     }
 
     /**

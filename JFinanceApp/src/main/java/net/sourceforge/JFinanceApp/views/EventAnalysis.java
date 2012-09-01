@@ -372,14 +372,13 @@ public class EventAnalysis implements JDataContents {
      * @throws JDataException on error
      */
     protected final void resetStatementBalance(final Statement pStatement) throws JDataException {
-        /* Access the iterator */
-        StatementLines myLines = pStatement.getLines();
-        Iterator<StatementLine> myIterator = myLines.listIterator();
-
         /* If we don't have balances just return */
         if (theAccount instanceof ExternalAccount) {
             return;
         }
+
+        /* Access the correct iterator */
+        Iterator<StatementLine> myIterator = pStatement.getIterator();
 
         /* Restore the SavePoint */
         theAccount.restoreSavePoint(theDate);

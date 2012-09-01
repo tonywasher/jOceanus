@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.views;
 
+import java.util.Iterator;
+
 import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
@@ -37,12 +39,12 @@ import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
 import net.sourceforge.JFinanceApp.data.statics.AccountType;
 import net.sourceforge.JFinanceApp.views.Analysis.ActDetail;
 import net.sourceforge.JFinanceApp.views.Analysis.AssetAccount;
 import net.sourceforge.JFinanceApp.views.Analysis.BucketType;
 import net.sourceforge.JFinanceApp.views.Analysis.ValueAccount;
+import net.sourceforge.JTableFilter.TableFilter;
 
 /**
  * Extension of Event to cater for statements.
@@ -175,6 +177,11 @@ public class Statement implements JDataContents {
     private JUnits theEndUnits = null;
 
     /**
+     * The table filter.
+     */
+    private TableFilter<StatementLine> theFilter = null;
+
+    /**
      * The analysis.
      */
     private EventAnalysis theAnalysis = null;
@@ -246,6 +253,22 @@ public class Statement implements JDataContents {
      */
     public StatementLines getLines() {
         return theLines;
+    }
+
+    /**
+     * Obtain the iterator.
+     * @return the iterator
+     */
+    public Iterator<StatementLine> getIterator() {
+        return (theFilter == null) ? theLines.listIterator() : theFilter.viewIterator();
+    }
+
+    /**
+     * Set the filter.
+     * @param pFilter the filter
+     */
+    public void setFilter(final TableFilter<StatementLine> pFilter) {
+        theFilter = pFilter;
     }
 
     /**
@@ -338,7 +361,7 @@ public class Statement implements JDataContents {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PatternList.class.getSimpleName(),
+        protected static final JDataFields FIELD_DEFS = new JDataFields(StatementLines.class.getSimpleName(),
                 DataList.FIELD_DEFS);
 
         @Override

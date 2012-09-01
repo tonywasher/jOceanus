@@ -34,7 +34,6 @@ import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.event.ListSelectionEvent;
 
 import net.sourceforge.JDataManager.EditState;
 import net.sourceforge.JDataManager.JDataException;
@@ -353,15 +352,6 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
         }
     }
 
-    @Override
-    public void valueChanged(final ListSelectionEvent evt) {
-        super.valueChanged(evt);
-        if (evt.getValueIsAdjusting()) {
-            return;
-        }
-        notifyChanges();
-    }
-
     /**
      * Select a row and ensure that it is visible.
      * @param row the row to select
@@ -416,10 +406,10 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
     }
 
     /**
-     * Perform additional validation after change.
+     * Perform additional updates after change.
      */
-    // protected void validateAfterChange() {
-    // }
+    protected void updateAfterChange() {
+    }
 
     /**
      * Get showAll value.
@@ -546,9 +536,9 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
             theModel.fireUpdateRowEvents(myRowNo);
         }
 
-        /* Re-validate after change */
+        /* Allow adjustments and increment version */
+        updateAfterChange();
         incrementVersion();
-        // validateAfterChange();
     }
 
     /**
@@ -596,9 +586,9 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
             theModel.fireInsertRowEvents(myRowNo);
         }
 
-        /* Re-validate after change */
+        /* Allow adjustments and increment version */
+        updateAfterChange();
         incrementVersion();
-        // validateAfterChange();
     }
 
     /**
@@ -645,8 +635,57 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
             theModel.fireUpdateRowEvents(myRowNo);
         }
 
-        /* Re-validate after change */
+        /* Allow adjustments and increment version */
+        updateAfterChange();
         incrementVersion();
-        // validateAfterChange();
+    }
+
+    /**
+     * Obtain next item in view.
+     * @param pItem the original item
+     * @return the next item (or null).
+     */
+    public T getNextItem(final T pItem) {
+        /* Obtain the index of the item */
+        int myIndex = theList.indexOf(pItem);
+
+        /* Obtain the view index and return null if invalid */
+        int myViewIndex = convertRowIndexToView(myIndex);
+        if (myViewIndex == -1) {
+            return null;
+        }
+
+        /* Increment the value and check within range */
+        int myCount = getRowCount();
+        if (++myViewIndex >= myCount) {
+            return null;
+        }
+
+        /* Convert back to model index and return the item */
+        myIndex = convertRowIndexToModel(myViewIndex);
+        return theList.get(myIndex);
+    }
+
+    /**
+     * Obtain previous item in view.
+     * @param pItem the original item
+     * @return the previous item (or null).
+     */
+    public T getPrevItem(final T pItem) {
+        /* Obtain the index of the item */
+        int myIndex = theList.indexOf(pItem);
+
+        /* Obtain the view index and return null if invalid or first item */
+        int myViewIndex = convertRowIndexToView(myIndex);
+        if (myViewIndex <= 0) {
+            return null;
+        }
+
+        /* Decrement the value */
+        myViewIndex--;
+
+        /* Convert back to model index and return the item */
+        myIndex = convertRowIndexToModel(myViewIndex);
+        return theList.get(myIndex);
     }
 }
