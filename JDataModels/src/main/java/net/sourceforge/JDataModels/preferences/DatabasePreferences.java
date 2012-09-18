@@ -104,7 +104,7 @@ public class DatabasePreferences extends PreferenceSet {
     /**
      * Default Database driver string.
      */
-    private static final JDBCDriver DEFAULT_DBDRIVER = JDBCDriver.SQLServer;
+    private static final JDBCDriver DEFAULT_DBDRIVER = JDBCDriver.PostgreSQL;
 
     /**
      * Default Database connection string.

@@ -63,6 +63,7 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
         /* Access the Lists */
         DataSet<?> myData = pReader.getData();
         theList = myData.getControlKeys();
+        setDataList(theList);
     }
 
     /**

@@ -68,6 +68,7 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
 
         /* Access the TaxRegime list */
         theList = pReader.getData().getTaxRegimes();
+        setDataList(theList);
     }
 
     /**

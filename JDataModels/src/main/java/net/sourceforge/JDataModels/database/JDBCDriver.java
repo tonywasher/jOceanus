@@ -164,14 +164,18 @@ public enum JDBCDriver {
         switch (this) {
             case SQLServer:
                 myBuilder.append("if exists (select * from sys.tables where name = '");
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append(pName);
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append("') drop table ");
                 myBuilder.append(pName);
                 break;
             case PostgreSQL:
             default:
                 myBuilder.append("drop table if exists ");
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append(pName);
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 break;
         }
 
@@ -189,17 +193,23 @@ public enum JDBCDriver {
         switch (this) {
             case SQLServer:
                 myBuilder.append("if exists (select * from sys.indexes where name = '");
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append(TableDefinition.PREFIX_INDEX);
                 myBuilder.append(pName);
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append("') drop index ");
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append(TableDefinition.PREFIX_INDEX);
                 myBuilder.append(pName);
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 break;
             case PostgreSQL:
             default:
                 myBuilder.append("drop index if exists ");
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 myBuilder.append(TableDefinition.PREFIX_INDEX);
                 myBuilder.append(pName);
+                myBuilder.append(TableDefinition.QUOTE_STRING);
                 break;
         }
 

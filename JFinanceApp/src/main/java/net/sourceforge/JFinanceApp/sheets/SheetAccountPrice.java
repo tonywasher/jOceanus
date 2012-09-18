@@ -106,6 +106,7 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
 
         /* Access the Prices list */
         theList = pReader.getData().getPrices();
+        setDataList(theList);
     }
 
     /**

@@ -156,6 +156,7 @@ public class SheetAccount extends SheetDataItem<Account> {
         /* Access the Lists */
         FinanceData myData = pReader.getData();
         theList = myData.getAccounts();
+        setDataList(theList);
     }
 
     /**

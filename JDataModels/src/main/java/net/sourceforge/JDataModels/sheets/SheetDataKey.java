@@ -73,6 +73,7 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
         /* Access the Lists */
         DataSet<?> myData = pReader.getData();
         theList = myData.getDataKeys();
+        setDataList(theList);
     }
 
     /**

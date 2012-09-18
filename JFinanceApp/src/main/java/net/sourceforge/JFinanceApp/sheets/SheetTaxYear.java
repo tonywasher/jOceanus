@@ -197,6 +197,7 @@ public class SheetTaxYear extends SheetDataItem<TaxYear> {
         /* Access the Lists */
         theData = pReader.getData();
         theList = theData.getTaxYears();
+        setDataList(theList);
     }
 
     /**

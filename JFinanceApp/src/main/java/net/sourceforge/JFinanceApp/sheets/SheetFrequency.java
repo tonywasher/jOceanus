@@ -68,6 +68,7 @@ public class SheetFrequency extends SheetStaticData<Frequency> {
 
         /* Access the Frequency list */
         theList = pReader.getData().getFrequencys();
+        setDataList(theList);
     }
 
     /**

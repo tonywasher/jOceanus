@@ -66,6 +66,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
 
         /* Access the InfoType list */
         theList = pReader.getData().getInfoTypes();
+        setDataList(theList);
     }
 
     /**

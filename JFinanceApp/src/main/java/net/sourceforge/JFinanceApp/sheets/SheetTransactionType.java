@@ -73,6 +73,7 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
 
         /* Access the Transaction Type list */
         theList = pReader.getData().getTransTypes();
+        setDataList(theList);
     }
 
     /**

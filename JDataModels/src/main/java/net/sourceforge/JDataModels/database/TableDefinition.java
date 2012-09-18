@@ -68,6 +68,11 @@ public class TableDefinition {
     protected static final String PREFIX_INDEX = "idx_";
 
     /**
+     * The quote string.
+     */
+    protected static final String QUOTE_STRING = "\"";
+
+    /**
      * The Table name.
      */
     private final String theTableName;
@@ -884,7 +889,9 @@ public class TableDefinition {
 
         /* Build the initial create */
         myBuilder.append("create table ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -920,10 +927,14 @@ public class TableDefinition {
 
         /* Build the initial create */
         myBuilder.append("create index ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(PREFIX_INDEX);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" on ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -936,7 +947,9 @@ public class TableDefinition {
             if (!myFirst) {
                 myBuilder.append(", ");
             }
+            myBuilder.append(QUOTE_STRING);
             myBuilder.append(myDef.getColumnName());
+            myBuilder.append(QUOTE_STRING);
             if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                 myBuilder.append(" DESC");
             }
@@ -993,13 +1006,17 @@ public class TableDefinition {
             if (sortOnReference) {
                 myBuilder.append("a.");
             }
+            myBuilder.append(QUOTE_STRING);
             myBuilder.append(myDef.getColumnName());
+            myBuilder.append(QUOTE_STRING);
             myFirst = false;
         }
 
         /* Close the statement */
         myBuilder.append(" from ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         if (sortOnReference) {
             myBuilder.append(" a");
         }
@@ -1083,14 +1100,18 @@ public class TableDefinition {
                     /* Handle standard column with prefix */
                     myBuilder.append(pChar);
                     myBuilder.append(".");
+                    myBuilder.append(QUOTE_STRING);
                     myBuilder.append(myDef.getColumnName());
+                    myBuilder.append(QUOTE_STRING);
                     if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                         myBuilder.append(" DESC");
                     }
                 }
             } else {
                 /* Handle standard column */
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append(myDef.getColumnName());
+                myBuilder.append(QUOTE_STRING);
                 if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                     myBuilder.append(" DESC");
                 }
@@ -1113,7 +1134,9 @@ public class TableDefinition {
 
         /* Build the initial insert */
         myBuilder.append("insert into ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" (");
 
         /* Create the iterator */
@@ -1125,11 +1148,11 @@ public class TableDefinition {
             ColumnDefinition myDef = myIterator.next();
             if (!myFirst) {
                 myBuilder.append(", ");
-            }
-            if (!myFirst) {
                 myValues.append(", ");
             }
+            myBuilder.append(QUOTE_STRING);
             myBuilder.append(myDef.getColumnName());
+            myBuilder.append(QUOTE_STRING);
             myValues.append('?');
             myFirst = false;
         }
@@ -1151,7 +1174,9 @@ public class TableDefinition {
 
         /* Build the initial update */
         myBuilder.append("update ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" set ");
 
         /* Create the iterator */
@@ -1180,7 +1205,9 @@ public class TableDefinition {
                 if (!myFirst) {
                     myBuilder.append(", ");
                 }
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append(myDef.getColumnName());
+                myBuilder.append(QUOTE_STRING);
                 myBuilder.append("=?");
                 myFirst = false;
             }
@@ -1193,7 +1220,9 @@ public class TableDefinition {
 
         /* Close the statement and return it */
         myBuilder.append(" where ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(myId.getColumnName());
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append("=?");
         return myBuilder.toString();
     }
@@ -1207,14 +1236,18 @@ public class TableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(" where ");
 
         /* Access the id definition */
         ColumnDefinition myId = theList.get(0);
 
         /* Build the rest of the command */
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(myId.getColumnName());
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append("=?");
         return myBuilder.toString();
     }
@@ -1228,7 +1261,9 @@ public class TableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("delete from ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         return myBuilder.toString();
     }
 
@@ -1241,7 +1276,9 @@ public class TableDefinition {
 
         /* Build the initial delete */
         myBuilder.append("select count(*) from ");
+        myBuilder.append(QUOTE_STRING);
         myBuilder.append(theTableName);
+        myBuilder.append(QUOTE_STRING);
         return myBuilder.toString();
     }
 }

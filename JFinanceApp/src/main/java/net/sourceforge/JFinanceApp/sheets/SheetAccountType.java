@@ -67,6 +67,7 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
 
         /* Access the Account Type list */
         theList = pReader.getData().getAccountTypes();
+        setDataList(theList);
     }
 
     /**

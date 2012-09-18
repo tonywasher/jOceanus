@@ -138,6 +138,7 @@ public class SheetEvent extends SheetDataItem<Event> {
         /* Access the Lists */
         FinanceData myData = pReader.getData();
         theList = myData.getEvents();
+        setDataList(theList);
     }
 
     /**

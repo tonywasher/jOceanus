@@ -37,6 +37,7 @@ import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
 import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
+import net.sourceforge.JSvnManager.data.Repository;
 import net.sourceforge.JSvnManager.data.SubVersionPreferences;
 
 import org.tmatesoft.svn.core.SVNCancelException;
@@ -62,7 +63,12 @@ public class Backup {
     /**
      * The Data file name.
      */
-    public static final String DATA_NAME = "zipData";
+    private static final String DATA_NAME = "zipData";
+
+    /**
+     * The Buffer length.
+     */
+    private static final int BUFFER_LEN = 100;
 
     /**
      * The preference manager.
@@ -162,6 +168,30 @@ public class Backup {
     }
 
     /**
+     * Build URL.
+     * @param pName the name of the repository
+     * @return the Repository path
+     */
+    private String buildURL(final String pName) {
+        /* Build the underlying string */
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+
+        /* Build the repository */
+        myBuilder.append(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO));
+
+        /* Build the prefix directory */
+        myBuilder.append(Repository.SEP_URL);
+        myBuilder.append(Repository.PFIX_URL);
+
+        /* Build the component directory */
+        myBuilder.append(Repository.SEP_URL);
+        myBuilder.append(pName);
+
+        /* Return the path */
+        return myBuilder.toString();
+    }
+
+    /**
      * Dump a repository to a Backup directory.
      * @param pManager the secure manager
      * @param pHash the password hash
@@ -190,8 +220,7 @@ public class Backup {
             String myPrefix = thePreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
 
             /* Determine the repository name */
-            String myRepoName = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO) + "/"
-                    + myName;
+            String myRepoName = buildURL(myName);
             SVNURL myURL = SVNURL.parseURIEncoded(myRepoName);
 
             /* Access the repository */

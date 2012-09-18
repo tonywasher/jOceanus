@@ -78,6 +78,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
         /* Access the Lists */
         DataSet<?> myData = pReader.getData();
         theList = myData.getControlData();
+        setDataList(theList);
     }
 
     /**

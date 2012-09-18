@@ -67,6 +67,7 @@ public class SheetTaxType extends SheetStaticData<TaxType> {
 
         /* Access the Tax Type list */
         theList = pReader.getData().getTaxTypes();
+        setDataList(theList);
     }
 
     /**

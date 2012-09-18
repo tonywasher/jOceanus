@@ -164,7 +164,9 @@ public abstract class ColumnDefinition {
      */
     protected void buildCreateString(final StringBuilder pBuilder) {
         /* Add the name of the column */
+        pBuilder.append(TableDefinition.QUOTE_STRING);
         pBuilder.append(getColumnName());
+        pBuilder.append(TableDefinition.QUOTE_STRING);
         pBuilder.append(' ');
 
         /* Add the type of the column */
@@ -359,9 +361,13 @@ public abstract class ColumnDefinition {
         protected void buildKeyReference(final StringBuilder pBuilder) {
             /* Add the reference */
             pBuilder.append(" references ");
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(theReference);
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append('(');
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(DataItem.FIELD_ID.getName());
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(')');
         }
 
@@ -401,7 +407,9 @@ public abstract class ColumnDefinition {
 
             /* Build Initial part of string */
             pBuilder.append(" join ");
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(theReference);
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(" ");
             pBuilder.append(myChar);
 
@@ -409,11 +417,15 @@ public abstract class ColumnDefinition {
             pBuilder.append(" on ");
             pBuilder.append(pChar);
             pBuilder.append(".");
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(getColumnName());
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(" = ");
             pBuilder.append(myChar);
             pBuilder.append(".");
+            pBuilder.append(TableDefinition.QUOTE_STRING);
             pBuilder.append(DataItem.FIELD_ID.getName());
+            pBuilder.append(TableDefinition.QUOTE_STRING);
 
             /* Increment offset */
             myOffset++;
@@ -468,7 +480,9 @@ public abstract class ColumnDefinition {
                     /* Build the column name */
                     pBuilder.append(myChar);
                     pBuilder.append(".");
+                    pBuilder.append(TableDefinition.QUOTE_STRING);
                     pBuilder.append(myDef.getColumnName());
+                    pBuilder.append(TableDefinition.QUOTE_STRING);
                     if (myDef.getSortOrder() == SortOrder.DESCENDING) {
                         pBuilder.append(" DESC");
                     }

@@ -133,6 +133,7 @@ public class SheetPattern extends SheetDataItem<Pattern> {
         FinanceData myData = pReader.getData();
         theAccounts = myData.getAccounts();
         theList = myData.getPatterns();
+        setDataList(theList);
     }
 
     /**
