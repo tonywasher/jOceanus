@@ -125,25 +125,6 @@ public class RenderManager {
     }
 
     /**
-     * Listener class.
-     */
-    // private final class RenderListener implements ChangeListener {
-    //
-    // @Override
-    // public void stateChanged(final ChangeEvent evt) {
-    // /* Process preferences */
-    // processPreferences();
-    // }
-    // }
-
-    /**
-     * Initialise DataManager.
-     */
-    // public void initialiseDataManager() {
-    //
-    // }
-
-    /**
      * Allocate a RenderData object.
      * @param isFixed is the data fixed width
      * @return the render data

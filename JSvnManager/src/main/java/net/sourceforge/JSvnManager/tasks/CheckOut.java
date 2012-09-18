@@ -306,7 +306,7 @@ public class CheckOut {
      */
     private final class CheckOutHandler implements ISVNEventHandler {
         /**
-         * Prefix
+         * Prefix.
          */
         private String thePrefix = null;
 
