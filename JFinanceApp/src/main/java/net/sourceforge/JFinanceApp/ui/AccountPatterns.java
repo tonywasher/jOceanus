@@ -108,7 +108,7 @@ public class AccountPatterns extends JDataTable<Pattern> {
     /**
      * Frequency Box.
      */
-    private final JComboBox theFreqBox;
+    private final JComboBox<Frequency> theFreqBox;
 
     /**
      * Self Reference.
@@ -313,7 +313,7 @@ public class AccountPatterns extends JDataTable<Pattern> {
         getTableHeader().setReorderingAllowed(false);
 
         /* Build the combo box */
-        theFreqBox = new JComboBox();
+        theFreqBox = new JComboBox<Frequency>();
 
         /* Add the mouse listener */
         PatternMouse myMouse = new PatternMouse();
@@ -416,8 +416,8 @@ public class AccountPatterns extends JDataTable<Pattern> {
      * @return the comboBox
      */
     @Override
-    public JComboBox getComboBox(final int row,
-                                 final int column) {
+    public JComboBox<?> getComboBox(final int row,
+                                    final int column) {
         /* Access the pattern */
         Pattern myPattern = thePatterns.get(row);
 

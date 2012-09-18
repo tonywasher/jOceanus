@@ -33,6 +33,7 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JSortedList.OrderedList;
+import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.JSvnManager.project.ProjectDefinition;
 import net.sourceforge.JSvnManager.project.ProjectId;
 import net.sourceforge.JSvnManager.project.ProjectId.ProjectStatus;
@@ -281,7 +282,7 @@ public final class Tag implements JDataContents, Comparable<Tag> {
     public SVNURL getURL() {
         /* Build the URL */
         try {
-            return SVNURL.parseURIDecoded(getURLPath());
+            return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
             return null;
         }
@@ -316,10 +317,35 @@ public final class Tag implements JDataContents, Comparable<Tag> {
     }
 
     /**
-     * resolveDependencies
+     * Clone the definition.
+     * @param pDefinition the definition to clone
      * @throws JDataException on error
      */
-    private void resolveDependencies() throws JDataException {
+    public void cloneDefinition(final ProjectDefinition pDefinition) throws JDataException {
+        /* clone the project definition */
+        theProject = new ProjectDefinition(pDefinition);
+        theProject.setSnapshotVersion(getTagName());
+    }
+
+    /**
+     * Obtain full tag list including dependencies.
+     * @return the full tag list.
+     */
+    public Map<Component, Tag> getAllTags() {
+        /* Create a new map and add self to map */
+        Map<Component, Tag> myMap = new HashMap<Component, Tag>(theDependencies);
+        myMap.put(theComponent, this);
+
+        /* return the map */
+        return myMap;
+    }
+
+    /**
+     * resolveDependencies.
+     * @param pReport the report object
+     * @throws JDataException on error
+     */
+    private void resolveDependencies(final ReportStatus pReport) throws JDataException {
         /* Switch on status */
         switch (theProjectStatus) {
             case FINAL:
@@ -346,7 +372,7 @@ public final class Tag implements JDataContents, Comparable<Tag> {
         /* Loop through our dependencies */
         for (Tag myDep : theDependencies.values()) {
             /* Resolve dependencies */
-            myDep.resolveDependencies();
+            myDep.resolveDependencies(pReport);
 
             /* Loop through underlying dependencies */
             for (Tag mySub : myDep.getDependencies().values()) {
@@ -367,11 +393,68 @@ public final class Tag implements JDataContents, Comparable<Tag> {
                     myNew.put(myComp, mySub);
                 }
             }
-
-            /* Store new dependencies and mark as resolved */
-            theDependencies = myNew;
-            theProjectStatus = ProjectStatus.FINAL;
         }
+
+        /* Check that we are not dependent on a different version of this component */
+        if (myNew.get(theComponent) != null) {
+            throw new JDataException(ExceptionClass.DATA, this, "Inconsistent dependency for Tag");
+        }
+
+        /* Store new dependencies and mark as resolved */
+        theDependencies = myNew;
+        theProjectStatus = ProjectStatus.FINAL;
+    }
+
+    /**
+     * Obtain merged and validated tag map.
+     * @param pTags the core tags
+     * @return the tag map
+     * @throws JDataException on error
+     */
+    public static Map<Component, Tag> getTagMap(final Tag[] pTags) throws JDataException {
+        /* Set default map */
+        Map<Component, Tag> myResult = null;
+        Repository myRepo = null;
+
+        /* Loop through the tags */
+        for (Tag myTag : pTags) {
+            /* Access map */
+            Map<Component, Tag> myMap = myTag.getAllTags();
+
+            /* If this is the first tag */
+            if (myResult == null) {
+                /* Store as result */
+                myResult = myMap;
+                myRepo = myTag.getRepository();
+                continue;
+            }
+
+            /* Check this is the same repository */
+            if (!myRepo.equals(myTag.getRepository())) {
+                /* throw exception */
+                throw new JDataException(ExceptionClass.DATA, "Different repository for tag");
+            }
+
+            /* Loop through map elements */
+            for (Map.Entry<Component, Tag> myEntry : myMap.entrySet()) {
+                /* Obtain any existing entry */
+                Tag myExisting = myResult.get(myEntry.getKey());
+
+                /* If this entry doesn't exist */
+                if (myExisting == null) {
+                    /* Add to map */
+                    myResult.put(myEntry.getKey(), myEntry.getValue());
+
+                    /* else if the tag differs */
+                } else if (!myExisting.equals(myEntry.getValue())) {
+                    /* throw exception */
+                    throw new JDataException(ExceptionClass.DATA, "Conflicting version for tag");
+                }
+            }
+        }
+
+        /* Return the result */
+        return myResult;
     }
 
     /**
@@ -463,9 +546,10 @@ public final class Tag implements JDataContents, Comparable<Tag> {
 
         /**
          * Discover tag list from repository.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        public void discover() throws JDataException {
+        public void discover(final ReportStatus pReport) throws JDataException {
             /* Reset the list */
             clear();
 
@@ -477,17 +561,16 @@ public final class Tag implements JDataContents, Comparable<Tag> {
             /* Protect against exceptions */
             try {
                 /* Access the tags directory URL */
-                SVNURL myURL = SVNURL.parseURIDecoded(theComponent.getTagsPath());
+                SVNURL myURL = SVNURL.parseURIEncoded(theComponent.getTagsPath());
 
                 /* List the tag directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
                                 SVNDirEntry.DIRENT_ALL, new ListDirHandler());
-
-                /* Release the client manager */
-                myRepo.releaseClientManager(myMgr);
             } catch (SVNException e) {
                 throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover tags for "
                         + theBranch.getBranchName(), e);
+            } finally {
+                myRepo.releaseClientManager(myMgr);
             }
 
             /* Access list iterator */
@@ -498,12 +581,14 @@ public final class Tag implements JDataContents, Comparable<Tag> {
                 /* Access the next branch */
                 Tag myTag = myIterator.next();
 
+                /* Report stage */
+                pReport.setNewStage("Analysing tag " + myTag.getTagName());
+
                 /* Parse project file */
                 ProjectDefinition myProject = myRepo.parseProjectURL(myTag.getURLPath());
                 myTag.theProject = myProject;
 
                 /* Register the tag */
-                /* Register the branch */
                 if (myProject != null) {
                     myRepo.registerTag(myProject.getDefinition(), myTag);
                 }
@@ -512,9 +597,10 @@ public final class Tag implements JDataContents, Comparable<Tag> {
 
         /**
          * registerDependencies.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        protected void registerDependencies() throws JDataException {
+        protected void registerDependencies(final ReportStatus pReport) throws JDataException {
             /* Access list iterator */
             Repository myRepo = theComponent.getRepository();
             Iterator<Tag> myIterator = iterator();
@@ -557,9 +643,10 @@ public final class Tag implements JDataContents, Comparable<Tag> {
 
         /**
          * propagateDependencies.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        protected void propagateDependencies() throws JDataException {
+        protected void propagateDependencies(final ReportStatus pReport) throws JDataException {
             /* Access list iterator */
             Iterator<Tag> myIterator = iterator();
 
@@ -567,7 +654,7 @@ public final class Tag implements JDataContents, Comparable<Tag> {
             while (myIterator.hasNext()) {
                 /* Access the Tag and resolve dependencies */
                 Tag myTag = myIterator.next();
-                myTag.resolveDependencies();
+                myTag.resolveDependencies(pReport);
             }
         }
 
@@ -601,10 +688,35 @@ public final class Tag implements JDataContents, Comparable<Tag> {
         }
 
         /**
-         * Determine next tag.
-         * @return the next tag
+         * Locate Tag.
+         * @param pTag the tag to locate
+         * @return the relevant tag or Null
          */
-        public Tag nextTag() {
+        protected Tag locateTag(final int pTag) {
+            /* Access list iterator */
+            Iterator<Tag> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Tag */
+                Tag myTag = myIterator.next();
+
+                /* If this is the correct tag */
+                if (pTag == myTag.theTag) {
+                    /* return the tag */
+                    return myTag;
+                }
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
+         * Determine latest tag.
+         * @return the latestt tag
+         */
+        public Tag latestTag() {
             /* Access list iterator */
             Iterator<Tag> myIterator = iterator();
             Tag myTag = null;
@@ -614,6 +726,18 @@ public final class Tag implements JDataContents, Comparable<Tag> {
                 /* Access the next tag */
                 myTag = myIterator.next();
             }
+
+            /* Return the tag */
+            return myTag;
+        }
+
+        /**
+         * Determine next tag.
+         * @return the next tag
+         */
+        public Tag nextTag() {
+            /* Access latest tag */
+            Tag myTag = latestTag();
 
             /* Determine the largest current tag */
             int myTagNo = (myTag == null) ? 0 : myTag.theTag;

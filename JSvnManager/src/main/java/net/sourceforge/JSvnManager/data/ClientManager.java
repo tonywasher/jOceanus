@@ -23,10 +23,15 @@
 package net.sourceforge.JSvnManager.data;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import org.tmatesoft.svn.core.SVNCancelException;
+import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+import org.tmatesoft.svn.core.wc.ISVNEventHandler;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNEvent;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 /**
@@ -40,14 +45,14 @@ public class ClientManager {
     private final List<SVNClientManager> thePool;
 
     /**
-     * Subversion User name.
+     * Authentication manager.
      */
-    private final String theUser;
+    private final ISVNAuthenticationManager theAuth;
 
     /**
-     * Subversion Password.
+     * Null Event Handler.
      */
-    private final String thePass;
+    private final NullEventHandler theHandler = new NullEventHandler();
 
     /**
      * Constructor.
@@ -58,8 +63,15 @@ public class ClientManager {
         thePool = new ArrayList<SVNClientManager>();
 
         /* Access UserId and password */
-        theUser = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER);
-        thePass = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS);
+        String myUser = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER);
+        String myPass = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS);
+        theAuth = SVNWCUtil.createDefaultAuthenticationManager(myUser, myPass);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        /* Dispose of any connections */
+        dispose();
     }
 
     /**
@@ -86,8 +98,8 @@ public class ClientManager {
      * @param pMgr the instance to return
      */
     public void releaseClientMgr(final SVNClientManager pMgr) {
-        /* Set event handler to null */
-        pMgr.setEventHandler(null);
+        /* Set event handler to default */
+        pMgr.setEventHandler(theHandler);
 
         /* Add it back into the pool */
         thePool.add(pMgr);
@@ -100,10 +112,44 @@ public class ClientManager {
     private SVNClientManager allocateClientMgr() {
         /* Access a default client manager */
         SVNClientManager myMgr = SVNClientManager.newInstance();
-        ISVNAuthenticationManager myAuth = SVNWCUtil.createDefaultAuthenticationManager(theUser, thePass);
-        myMgr.setAuthenticationManager(myAuth);
+        myMgr.setAuthenticationManager(theAuth);
+
+        /* Initialise handler */
+        myMgr.setEventHandler(theHandler);
 
         /* Return the new instance */
         return myMgr;
+    }
+
+    /**
+     * Dispose of all Client Manager instances.
+     */
+    public void dispose() {
+        /* Allocate an iterator */
+        Iterator<SVNClientManager> myIterator = thePool.iterator();
+
+        /* Loop through the list */
+        while (myIterator.hasNext()) {
+            SVNClientManager myMgr = myIterator.next();
+
+            /* Dispose of the manager */
+            myMgr.dispose();
+            myIterator.remove();
+        }
+    }
+
+    /**
+     * EventHandler.
+     */
+    private final class NullEventHandler implements ISVNEventHandler {
+
+        @Override
+        public void checkCancelled() throws SVNCancelException {
+        }
+
+        @Override
+        public void handleEvent(final SVNEvent pEvent,
+                                final double pProgress) throws SVNException {
+        }
     }
 }

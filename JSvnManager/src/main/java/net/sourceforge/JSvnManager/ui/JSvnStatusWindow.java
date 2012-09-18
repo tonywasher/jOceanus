@@ -25,15 +25,17 @@ package net.sourceforge.JSvnManager.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportTask;
-import net.sourceforge.JSvnManager.threads.DiscoverData;
 
 /**
  * Status window for SubVersion operations.
@@ -61,9 +63,29 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
     private final JTextArea theText;
 
     /**
+     * The TextPosition.
+     */
+    private int thePosition = 0;
+
+    /**
      * The Clear button.
      */
     private final JButton theClearButton;
+
+    /**
+     * The Cancel button.
+     */
+    private final JButton theCancelButton;
+
+    /**
+     * The Thread executor.
+     */
+    private final ExecutorService theExecutor = Executors.newSingleThreadExecutor();
+
+    /**
+     * The active thread.
+     */
+    private SwingWorker<Void, String> theThread = null;
 
     /**
      * Constructor.
@@ -77,6 +99,7 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
         theText = new JTextArea();
         theText.setEditable(false);
         theClearButton = new JButton("Clear");
+        theCancelButton = new JButton("Cancel");
 
         /* Create the scrollPane */
         theScroll = new JScrollPane();
@@ -84,34 +107,73 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
         theScroll.setPreferredSize(new Dimension(600, 400));
 
         /* Add listener */
-        theClearButton.addActionListener(new StatusListener());
+        StatusListener myListener = new StatusListener();
+        theClearButton.addActionListener(myListener);
+        theCancelButton.addActionListener(myListener);
+        theCancelButton.setVisible(false);
 
         /* Add the components */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         add(theScroll);
         add(theClearButton);
+        add(theCancelButton);
+    }
+
+    /**
+     * Run thread.
+     * @param pThread the thread to run
+     */
+    protected void runThread(final SwingWorker<Void, String> pThread) {
+        /* Store thread and enable cancel button */
+        theThread = pThread;
+        theCancelButton.setVisible(true);
+
+        /* Run the thread */
+        theExecutor.execute(theThread);
+    }
+
+    /**
+     * Shutdown.
+     */
+    protected void shutdown() {
+        /* Shutdown the executor */
+        theExecutor.shutdown();
     }
 
     @Override
-    public void reportStatus(final String pStatus) {
+    public boolean initTask(final String pTask) {
         /* Add status to text area */
-        theText.append(pStatus);
+        return setNewStage(pTask);
+    }
+
+    @Override
+    public boolean setNewStage(final String pStage) {
+        /* Add status to text area */
+        theText.append(pStage);
         theText.append("\n");
+        thePosition += pStage.length() + 1;
+        theText.setCaretPosition(thePosition);
+        return true;
+    }
+
+    @Override
+    public boolean setNumStages(final int pNumStages) {
+        return true;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return false;
     }
 
     @Override
     public void completeTask(final Object pTask) {
-        /* If this is the discoverData thread */
-        if (pTask instanceof DiscoverData) {
-            /* Access correctly */
-            DiscoverData myThread = (DiscoverData) pTask;
+        /* Let the manager know about the completion */
+        theManager.completeTask(pTask);
 
-            /* If there was no error */
-            if (myThread.getError() == null) {
-                /* Report data to manager */
-                theManager.setData(myThread);
-            }
-        }
+        /* Clear the thread indication and hide the cancel button */
+        theThread = null;
+        theCancelButton.setVisible(false);
     }
 
     /**
@@ -120,8 +182,21 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
     private final class StatusListener implements ActionListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
-            /* Clear contents */
-            theText.setText(null);
+            Object o = evt.getSource();
+
+            /* If this is the clear button */
+            if (theClearButton.equals(o)) {
+                /* Clear contents */
+                theText.setText(null);
+                thePosition = 0;
+
+                /* If this is the clear button */
+            } else if (theCancelButton.equals(o)) {
+                /* Cancel any running thread */
+                if (theThread != null) {
+                    theThread.cancel(true);
+                }
+            }
         }
     }
 }

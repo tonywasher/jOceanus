@@ -125,12 +125,12 @@ public class ReportSelect extends JEventPanel {
     /**
      * Reports comboBox.
      */
-    private final JComboBox theReportBox;
+    private final JComboBox<ReportType> theReportBox;
 
     /**
      * Years comboBox.
      */
-    private final JComboBox theYearsBox;
+    private final JComboBox<TaxYear> theYearsBox;
 
     /**
      * Years label.
@@ -197,8 +197,8 @@ public class ReportSelect extends JEventPanel {
         theView = pView;
 
         /* Create the boxes */
-        theReportBox = new JComboBox();
-        theYearsBox = new JComboBox();
+        theReportBox = new JComboBox<ReportType>();
+        theYearsBox = new JComboBox<TaxYear>();
         theReportBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
         theYearsBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
 

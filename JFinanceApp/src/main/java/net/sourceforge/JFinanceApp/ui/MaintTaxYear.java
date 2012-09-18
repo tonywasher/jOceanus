@@ -166,7 +166,7 @@ public class MaintTaxYear extends JEventPanel {
     /**
      * The regimes comboBox.
      */
-    private final JComboBox theRegimesBox;
+    private final JComboBox<TaxRegime> theRegimesBox;
 
     /**
      * The tax year field.
@@ -387,7 +387,7 @@ public class MaintTaxYear extends JEventPanel {
         theFieldSet = new FieldSet(theRenderMgr);
 
         /* Create the combo box and add to the field set */
-        theRegimesBox = new JComboBox();
+        theRegimesBox = new JComboBox<TaxRegime>();
         theFieldSet.addItemField(theRegimesBox, TaxYear.FIELD_REGIME);
 
         /* Create the text fields */

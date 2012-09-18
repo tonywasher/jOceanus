@@ -113,7 +113,7 @@ public class SubVersionPreferences extends PreferenceSet {
     /**
      * Default value for SubversionRepository Base.
      */
-    private static final String DEFAULT_SVN_REPO = "http://localhost";
+    private static final String DEFAULT_SVN_REPO = "http://Tony-HP";
 
     /**
      * Default value for SubversionRepository Name.
@@ -123,27 +123,27 @@ public class SubVersionPreferences extends PreferenceSet {
     /**
      * Default value for SubversionUser.
      */
-    private static final String DEFAULT_SVN_USER = "User";
+    private static final String DEFAULT_SVN_USER = "Tony";
 
     /**
      * Default value for SubversionPassword.
      */
-    private static final String DEFAULT_SVN_PASS = "";
+    private static final String DEFAULT_SVN_PASS = "c2Resmin";
 
     /**
      * Default value for SubversionWorkSpace.
      */
-    private static final String DEFAULT_SVN_WORK = "C:\\";
+    private static final String DEFAULT_SVN_WORK = "C:\\Users\\Tony\\financeWorkSpace";
 
     /**
      * Default value for SubversionBuildSpace.
      */
-    private static final String DEFAULT_SVN_BUILD = "C:\\Users\\Unknown";
+    private static final String DEFAULT_SVN_BUILD = "C:\\Users\\Tony\\TestWC";
 
     /**
      * Default value for SubversionDirectory.
      */
-    private static final String DEFAULT_SVN_DIR = "C:\\Program Files\\csvn\\data\\repositories";
+    private static final String DEFAULT_SVN_DIR = "C:\\csvn\\data\\repositories";
 
     /**
      * Default value for BackupPrefix.

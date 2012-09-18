@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.JDecimal</groupId>
-  <artifactId>JDecimal</artifactId>
-  <version>v1.0.0-SNAPSHOT</version>
+  <groupId>net.sourceforge.${svnComponent}</groupId>
+  <artifactId>${svnComponent}</artifactId>
+  <version>${svnBranch}-SNAPSHOT</version>
   <name>Java Small Decimal implementation</name>
   <description>Small decimal implementation for Java</description>
   <licenses>
@@ -25,16 +25,20 @@
   </developers>
   <issueManagement>
     <system>Jira</system>
-    <url>http://Tony-LapTop:8080/</url>
+    <url>http://${svnHost}:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://Tony-LapTop/svn/finance/JDecimal</connection>
-    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JDecimal</developerConnection>
+    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnComponent}</connection>
+    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnComponent}</developerConnection>
     <tag>HEAD</tag>
-    <url>http://Tony-LapTop/viewvc/finance/JDecimal</url>
+    <url>http://${svnHost}/viewvc/${svnRepository}/${svnComponent}/branches/${svnBranch}</url>
   </scm>
   <properties>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
+    <svnHost>Tony-HP</svnHost>
+    <svnRepository>Finance</svnRepository>
+    <svnComponent>JDecimal</svnComponent>
+    <svnBranch>v1.0.0</svnBranch>
   </properties>
   <build>
     <resources>
@@ -47,7 +51,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>2.4</version>
         <configuration>
           <archive>
             <manifest>
@@ -61,10 +65,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
+        <version>2.5.1</version>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
       <plugin>
@@ -91,7 +95,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.5.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -106,7 +110,7 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <version>2.7.1</version>
         <configuration>
-           <targetJdk>1.5</targetJdk>
+           <targetJdk>1.7</targetJdk>
         </configuration>
       </plugin>
       <plugin>

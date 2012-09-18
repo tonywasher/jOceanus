@@ -15,33 +15,42 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * $URL: http://tony-laptop/svn/finance/JSvnManager/branches/v1.1.0/src/main/java/net/sourceforge/JSvnManager/threads/CreateWorkingCopy.java $
+ * $Revision: 153 $
+ * $Author: Tony $
+ * $Date: 2012-09-07 16:50:07 +0100 (Fri, 07 Sep 2012) $
  ******************************************************************************/
 package net.sourceforge.JSvnManager.threads;
 
+import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
+import net.sourceforge.JSvnManager.data.Branch;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportTask;
 import net.sourceforge.JSvnManager.data.Repository;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.JSvnManager.tasks.Directory;
+import net.sourceforge.JSvnManager.tasks.VersionMgr;
 
 /**
- * Thread to handle analysis of repository.
+ * Thread to handle creation of branch tags.
  * @author Tony Washer
  */
-public class DiscoverData extends SwingWorker<Void, String> implements ReportStatus {
+public class CreateBranchTags extends SwingWorker<Void, String> implements ReportStatus {
     /**
-     * Preference Manager.
+     * Branches.
      */
-    private final PreferenceManager thePreferenceMgr;
+    private final Collection<Branch> theBranches;
+
+    /**
+     * Location.
+     */
+    private final File theLocation;
 
     /**
      * Report object.
@@ -51,25 +60,17 @@ public class DiscoverData extends SwingWorker<Void, String> implements ReportSta
     /**
      * The Repository.
      */
-    private Repository theRepository;
+    private final Repository theRepository;
 
     /**
      * The WorkingCopySet.
      */
-    private WorkingCopySet theWorkingCopySet;
+    private WorkingCopySet theWorkingCopySet = null;
 
     /**
      * The Error.
      */
     private JDataException theError = null;
-
-    /**
-     * Obtain the repository.
-     * @return the repository
-     */
-    public Repository getRepository() {
-        return theRepository;
-    }
 
     /**
      * Obtain the working copy set.
@@ -89,24 +90,43 @@ public class DiscoverData extends SwingWorker<Void, String> implements ReportSta
 
     /**
      * Constructor.
-     * @param pPreferenceMgr the preference manager
+     * @param pBranches the branches to create the working copy for
+     * @param pLocation the location to create into
      * @param pReport the report object
      */
-    public DiscoverData(final PreferenceManager pPreferenceMgr,
-                        final ReportTask pReport) {
-        thePreferenceMgr = pPreferenceMgr;
+    public CreateBranchTags(final Branch[] pBranches,
+                            final File pLocation,
+                            final ReportTask pReport) {
+        /* Store parameters */
+        theLocation = pLocation;
         theReport = pReport;
+        theRepository = pBranches[0].getRepository();
+        Collection<Branch> myBranches = null;
+
+        /* protect against exceptions */
+        try {
+            /* Create new directory for working copy */
+            Directory.createDirectory(pLocation);
+
+            /* Access branch list for extract */
+            myBranches = Branch.getBranchMap(pBranches).values();
+        } catch (JDataException e) {
+            /* Store the error and cancel thread */
+            theError = e;
+            cancel(true);
+        }
+
+        /* Record branches */
+        theBranches = myBranches;
     }
 
     @Override
     protected Void doInBackground() {
         /* Protect against exceptions */
         try {
-            /* Discover repository details */
-            theRepository = new Repository(thePreferenceMgr, this);
-
-            /* Discover workingSet details */
-            theWorkingCopySet = new WorkingCopySet(theRepository, this);
+            /* Create the tags */
+            VersionMgr myVersionMgr = new VersionMgr(theRepository, theLocation, theReport);
+            myVersionMgr.createTags(theBranches);
         } catch (JDataException e) {
             /* Store the error */
             theError = e;

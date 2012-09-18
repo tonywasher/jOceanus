@@ -34,6 +34,7 @@ import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.preferences.BackupPreferences;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
 import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.SubVersionPreferences;
@@ -123,16 +124,41 @@ public class Backup {
     /**
      * Load a repository from the input stream.
      * @param pRepository the repository directory
-     * @param pStream the input stream
-     * @throws SVNException on error
+     * @param pSecurity the secure manager
+     * @param pZipFile the zipFile to load
+     * @throws JDataException on error
      */
     public void loadRepository(final File pRepository,
-                               final InputStream pStream) throws SVNException {
-        /* Re-create the repository */
-        theAdminClient.doCreateRepository(pRepository, null, true, true);
+                               final SecureManager pSecurity,
+                               final File pZipFile) throws JDataException {
+        /* Protect against exceptions */
+        try {
+            /* Access the zipFile */
+            ZipReadFile myFile = new ZipReadFile(pZipFile);
 
-        /* Read the data from the input stream */
-        theAdminClient.doLoad(pRepository, pStream);
+            /* Obtain the hash bytes from the file */
+            byte[] myHashBytes = myFile.getHashBytes();
+
+            /* Obtain the initialised password hash */
+            PasswordHash myHash = pSecurity.resolvePasswordHash(myHashBytes, pZipFile.getName());
+
+            /* Associate this password hash with the ZipFile */
+            myFile.setPasswordHash(myHash);
+
+            /* Access the input stream for the relevant file */
+            InputStream myStream = myFile.getInputStream(myFile.getContents().findFileEntry(DATA_NAME));
+
+            /* Re-create the repository */
+            theAdminClient.doCreateRepository(pRepository, null, true, true);
+
+            /* Read the data from the input stream */
+            theAdminClient.doLoad(pRepository, myStream);
+        } catch (SVNException e) {
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed", e);
+        }
+
+        /* Return to caller */
+        return;
     }
 
     /**
@@ -166,7 +192,7 @@ public class Backup {
             /* Determine the repository name */
             String myRepoName = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_REPO) + "/"
                     + myName;
-            SVNURL myURL = SVNURL.parseURIDecoded(myRepoName);
+            SVNURL myURL = SVNURL.parseURIEncoded(myRepoName);
 
             /* Access the repository */
             SVNRepository myRepo = SVNRepositoryFactory.create(myURL);

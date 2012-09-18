@@ -23,6 +23,7 @@
 package net.sourceforge.JSvnManager.data;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.ListIterator;
 
 import net.sourceforge.JDataManager.JDataException;
@@ -45,14 +46,12 @@ import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusClient;
-import org.tmatesoft.svn.core.wc.SVNUpdateClient;
-import org.tmatesoft.svn.core.wc.SVNWCClient;
 
 /**
  * Represents a Working extract copy of subversion.
  * @author Tony Washer
  */
-public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
+public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
     /**
      * Report fields.
      */
@@ -217,9 +216,9 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
      * @param pRevision the checked out revision
      * @throws JDataException on error
      */
-    protected WorkingCopy(final File pLocation,
-                          final Branch pBranch,
-                          final SVNRevision pRevision) throws JDataException {
+    private WorkingCopy(final File pLocation,
+                        final Branch pBranch,
+                        final SVNRevision pRevision) throws JDataException {
         /* Store parameters */
         theBranch = pBranch;
         theLocation = pLocation;
@@ -236,9 +235,10 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
 
     /**
      * Discover updates.
+     * @param pReport the report object
      * @throws JDataException on error
      */
-    public void discoverUpdates() throws JDataException {
+    public void discoverUpdates(final ReportStatus pReport) throws JDataException {
         /* Access client */
         Repository myRepository = theBranch.getRepository();
         SVNClientManager myMgr = myRepository.getClientManager();
@@ -250,12 +250,10 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
             myClient.doStatus(theLocation, SVNRevision.HEAD, SVNDepth.INFINITY, false, false, false, false,
                               new UpdateHandler(this), null);
         } catch (SVNException e) {
-            /* Allow file/directory exists but is not WC */
             throw new JDataException(ExceptionClass.SUBVERSION, "Unable to get status", e);
+        } finally {
+            myRepository.releaseClientManager(myMgr);
         }
-
-        /* Release the client manager */
-        myRepository.releaseClientManager(myMgr);
     }
 
     /**
@@ -402,6 +400,22 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
         private final File theLocation;
 
         /**
+         * Get Location.
+         * @return the location
+         */
+        public File getLocation() {
+            return theLocation;
+        }
+
+        /**
+         * Get Repository.
+         * @return the repository
+         */
+        public Repository getRepository() {
+            return theRepository;
+        }
+
+        /**
          * Constructor.
          * @param pRepository the repository
          * @param pLocation the location
@@ -409,17 +423,17 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
          * @throws JDataException on error
          */
         public WorkingCopySet(final Repository pRepository,
-                              final String pLocation,
+                              final File pLocation,
                               final ReportStatus pReport) throws JDataException {
             /* Call super constructor */
             super(WorkingCopy.class);
 
             /* Store parameters */
             theRepository = pRepository;
-            theLocation = new File(pLocation);
+            theLocation = pLocation;
 
-            /* Locate working directories */
-            locateWorkingDirectories(theLocation, pReport);
+            /* Analyse the WorkingCopySet */
+            analyseWorkingCopySet(pReport);
         }
 
         /**
@@ -441,14 +455,42 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
             String myLocation = myPrefs.getStringValue(SubVersionPreferences.NAME_SVN_WORK);
             theLocation = new File(myLocation);
 
+            /* Analyse the WorkingCopySet */
+            analyseWorkingCopySet(pReport);
+        }
+
+        /**
+         * Analyse WorkingSet.
+         * @param pReport the report object
+         * @throws JDataException on error
+         */
+        private void analyseWorkingCopySet(final ReportStatus pReport) throws JDataException {
             /* Report start of analysis */
-            pReport.reportStatus("Analysing Working Copies");
+            pReport.initTask("Analysing Working Copies");
 
             /* Locate working directories */
             locateWorkingDirectories(theLocation, pReport);
 
+            /* Report number of stages */
+            pReport.setNumStages(size() + 2);
+
+            /* Access list iterator */
+            Iterator<WorkingCopy> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Component */
+                WorkingCopy myCopy = myIterator.next();
+
+                /* Report stage of analysis */
+                pReport.setNewStage("Analysing WC at " + myCopy.getLocation().getName());
+
+                /* Discover updates */
+                myCopy.discoverUpdates(pReport);
+            }
+
             /* Report end of analysis */
-            pReport.reportStatus("WorkingCopy Analysis complete");
+            pReport.initTask("WorkingCopy Analysis complete");
         }
 
         /**
@@ -494,12 +536,6 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
 
                         /* Add to the list */
                         add(myCopy);
-
-                        /* Report end of analysis */
-                        pReport.reportStatus("Analysing WC at " + myFile.getName());
-
-                        /* Discover updates */
-                        myCopy.discoverUpdates();
                     }
                 }
             }
@@ -553,36 +589,6 @@ public class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
 
             /* Return null */
             return null;
-        }
-
-        /**
-         * Revert changes across working set.
-         * @throws SVNException on error
-         */
-        public void revertChanges() throws SVNException {
-            /* Access the array of locations */
-            File[] myLocations = getLocationsArray();
-
-            /* Access WorkingCopy client */
-            SVNWCClient myClient = theRepository.getClientManager().getWCClient();
-
-            /* Revert changes */
-            myClient.doRevert(myLocations, SVNDepth.INFINITY, null);
-        }
-
-        /**
-         * Access updates across working set.
-         * @throws SVNException on error
-         */
-        public void updateWorkingSets() throws SVNException {
-            /* Access the array of locations */
-            File[] myLocations = getLocationsArray();
-
-            /* Access Update client */
-            SVNUpdateClient myClient = theRepository.getClientManager().getUpdateClient();
-
-            /* Refresh changes */
-            myClient.doUpdate(myLocations, SVNRevision.HEAD, SVNDepth.INFINITY, false, false);
         }
     }
 }

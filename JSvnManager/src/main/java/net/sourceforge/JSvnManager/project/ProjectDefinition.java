@@ -131,6 +131,14 @@ public class ProjectDefinition implements JDataContents {
     private final ProjectList theDependencies;
 
     /**
+     * Get Document.
+     * @return the document
+     */
+    private Document getDocument() {
+        return theDocument;
+    }
+
+    /**
      * Get Project Identity.
      * @return the project identity
      */
@@ -220,32 +228,8 @@ public class ProjectDefinition implements JDataContents {
             /* Create the dependency list */
             theDependencies = new ProjectList();
 
-            /* Loop through the nodes */
-            for (Node myNode = myElement.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
-                /* Ignore non-elements */
-                if (myNode.getNodeType() != Node.ELEMENT_NODE) {
-                    continue;
-                }
-
-                /* Access dependencies */
-                if (myNode.getNodeName().equals(NODENAME_DEPENDENCIES)) {
-                    /* Loop through the dependency nodes */
-                    for (Node myDepNode = myNode.getFirstChild(); myDepNode != null; myDepNode = myDepNode
-                            .getNextSibling()) {
-                        /* Ignore non-elements */
-                        if (myDepNode.getNodeType() != Node.ELEMENT_NODE) {
-                            continue;
-                        }
-
-                        /* Access dependency */
-                        if (myDepNode.getNodeName().equals(NODENAME_DEPENDENCY)) {
-                            /* Add dependency to list */
-                            ProjectId myDef = new ProjectId(myDepNode);
-                            theDependencies.add(myDef);
-                        }
-                    }
-                }
-            }
+            /* Parse the dependencies */
+            parseDependencies(myElement);
 
             /* Catch exceptions */
         } catch (IOException e) {
@@ -255,6 +239,70 @@ public class ProjectDefinition implements JDataContents {
             /* Throw Exception */
             throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
         } catch (SAXException e) {
+            /* Throw Exception */
+            throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
+        }
+    }
+
+    /**
+     * Parse dependencies.
+     * @param pElement the top level element
+     * @throws JDataException on error
+     */
+    private void parseDependencies(final Node pElement) throws JDataException {
+        /* Loop through the nodes */
+        for (Node myNode = pElement.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
+            /* Ignore non-elements */
+            if (myNode.getNodeType() != Node.ELEMENT_NODE) {
+                continue;
+            }
+
+            /* Access dependencies */
+            if (myNode.getNodeName().equals(NODENAME_DEPENDENCIES)) {
+                /* Loop through the dependency nodes */
+                for (Node myDepNode = myNode.getFirstChild(); myDepNode != null; myDepNode = myDepNode
+                        .getNextSibling()) {
+                    /* Ignore non-elements */
+                    if (myDepNode.getNodeType() != Node.ELEMENT_NODE) {
+                        continue;
+                    }
+
+                    /* Access dependency */
+                    if (myDepNode.getNodeName().equals(NODENAME_DEPENDENCY)) {
+                        /* Add dependency to list */
+                        ProjectId myDef = new ProjectId(myDepNode);
+                        theDependencies.add(myDef);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Constructor for a duplicate project definition.
+     * @param pDefinition the definition to copy
+     * @throws JDataException on error
+     */
+    public ProjectDefinition(final ProjectDefinition pDefinition) throws JDataException {
+        /* Protect against exceptions */
+        try {
+            /* Create a document builder */
+            DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
+
+            /* Copy the document */
+            theDocument = myBuilder.newDocument();
+            Document myOldDoc = pDefinition.getDocument();
+            Node myOldRoot = myOldDoc.getDocumentElement();
+            Node myNewRoot = theDocument.importNode(myOldRoot, true);
+            theDocument.appendChild(myNewRoot);
+
+            /* Copy project Id and dependencies */
+            theDefinition = new ProjectId(myNewRoot);
+            theDependencies = new ProjectList();
+            parseDependencies(myNewRoot);
+
+        } catch (ParserConfigurationException e) {
             /* Throw Exception */
             throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
         }
@@ -304,23 +352,32 @@ public class ProjectDefinition implements JDataContents {
     }
 
     /**
-     * Set New Version.
-     * @param pGroupId the groupId
-     * @param pArtifactId the ArtifactId
-     * @param pVersion the Version
+     * Set Snapshot Version.
+     * @param pVersion the version
      */
-    public void setNewVersion(final String pGroupId,
-                              final String pArtifactId,
-                              final String pVersion) {
-        /* Update own version */
-        theDefinition.setNewVersion(pGroupId, pArtifactId, pVersion);
+    public void setSnapshotVersion(final String pVersion) {
+        theDefinition.setSnapshotVersion(pVersion);
+    }
 
+    /**
+     * Set New Version.
+     * @param pVersion the version
+     */
+    public void setVersion(final String pVersion) {
+        theDefinition.setVersion(pVersion);
+    }
+
+    /**
+     * Set New Version for dependencies.
+     * @param pProjectId the project Id
+     */
+    public void setNewVersion(final ProjectId pProjectId) {
         /* Loop through dependencies */
         Iterator<ProjectId> myIterator = theDependencies.iterator();
         while (myIterator.hasNext()) {
             /* Access dependency and set version */
             ProjectId myRef = myIterator.next();
-            myRef.setNewVersion(pGroupId, pArtifactId, pVersion);
+            myRef.setNewVersion(pProjectId);
         }
     }
 }

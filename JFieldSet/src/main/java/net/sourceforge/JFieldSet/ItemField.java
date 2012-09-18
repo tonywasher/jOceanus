@@ -180,7 +180,7 @@ public class ItemField extends ValueField {
 
                 /* else if the component is a ComboBox */
             } else if (theComponent instanceof JComboBox) {
-                JComboBox myField = (JComboBox) theComponent;
+                JComboBox<?> myField = (JComboBox<?>) theComponent;
 
                 /* If no value is selected */
                 if (myField.getSelectedIndex() == -1) {

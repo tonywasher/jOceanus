@@ -673,8 +673,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
      * @return the comboBox
      */
     @Override
-    public JComboBox getComboBox(final int row,
-                                 final int column) {
+    public JComboBox<?> getComboBox(final int row,
+                                    final int column) {
         /* Access the line */
         StatementLine myLine = theLines.get(row);
 

@@ -15,34 +15,30 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * $URL: http://tony-laptop/svn/finance/JSvnManager/branches/v1.1.0/src/main/java/net/sourceforge/JSvnManager/threads/RevertWorkingCopy.java $
+ * $Revision: 153 $
+ * $Author: Tony $
+ * $Date: 2012-09-07 16:50:07 +0100 (Fri, 07 Sep 2012) $
  ******************************************************************************/
 package net.sourceforge.JSvnManager.threads;
 
+import java.io.File;
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportTask;
 import net.sourceforge.JSvnManager.data.Repository;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.JSvnManager.tasks.CheckOut;
 
 /**
- * Thread to handle analysis of repository.
+ * Thread to handle revert of working copy.
  * @author Tony Washer
  */
-public class DiscoverData extends SwingWorker<Void, String> implements ReportStatus {
-    /**
-     * Preference Manager.
-     */
-    private final PreferenceManager thePreferenceMgr;
-
+public class RevertWorkingCopy extends SwingWorker<Void, String> implements ReportStatus {
     /**
      * Report object.
      */
@@ -51,7 +47,12 @@ public class DiscoverData extends SwingWorker<Void, String> implements ReportSta
     /**
      * The Repository.
      */
-    private Repository theRepository;
+    private final Repository theRepository;
+
+    /**
+     * The Location.
+     */
+    private final File theLocation;
 
     /**
      * The WorkingCopySet.
@@ -61,15 +62,7 @@ public class DiscoverData extends SwingWorker<Void, String> implements ReportSta
     /**
      * The Error.
      */
-    private JDataException theError = null;
-
-    /**
-     * Obtain the repository.
-     * @return the repository
-     */
-    public Repository getRepository() {
-        return theRepository;
-    }
+    private JDataException theError;
 
     /**
      * Obtain the working copy set.
@@ -89,12 +82,15 @@ public class DiscoverData extends SwingWorker<Void, String> implements ReportSta
 
     /**
      * Constructor.
-     * @param pPreferenceMgr the preference manager
+     * @param pWorkingSet the working set to update
      * @param pReport the report object
      */
-    public DiscoverData(final PreferenceManager pPreferenceMgr,
-                        final ReportTask pReport) {
-        thePreferenceMgr = pPreferenceMgr;
+    public RevertWorkingCopy(final WorkingCopySet pWorkingSet,
+                             final ReportTask pReport) {
+        /* Store parameters */
+        theWorkingCopySet = pWorkingSet;
+        theLocation = pWorkingSet.getLocation();
+        theRepository = pWorkingSet.getRepository();
         theReport = pReport;
     }
 
@@ -102,11 +98,12 @@ public class DiscoverData extends SwingWorker<Void, String> implements ReportSta
     protected Void doInBackground() {
         /* Protect against exceptions */
         try {
-            /* Discover repository details */
-            theRepository = new Repository(thePreferenceMgr, this);
+            /* Update the working copy set */
+            CheckOut myCheckOut = new CheckOut(theRepository, theReport);
+            myCheckOut.revertWorkingCopySet(theWorkingCopySet);
 
-            /* Discover workingSet details */
-            theWorkingCopySet = new WorkingCopySet(theRepository, this);
+            /* Discover new workingSet details */
+            theWorkingCopySet = new WorkingCopySet(theRepository, theLocation, this);
         } catch (JDataException e) {
             /* Store the error */
             theError = e;

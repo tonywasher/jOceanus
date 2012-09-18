@@ -565,8 +565,8 @@ public class Extract extends JDataTable<Event> {
      * @return the comboBox
      */
     @Override
-    public JComboBox getComboBox(final int row,
-                                 final int column) {
+    public JComboBox<?> getComboBox(final int row,
+                                    final int column) {
         /* Access the event */
         Event myEvent = theEvents.get(row);
 

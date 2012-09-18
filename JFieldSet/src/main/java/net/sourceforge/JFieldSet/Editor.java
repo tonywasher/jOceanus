@@ -63,8 +63,8 @@ public class Editor {
          * @param pColIndex the column
          * @return the combo box
          */
-        JComboBox getComboBox(final int pRowIndex,
-                              final int pColIndex);
+        JComboBox<?> getComboBox(final int pRowIndex,
+                                 final int pColIndex);
     }
 
     /**
@@ -264,7 +264,7 @@ public class Editor {
         /**
          * The ComboBox.
          */
-        private JComboBox theCombo = null;
+        private JComboBox<?> theCombo = null;
 
         /**
          * The action Listener.

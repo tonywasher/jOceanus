@@ -261,13 +261,21 @@ public class Repository implements JDataContents, Comparable<Repository> {
         theComponents = new ComponentList(this);
 
         /* Report start of analysis */
-        pReport.reportStatus("Analysing components");
+        pReport.initTask("Analysing components");
 
         /* Discover components */
         theComponents.discover(pReport);
 
         /* Report completion of pass */
-        pReport.reportStatus("Component Analysis complete");
+        pReport.initTask("Component Analysis complete");
+    }
+
+    /**
+     * Dispose of any client links.
+     */
+    public void dispose() {
+        /* Dispose of any connections */
+        theClientMgrPool.dispose();
     }
 
     /**
@@ -311,6 +319,42 @@ public class Repository implements JDataContents, Comparable<Repository> {
 
         /* Compare names */
         return theName.compareTo(pThat.theName);
+    }
+
+    /**
+     * Locate Component.
+     * @param pName the component to locate
+     * @return the relevant component or Null
+     */
+    public Component locateComponent(final String pName) {
+        /* Locate component in component list */
+        return theComponents.locateComponent(pName);
+    }
+
+    /**
+     * Locate Branch.
+     * @param pComponent the component to locate
+     * @param pVersion the version to locate
+     * @return the relevant branch or Null
+     */
+    public Branch locateBranch(final String pComponent,
+                               final String pVersion) {
+        /* Locate branch in component list */
+        return theComponents.locateBranch(pComponent, pVersion);
+    }
+
+    /**
+     * Locate Branch.
+     * @param pComponent the component to locate
+     * @param pVersion the version to locate
+     * @param pTag the tag to locate
+     * @return the relevant branch or Null
+     */
+    public Tag locateTag(final String pComponent,
+                         final String pVersion,
+                         final int pTag) {
+        /* Locate Tag in component list */
+        return theComponents.locateTag(pComponent, pVersion, pTag);
     }
 
     /**
@@ -386,7 +430,7 @@ public class Repository implements JDataContents, Comparable<Repository> {
             myBuilder.append(ProjectDefinition.POM_NAME);
 
             /* Create the repository path */
-            SVNURL myURL = SVNURL.parseURIDecoded(myBuilder.toString());
+            SVNURL myURL = SVNURL.parseURIEncoded(myBuilder.toString());
 
             /* Access URL as input stream */
             myInput = getFileURLasInputStream(myURL);

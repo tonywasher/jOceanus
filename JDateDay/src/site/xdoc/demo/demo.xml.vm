@@ -9,7 +9,7 @@
     </section>
 
     <section name="Demo">
-      <applet code = 'net.sourceforge.JDateDay.Demo.DateDayExample' 
+      <applet code = 'net.sourceforge.JDateDay.Demo.JDateDayExample' 
         archive = '${demo-name}.jar'
         width = "510" 
         height = "300"></applet>      

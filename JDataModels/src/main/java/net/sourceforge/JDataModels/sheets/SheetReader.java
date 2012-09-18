@@ -156,10 +156,10 @@ public abstract class SheetReader<T extends DataSet<T>> {
             /* Obtain the initialised password hash */
             PasswordHash myHash = mySecurity.resolvePasswordHash(myHashBytes, pFile.getName());
 
-            /* Associate this password hash with the Zip file */
+            /* Associate this password hash with the ZipFile */
             myFile.setPasswordHash(myHash);
 
-            /* Access the input stream for the first file */
+            /* Access the input stream for the relevant file */
             myStream = myFile.getInputStream(myFile.getContents().findFileEntry(SpreadSheet.FILE_NAME));
 
             /* Initialise the workbook */

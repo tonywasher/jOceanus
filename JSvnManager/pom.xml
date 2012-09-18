@@ -1,21 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.JSvnManager</groupId>
-  <artifactId>JSvnManager</artifactId>
-  <version>v1.1.0-SNAPSHOT</version>
+  <groupId>net.sourceforge.${svnComponent}</groupId>
+  <artifactId>${svnComponent}</artifactId>
+  <version>${svnBranch}-SNAPSHOT</version>
   <name>Java SubVersion Manager</name>
   <description>SubVersion Manager</description>
   <dependencies>
     <dependency>
       <groupId>org.tmatesoft.svnkit</groupId>
       <artifactId>svnkit</artifactId>
-      <version>1.7.5</version>
+      <version>1.7.5-v1</version>
     </dependency>  
-    <dependency>
+    <!--<dependency>
       <groupId>net.sourceforge.JiraAccess</groupId>
       <artifactId>JiraAccess</artifactId>
       <version>v1.1.0-SNAPSHOT</version>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>net.sourceforge.JDataModels</groupId>
       <artifactId>JDataModels</artifactId>
@@ -52,29 +52,33 @@
   </developers>
   <issueManagement>
     <system>Jira</system>
-    <url>http://Tony-LapTop:8080/</url>
+    <url>http://${svnHost}:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://Tony-LapTop/svn/finance/JSvnManager</connection>
-    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JSvnManager</developerConnection>
+    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnComponent}</connection>
+    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnComponent}</developerConnection>
     <tag>HEAD</tag>
-    <url>http://Tony-LapTop/viewvc/finance/JSvnManager</url>
+    <url>http://${svnHost}/viewvc/${svnRepository}/${svnComponent}/branches/${svnBranch}</url>
   </scm>
+  <properties>
+    <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
+    <svnHost>Tony-HP</svnHost>
+    <svnRepository>Finance</svnRepository>
+    <svnComponent>JSvnManager</svnComponent>
+    <svnBranch>v1.1.0</svnBranch>
+  </properties>
   <repositories>
     <repository>
       <id>svnkit</id>
       <name>SubVersion Repository</name>
       <url>http://maven.tmatesoft.com/content/repositories/releases/</url>
     </repository>
-    <repository>
+    <!--<repository>
       <id>svnkita</id>
       <name>SubVersion Repository</name>
       <url>http://maven.tmatesoft.com/content/repositories/snapshots/</url>
-    </repository>
+    </repository>-->
   </repositories>
-  <properties>
-    <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
-  </properties>
   <build>
     <resources>
       <resource>
@@ -86,7 +90,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>2.4</version>
         <configuration>
           <archive>
             <manifest>
@@ -100,10 +104,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
+        <version>2.5.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
       <plugin>
@@ -130,7 +134,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.5.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -145,7 +149,7 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <version>2.7.1</version>
         <configuration>
-           <targetJdk>1.6</targetJdk>
+           <targetJdk>1.7</targetJdk>
         </configuration>
       </plugin>
       <plugin>

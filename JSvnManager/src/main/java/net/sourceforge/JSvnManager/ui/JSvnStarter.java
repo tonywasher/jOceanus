@@ -43,6 +43,12 @@ public final class JSvnStarter {
     }
 
     /**
+     * Private constructor.
+     */
+    private JSvnStarter() {
+    }
+
+    /**
      * Create and show the GUI.
      */
     private static void createAndShowGUI() {

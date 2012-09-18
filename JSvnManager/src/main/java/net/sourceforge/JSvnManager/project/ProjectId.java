@@ -59,7 +59,7 @@ public final class ProjectId implements JDataContents {
     /**
      * SnapShot indication.
      */
-    private static final String SUFFIX_SNAPSHOT = "-SNAPSHOT";
+    public static final String SUFFIX_SNAPSHOT = "-SNAPSHOT";
 
     /**
      * Report fields.
@@ -158,6 +158,14 @@ public final class ProjectId implements JDataContents {
     }
 
     /**
+     * Get Version Text.
+     * @return the version text
+     */
+    public String getVersionText() {
+        return theVersionNode.getTextContent();
+    }
+
+    /**
      * Constructor.
      * @param pParent the parent node
      * @throws JDataException on error
@@ -206,18 +214,42 @@ public final class ProjectId implements JDataContents {
 
     /**
      * Set new version.
-     * @param pGroupId the groupId
-     * @param pArtifactId the ArtifactId
-     * @param pVersion the Version
+     * @param pVersion the version
      */
-    protected void setNewVersion(final String pGroupId,
-                                 final String pArtifactId,
-                                 final String pVersion) {
+    protected void setSnapshotVersion(final String pVersion) {
+        /* Delete child elements of the version node */
+        clearChildren(theVersionNode);
+
+        /* create a new text node and add to the node */
+        theVersion = pVersion;
+        Text myText = theDocument.createTextNode(pVersion + SUFFIX_SNAPSHOT);
+        theVersionNode.appendChild(myText);
+    }
+
+    /**
+     * Set new version.
+     * @param pVersion the version
+     */
+    protected void setVersion(final String pVersion) {
+        /* Delete child elements of the version node */
+        clearChildren(theVersionNode);
+
+        /* create a new text node and add to the node */
+        theVersion = pVersion;
+        Text myText = theDocument.createTextNode(pVersion);
+        theVersionNode.appendChild(myText);
+    }
+
+    /**
+     * Set new version.
+     * @param pId the project Id
+     */
+    protected void setNewVersion(final ProjectId pId) {
         /* Ignore if wrong groupId/versionId */
-        if (!theGroupId.equals(pGroupId)) {
+        if (!theGroupId.equals(pId.getGroupId())) {
             return;
         }
-        if (!theArtifactId.equals(pArtifactId)) {
+        if (!theArtifactId.equals(pId.getArtifactId())) {
             return;
         }
 
@@ -225,7 +257,8 @@ public final class ProjectId implements JDataContents {
         clearChildren(theVersionNode);
 
         /* create a new text node and add to the node */
-        Text myText = theDocument.createTextNode(pVersion);
+        theVersion = pId.getVersion();
+        Text myText = theDocument.createTextNode(pId.getVersion());
         theVersionNode.appendChild(myText);
     }
 

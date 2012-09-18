@@ -127,7 +127,7 @@ public class MaintPreferences extends JEventPanel {
     /**
      * The selection panel.
      */
-    private final JComboBox theSelect;
+    private final JComboBox<PreferenceSetPanel> theSelect;
 
     /**
      * The properties panel.
@@ -184,7 +184,7 @@ public class MaintPreferences extends JEventPanel {
 
         /* Create selection box and label */
         JLabel myLabel = new JLabel(NLS_SET);
-        theSelect = new JComboBox();
+        theSelect = new JComboBox<PreferenceSetPanel>();
         theSelect.setMaximumSize(new Dimension(SELECT_WIDTH, SELECT_HEIGHT));
 
         /* Create the selection panel */

@@ -104,7 +104,7 @@ public class MaintStatic extends JEventPanel {
     /**
      * The selection box.
      */
-    private final JComboBox theSelectBox;
+    private final JComboBox<String> theSelectBox;
 
     /**
      * The Account Types panel.
@@ -213,7 +213,7 @@ public class MaintStatic extends JEventPanel {
                 EventInfoTypeList.class, EventInfoType.class);
 
         /* Build the Static box */
-        theSelectBox = new JComboBox();
+        theSelectBox = new JComboBox<String>();
         theSelectBox.addItem(AccountType.LIST_NAME);
         theSelectBox.addItem(TransactionType.LIST_NAME);
         theSelectBox.addItem(TaxType.LIST_NAME);

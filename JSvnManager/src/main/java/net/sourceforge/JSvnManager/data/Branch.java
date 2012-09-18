@@ -33,6 +33,7 @@ import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JSortedList.OrderedList;
+import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.JSvnManager.data.Tag.TagList;
 import net.sourceforge.JSvnManager.project.ProjectDefinition;
 import net.sourceforge.JSvnManager.project.ProjectId;
@@ -285,7 +286,24 @@ public final class Branch implements JDataContents, Comparable<Branch> {
      * @return true if there are changes since last tag was created, false otherwise.
      */
     public boolean isTaggable() {
-        return theLastRevision > theTags.getLastRevision();
+        /* If we have changes since the last tag, return true */
+        if (theLastRevision > theTags.getLastRevision()) {
+            return true;
+        }
+
+        /* Loop through the dependencies */
+        Iterator<Branch> myIterator = theDependencies.values().iterator();
+        while (myIterator.hasNext()) {
+            Branch myBranch = myIterator.next();
+
+            /* If we are dependent on a tag-able branch, return true */
+            if (myBranch.isTaggable()) {
+                return true;
+            }
+        }
+
+        /* Not tag-able */
+        return false;
     }
 
     /**
@@ -408,7 +426,7 @@ public final class Branch implements JDataContents, Comparable<Branch> {
     public SVNURL getURL() {
         /* Build the URL */
         try {
-            return SVNURL.parseURIDecoded(getURLPath());
+            return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
             return null;
         }
@@ -455,6 +473,69 @@ public final class Branch implements JDataContents, Comparable<Branch> {
     }
 
     /**
+     * Clone the definition.
+     * @param pDefinition the definition to clone
+     * @throws JDataException on error
+     */
+    public void cloneDefinition(final ProjectDefinition pDefinition) throws JDataException {
+        /* clone the project definition */
+        theProject = new ProjectDefinition(pDefinition);
+        theProject.setSnapshotVersion(getBranchName());
+    }
+
+    /**
+     * Determine next major branch.
+     * @return the next major branch
+     */
+    public Branch nextMajorBranch() {
+        /* Determine the next major branch */
+        BranchList myBranches = theComponent.getBranchList();
+        return myBranches.nextMajorBranch();
+    }
+
+    /**
+     * Determine next minor branch.
+     * @return the next minor branch
+     */
+    public Branch nextMinorBranch() {
+        /* Determine the next major branch */
+        BranchList myBranches = theComponent.getBranchList();
+        return myBranches.nextMinorBranch(this);
+    }
+
+    /**
+     * Determine next delta branch.
+     * @return the next delta branch
+     */
+    public Branch nextDeltaBranch() {
+        /* Determine the next major branch */
+        BranchList myBranches = theComponent.getBranchList();
+        return myBranches.nextDeltaBranch(this);
+    }
+
+    /**
+     * Determine next tag.
+     * @return the next tag
+     */
+    public Tag nextTag() {
+        /* Determine the next tag */
+        return theTags.nextTag();
+    }
+
+    /**
+     * Obtain full branch list including dependencies.
+     * @return the full branch list.
+     */
+    public Map<Component, Branch> getAllBranches() {
+        /* Create a new list and add self to list */
+        Map<Component, Branch> myMap = new HashMap<Component, Branch>(theDependencies);
+        myMap.put(theComponent, this);
+
+        /* return the map */
+        return myMap;
+    }
+
+    /**
      * Discover last change from repository.
      * @throws JDataException on error
      */
@@ -463,28 +544,32 @@ public final class Branch implements JDataContents, Comparable<Branch> {
         SVNClientManager myMgr = theRepository.getClientManager();
         SVNLogClient myClient = myMgr.getLogClient();
 
+        /* Initialise the counts */
+        theLastRevision = -1;
+        theNumElements = 0;
+
         /* Protect against exceptions */
         try {
-            /* Access the tags directory URL */
+            /* Access the URL */
             SVNURL myURL = getURL();
 
             /* List the members directories */
             myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.INFINITY,
                             SVNDirEntry.DIRENT_ALL, new BranchDirHandler());
-
-            /* Release the client manager */
-            theRepository.releaseClientManager(myMgr);
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover lastRevision for "
                     + getBranchName(), e);
+        } finally {
+            theRepository.releaseClientManager(myMgr);
         }
     }
 
     /**
-     * resolveDependencies
+     * resolveDependencies.
+     * @param pReport the report object
      * @throws JDataException on error
      */
-    private void resolveDependencies() throws JDataException {
+    private void resolveDependencies(final ReportStatus pReport) throws JDataException {
         /* Switch on status */
         switch (theProjectStatus) {
             case FINAL:
@@ -511,7 +596,7 @@ public final class Branch implements JDataContents, Comparable<Branch> {
         /* Loop through our dependencies */
         for (Branch myDep : theDependencies.values()) {
             /* Resolve dependencies */
-            myDep.resolveDependencies();
+            myDep.resolveDependencies(pReport);
 
             /* Loop through underlying dependencies */
             for (Branch mySub : myDep.getDependencies().values()) {
@@ -533,11 +618,16 @@ public final class Branch implements JDataContents, Comparable<Branch> {
                     myNew.put(myComp, mySub);
                 }
             }
-
-            /* Store new dependencies and mark as resolved */
-            theDependencies = myNew;
-            theProjectStatus = ProjectStatus.FINAL;
         }
+
+        /* Check that we are not dependent on a different version of this component */
+        if (myNew.get(theComponent) != null) {
+            throw new JDataException(ExceptionClass.DATA, this, "Inconsistent dependency for Branch");
+        }
+
+        /* Store new dependencies and mark as resolved */
+        theDependencies = myNew;
+        theProjectStatus = ProjectStatus.FINAL;
     }
 
     /**
@@ -552,6 +642,58 @@ public final class Branch implements JDataContents, Comparable<Branch> {
             theLastRevision = Math.max(theLastRevision, myRev);
             theNumElements++;
         }
+    }
+
+    /**
+     * Obtain merged and validated branch map.
+     * @param pBranches the core branches
+     * @return the branch map
+     * @throws JDataException on error
+     */
+    public static Map<Component, Branch> getBranchMap(final Branch[] pBranches) throws JDataException {
+        /* Set default map */
+        Map<Component, Branch> myResult = null;
+        Repository myRepo = null;
+
+        /* Loop through the branches */
+        for (Branch myBranch : pBranches) {
+            /* Access map */
+            Map<Component, Branch> myMap = myBranch.getAllBranches();
+
+            /* If this is the first branch */
+            if (myResult == null) {
+                /* Store as result */
+                myResult = myMap;
+                myRepo = myBranch.getRepository();
+                continue;
+            }
+
+            /* Check this is the same repository */
+            if (!myRepo.equals(myBranch.getRepository())) {
+                /* throw exception */
+                throw new JDataException(ExceptionClass.DATA, "Different repository for branch");
+            }
+
+            /* Loop through map elements */
+            for (Map.Entry<Component, Branch> myEntry : myMap.entrySet()) {
+                /* Obtain any existing entry */
+                Branch myExisting = myResult.get(myEntry.getKey());
+
+                /* If this entry doesn't exist */
+                if (myExisting == null) {
+                    /* Add to map */
+                    myResult.put(myEntry.getKey(), myEntry.getValue());
+
+                    /* else if the branch differs */
+                } else if (!myExisting.equals(myEntry.getValue())) {
+                    /* throw exception */
+                    throw new JDataException(ExceptionClass.DATA, "Conflicting version for branch");
+                }
+            }
+        }
+
+        /* Return the result */
+        return myResult;
     }
 
     /**
@@ -608,9 +750,10 @@ public final class Branch implements JDataContents, Comparable<Branch> {
 
         /**
          * Discover branch list from repository.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        public void discover() throws JDataException {
+        public void discover(final ReportStatus pReport) throws JDataException {
             /* Reset the list */
             clear();
 
@@ -622,17 +765,17 @@ public final class Branch implements JDataContents, Comparable<Branch> {
             /* Protect against exceptions */
             try {
                 /* Access the branch directory URL */
-                SVNURL myURL = SVNURL.parseURIDecoded(theComponent.getBranchesPath());
+                SVNURL myURL = SVNURL.parseURIEncoded(theComponent.getBranchesPath());
 
                 /* List the branch directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
                                 SVNDirEntry.DIRENT_ALL, new ListDirHandler());
 
-                /* Release the client manager */
-                myRepo.releaseClientManager(myMgr);
             } catch (SVNException e) {
                 throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover branches for "
                         + theComponent.getName(), e);
+            } finally {
+                myRepo.releaseClientManager(myMgr);
             }
 
             /* Access list iterator */
@@ -642,6 +785,9 @@ public final class Branch implements JDataContents, Comparable<Branch> {
             while (myIterator.hasNext()) {
                 /* Access the next branch */
                 Branch myBranch = myIterator.next();
+
+                /* Report stage */
+                pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
 
                 /* Parse project file */
                 ProjectDefinition myProject = myRepo.parseProjectURL(myBranch.getURLPath());
@@ -654,15 +800,16 @@ public final class Branch implements JDataContents, Comparable<Branch> {
 
                 /* Discover tags and last revision */
                 myBranch.discoverLastRevision();
-                myBranch.getTagList().discover();
+                myBranch.getTagList().discover(pReport);
             }
         }
 
         /**
          * registerDependencies.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        protected void registerDependencies() throws JDataException {
+        protected void registerDependencies(final ReportStatus pReport) throws JDataException {
             /* Access list iterator */
             Repository myRepo = theComponent.getRepository();
             Iterator<Branch> myIterator = iterator();
@@ -702,16 +849,17 @@ public final class Branch implements JDataContents, Comparable<Branch> {
 
                     /* register dependencies */
                     TagList myTags = myBranch.getTagList();
-                    myTags.registerDependencies();
+                    myTags.registerDependencies(pReport);
                 }
             }
         }
 
         /**
          * propagateDependencies.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        protected void propagateDependencies() throws JDataException {
+        protected void propagateDependencies(final ReportStatus pReport) throws JDataException {
             /* Access list iterator */
             Iterator<Branch> myIterator = iterator();
 
@@ -719,11 +867,11 @@ public final class Branch implements JDataContents, Comparable<Branch> {
             while (myIterator.hasNext()) {
                 /* Access the Branch and resolve dependencies */
                 Branch myBranch = myIterator.next();
-                myBranch.resolveDependencies();
+                myBranch.resolveDependencies(pReport);
 
                 /* Resolve dependencies for the tags */
                 TagList myTags = myBranch.getTagList();
-                myTags.propagateDependencies();
+                myTags.propagateDependencies(pReport);
             }
         }
 
@@ -779,6 +927,58 @@ public final class Branch implements JDataContents, Comparable<Branch> {
                     continue;
                 }
                 return myBranch;
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
+         * Locate Branch.
+         * @param pVersion the version to locate
+         * @return the relevant branch or Null
+         */
+        protected Branch locateBranch(final String pVersion) {
+            /* Access list iterator */
+            Iterator<Branch> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Branch */
+                Branch myBranch = myIterator.next();
+
+                /* If this is the correct branch */
+                if (pVersion.equals(myBranch.getBranchName())) {
+                    /* Return it */
+                    return myBranch;
+                }
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
+         * Locate Tag.
+         * @param pVersion the version to locate
+         * @param pTag the tag to locate
+         * @return the relevant tag or Null
+         */
+        protected Tag locateTag(final String pVersion,
+                                final int pTag) {
+            /* Access list iterator */
+            Iterator<Branch> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Branch */
+                Branch myBranch = myIterator.next();
+
+                /* If this is the correct branch */
+                if (pVersion.equals(myBranch.getBranchName())) {
+                    /* Search in this branches tags */
+                    return myBranch.getTagList().locateTag(pTag);
+                }
             }
 
             /* Not found */

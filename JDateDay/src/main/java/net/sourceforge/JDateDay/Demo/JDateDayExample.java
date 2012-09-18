@@ -216,12 +216,12 @@ public class JDateDayExample extends JApplet {
     /**
      * The list of locales.
      */
-    private JComboBox theLocaleList = null;
+    private JComboBox<ShortLocale> theLocaleList = null;
 
     /**
      * The list of formats.
      */
-    private JComboBox theFormatList = null;
+    private JComboBox<String> theFormatList = null;
 
     /**
      * The start date.
@@ -522,7 +522,7 @@ public class JDateDayExample extends JApplet {
      */
     private void makeLocaleList() {
         /* Create the Combo box and populate it */
-        theLocaleList = new JComboBox();
+        theLocaleList = new JComboBox<ShortLocale>();
         for (ShortLocale myLocale : ShortLocale.values()) {
             /* Add the Locale to the list */
             theLocaleList.addItem(myLocale);
@@ -540,7 +540,7 @@ public class JDateDayExample extends JApplet {
      */
     private void makeFormatList() {
         /* Create the Combo box and populate it */
-        theFormatList = new JComboBox();
+        theFormatList = new JComboBox<String>();
         theFormatList.addItem("dd-MMM-yyyy");
         theFormatList.addItem("dd/MMM/yy");
         theFormatList.addItem("yyyy/MMM/dd");

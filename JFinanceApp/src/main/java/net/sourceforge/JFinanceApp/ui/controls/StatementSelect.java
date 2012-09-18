@@ -70,7 +70,7 @@ public class StatementSelect extends JEventPanel {
     /**
      * The State Box.
      */
-    private final JComboBox theStateBox;
+    private final JComboBox<StatementType> theStateBox;
 
     /**
      * The Statement type.
@@ -95,7 +95,7 @@ public class StatementSelect extends JEventPanel {
      */
     public StatementSelect() {
         /* Create the boxes */
-        theStateBox = new JComboBox();
+        theStateBox = new JComboBox<StatementType>();
 
         /* Create the labels */
         JLabel myStateLabel = new JLabel(NLS_VIEW);

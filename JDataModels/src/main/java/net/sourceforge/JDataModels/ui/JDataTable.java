@@ -216,8 +216,8 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
     }
 
     @Override
-    public JComboBox getComboBox(final int pRowIndex,
-                                 final int pColIndex) {
+    public JComboBox<?> getComboBox(final int pRowIndex,
+                                    final int pColIndex) {
         return null;
     }
 

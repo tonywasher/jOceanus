@@ -891,7 +891,7 @@ public class PreferenceSetPanel extends JEventPanel {
             /**
              * The underlying combo box field.
              */
-            private final JComboBox theField;
+            private final JComboBox<String> theField;
 
             /**
              * The preference as an EnumPreference.
@@ -905,7 +905,7 @@ public class PreferenceSetPanel extends JEventPanel {
             private EnumField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theEnum = (EnumPreference<?>) pPreference;
-                theField = new JComboBox();
+                theField = new JComboBox<String>();
 
                 /* For all values */
                 for (Enum<?> myEnum : theEnum.getValues()) {

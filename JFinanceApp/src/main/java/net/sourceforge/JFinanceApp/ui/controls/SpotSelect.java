@@ -141,7 +141,7 @@ public class SpotSelect extends JEventPanel {
     /**
      * The accountTypes comboBox.
      */
-    private final JComboBox theTypesBox;
+    private final JComboBox<AccountType> theTypesBox;
 
     /**
      * The current state.
@@ -214,7 +214,7 @@ public class SpotSelect extends JEventPanel {
         thePrev = new JButton(NLS_PREV);
 
         /* Create the Type box */
-        theTypesBox = new JComboBox();
+        theTypesBox = new JComboBox<AccountType>();
         theTypesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
 
         /* Create initial state */

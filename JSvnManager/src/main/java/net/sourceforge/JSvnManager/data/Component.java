@@ -229,7 +229,7 @@ public final class Component implements JDataContents, Comparable<Component> {
     public SVNURL getURL() {
         /* Build the URL */
         try {
-            return SVNURL.parseURIDecoded(getURLPath());
+            return SVNURL.parseURIEncoded(getURLPath());
         } catch (SVNException e) {
             return null;
         }
@@ -325,18 +325,20 @@ public final class Component implements JDataContents, Comparable<Component> {
             /* Protect against exceptions */
             try {
                 /* Access the component directory URL */
-                SVNURL myURL = SVNURL.parseURIDecoded(theRepository.getPath());
+                SVNURL myURL = SVNURL.parseURIEncoded(theRepository.getPath());
 
                 /* List the component directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
                                 SVNDirEntry.DIRENT_ALL, new ListDirHandler());
-
-                /* Release the client manager */
-                theRepository.releaseClientManager(myMgr);
             } catch (SVNException e) {
                 throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover components for "
                         + theRepository.getName(), e);
+            } finally {
+                theRepository.releaseClientManager(myMgr);
             }
+
+            /* Report number of stages */
+            pReport.setNumStages(size() + 2);
 
             /* Access list iterator */
             Iterator<Component> myIterator = iterator();
@@ -348,17 +350,23 @@ public final class Component implements JDataContents, Comparable<Component> {
                 BranchList myBranches = myComponent.getBranchList();
 
                 /* Report discovery of component */
-                pReport.reportStatus("Analysing component " + myComponent.getName());
+                pReport.setNewStage("Analysing component " + myComponent.getName());
 
                 /* Discover branches for the component */
-                myBranches.discover();
+                myBranches.discover(pReport);
             }
 
+            /* Report stage */
+            pReport.setNewStage("Registering dependencies");
+
             /* Register dependencies */
-            registerDependencies();
+            registerDependencies(pReport);
+
+            /* Report stage */
+            pReport.setNewStage("Propagating dependencies");
 
             /* Propagate dependencies */
-            propagateDependencies();
+            propagateDependencies(pReport);
         }
 
         /**
@@ -395,10 +403,92 @@ public final class Component implements JDataContents, Comparable<Component> {
         }
 
         /**
+         * Locate Component.
+         * @param pName the component to locate
+         * @return the relevant component or Null
+         */
+        protected Component locateComponent(final String pName) {
+            /* Access list iterator */
+            Iterator<Component> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Component */
+                Component myComponent = myIterator.next();
+
+                /* If this is the correct component */
+                if (pName.equals(myComponent.getName())) {
+                    /* Return the component */
+                    return myComponent;
+                }
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
+         * Locate Branch.
+         * @param pComponent the component to locate
+         * @param pVersion the version to locate
+         * @return the relevant branch or Null
+         */
+        protected Branch locateBranch(final String pComponent,
+                                      final String pVersion) {
+            /* Access list iterator */
+            Iterator<Component> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Component */
+                Component myComponent = myIterator.next();
+
+                /* If this is the correct component */
+                if (pComponent.equals(myComponent.getName())) {
+                    /* Search in this components branches */
+                    return myComponent.getBranchList().locateBranch(pVersion);
+                }
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
+         * Locate Tag.
+         * @param pComponent the component to locate
+         * @param pVersion the version to locate
+         * @param pTag the tag to locate
+         * @return the relevant tag or Null
+         */
+        protected Tag locateTag(final String pComponent,
+                                final String pVersion,
+                                final int pTag) {
+            /* Access list iterator */
+            Iterator<Component> myIterator = iterator();
+
+            /* While we have entries */
+            while (myIterator.hasNext()) {
+                /* Access the Component */
+                Component myComponent = myIterator.next();
+
+                /* If this is the correct component */
+                if (pComponent.equals(myComponent.getName())) {
+                    /* Search in this components branches */
+                    return myComponent.getBranchList().locateTag(pVersion, pTag);
+                }
+            }
+
+            /* Not found */
+            return null;
+        }
+
+        /**
          * registerDependencies.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        private void registerDependencies() throws JDataException {
+        private void registerDependencies(final ReportStatus pReport) throws JDataException {
             /* Access list iterator */
             Iterator<Component> myIterator = iterator();
 
@@ -409,15 +499,16 @@ public final class Component implements JDataContents, Comparable<Component> {
 
                 /* register dependencies */
                 BranchList myBranches = myComponent.getBranchList();
-                myBranches.registerDependencies();
+                myBranches.registerDependencies(pReport);
             }
         }
 
         /**
          * propagateDependencies.
+         * @param pReport the report object
          * @throws JDataException on error
          */
-        protected void propagateDependencies() throws JDataException {
+        protected void propagateDependencies(final ReportStatus pReport) throws JDataException {
             /* Access list iterator */
             Iterator<Component> myIterator = iterator();
 
@@ -426,7 +517,7 @@ public final class Component implements JDataContents, Comparable<Component> {
                 /* Access the Component and resolve dependencies */
                 Component myComp = myIterator.next();
                 BranchList myBranches = myComp.getBranchList();
-                myBranches.propagateDependencies();
+                myBranches.propagateDependencies(pReport);
             }
         }
 

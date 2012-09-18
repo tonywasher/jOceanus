@@ -23,32 +23,30 @@
 package net.sourceforge.JSvnManager.tasks;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Branch;
-import net.sourceforge.JSvnManager.data.Branch.BranchList;
 import net.sourceforge.JSvnManager.data.Component;
+import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.JSvnManager.data.Repository;
-import net.sourceforge.JSvnManager.data.SubVersionPreferences;
 import net.sourceforge.JSvnManager.data.Tag;
-import net.sourceforge.JSvnManager.data.Tag.TagList;
 import net.sourceforge.JSvnManager.project.ProjectDefinition;
-import net.sourceforge.JiraAccess.data.Issue;
+import net.sourceforge.JSvnManager.project.ProjectId;
 
-import org.tmatesoft.svn.core.ISVNDirEntryHandler;
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;
-import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
+import org.tmatesoft.svn.core.wc.ISVNEventHandler;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNCopyClient;
 import org.tmatesoft.svn.core.wc.SVNCopySource;
 import org.tmatesoft.svn.core.wc.SVNEvent;
-import org.tmatesoft.svn.core.wc.SVNEventAdapter;
-import org.tmatesoft.svn.core.wc.SVNLogClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNUpdateClient;
 
@@ -57,21 +55,6 @@ import org.tmatesoft.svn.core.wc.SVNUpdateClient;
  * @author Tony Washer
  */
 public class VersionMgr {
-    /**
-     * Subversion Work Directory.
-     */
-    private static final String DIR_SVNWORK = "svnTempWork";
-
-    /**
-     * The Preference Manager.
-     */
-    private final PreferenceManager thePreferenceMgr;
-
-    /**
-     * The Preferences.
-     */
-    private final SubVersionPreferences thePreferences;
-
     /**
      * The Client Manager.
      */
@@ -83,201 +66,64 @@ public class VersionMgr {
     private final Repository theRepository;
 
     /**
+     * Location.
+     */
+    private final File theLocation;
+
+    /**
+     * Report object.
+     */
+    private final ReportStatus theReport;
+
+    /**
+     * Event Handler.
+     */
+    private final VersionHandler theHandler = new VersionHandler();
+
+    /**
      * Constructor.
      * @param pRepository the repository
+     * @param pLocation the location
+     * @param pReport the report object
      */
-    public VersionMgr(final Repository pRepository) {
+    public VersionMgr(final Repository pRepository,
+                      final File pLocation,
+                      final ReportStatus pReport) {
         /* Store Parameters */
         theRepository = pRepository;
-        thePreferenceMgr = theRepository.getPreferenceMgr();
+        theLocation = pLocation;
+        theReport = pReport;
         theMgr = theRepository.getClientManager();
-        thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
+        theMgr.setEventHandler(theHandler);
     }
 
-    @Override
-    public void finalize() throws Throwable {
+    /**
+     * Dispose of resources.
+     */
+    public void dispose() {
         /* Release the client manager */
         theRepository.releaseClientManager(theMgr);
-        super.finalize();
-    }
-
-    /**
-     * Create major branch.
-     * @param pSource the tag to base the branch on
-     * @param pIssue the issue to make changes against
-     * @return the new branch
-     * @throws JDataException on error
-     */
-    protected Branch createMajorBranch(final Tag pSource,
-                                       final Issue pIssue) throws JDataException {
-        /* Obtain the component that we are creating the branch in */
-        Component myComponent = pSource.getComponent();
-        BranchList myList = myComponent.getBranchList();
-
-        /* Determine the branch to create */
-        Branch myBranch = myList.nextMajorBranch();
-
-        /* Create the branch */
-        createBranch(myBranch, pSource, pIssue);
-
-        /* re-discover branches */
-        myList.discover();
-
-        /* Return the newly created branch */
-        return myList.locateBranch(myBranch);
-    }
-
-    /**
-     * Create minor branch.
-     * @param pSource the tag to base the branch on
-     * @param pIssue the issue to make changes against
-     * @return the new branch
-     * @throws JDataException on error
-     */
-    protected Branch createMinorBranch(final Tag pSource,
-                                       final Issue pIssue) throws JDataException {
-        /* Obtain the component that we are creating the branch in */
-        Component myComponent = pSource.getComponent();
-        BranchList myList = myComponent.getBranchList();
-
-        /* Determine the branch to create */
-        Branch myBranch = myList.nextMinorBranch(pSource.getBranch());
-
-        /* Create the branch */
-        createBranch(myBranch, pSource, pIssue);
-
-        /* re-discover branches */
-        myList.discover();
-
-        /* Return the newly created branch */
-        return myList.locateBranch(myBranch);
-    }
-
-    /**
-     * Create delta branch.
-     * @param pSource the tag to base the branch on
-     * @param pIssue the issue to make changes against
-     * @return the new branch
-     * @throws JDataException on error
-     */
-    protected Branch createDeltaBranch(final Tag pSource,
-                                       final Issue pIssue) throws JDataException {
-        /* Obtain the component that we are creating the branch in */
-        Component myComponent = pSource.getComponent();
-        BranchList myList = myComponent.getBranchList();
-
-        /* Determine the branch to create */
-        Branch myBranch = myList.nextDeltaBranch(pSource.getBranch());
-
-        /* Create the branch */
-        createBranch(myBranch, pSource, pIssue);
-
-        /* re-discover branches */
-        myList.discover();
-
-        /* Return the newly created branch */
-        return myList.locateBranch(myBranch);
-    }
-
-    /**
-     * Create next tag for branch.
-     * @param pSource the branch to tag
-     * @param pIssue the issue to make changes against
-     * @return the new tag
-     * @throws JDataException on error
-     */
-    public Tag createNextTag(final Branch pSource,
-                             final Issue pIssue) throws JDataException {
-        /* Access tag list */
-        TagList myList = pSource.getTagList();
-
-        /* Determine the tag to create */
-        Tag myTag = myList.nextTag();
-
-        /* Create the branch */
-        createTag(myTag, pSource, pIssue);
-
-        /* re-discover tags */
-        myList.discover();
-
-        /* Return the newly created tag */
-        return myList.locateTag(myTag);
-    }
-
-    /**
-     * Count objects in URL.
-     * @param pURL the URL
-     * @return the object count
-     */
-    private Integer countObjects(final SVNURL pURL) {
-        /* Access a LogClient */
-        SVNLogClient myClient = theMgr.getLogClient();
-        CountHandler myHandler = new CountHandler();
-
-        /* Protect against exceptions */
-        try {
-            /* List the objects recursively */
-            myClient.doList(pURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.INFINITY,
-                            SVNDirEntry.DIRENT_ALL, myHandler);
-
-            /* Return the count */
-            return myHandler.getObjectCount();
-        } catch (SVNException e) {
-            return null;
-        }
-    }
-
-    /**
-     * The Count Handler.
-     */
-    protected static final class CountHandler implements ISVNDirEntryHandler {
-        /**
-         * The object count.
-         */
-        private int theCount = 0;
-
-        /**
-         * Obtain the object count.
-         * @return the object count
-         */
-        public int getObjectCount() {
-            return theCount;
-        }
-
-        @Override
-        public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
-            /* Ignore if is top-level */
-            if (pEntry.getRelativePath().length() == 0) {
-                return;
-            }
-
-            /* Increment the count */
-            theCount++;
-        }
     }
 
     /**
      * Create branch in temporary working copy.
      * @param pTarget the branch to create
      * @param pSource the tag to base the branch on
-     * @param pIssue the issue to make changes against
      * @throws JDataException on error
      */
-    private void createBranch(final Branch pTarget,
-                              final Tag pSource,
-                              final Issue pIssue) throws JDataException {
+    protected void createBranch(final Branch pTarget,
+                                final Tag pSource) throws JDataException {
         /* Access details */
         Component myComp = pTarget.getComponent();
 
         /* Access clients */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
         SVNCopyClient myCopy = theMgr.getCopyClient();
-        // SVNCommitClient myCommit = theMgr.getCommitClient();
 
         /* Protect against exceptions */
         try {
             /* Access the work and target */
-            File myWork = prepareWorkDir(thePreferences);
+            File myWork = new File(theLocation, myComp.getName());
             File myTarget = new File(myWork, pTarget.getBranchName());
 
             /* Determine the URL for the branches path */
@@ -292,32 +138,11 @@ public class VersionMgr {
             SVNCopySource mySource = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, mySrcURL);
             SVNCopySource[] mySrcs = new SVNCopySource[] { mySource };
 
-            /* Count the objects that we are to copy */
-            Integer myCount = countObjects(mySrcURL);
-            CopyHandler myCopyHandler = new CopyHandler();
-            myCopy.setEventHandler(myCopyHandler);
-
             /* Copy the source tag to the new branch */
             myCopy.doCopy(mySrcs, myTarget, false, false, true);
 
-            /* Determine count of objects copied */
-            Integer myCopied = myCopyHandler.getCopyCount();
-
-            /* Determine the location of the project definition */
-            File myPom = ProjectDefinition.getProjectDefFile(myTarget);
-            if (myPom != null) {
-                ProjectDefinition myProject = ProjectDefinition.parseProjectFile(myPom);
-            }
-
-            /* Commit the changes */
-            // SVNCommitPacket myPacket = myCommit.doCollectCommitItems(new File[] { myWork }, false, false,
-            // SVNDepth.INFINITY, null);
-            // SVNCommitInfo myResult = myCommit.doCommit(myPacket, false, "Created branch " +
-            // pTarget.getBranchName() +
-            // " from tag " + pSource.getTagName());
-
-            /* Remove work directory */
-            // Utils.removeDirectory(myWork);
+            /* Clone the definition */
+            pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Failed to create branch "
                     + pTarget.getBranchName(), e);
@@ -328,24 +153,21 @@ public class VersionMgr {
      * Create tag in temporary working copy.
      * @param pTarget the tag to create
      * @param pSource the branch to create the tag for
-     * @param pIssue the issue to make changes against
      * @throws JDataException on error
      */
     private void createTag(final Tag pTarget,
-                           final Branch pSource,
-                           final Issue pIssue) throws JDataException {
+                           final Branch pSource) throws JDataException {
         /* Access details */
         Component myComp = pTarget.getComponent();
 
         /* Access clients */
         SVNUpdateClient myUpdate = theMgr.getUpdateClient();
         SVNCopyClient myCopy = theMgr.getCopyClient();
-        // SVNCommitClient myCommit = theMgr.getCommitClient();
 
         /* Protect against exceptions */
         try {
             /* Access the work and target */
-            File myWork = prepareWorkDir(thePreferences);
+            File myWork = new File(theLocation, myComp.getName());
             File myTarget = new File(myWork, pTarget.getTagName());
 
             /* Determine the URL for the tags path */
@@ -360,31 +182,11 @@ public class VersionMgr {
             SVNCopySource mySource = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, mySrcURL);
             SVNCopySource[] mySrcs = new SVNCopySource[] { mySource };
 
-            /* Count the objects that we are to copy */
-            Integer myCount = countObjects(mySrcURL);
-            CopyHandler myCopyHandler = new CopyHandler();
-            myCopy.setEventHandler(myCopyHandler);
-
             /* Copy the source branch to the new tag */
             myCopy.doCopy(mySrcs, myTarget, false, false, true);
 
-            /* Determine count of objects copied */
-            Integer myCopied = myCopyHandler.getCopyCount();
-
-            /* Determine the location of the project definition */
-            File myPom = ProjectDefinition.getProjectDefFile(myTarget);
-            if (myPom != null) {
-                ProjectDefinition myProject = ProjectDefinition.parseProjectFile(myPom);
-            }
-
-            /* Commit the changes */
-            // SVNCommitPacket myPacket = myCommit.doCollectCommitItems(new File[] { myWork }, false, false,
-            // SVNDepth.INFINITY, null);
-            // SVNCommitInfo myResult = myCommit.doCommit(myPacket, false, "Created tag " +
-            // pTarget.getTagName());
-
-            /* Remove work directory */
-            // Utils.removeDirectory(myWork);
+            /* Clone the definition */
+            pTarget.cloneDefinition(pSource.getProjectDefinition());
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Failed to create tag "
                     + pTarget.getTagName(), e);
@@ -392,105 +194,216 @@ public class VersionMgr {
     }
 
     /**
-     * Prepare temporary work directory.
-     * @param pPreferences the preferences
-     * @return the work directory
+     * Create new Tags to the specified directory.
+     * @param pBranches the branches to tag.
+     * @return the list of tags that were created
+     * @throws JDataException on error
      */
-    private static File prepareWorkDir(final SubVersionPreferences pPreferences) {
-        /* Determine the name of the work directory */
-        String myBase = pPreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD);
-        File myWork = new File(myBase + File.separator + DIR_SVNWORK);
+    public List<Tag> createTags(final Collection<Branch> pBranches) throws JDataException {
+        /* Create the list of tags */
+        List<Tag> myList = new ArrayList<Tag>();
+        Tag myTag;
 
-        /* Remove the directory */
-        if (!removeDirectory(myWork)) {
-            return null;
+        /* Loop through branches */
+        for (Branch myBranch : pBranches) {
+            /* If the branch is tag-gable */
+            if (myBranch.isTaggable()) {
+                /* Determine the new tag */
+                myTag = myBranch.nextTag();
+
+                /* Create the tag */
+                createTag(myTag, myBranch);
+
+                /* else not tag-able */
+            } else {
+                /* Just use latest tag */
+                myTag = myBranch.getTagList().latestTag();
+            }
+
+            /* Add it to the list */
+            myList.add(myTag);
         }
 
-        /* Create the directory */
-        if (!myWork.mkdir()) {
-            return null;
-        }
+        /* Adjust the dependencies */
+        adjustTagDependencies(myList);
 
-        /* Return the directory */
-        return myWork;
+        /* Return the list */
+        return myList;
     }
 
     /**
-     * Remove a directory and all of its contents.
-     * @param pDir the directory to remove
-     * @return success/failure
+     * Create new Major branches to the specified directory.
+     * @param pTags the tags to branch from.
+     * @return the list of branches that were created
+     * @throws JDataException on error
      */
-    public static boolean removeDirectory(final File pDir) {
-        /* Clear the directory */
-        if (!clearDirectory(pDir)) {
-            return false;
+    public List<Branch> createMajorBranches(final Collection<Tag> pTags) throws JDataException {
+        /* Create the list of branches */
+        List<Branch> myList = new ArrayList<Branch>();
+
+        /* Loop through tags */
+        for (Tag myTag : pTags) {
+            /* Determine the new branch */
+            Branch myBranch = myTag.getBranch();
+            myBranch = myBranch.nextMajorBranch();
+
+            /* Create the branch */
+            createBranch(myBranch, myTag);
+
+            /* Add it to the list */
+            myList.add(myBranch);
         }
 
-        /* Delete the directory itself */
-        return (!pDir.exists()) || (pDir.delete());
+        /* Adjust the dependencies */
+        adjustBranchDependencies(myList);
+
+        /* Return the list */
+        return myList;
     }
 
     /**
-     * Clear a directory of all of its contents.
-     * @param pDir the directory to clear
-     * @return success/failure
+     * Create new Minor branches to the specified directory.
+     * @param pTags the tags to branch from.
+     * @return the list of branches that were created
+     * @throws JDataException on error
      */
-    public static boolean clearDirectory(final File pDir) {
-        /* Handle trivial operations */
-        if ((pDir == null) || (!pDir.exists())) {
-            return true;
-        }
-        if (!pDir.isDirectory()) {
-            return false;
+    public List<Branch> createMinorBranches(final Collection<Tag> pTags) throws JDataException {
+        /* Create the list of branches */
+        List<Branch> myList = new ArrayList<Branch>();
+
+        /* Loop through tags */
+        for (Tag myTag : pTags) {
+            /* Determine the new branch */
+            Branch myBranch = myTag.getBranch();
+            myBranch = myBranch.nextMinorBranch();
+
+            /* Create the branch */
+            createBranch(myBranch, myTag);
+
+            /* Add it to the list */
+            myList.add(myBranch);
         }
 
-        /* Loop through all items */
-        for (File myFile : pDir.listFiles()) {
-            /* If the file is a directory */
-            if (myFile.isDirectory()) {
-                /* Remove it recursively */
-                if (!removeDirectory(myFile)) {
-                    return false;
+        /* Adjust the dependencies */
+        adjustBranchDependencies(myList);
+
+        /* Return the list */
+        return myList;
+    }
+
+    /**
+     * Create new Delta branches to the specified directory.
+     * @param pTags the tags to branch from.
+     * @return the list of branches that were created
+     * @throws JDataException on error
+     */
+    public List<Branch> createDeltaBranches(final Collection<Tag> pTags) throws JDataException {
+        /* Create the list of branches */
+        List<Branch> myList = new ArrayList<Branch>();
+
+        /* Loop through tags */
+        for (Tag myTag : pTags) {
+            /* Determine the new branch */
+            Branch myBranch = myTag.getBranch();
+            myBranch = myBranch.nextDeltaBranch();
+
+            /* Create the tag */
+            createBranch(myBranch, myTag);
+
+            /* Add it to the list */
+            myList.add(myBranch);
+        }
+
+        /* Adjust the dependencies */
+        adjustBranchDependencies(myList);
+
+        /* Return the list */
+        return myList;
+    }
+
+    /**
+     * Adjust dependencies.
+     * @param pBranches the branches to adjust.
+     * @throws JDataException on error
+     */
+    private void adjustBranchDependencies(final List<Branch> pBranches) throws JDataException {
+        /* Loop through the branches */
+        for (Branch myBranch : pBranches) {
+            /* Access version */
+            ProjectDefinition myTargDef = myBranch.getProjectDefinition();
+
+            /* Loop through the branches */
+            Iterator<Branch> myIterator = pBranches.iterator();
+            while (myIterator.hasNext()) {
+                Branch mySource = myIterator.next();
+
+                /* Skip if we are the same branch */
+                if (mySource.equals(myBranch)) {
+                    continue;
                 }
 
-                /* else remove the file */
-            } else if (!myFile.delete()) {
-                return false;
+                /* Set new version */
+                ProjectDefinition mySrcDef = mySource.getProjectDefinition();
+                ProjectId myId = mySrcDef.getDefinition();
+                myTargDef.setNewVersion(myId);
             }
-        }
 
-        /* All cleared */
-        return true;
+            /* Write out the new definition */
+            File myTarget = new File(theLocation, myBranch.getComponent().getName());
+            myTargDef.writeToFile(myTarget);
+        }
     }
 
     /**
-     * Copy Event Handler class.
+     * Adjust dependencies.
+     * @param pTags the tags to adjust.
+     * @throws JDataException on error
      */
-    private final class CopyHandler extends SVNEventAdapter {
-        /**
-         * Copy count.
-         */
-        private int theCount = 0;
+    private void adjustTagDependencies(final List<Tag> pTags) throws JDataException {
+        /* Loop through the tags */
+        for (Tag myTag : pTags) {
+            /* Access version */
+            ProjectDefinition myTargDef = myTag.getProjectDefinition();
 
-        /**
-         * Obtain the object count.
-         * @return the copy count
-         */
-        public int getCopyCount() {
-            return theCount;
+            /* Loop through the branches */
+            Iterator<Tag> myIterator = pTags.iterator();
+            while (myIterator.hasNext()) {
+                Tag mySource = myIterator.next();
+
+                /* Skip if we are the same tag */
+                if (mySource.equals(myTag)) {
+                    continue;
+                }
+
+                /* Set new version */
+                ProjectDefinition mySrcDef = mySource.getProjectDefinition();
+                ProjectId myId = mySrcDef.getDefinition();
+                myTargDef.setNewVersion(myId);
+            }
+
+            /* Write out the new definition */
+            File myTarget = new File(theLocation, myTag.getComponent().getName());
+            myTargDef.writeToFile(myTarget);
         }
+    }
+
+    /**
+     * EventHandler.
+     */
+    private final class VersionHandler implements ISVNEventHandler {
 
         @Override
         public void checkCancelled() throws SVNCancelException {
-            // if (theStatus.isCancelled())
-            // throw new SVNCancelException();
+            if (theReport.isCancelled()) {
+                throw new SVNCancelException();
+            }
         }
 
         @Override
-        public void handleEvent(final SVNEvent arg0,
-                                final double arg1) throws SVNException {
-            /* Increment the count */
-            theCount++;
+        public void handleEvent(final SVNEvent pEvent,
+                                final double pProgress) throws SVNException {
+            /* Report activity */
+            theReport.setNewStage(pEvent.getFile().getPath());
         }
     }
 }

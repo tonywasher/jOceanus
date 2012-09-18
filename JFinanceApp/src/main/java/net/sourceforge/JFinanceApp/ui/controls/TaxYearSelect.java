@@ -85,7 +85,7 @@ public class TaxYearSelect extends JEventPanel {
     /**
      * Years box.
      */
-    private final JComboBox theYearsBox;
+    private final JComboBox<TaxYear> theYearsBox;
 
     /**
      * Show Deleted check box.
@@ -141,7 +141,7 @@ public class TaxYearSelect extends JEventPanel {
         mySelect = new JLabel(NLS_YEAR);
 
         /* Create the combo boxes */
-        theYearsBox = new JComboBox();
+        theYearsBox = new JComboBox<TaxYear>();
 
         /* Create the combo boxes */
         theShowDeleted = new JCheckBox(NLS_DELETED);

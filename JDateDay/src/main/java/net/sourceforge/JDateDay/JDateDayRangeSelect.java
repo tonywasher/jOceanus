@@ -109,7 +109,7 @@ public class JDateDayRangeSelect extends JPanel {
     /**
      * The Period ComboBox.
      */
-    private final JComboBox thePeriodBox;
+    private final JComboBox<JDatePeriod> thePeriodBox;
 
     /**
      * The Next button.
@@ -184,7 +184,7 @@ public class JDateDayRangeSelect extends JPanel {
         theLocale = pFormatter.getLocale();
 
         /* Create the boxes */
-        thePeriodBox = new JComboBox();
+        thePeriodBox = new JComboBox<JDatePeriod>();
         thePeriodBox.setMaximumSize(new Dimension(PERIOD_WIDTH, PERIOD_HEIGHT));
 
         /* Create the DateButton */

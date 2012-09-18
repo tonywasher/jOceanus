@@ -107,12 +107,12 @@ public class AccountSelect extends JEventPanel {
     /**
      * Account types comboBox.
      */
-    private final JComboBox theTypesBox;
+    private final JComboBox<AccountType> theTypesBox;
 
     /**
      * Accounts comboBox.
      */
-    private final JComboBox theAccountBox;
+    private final JComboBox<Account> theAccountBox;
 
     /**
      * Show closed checkBox.
@@ -189,8 +189,8 @@ public class AccountSelect extends JEventPanel {
         theView = pView;
 
         /* Create the boxes */
-        theTypesBox = new JComboBox();
-        theAccountBox = new JComboBox();
+        theTypesBox = new JComboBox<AccountType>();
+        theAccountBox = new JComboBox<Account>();
         theShowClosed = new JCheckBox();
         theShowDeleted = new JCheckBox();
         theTypesBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));

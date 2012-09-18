@@ -32,10 +32,31 @@ public class JSvnReporter {
      */
     public interface ReportStatus {
         /**
-         * Report Status.
-         * @param pStatus the status
+         * Initialise Task.
+         * @param pTask the task
+         * @return continue? true/false
          */
-        void reportStatus(final String pStatus);
+        boolean initTask(final String pTask);
+
+        /**
+         * Set number of stages.
+         * @param pNumStages the number of stages
+         * @return continue? true/false
+         */
+        boolean setNumStages(final int pNumStages);
+
+        /**
+         * Set new stage.
+         * @param pStage the new stage
+         * @return continue? true/false
+         */
+        boolean setNewStage(final String pStage);
+
+        /**
+         * Is the task cancelled?
+         * @return true/false
+         */
+        boolean isCancelled();
     }
 
     /**

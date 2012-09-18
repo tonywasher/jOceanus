@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.JDateDay</groupId>
-  <artifactId>JDateDay</artifactId>
-  <version>v1.0.0-SNAPSHOT</version>
+  <groupId>net.sourceforge.${svnComponent}</groupId>
+  <artifactId>${svnComponent}</artifactId>
+  <version>${svnBranch}-SNAPSHOT</version>
   <name>Java DateDay</name>
   <description>Implementation of a DateDay</description>
   <dependencies>
@@ -37,18 +37,22 @@
   </developers>
   <issueManagement>
     <system>Jira</system>
-    <url>http://Tony-LapTop:8080/</url>
+    <url>http://${svnHost}:8080/</url>
   </issueManagement>
   <scm>
-    <connection>scm:svn:http://Tony-LapTop/svn/finance/JDateDay</connection>
-    <developerConnection>scm:svn:https://Tony-LapTop/svn/finance/JDateDay</developerConnection>
+    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnComponent}</connection>
+    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnComponent}</developerConnection>
     <tag>HEAD</tag>
-    <url>http://Tony-LapTop/viewvc/finance/JDateDay</url>
+    <url>http://${svnHost}/viewvc/${svnRepository}/${svnComponent}/branches/${svnBranch}</url>
   </scm>
   <properties>
     <demo-name>${project.artifactId}-${project.version}</demo-name>
     <demo-dir>${project.build.directory}/site/demo</demo-dir>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
+    <svnHost>Tony-HP</svnHost>
+    <svnRepository>Finance</svnRepository>
+    <svnComponent>JDateDay</svnComponent>
+    <svnBranch>v1.0.0</svnBranch>
   </properties>
   <build>
     <resources>
@@ -61,7 +65,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.7</version>
+        <version>1.7.1</version>
         <configuration>
           <finalName>${project.artifactId}-${project.version}-uber</finalName>
         </configuration>
@@ -77,7 +81,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.5.1</version>
         <executions>
           <execution>
             <id>copy-installed</id>
@@ -112,14 +116,14 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>2.4</version>
         <configuration>
           <archive>
             <manifest>
               <packageName>net.sourceforge.JDateDay</packageName>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <MainClass>net.sourceforge.JDateDay.Demo.DateExample</MainClass>
+              <MainClass>net.sourceforge.JDateDay.Demo.JDateDayExample</MainClass>
             </manifest>
           </archive>
         </configuration>
@@ -127,10 +131,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
+        <version>2.5.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
         </configuration>
       </plugin>
       <plugin>
@@ -157,7 +161,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.5.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -172,7 +176,7 @@
         <artifactId>maven-pmd-plugin</artifactId>
         <version>2.7.1</version>
         <configuration>
-           <targetJdk>1.6</targetJdk>
+           <targetJdk>1.7</targetJdk>
         </configuration>
       </plugin>
       <plugin>

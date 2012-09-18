@@ -710,7 +710,7 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
      * Iterator for rows. Note that this iterator is for a self-contained snapshot of the table mapping. It
      * will not be affected or invalidated by subsequent changes.
      */
-    private class TableIterator implements Iterator<T> {
+    private final class TableIterator implements Iterator<T> {
         /**
          * List to iterate over.
          */
@@ -730,7 +730,7 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
          * Constructor.
          * @param pArray the array to iterate over
          */
-        private TableIterator(RowEntry<T>[] pArray) {
+        private TableIterator(final RowEntry<T>[] pArray) {
             /* Store the array */
             theArray = pArray;
             theSize = theArray.length;

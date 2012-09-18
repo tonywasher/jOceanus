@@ -28,7 +28,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -49,7 +48,6 @@ import net.sourceforge.JDataManager.JDataFormatter;
 import net.sourceforge.JDataManager.JDataManager;
 import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JDataModels.ui.ErrorPanel;
 import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
@@ -174,17 +172,17 @@ public class MaintAccount extends JEventPanel {
     /**
      * The types comboBox.
      */
-    private final JComboBox theTypesBox;
+    private final JComboBox<AccountType> theTypesBox;
 
     /**
      * The parent comboBox.
      */
-    private final JComboBox theParentBox;
+    private final JComboBox<Account> theParentBox;
 
     /**
      * The alias comboBox.
      */
-    private final JComboBox theAliasBox;
+    private final JComboBox<Account> theAliasBox;
 
     /**
      * The maturity button.
@@ -344,27 +342,14 @@ public class MaintAccount extends JEventPanel {
         theNotes.setColumns(Account.WSITELEN);
 
         /* Create the combo boxes */
-        theTypesBox = new JComboBox();
-        theParentBox = new JComboBox();
-        theAliasBox = new JComboBox();
+        theTypesBox = new JComboBox<AccountType>();
+        theParentBox = new JComboBox<Account>();
+        theAliasBox = new JComboBox<Account>();
 
         /* Add the ComboBoxes to the Field Set */
         theFieldSet.addItemField(theTypesBox, Account.FIELD_TYPE);
         theFieldSet.addItemField(theParentBox, Account.FIELD_PARENT);
         theFieldSet.addItemField(theAliasBox, Account.FIELD_ALIAS);
-
-        /* Dimension the account boxes correctly */
-        char[] myDefChars = new char[Account.NAMELEN];
-        Arrays.fill(myDefChars, 'X');
-        String myDefValue = new String(myDefChars);
-        theParentBox.setPrototypeDisplayValue(myDefValue);
-        theAliasBox.setPrototypeDisplayValue(myDefValue);
-
-        /* Dimension the account type box correctly */
-        myDefChars = new char[StaticData.NAMELEN];
-        Arrays.fill(myDefChars, 'X');
-        myDefValue = new String(myDefChars);
-        theTypesBox.setPrototypeDisplayValue(myDefValue);
 
         /* Create the Maturity Button */
         theMatButton = new JDateDayButton();
