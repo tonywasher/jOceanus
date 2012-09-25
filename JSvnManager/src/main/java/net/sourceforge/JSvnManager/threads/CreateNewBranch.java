@@ -23,29 +23,37 @@
 package net.sourceforge.JSvnManager.threads;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JSvnManager.data.Branch;
+import net.sourceforge.JSvnManager.data.Branch.BranchOpType;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportTask;
 import net.sourceforge.JSvnManager.data.Repository;
+import net.sourceforge.JSvnManager.data.Tag;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
 import net.sourceforge.JSvnManager.tasks.Directory;
 import net.sourceforge.JSvnManager.tasks.VersionMgr;
 
 /**
- * Thread to handle creation of branch tags.
+ * Thread to handle creation of new branches.
  * @author Tony Washer
  */
-public class CreateBranchTags extends SwingWorker<Void, String> implements ReportStatus {
+public class CreateNewBranch extends SwingWorker<Void, String> implements ReportStatus {
     /**
-     * Branches.
+     * Tags.
      */
-    private final Collection<Branch> theBranches;
+    private final Collection<Tag> theTags;
+
+    /**
+     * Tags.
+     */
+    private final BranchOpType theBranchType;
 
     /**
      * Location.
@@ -90,43 +98,46 @@ public class CreateBranchTags extends SwingWorker<Void, String> implements Repor
 
     /**
      * Constructor.
-     * @param pBranches the branches to create the tags for
+     * @param pTags the tags to create the branches from
+     * @param pBranchType the type of branches to create
      * @param pLocation the location to create into
      * @param pReport the report object
      */
-    public CreateBranchTags(final Branch[] pBranches,
-                            final File pLocation,
-                            final ReportTask pReport) {
+    public CreateNewBranch(final Tag[] pTags,
+                           final BranchOpType pBranchType,
+                           final File pLocation,
+                           final ReportTask pReport) {
         /* Store parameters */
         theLocation = pLocation;
+        theBranchType = pBranchType;
         theReport = pReport;
-        theRepository = pBranches[0].getRepository();
-        Collection<Branch> myBranches = null;
+        theRepository = pTags[0].getRepository();
+        Collection<Tag> myTags = null;
 
         /* protect against exceptions */
         try {
             /* Create new directory for working copy */
             Directory.createDirectory(pLocation);
 
-            /* Access branch list for extract */
-            myBranches = Branch.getBranchMap(pBranches).values();
+            /* Store the tags */
+            myTags = new HashSet<Tag>(Arrays.asList(pTags));
         } catch (JDataException e) {
             /* Store the error and cancel thread */
             theError = e;
             cancel(true);
         }
 
-        /* Record branches */
-        theBranches = myBranches;
+        /* Record tags */
+        theTags = myTags;
     }
 
     @Override
     protected Void doInBackground() {
         /* Protect against exceptions */
         try {
-            /* Create the tags */
+            /* Create the branches */
             VersionMgr myVersionMgr = new VersionMgr(theRepository, theLocation, theReport);
-            myVersionMgr.createTags(theBranches);
+            myVersionMgr.createBranches(theTags, theBranchType);
 
             /* Discover workingSet details */
             theWorkingCopySet = new WorkingCopySet(theRepository, theLocation, this);

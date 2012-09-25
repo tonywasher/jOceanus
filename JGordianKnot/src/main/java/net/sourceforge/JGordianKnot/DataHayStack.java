@@ -114,12 +114,6 @@ public class DataHayStack {
             myHayStack[iPos + i + 2] = (byte) (pNeedle[i] ^ iMask);
         }
 
-        /*
-         * Check that we can find the needle again NeedleResult myResult = findNeedle(myHayStack); if
-         * ((myResult == null) || (!Arrays.equals(pNeedle, myResult.getNeedle())) ||
-         * (!Arrays.equals(pHayStack, myResult.getHayStack()))) { findNeedle(myHayStack); }
-         */
-
         /* Return the new hayStack */
         return myHayStack;
     }

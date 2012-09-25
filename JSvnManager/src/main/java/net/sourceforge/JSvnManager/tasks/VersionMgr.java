@@ -31,6 +31,8 @@ import java.util.List;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JSvnManager.data.Branch;
+import net.sourceforge.JSvnManager.data.Branch.BranchList;
+import net.sourceforge.JSvnManager.data.Branch.BranchOpType;
 import net.sourceforge.JSvnManager.data.Component;
 import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.JSvnManager.data.Repository;
@@ -128,7 +130,7 @@ public class VersionMgr {
 
             /* Determine the URL for the branches path */
             String myBase = myComp.getBranchesPath();
-            SVNURL myURL = SVNURL.parseURIDecoded(myBase);
+            SVNURL myURL = SVNURL.parseURIEncoded(myBase);
 
             /* Check out the path */
             myUpdate.doCheckout(myURL, myWork, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.EMPTY, false);
@@ -172,7 +174,7 @@ public class VersionMgr {
 
             /* Determine the URL for the tags path */
             String myBase = myComp.getTagsPath();
-            SVNURL myURL = SVNURL.parseURIDecoded(myBase);
+            SVNURL myURL = SVNURL.parseURIEncoded(myBase);
 
             /* Check out the path */
             myUpdate.doCheckout(myURL, myWork, SVNRevision.HEAD, SVNRevision.HEAD, SVNDepth.EMPTY, false);
@@ -234,10 +236,12 @@ public class VersionMgr {
     /**
      * Create new Major branches to the specified directory.
      * @param pTags the tags to branch from.
+     * @param pBranchType the type of branches to create
      * @return the list of branches that were created
      * @throws JDataException on error
      */
-    public List<Branch> createMajorBranches(final Collection<Tag> pTags) throws JDataException {
+    public List<Branch> createBranches(final Collection<Tag> pTags,
+                                       final BranchOpType pBranchType) throws JDataException {
         /* Create the list of branches */
         List<Branch> myList = new ArrayList<Branch>();
 
@@ -245,69 +249,11 @@ public class VersionMgr {
         for (Tag myTag : pTags) {
             /* Determine the new branch */
             Branch myBranch = myTag.getBranch();
-            myBranch = myBranch.nextMajorBranch();
+            Component myComp = myBranch.getComponent();
+            BranchList myBranches = myComp.getBranchList();
+            myBranch = myBranches.nextBranch(myTag.getBranch(), pBranchType);
 
             /* Create the branch */
-            createBranch(myBranch, myTag);
-
-            /* Add it to the list */
-            myList.add(myBranch);
-        }
-
-        /* Adjust the dependencies */
-        adjustBranchDependencies(myList);
-
-        /* Return the list */
-        return myList;
-    }
-
-    /**
-     * Create new Minor branches to the specified directory.
-     * @param pTags the tags to branch from.
-     * @return the list of branches that were created
-     * @throws JDataException on error
-     */
-    public List<Branch> createMinorBranches(final Collection<Tag> pTags) throws JDataException {
-        /* Create the list of branches */
-        List<Branch> myList = new ArrayList<Branch>();
-
-        /* Loop through tags */
-        for (Tag myTag : pTags) {
-            /* Determine the new branch */
-            Branch myBranch = myTag.getBranch();
-            myBranch = myBranch.nextMinorBranch();
-
-            /* Create the branch */
-            createBranch(myBranch, myTag);
-
-            /* Add it to the list */
-            myList.add(myBranch);
-        }
-
-        /* Adjust the dependencies */
-        adjustBranchDependencies(myList);
-
-        /* Return the list */
-        return myList;
-    }
-
-    /**
-     * Create new Delta branches to the specified directory.
-     * @param pTags the tags to branch from.
-     * @return the list of branches that were created
-     * @throws JDataException on error
-     */
-    public List<Branch> createDeltaBranches(final Collection<Tag> pTags) throws JDataException {
-        /* Create the list of branches */
-        List<Branch> myList = new ArrayList<Branch>();
-
-        /* Loop through tags */
-        for (Tag myTag : pTags) {
-            /* Determine the new branch */
-            Branch myBranch = myTag.getBranch();
-            myBranch = myBranch.nextDeltaBranch();
-
-            /* Create the tag */
             createBranch(myBranch, myTag);
 
             /* Add it to the list */

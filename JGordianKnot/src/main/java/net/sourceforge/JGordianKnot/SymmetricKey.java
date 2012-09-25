@@ -276,7 +276,6 @@ public class SymmetricKey implements JDataContents {
             myCipher.init(Cipher.ENCRYPT_MODE, theKey, theGenerator.getRandom());
 
             /* Return the Stream Cipher */
-            // return new StreamCipher(myCipher, myCipher.getIV());
             return myCipher;
 
             /* catch exceptions */
@@ -302,7 +301,6 @@ public class SymmetricKey implements JDataContents {
             myCipher.init(Cipher.DECRYPT_MODE, theKey, myParms);
 
             /* Return the Stream Cipher */
-            // return new StreamCipher(myCipher, pInitVector);
             return myCipher;
 
             /* catch exceptions */

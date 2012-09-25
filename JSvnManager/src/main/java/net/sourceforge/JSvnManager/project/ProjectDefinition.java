@@ -171,8 +171,7 @@ public class ProjectDefinition implements JDataContents {
             myInBuffer = new BufferedInputStream(myInFile);
 
             /* Parse the project definition */
-            ProjectDefinition myProject = new ProjectDefinition(myInBuffer);
-            return myProject;
+            return new ProjectDefinition(myInBuffer);
 
             /* Catch exceptions */
         } catch (JDataException e) {

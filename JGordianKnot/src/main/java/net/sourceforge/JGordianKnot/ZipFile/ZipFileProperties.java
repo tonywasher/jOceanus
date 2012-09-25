@@ -117,19 +117,33 @@ public class ZipFileProperties {
      */
     protected void setProperty(final String pName,
                                final byte[] pValue) {
-        Property myProperty;
+        /* Determine whether we are setting a null value */
+        boolean isNull = (pValue == null);
 
         /* Access any existing property */
-        myProperty = getProperty(pName);
+        Property myProperty = getProperty(pName);
 
         /* If the property does not exist */
         if (myProperty == null) {
-            /* Create the new property */
-            myProperty = new Property(theList, pName);
-        }
+            /* If we have a value */
+            if (!isNull) {
+                /* Create the new property */
+                myProperty = new Property(theList, pName);
 
-        /* Set the new value */
-        myProperty.setByteValue(pValue);
+                /* Set the new value */
+                myProperty.setByteValue(pValue);
+            }
+
+            /* else if the property now has no value */
+        } else if ((isNull) && (myProperty.getLongValue() == null)) {
+            /* Remove the value from the list */
+            theList.remove(myProperty);
+
+            /* else just set the value */
+        } else {
+            /* Set the new value */
+            myProperty.setByteValue(pValue);
+        }
     }
 
     /**
@@ -138,20 +152,34 @@ public class ZipFileProperties {
      * @param pValue the Value of the property
      */
     protected void setProperty(final String pName,
-                               final long pValue) {
-        Property myProperty;
+                               final Long pValue) {
+        /* Determine whether we are setting a null value */
+        boolean isNull = (pValue == null);
 
         /* Access any existing property */
-        myProperty = getProperty(pName);
+        Property myProperty = getProperty(pName);
 
         /* If the property does not exist */
         if (myProperty == null) {
-            /* Create the new property */
-            myProperty = new Property(theList, pName);
-        }
+            /* If we have a value */
+            if (!isNull) {
+                /* Create the new property */
+                myProperty = new Property(theList, pName);
 
-        /* Set the new value */
-        myProperty.setLongValue(pValue);
+                /* Set the new value */
+                myProperty.setLongValue(pValue);
+            }
+
+            /* else if the property now has no value */
+        } else if ((isNull) && (myProperty.getByteValue() == null)) {
+            /* Remove the value from the list */
+            theList.remove(myProperty);
+
+            /* else just set the value */
+        } else {
+            /* Set the new value */
+            myProperty.setLongValue(pValue);
+        }
     }
 
     /**
@@ -174,10 +202,8 @@ public class ZipFileProperties {
      * @return the value of the property or <code>null</code> if the property does not exist
      */
     protected byte[] getByteProperty(final String pName) {
-        Property myProperty;
-
         /* Access the property */
-        myProperty = getProperty(pName);
+        Property myProperty = getProperty(pName);
 
         /* Return the value */
         return (myProperty == null) ? null : myProperty.getByteValue();
@@ -188,14 +214,12 @@ public class ZipFileProperties {
      * @param pName the name of the property
      * @return the value of the property or <code>-1</code> if the property does not exist
      */
-    protected long getLongProperty(final String pName) {
-        Property myProperty;
-
+    protected Long getLongProperty(final String pName) {
         /* Access the property */
-        myProperty = getProperty(pName);
+        Property myProperty = getProperty(pName);
 
         /* Return the value */
-        return (myProperty == null) ? -1 : myProperty.getLongValue();
+        return (myProperty == null) ? null : myProperty.getLongValue();
     }
 
     /**
@@ -257,7 +281,7 @@ public class ZipFileProperties {
             myValue.append(SEP_LONG);
 
             /* If we have a long value */
-            if (myProperty.getLongValue() != -1) {
+            if (myProperty.getLongValue() != null) {
                 /* Add the long value as a Hex String */
                 myValue.append(DataConverter.longToHexString(myProperty.getLongValue()));
             }
@@ -279,15 +303,8 @@ public class ZipFileProperties {
      * @throws JDataException on error
      */
     private void parseEncodedProperty(final String pValue) throws JDataException {
-        Property myProperty;
-        String myName;
-        String myBytes;
-        String myLong;
-        int myLen;
-        int myLoc;
-
         /* Locate the Value separator in the string */
-        myLoc = pValue.indexOf(SEP_VALUE);
+        int myLoc = pValue.indexOf(SEP_VALUE);
 
         /* Check that we found the value separator */
         if (myLoc == -1) {
@@ -295,9 +312,9 @@ public class ZipFileProperties {
         }
 
         /* Split the values and name */
-        myName = pValue.substring(0, myLoc);
-        myBytes = pValue.substring(myLoc + 1);
-        myLen = myBytes.length();
+        String myName = pValue.substring(0, myLoc);
+        String myBytes = pValue.substring(myLoc + 1);
+        int myLen = myBytes.length();
 
         /* If the name is already present reject it */
         if (getProperty(myName) != null) {
@@ -313,16 +330,16 @@ public class ZipFileProperties {
         }
 
         /* Access the separate byte and long values */
-        myLong = (myLoc < myLen - 1) ? myBytes.substring(myLoc + 1) : null;
+        String myLong = (myLoc < myLen - 1) ? myBytes.substring(myLoc + 1) : null;
         myBytes = (myLoc > 0) ? myBytes.substring(0, myLoc) : null;
 
         /* Must have at least one of Bytes/Long */
         if ((myBytes == null) && (myLong == null)) {
-            throw new JDataException(ExceptionClass.DATA, "Missing long separator: " + pValue);
+            throw new JDataException(ExceptionClass.DATA, "Invalid property: " + myName);
         }
 
         /* Create a new property */
-        myProperty = new Property(theList, myName);
+        Property myProperty = new Property(theList, myName);
 
         /* If we have a bytes array */
         if (myBytes != null) {
@@ -354,7 +371,7 @@ public class ZipFileProperties {
         /**
          * Value of property.
          */
-        private long theLongValue = -1;
+        private Long theLongValue = null;
 
         /**
          * Standard Constructor.
@@ -419,7 +436,7 @@ public class ZipFileProperties {
          * Obtain the long value of the property.
          * @return the value of the property
          */
-        private long getLongValue() {
+        private Long getLongValue() {
             return theLongValue;
         }
 
@@ -428,14 +445,14 @@ public class ZipFileProperties {
          * @param pValue the new value
          */
         private void setByteValue(final byte[] pValue) {
-            theByteValue = Arrays.copyOf(pValue, pValue.length);
+            theByteValue = (pValue == null) ? null : Arrays.copyOf(pValue, pValue.length);
         }
 
         /**
          * Set the long value.
          * @param pValue the new value
          */
-        private void setLongValue(final long pValue) {
+        private void setLongValue(final Long pValue) {
             theLongValue = pValue;
         }
     }

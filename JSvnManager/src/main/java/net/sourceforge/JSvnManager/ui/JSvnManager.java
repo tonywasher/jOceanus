@@ -39,9 +39,12 @@ import net.sourceforge.JDataManager.JDataManager.JDataEntry;
 import net.sourceforge.JDataManager.JDataWindow;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
 import net.sourceforge.JSvnManager.data.Branch;
+import net.sourceforge.JSvnManager.data.Branch.BranchOpType;
 import net.sourceforge.JSvnManager.data.Repository;
 import net.sourceforge.JSvnManager.data.Tag;
 import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.JSvnManager.threads.CreateBranchTags;
+import net.sourceforge.JSvnManager.threads.CreateNewBranch;
 import net.sourceforge.JSvnManager.threads.CreateTagExtract;
 import net.sourceforge.JSvnManager.threads.CreateWorkingCopy;
 import net.sourceforge.JSvnManager.threads.DiscoverData;
@@ -104,6 +107,16 @@ public final class JSvnManager {
      * The RevertWorkingCopy menuItem.
      */
     private final JMenuItem theRevertWC;
+
+    /**
+     * The CreateBranchTags menuItem.
+     */
+    private final JMenuItem theCreateBrnTags;
+
+    /**
+     * The CreateNewBranch menuItem.
+     */
+    private final JMenuItem theCreateNewBrn;
 
     /**
      * The Started data window.
@@ -172,6 +185,16 @@ public final class JSvnManager {
         theRevertWC = new JMenuItem("RevertWorkingCopy");
         theRevertWC.addActionListener(myMenuListener);
         theTasks.add(theRevertWC);
+
+        /* Create the CreateBranchTags menuItem */
+        theCreateBrnTags = new JMenuItem("CreateBranchTags");
+        theCreateBrnTags.addActionListener(myMenuListener);
+        theTasks.add(theCreateBrnTags);
+
+        /* Create the CreateNewBranch menuItem */
+        theCreateNewBrn = new JMenuItem("CreateNewBranch");
+        theCreateNewBrn.addActionListener(myMenuListener);
+        theTasks.add(theCreateNewBrn);
 
         /* Add the Menu bar */
         theFrame.setJMenuBar(myMainMenu);
@@ -282,14 +305,42 @@ public final class JSvnManager {
     }
 
     /**
+     * Create and run the CreateBranchTags thread.
+     */
+    private void runCreateBranchTags() {
+        /* Create and run createBranchTags thread */
+        Branch myBranch = theRepository.locateBranch("JFinanceApp", "v1.1.0");
+        Branch[] myList = new Branch[] { myBranch };
+        CreateBranchTags myThread = new CreateBranchTags(myList, new File("c:\\Users\\Tony\\TestBT"),
+                theStatusPanel);
+        theTasks.setEnabled(false);
+        theStatusPanel.runThread(myThread);
+    }
+
+    /**
+     * Create and run the CreateNewBranch thread.
+     */
+    private void runCreateNewBranch() {
+        /* Create and run createBranchTags thread */
+        Tag myTag = theRepository.locateTag("JFinanceApp", "v1.0.0", 1);
+        Tag[] myList = new Tag[] { myTag };
+        CreateNewBranch myThread = new CreateNewBranch(myList, BranchOpType.MAJOR, new File(
+                "c:\\Users\\Tony\\TestNB"), theStatusPanel);
+        theTasks.setEnabled(false);
+        theStatusPanel.runThread(myThread);
+    }
+
+    /**
      * MenuListener class.
      */
     private final class MenuListener implements ActionListener {
 
         @Override
         public void actionPerformed(final ActionEvent evt) {
+            Object o = evt.getSource();
+
             /* If this is the DataManager window */
-            if (theShowDataMgr.equals(evt.getSource())) {
+            if (theShowDataMgr.equals(o)) {
                 /* Create the data window */
                 theDataWdw = new JDataWindow(theFrame, theDataMgr);
 
@@ -303,24 +354,34 @@ public final class JSvnManager {
                 theDataWdw.showDialog();
 
                 /* If this is the CreateWC task */
-            } else if (theCreateWC.equals(evt.getSource())) {
+            } else if (theCreateWC.equals(o)) {
                 /* run the thread */
                 runCheckOutWC();
 
                 /* If this is the ExtractTag task */
-            } else if (theExtractTag.equals(evt.getSource())) {
+            } else if (theExtractTag.equals(o)) {
                 /* run the thread */
                 runCreateTagExtract();
 
                 /* If this is the UpdateWC task */
-            } else if (theUpdateWC.equals(evt.getSource())) {
+            } else if (theUpdateWC.equals(o)) {
                 /* run the thread */
                 runUpdateWC();
 
                 /* If this is the RevertWC task */
-            } else if (theRevertWC.equals(evt.getSource())) {
+            } else if (theRevertWC.equals(o)) {
                 /* run the thread */
                 runRevertWC();
+
+                /* If this is the CreateBranchTags task */
+            } else if (theCreateBrnTags.equals(o)) {
+                /* run the thread */
+                runCreateBranchTags();
+
+                /* If this is the CreateNewBranch task */
+            } else if (theCreateNewBrn.equals(o)) {
+                /* run the thread */
+                runCreateNewBranch();
             }
         }
     }

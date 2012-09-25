@@ -65,11 +65,6 @@ public class ZipWriteFile {
     private final int theNumEncrypts;
 
     /**
-     * Do we debug this file.
-     */
-    private boolean bDebug;
-
-    /**
      * AsymmetricKey for this zip file.
      */
     private final AsymmetricKey theAsymKey;
@@ -88,6 +83,11 @@ public class ZipWriteFile {
      * The active zipEntry.
      */
     private ZipEntry theEntry = null;
+
+    /**
+     * The active zipFileEntry.
+     */
+    private ZipFileEntry theFileEntry = null;
 
     /**
      * The active filename.
@@ -128,6 +128,14 @@ public class ZipWriteFile {
      */
     public ZipFileContents getContents() {
         return theContents;
+    }
+
+    /**
+     * Obtain the currently active ZipFileEntry.
+     * @return the ZipFile Entry
+     */
+    public ZipFileEntry getCurrentEntry() {
+        return theFileEntry;
     }
 
     /**
@@ -248,9 +256,6 @@ public class ZipWriteFile {
             throw new JDataException(ExceptionClass.LOGIC, "Output stream already open");
         }
 
-        /* Store debug indication */
-        bDebug = pDebug;
-
         /* Increment file number */
         theFileNo++;
 
@@ -261,13 +266,21 @@ public class ZipWriteFile {
             theEntry = new ZipEntry(isEncrypted() ? FILE_PREFIX + theFileNo : theFileName);
             theStream.putNextEntry(theEntry);
 
+            /* Create a new zipFileEntry */
+            theFileEntry = theContents.addZipFileEntry(theFileName);
+
+            /* Add debug indication if required */
+            if (pDebug) {
+                theFileEntry.setDebug();
+            }
+
             /* Simply create a wrapper on the output stream */
             theOutput = new WrapOutputStream();
 
             /* If we are encrypting */
             if (isEncrypted()) {
                 /* Determine number of digests */
-                int iNumDigest = 2 + (bDebug ? theNumEncrypts : 0);
+                int iNumDigest = 2 + (pDebug ? theNumEncrypts : 0);
 
                 /* Create the arrays */
                 theDigests = new DigestOutputStream[iNumDigest];
@@ -291,7 +304,7 @@ public class ZipWriteFile {
                     theEncrypts[iEncrypt] = myEncrypt;
 
                     /* if we are debugging */
-                    if (bDebug) {
+                    if (pDebug) {
                         /* Create an extra digest stream */
                         myDigest = new DigestOutputStream(new MsgDigest(theGenerator), theOutput);
                         theOutput = myDigest;
@@ -323,8 +336,6 @@ public class ZipWriteFile {
      * @throws IOException on error
      */
     private void closeOutputStream() throws IOException {
-        ZipFileEntry myEntry;
-
         /* Protect against exceptions */
         try {
             /* If we have an output stream */
@@ -332,33 +343,26 @@ public class ZipWriteFile {
                 /* Close the active entry */
                 theStream.closeEntry();
 
-                /* Create a new zipFileEntry */
-                myEntry = theContents.addZipFileEntry(theFileName);
-
                 /* Add the details of the entry */
-                myEntry.setZipEntry(theEntry);
+                theFileEntry.setZipEntry(theEntry);
 
                 /* If we have encryption */
                 if (isEncrypted()) {
-                    /* Add debug indication if required */
-                    if (bDebug) {
-                        myEntry.setDebug();
-                    }
-
                     /* Record the digests */
-                    myEntry.setDigests(theDigests);
+                    theFileEntry.setDigests(theDigests);
 
                     /* Record the secret keys */
-                    myEntry.setSecretKeys(theEncrypts, theAsymKey);
+                    theFileEntry.setSecretKeys(theEncrypts, theAsymKey);
 
                     /* Calculate the signature and declare it */
                     Signature mySignature = theAsymKey.getSignature(true);
-                    myEntry.signEntry(mySignature, false);
+                    theFileEntry.signEntry(mySignature, false);
                 }
 
                 /* Release the entry */
                 theEntry = null;
                 theFileName = null;
+                theFileEntry = null;
             }
 
             /* Reset streams */

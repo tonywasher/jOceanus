@@ -38,6 +38,11 @@ import net.sourceforge.JGordianKnot.AsymmetricKey;
  */
 public class ZipFileEntry {
     /**
+     * The User property prefix.
+     */
+    private static final String PROP_USERPFIX = "User";
+
+    /**
      * The Name property of a file.
      */
     private static final String PROP_NAME = "Name";
@@ -101,6 +106,11 @@ public class ZipFileEntry {
      * The parent contents.
      */
     private ZipFileContents theParent = null;
+
+    /**
+     * The properties.
+     */
+    private final ZipFileProperties theProperties;
 
     /**
      * The file name.
@@ -286,6 +296,9 @@ public class ZipFileEntry {
     protected ZipFileEntry(final String pFileName) {
         /* Store the file name */
         theFileName = pFileName;
+
+        /* Allocate the properties */
+        theProperties = new ZipFileProperties();
     }
 
     /**
@@ -294,6 +307,9 @@ public class ZipFileEntry {
      * @throws JDataException on error
      */
     protected ZipFileEntry(final ZipFileProperties pProperties) throws JDataException {
+        /* Store the properties */
+        theProperties = pProperties;
+
         /* Access the top-level details */
         theFileName = pProperties.getStringProperty(PROP_NAME);
         theFileSize = pProperties.getLongProperty(PROP_NAME);
@@ -301,7 +317,7 @@ public class ZipFileEntry {
         theCompressedSize = pProperties.getLongProperty(PROP_ZIPNAME);
 
         /* Determine whether this is a header */
-        isHeader = (pProperties.getLongProperty(PROP_HEADER) != -1);
+        isHeader = (pProperties.getLongProperty(PROP_HEADER) != null);
 
         /* If this is the header */
         if (isHeader) {
@@ -312,12 +328,12 @@ public class ZipFileEntry {
             /* Else standard entry */
         } else {
             /* Determine whether this is a debug entry */
-            isDebug = (pProperties.getLongProperty(PROP_DEBUG) != -1);
+            isDebug = (pProperties.getLongProperty(PROP_DEBUG) != null);
 
             /* Determine the number of digests */
-            int myNumDigests = (int) pProperties.getLongProperty(PROP_NUMDIGESTS);
-            theDigests = new byte[myNumDigests][];
-            theDigestLens = new long[myNumDigests];
+            long myNumDigests = pProperties.getLongProperty(PROP_NUMDIGESTS);
+            theDigests = new byte[(int) myNumDigests][];
+            theDigestLens = new long[(int) myNumDigests];
 
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
@@ -327,9 +343,9 @@ public class ZipFileEntry {
             }
 
             /* Determine the number of encryption steps */
-            int myNumEncrypts = (int) pProperties.getLongProperty(PROP_NUMENCRYPTS);
-            theSecretKeys = new byte[myNumEncrypts][];
-            theInitVectors = new byte[myNumEncrypts][];
+            long myNumEncrypts = pProperties.getLongProperty(PROP_NUMENCRYPTS);
+            theSecretKeys = new byte[(int) myNumEncrypts][];
+            theInitVectors = new byte[(int) myNumEncrypts][];
 
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumEncrypts; iIndex++) {
@@ -349,59 +365,102 @@ public class ZipFileEntry {
      * @throws JDataException on error
      */
     protected ZipFileProperties allocateProperties() throws JDataException {
-        /* Allocate the properties */
-        ZipFileProperties myProperties = new ZipFileProperties();
-
         /* Set the top-level details */
-        myProperties.setProperty(PROP_NAME, theFileName);
-        myProperties.setProperty(PROP_NAME, theFileSize);
-        myProperties.setProperty(PROP_ZIPNAME, theZipName);
-        myProperties.setProperty(PROP_ZIPNAME, theCompressedSize);
+        theProperties.setProperty(PROP_NAME, theFileName);
+        theProperties.setProperty(PROP_NAME, theFileSize);
+        theProperties.setProperty(PROP_ZIPNAME, theZipName);
+        theProperties.setProperty(PROP_ZIPNAME, theCompressedSize);
 
         /* If this is the header */
         if (isHeader) {
             /* Note the header */
-            myProperties.setProperty(PROP_HEADER, 1);
+            theProperties.setProperty(PROP_HEADER, 1L);
 
             /* Set private/public keys */
-            myProperties.setProperty(PROP_PRIVATEKEY, thePrivateKey);
-            myProperties.setProperty(PROP_PUBLICKEY, thePublicKey);
+            theProperties.setProperty(PROP_PRIVATEKEY, thePrivateKey);
+            theProperties.setProperty(PROP_PUBLICKEY, thePublicKey);
 
             /* Else standard entry */
         } else {
             /* Set debug flag if required */
             if (isDebug) {
-                myProperties.setProperty(PROP_DEBUG, 1);
+                theProperties.setProperty(PROP_DEBUG, 1L);
             }
 
             /* Store the number of digests */
-            int myNumDigests = theDigests.length;
-            myProperties.setProperty(PROP_NUMDIGESTS, myNumDigests);
+            long myNumDigests = theDigests.length;
+            theProperties.setProperty(PROP_NUMDIGESTS, myNumDigests);
 
             /* Loop through the digests */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
                 /* Set digest properties */
-                myProperties.setProperty(PROP_DIGEST + iIndex, theDigests[iIndex - 1]);
-                myProperties.setProperty(PROP_DIGEST + iIndex, theDigestLens[iIndex - 1]);
+                theProperties.setProperty(PROP_DIGEST + iIndex, theDigests[iIndex - 1]);
+                theProperties.setProperty(PROP_DIGEST + iIndex, theDigestLens[iIndex - 1]);
             }
 
             /* Store the number of encryption steps */
-            int myNumEncrypts = theSecretKeys.length;
-            myProperties.setProperty(PROP_NUMENCRYPTS, myNumEncrypts);
+            long myNumEncrypts = theSecretKeys.length;
+            theProperties.setProperty(PROP_NUMENCRYPTS, myNumEncrypts);
 
             /* Loop through the secret keys and initVectors */
             for (int iIndex = 1; iIndex <= myNumEncrypts; iIndex++) {
                 /* Set Secret key properties */
-                myProperties.setProperty(PROP_SECRETKEY + iIndex, theSecretKeys[iIndex - 1]);
-                myProperties.setProperty(PROP_INITVECTOR + iIndex, theInitVectors[iIndex - 1]);
+                theProperties.setProperty(PROP_SECRETKEY + iIndex, theSecretKeys[iIndex - 1]);
+                theProperties.setProperty(PROP_INITVECTOR + iIndex, theInitVectors[iIndex - 1]);
             }
 
             /* Store the signature */
-            myProperties.setProperty(PROP_SIGNATURE, theSignature);
+            theProperties.setProperty(PROP_SIGNATURE, theSignature);
         }
 
         /* Return the properties */
-        return myProperties;
+        return theProperties;
+    }
+
+    /**
+     * Set User String property.
+     * @param pPropertyName the property name
+     * @param pPropertyValue the property value
+     * @throws JDataException on error
+     */
+    public void setUserStringProperty(final String pPropertyName,
+                                      final String pPropertyValue) throws JDataException {
+        /* Set the property */
+        theProperties.setProperty(PROP_USERPFIX + pPropertyName, pPropertyValue);
+    }
+
+    /**
+     * Set User Long property.
+     * @param pPropertyName the property name
+     * @param pPropertyValue the property value
+     * @throws JDataException on error
+     */
+    public void setUserLongProperty(final String pPropertyName,
+                                    final Long pPropertyValue) throws JDataException {
+        /* Set the property */
+        theProperties.setProperty(PROP_USERPFIX + pPropertyName, pPropertyValue);
+    }
+
+    /**
+     * Get User String property.
+     * @param pPropertyName the property name
+     * @return the property value (or null)
+     * @throws JDataException on error
+     */
+    public String getUserStringProperty(final String pPropertyName) throws JDataException {
+        /* Set the property */
+        return theProperties.getStringProperty(PROP_USERPFIX + pPropertyName);
+    }
+
+    /**
+     * Get User String property.
+     * @param pPropertyName the property name
+     * @return the property value (or null)
+     * @throws JDataException on error
+     */
+    public Long getUserLongProperty(final String pPropertyName) throws JDataException {
+        /* Set the property */
+        return theProperties.getLongProperty(PROP_USERPFIX + pPropertyName);
     }
 
     /**

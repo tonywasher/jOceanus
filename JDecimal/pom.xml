@@ -1,10 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.${svnComponent}</groupId>
-  <artifactId>${svnComponent}</artifactId>
-  <version>${svnBranch}-SNAPSHOT</version>
+  <groupId>net.sourceforge.JDecimal</groupId>
+  <artifactId>JDecimal</artifactId>
+  <version>v1.0.0-SNAPSHOT</version>
   <name>Java Small Decimal implementation</name>
   <description>Small decimal implementation for Java</description>
+  <inceptionYear>2012</inceptionYear>
   <licenses>
     <license>
       <name>The Apache Software License, Version 2.0</name>
@@ -31,7 +32,7 @@
     <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnComponent}</connection>
     <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnComponent}</developerConnection>
     <tag>HEAD</tag>
-    <url>http://${svnHost}/viewvc/${svnRepository}/${svnComponent}/branches/${svnBranch}</url>
+    <url>http://${svnHost}/viewvc/${svnRepository}/${svnComponent}/${svnLocation}</url>
   </scm>
   <properties>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
@@ -39,6 +40,8 @@
     <svnRepository>Finance</svnRepository>
     <svnComponent>JDecimal</svnComponent>
     <svnBranch>v1.0.0</svnBranch>
+    <svnTag>SNAPSHOT</svnTag>
+    <svnLocation>branches/${svnBranch}</svnLocation>
   </properties>
   <build>
     <resources>

@@ -986,10 +986,30 @@ public final class Branch implements JDataContents, Comparable<Branch> {
         }
 
         /**
+         * Determine next branch.
+         * @param pBase the branch to base from
+         * @param pBranchType the type of branch to create
+         * @return the next branch
+         */
+        public Branch nextBranch(final Branch pBase,
+                                 final BranchOpType pBranchType) {
+            /* Switch on branch type */
+            switch (pBranchType) {
+                case MAJOR:
+                    return nextMajorBranch();
+                case MINOR:
+                    return nextMinorBranch(pBase);
+                case DELTA:
+                default:
+                    return nextDeltaBranch(pBase);
+            }
+        }
+
+        /**
          * Determine next major branch.
          * @return the major branch
          */
-        public Branch nextMajorBranch() {
+        private Branch nextMajorBranch() {
             /* Access list iterator */
             Iterator<Branch> myIterator = iterator();
             Branch myBranch = null;
@@ -1012,7 +1032,7 @@ public final class Branch implements JDataContents, Comparable<Branch> {
          * @param pBase the branch to base from
          * @return the minor branch
          */
-        public Branch nextMinorBranch(final Branch pBase) {
+        private Branch nextMinorBranch(final Branch pBase) {
             /* Access major version */
             int myMajor = pBase.theMajorVersion;
 
@@ -1049,7 +1069,7 @@ public final class Branch implements JDataContents, Comparable<Branch> {
          * @param pBase the branch to base from
          * @return the delta branch
          */
-        public Branch nextDeltaBranch(final Branch pBase) {
+        private Branch nextDeltaBranch(final Branch pBase) {
             /* Access major/minor version */
             int myMajor = pBase.theMajorVersion;
             int myMinor = pBase.theMinorVersion;
@@ -1115,5 +1135,25 @@ public final class Branch implements JDataContents, Comparable<Branch> {
                 add(myBranch);
             }
         }
+    }
+
+    /**
+     * Branch operation.
+     */
+    public enum BranchOpType {
+        /**
+         * Major branch. Increment major version
+         */
+        MAJOR,
+
+        /**
+         * Minor branch. Increment minor version
+         */
+        MINOR,
+
+        /**
+         * Delta branch. Increment delta version
+         */
+        DELTA;
     }
 }

@@ -50,7 +50,7 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
     /**
      * SvnManager.
      */
-    private final JSvnManager theManager;
+    private final transient JSvnManager theManager;
 
     /**
      * The scroll pane.
@@ -80,12 +80,12 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
     /**
      * The Thread executor.
      */
-    private final ExecutorService theExecutor = Executors.newSingleThreadExecutor();
+    private final transient ExecutorService theExecutor = Executors.newSingleThreadExecutor();
 
     /**
      * The active thread.
      */
-    private SwingWorker<Void, String> theThread = null;
+    private transient SwingWorker<Void, String> theThread = null;
 
     /**
      * Constructor.

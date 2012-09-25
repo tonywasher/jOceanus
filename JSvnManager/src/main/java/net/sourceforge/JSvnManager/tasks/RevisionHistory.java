@@ -99,7 +99,7 @@ public class RevisionHistory {
             SVNRevision myRevision = SVNRevision.create(pRevision);
             myLog.doLog(myURL, null, myRevision, myRevision, myRevision, false, true, 0, new LogHandler());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to get revision history");
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to get revision history", e);
         }
     }
 
@@ -119,7 +119,7 @@ public class RevisionHistory {
             myLog.doLog(pFile, null, SVNRevision.HEAD, SVNRevision.HEAD, SVNRevision.create(0), false, true,
                         0, new LogHandler());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to get revision history");
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to get revision history", e);
         }
     }
 

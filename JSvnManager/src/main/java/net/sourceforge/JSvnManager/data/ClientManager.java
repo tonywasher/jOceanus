@@ -72,6 +72,9 @@ public class ClientManager {
     protected void finalize() throws Throwable {
         /* Dispose of any connections */
         dispose();
+
+        /* Pass call on */
+        super.finalize();
     }
 
     /**
@@ -141,7 +144,7 @@ public class ClientManager {
     /**
      * EventHandler.
      */
-    private final class NullEventHandler implements ISVNEventHandler {
+    private static final class NullEventHandler implements ISVNEventHandler {
 
         @Override
         public void checkCancelled() throws SVNCancelException {

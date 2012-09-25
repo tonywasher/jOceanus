@@ -545,7 +545,7 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
          * Obtain locations array.
          * @return locations array
          */
-        protected File[] getLocationsArray() {
+        public File[] getLocationsArray() {
             /* Allocate array */
             File[] myFiles = new File[size()];
             int myFile = 0;

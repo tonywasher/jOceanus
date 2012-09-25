@@ -34,6 +34,7 @@ import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.preferences.BackupPreferences;
 import net.sourceforge.JGordianKnot.PasswordHash;
 import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.JGordianKnot.ZipFile.ZipFileEntry;
 import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
 import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
@@ -60,6 +61,11 @@ import org.tmatesoft.svn.core.wc.admin.SVNAdminEventAction;
  * @author Tony Washer
  */
 public class Backup {
+    /**
+     * The Number Of Revisions.
+     */
+    private static final String PROP_NUMREV = "NumRevisions";
+
     /**
      * The Data file name.
      */
@@ -151,8 +157,12 @@ public class Backup {
             /* Associate this password hash with the ZipFile */
             myFile.setPasswordHash(myHash);
 
+            /* Access the relevant entry and obtain the number of revisions */
+            ZipFileEntry myEntry = myFile.getContents().findFileEntry(DATA_NAME);
+            // Long myNumRevs = myEntry.getUserLongProperty(PROP_NUMREV);
+
             /* Access the input stream for the relevant file */
-            InputStream myStream = myFile.getInputStream(myFile.getContents().findFileEntry(DATA_NAME));
+            InputStream myStream = myFile.getInputStream(myEntry);
 
             /* Re-create the repository */
             theAdminClient.doCreateRepository(pRepository, null, true, true);
@@ -206,15 +216,13 @@ public class Backup {
         ZipWriteFile myZipFile = null;
         OutputStream myStream = null;
         boolean bSuccess = true;
-        String myName;
-        File myEntryName;
         File myZipName = null;
 
         /* Protect against exceptions */
         try {
             /* Access the name of the repository */
-            myName = pRepository.getName();
-            myEntryName = new File(DATA_NAME);
+            String myName = pRepository.getName();
+            File myEntryName = new File(DATA_NAME);
 
             /* Determine the prefix for backups */
             String myPrefix = thePreferences.getStringValue(SubVersionPreferences.NAME_REPO_PFIX);
@@ -266,6 +274,10 @@ public class Backup {
             /* Create the new zip file */
             myZipFile = new ZipWriteFile(myHash, myZipName);
             myStream = myZipFile.getOutputStream(myEntryName);
+
+            /* Access the current entry and set the number of revisions */
+            ZipFileEntry myEntry = myZipFile.getCurrentEntry();
+            myEntry.setUserLongProperty(PROP_NUMREV, revLast);
 
             /* Dump the data to the zip file */
             theAdminClient.doDump(pRepository, myStream, SVNRevision.UNDEFINED, SVNRevision.create(revLast),
