@@ -34,7 +34,7 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
 
 /**
  * EventValue data type.
@@ -243,7 +243,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
 
             /* Look up the EventType */
             FinanceData myData = getDataSet();
-            EventInfoTypeList myTypes = myData.getInfoTypes();
+            EventInfoList myTypes = myData.getEventInfoTypes();
             EventInfoType myType = myTypes.findItemById(uInfoTypeId);
             if (myType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
@@ -344,7 +344,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         /* Access Events and InfoTypes */
         FinanceData myData = getDataSet();
         EventList myEvents = myData.getEvents();
-        EventInfoTypeList myTypes = myData.getInfoTypes();
+        EventInfoList myTypes = myData.getEventInfoTypes();
 
         /* Update to use the local copy of the Types */
         EventInfoType myType = getInfoType();

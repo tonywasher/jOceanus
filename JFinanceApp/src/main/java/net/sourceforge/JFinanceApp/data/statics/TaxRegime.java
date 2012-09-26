@@ -29,7 +29,6 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JFinanceApp.data.FinanceData;
 
 /**
  * TaxRegime data type.
@@ -200,7 +199,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * Construct an empty CORE tax regime list.
          * @param pData the DataSet for the list
          */
-        public TaxRegimeList(final FinanceData pData) {
+        public TaxRegimeList(final DataSet<?> pData) {
             super(TaxRegime.class, pData, ListStyle.CORE);
         }
 

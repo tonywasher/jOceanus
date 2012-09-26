@@ -270,6 +270,12 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
                 bContinue = SheetFrequency.loadArchive(pTask, myHelper, myData);
             }
             if (bContinue) {
+                bContinue = SheetTaxYearInfoType.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountInfoType.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
                 bContinue = SheetEventInfoType.loadArchive(pTask, myHelper, myData);
             }
 

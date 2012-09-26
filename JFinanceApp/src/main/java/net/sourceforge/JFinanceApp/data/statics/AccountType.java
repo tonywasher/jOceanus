@@ -29,7 +29,6 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JFinanceApp.data.FinanceData;
 
 /**
  * AccountType data type.
@@ -509,7 +508,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * Construct an empty CORE account type list.
          * @param pData the DataSet for the list
          */
-        public AccountTypeList(final FinanceData pData) {
+        public AccountTypeList(final DataSet<?> pData) {
             super(AccountType.class, pData, ListStyle.CORE);
         }
 

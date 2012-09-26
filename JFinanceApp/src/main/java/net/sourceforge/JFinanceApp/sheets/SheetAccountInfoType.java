@@ -14,10 +14,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * $URL: http://tony-hp/svn/Finance/JFinanceApp/branches/v1.1.0/src/main/java/net/sourceforge/JFinanceApp/sheets/SheetEventInfoType.java $
+ * $Revision: 156 $
+ * $Author: Tony $
+ * $Date: 2012-09-18 20:52:20 +0100 (Tue, 18 Sep 2012) $
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.sheets;
 
@@ -27,8 +27,8 @@ import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.JDataModels.sheets.SheetStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,35 +37,35 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
 /**
- * SheetStaticData extension for EventInfoType.
+ * SheetStaticData extension for AccountInfoType.
  * @author Tony Washer
  */
-public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
+public class SheetAccountInfoType extends SheetStaticData<AccountInfoType> {
     /**
      * NamedArea for EventInfoType.
      */
-    private static final String AREA_EVENTINFOTYPES = EventInfoType.LIST_NAME;
+    private static final String AREA_ACCOUNTINFOTYPES = AccountInfoType.LIST_NAME;
 
     /**
      * NameList for EventInfoType.
      */
-    protected static final String AREA_EVENTINFOTYPENAMES = EventInfoType.OBJECT_NAME + "Names";
+    protected static final String AREA_ACCOUNTINFOTYPENAMES = AccountInfoType.OBJECT_NAME + "Names";
 
     /**
-     * EventInfoTypes data list.
+     * AccountInfoTypes data list.
      */
-    private final EventInfoList theList;
+    private final AccountInfoList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventInfoType(final FinanceReader pReader) {
+    protected SheetAccountInfoType(final FinanceReader pReader) {
         /* Call super-constructor */
-        super(pReader, AREA_EVENTINFOTYPES);
+        super(pReader, AREA_ACCOUNTINFOTYPES);
 
         /* Access the InfoType list */
-        theList = pReader.getData().getEventInfoTypes();
+        theList = pReader.getData().getActInfoTypes();
         setDataList(theList);
     }
 
@@ -73,12 +73,12 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventInfoType(final FinanceWriter pWriter) {
+    protected SheetAccountInfoType(final FinanceWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_EVENTINFOTYPES, AREA_EVENTINFOTYPENAMES);
+        super(pWriter, AREA_ACCOUNTINFOTYPES, AREA_ACCOUNTINFOTYPENAMES);
 
         /* Access the InfoType list */
-        theList = pWriter.getData().getEventInfoTypes();
+        theList = pWriter.getData().getActInfoTypes();
         setDataList(theList);
     }
 
@@ -117,10 +117,10 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_EVENTINFOTYPES);
+            AreaReference myRange = pHelper.resolveAreaReference(AREA_ACCOUNTINFOTYPES);
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_EVENTINFOTYPES)) {
+            if (!pTask.setNewStage(AREA_ACCOUNTINFOTYPES)) {
                 return false;
             }
 
@@ -140,7 +140,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                 int myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Access the list of InfoTypes */
-                EventInfoList myList = pData.getEventInfoTypes();
+                AccountInfoList myList = pData.getActInfoTypes();
 
                 /* Declare the number of steps */
                 if (!pTask.setNumSteps(myTotal)) {
@@ -167,7 +167,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                 myList.reSort();
             }
         } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load EventInfoTypes", e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to load AccountInfoTypes", e);
         }
 
         /* Return to caller */

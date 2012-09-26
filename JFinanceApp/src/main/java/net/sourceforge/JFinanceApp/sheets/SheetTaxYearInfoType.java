@@ -14,10 +14,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * $URL: http://tony-hp/svn/Finance/JFinanceApp/branches/v1.1.0/src/main/java/net/sourceforge/JFinanceApp/sheets/SheetEventInfoType.java $
+ * $Revision: 156 $
+ * $Author: Tony $
+ * $Date: 2012-09-18 20:52:20 +0100 (Tue, 18 Sep 2012) $
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.sheets;
 
@@ -27,8 +27,9 @@ import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.JDataModels.sheets.SheetStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -37,35 +38,35 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 
 /**
- * SheetStaticData extension for EventInfoType.
+ * SheetStaticData extension for TaxYearInfoType.
  * @author Tony Washer
  */
-public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
+public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
     /**
      * NamedArea for EventInfoType.
      */
-    private static final String AREA_EVENTINFOTYPES = EventInfoType.LIST_NAME;
+    private static final String AREA_TAXINFOTYPES = TaxYearInfoType.LIST_NAME;
 
     /**
      * NameList for EventInfoType.
      */
-    protected static final String AREA_EVENTINFOTYPENAMES = EventInfoType.OBJECT_NAME + "Names";
+    protected static final String AREA_TAXINFOTYPENAMES = TaxYearInfoType.OBJECT_NAME + "Names";
 
     /**
-     * EventInfoTypes data list.
+     * TaxYearInfoTypes data list.
      */
-    private final EventInfoList theList;
+    private final TaxYearInfoList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetEventInfoType(final FinanceReader pReader) {
+    protected SheetTaxYearInfoType(final FinanceReader pReader) {
         /* Call super-constructor */
-        super(pReader, AREA_EVENTINFOTYPES);
+        super(pReader, AREA_TAXINFOTYPES);
 
         /* Access the InfoType list */
-        theList = pReader.getData().getEventInfoTypes();
+        theList = pReader.getData().getTaxInfoTypes();
         setDataList(theList);
     }
 
@@ -73,12 +74,12 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetEventInfoType(final FinanceWriter pWriter) {
+    protected SheetTaxYearInfoType(final FinanceWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_EVENTINFOTYPES, AREA_EVENTINFOTYPENAMES);
+        super(pWriter, AREA_TAXINFOTYPES, AREA_TAXINFOTYPENAMES);
 
         /* Access the InfoType list */
-        theList = pWriter.getData().getEventInfoTypes();
+        theList = pWriter.getData().getTaxInfoTypes();
         setDataList(theList);
     }
 
@@ -117,10 +118,10 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_EVENTINFOTYPES);
+            AreaReference myRange = pHelper.resolveAreaReference(AREA_TAXINFOTYPES);
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_EVENTINFOTYPES)) {
+            if (!pTask.setNewStage(AREA_TAXINFOTYPES)) {
                 return false;
             }
 
@@ -140,7 +141,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                 int myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Access the list of InfoTypes */
-                EventInfoList myList = pData.getEventInfoTypes();
+                TaxYearInfoList myList = pData.getTaxInfoTypes();
 
                 /* Declare the number of steps */
                 if (!pTask.setNumSteps(myTotal)) {
@@ -152,9 +153,13 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                     /* Access the cell by reference */
                     Row myRow = mySheet.getRow(i);
                     Cell myCell = myRow.getCell(myCol);
+                    String myValue = myCell.getStringCellValue();
 
-                    /* Add the value into the finance tables */
-                    myList.addItem(myCell.getStringCellValue());
+                    /* Ignore TaxRegime */
+                    if (!TaxRegime.OBJECT_NAME.equals(myValue)) {
+                        /* Add the value into the finance tables */
+                        myList.addItem(myValue);
+                    }
 
                     /* Report the progress */
                     myCount++;
@@ -167,7 +172,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                 myList.reSort();
             }
         } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load EventInfoTypes", e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to load TaxYearInfoTypes", e);
         }
 
         /* Return to caller */

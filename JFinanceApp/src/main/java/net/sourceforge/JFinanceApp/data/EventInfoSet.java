@@ -40,7 +40,7 @@ import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
 import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoClass;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
 import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 
 /**
@@ -157,7 +157,7 @@ public class EventInfoSet implements JDataContents {
     /**
      * The list of EventInfoTypes.
      */
-    private EventInfoTypeList theTypes = null;
+    private EventInfoList theTypes = null;
 
     /**
      * The EventData list for new data.
@@ -208,7 +208,7 @@ public class EventInfoSet implements JDataContents {
         }
 
         /* Access the EventInfo Types */
-        theTypes = myData.getInfoTypes();
+        theTypes = myData.getEventInfoTypes();
     }
 
     /**

@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * $URL: http://tony-hp/svn/Finance/JFinanceApp/branches/v1.1.0/src/main/java/net/sourceforge/JFinanceApp/database/TableEventInfoType.java $
+ * $Revision: 147 $
+ * $Author: Tony $
+ * $Date: 2012-08-21 09:54:34 +0100 (Tue, 21 Aug 2012) $
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.database;
 
@@ -27,36 +27,36 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoList;
 
 /**
- * TableStaticData extension for EventInfoType.
+ * TableStaticData extension for TaxYearInfoType.
  * @author Tony Washer
  */
-public class TableEventInfoType extends TableStaticData<EventInfoType> {
+public class TableTaxYearInfoType extends TableStaticData<TaxYearInfoType> {
     /**
      * The name of the table.
      */
-    protected static final String TABLE_NAME = EventInfoType.LIST_NAME;
+    protected static final String TABLE_NAME = TaxYearInfoType.LIST_NAME;
 
     /**
      * The InfoType list.
      */
-    private EventInfoList theList = null;
+    private TaxYearInfoList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableEventInfoType(final Database<?> pDatabase) {
+    protected TableTaxYearInfoType(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theList = myData.getEventInfoTypes();
+        theList = myData.getTaxInfoTypes();
         setList(theList);
     }
 

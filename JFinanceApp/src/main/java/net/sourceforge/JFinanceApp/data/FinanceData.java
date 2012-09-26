@@ -38,11 +38,13 @@ import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
 import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
 import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoList;
 import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
 import net.sourceforge.JFinanceApp.data.statics.Frequency.FrequencyList;
 import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.JFinanceApp.data.statics.TaxType.TaxTypeList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoList;
 import net.sourceforge.JFinanceApp.data.statics.TransactionType.TransTypeList;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
@@ -89,9 +91,19 @@ public class FinanceData extends DataSet<FinanceData> {
     public static final JDataField FIELD_TAXREGS = FIELD_DEFS.declareLocalField("TaxRegimes");
 
     /**
+     * TaxYearInfoTypes Field Id.
+     */
+    public static final JDataField FIELD_TAXINFOTYPES = FIELD_DEFS.declareLocalField("TaxYearInfoTypes");
+
+    /**
+     * AccountInfoTypes Field Id.
+     */
+    public static final JDataField FIELD_ACTINFOTYPES = FIELD_DEFS.declareLocalField("AccountInfoTypes");
+
+    /**
      * EventInfoTypes Field Id.
      */
-    public static final JDataField FIELD_INFOTYPES = FIELD_DEFS.declareLocalField("EventInfoTypes");
+    public static final JDataField FIELD_EVTINFOTYPES = FIELD_DEFS.declareLocalField("EventInfoTypes");
 
     /**
      * TaxYears Field Id.
@@ -155,8 +167,14 @@ public class FinanceData extends DataSet<FinanceData> {
         if (FIELD_FREQS.equals(pField)) {
             return (theFrequencys.size() > 0) ? theFrequencys : JDataFieldValue.SkipField;
         }
-        if (FIELD_INFOTYPES.equals(pField)) {
-            return (theInfoTypes.size() > 0) ? theInfoTypes : JDataFieldValue.SkipField;
+        if (FIELD_TAXINFOTYPES.equals(pField)) {
+            return (theTaxInfoTypes.size() > 0) ? theTaxInfoTypes : JDataFieldValue.SkipField;
+        }
+        if (FIELD_ACTINFOTYPES.equals(pField)) {
+            return (theActInfoTypes.size() > 0) ? theActInfoTypes : JDataFieldValue.SkipField;
+        }
+        if (FIELD_EVTINFOTYPES.equals(pField)) {
+            return (theEventInfoTypes.size() > 0) ? theEventInfoTypes : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXYEARS.equals(pField)) {
             return (theTaxYears.size() > 0) ? theTaxYears : JDataFieldValue.SkipField;
@@ -216,9 +234,19 @@ public class FinanceData extends DataSet<FinanceData> {
     private FrequencyList theFrequencys = null;
 
     /**
+     * TaxYearInfoTypes.
+     */
+    private TaxYearInfoList theTaxInfoTypes = null;
+
+    /**
+     * AccountInfoTypes.
+     */
+    private AccountInfoList theActInfoTypes = null;
+
+    /**
      * EventInfoTypes.
      */
-    private EventInfoTypeList theInfoTypes = null;
+    private EventInfoList theEventInfoTypes = null;
 
     /**
      * TaxYears.
@@ -316,11 +344,27 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
+     * Obtain TaxInfoTypes.
+     * @return the TaxYear Info types
+     */
+    public TaxYearInfoList getTaxInfoTypes() {
+        return theTaxInfoTypes;
+    }
+
+    /**
      * Obtain EventInfoTypes.
      * @return the Event Info types
      */
-    public EventInfoTypeList getInfoTypes() {
-        return theInfoTypes;
+    public AccountInfoList getActInfoTypes() {
+        return theActInfoTypes;
+    }
+
+    /**
+     * Obtain EventInfoTypes.
+     * @return the Event Info types
+     */
+    public EventInfoList getEventInfoTypes() {
+        return theEventInfoTypes;
     }
 
     /**
@@ -427,7 +471,9 @@ public class FinanceData extends DataSet<FinanceData> {
         theTaxTypes = new TaxTypeList(this);
         theTaxRegimes = new TaxRegimeList(this);
         theFrequencys = new FrequencyList(this);
-        theInfoTypes = new EventInfoTypeList(this);
+        theTaxInfoTypes = new TaxYearInfoList(this);
+        theActInfoTypes = new AccountInfoList(this);
+        theEventInfoTypes = new EventInfoList(this);
         theTaxYears = new TaxYearList(this);
         theAccounts = new AccountList(this);
         theRates = new AccountRateList(this);
@@ -470,7 +516,9 @@ public class FinanceData extends DataSet<FinanceData> {
         myExtract.theTaxTypes = theTaxTypes.deriveList(ListStyle.UPDATE);
         myExtract.theTaxRegimes = theTaxRegimes.deriveList(ListStyle.UPDATE);
         myExtract.theFrequencys = theFrequencys.deriveList(ListStyle.UPDATE);
-        myExtract.theInfoTypes = theInfoTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theTaxInfoTypes = theTaxInfoTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theActInfoTypes = theActInfoTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theEventInfoTypes = theEventInfoTypes.deriveList(ListStyle.UPDATE);
 
         /* Build the data extract */
         myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.UPDATE);
@@ -503,7 +551,9 @@ public class FinanceData extends DataSet<FinanceData> {
         myExtract.theTaxTypes = theTaxTypes.cloneList(this);
         myExtract.theTaxRegimes = theTaxRegimes.cloneList(this);
         myExtract.theFrequencys = theFrequencys.cloneList(this);
-        myExtract.theInfoTypes = theInfoTypes.cloneList(this);
+        myExtract.theTaxInfoTypes = theTaxInfoTypes.cloneList(this);
+        myExtract.theActInfoTypes = theActInfoTypes.cloneList(this);
+        myExtract.theEventInfoTypes = theEventInfoTypes.cloneList(this);
 
         /* Build the data extract */
         myExtract.theTaxYears = theTaxYears.cloneList(this);
@@ -545,7 +595,9 @@ public class FinanceData extends DataSet<FinanceData> {
         myDiffers.theTaxTypes = theTaxTypes.deriveDifferences(pOld.getTaxTypes());
         myDiffers.theTaxRegimes = theTaxRegimes.deriveDifferences(pOld.getTaxRegimes());
         myDiffers.theFrequencys = theFrequencys.deriveDifferences(pOld.getFrequencys());
-        myDiffers.theInfoTypes = theInfoTypes.deriveDifferences(pOld.getInfoTypes());
+        myDiffers.theTaxInfoTypes = theTaxInfoTypes.deriveDifferences(pOld.getTaxInfoTypes());
+        myDiffers.theActInfoTypes = theActInfoTypes.deriveDifferences(pOld.getActInfoTypes());
+        myDiffers.theEventInfoTypes = theEventInfoTypes.deriveDifferences(pOld.getEventInfoTypes());
 
         /* Build the data differences */
         myDiffers.theTaxYears = theTaxYears.deriveDifferences(pOld.getTaxYears());
@@ -580,7 +632,9 @@ public class FinanceData extends DataSet<FinanceData> {
         theTaxTypes.reBase(pOld.getTaxTypes());
         theTaxRegimes.reBase(pOld.getTaxRegimes());
         theFrequencys.reBase(pOld.getFrequencys());
-        theInfoTypes.reBase(pOld.getInfoTypes());
+        theTaxInfoTypes.reBase(pOld.getTaxInfoTypes());
+        theActInfoTypes.reBase(pOld.getActInfoTypes());
+        theEventInfoTypes.reBase(pOld.getEventInfoTypes());
 
         /* ReBase the data items */
         theTaxYears.reBase(pOld.getTaxYears());
@@ -603,7 +657,9 @@ public class FinanceData extends DataSet<FinanceData> {
         addList(theTaxTypes);
         addList(theTaxRegimes);
         addList(theFrequencys);
-        addList(theInfoTypes);
+        addList(theTaxInfoTypes);
+        addList(theActInfoTypes);
+        addList(theEventInfoTypes);
         addList(theTaxYears);
         addList(theAccounts);
         addList(theRates);

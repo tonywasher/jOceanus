@@ -29,7 +29,6 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JFinanceApp.data.FinanceData;
 
 /**
  * Frequency data type.
@@ -159,7 +158,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * Construct an empty CORE frequency list.
          * @param pData the DataSet for the list
          */
-        public FrequencyList(final FinanceData pData) {
+        public FrequencyList(final DataSet<?> pData) {
             super(Frequency.class, pData, ListStyle.CORE);
         }
 

@@ -29,7 +29,6 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JFinanceApp.data.FinanceData;
 
 /**
  * TransactionType data type.
@@ -451,7 +450,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * Construct an empty CORE transaction type list.
          * @param pData the DataSet for the list
          */
-        public TransTypeList(final FinanceData pData) {
+        public TransTypeList(final DataSet<?> pData) {
             super(TransactionType.class, pData, ListStyle.CORE);
         }
 

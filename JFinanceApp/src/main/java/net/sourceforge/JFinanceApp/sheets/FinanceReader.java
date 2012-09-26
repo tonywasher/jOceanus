@@ -59,6 +59,8 @@ public class FinanceReader extends SheetReader<FinanceData> {
         addSheet(new SheetTaxType(this));
         addSheet(new SheetTaxRegime(this));
         addSheet(new SheetFrequency(this));
+        addSheet(new SheetTaxYearInfoType(this));
+        addSheet(new SheetAccountInfoType(this));
         addSheet(new SheetEventInfoType(this));
         addSheet(new SheetTaxYear(this));
         addSheet(new SheetAccount(this));

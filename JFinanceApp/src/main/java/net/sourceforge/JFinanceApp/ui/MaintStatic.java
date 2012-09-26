@@ -47,16 +47,20 @@ import net.sourceforge.JDataModels.ui.SaveButtons;
 import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JEventManager.JEventPanel;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoList;
 import net.sourceforge.JFinanceApp.data.statics.AccountType;
 import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
 import net.sourceforge.JFinanceApp.data.statics.Frequency;
 import net.sourceforge.JFinanceApp.data.statics.Frequency.FrequencyList;
 import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
 import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.JFinanceApp.data.statics.TaxType;
 import net.sourceforge.JFinanceApp.data.statics.TaxType.TaxTypeList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoList;
 import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 import net.sourceforge.JFinanceApp.data.statics.TransactionType.TransTypeList;
 import net.sourceforge.JFinanceApp.views.View;
@@ -132,9 +136,19 @@ public class MaintStatic extends JEventPanel {
     private final MaintStaticData<?, ?> theFrequencys;
 
     /**
+     * The TaxYear Info Types panel.
+     */
+    private final MaintStaticData<?, ?> theTaxInfoTypes;
+
+    /**
+     * The Account Info Types panel.
+     */
+    private final MaintStaticData<?, ?> theActInfoTypes;
+
+    /**
      * The Event Info Types panel.
      */
-    private final MaintStaticData<?, ?> theInfoTypes;
+    private final MaintStaticData<?, ?> theEvtInfoTypes;
 
     /**
      * The Panel map.
@@ -209,8 +223,12 @@ public class MaintStatic extends JEventPanel {
                 TaxRegimeList.class, TaxRegime.class);
         theFrequencys = new MaintStaticData<FrequencyList, Frequency>(myView, theUpdateSet, theError,
                 FrequencyList.class, Frequency.class);
-        theInfoTypes = new MaintStaticData<EventInfoTypeList, EventInfoType>(myView, theUpdateSet, theError,
-                EventInfoTypeList.class, EventInfoType.class);
+        theTaxInfoTypes = new MaintStaticData<TaxYearInfoList, TaxYearInfoType>(myView, theUpdateSet,
+                theError, TaxYearInfoList.class, TaxYearInfoType.class);
+        theActInfoTypes = new MaintStaticData<AccountInfoList, AccountInfoType>(myView, theUpdateSet,
+                theError, AccountInfoList.class, AccountInfoType.class);
+        theEvtInfoTypes = new MaintStaticData<EventInfoList, EventInfoType>(myView, theUpdateSet, theError,
+                EventInfoList.class, EventInfoType.class);
 
         /* Build the Static box */
         theSelectBox = new JComboBox<String>();
@@ -219,6 +237,8 @@ public class MaintStatic extends JEventPanel {
         theSelectBox.addItem(TaxType.LIST_NAME);
         theSelectBox.addItem(TaxRegime.LIST_NAME);
         theSelectBox.addItem(Frequency.LIST_NAME);
+        theSelectBox.addItem(TaxYearInfoType.LIST_NAME);
+        theSelectBox.addItem(AccountInfoType.LIST_NAME);
         theSelectBox.addItem(EventInfoType.LIST_NAME);
 
         /* Add the listener for item changes */
@@ -234,7 +254,9 @@ public class MaintStatic extends JEventPanel {
         theTaxTypes.addChangeListener(myListener);
         theTaxRegimes.addChangeListener(myListener);
         theFrequencys.addChangeListener(myListener);
-        theInfoTypes.addChangeListener(myListener);
+        theTaxInfoTypes.addChangeListener(myListener);
+        theActInfoTypes.addChangeListener(myListener);
+        theEvtInfoTypes.addChangeListener(myListener);
 
         /* Create the selection panel */
         JPanel mySelect = new JPanel();
@@ -255,7 +277,9 @@ public class MaintStatic extends JEventPanel {
         theCardPanel.add(theTaxTypes.getPanel(), TaxType.LIST_NAME);
         theCardPanel.add(theTaxRegimes.getPanel(), TaxRegime.LIST_NAME);
         theCardPanel.add(theFrequencys.getPanel(), Frequency.LIST_NAME);
-        theCardPanel.add(theInfoTypes.getPanel(), EventInfoType.LIST_NAME);
+        theCardPanel.add(theTaxInfoTypes.getPanel(), TaxYearInfoType.LIST_NAME);
+        theCardPanel.add(theActInfoTypes.getPanel(), AccountInfoType.LIST_NAME);
+        theCardPanel.add(theEvtInfoTypes.getPanel(), EventInfoType.LIST_NAME);
 
         /* Build the panel map */
         theMap = new HashMap<String, MaintStaticData<?, ?>>();
@@ -264,7 +288,9 @@ public class MaintStatic extends JEventPanel {
         theMap.put(TaxType.LIST_NAME, theTaxTypes);
         theMap.put(TaxRegime.LIST_NAME, theTaxRegimes);
         theMap.put(Frequency.LIST_NAME, theFrequencys);
-        theMap.put(EventInfoType.LIST_NAME, theInfoTypes);
+        theMap.put(TaxYearInfoType.LIST_NAME, theTaxInfoTypes);
+        theMap.put(AccountInfoType.LIST_NAME, theActInfoTypes);
+        theMap.put(EventInfoType.LIST_NAME, theEvtInfoTypes);
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -325,7 +351,9 @@ public class MaintStatic extends JEventPanel {
         theTaxTypes.refreshData();
         theTaxRegimes.refreshData();
         theFrequencys.refreshData();
-        theInfoTypes.refreshData();
+        theTaxInfoTypes.refreshData();
+        theActInfoTypes.refreshData();
+        theEvtInfoTypes.refreshData();
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
@@ -341,7 +369,9 @@ public class MaintStatic extends JEventPanel {
         theTaxTypes.cancelEditing();
         theTaxRegimes.cancelEditing();
         theFrequencys.cancelEditing();
-        theInfoTypes.cancelEditing();
+        theTaxInfoTypes.cancelEditing();
+        theActInfoTypes.cancelEditing();
+        theEvtInfoTypes.cancelEditing();
     }
 
     /**

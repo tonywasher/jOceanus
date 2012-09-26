@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * $URL: http://tony-hp/svn/Finance/JFinanceApp/branches/v1.1.0/src/main/java/net/sourceforge/JFinanceApp/data/statics/AccountClass.java $
+ * $Revision: 147 $
+ * $Author: Tony $
+ * $Date: 2012-08-21 09:54:34 +0100 (Tue, 21 Aug 2012) $
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data.statics;
 
@@ -27,143 +27,108 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.StaticData.StaticInterface;
 
 /**
- * Enumeration of Account Type Classes.
+ * Enumeration of Tax Year Info Classes.
  */
-public enum AccountClass implements StaticInterface {
+public enum TaxYearInfoClass implements StaticInterface {
     /**
-     * Current Banking Account.
+     * Personal Allowance.
      */
-    CURRENT(1, 0),
+    ALLOWANCE(1, 0),
 
     /**
-     * Instant Access Savings Account.
+     * Low Tax Band.
      */
-    INSTANT(2, 1),
+    LOTAXBAND(2, 1),
 
     /**
-     * Savings Account Requiring Notice for Withdrawals.
+     * Basic Tax Band.
      */
-    NOTICE(3, 2),
+    BASICTAXBAND(3, 2),
 
     /**
-     * Fixed Rate Savings Bond.
+     * Rental Allowance.
      */
-    BOND(4, 3),
+    RENTALALLOW(4, 3),
 
     /**
-     * Instant Access Cash ISA Account.
+     * Capital Allowance.
      */
-    CASHISA(5, 4),
+    CAPITALALLOW(5, 4),
 
     /**
-     * Fixed Rate Cash ISA Bond.
+     * Low Age Allowance.
      */
-    ISABOND(6, 5),
+    LOAGEALLOW(6, 5),
 
     /**
-     * Index Linked Bond.
+     * High Age Allowance.
      */
-    TAXFREEBOND(7, 6),
+    HIAGEALLOW(7, 6),
 
     /**
-     * Equity Bond.
+     * Age Allowance Limit.
      */
-    EQUITYBOND(8, 7),
+    AGEALLOWLIMIT(8, 7),
 
     /**
-     * Shares.
+     * Additional Allowance Limit.
      */
-    SHARES(9, 8),
+    ADDALLOWLIMIT(9, 8),
 
     /**
-     * Unit Trust or OEIC.
+     * Additional Income Threshold.
      */
-    UNITTRUST(10, 9),
+    ADDINCOMETHOLD(10, 9),
 
     /**
-     * Life Bond.
+     * Low Tax Rate.
      */
-    LIFEBOND(11, 10),
+    LOTAXRATE(11, 10),
 
     /**
-     * Unit Trust or OEIC in ISA wrapper.
+     * Basic Tax Rate.
      */
-    UNITISA(12, 11),
+    BASICTAXRATE(12, 11),
 
     /**
-     * Car.
+     * High Tax Rate.
      */
-    CAR(13, 12),
+    HITAXRATE(13, 12),
 
     /**
-     * House.
+     * Interest Tax Rate.
      */
-    HOUSE(14, 13),
+    INTTAXRATE(14, 13),
 
     /**
-     * Debts.
+     * Dividend Tax Rate.
      */
-    DEBTS(15, 16),
+    DIVTAXRATE(15, 14),
 
     /**
-     * CreditCard.
+     * High Dividend Tax Rate.
      */
-    CREDITCARD(16, 15),
+    HIDIVTAXRATE(16, 15),
 
     /**
-     * WriteOff.
+     * Additional Tax Rate.
      */
-    WRITEOFF(17, 22),
+    ADDTAXRATE(17, 16),
 
     /**
-     * External Account.
+     * Additional Dividend Tax Rate.
      */
-    EXTERNAL(18, 24),
+    ADDDIVTAXRATE(18, 17),
 
     /**
-     * Employer Account.
+     * Capital Tax Rate.
      */
-    EMPLOYER(19, 18),
+    CAPTAXRATE(19, 18),
 
     /**
-     * Asset Owner Account.
+     * High Capital Tax Rate.
      */
-    OWNER(20, 25),
-
-    /**
-     * Market.
-     */
-    MARKET(21, 26),
-
-    /**
-     * Inland Revenue.
-     */
-    TAXMAN(22, 20),
-
-    /**
-     * Cash.
-     */
-    CASH(23, 19),
-
-    /**
-     * Inheritance.
-     */
-    INHERITANCE(24, 21),
-
-    /**
-     * Endowment.
-     */
-    ENDOWMENT(25, 14),
-
-    /**
-     * Benefit.
-     */
-    BENEFIT(26, 23),
-
-    /**
-     * Deferred between tax years.
-     */
-    DEFERRED(27, 17);
+    HICAPTAXRATE(20, 19);
 
     /**
      * Class Id.
@@ -198,8 +163,8 @@ public enum AccountClass implements StaticInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private AccountClass(final int uId,
-                         final int uOrder) {
+    private TaxYearInfoClass(final int uId,
+                             final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -210,12 +175,12 @@ public enum AccountClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static AccountClass fromId(final int id) throws JDataException {
-        for (AccountClass myClass : values()) {
+    public static TaxYearInfoClass fromId(final int id) throws JDataException {
+        for (TaxYearInfoClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid Account Class Id: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid TaxYear Info Class Id: " + id);
     }
 }

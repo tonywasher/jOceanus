@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL$
- * $Revision$
- * $Author$
- * $Date$
+ * $URL: http://tony-hp/svn/Finance/JFinanceApp/branches/v1.1.0/src/main/java/net/sourceforge/JFinanceApp/data/statics/AccountClass.java $
+ * $Revision: 147 $
+ * $Author: Tony $
+ * $Date: 2012-08-21 09:54:34 +0100 (Tue, 21 Aug 2012) $
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data.statics;
 
@@ -27,143 +27,53 @@ import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.StaticData.StaticInterface;
 
 /**
- * Enumeration of Account Type Classes.
+ * Enumeration of Account Info Classes.
  */
-public enum AccountClass implements StaticInterface {
+public enum AccountInfoClass implements StaticInterface {
     /**
-     * Current Banking Account.
+     * Maturity Date.
      */
-    CURRENT(1, 0),
+    MATURITY(1, 0),
 
     /**
-     * Instant Access Savings Account.
+     * Parent Id.
      */
-    INSTANT(2, 1),
+    PARENT(2, 1),
 
     /**
-     * Savings Account Requiring Notice for Withdrawals.
+     * Alias Id.
      */
-    NOTICE(3, 2),
+    ALIAS(3, 2),
 
     /**
-     * Fixed Rate Savings Bond.
+     * WebSite.
      */
-    BOND(4, 3),
+    WEBSITE(4, 3),
 
     /**
-     * Instant Access Cash ISA Account.
+     * Customer #.
      */
-    CASHISA(5, 4),
+    CUSTNO(5, 4),
 
     /**
-     * Fixed Rate Cash ISA Bond.
+     * User Id.
      */
-    ISABOND(6, 5),
+    USERID(6, 5),
 
     /**
-     * Index Linked Bond.
+     * Password.
      */
-    TAXFREEBOND(7, 6),
+    PASSWORD(7, 6),
 
     /**
-     * Equity Bond.
+     * Account.
      */
-    EQUITYBOND(8, 7),
+    ACCOUNT(8, 7),
 
     /**
-     * Shares.
+     * Notes.
      */
-    SHARES(9, 8),
-
-    /**
-     * Unit Trust or OEIC.
-     */
-    UNITTRUST(10, 9),
-
-    /**
-     * Life Bond.
-     */
-    LIFEBOND(11, 10),
-
-    /**
-     * Unit Trust or OEIC in ISA wrapper.
-     */
-    UNITISA(12, 11),
-
-    /**
-     * Car.
-     */
-    CAR(13, 12),
-
-    /**
-     * House.
-     */
-    HOUSE(14, 13),
-
-    /**
-     * Debts.
-     */
-    DEBTS(15, 16),
-
-    /**
-     * CreditCard.
-     */
-    CREDITCARD(16, 15),
-
-    /**
-     * WriteOff.
-     */
-    WRITEOFF(17, 22),
-
-    /**
-     * External Account.
-     */
-    EXTERNAL(18, 24),
-
-    /**
-     * Employer Account.
-     */
-    EMPLOYER(19, 18),
-
-    /**
-     * Asset Owner Account.
-     */
-    OWNER(20, 25),
-
-    /**
-     * Market.
-     */
-    MARKET(21, 26),
-
-    /**
-     * Inland Revenue.
-     */
-    TAXMAN(22, 20),
-
-    /**
-     * Cash.
-     */
-    CASH(23, 19),
-
-    /**
-     * Inheritance.
-     */
-    INHERITANCE(24, 21),
-
-    /**
-     * Endowment.
-     */
-    ENDOWMENT(25, 14),
-
-    /**
-     * Benefit.
-     */
-    BENEFIT(26, 23),
-
-    /**
-     * Deferred between tax years.
-     */
-    DEFERRED(27, 17);
+    NOTES(9, 8);
 
     /**
      * Class Id.
@@ -198,8 +108,8 @@ public enum AccountClass implements StaticInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private AccountClass(final int uId,
-                         final int uOrder) {
+    private AccountInfoClass(final int uId,
+                             final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -210,12 +120,12 @@ public enum AccountClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static AccountClass fromId(final int id) throws JDataException {
-        for (AccountClass myClass : values()) {
+    public static AccountInfoClass fromId(final int id) throws JDataException {
+        for (AccountInfoClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid Account Class Id: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid Account Info Class Id: " + id);
     }
 }
