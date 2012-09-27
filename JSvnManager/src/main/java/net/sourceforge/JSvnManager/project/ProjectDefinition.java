@@ -23,20 +23,14 @@
 package net.sourceforge.JSvnManager.project;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
+import java.util.List;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
@@ -46,10 +40,11 @@ import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.JSvnManager.project.ProjectId.ProjectList;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * Represents the definition of a project.
@@ -60,21 +55,6 @@ public class ProjectDefinition implements JDataContents {
      * POM name.
      */
     public static final String POM_NAME = "pom.xml";
-
-    /**
-     * project document name.
-     */
-    private static final String DOCNAME_PROJECT = "project";
-
-    /**
-     * Dependencies node name.
-     */
-    private static final String NODENAME_DEPENDENCIES = "dependencies";
-
-    /**
-     * Group node name.
-     */
-    private static final String NODENAME_DEPENDENCY = "dependency";
 
     /**
      * Report fields.
@@ -116,9 +96,9 @@ public class ProjectDefinition implements JDataContents {
     }
 
     /**
-     * XML POM representation.
+     * POM Model representation.
      */
-    private final Document theDocument;
+    private Model theModel;
 
     /**
      * Main module identity.
@@ -131,11 +111,11 @@ public class ProjectDefinition implements JDataContents {
     private final ProjectList theDependencies;
 
     /**
-     * Get Document.
-     * @return the document
+     * Get Model.
+     * @return the model
      */
-    private Document getDocument() {
-        return theDocument;
+    private Model getModel() {
+        return theModel;
     }
 
     /**
@@ -201,79 +181,28 @@ public class ProjectDefinition implements JDataContents {
      * @throws JDataException on error
      */
     public ProjectDefinition(final InputStream pInput) throws JDataException {
-        DocumentBuilderFactory myFactory;
-        DocumentBuilder myBuilder;
-        Element myElement;
-
         /* Protect against exceptions */
         try {
-            /* Create the document builder */
-            myFactory = DocumentBuilderFactory.newInstance();
-            myBuilder = myFactory.newDocumentBuilder();
-
-            /* Access the XML document element */
-            theDocument = myBuilder.parse(pInput);
-            myElement = theDocument.getDocumentElement();
-
-            /* Reject if this is not a Pom file */
-            if (!myElement.getNodeName().equals(DOCNAME_PROJECT)) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid document name: "
-                        + myElement.getNodeName());
-            }
+            /* Parse the Project definition */
+            MavenXpp3Reader myReader = new MavenXpp3Reader();
+            theModel = myReader.read(pInput);
 
             /* Obtain the major definition */
-            theDefinition = new ProjectId(myElement);
+            theDefinition = new ProjectId(theModel);
 
             /* Create the dependency list */
             theDependencies = new ProjectList();
 
             /* Parse the dependencies */
-            parseDependencies(myElement);
+            parseDependencies();
 
             /* Catch exceptions */
         } catch (IOException e) {
             /* Throw Exception */
             throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
-        } catch (ParserConfigurationException e) {
+        } catch (XmlPullParserException e) {
             /* Throw Exception */
             throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
-        } catch (SAXException e) {
-            /* Throw Exception */
-            throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
-        }
-    }
-
-    /**
-     * Parse dependencies.
-     * @param pElement the top level element
-     * @throws JDataException on error
-     */
-    private void parseDependencies(final Node pElement) throws JDataException {
-        /* Loop through the nodes */
-        for (Node myNode = pElement.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
-            /* Ignore non-elements */
-            if (myNode.getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
-
-            /* Access dependencies */
-            if (myNode.getNodeName().equals(NODENAME_DEPENDENCIES)) {
-                /* Loop through the dependency nodes */
-                for (Node myDepNode = myNode.getFirstChild(); myDepNode != null; myDepNode = myDepNode
-                        .getNextSibling()) {
-                    /* Ignore non-elements */
-                    if (myDepNode.getNodeType() != Node.ELEMENT_NODE) {
-                        continue;
-                    }
-
-                    /* Access dependency */
-                    if (myDepNode.getNodeName().equals(NODENAME_DEPENDENCY)) {
-                        /* Add dependency to list */
-                        ProjectId myDef = new ProjectId(myDepNode);
-                        theDependencies.add(myDef);
-                    }
-                }
-            }
         }
     }
 
@@ -283,27 +212,31 @@ public class ProjectDefinition implements JDataContents {
      * @throws JDataException on error
      */
     public ProjectDefinition(final ProjectDefinition pDefinition) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Create a document builder */
-            DocumentBuilderFactory myFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder myBuilder = myFactory.newDocumentBuilder();
+        /* Clone the old model */
+        theModel = pDefinition.getModel().clone();
 
-            /* Copy the document */
-            theDocument = myBuilder.newDocument();
-            Document myOldDoc = pDefinition.getDocument();
-            Node myOldRoot = myOldDoc.getDocumentElement();
-            Node myNewRoot = theDocument.importNode(myOldRoot, true);
-            theDocument.appendChild(myNewRoot);
+        /* Copy project Id and dependencies */
+        theDefinition = new ProjectId(theModel);
+        theDependencies = new ProjectList();
+        parseDependencies();
+    }
 
-            /* Copy project Id and dependencies */
-            theDefinition = new ProjectId(myNewRoot);
-            theDependencies = new ProjectList();
-            parseDependencies(myNewRoot);
+    /**
+     * Parse dependencies.
+     * @throws JDataException on error
+     */
+    private void parseDependencies() throws JDataException {
+        /* Obtain the dependency list */
+        List<Dependency> myDependencies = theModel.getDependencies();
 
-        } catch (ParserConfigurationException e) {
-            /* Throw Exception */
-            throw new JDataException(ExceptionClass.DATA, "Failed to parse Project file", e);
+        /* Iterate through the dependencies */
+        Iterator<Dependency> myIterator = myDependencies.iterator();
+        while (myIterator.hasNext()) {
+            Dependency myDependency = myIterator.next();
+
+            /* Build new project Id */
+            ProjectId myDep = new ProjectId(myDependency);
+            theDependencies.add(myDep);
         }
     }
 
@@ -333,20 +266,21 @@ public class ProjectDefinition implements JDataContents {
                 pFile.delete();
             }
 
-            /* Prepare to write the document */
-            TransformerFactory myFactory = TransformerFactory.newInstance();
-            Transformer myXformer = myFactory.newTransformer();
-            DOMSource mySource = new DOMSource(theDocument);
-            StreamResult myResult = new StreamResult(pFile);
+            /* Create the output streams */
+            FileOutputStream myOutFile = new FileOutputStream(pFile);
+            BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
 
-            /* Output the XML */
-            myXformer.transform(mySource, myResult);
+            /* Parse the Project definition */
+            MavenXpp3Writer myWriter = new MavenXpp3Writer();
+            myWriter.write(myOutBuffer, theModel);
+
+            /* Close the output file */
+            myOutBuffer.close();
 
             /* Catch exceptions */
-        } catch (TransformerException e) {
+        } catch (IOException e) {
             /* Throw Exception */
-            throw new JDataException(ExceptionClass.DATA, "Failed to write Project file to "
-                    + pFile.getName(), e);
+            throw new JDataException(ExceptionClass.DATA, "Failed to write Project file", e);
         }
     }
 

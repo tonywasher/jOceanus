@@ -25,37 +25,19 @@ package net.sourceforge.JSvnManager.project;
 import java.util.ArrayList;
 
 import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.JDataObject.JDataContents;
 import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.Text;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
 
 /**
  * Project element of POM.
  * @author Tony Washer
  */
 public final class ProjectId implements JDataContents {
-    /**
-     * Group node name.
-     */
-    private static final String NODENAME_GROUP = "groupId";
-
-    /**
-     * Artifact node name.
-     */
-    private static final String NODENAME_ARTIFACT = "artifactId";
-
-    /**
-     * Version node name.
-     */
-    private static final String NODENAME_VERSION = "version";
-
     /**
      * SnapShot indication.
      */
@@ -109,29 +91,34 @@ public final class ProjectId implements JDataContents {
     }
 
     /**
-     * XML POM representation.
-     */
-    private final Document theDocument;
-
-    /**
-     * The groupId text.
+     * The groupId.
      */
     private String theGroupId;
 
     /**
-     * The artifactId text.
+     * The artifactId.
      */
     private String theArtifactId;
 
     /**
-     * The version text.
+     * The version.
      */
     private String theVersion;
 
     /**
-     * The version node.
+     * The version text.
      */
-    private Element theVersionNode;
+    private String theVersionText;
+
+    /**
+     * The project model.
+     */
+    private final Model theModel;
+
+    /**
+     * The project dependency.
+     */
+    private final Dependency theDependency;
 
     /**
      * Get GroupId.
@@ -162,54 +149,56 @@ public final class ProjectId implements JDataContents {
      * @return the version text
      */
     public String getVersionText() {
-        return theVersionNode.getTextContent();
+        return theVersionText;
     }
 
     /**
      * Constructor.
-     * @param pParent the parent node
+     * @param pModel the project model
      * @throws JDataException on error
      */
-    protected ProjectId(final Node pParent) throws JDataException {
-        /* Store document */
-        theDocument = pParent.getOwnerDocument();
+    protected ProjectId(final Model pModel) throws JDataException {
+        /* Store model */
+        theModel = pModel;
+        theDependency = null;
 
-        /* Loop through the nodes */
-        for (Node myNode = pParent.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
-            /* Ignore non-elements */
-            if (myNode.getNodeType() != Node.ELEMENT_NODE) {
-                continue;
-            }
-            String myName = myNode.getNodeName();
+        /* Access IDs */
+        theGroupId = theModel.getGroupId();
+        theArtifactId = theModel.getArtifactId();
+        theVersionText = theModel.getVersion();
+        theVersion = parseVersion();
+    }
 
-            /* Access group id */
-            if (myName.equals(NODENAME_GROUP)) {
-                /* Access the text */
-                theGroupId = myNode.getTextContent();
+    /**
+     * Constructor.
+     * @param pDependency the project dependency
+     * @throws JDataException on error
+     */
+    protected ProjectId(final Dependency pDependency) throws JDataException {
+        /* Store dependency */
+        theModel = null;
+        theDependency = pDependency;
 
-                /* Access artifact id */
-            } else if (myName.equals(NODENAME_ARTIFACT)) {
-                /* Access the text */
-                theArtifactId = myNode.getTextContent();
+        /* Access IDs */
+        theGroupId = theDependency.getGroupId();
+        theArtifactId = theDependency.getArtifactId();
+        theVersionText = theDependency.getVersion();
+        theVersion = parseVersion();
+    }
 
-                /* Access version */
-            } else if (myName.equals(NODENAME_VERSION)) {
-                /* Access the element and text */
-                theVersionNode = (Element) myNode;
-                theVersion = theVersionNode.getTextContent();
-            }
-        }
-
-        /* Handle missing elements */
-        if ((theGroupId == null) || (theArtifactId == null) || (theVersion == null)) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid version definition");
-        }
-
+    /**
+     * Parse Version.
+     * @return the version
+     */
+    private String parseVersion() {
         /* Strip off SNAPSHOT indication */
-        if (theVersion.endsWith(SUFFIX_SNAPSHOT)) {
+        if (theVersionText.endsWith(SUFFIX_SNAPSHOT)) {
             /* Strip it off */
-            theVersion = theVersion.substring(0, theVersion.length() - SUFFIX_SNAPSHOT.length());
+            return theVersionText.substring(0, theVersionText.length() - SUFFIX_SNAPSHOT.length());
         }
+
+        /* Default to versionText */
+        return theVersionText;
     }
 
     /**
@@ -217,13 +206,12 @@ public final class ProjectId implements JDataContents {
      * @param pVersion the version
      */
     protected void setSnapshotVersion(final String pVersion) {
-        /* Delete child elements of the version node */
-        clearChildren(theVersionNode);
-
-        /* create a new text node and add to the node */
+        /* Update version and text */
         theVersion = pVersion;
-        Text myText = theDocument.createTextNode(pVersion + SUFFIX_SNAPSHOT);
-        theVersionNode.appendChild(myText);
+        theVersionText = pVersion + SUFFIX_SNAPSHOT;
+
+        /* Update version */
+        updateVersion();
     }
 
     /**
@@ -231,13 +219,12 @@ public final class ProjectId implements JDataContents {
      * @param pVersion the version
      */
     protected void setVersion(final String pVersion) {
-        /* Delete child elements of the version node */
-        clearChildren(theVersionNode);
-
-        /* create a new text node and add to the node */
+        /* Update version and text */
         theVersion = pVersion;
-        Text myText = theDocument.createTextNode(pVersion);
-        theVersionNode.appendChild(myText);
+        theVersionText = pVersion;
+
+        /* Update version */
+        updateVersion();
     }
 
     /**
@@ -253,34 +240,27 @@ public final class ProjectId implements JDataContents {
             return;
         }
 
-        /* Delete child elements of the version node */
-        clearChildren(theVersionNode);
-
-        /* create a new text node and add to the node */
-        theVersion = pId.getVersion();
-        Text myText = theDocument.createTextNode(pId.getVersion());
-        theVersionNode.appendChild(myText);
+        /* Set version */
+        setVersion(pId.getVersionText());
     }
 
     /**
-     * Clear children.
-     * @param pNode the node
+     * Update version.
      */
-    private void clearChildren(final Node pNode) {
-        /* Delete child elements of the version node */
-        Node myNode = pNode.getFirstChild();
-        while (myNode != null) {
-            /* Determine next node */
-            Node myNext = myNode.getNextSibling();
+    protected void updateVersion() {
+        /* If we are top-level */
+        if (theModel != null) {
+            /* Set values into model */
+            theModel.setGroupId(theGroupId);
+            theModel.setArtifactId(theArtifactId);
+            theModel.setVersion(theVersionText);
 
-            /* remove any children */
-            if (myNode.hasChildNodes()) {
-                clearChildren(myNode);
-            }
-            pNode.removeChild(myNode);
-
-            /* Move to next node */
-            myNode = myNext;
+            /* else we are a dependency */
+        } else {
+            /* Set versions into dependency */
+            theDependency.setGroupId(theGroupId);
+            theDependency.setArtifactId(theArtifactId);
+            theDependency.setVersion(theVersionText);
         }
     }
 

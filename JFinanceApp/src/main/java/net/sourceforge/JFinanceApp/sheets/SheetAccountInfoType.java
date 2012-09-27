@@ -14,10 +14,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://tony-hp/svn/Finance/JFinanceApp/branches/v1.1.0/src/main/java/net/sourceforge/JFinanceApp/sheets/SheetEventInfoType.java $
- * $Revision: 156 $
- * $Author: Tony $
- * $Date: 2012-09-18 20:52:20 +0100 (Tue, 18 Sep 2012) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.sheets;
 

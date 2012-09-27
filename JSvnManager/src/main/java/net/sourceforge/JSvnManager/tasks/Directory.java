@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://tony-laptop/svn/finance/JSvnManager/branches/v1.1.0/src/main/java/net/sourceforge/JSvnManager/tasks/Directory.java $
- * $Revision: 153 $
- * $Author: Tony $
- * $Date: 2012-09-07 16:50:07 +0100 (Fri, 07 Sep 2012) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.JSvnManager.tasks;
 

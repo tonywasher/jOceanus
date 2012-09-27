@@ -15,10 +15,10 @@
  * limitations under the License.
  * ------------------------------------------------------------
  * SubVersion Revision Information:
- * $URL: http://tony-hp/svn/Finance/JFinanceApp/branches/v1.1.0/src/main/java/net/sourceforge/JFinanceApp/data/statics/AccountClass.java $
- * $Revision: 147 $
- * $Author: Tony $
- * $Date: 2012-08-21 09:54:34 +0100 (Tue, 21 Aug 2012) $
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data.statics;
 
