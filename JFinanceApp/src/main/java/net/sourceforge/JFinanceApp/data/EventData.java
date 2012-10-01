@@ -37,7 +37,7 @@ import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JUnits;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedDilution;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedMoney;
 import net.sourceforge.JGordianKnot.EncryptedData.EncryptedUnits;
@@ -334,7 +334,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
 
             /* Look up the EventType */
             FinanceData myData = pList.getDataSet();
-            EventInfoList myTypes = myData.getEventInfoTypes();
+            EventInfoTypeList myTypes = myData.getEventInfoTypes();
             EventInfoType myType = myTypes.findItemById(uInfoTypeId);
             if (myType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
@@ -440,7 +440,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
         /* Access Events and InfoTypes */
         FinanceData myData = getDataSet();
         EventList myEvents = myData.getEvents();
-        EventInfoList myTypes = myData.getEventInfoTypes();
+        EventInfoTypeList myTypes = myData.getEventInfoTypes();
 
         /* Update to use the local copy of the Types */
         EventInfoType myType = getInfoType();

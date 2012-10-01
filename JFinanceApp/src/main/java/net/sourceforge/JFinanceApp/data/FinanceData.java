@@ -38,13 +38,13 @@ import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
 import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
 import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
-import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoList;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JFinanceApp.data.statics.Frequency.FrequencyList;
 import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.JFinanceApp.data.statics.TaxType.TaxTypeList;
-import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.JFinanceApp.data.statics.TransactionType.TransTypeList;
 import net.sourceforge.JGordianKnot.SecureManager;
 import net.sourceforge.JPreferenceSet.PreferenceManager;
@@ -236,17 +236,17 @@ public class FinanceData extends DataSet<FinanceData> {
     /**
      * TaxYearInfoTypes.
      */
-    private TaxYearInfoList theTaxInfoTypes = null;
+    private TaxYearInfoTypeList theTaxInfoTypes = null;
 
     /**
      * AccountInfoTypes.
      */
-    private AccountInfoList theActInfoTypes = null;
+    private AccountInfoTypeList theActInfoTypes = null;
 
     /**
      * EventInfoTypes.
      */
-    private EventInfoList theEventInfoTypes = null;
+    private EventInfoTypeList theEventInfoTypes = null;
 
     /**
      * TaxYears.
@@ -347,15 +347,15 @@ public class FinanceData extends DataSet<FinanceData> {
      * Obtain TaxInfoTypes.
      * @return the TaxYear Info types
      */
-    public TaxYearInfoList getTaxInfoTypes() {
+    public TaxYearInfoTypeList getTaxInfoTypes() {
         return theTaxInfoTypes;
     }
 
     /**
-     * Obtain EventInfoTypes.
-     * @return the Event Info types
+     * Obtain AccountInfoTypes.
+     * @return the Account Info types
      */
-    public AccountInfoList getActInfoTypes() {
+    public AccountInfoTypeList getActInfoTypes() {
         return theActInfoTypes;
     }
 
@@ -363,7 +363,7 @@ public class FinanceData extends DataSet<FinanceData> {
      * Obtain EventInfoTypes.
      * @return the Event Info types
      */
-    public EventInfoList getEventInfoTypes() {
+    public EventInfoTypeList getEventInfoTypes() {
         return theEventInfoTypes;
     }
 
@@ -471,9 +471,9 @@ public class FinanceData extends DataSet<FinanceData> {
         theTaxTypes = new TaxTypeList(this);
         theTaxRegimes = new TaxRegimeList(this);
         theFrequencys = new FrequencyList(this);
-        theTaxInfoTypes = new TaxYearInfoList(this);
-        theActInfoTypes = new AccountInfoList(this);
-        theEventInfoTypes = new EventInfoList(this);
+        theTaxInfoTypes = new TaxYearInfoTypeList(this);
+        theActInfoTypes = new AccountInfoTypeList(this);
+        theEventInfoTypes = new EventInfoTypeList(this);
         theTaxYears = new TaxYearList(this);
         theAccounts = new AccountList(this);
         theRates = new AccountRateList(this);

@@ -48,11 +48,11 @@ import net.sourceforge.JDataModels.views.DataControl;
 import net.sourceforge.JDataModels.views.UpdateSet;
 import net.sourceforge.JEventManager.JEventPanel;
 import net.sourceforge.JFinanceApp.data.statics.AccountInfoType;
-import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoList;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.JFinanceApp.data.statics.AccountType;
 import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JFinanceApp.data.statics.Frequency;
 import net.sourceforge.JFinanceApp.data.statics.Frequency.FrequencyList;
 import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
@@ -60,7 +60,7 @@ import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.JFinanceApp.data.statics.TaxType;
 import net.sourceforge.JFinanceApp.data.statics.TaxType.TaxTypeList;
 import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
-import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 import net.sourceforge.JFinanceApp.data.statics.TransactionType.TransTypeList;
 import net.sourceforge.JFinanceApp.views.View;
@@ -223,12 +223,12 @@ public class MaintStatic extends JEventPanel {
                 TaxRegimeList.class, TaxRegime.class);
         theFrequencys = new MaintStaticData<FrequencyList, Frequency>(myView, theUpdateSet, theError,
                 FrequencyList.class, Frequency.class);
-        theTaxInfoTypes = new MaintStaticData<TaxYearInfoList, TaxYearInfoType>(myView, theUpdateSet,
-                theError, TaxYearInfoList.class, TaxYearInfoType.class);
-        theActInfoTypes = new MaintStaticData<AccountInfoList, AccountInfoType>(myView, theUpdateSet,
-                theError, AccountInfoList.class, AccountInfoType.class);
-        theEvtInfoTypes = new MaintStaticData<EventInfoList, EventInfoType>(myView, theUpdateSet, theError,
-                EventInfoList.class, EventInfoType.class);
+        theTaxInfoTypes = new MaintStaticData<TaxYearInfoTypeList, TaxYearInfoType>(myView, theUpdateSet,
+                theError, TaxYearInfoTypeList.class, TaxYearInfoType.class);
+        theActInfoTypes = new MaintStaticData<AccountInfoTypeList, AccountInfoType>(myView, theUpdateSet,
+                theError, AccountInfoTypeList.class, AccountInfoType.class);
+        theEvtInfoTypes = new MaintStaticData<EventInfoTypeList, EventInfoType>(myView, theUpdateSet,
+                theError, EventInfoTypeList.class, EventInfoType.class);
 
         /* Build the Static box */
         theSelectBox = new JComboBox<String>();

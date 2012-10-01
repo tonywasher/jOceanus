@@ -28,7 +28,7 @@ import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.statics.AccountInfoType;
-import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoList;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeList;
 
 /**
  * TableStaticData extension for AccountInfoType.
@@ -43,7 +43,7 @@ public class TableAccountInfoType extends TableStaticData<AccountInfoType> {
     /**
      * The InfoType list.
      */
-    private AccountInfoList theList = null;
+    private AccountInfoTypeList theList = null;
 
     /**
      * Constructor.

@@ -34,7 +34,7 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 
 /**
  * EventValue data type.
@@ -243,7 +243,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
 
             /* Look up the EventType */
             FinanceData myData = getDataSet();
-            EventInfoList myTypes = myData.getEventInfoTypes();
+            EventInfoTypeList myTypes = myData.getEventInfoTypes();
             EventInfoType myType = myTypes.findItemById(uInfoTypeId);
             if (myType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
@@ -264,8 +264,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
                 case XferDelay:
                     setValueValue(pValue);
                     break;
-                // case ThirdParty:
-                case CashAccount:
+                case ThirdParty:
                     /* Look up the Account */
                     setValueValue(pValue);
                     AccountList myAccounts = myData.getAccounts();
@@ -344,7 +343,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         /* Access Events and InfoTypes */
         FinanceData myData = getDataSet();
         EventList myEvents = myData.getEvents();
-        EventInfoList myTypes = myData.getEventInfoTypes();
+        EventInfoTypeList myTypes = myData.getEventInfoTypes();
 
         /* Update to use the local copy of the Types */
         EventInfoType myType = getInfoType();
@@ -386,8 +385,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
                         addError(myType.getName() + " must be positive", FIELD_VALUE);
                     }
                     break;
-                // case ThirdParty:
-                case CashAccount:
+                case ThirdParty:
                     Account myAccount = getAccount();
                     if (myAccount == null) {
                         addError(myType.getName() + " must be non-null", FIELD_VALUE);
@@ -420,8 +418,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
 
         /* Switch on type of Value */
         switch (getInfoType().getInfoClass()) {
-        // case ThirdParty:
-            case CashAccount:
+            case ThirdParty:
                 return myFormatter.formatObject(getAccount());
             case QualifyYears:
             case XferDelay:
@@ -457,8 +454,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
     protected void setAccount(final Account pValue) throws JDataException {
         /* Switch on Info type */
         switch (getInfoType().getInfoClass()) {
-        // case ThirdParty:
-            case CashAccount:
+            case ThirdParty:
                 setValueAccount(pValue);
                 setValueValue((pValue == null) ? null : pValue.getId());
                 break;

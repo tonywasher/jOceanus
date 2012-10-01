@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data.statics;
 
+import net.sourceforge.JDataManager.DataType;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
@@ -63,6 +64,22 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
         return super.getStaticClass();
     }
 
+    /**
+     * Return the Data Type of the AccountInfoType.
+     * @return the data type
+     */
+    public DataType getDataType() {
+        return getInfoClass().getDataType();
+    }
+
+    /**
+     * is this a Link?
+     * @return true/false
+     */
+    public boolean isLink() {
+        return getInfoClass().isLink();
+    }
+
     @Override
     public AccountInfoType getBase() {
         return (AccountInfoType) super.getBase();
@@ -73,7 +90,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
      * @param pList The list to associate the Account Info Type with
      * @param pInfoType The Account Info Type to copy
      */
-    protected AccountInfoType(final AccountInfoList pList,
+    protected AccountInfoType(final AccountInfoTypeList pList,
                               final AccountInfoType pInfoType) {
         super(pList, pInfoType);
     }
@@ -84,7 +101,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
      * @param sName Name of Account Info Type
      * @throws JDataException on error
      */
-    private AccountInfoType(final AccountInfoList pList,
+    private AccountInfoType(final AccountInfoTypeList pList,
                             final String sName) throws JDataException {
         super(pList, sName);
     }
@@ -99,7 +116,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
      * @param pDesc Description of Account Info Type
      * @throws JDataException on error
      */
-    private AccountInfoType(final AccountInfoList pList,
+    private AccountInfoType(final AccountInfoTypeList pList,
                             final int uId,
                             final boolean isEnabled,
                             final int uOrder,
@@ -119,7 +136,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
      * @param pDesc Encrypted Description of Account Info Type
      * @throws JDataException on error
      */
-    private AccountInfoType(final AccountInfoList pList,
+    private AccountInfoType(final AccountInfoTypeList pList,
                             final int uId,
                             final int uControlId,
                             final boolean isEnabled,
@@ -132,12 +149,12 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
     /**
      * Represents a list of {@link AccountInfoType} objects.
      */
-    public static class AccountInfoList extends StaticList<AccountInfoType, AccountInfoClass> {
+    public static class AccountInfoTypeList extends StaticList<AccountInfoType, AccountInfoClass> {
         /**
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AccountInfoList.class.getSimpleName(), DataList.FIELD_DEFS);
+                AccountInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -158,7 +175,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
          * Construct an empty CORE account type list.
          * @param pData the DataSet for the list
          */
-        public AccountInfoList(final DataSet<?> pData) {
+        public AccountInfoTypeList(final DataSet<?> pData) {
             super(AccountInfoType.class, pData, ListStyle.CORE);
         }
 
@@ -166,28 +183,28 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private AccountInfoList(final AccountInfoList pSource) {
+        private AccountInfoTypeList(final AccountInfoTypeList pSource) {
             super(pSource);
         }
 
         @Override
-        protected AccountInfoList getEmptyList() {
-            return new AccountInfoList(this);
+        protected AccountInfoTypeList getEmptyList() {
+            return new AccountInfoTypeList(this);
         }
 
         @Override
-        public AccountInfoList cloneList(final DataSet<?> pDataSet) {
-            return (AccountInfoList) super.cloneList(pDataSet);
+        public AccountInfoTypeList cloneList(final DataSet<?> pDataSet) {
+            return (AccountInfoTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountInfoList deriveList(final ListStyle pStyle) {
-            return (AccountInfoList) super.deriveList(pStyle);
+        public AccountInfoTypeList deriveList(final ListStyle pStyle) {
+            return (AccountInfoTypeList) super.deriveList(pStyle);
         }
 
         @Override
-        public AccountInfoList deriveDifferences(final DataList<AccountInfoType> pOld) {
-            return (AccountInfoList) super.deriveDifferences(pOld);
+        public AccountInfoTypeList deriveDifferences(final DataList<AccountInfoType> pOld) {
+            return (AccountInfoTypeList) super.deriveDifferences(pOld);
         }
 
         @Override

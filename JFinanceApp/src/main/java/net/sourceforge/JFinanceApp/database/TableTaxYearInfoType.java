@@ -28,7 +28,7 @@ import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
-import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 
 /**
  * TableStaticData extension for TaxYearInfoType.
@@ -43,7 +43,7 @@ public class TableTaxYearInfoType extends TableStaticData<TaxYearInfoType> {
     /**
      * The InfoType list.
      */
-    private TaxYearInfoList theList = null;
+    private TaxYearInfoTypeList theList = null;
 
     /**
      * Constructor.

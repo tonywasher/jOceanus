@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data.statics;
 
+import net.sourceforge.JDataManager.DataType;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
@@ -63,6 +64,14 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
         return super.getStaticClass();
     }
 
+    /**
+     * Return the Data Type of the TaxYearInfoType.
+     * @return the data type
+     */
+    public DataType getDataType() {
+        return getInfoClass().getDataType();
+    }
+
     @Override
     public TaxYearInfoType getBase() {
         return (TaxYearInfoType) super.getBase();
@@ -73,7 +82,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
      * @param pList The list to associate the TaxYear Info Type with
      * @param pInfoType The TaxYear Info Type to copy
      */
-    protected TaxYearInfoType(final TaxYearInfoList pList,
+    protected TaxYearInfoType(final TaxYearInfoTypeList pList,
                               final TaxYearInfoType pInfoType) {
         super(pList, pInfoType);
     }
@@ -84,7 +93,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
      * @param sName Name of TaxYear Info Type
      * @throws JDataException on error
      */
-    private TaxYearInfoType(final TaxYearInfoList pList,
+    private TaxYearInfoType(final TaxYearInfoTypeList pList,
                             final String sName) throws JDataException {
         super(pList, sName);
     }
@@ -99,7 +108,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
      * @param pDesc Description of TaxYear Info Type
      * @throws JDataException on error
      */
-    private TaxYearInfoType(final TaxYearInfoList pList,
+    private TaxYearInfoType(final TaxYearInfoTypeList pList,
                             final int uId,
                             final boolean isEnabled,
                             final int uOrder,
@@ -119,7 +128,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
      * @param pDesc Encrypted Description of TaxYear Info Type
      * @throws JDataException on error
      */
-    private TaxYearInfoType(final TaxYearInfoList pList,
+    private TaxYearInfoType(final TaxYearInfoTypeList pList,
                             final int uId,
                             final int uControlId,
                             final boolean isEnabled,
@@ -132,12 +141,12 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
     /**
      * Represents a list of {@link TaxYearInfoType} objects.
      */
-    public static class TaxYearInfoList extends StaticList<TaxYearInfoType, TaxYearInfoClass> {
+    public static class TaxYearInfoTypeList extends StaticList<TaxYearInfoType, TaxYearInfoClass> {
         /**
          * Local Report fields.
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(
-                TaxYearInfoList.class.getSimpleName(), DataList.FIELD_DEFS);
+                TaxYearInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -158,7 +167,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
          * Construct an empty CORE account type list.
          * @param pData the DataSet for the list
          */
-        public TaxYearInfoList(final DataSet<?> pData) {
+        public TaxYearInfoTypeList(final DataSet<?> pData) {
             super(TaxYearInfoType.class, pData, ListStyle.CORE);
         }
 
@@ -166,28 +175,28 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private TaxYearInfoList(final TaxYearInfoList pSource) {
+        private TaxYearInfoTypeList(final TaxYearInfoTypeList pSource) {
             super(pSource);
         }
 
         @Override
-        protected TaxYearInfoList getEmptyList() {
-            return new TaxYearInfoList(this);
+        protected TaxYearInfoTypeList getEmptyList() {
+            return new TaxYearInfoTypeList(this);
         }
 
         @Override
-        public TaxYearInfoList cloneList(final DataSet<?> pDataSet) {
-            return (TaxYearInfoList) super.cloneList(pDataSet);
+        public TaxYearInfoTypeList cloneList(final DataSet<?> pDataSet) {
+            return (TaxYearInfoTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public TaxYearInfoList deriveList(final ListStyle pStyle) {
-            return (TaxYearInfoList) super.deriveList(pStyle);
+        public TaxYearInfoTypeList deriveList(final ListStyle pStyle) {
+            return (TaxYearInfoTypeList) super.deriveList(pStyle);
         }
 
         @Override
-        public TaxYearInfoList deriveDifferences(final DataList<TaxYearInfoType> pOld) {
-            return (TaxYearInfoList) super.deriveDifferences(pOld);
+        public TaxYearInfoTypeList deriveDifferences(final DataList<TaxYearInfoType> pOld) {
+            return (TaxYearInfoTypeList) super.deriveDifferences(pOld);
         }
 
         @Override

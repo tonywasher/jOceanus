@@ -29,7 +29,7 @@ import net.sourceforge.JDataModels.sheets.SheetStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
 import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
-import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -55,7 +55,7 @@ public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
     /**
      * TaxYearInfoTypes data list.
      */
-    private final TaxYearInfoList theList;
+    private final TaxYearInfoTypeList theList;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -141,7 +141,7 @@ public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
                 int myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Access the list of InfoTypes */
-                TaxYearInfoList myList = pData.getTaxInfoTypes();
+                TaxYearInfoTypeList myList = pData.getTaxInfoTypes();
 
                 /* Declare the number of steps */
                 if (!pTask.setNumSteps(myTotal)) {

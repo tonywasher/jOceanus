@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data.statics;
 
+import net.sourceforge.JDataManager.DataType;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.StaticData.StaticInterface;
@@ -33,7 +34,7 @@ public enum AccountInfoClass implements StaticInterface {
     /**
      * Maturity Date.
      */
-    MATURITY(1, 0),
+    MATURITY(1, 0, DataType.DATEDAY),
 
     /**
      * Parent Id.
@@ -48,32 +49,32 @@ public enum AccountInfoClass implements StaticInterface {
     /**
      * WebSite.
      */
-    WEBSITE(4, 3),
+    WEBSITE(4, 3, DataType.CHARARRAY),
 
     /**
      * Customer #.
      */
-    CUSTNO(5, 4),
+    CUSTNO(5, 4, DataType.CHARARRAY),
 
     /**
      * User Id.
      */
-    USERID(6, 5),
+    USERID(6, 5, DataType.CHARARRAY),
 
     /**
      * Password.
      */
-    PASSWORD(7, 6),
+    PASSWORD(7, 6, DataType.CHARARRAY),
 
     /**
      * Account.
      */
-    ACCOUNT(8, 7),
+    ACCOUNT(8, 7, DataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    NOTES(9, 8);
+    NOTES(9, 8, DataType.CHARARRAY);
 
     /**
      * Class Id.
@@ -84,6 +85,16 @@ public enum AccountInfoClass implements StaticInterface {
      * Class Order.
      */
     private final int theOrder;
+
+    /**
+     * Data Type.
+     */
+    private final DataType theDataType;
+
+    /**
+     * Is this a Link?.
+     */
+    private final boolean isLink;
 
     /**
      * Obtain Class Id.
@@ -104,6 +115,37 @@ public enum AccountInfoClass implements StaticInterface {
     }
 
     /**
+     * Obtain Data Type.
+     * @return the date type
+     */
+    public DataType getDataType() {
+        return theDataType;
+    }
+
+    /**
+     * is this a Link?
+     * @return true/false
+     */
+    public boolean isLink() {
+        return isLink;
+    }
+
+    /**
+     * Constructor.
+     * @param uId the Id
+     * @param uOrder the default order.
+     * @param pDataType the data type
+     */
+    private AccountInfoClass(final int uId,
+                             final int uOrder,
+                             final DataType pDataType) {
+        theId = uId;
+        theOrder = uOrder;
+        theDataType = pDataType;
+        isLink = false;
+    }
+
+    /**
      * Constructor.
      * @param uId the Id
      * @param uOrder the default order.
@@ -112,6 +154,8 @@ public enum AccountInfoClass implements StaticInterface {
                              final int uOrder) {
         theId = uId;
         theOrder = uOrder;
+        theDataType = DataType.INTEGER;
+        isLink = true;
     }
 
     /**

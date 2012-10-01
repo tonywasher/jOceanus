@@ -28,7 +28,7 @@ import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.JDataModels.sheets.SheetStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -54,7 +54,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
     /**
      * EventInfoTypes data list.
      */
-    private final EventInfoList theList;
+    private final EventInfoTypeList theList;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -140,7 +140,7 @@ public class SheetEventInfoType extends SheetStaticData<EventInfoType> {
                 int myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Access the list of InfoTypes */
-                EventInfoList myList = pData.getEventInfoTypes();
+                EventInfoTypeList myList = pData.getEventInfoTypes();
 
                 /* Declare the number of steps */
                 if (!pTask.setNumSteps(myTotal)) {

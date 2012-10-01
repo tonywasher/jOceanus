@@ -1,0 +1,506 @@
+/*******************************************************************************
+ * JFinanceApp: Finance Application
+ * Copyright 2012 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
+package net.sourceforge.JFinanceApp.data;
+
+import net.sourceforge.JDataManager.JDataException;
+import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.JDataManager.JDataFields;
+import net.sourceforge.JDataManager.JDataFormatter;
+import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JDataModels.data.DataInfo;
+import net.sourceforge.JDataModels.data.DataItem;
+import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.JDataModels.data.DataSet;
+import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.JDecimal.JMoney;
+import net.sourceforge.JDecimal.JRate;
+import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+
+/**
+ * Representation of an information extension of a TaxYear.
+ * @author Tony Washer
+ */
+public class TaxYearInfo extends DataInfo<TaxYear, TaxYearInfoType> implements Comparable<TaxYearInfo> {
+    /**
+     * Object name.
+     */
+    public static final String OBJECT_NAME = TaxYearInfo.class.getSimpleName();
+
+    /**
+     * List name.
+     */
+    public static final String LIST_NAME = OBJECT_NAME + "s";
+
+    /**
+     * Report fields.
+     */
+    protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearInfo.class.getSimpleName(),
+            DataInfo.FIELD_DEFS);
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
+
+    /**
+     * Obtain InfoType.
+     * @return the Info type
+     */
+    public TaxYearInfoType getInfoType() {
+        return getInfoType(getValueSet(), TaxYearInfoType.class);
+    }
+
+    /**
+     * Obtain TaxYear.
+     * @return the TaxYear
+     */
+    public TaxYear getTaxYear() {
+        return getOwner(getValueSet(), TaxYear.class);
+    }
+
+    /**
+     * Obtain Money.
+     * @return the Money
+     */
+    public JMoney getMoney() {
+        return getMoney(getValueSet());
+    }
+
+    /**
+     * Obtain Rate.
+     * @return the Rate
+     */
+    public JRate getRate() {
+        return getRate(getValueSet());
+    }
+
+    /**
+     * Obtain InfoType.
+     * @param pValueSet the valueSet
+     * @return the Money
+     */
+    public static TaxYearInfoType getInfoType(final ValueSet pValueSet) {
+        return getInfoType(pValueSet, TaxYearInfoType.class);
+    }
+
+    /**
+     * Obtain TaxYear.
+     * @param pValueSet the valueSet
+     * @return the TaxYear
+     */
+    public static TaxYear getTaxYear(final ValueSet pValueSet) {
+        return getOwner(pValueSet, TaxYear.class);
+    }
+
+    @Override
+    public FinanceData getDataSet() {
+        return (FinanceData) super.getDataSet();
+    }
+
+    @Override
+    public TaxYearInfo getBase() {
+        return (TaxYearInfo) super.getBase();
+    }
+
+    /**
+     * Construct a copy of a TaxYearInfo.
+     * @param pList the list
+     * @param pInfo The Info to copy
+     */
+    protected TaxYearInfo(final TaxInfoList pList,
+                          final TaxYearInfo pInfo) {
+        /* Set standard values */
+        super(pList, pInfo);
+    }
+
+    /**
+     * Encrypted constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param uControlId the control id
+     * @param uInfoTypeId the info id
+     * @param uTaxYearId the TaxYear id
+     * @param pValue the value
+     * @throws JDataException on error
+     */
+    private TaxYearInfo(final TaxInfoList pList,
+                        final int uId,
+                        final int uControlId,
+                        final int uInfoTypeId,
+                        final int uTaxYearId,
+                        final byte[] pValue) throws JDataException {
+        /* Initialise the item */
+        super(pList, uId, uControlId, uInfoTypeId, uTaxYearId);
+
+        /* Protect against exceptions */
+        try {
+            /* Look up the EventType */
+            FinanceData myData = getDataSet();
+            TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
+            TaxYearInfoType myType = myTypes.findItemById(uInfoTypeId);
+            if (myType == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid TaxInfoType Id");
+            }
+            setValueInfoType(myType);
+
+            /* Look up the TaxYear */
+            TaxYearList myTaxYears = myData.getTaxYears();
+            TaxYear myTaxYear = myTaxYears.findItemById(uTaxYearId);
+            if (myTaxYear == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid TaxYear Id");
+            }
+            setValueOwner(myTaxYear);
+
+            /* Switch on Info Class */
+            switch (myType.getDataType()) {
+                case MONEY:
+                    setValueMoney(pValue);
+                    break;
+                case RATE:
+                    setValueRate(pValue);
+                    break;
+                default:
+                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
+            }
+
+            /* Access the EventInfoSet and register this data */
+            // EventInfoSet mySet = myEvent.getInfoSet();
+            // mySet.registerData(this);
+        } catch (JDataException e) {
+            /* Pass on exception */
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+        }
+    }
+
+    /**
+     * Open Text constructor.
+     * @param pList the list
+     * @param uId the id
+     * @param pInfoType the info type
+     * @param pTaxYear the TaxYear
+     * @param pValue the value
+     * @throws JDataException on error
+     */
+    private TaxYearInfo(final TaxInfoList pList,
+                        final int uId,
+                        final TaxYearInfoType pInfoType,
+                        final TaxYear pTaxYear,
+                        final String pValue) throws JDataException {
+        /* Initialise the item */
+        super(pList, uId, pInfoType, pTaxYear);
+
+        /* Protect against exceptions */
+        try {
+            /* Access the DataSet and parser */
+            FinanceData myDataSet = getDataSet();
+            JDataFormatter myFormatter = myDataSet.getDataFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
+
+            /* Switch on Info Class */
+            switch (pInfoType.getDataType()) {
+                case MONEY:
+                    setValueMoney(myParser.parseMoneyValue(pValue));
+                    break;
+                case RATE:
+                    setValueRate(myParser.parseRateValue(pValue));
+                    break;
+                default:
+                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
+            }
+
+            /* Access the EventInfoSet and register this data */
+            // EventInfoSet mySet = myEvent.getInfoSet();
+            // mySet.registerData(this);
+        } catch (JDataException e) {
+            /* Pass on exception */
+            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+        }
+    }
+
+    // @Override
+    // public void deRegister() {
+    /* Access the EventInfoSet and register this value */
+    // EventInfoSet mySet = getEvent().getInfoSet();
+    // mySet.deRegisterData(this);
+    // }
+
+    /**
+     * Compare this data to another to establish sort order.
+     * @param pThat The TaxYearInfo to compare to
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
+     *         sort order
+     */
+    @Override
+    public int compareTo(final TaxYearInfo pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return 0;
+        }
+        if (pThat == null) {
+            return -1;
+        }
+
+        /* Compare the TaxYears */
+        int iDiff = getTaxYear().compareTo(pThat.getTaxYear());
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* Compare the Info Types */
+        iDiff = getInfoType().compareTo(pThat.getInfoType());
+        if (iDiff != 0) {
+            return iDiff;
+        }
+
+        /* Compare the underlying id */
+        return super.compareId(pThat);
+    }
+
+    @Override
+    protected void relinkToDataSet() {
+        /* Update the Encryption details */
+        super.relinkToDataSet();
+
+        /* Access TaxYears and InfoTypes */
+        FinanceData myData = getDataSet();
+        TaxYearList myTaxYears = myData.getTaxYears();
+        TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
+
+        /* Update to use the local copy of the Types */
+        TaxYearInfoType myType = getInfoType();
+        TaxYearInfoType myNewType = myTypes.findItemById(myType.getId());
+        setValueInfoType(myNewType);
+
+        /* Update to use the local copy of the TaxYears */
+        TaxYear myTaxYear = getTaxYear();
+        TaxYear myNewYear = myTaxYears.findItemById(myTaxYear.getId());
+        setValueOwner(myNewYear);
+    }
+
+    @Override
+    public String formatObject() {
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
+        /* Switch on type of Data */
+        switch (getInfoType().getDataType()) {
+            case MONEY:
+                return myFormatter.formatObject(getMoney());
+            case RATE:
+                return myFormatter.formatObject(getRate());
+            default:
+                return "null";
+        }
+    }
+
+    /**
+     * Set Money.
+     * @param pValue the Value
+     * @throws JDataException on error
+     */
+    protected void setMoney(final JMoney pValue) throws JDataException {
+        /* Switch on Info type */
+        switch (getInfoType().getDataType()) {
+            case MONEY:
+                /* Set the value */
+                setValueMoney(pValue);
+                break;
+            default:
+                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Money value");
+        }
+    }
+
+    /**
+     * Set Rate.
+     * @param pValue the Value
+     * @throws JDataException on error
+     */
+    protected void setRate(final JRate pValue) throws JDataException {
+        /* Switch on Info type */
+        switch (getInfoType().getDataType()) {
+            case RATE:
+                /* Set the value */
+                setValueRate(pValue);
+                break;
+            default:
+                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Rate value");
+        }
+    }
+
+    /**
+     * TaxYearInfoList.
+     */
+    public static class TaxInfoList extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType> {
+        /**
+         * Local Report fields.
+         */
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxInfoList.class.getSimpleName(),
+                DataInfoList.FIELD_DEFS);
+
+        @Override
+        public JDataFields declareFields() {
+            return FIELD_DEFS;
+        }
+
+        @Override
+        public String listName() {
+            return LIST_NAME;
+        }
+
+        @Override
+        public FinanceData getDataSet() {
+            return (FinanceData) super.getDataSet();
+        }
+
+        /**
+         * Construct an empty CORE account list.
+         * @param pData the DataSet for the list
+         */
+        protected TaxInfoList(final FinanceData pData) {
+            super(TaxYearInfo.class, pData, ListStyle.CORE);
+        }
+
+        /**
+         * Constructor for a cloned List.
+         * @param pSource the source List
+         */
+        private TaxInfoList(final TaxInfoList pSource) {
+            super(pSource);
+        }
+
+        @Override
+        protected TaxInfoList getEmptyList() {
+            return new TaxInfoList(this);
+        }
+
+        @Override
+        public TaxInfoList cloneList(final DataSet<?> pDataSet) {
+            return (TaxInfoList) super.cloneList(pDataSet);
+        }
+
+        @Override
+        public TaxInfoList deriveList(final ListStyle pStyle) {
+            return (TaxInfoList) super.deriveList(pStyle);
+        }
+
+        @Override
+        public TaxInfoList deriveDifferences(final DataList<TaxYearInfo> pOld) {
+            return (TaxInfoList) super.deriveDifferences(pOld);
+        }
+
+        @Override
+        public TaxYearInfo addNewItem(final DataItem pItem) {
+            /* Can only clone a TaxYearInfo */
+            if (!(pItem instanceof TaxYearInfo)) {
+                return null;
+            }
+
+            TaxYearInfo myInfo = new TaxYearInfo(this, (TaxYearInfo) pItem);
+            add(myInfo);
+            return myInfo;
+        }
+
+        @Override
+        public TaxYearInfo addNewItem() {
+            return null;
+        }
+
+        /**
+         * Allow a TaxYearInfo to be added.
+         * @param uId the id
+         * @param uControlId the control id
+         * @param uInfoTypeId the info type id
+         * @param uTaxYearId the taxYear id
+         * @param pValue the data
+         * @throws JDataException on error
+         */
+        public void addSecureItem(final int uId,
+                                  final int uControlId,
+                                  final int uInfoTypeId,
+                                  final int uTaxYearId,
+                                  final byte[] pValue) throws JDataException {
+            /* Create the info */
+            TaxYearInfo myInfo = new TaxYearInfo(this, uId, uControlId, uInfoTypeId, uTaxYearId, pValue);
+
+            /* Check that this DataId has not been previously added */
+            if (!isIdUnique(uId)) {
+                throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate DataId");
+            }
+
+            /* Validate the information */
+            myInfo.validate();
+
+            /* Handle validation failure */
+            if (myInfo.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
+            }
+
+            /* Add to the list */
+            append(myInfo);
+        }
+
+        /**
+         * Add a TaxYearInfo to the list.
+         * @param uId the Id of the tax info
+         * @param pTaxYear the tax Year
+         * @param pInfoType the Name of the account info type
+         * @param pValue the value of the tax info
+         * @throws JDataException on error
+         */
+        public void addOpenItem(final int uId,
+                                final TaxYear pTaxYear,
+                                final String pInfoType,
+                                final String pValue) throws JDataException {
+            /* Access the data set */
+            FinanceData myData = getDataSet();
+
+            /* Look up the Info Type */
+            TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByName(pInfoType);
+            if (myInfoType == null) {
+                throw new JDataException(ExceptionClass.DATA, pTaxYear, "TaxYear has invalid Tax Info Type ["
+                        + pInfoType + "]");
+            }
+
+            /* Create a new Tax Info */
+            TaxYearInfo myTaxInfo = new TaxYearInfo(this, uId, myInfoType, pTaxYear, pValue);
+
+            /* Check that this InfoTypeId has not been previously added */
+            if (!isIdUnique(myTaxInfo.getId())) {
+                throw new JDataException(ExceptionClass.DATA, myTaxInfo, "Duplicate TaxYearInfoId");
+            }
+
+            /* Add the TaxYear Info to the list */
+            append(myTaxInfo);
+
+            /* Validate the TaxInfo */
+            myTaxInfo.validate();
+
+            /* Handle validation failure */
+            if (myTaxInfo.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myTaxInfo, "Failed validation");
+            }
+        }
+    }
+}

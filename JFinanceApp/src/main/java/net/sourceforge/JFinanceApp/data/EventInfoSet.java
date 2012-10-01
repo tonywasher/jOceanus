@@ -40,7 +40,7 @@ import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
 import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoClass;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.JFinanceApp.data.statics.TransactionType;
 
 /**
@@ -138,8 +138,7 @@ public class EventInfoSet implements JDataContents {
             return theValueMap.get(EventInfoClass.QualifyYears);
         }
         if (FIELD_THIRDPARTY.equals(pField)) {
-            return theValueMap.get(EventInfoClass.CashAccount);
-            // return theValueMap.get(EventInfoClass.ThirdParty);
+            return theValueMap.get(EventInfoClass.ThirdParty);
         }
         return JDataFieldValue.UnknownField;
     }
@@ -157,7 +156,7 @@ public class EventInfoSet implements JDataContents {
     /**
      * The list of EventInfoTypes.
      */
-    private EventInfoList theTypes = null;
+    private EventInfoTypeList theTypes = null;
 
     /**
      * The EventData list for new data.

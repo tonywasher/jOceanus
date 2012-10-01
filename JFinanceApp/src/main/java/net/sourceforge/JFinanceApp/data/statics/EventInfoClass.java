@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data.statics;
 
+import net.sourceforge.JDataManager.DataType;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataModels.data.StaticData.StaticInterface;
@@ -33,58 +34,57 @@ public enum EventInfoClass implements StaticInterface {
     /**
      * Tax Credit.
      */
-    TaxCredit(1, 0),
+    TaxCredit(1, 0, DataType.MONEY),
 
     /**
      * National Insurance.
      */
-    NatInsurance(2, 1),
+    NatInsurance(2, 1, DataType.MONEY),
 
     /**
      * Benefit.
      */
-    Benefit(3, 2),
+    Benefit(3, 2, DataType.MONEY),
 
     /**
      * Pension.
      */
-    Pension(4, 3),
+    Pension(4, 3, DataType.MONEY),
 
     /**
      * QualifyingYears.
      */
-    QualifyYears(5, 4),
+    QualifyYears(5, 4, DataType.INTEGER),
 
     /**
      * TransferDelay.
      */
-    XferDelay(6, 5),
+    XferDelay(6, 5, DataType.INTEGER),
 
     /**
      * Credit Units.
      */
-    CreditUnits(7, 6),
+    CreditUnits(7, 6, DataType.UNITS),
 
     /**
      * Debit Units.
      */
-    DebitUnits(8, 7),
+    DebitUnits(8, 7, DataType.UNITS),
 
     /**
      * Dilution.
      */
-    Dilution(9, 8),
+    Dilution(9, 8, DataType.DILUTION),
 
     /**
      * CashConsideration.
      */
-    CashConsider(10, 9),
+    CashConsider(10, 9, DataType.MONEY),
 
     /**
      * ThirdParty Account.
      */
-    // ThirdParty(11, 10);
-    CashAccount(11, 10);
+    ThirdParty(11, 10);
 
     /**
      * Class Id.
@@ -95,6 +95,16 @@ public enum EventInfoClass implements StaticInterface {
      * Class Order.
      */
     private final int theOrder;
+
+    /**
+     * Data Type.
+     */
+    private final DataType theDataType;
+
+    /**
+     * Is this a Link?.
+     */
+    private final boolean isLink;
 
     /**
      * Obtain Class Id.
@@ -115,6 +125,37 @@ public enum EventInfoClass implements StaticInterface {
     }
 
     /**
+     * Obtain Data Type.
+     * @return the date type
+     */
+    public DataType getDataType() {
+        return theDataType;
+    }
+
+    /**
+     * is this a Link?
+     * @return true/false
+     */
+    public boolean isLink() {
+        return isLink;
+    }
+
+    /**
+     * Constructor.
+     * @param uId the id
+     * @param uOrder the default order
+     * @param pDataType the data type
+     */
+    private EventInfoClass(final int uId,
+                           final int uOrder,
+                           final DataType pDataType) {
+        theId = uId;
+        theOrder = uOrder;
+        theDataType = pDataType;
+        isLink = false;
+    }
+
+    /**
      * Constructor.
      * @param uId the id
      * @param uOrder the default order
@@ -123,6 +164,8 @@ public enum EventInfoClass implements StaticInterface {
                            final int uOrder) {
         theId = uId;
         theOrder = uOrder;
+        theDataType = DataType.INTEGER;
+        isLink = true;
     }
 
     /**

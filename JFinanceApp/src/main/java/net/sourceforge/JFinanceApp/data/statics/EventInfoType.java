@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data.statics;
 
+import net.sourceforge.JDataManager.DataType;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
@@ -63,6 +64,22 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
         return super.getStaticClass();
     }
 
+    /**
+     * Return the Data Type of the EventInfoType.
+     * @return the data type
+     */
+    public DataType getDataType() {
+        return getInfoClass().getDataType();
+    }
+
+    /**
+     * is this a Link?
+     * @return true/false
+     */
+    public boolean isLink() {
+        return getInfoClass().isLink();
+    }
+
     @Override
     public EventInfoType getBase() {
         return (EventInfoType) super.getBase();
@@ -73,7 +90,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
      * @param pList The list to associate the EventInfoType with
      * @param pType The InfoType to copy
      */
-    protected EventInfoType(final EventInfoList pList,
+    protected EventInfoType(final EventInfoTypeList pList,
                             final EventInfoType pType) {
         super(pList, pType);
     }
@@ -84,7 +101,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
      * @param sName Name of InfoType
      * @throws JDataException on error
      */
-    private EventInfoType(final EventInfoList pList,
+    private EventInfoType(final EventInfoTypeList pList,
                           final String sName) throws JDataException {
         super(pList, sName);
     }
@@ -99,7 +116,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
      * @param pDesc Description of InfoType
      * @throws JDataException on error
      */
-    private EventInfoType(final EventInfoList pList,
+    private EventInfoType(final EventInfoTypeList pList,
                           final int uId,
                           final boolean isEnabled,
                           final int uOrder,
@@ -119,7 +136,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
      * @param pDesc Encrypted Description of InfoType
      * @throws JDataException on error
      */
-    private EventInfoType(final EventInfoList pList,
+    private EventInfoType(final EventInfoTypeList pList,
                           final int uId,
                           final int uControlId,
                           final boolean isEnabled,
@@ -132,12 +149,12 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
     /**
      * Represents a list of {@link EventInfoType} objects.
      */
-    public static class EventInfoList extends StaticList<EventInfoType, EventInfoClass> {
+    public static class EventInfoTypeList extends StaticList<EventInfoType, EventInfoClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfoList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(
+                EventInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -158,7 +175,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * Construct an empty CORE eventInfo list.
          * @param pData the DataSet for the list
          */
-        public EventInfoList(final DataSet<?> pData) {
+        public EventInfoTypeList(final DataSet<?> pData) {
             super(EventInfoType.class, pData, ListStyle.CORE);
         }
 
@@ -166,28 +183,28 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private EventInfoList(final EventInfoList pSource) {
+        private EventInfoTypeList(final EventInfoTypeList pSource) {
             super(pSource);
         }
 
         @Override
-        protected EventInfoList getEmptyList() {
-            return new EventInfoList(this);
+        protected EventInfoTypeList getEmptyList() {
+            return new EventInfoTypeList(this);
         }
 
         @Override
-        public EventInfoList cloneList(final DataSet<?> pDataSet) {
-            return (EventInfoList) super.cloneList(pDataSet);
+        public EventInfoTypeList cloneList(final DataSet<?> pDataSet) {
+            return (EventInfoTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public EventInfoList deriveList(final ListStyle pStyle) {
-            return (EventInfoList) super.deriveList(pStyle);
+        public EventInfoTypeList deriveList(final ListStyle pStyle) {
+            return (EventInfoTypeList) super.deriveList(pStyle);
         }
 
         @Override
-        public EventInfoList deriveDifferences(final DataList<EventInfoType> pOld) {
-            return (EventInfoList) super.deriveDifferences(pOld);
+        public EventInfoTypeList deriveDifferences(final DataList<EventInfoType> pOld) {
+            return (EventInfoTypeList) super.deriveDifferences(pOld);
         }
 
         @Override

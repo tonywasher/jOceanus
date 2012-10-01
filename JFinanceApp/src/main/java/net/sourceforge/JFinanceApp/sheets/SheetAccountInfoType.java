@@ -28,7 +28,7 @@ import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.JDataModels.sheets.SheetStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.statics.AccountInfoType;
-import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoList;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeList;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -54,7 +54,7 @@ public class SheetAccountInfoType extends SheetStaticData<AccountInfoType> {
     /**
      * AccountInfoTypes data list.
      */
-    private final AccountInfoList theList;
+    private final AccountInfoTypeList theList;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -140,7 +140,7 @@ public class SheetAccountInfoType extends SheetStaticData<AccountInfoType> {
                 int myTotal = myBottom.getRow() - myTop.getRow() + 1;
 
                 /* Access the list of InfoTypes */
-                AccountInfoList myList = pData.getActInfoTypes();
+                AccountInfoTypeList myList = pData.getActInfoTypes();
 
                 /* Declare the number of steps */
                 if (!pTask.setNumSteps(myTotal)) {

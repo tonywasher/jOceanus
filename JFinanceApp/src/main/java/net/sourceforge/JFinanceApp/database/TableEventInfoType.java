@@ -28,7 +28,7 @@ import net.sourceforge.JDataModels.database.Database;
 import net.sourceforge.JDataModels.database.TableStaticData;
 import net.sourceforge.JFinanceApp.data.FinanceData;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 
 /**
  * TableStaticData extension for EventInfoType.
@@ -43,7 +43,7 @@ public class TableEventInfoType extends TableStaticData<EventInfoType> {
     /**
      * The InfoType list.
      */
-    private EventInfoList theList = null;
+    private EventInfoTypeList theList = null;
 
     /**
      * Constructor.
