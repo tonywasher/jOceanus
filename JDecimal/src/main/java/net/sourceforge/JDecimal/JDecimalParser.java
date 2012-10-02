@@ -54,37 +54,42 @@ public class JDecimalParser {
     /**
      * The grouping separator.
      */
-    private final String theGrouping;
+    private String theGrouping;
 
     /**
      * The minus sign.
      */
-    private final char theMinusSign;
+    private char theMinusSign;
 
     /**
      * The perCent symbol.
      */
-    private final char thePerCent;
+    private char thePerCent;
 
     /**
      * The perMille symbol.
      */
-    private final char thePerMille;
+    private char thePerMille;
 
     /**
      * The decimal separator.
      */
-    private final String theDecimal;
+    private String theDecimal;
 
     /**
      * The money decimal separator.
      */
-    private final String theMoneyDecimal;
+    private String theMoneyDecimal;
 
     /**
      * The default currency.
      */
-    private final Currency theCurrency;
+    private Currency theCurrency;
+
+    /**
+     * Do we use strict # of decimals?
+     */
+    private boolean useStrictDecimals = true;
 
     /**
      * Constructor.
@@ -100,6 +105,24 @@ public class JDecimalParser {
      */
     public JDecimalParser(final Locale pLocale) {
         /* Store locale */
+        setLocale(pLocale);
+    }
+
+    /**
+     * Should we parse to strict decimals.
+     * @param bStrictDecimals true/false
+     */
+    public void setStrictDecimals(final boolean bStrictDecimals) {
+        /* Set accounting mode on and set the width */
+        useStrictDecimals = bStrictDecimals;
+    }
+
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* Store the locale */
         theLocale = pLocale;
 
         /* Access decimal formats */
@@ -115,15 +138,6 @@ public class JDecimalParser {
 
         /* Access the default currency */
         theCurrency = mySymbols.getCurrency();
-    }
-
-    /**
-     * Set the locale.
-     * @param pLocale the locale
-     */
-    public final void setLocale(final Locale pLocale) {
-        /* Store the locale */
-        theLocale = pLocale;
     }
 
     /**
@@ -303,6 +317,36 @@ public class JDecimalParser {
     }
 
     /**
+     * Adjust to desired decimals.
+     * @param pValue the value to adjust
+     * @param pDecimals the desired decimals
+     */
+    private void adjustDecimals(final JDecimal pValue,
+                                final int pDecimals) {
+        /* If we are using strict decimals */
+        if (useStrictDecimals) {
+            /* Correct the scale */
+            pValue.adjustToScale(pDecimals);
+
+            /* else we should honour what we can */
+        } else {
+            /* Calculate the standard correction */
+            int myAdjust = pDecimals - pValue.scale();
+
+            /* If we have too few decimals */
+            if (myAdjust > 0) {
+                /* Adjust the value appropriately */
+                pValue.movePointRight(myAdjust);
+
+                /* else if we have too many */
+            } else if (myAdjust < 0) {
+                /* remove redundant decimal places */
+                pValue.reduceScale(pDecimals);
+            }
+        }
+    }
+
+    /**
      * Parse a currency string.
      * @param pWork the buffer to parse
      * @return the parsed currency
@@ -385,7 +429,7 @@ public class JDecimalParser {
         parseDecimalValue(myWork.toString(), myDec, myMoney);
 
         /* Correct the scale */
-        myMoney.adjustToScale(myCurrency.getDefaultFractionDigits());
+        adjustDecimals(myMoney, myCurrency.getDefaultFractionDigits());
 
         /* return the parsed money object */
         return myMoney;
@@ -455,20 +499,8 @@ public class JDecimalParser {
         /* Parse the remaining string */
         parseDecimalValue(myWork.toString(), myDec, myPrice);
 
-        /* Check the desired amount of decimals */
-        int myReqScale = myCurrency.getDefaultFractionDigits() + JPrice.XTRA_DECIMALS;
-        int myAdjust = myReqScale - myPrice.scale();
-
-        /* If we have too few */
-        if (myAdjust > 0) {
-            /* Adjust the value appropriately */
-            myPrice.movePointRight(myAdjust);
-
-            /* else if we have too many */
-        } else if (myAdjust < 0) {
-            /* remove redundant decimal places */
-            myPrice.reduceScale(myReqScale);
-        }
+        /* Correct the scale */
+        adjustDecimals(myPrice, myCurrency.getDefaultFractionDigits() + JPrice.XTRA_DECIMALS);
 
         /* return the parsed price object */
         return myPrice;
@@ -530,20 +562,8 @@ public class JDecimalParser {
         /* Parse the remaining string */
         parseDecimalValue(myWork.toString(), myDec, myDilutedPrice);
 
-        /* If we are not the correct number of decimals */
-        int myReqScale = myCurrency.getDefaultFractionDigits() + JDilutedPrice.XTRA_DECIMALS;
-        int myAdjust = myReqScale - myDilutedPrice.scale();
-
-        /* If we have too few */
-        if (myAdjust > 0) {
-            /* Adjust the value appropriately */
-            myDilutedPrice.movePointRight(myAdjust);
-
-            /* else if we have too many */
-        } else if (myAdjust < 0) {
-            /* remove redundant decimal places */
-            myDilutedPrice.reduceScale(myReqScale);
-        }
+        /* Correct the scale */
+        adjustDecimals(myDilutedPrice, myCurrency.getDefaultFractionDigits() + JDilutedPrice.XTRA_DECIMALS);
 
         /* return the parsed diluted price object */
         return myDilutedPrice;
@@ -588,19 +608,8 @@ public class JDecimalParser {
             myRate.recordScale(myXtraDecimals + myRate.scale());
         }
 
-        /* Check the desired amount of decimals */
-        int myAdjust = JRate.NUM_DECIMALS - myRate.scale();
-
-        /* If we have too few */
-        if (myAdjust > 0) {
-            /* Adjust the value appropriately */
-            myRate.movePointRight(myAdjust);
-
-            /* else if we have too many */
-        } else if (myAdjust < 0) {
-            /* remove redundant decimal places */
-            myRate.reduceScale(JRate.NUM_DECIMALS);
-        }
+        /* Correct the scale */
+        adjustDecimals(myRate, JRate.NUM_DECIMALS);
 
         /* return the parsed rate object */
         return myRate;
@@ -623,19 +632,8 @@ public class JDecimalParser {
         /* Parse the remaining string */
         parseDecimalValue(pValue.trim(), theDecimal, myUnits);
 
-        /* Check the desired amount of decimals */
-        int myAdjust = JUnits.NUM_DECIMALS - myUnits.scale();
-
-        /* If we have too few */
-        if (myAdjust > 0) {
-            /* Adjust the value appropriately */
-            myUnits.movePointRight(myAdjust);
-
-            /* else if we have too many */
-        } else if (myAdjust < 0) {
-            /* remove redundant decimal places */
-            myUnits.reduceScale(JUnits.NUM_DECIMALS);
-        }
+        /* Correct the scale */
+        adjustDecimals(myUnits, JUnits.NUM_DECIMALS);
 
         /* return the parsed units object */
         return myUnits;
@@ -658,19 +656,8 @@ public class JDecimalParser {
         /* Parse the remaining string */
         parseDecimalValue(pValue.trim(), theDecimal, myDilution);
 
-        /* Check the desired amount of decimals */
-        int myAdjust = JDilution.NUM_DECIMALS - myDilution.scale();
-
-        /* If we have too few */
-        if (myAdjust > 0) {
-            /* Adjust the value appropriately */
-            myDilution.movePointRight(myAdjust);
-
-            /* else if we have too many */
-        } else if (myAdjust < 0) {
-            /* remove redundant decimal places */
-            myDilution.reduceScale(JDilution.NUM_DECIMALS);
-        }
+        /* Correct the scale */
+        adjustDecimals(myDilution, JDilution.NUM_DECIMALS);
 
         /* return the parsed dilution object */
         return myDilution;
@@ -693,19 +680,8 @@ public class JDecimalParser {
         /* Parse the remaining string */
         parseDecimalValue(pValue.trim(), theDecimal, myRatio);
 
-        /* Check the desired amount of decimals */
-        int myAdjust = JRatio.NUM_DECIMALS - myRatio.scale();
-
-        /* If we have too few */
-        if (myAdjust > 0) {
-            /* Adjust the value appropriately */
-            myRatio.movePointRight(myAdjust);
-
-            /* else if we have too many */
-        } else if (myAdjust < 0) {
-            /* remove redundant decimal places */
-            myRatio.reduceScale(JRatio.NUM_DECIMALS);
-        }
+        /* Correct the scale */
+        adjustDecimals(myRatio, JRatio.NUM_DECIMALS);
 
         /* return the parsed ratio object */
         return myRatio;

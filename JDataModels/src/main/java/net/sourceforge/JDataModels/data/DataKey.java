@@ -393,29 +393,14 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
         /* Initialise the item */
         super(pList, 0);
 
-        /* Protect against exceptions */
-        try {
-            /* Store the Control details */
-            setValueControlKey(pControlKey);
+        /* Store the Control details */
+        setValueControlKey(pControlKey);
 
-            /* Copy the key details */
-            setValueDataKey(pDataKey.getDataKey());
-            setValueCipher(pDataKey.getCipher());
-            setValueKeyType(pDataKey.getKeyType());
-
-            /* Access Password Hash */
-            PasswordHash myHash = pControlKey.getPasswordHash();
-
-            /* Store its secured keyDef */
-            setValuePasswordHash(myHash);
-            CipherSet myCipher = myHash.getCipherSet();
-            setValueSecuredKeyDef(myCipher.secureSymmetricKey(getDataKey()));
-
-            /* Catch Exceptions */
-        } catch (JDataException e) {
-            /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
-        }
+        /* Copy the key details */
+        setValueDataKey(pDataKey.getDataKey());
+        setValueSecuredKeyDef(pDataKey.getSecuredKeyDef());
+        setValueCipher(pDataKey.getCipher());
+        setValueKeyType(pDataKey.getKeyType());
     }
 
     @Override

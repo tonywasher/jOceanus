@@ -53,7 +53,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
         /* Define the columns */
         myTableDef.addReferenceColumn(DataKey.FIELD_CONTROLKEY, TableControlKeys.TABLE_NAME);
         myTableDef.addIntegerColumn(DataKey.FIELD_KEYTYPE);
-        myTableDef.addBinaryColumn(DataKey.FIELD_KEY, DataKey.KEYLEN);
+        myTableDef.addBinaryColumn(DataKey.FIELD_KEYDEF, DataKey.KEYLEN);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
         TableDefinition myTableDef = getTableDef();
         int myControl = myTableDef.getIntegerValue(DataKey.FIELD_CONTROLKEY);
         int myKeyType = myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE);
-        byte[] myKey = myTableDef.getBinaryValue(DataKey.FIELD_KEY);
+        byte[] myKey = myTableDef.getBinaryValue(DataKey.FIELD_KEYDEF);
 
         /* Add into the list */
         theList.addSecureItem(pId, myControl, myKeyType, myKey);
@@ -83,7 +83,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
             myTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
         } else if (DataKey.FIELD_KEYTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getKeyType().getId());
-        } else if (DataKey.FIELD_KEY.equals(iField)) {
+        } else if (DataKey.FIELD_KEYDEF.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getSecuredKeyDef());
         } else {
             super.setFieldValue(pItem, iField);

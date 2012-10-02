@@ -145,6 +145,12 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        /* If this is a valueSet field */
+        if (pField.isValueSetField()) {
+            /* Access from valueSet */
+            return theValueSet.getValue(pField);
+        }
+
         /* If the field is not an attribute handle normally */
         if (FIELD_ID.equals(pField)) {
             return getId();

@@ -218,6 +218,7 @@ public class ValueSetHistory implements JDataContents {
         theOriginal = theCurr.cloneIt();
         theOriginal.copyFrom(pBase);
         theStack.push(theOriginal);
+        theCurr.setVersion(1);
 
         /* Add the delta to the stack */
         theDeltas.push(new ValueSetDelta(theCurr, theOriginal));

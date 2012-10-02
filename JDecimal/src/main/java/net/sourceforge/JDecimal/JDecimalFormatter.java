@@ -71,37 +71,37 @@ public class JDecimalFormatter {
     /**
      * The grouping size.
      */
-    private final int theGroupingSize;
+    private int theGroupingSize;
 
     /**
      * The grouping separator.
      */
-    private final String theGrouping;
+    private String theGrouping;
 
     /**
      * The minus sign.
      */
-    private final char theMinusSign;
+    private char theMinusSign;
 
     /**
      * The perCent symbol.
      */
-    private final char thePerCent;
+    private char thePerCent;
 
     /**
      * The perMille symbol.
      */
-    private final char thePerMille;
+    private char thePerMille;
 
     /**
      * The decimal separator.
      */
-    private final String theDecimal;
+    private String theDecimal;
 
     /**
      * The money decimal separator.
      */
-    private final String theMoneyDecimal;
+    private String theMoneyDecimal;
 
     /**
      * Do we use accounting format for monetary values?
@@ -126,7 +126,16 @@ public class JDecimalFormatter {
      * @param pLocale the locale
      */
     public JDecimalFormatter(final Locale pLocale) {
-        /* Store locale */
+        /* Set the locale */
+        setLocale(pLocale);
+    }
+
+    /**
+     * Set the locale.
+     * @param pLocale the locale
+     */
+    public final void setLocale(final Locale pLocale) {
+        /* Store the locale */
         theLocale = pLocale;
 
         /* Access decimal formats */
@@ -141,15 +150,6 @@ public class JDecimalFormatter {
         thePerMille = mySymbols.getPerMill();
         theDecimal = Character.toString(mySymbols.getDecimalSeparator());
         theMoneyDecimal = Character.toString(mySymbols.getMonetaryDecimalSeparator());
-    }
-
-    /**
-     * Set the locale.
-     * @param pLocale the locale
-     */
-    public final void setLocale(final Locale pLocale) {
-        /* Store the locale */
-        theLocale = pLocale;
     }
 
     /**
@@ -447,9 +447,6 @@ public class JDecimalFormatter {
      * @param pWork the working buffer
      */
     private void formatForAccounting(final StringBuilder pWork) {
-        /* Add a blank at the end of the buffer */
-        // pWork.append(CHAR_BLANK);
-
         /* If we are short of the width */
         int myLen = pWork.length();
         while (myLen < theAccountingWidth) {
@@ -481,9 +478,6 @@ public class JDecimalFormatter {
                 myWork.append(CHAR_BLANK);
             }
         }
-
-        /* Add a blank at the end of the buffer */
-        // myWork.append(CHAR_BLANK);
 
         /* If we are short of the width */
         int myLen = myWork.length();

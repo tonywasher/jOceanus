@@ -57,7 +57,7 @@ public final class TestDecimal {
 
         myRate = JRate.getWholePercentage(5);
         myMoney = JMoney.getWholeUnits(10);
-        JPrice myPrice = myParser.parsePriceValue("4.3969");
+        JPrice myPrice = myParser.parsePriceValue("5.280843");
         JDilutedPrice myDPrice = myParser.parseDilutedPriceValue("4.3969");
         JDilution myDilution = new JDilution("0.5");
         myPrice = myDPrice.getPrice(myDilution);

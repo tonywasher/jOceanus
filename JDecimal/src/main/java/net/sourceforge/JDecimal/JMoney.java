@@ -43,7 +43,7 @@ public class JMoney extends JDecimal {
     }
 
     /**
-     * Factory method for generating whole monetary units fo a currency (e.g. £1)
+     * Factory method for generating whole monetary units for a currency (e.g. £1)
      * @param pUnits the number of whole monetary units
      * @param pCurrency the currency
      * @return the allocated money
