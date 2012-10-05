@@ -55,11 +55,14 @@ public class FinanceWriter extends SheetWriter<FinanceData> {
         addSheet(new SheetAccountInfoType(this));
         addSheet(new SheetEventInfoType(this));
         addSheet(new SheetTaxYear(this));
+        addSheet(new SheetTaxYearInfo(this));
         addSheet(new SheetAccount(this));
+        addSheet(new SheetAccountInfo(this));
         addSheet(new SheetAccountRate(this));
         addSheet(new SheetAccountPrice(this));
         addSheet(new SheetPattern(this));
         addSheet(new SheetEvent(this));
+        addSheet(new SheetEventInfo(this));
         addSheet(new SheetEventData(this));
         addSheet(new SheetEventValues(this));
     }

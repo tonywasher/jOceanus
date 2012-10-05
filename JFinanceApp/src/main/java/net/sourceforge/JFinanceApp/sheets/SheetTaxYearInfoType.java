@@ -43,12 +43,12 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
     /**
-     * NamedArea for EventInfoType.
+     * NamedArea for TaxYearInfoType.
      */
     private static final String AREA_TAXINFOTYPES = TaxYearInfoType.LIST_NAME;
 
     /**
-     * NameList for EventInfoType.
+     * NameList for TaxYearInfoType.
      */
     protected static final String AREA_TAXINFOTYPENAMES = TaxYearInfoType.OBJECT_NAME + "Names";
 

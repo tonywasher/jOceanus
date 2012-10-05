@@ -42,7 +42,8 @@ import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeL
  * Representation of an information extension of a TaxYear.
  * @author Tony Washer
  */
-public class TaxYearInfo extends DataInfo<TaxYear, TaxYearInfoType> implements Comparable<TaxYearInfo> {
+public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType> implements
+        Comparable<TaxYearInfo> {
     /**
      * Object name.
      */

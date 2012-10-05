@@ -46,7 +46,8 @@ import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeL
  * Representation of an information extension of an account.
  * @author Tony Washer
  */
-public class AccountInfo extends DataInfo<Account, AccountInfoType> implements Comparable<AccountInfo> {
+public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType> implements
+        Comparable<AccountInfo> {
     /**
      * Object name.
      */
@@ -156,8 +157,8 @@ public class AccountInfo extends DataInfo<Account, AccountInfoType> implements C
     }
 
     @Override
-    public TaxYearInfo getBase() {
-        return (TaxYearInfo) super.getBase();
+    public AccountInfo getBase() {
+        return (AccountInfo) super.getBase();
     }
 
     /**

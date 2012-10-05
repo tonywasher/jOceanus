@@ -48,7 +48,7 @@ import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
  * Representation of an information extension of an event.
  * @author Tony Washer
  */
-public class EventInfo extends DataInfo<Event, EventInfoType> implements Comparable<EventInfo> {
+public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> implements Comparable<EventInfo> {
     /**
      * Object name.
      */
@@ -183,8 +183,8 @@ public class EventInfo extends DataInfo<Event, EventInfoType> implements Compara
     }
 
     @Override
-    public TaxYearInfo getBase() {
-        return (TaxYearInfo) super.getBase();
+    public EventInfo getBase() {
+        return (EventInfo) super.getBase();
     }
 
     /**

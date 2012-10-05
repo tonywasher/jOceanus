@@ -42,12 +42,12 @@ import org.apache.poi.ss.util.CellReference;
  */
 public class SheetAccountInfoType extends SheetStaticData<AccountInfoType> {
     /**
-     * NamedArea for EventInfoType.
+     * NamedArea for AccountInfoType.
      */
     private static final String AREA_ACCOUNTINFOTYPES = AccountInfoType.LIST_NAME;
 
     /**
-     * NameList for EventInfoType.
+     * NameList for AccountInfoType.
      */
     protected static final String AREA_ACCOUNTINFOTYPENAMES = AccountInfoType.OBJECT_NAME + "Names";
 

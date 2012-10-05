@@ -44,10 +44,17 @@ import net.sourceforge.JGordianKnot.EncryptedValueSet;
 /**
  * Representation of an information extension of a DataItem.
  * @author Tony Washer
+ * @param <T> the data type
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
  */
-public abstract class DataInfo<O extends DataItem, I extends StaticData<?, ?>> extends EncryptedItem {
+public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, I extends StaticData<?, ?>>
+        extends EncryptedItem implements Comparable<T> {
+    /**
+     * Maximum DataLength.
+     */
+    public static final int DATALEN = 512;
+
     /**
      * Report fields.
      */
@@ -73,6 +80,22 @@ public abstract class DataInfo<O extends DataItem, I extends StaticData<?, ?>> e
      * Value Field Id.
      */
     public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField("Value");
+
+    /**
+     * Obtain InfoTypeId.
+     * @return the InfoTypeId
+     */
+    public Integer getInfoTypeId() {
+        return getInfoType(getValueSet(), DataItem.class).getId();
+    }
+
+    /**
+     * Obtain OwnerId.
+     * @return the OwnerId
+     */
+    public Integer getOwnerId() {
+        return getOwner(getValueSet(), DataItem.class).getId();
+    }
 
     /**
      * Obtain Encrypted Bytes.
@@ -388,7 +411,7 @@ public abstract class DataInfo<O extends DataItem, I extends StaticData<?, ?>> e
      * @param pInfo The Info to copy
      */
     protected DataInfo(final DataInfoList<?, O, I> pList,
-                       final DataInfo<O, I> pInfo) {
+                       final DataInfo<T, O, I> pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -443,7 +466,7 @@ public abstract class DataInfo<O extends DataItem, I extends StaticData<?, ?>> e
      * @param <O> the Owner Type
      * @param <I> the DataInfo Type
      */
-    protected abstract static class DataInfoList<T extends DataInfo<O, I> & Comparable<T>, O extends DataItem, I extends StaticData<?, ?>>
+    protected abstract static class DataInfoList<T extends DataInfo<T, O, I> & Comparable<T>, O extends DataItem, I extends StaticData<?, ?>>
             extends EncryptedList<T> {
         /**
          * Local Report fields.

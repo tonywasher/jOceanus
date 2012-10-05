@@ -59,11 +59,14 @@ public class FinanceDatabase extends Database<FinanceData> {
         addTable(new TableAccountInfoType(this));
         addTable(new TableEventInfoType(this));
         addTable(new TableTaxYear(this));
+        addTable(new TableTaxYearInfo(this));
         addTable(new TableAccount(this));
+        addTable(new TableAccountInfo(this));
         addTable(new TableAccountRate(this));
         addTable(new TableAccountPrice(this));
         addTable(new TablePattern(this));
         addTable(new TableEvent(this));
+        addTable(new TableEventInfo(this));
         addTable(new TableEventData(this));
         addTable(new TableEventValues(this));
     }
