@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.JFinanceApp.data;
 
-import java.util.Date;
-
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
 import net.sourceforge.JDataManager.JDataFields;
@@ -86,10 +84,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
         return super.getFieldValue(pField);
     }
 
-    /**
-     * Obtain InfoType.
-     * @return the Info type
-     */
+    @Override
     public EventInfoType getInfoType() {
         return getInfoType(getValueSet(), EventInfoType.class);
     }
@@ -108,38 +103,6 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
      */
     public Account getAccount() {
         return getAccount(getValueSet());
-    }
-
-    /**
-     * Obtain Money.
-     * @return the Money
-     */
-    public JMoney getMoney() {
-        return getMoney(getValueSet());
-    }
-
-    /**
-     * Obtain Units.
-     * @return the Units
-     */
-    public JUnits getUnits() {
-        return getUnits(getValueSet());
-    }
-
-    /**
-     * Obtain Dilution.
-     * @return the Dilution
-     */
-    public JDilution getDilution() {
-        return getDilution(getValueSet());
-    }
-
-    /**
-     * Obtain Integer.
-     * @return the Integer
-     */
-    public Integer getInteger() {
-        return getInteger(getValueSet());
     }
 
     /**
@@ -199,6 +162,23 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
     }
 
     /**
+     * Edit Constructor.
+     * @param pList the list
+     * @param pEvent the event
+     * @param pType the type
+     */
+    private EventInfo(final EventInfoList pList,
+                      final Event pEvent,
+                      final EventInfoType pType) {
+        /* Initialise the item */
+        super(pList);
+
+        /* Record the Detail */
+        setValueInfoType(pType);
+        setValueOwner(pEvent);
+    }
+
+    /**
      * Encrypted constructor.
      * @param pList the list
      * @param uId the id
@@ -239,10 +219,10 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
             /* Switch on Info Class */
             switch (myType.getDataType()) {
                 case INTEGER:
-                    setValueInteger(pValue);
+                    setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
                         AccountList myAccounts = myData.getAccounts();
-                        Account myAccount = myAccounts.findItemById(getInteger());
+                        Account myAccount = myAccounts.findItemById(getValue(Integer.class));
                         if (myAccount == null) {
                             throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
                         }
@@ -250,13 +230,13 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
                     }
                     break;
                 case MONEY:
-                    setValueMoney(pValue);
+                    setValueBytes(pValue, JMoney.class);
                     break;
                 case UNITS:
-                    setValueUnits(pValue);
+                    setValueBytes(pValue, JUnits.class);
                     break;
                 case DILUTION:
-                    setValueDilution(pValue);
+                    setValueBytes(pValue, JDilution.class);
                     break;
                 default:
                     throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
@@ -290,52 +270,8 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
 
         /* Protect against exceptions */
         try {
-            /* Access the DataSet and parser */
-            FinanceData myDataSet = getDataSet();
-            JDataFormatter myFormatter = myDataSet.getDataFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
-            /* Switch on Info Class */
-            boolean bValueOK = false;
-            switch (pInfoType.getDataType()) {
-                case INTEGER:
-                    if ((pValue instanceof Integer) && (!pInfoType.isLink())) {
-                        setValueInteger((Integer) pValue);
-                        bValueOK = true;
-                    }
-                    if ((pValue instanceof Account) && (pInfoType.isLink())) {
-                        Account myAccount = (Account) pValue;
-                        setValueInteger(myAccount.getId());
-                        setValueAccount(myAccount);
-                        bValueOK = true;
-                    }
-                    break;
-                case MONEY:
-                    if (pValue instanceof String) {
-                        setValueMoney(myParser.parseMoneyValue((String) pValue));
-                        bValueOK = true;
-                    }
-                    break;
-                case UNITS:
-                    if (pValue instanceof Date) {
-                        setValueUnits(myParser.parseUnitsValue((String) pValue));
-                        bValueOK = true;
-                    }
-                    break;
-                case DILUTION:
-                    if (pValue instanceof Date) {
-                        setValueDilution(myParser.parseDilutionValue((String) pValue));
-                        bValueOK = true;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            /* Reject invalid value */
-            if (!bValueOK) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
-            }
+            /* Set the value */
+            setValue(pValue);
 
             /* Access the EventInfoSet and register this data */
             // EventInfoSet mySet = myEvent.getInfoSet();
@@ -424,101 +360,82 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
         EventInfoType myType = getInfoType();
         switch (myType.getDataType()) {
             case INTEGER:
-                return myFormatter.formatObject(myType.isLink() ? getAccount() : getInteger());
+                return myFormatter.formatObject(myType.isLink() ? getAccount() : getValue(Integer.class));
             case MONEY:
-                return myFormatter.formatObject(getMoney());
+                return myFormatter.formatObject(getValue(JMoney.class));
             case UNITS:
-                return myFormatter.formatObject(getUnits());
+                return myFormatter.formatObject(getValue(JUnits.class));
             case DILUTION:
-                return myFormatter.formatObject(getDilution());
+                return myFormatter.formatObject(getValue(JDilution.class));
             default:
                 return "null";
         }
     }
 
     /**
-     * Set Money.
+     * Set Value.
      * @param pValue the Value
      * @throws JDataException on error
      */
-    protected void setMoney(final JMoney pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
+    @Override
+    protected void setValue(final Object pValue) throws JDataException {
+        /* Access the info Type */
+        EventInfoType myType = getInfoType();
+
+        /* Access the DataSet and parser */
+        FinanceData myDataSet = getDataSet();
+        JDataFormatter myFormatter = myDataSet.getDataFormatter();
+        JDecimalParser myParser = myFormatter.getDecimalParser();
+
+        /* Switch on Info Class */
+        boolean bValueOK = false;
+        switch (myType.getDataType()) {
+            case INTEGER:
+                if ((pValue instanceof Integer) && (!myType.isLink())) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                }
+                if ((pValue instanceof Account) && (myType.isLink())) {
+                    Account myAccount = (Account) pValue;
+                    setValueValue(myAccount.getId());
+                    setValueAccount(myAccount);
+                    bValueOK = true;
+                }
+                break;
             case MONEY:
-                /* Set the value */
-                setValueMoney(pValue);
+                if (pValue instanceof JMoney) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                } else if (pValue instanceof String) {
+                    setValueValue(myParser.parseMoneyValue((String) pValue));
+                    bValueOK = true;
+                }
                 break;
-            default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Money value");
-        }
-    }
-
-    /**
-     * Set Units.
-     * @param pValue the Value
-     * @throws JDataException on error
-     */
-    protected void setUnits(final JUnits pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
             case UNITS:
-                /* Set the value */
-                setValueUnits(pValue);
+                if (pValue instanceof JUnits) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                } else if (pValue instanceof String) {
+                    setValueValue(myParser.parseUnitsValue((String) pValue));
+                    bValueOK = true;
+                }
                 break;
-            default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Units value");
-        }
-    }
-
-    /**
-     * Set Dilution.
-     * @param pValue the Value
-     * @throws JDataException on error
-     */
-    protected void setDilution(final JDilution pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
             case DILUTION:
-                /* Set the value */
-                setValueDilution(pValue);
+                if (pValue instanceof JDilution) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                } else if (pValue instanceof String) {
+                    setValueValue(myParser.parseDilutionValue((String) pValue));
+                    bValueOK = true;
+                }
                 break;
             default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Dilution value");
+                break;
         }
-    }
 
-    /**
-     * Set Integer.
-     * @param pValue the Value
-     * @throws JDataException on error
-     */
-    protected void setInteger(final Integer pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
-            case INTEGER:
-                /* Set the value */
-                setValueInteger(pValue);
-                break;
-            default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Integer value");
-        }
-    }
-
-    /**
-     * Set Account.
-     * @param pValue the Value
-     * @throws JDataException on error
-     */
-    protected void setAccount(final Account pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
-            case INTEGER:
-                /* Set the value */
-                setValueAccount(pValue);
-                setValueInteger(pValue.getId());
-                break;
-            default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Account value");
+        /* Reject invalid value */
+        if (!bValueOK) {
+            throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
         }
     }
 
@@ -598,6 +515,17 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
         @Override
         public EventInfo addNewItem() {
             return null;
+        }
+
+        @Override
+        protected EventInfo addNewItem(final Event pOwner,
+                                       final EventInfoType pInfoType) {
+            /* Allocate the new entry and add to list */
+            EventInfo myInfo = new EventInfo(this, pOwner, pInfoType);
+            add(myInfo);
+
+            /* return it */
+            return myInfo;
         }
 
         /**

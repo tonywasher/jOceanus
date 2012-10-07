@@ -26,19 +26,6 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JDilution;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JDecimal.JUnits;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedCharArray;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedDateDay;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedDilution;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedInteger;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedMoney;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedRate;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedUnits;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
 
 /**
@@ -48,7 +35,7 @@ import net.sourceforge.JGordianKnot.EncryptedValueSet;
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, I extends StaticData<?, ?>>
+public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, I extends StaticData<I, ?>>
         extends EncryptedItem implements Comparable<T> {
     /**
      * Maximum DataLength.
@@ -82,6 +69,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField("Value");
 
     /**
+     * Obtain InfoType.
+     * @return the InfoTypeId
+     */
+    public abstract I getInfoType();
+
+    /**
      * Obtain InfoTypeId.
      * @return the InfoTypeId
      */
@@ -95,6 +88,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
      */
     public Integer getOwnerId() {
         return getOwner(getValueSet(), DataItem.class).getId();
+    }
+
+    /**
+     * Obtain Value as object.
+     * @param <X> the object type
+     * @param pClass the object class
+     * @return the Value
+     */
+    public <X> X getValue(final Class<X> pClass) {
+        return getValue(getValueSet(), pClass);
     }
 
     /**
@@ -130,103 +133,24 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
-     * Obtain Date.
-     * @param pValueSet the valueSet
-     * @return the Date
-     */
-    public static JDateDay getDate(final EncryptedValueSet pValueSet) {
-        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
-        if (!(myField instanceof EncryptedDateDay)) {
-            return null;
-        }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, JDateDay.class);
-    }
-
-    /**
-     * Obtain CharArray.
-     * @param pValueSet the valueSet
-     * @return the CharArray
-     */
-    public static char[] getCharArray(final EncryptedValueSet pValueSet) {
-        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
-        if (!(myField instanceof EncryptedCharArray)) {
-            return null;
-        }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, char[].class);
-    }
-
-    /**
-     * Obtain Integer.
-     * @param pValueSet the valueSet
-     * @return the Integer
-     */
-    public static Integer getInteger(final EncryptedValueSet pValueSet) {
-        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
-        if (!(myField instanceof EncryptedInteger)) {
-            return null;
-        }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, Integer.class);
-    }
-
-    /**
-     * Obtain Money.
-     * @param pValueSet the valueSet
-     * @return the Money
-     */
-    public static JMoney getMoney(final EncryptedValueSet pValueSet) {
-        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
-        if (!(myField instanceof EncryptedMoney)) {
-            return null;
-        }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, JMoney.class);
-    }
-
-    /**
-     * Obtain Rate.
-     * @param pValueSet the valueSet
-     * @return the Rate
-     */
-    public static JRate getRate(final EncryptedValueSet pValueSet) {
-        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
-        if (!(myField instanceof EncryptedRate)) {
-            return null;
-        }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, JRate.class);
-    }
-
-    /**
-     * Obtain Units.
-     * @param pValueSet the valueSet
-     * @return the Units
-     */
-    public static JUnits getUnits(final EncryptedValueSet pValueSet) {
-        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
-        if (!(myField instanceof EncryptedUnits)) {
-            return null;
-        }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, JUnits.class);
-    }
-
-    /**
-     * Obtain Dilution.
-     * @param pValueSet the valueSet
-     * @return the Dilution
-     */
-    public static JDilution getDilution(final EncryptedValueSet pValueSet) {
-        Object myField = pValueSet.getValue(FIELD_VALUE, Object.class);
-        if (!(myField instanceof EncryptedDilution)) {
-            return null;
-        }
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, JDilution.class);
-    }
-
-    /**
      * Obtain Encrypted Bytes.
      * @param pValueSet the valueSet
      * @return the Bytes
      */
     public static byte[] getValueBytes(final EncryptedValueSet pValueSet) {
         return pValueSet.getEncryptedFieldBytes(FIELD_VALUE);
+    }
+
+    /**
+     * Obtain Value as object.
+     * @param <X> the object type
+     * @param pValueSet the valueSet
+     * @param pClass the object class
+     * @return the Value
+     */
+    public static <X> X getValue(final EncryptedValueSet pValueSet,
+                                 final Class<X> pClass) {
+        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
     }
 
     /**
@@ -262,147 +186,25 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
-     * Set Money.
-     * @param pValue the money
+     * Set Value.
+     * @param pValue the value
      * @throws JDataException on error
      */
-    protected void setValueMoney(final JMoney pValue) throws JDataException {
+    protected void setValueValue(final Object pValue) throws JDataException {
+        getValueSet().setDeletion(false);
         setEncryptedValue(FIELD_VALUE, pValue);
     }
 
     /**
-     * Set Rate.
-     * @param pValue the rate
+     * Set Object Value.
+     * @param <X> the object type
+     * @param pBytes the value
+     * @param pClass the object class
      * @throws JDataException on error
      */
-    protected void setValueRate(final JRate pValue) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pValue);
-    }
-
-    /**
-     * Set Units.
-     * @param pValue the units
-     * @throws JDataException on error
-     */
-    protected void setValueUnits(final JUnits pValue) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pValue);
-    }
-
-    /**
-     * Set Price.
-     * @param pValue the price
-     * @throws JDataException on error
-     */
-    protected void setValuePrice(final JPrice pValue) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pValue);
-    }
-
-    /**
-     * Set Dilution.
-     * @param pValue the dilution
-     * @throws JDataException on error
-     */
-    protected void setValueDilution(final JDilution pValue) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pValue);
-    }
-
-    /**
-     * Set Integer.
-     * @param pValue the integer
-     * @throws JDataException on error
-     */
-    protected void setValueInteger(final Integer pValue) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pValue);
-    }
-
-    /**
-     * Set Date.
-     * @param pValue the date
-     * @throws JDataException on error
-     */
-    protected void setValueDateDay(final JDateDay pValue) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pValue);
-    }
-
-    /**
-     * Set charArray.
-     * @param pValue the charArray
-     * @throws JDataException on error
-     */
-    protected void setValueCharArray(final char[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pValue);
-    }
-
-    /**
-     * Set Money Value.
-     * @param pBytes the money
-     * @throws JDataException on error
-     */
-    protected void setValueMoney(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, JMoney.class);
-    }
-
-    /**
-     * Set Rate Value.
-     * @param pBytes the rate
-     * @throws JDataException on error
-     */
-    protected void setValueRate(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, JRate.class);
-    }
-
-    /**
-     * Set Units Value.
-     * @param pBytes the units
-     * @throws JDataException on error
-     */
-    protected void setValueUnits(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, JUnits.class);
-    }
-
-    /**
-     * Set Price Value.
-     * @param pBytes the price
-     * @throws JDataException on error
-     */
-    protected void setValuePrice(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, JPrice.class);
-    }
-
-    /**
-     * Set Dilution Value.
-     * @param pBytes the dilution
-     * @throws JDataException on error
-     */
-    protected void setValueDilution(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, JDilution.class);
-    }
-
-    /**
-     * Set Integer Value.
-     * @param pBytes the integer
-     * @throws JDataException on error
-     */
-    protected void setValueInteger(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, Integer.class);
-    }
-
-    /**
-     * Set Date Value.
-     * @param pBytes the Date
-     * @throws JDataException on error
-     */
-    protected void setValueDateDay(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, JDateDay.class);
-    }
-
-    /**
-     * Set charArray Value.
-     * @param pBytes the charArray
-     * @throws JDataException on error
-     */
-    protected void setValueCharArray(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_VALUE, pBytes, char[].class);
+    protected <X> void setValueBytes(final byte[] pBytes,
+                                     final Class<X> pClass) throws JDataException {
+        setEncryptedValue(FIELD_VALUE, pBytes, pClass);
     }
 
     /**
@@ -414,6 +216,15 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
                        final DataInfo<T, O, I> pInfo) {
         /* Set standard values */
         super(pList, pInfo);
+    }
+
+    /**
+     * Construct a new DataInfo.
+     * @param pList the list
+     */
+    protected DataInfo(final DataInfoList<?, O, I> pList) {
+        /* Set standard values */
+        super(pList, 0);
     }
 
     /**
@@ -442,6 +253,23 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
+     * Set value.
+     * @param pValue the value
+     * @throws JDataException on error
+     */
+    protected abstract void setValue(final Object pValue) throws JDataException;
+
+    /**
+     * Mark deleted.
+     */
+    public void markDeleted() {
+        /* Set null deletion value */
+        ValueSet myValues = getValueSet();
+        myValues.setValue(FIELD_VALUE, null);
+        myValues.setDeletion(true);
+    }
+
+    /**
      * Plain Text constructor.
      * @param pList the list
      * @param uId the id
@@ -466,7 +294,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
      * @param <O> the Owner Type
      * @param <I> the DataInfo Type
      */
-    protected abstract static class DataInfoList<T extends DataInfo<T, O, I> & Comparable<T>, O extends DataItem, I extends StaticData<?, ?>>
+    protected abstract static class DataInfoList<T extends DataInfo<T, O, I> & Comparable<T>, O extends DataItem, I extends StaticData<I, ?>>
             extends EncryptedList<T> {
         /**
          * Local Report fields.
@@ -498,5 +326,17 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
         protected DataInfoList(final DataInfoList<T, O, I> pSource) {
             super(pSource);
         }
+
+        @Override
+        protected abstract DataInfoList<T, O, I> getEmptyList();
+
+        /**
+         * Add new item to the list.
+         * @param pOwner the owner
+         * @param pInfoType the information
+         * @return the new info item
+         */
+        protected abstract T addNewItem(final O pOwner,
+                                        final I pInfoType);
     }
 }

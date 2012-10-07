@@ -36,8 +36,6 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JRate;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.statics.AccountInfoType;
 import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -85,10 +83,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
         return super.getFieldValue(pField);
     }
 
-    /**
-     * Obtain InfoType.
-     * @return the Info type
-     */
+    @Override
     public AccountInfoType getInfoType() {
         return getInfoType(getValueSet(), AccountInfoType.class);
     }
@@ -99,30 +94,6 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
      */
     public Account getAccount() {
         return getOwner(getValueSet(), Account.class);
-    }
-
-    /**
-     * Obtain Date.
-     * @return the Money
-     */
-    public JDateDay getDate() {
-        return getDate(getValueSet());
-    }
-
-    /**
-     * Obtain CharArray.
-     * @return the CharArray
-     */
-    public char[] getCharArray() {
-        return getCharArray(getValueSet());
-    }
-
-    /**
-     * Obtain Integer.
-     * @return the Integer
-     */
-    private Integer getInteger() {
-        return getInteger(getValueSet());
     }
 
     /**
@@ -173,6 +144,23 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
     }
 
     /**
+     * Edit Constructor.
+     * @param pList the list
+     * @param pAccount the account
+     * @param pType the type
+     */
+    private AccountInfo(final AccountInfoList pList,
+                        final Account pAccount,
+                        final AccountInfoType pType) {
+        /* Initialise the item */
+        super(pList);
+
+        /* Record the Detail */
+        setValueInfoType(pType);
+        setValueOwner(pAccount);
+    }
+
+    /**
      * Encrypted constructor.
      * @param pList the list
      * @param uId the id
@@ -213,9 +201,9 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
             /* Switch on Info Class */
             switch (myType.getDataType()) {
                 case INTEGER:
-                    setValueInteger(pValue);
+                    setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        myAccount = myAccounts.findItemById(getInteger());
+                        myAccount = myAccounts.findItemById(getValue(Integer.class));
                         if (myAccount == null) {
                             throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
                         }
@@ -223,10 +211,10 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
                     }
                     break;
                 case DATEDAY:
-                    setValueDateDay(pValue);
+                    setValueBytes(pValue, JDateDay.class);
                     break;
                 case CHARARRAY:
-                    setValueCharArray(pValue);
+                    setValueBytes(pValue, char[].class);
                     break;
                 default:
                     throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
@@ -258,39 +246,9 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
         /* Initialise the item */
         super(pList, uId, pInfoType, pAccount);
 
-        /* Protect against exceptions */
         try {
-            /* Switch on Info Class */
-            boolean bValueOK = false;
-            switch (pInfoType.getDataType()) {
-                case INTEGER:
-                    if (pValue instanceof Account) {
-                        Account myAccount = (Account) pValue;
-                        setValueInteger(myAccount.getId());
-                        setValueAccount(myAccount);
-                        bValueOK = true;
-                    }
-                    break;
-                case DATEDAY:
-                    if (pValue instanceof Date) {
-                        setValueDateDay(new JDateDay((Date) pValue));
-                        bValueOK = true;
-                    }
-                    break;
-                case CHARARRAY:
-                    if (pValue instanceof char[]) {
-                        setValueCharArray((char[]) pValue);
-                        bValueOK = true;
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            /* Reject invalid value */
-            if (!bValueOK) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
-            }
+            /* Set the value */
+            setValue(pValue);
 
             /* Access the EventInfoSet and register this data */
             // EventInfoSet mySet = myEvent.getInfoSet();
@@ -371,45 +329,57 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
             case INTEGER:
                 return myFormatter.formatObject(getAccount());
             case DATEDAY:
-                return myFormatter.formatObject(getDate());
+                return myFormatter.formatObject(getValue(JDateDay.class));
             case CHARARRAY:
-                return myFormatter.formatObject(getCharArray());
+                return myFormatter.formatObject(getValue(char[].class));
             default:
                 return "null";
         }
     }
 
     /**
-     * Set Money.
+     * Set Value.
      * @param pValue the Value
      * @throws JDataException on error
      */
-    protected void setMoney(final JMoney pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
-            case MONEY:
-                /* Set the value */
-                setValueMoney(pValue);
-                break;
-            default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Money value");
-        }
-    }
+    @Override
+    protected void setValue(final Object pValue) throws JDataException {
+        /* Access the info Type */
+        AccountInfoType myType = getInfoType();
 
-    /**
-     * Set Units.
-     * @param pValue the Value
-     * @throws JDataException on error
-     */
-    protected void setRate(final JRate pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
-            case RATE:
-                /* Set the value */
-                setValueRate(pValue);
+        /* Switch on Info Class */
+        boolean bValueOK = false;
+        switch (myType.getDataType()) {
+            case INTEGER:
+                if (pValue instanceof Account) {
+                    Account myAccount = (Account) pValue;
+                    setValueValue(myAccount.getId());
+                    setValueAccount(myAccount);
+                    bValueOK = true;
+                }
+                break;
+            case DATEDAY:
+                if (pValue instanceof Date) {
+                    setValueValue(new JDateDay((Date) pValue));
+                    bValueOK = true;
+                } else if (pValue instanceof JDateDay) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                }
+                break;
+            case CHARARRAY:
+                if (pValue instanceof char[]) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                }
                 break;
             default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Rate value");
+                break;
+        }
+
+        /* Reject invalid value */
+        if (!bValueOK) {
+            throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
         }
     }
 
@@ -489,6 +459,17 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
         @Override
         public AccountInfo addNewItem() {
             return null;
+        }
+
+        @Override
+        protected AccountInfo addNewItem(final Account pOwner,
+                                         final AccountInfoType pInfoType) {
+            /* Allocate the new entry and add to list */
+            AccountInfo myInfo = new AccountInfo(this, pOwner, pInfoType);
+            add(myInfo);
+
+            /* return it */
+            return myInfo;
         }
 
         /**

@@ -65,10 +65,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
         return FIELD_DEFS;
     }
 
-    /**
-     * Obtain InfoType.
-     * @return the Info type
-     */
+    @Override
     public TaxYearInfoType getInfoType() {
         return getInfoType(getValueSet(), TaxYearInfoType.class);
     }
@@ -79,22 +76,6 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
      */
     public TaxYear getTaxYear() {
         return getOwner(getValueSet(), TaxYear.class);
-    }
-
-    /**
-     * Obtain Money.
-     * @return the Money
-     */
-    public JMoney getMoney() {
-        return getMoney(getValueSet());
-    }
-
-    /**
-     * Obtain Rate.
-     * @return the Rate
-     */
-    public JRate getRate() {
-        return getRate(getValueSet());
     }
 
     /**
@@ -134,6 +115,23 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
                           final TaxYearInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
+    }
+
+    /**
+     * Edit Constructor.
+     * @param pList the list
+     * @param pTaxYear the taxYear
+     * @param pType the type
+     */
+    private TaxYearInfo(final TaxInfoList pList,
+                        final TaxYear pTaxYear,
+                        final TaxYearInfoType pType) {
+        /* Initialise the item */
+        super(pList);
+
+        /* Record the Detail */
+        setValueInfoType(pType);
+        setValueOwner(pTaxYear);
     }
 
     /**
@@ -177,10 +175,10 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
             /* Switch on Info Class */
             switch (myType.getDataType()) {
                 case MONEY:
-                    setValueMoney(pValue);
+                    setValueBytes(pValue, JMoney.class);
                     break;
                 case RATE:
-                    setValueRate(pValue);
+                    setValueBytes(pValue, JRate.class);
                     break;
                 default:
                     throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
@@ -214,22 +212,8 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
 
         /* Protect against exceptions */
         try {
-            /* Access the DataSet and parser */
-            FinanceData myDataSet = getDataSet();
-            JDataFormatter myFormatter = myDataSet.getDataFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
-            /* Switch on Info Class */
-            switch (pInfoType.getDataType()) {
-                case MONEY:
-                    setValueMoney(myParser.parseMoneyValue(pValue));
-                    break;
-                case RATE:
-                    setValueRate(myParser.parseRateValue(pValue));
-                    break;
-                default:
-                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
-            }
+            /* Set the value */
+            setValue(pValue);
 
             /* Access the EventInfoSet and register this data */
             // EventInfoSet mySet = myEvent.getInfoSet();
@@ -308,45 +292,57 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
         /* Switch on type of Data */
         switch (getInfoType().getDataType()) {
             case MONEY:
-                return myFormatter.formatObject(getMoney());
+                return myFormatter.formatObject(getValue(JMoney.class));
             case RATE:
-                return myFormatter.formatObject(getRate());
+                return myFormatter.formatObject(getValue(JRate.class));
             default:
                 return "null";
         }
     }
 
     /**
-     * Set Money.
+     * Set Value.
      * @param pValue the Value
      * @throws JDataException on error
      */
-    protected void setMoney(final JMoney pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
-            case MONEY:
-                /* Set the value */
-                setValueMoney(pValue);
-                break;
-            default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Money value");
-        }
-    }
+    @Override
+    protected void setValue(final Object pValue) throws JDataException {
+        /* Access the info Type */
+        TaxYearInfoType myType = getInfoType();
 
-    /**
-     * Set Rate.
-     * @param pValue the Value
-     * @throws JDataException on error
-     */
-    protected void setRate(final JRate pValue) throws JDataException {
-        /* Switch on Info type */
-        switch (getInfoType().getDataType()) {
+        /* Access the DataSet and parser */
+        FinanceData myDataSet = getDataSet();
+        JDataFormatter myFormatter = myDataSet.getDataFormatter();
+        JDecimalParser myParser = myFormatter.getDecimalParser();
+
+        /* Switch on Info Class */
+        boolean bValueOK = false;
+        switch (myType.getDataType()) {
+            case MONEY:
+                if (pValue instanceof JMoney) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                } else if (pValue instanceof String) {
+                    setValueValue(myParser.parseMoneyValue((String) pValue));
+                    bValueOK = true;
+                }
+                break;
             case RATE:
-                /* Set the value */
-                setValueRate(pValue);
+                if (pValue instanceof JRate) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                } else if (pValue instanceof String) {
+                    setValueValue(myParser.parseRateValue((String) pValue));
+                    bValueOK = true;
+                }
                 break;
             default:
-                throw new JDataException(ExceptionClass.LOGIC, this, "Invalid Attempt to set Rate value");
+                break;
+        }
+
+        /* Reject invalid value */
+        if (!bValueOK) {
+            throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
         }
     }
 
@@ -426,6 +422,17 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
         @Override
         public TaxYearInfo addNewItem() {
             return null;
+        }
+
+        @Override
+        protected TaxYearInfo addNewItem(final TaxYear pOwner,
+                                         final TaxYearInfoType pInfoType) {
+            /* Allocate the new entry and add to list */
+            TaxYearInfo myInfo = new TaxYearInfo(this, pOwner, pInfoType);
+            add(myInfo);
+
+            /* return it */
+            return myInfo;
         }
 
         /**
