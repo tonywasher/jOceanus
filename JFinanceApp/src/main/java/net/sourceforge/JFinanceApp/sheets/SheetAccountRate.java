@@ -26,11 +26,9 @@ import java.util.Date;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetDataItem;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
-import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountRate;
 import net.sourceforge.JFinanceApp.data.AccountRate.AccountRateList;
@@ -58,39 +56,24 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
     private static final String AREA_RATES1 = "Rates";
 
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 6;
-
-    /**
-     * ControlKey column.
-     */
-    private static final int COL_CONTROL = 1;
-
-    /**
      * Account column.
      */
-    private static final int COL_ACCOUNT = 2;
+    private static final int COL_ACCOUNT = COL_CONTROLID + 1;
 
     /**
      * Rate column.
      */
-    private static final int COL_RATE = 3;
+    private static final int COL_RATE = COL_ACCOUNT + 1;
 
     /**
      * Bonus column.
      */
-    private static final int COL_BONUS = 4;
+    private static final int COL_BONUS = COL_RATE + 1;
 
     /**
      * EndDate column.
      */
-    private static final int COL_ENDDATE = 5;
-
-    /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one?
-     */
-    private final boolean isBackup;
+    private static final int COL_ENDDATE = COL_BONUS + 1;
 
     /**
      * Rates data list.
@@ -105,9 +88,6 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
         /* Call super constructor */
         super(pReader, AREA_RATES);
 
-        /* Note whether this is a backup */
-        isBackup = (pReader.getType() == SheetType.BACKUP);
-
         /* Access the Rates list */
         theList = pReader.getData().getRates();
         setDataList(theList);
@@ -121,115 +101,89 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
         /* Call super constructor */
         super(pWriter, AREA_RATES);
 
-        /* Note whether this is a backup */
-        isBackup = (pWriter.getType() == SheetType.BACKUP);
-
         /* Access the Rates list */
         theList = pWriter.getData().getRates();
         setDataList(theList);
     }
 
     @Override
-    protected void loadItem() throws JDataException {
-        /* If this is a backup load */
-        if (isBackup) {
-            /* Access the IDs */
-            int myID = loadInteger(COL_ID);
-            int myControlId = loadInteger(COL_CONTROL);
-            int myActId = loadInteger(COL_ACCOUNT);
+    protected void loadSecureItem() throws JDataException {
+        /* Access the IDs */
+        int myID = loadInteger(COL_ID);
+        int myControlId = loadInteger(COL_CONTROLID);
+        int myActId = loadInteger(COL_ACCOUNT);
 
-            /* Access the rates and end-date */
-            byte[] myRateBytes = loadBytes(COL_RATE);
-            byte[] myBonusBytes = loadBytes(COL_BONUS);
-            Date myEndDate = loadDate(COL_ENDDATE);
+        /* Access the rates and end-date */
+        byte[] myRateBytes = loadBytes(COL_RATE);
+        byte[] myBonusBytes = loadBytes(COL_BONUS);
+        Date myEndDate = loadDate(COL_ENDDATE);
 
-            /* Load the item */
-            theList.addSecureItem(myID, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
-
-            /* else this is a load from an edit-able spreadsheet */
-        } else {
-            /* Access the account */
-            int myID = loadInteger(COL_ID);
-            String myAccount = loadString(COL_ACCOUNT - 1);
-
-            /* Access the name and description bytes */
-            String myRate = loadString(COL_RATE - 1);
-            String myBonus = loadString(COL_BONUS - 1);
-            Date myEndDate = loadDate(COL_ENDDATE - 1);
-
-            /* Load the item */
-            theList.addOpenItem(myID, myAccount, myRate, myEndDate, myBonus);
-        }
+        /* Load the item */
+        theList.addSecureItem(myID, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
     }
 
     @Override
-    protected void insertItem(final AccountRate pItem) throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
-            writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
-            writeBytes(COL_RATE, pItem.getRateBytes());
-            writeBytes(COL_BONUS, pItem.getBonusBytes());
-            writeDate(COL_ENDDATE, pItem.getEndDate());
+    protected void loadOpenItem() throws JDataException {
+        /* Access the account */
+        int myID = loadInteger(COL_ID);
+        String myAccount = loadString(COL_ACCOUNT);
 
-            /* else we are creating an edit-able spreadsheet */
-        } else {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeString(COL_ACCOUNT - 1, pItem.getAccount().getName());
-            writeNumber(COL_RATE - 1, pItem.getRate());
-            writeNumber(COL_BONUS - 1, pItem.getBonus());
-            writeDate(COL_ENDDATE - 1, pItem.getEndDate());
-        }
+        /* Access the name and description bytes */
+        String myRate = loadString(COL_RATE);
+        String myBonus = loadString(COL_BONUS);
+        Date myEndDate = loadDate(COL_ENDDATE);
+
+        /* Load the item */
+        theList.addOpenItem(myID, myAccount, myRate, myEndDate, myBonus);
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-        /* Ignore if we are creating a backup */
-        if (isBackup) {
-            return;
-        }
+    protected void insertSecureItem(final AccountRate pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
+        writeBytes(COL_RATE, pItem.getRateBytes());
+        writeBytes(COL_BONUS, pItem.getBonusBytes());
+        writeDate(COL_ENDDATE, pItem.getEndDate());
+    }
 
-        /* Create a new row */
-        newRow();
+    @Override
+    protected void insertOpenItem(final AccountRate pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeString(COL_ACCOUNT, pItem.getAccount().getName());
+        writeNumber(COL_RATE, pItem.getRate());
+        writeNumber(COL_BONUS, pItem.getBonus());
+        writeDate(COL_ENDDATE, pItem.getEndDate());
+    }
 
+    @Override
+    protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
-        writeHeader(COL_ACCOUNT - 1, AccountRate.FIELD_ACCOUNT.getName());
-        writeHeader(COL_RATE - 1, AccountRate.FIELD_RATE.getName());
-        writeHeader(COL_BONUS - 1, AccountRate.FIELD_BONUS.getName());
-        writeHeader(COL_ENDDATE - 1, AccountRate.FIELD_ENDDATE.getName());
+        writeHeader(COL_ACCOUNT, AccountRate.FIELD_ACCOUNT.getName());
+        writeHeader(COL_RATE, AccountRate.FIELD_RATE.getName());
+        writeHeader(COL_BONUS, AccountRate.FIELD_BONUS.getName());
+        writeHeader(COL_ENDDATE, AccountRate.FIELD_ENDDATE.getName());
 
-        /* Adjust for Header */
-        adjustForHeader();
+        /* Set the Account column width */
+        setColumnWidth(COL_ACCOUNT, Account.NAMELEN);
+
+        /* Set Rate and Date columns */
+        setRateColumn(COL_RATE);
+        setRateColumn(COL_BONUS);
+        setDateColumn(COL_ENDDATE);
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the six columns as the range */
-            nameRange(NUM_COLS);
+        /* Set the range */
+        nameRange(COL_ENDDATE);
 
-            /* else this is an edit-able spreadsheet */
-        } else {
-            /* Set the five columns as the range */
-            nameRange(NUM_COLS - 1);
-
-            /* Hide the ID column */
-            setHiddenColumn(COL_ID);
-            setIntegerColumn(COL_ID);
-
-            /* Set the Account column width */
-            setColumnWidth(COL_ACCOUNT - 1, Account.NAMELEN);
-            applyDataValidation(COL_ACCOUNT - 1, SheetAccount.AREA_ACCOUNTNAMES);
-
-            /* Set Rate and Date columns */
-            setRateColumn(COL_RATE - 1);
-            setRateColumn(COL_RATE - 1);
-            setDateColumn(COL_ENDDATE - 1);
+        /* If we are not creating a backup */
+        if (!isBackup()) {
+            /* Set validation */
+            applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
         }
     }
 

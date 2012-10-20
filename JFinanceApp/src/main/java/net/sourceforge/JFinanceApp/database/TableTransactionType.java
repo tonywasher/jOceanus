@@ -61,10 +61,10 @@ public class TableTransactionType extends TableStaticData<TransactionType> {
     }
 
     @Override
-    protected void loadTheItem(final int pId,
-                               final int pControlId,
-                               final boolean isEnabled,
-                               final int iOrder,
+    protected void loadTheItem(final Integer pId,
+                               final Integer pControlId,
+                               final Boolean isEnabled,
+                               final Integer iOrder,
                                final byte[] pTrans,
                                final byte[] pDesc) throws JDataException {
         /* Add into the list */

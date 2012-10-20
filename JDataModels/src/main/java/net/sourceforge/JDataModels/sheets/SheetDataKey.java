@@ -38,24 +38,14 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
     private static final String SHEET_NAME = DataKey.class.getSimpleName();
 
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 4;
-
-    /**
-     * KeyData column.
-     */
-    private static final int COL_CONTROL = 1;
-
-    /**
      * KeyType column.
      */
-    private static final int COL_KEYTYPE = 2;
+    private static final int COL_KEYTYPE = COL_CONTROLID + 1;
 
     /**
      * KeyData column.
      */
-    private static final int COL_KEYDATA = 3;
+    private static final int COL_KEYDATA = COL_KEYTYPE + 1;
 
     /**
      * DataKey list.
@@ -90,11 +80,11 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
     }
 
     @Override
-    protected void loadItem() throws JDataException {
+    protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
-        int myID = loadInteger(COL_ID);
-        int myControl = loadInteger(COL_CONTROL);
-        int myKeyType = loadInteger(COL_KEYTYPE);
+        Integer myID = loadInteger(COL_ID);
+        Integer myControl = loadInteger(COL_CONTROLID);
+        Integer myKeyType = loadInteger(COL_KEYTYPE);
 
         /* Access the Binary values */
         byte[] myKey = loadBytes(COL_KEYDATA);
@@ -104,21 +94,17 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
     }
 
     @Override
-    protected void insertItem(final DataKey pItem) throws JDataException {
+    protected void insertSecureItem(final DataKey pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROL, pItem.getControlKey().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
         writeInteger(COL_KEYTYPE, pItem.getKeyType().getId());
         writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-    }
-
-    @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* Set the four columns as the range */
-        nameRange(NUM_COLS);
+        /* Set the range */
+        nameRange(COL_KEYDATA);
     }
 }

@@ -113,7 +113,7 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
                 /* If this is a new item, add it to the list */
                 case NEW:
                     /* Link this item to the new item */
-                    myBase = myBaseList.addNewItem(myCurr);
+                    myBase = myBaseList.addCopyItem(myCurr);
                     myBase.setNewVersion();
                     myCurr.setBase(myBase);
                     break;

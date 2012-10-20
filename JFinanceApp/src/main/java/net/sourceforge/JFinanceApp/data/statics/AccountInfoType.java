@@ -86,7 +86,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
     }
 
     /**
-     * Construct a copy of an Account Info Type.
+     * Copy Constructor.
      * @param pList The list to associate the Account Info Type with
      * @param pInfoType The Account Info Type to copy
      */
@@ -96,7 +96,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
     }
 
     /**
-     * Construct a standard account info type on load.
+     * Basic Constructor.
      * @param pList The list to associate the Account Info Type with
      * @param sName Name of Account Info Type
      * @throws JDataException on error
@@ -107,7 +107,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
     }
 
     /**
-     * Construct a standard account info type on load.
+     * Open Constructor.
      * @param pList The list to associate the Account Info Type with
      * @param uId the id
      * @param isEnabled is the account info type enabled
@@ -117,16 +117,16 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
      * @throws JDataException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
+                            final Integer uId,
+                            final Boolean isEnabled,
+                            final Integer uOrder,
                             final String pName,
                             final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard account info type on load.
+     * Secure Constructor.
      * @param pList The list to associate the Account Info Type with
      * @param uId ID of Account Info Type
      * @param uControlId the control id of the new item
@@ -137,10 +137,10 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
      * @throws JDataException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
+                            final Integer uId,
+                            final Integer uControlId,
+                            final Boolean isEnabled,
+                            final Integer uOrder,
                             final byte[] pName,
                             final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
@@ -208,7 +208,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
         }
 
         @Override
-        public AccountInfoType addNewItem(final DataItem pItem) {
+        public AccountInfoType addCopyItem(final DataItem pItem) {
             /* Can only clone an AccountInfoType */
             if (!(pItem instanceof AccountInfoType)) {
                 return null;
@@ -233,11 +233,11 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
         }
 
         /**
-         * Add an AccountInfoType to the list.
+         * Add a Basic Open AccountInfoType to the list.
          * @param pInfoType the Name of the account info type
          * @throws JDataException on error
          */
-        public void addItem(final String pInfoType) throws JDataException {
+        public void addBasicItem(final String pInfoType) throws JDataException {
             /* Create a new Account Info Type */
             AccountInfoType myInfoType = new AccountInfoType(this, pInfoType);
 
@@ -264,7 +264,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
         }
 
         /**
-         * Add an AccountInfoType to the list.
+         * Add an Open AccountInfoType to the list.
          * @param uId the Id of the account info type
          * @param isEnabled is the account info type enabled
          * @param uOrder the sort order
@@ -272,9 +272,9 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
          * @param pDesc the Description of the account info type
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final boolean isEnabled,
-                                final int uOrder,
+        public void addOpenItem(final Integer uId,
+                                final Boolean isEnabled,
+                                final Integer uOrder,
                                 final String pInfoType,
                                 final String pDesc) throws JDataException {
             /* Create a new Account Info Type */
@@ -298,7 +298,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
         }
 
         /**
-         * Add an AccountInfoType to the list.
+         * Add a Secure AccountInfoType to the list.
          * @param uId the Id of the account info type
          * @param uControlId the control id of the new item
          * @param isEnabled is the account info type enabled
@@ -307,10 +307,10 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
          * @param pDesc the Encrypted Description of the account info type
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final boolean isEnabled,
-                                  final int uOrder,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Boolean isEnabled,
+                                  final Integer uOrder,
                                   final byte[] pInfoType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Account Info Type */

@@ -63,7 +63,7 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
     }
 
     @Override
-    protected void loadItem(final int pId) throws JDataException {
+    protected void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         int myControl = myTableDef.getIntegerValue(DataKey.FIELD_CONTROLKEY);

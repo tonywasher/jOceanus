@@ -107,7 +107,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
     }
 
     @Override
-    public void loadItem(final int pId) throws JDataException {
+    public void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Date myYear = myTableDef.getDateValue(TaxYear.FIELD_TAXYEAR);

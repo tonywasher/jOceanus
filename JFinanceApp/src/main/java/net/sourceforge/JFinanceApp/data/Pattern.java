@@ -217,7 +217,7 @@ public class Pattern extends Event {
     }
 
     /**
-     * Construct a copy of a Pattern.
+     * Copy Constructor.
      * @param pList the list
      * @param pPattern The Pattern
      */
@@ -233,7 +233,7 @@ public class Pattern extends Event {
     }
 
     /**
-     * Constructor.
+     * Edit Constructor.
      * @param pList the list
      */
     public Pattern(final PatternList pList) {
@@ -245,7 +245,7 @@ public class Pattern extends Event {
     }
 
     /**
-     * Construct a new pattern from a statement line.
+     * Construct a new pattern from an Event.
      * @param pList the list
      * @param pLine the line
      */
@@ -274,7 +274,7 @@ public class Pattern extends Event {
     }
 
     /**
-     * Constructor.
+     * Secure Constructor.
      * @param pList the list
      * @param uId the id
      * @param uControlId the control Id
@@ -289,15 +289,15 @@ public class Pattern extends Event {
      * @throws JDataException on error
      */
     private Pattern(final PatternList pList,
-                    final int uId,
-                    final int uControlId,
-                    final int uAccountId,
+                    final Integer uId,
+                    final Integer uControlId,
+                    final Integer uAccountId,
                     final Date pDate,
                     final byte[] pDesc,
                     final byte[] pAmount,
-                    final int uPartnerId,
-                    final int uTransId,
-                    final int uFreqId,
+                    final Integer uPartnerId,
+                    final Integer uTransId,
+                    final Integer uFreqId,
                     final boolean isCredit) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
         super(pList, uId, uControlId, pDate, pDesc, (isCredit) ? uPartnerId : uAccountId,
@@ -320,7 +320,7 @@ public class Pattern extends Event {
     }
 
     /**
-     * Standard constructor.
+     * Open constructor.
      * @param pList the list
      * @param uId the id
      * @param pAccount the account
@@ -334,7 +334,7 @@ public class Pattern extends Event {
      * @throws JDataException on error
      */
     private Pattern(final EncryptedList<Pattern> pList,
-                    final int uId,
+                    final Integer uId,
                     final Account pAccount,
                     final Date pDate,
                     final String pDesc,
@@ -741,7 +741,7 @@ public class Pattern extends Event {
          * @return the newly added item
          */
         @Override
-        public Pattern addNewItem(final DataItem pPattern) {
+        public Pattern addCopyItem(final DataItem pPattern) {
             /* Can only clone from Pattern */
             if (!(pPattern instanceof Pattern)) {
                 return null;
@@ -804,7 +804,7 @@ public class Pattern extends Event {
          * @param isCredit true/false
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
+        public void addOpenItem(final Integer uId,
                                 final Date pDate,
                                 final String pDesc,
                                 final String pAmount,
@@ -882,15 +882,15 @@ public class Pattern extends Event {
          * @param isCredit true/false
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
                                   final Date pDate,
                                   final byte[] pDesc,
                                   final byte[] pAmount,
-                                  final int uAccountId,
-                                  final int uPartnerId,
-                                  final int uTransId,
-                                  final int uFreqId,
+                                  final Integer uAccountId,
+                                  final Integer uPartnerId,
+                                  final Integer uTransId,
+                                  final Integer uFreqId,
                                   final boolean isCredit) throws JDataException {
             /* Create the new pattern */
             Pattern myPattern = new Pattern(this, uId, uControlId, uAccountId, pDate, pDesc, pAmount,

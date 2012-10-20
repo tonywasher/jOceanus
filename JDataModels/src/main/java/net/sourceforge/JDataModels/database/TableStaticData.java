@@ -64,16 +64,16 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
      * @param pDesc the description
      * @throws JDataException on error
      */
-    protected abstract void loadTheItem(final int pId,
-                                        final int pControlId,
-                                        final boolean isEnabled,
-                                        final int iOrder,
+    protected abstract void loadTheItem(final Integer pId,
+                                        final Integer pControlId,
+                                        final Boolean isEnabled,
+                                        final Integer iOrder,
                                         final byte[] pName,
                                         final byte[] pDesc) throws JDataException;
 
     @Override
-    protected void loadItem(final int pId,
-                            final int pControlId) throws JDataException {
+    protected void loadItem(final Integer pId,
+                            final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);

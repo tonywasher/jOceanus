@@ -76,7 +76,7 @@ public class TableEventValues extends DatabaseTable<EventValue> {
     }
 
     @Override
-    public void loadItem(final int pId) throws JDataException {
+    public void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         int myInfoType = myTableDef.getIntegerValue(EventValue.FIELD_INFOTYPE);

@@ -100,19 +100,19 @@ public abstract class EncryptedItem extends DataItem {
     }
 
     /**
-     * Constructor. This creates a null encryption generator. This will be overridden when a ControlKey is
-     * assigned to the item.
+     * Standard Constructor. This creates a null encryption generator. This will be overridden when a
+     * ControlKey is assigned to the item.
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
     public EncryptedItem(final EncryptedList<?> pList,
-                         final int uId) {
+                         final Integer uId) {
         super(pList, uId);
         theGenerator = new EncryptionGenerator(null);
     }
 
     /**
-     * Constructor. This picks up the generator from the source item.
+     * Copy Constructor. This picks up the generator from the source item.
      * @param pList the list that this item is associated with
      * @param pSource the source item
      */
@@ -135,7 +135,7 @@ public abstract class EncryptedItem extends DataItem {
      * @param uControlId the Control Id
      * @throws JDataException on error
      */
-    protected void setControlKey(final int uControlId) throws JDataException {
+    protected void setControlKey(final Integer uControlId) throws JDataException {
         /* Store the id */
         setValueControlKey(uControlId);
 

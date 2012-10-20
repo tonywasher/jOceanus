@@ -78,7 +78,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
     }
 
     /**
-     * Construct a copy of an TaxYear Info Type.
+     * Copy Constructor.
      * @param pList The list to associate the TaxYear Info Type with
      * @param pInfoType The TaxYear Info Type to copy
      */
@@ -88,7 +88,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
     }
 
     /**
-     * Construct a standard TaxYear info type on load.
+     * Basic Constructor.
      * @param pList The list to associate the TaxYear Info Type with
      * @param sName Name of TaxYear Info Type
      * @throws JDataException on error
@@ -99,7 +99,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
     }
 
     /**
-     * Construct a standard TaxYear info type on load.
+     * Open Constructor.
      * @param pList The list to associate the TaxYear Info Type with
      * @param uId the id
      * @param isEnabled is the TaxYear info type enabled
@@ -109,16 +109,16 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
      * @throws JDataException on error
      */
     private TaxYearInfoType(final TaxYearInfoTypeList pList,
-                            final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
+                            final Integer uId,
+                            final Boolean isEnabled,
+                            final Integer uOrder,
                             final String pName,
                             final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard TaxYear info type on load.
+     * Secure Constructor.
      * @param pList The list to associate the TaxYear Info Type with
      * @param uId ID of TaxYear Info Type
      * @param uControlId the control id of the new item
@@ -129,10 +129,10 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
      * @throws JDataException on error
      */
     private TaxYearInfoType(final TaxYearInfoTypeList pList,
-                            final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
+                            final Integer uId,
+                            final Integer uControlId,
+                            final Boolean isEnabled,
+                            final Integer uOrder,
                             final byte[] pName,
                             final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
@@ -200,7 +200,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
         }
 
         @Override
-        public TaxYearInfoType addNewItem(final DataItem pItem) {
+        public TaxYearInfoType addCopyItem(final DataItem pItem) {
             /* Can only clone an TaxYearInfoType */
             if (!(pItem instanceof TaxYearInfoType)) {
                 return null;
@@ -229,7 +229,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
          * @param pInfoType the Name of the TaxYear info type
          * @throws JDataException on error
          */
-        public void addItem(final String pInfoType) throws JDataException {
+        public void addBasicItem(final String pInfoType) throws JDataException {
             /* Create a new TaxYear Info Type */
             TaxYearInfoType myInfoType = new TaxYearInfoType(this, pInfoType);
 
@@ -264,9 +264,9 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
          * @param pDesc the Description of the TaxYear info type
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final boolean isEnabled,
-                                final int uOrder,
+        public void addOpenItem(final Integer uId,
+                                final Boolean isEnabled,
+                                final Integer uOrder,
                                 final String pInfoType,
                                 final String pDesc) throws JDataException {
             /* Create a new TaxYear Info Type */
@@ -299,10 +299,10 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
          * @param pDesc the Encrypted Description of the TaxYear info type
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final boolean isEnabled,
-                                  final int uOrder,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Boolean isEnabled,
+                                  final Integer uOrder,
                                   final byte[] pInfoType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new TaxYear Info Type */

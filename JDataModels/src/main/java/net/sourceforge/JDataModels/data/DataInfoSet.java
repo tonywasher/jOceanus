@@ -36,6 +36,7 @@ import net.sourceforge.JDataModels.data.DataInfo.DataInfoList;
 import net.sourceforge.JDataModels.data.DataList.ListStyle;
 import net.sourceforge.JDataModels.data.StaticData.StaticInterface;
 import net.sourceforge.JDataModels.data.StaticData.StaticList;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
 
 /**
  * Representation of an information set extension of a DataItem.
@@ -51,11 +52,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
      * Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(DataInfoSet.class.getSimpleName());
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
 
     /**
      * Version Field Id.
@@ -86,6 +82,11 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
         return JDataFieldValue.UnknownField;
     }
 
+    @Override
+    public String formatObject() {
+        return getDataFields().getName();
+    }
+
     /**
      * Version # of the values.
      */
@@ -104,12 +105,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
     /**
      * The InfoTypes for the InfoSet.
      */
-    private final StaticList<I, E> theTypeList;
+    private StaticList<I, E> theTypeList;
 
     /**
      * The DataInfoList for the InfoSet.
      */
-    private final DataInfoList<T, O, I> theInfoList;
+    private DataInfoList<T, O, I> theInfoList;
 
     /**
      * The Map of the DataInfo.
@@ -155,7 +156,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
         /* Clone the InfoSet for each Event in the underlying Map */
         for (Entry<E, T> myEntry : pSource.theMap.entrySet()) {
             /* Create the new value */
-            T myNew = theInfoList.addNewItem(myEntry.getValue());
+            T myNew = theInfoList.addCopyItem(myEntry.getValue());
 
             /* Add to the map */
             theMap.put(myEntry.getKey(), myNew);
@@ -169,8 +170,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
      * @param pClass the Value Class
      * @return the value
      */
-    protected <X> X getValue(final E pInfoClass,
-                             final Class<X> pClass) {
+    public <X> X getValue(final E pInfoClass,
+                          final Class<X> pClass) {
         /* Access existing entry */
         T myValue = theMap.get(pInfoClass);
 
@@ -184,13 +185,41 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
     }
 
     /**
+     * Obtain the field value for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the value
+     */
+    public EncryptedField<?> getField(final E pInfoClass) {
+        /* Access existing entry */
+        T myValue = theMap.get(pInfoClass);
+
+        /* If we have no entry, return null */
+        if (myValue == null) {
+            return null;
+        }
+
+        /* Return the field */
+        return myValue.getField();
+    }
+
+    /**
+     * Obtain the field value for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the value
+     */
+    protected T getInfo(final E pInfoClass) {
+        /* Return the info */
+        return theMap.get(pInfoClass);
+    }
+
+    /**
      * Set the value for the infoClass.
      * @param pInfoClass the Info Class
      * @param pValue the Value
      * @throws JDataException on error
      */
-    protected void setValue(final E pInfoClass,
-                            final Object pValue) throws JDataException {
+    public void setValue(final E pInfoClass,
+                         final Object pValue) throws JDataException {
         /* Determine whether this is a deletion */
         boolean bDelete = (pValue == null);
 
@@ -215,6 +244,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
 
             /* Create the entry and add to list */
             myValue = theInfoList.addNewItem(theOwner, myInfoType);
+            myValue.setNewVersion();
 
             /* Insert the value into the map */
             theMap.put(pInfoClass, myValue);
@@ -222,6 +252,18 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
 
         /* Update the value */
         myValue.setValue(pValue);
+    }
+
+    /**
+     * reLink to Lists.
+     * @param pInfoList the infoList for the info values
+     * @param pTypeList the infoTypeList for the set
+     */
+    public void relinkToDataSet(final DataInfoList<T, O, I> pInfoList,
+                                final StaticList<I, E> pTypeList) {
+        /* Update to use the new lists */
+        theInfoList = pInfoList;
+        theTypeList = pTypeList;
     }
 
     /**

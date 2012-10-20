@@ -69,7 +69,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
     }
 
     /**
-     * Construct a copy of an Account Type.
+     * Copy Constructor.
      * @param pList The list to associate the Account Type with
      * @param pAcType The Account Type to copy
      */
@@ -79,7 +79,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
     }
 
     /**
-     * Construct a standard account type on load.
+     * Basic constructor.
      * @param pList The list to associate the Account Type with
      * @param sName Name of Account Type
      * @throws JDataException on error
@@ -90,7 +90,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
     }
 
     /**
-     * Construct a standard account type on load.
+     * Open Constructor.
      * @param pList The list to associate the Account Type with
      * @param uId the id
      * @param isEnabled is the account type enabled
@@ -100,16 +100,16 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * @throws JDataException on error
      */
     private AccountType(final AccountTypeList pList,
-                        final int uId,
-                        final boolean isEnabled,
-                        final int uOrder,
+                        final Integer uId,
+                        final Boolean isEnabled,
+                        final Integer uOrder,
                         final String pName,
                         final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard account type on load.
+     * Secure Constructor.
      * @param pList The list to associate the Account Type with
      * @param uId ID of Account Type
      * @param uControlId the control id of the new item
@@ -120,10 +120,10 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
      * @throws JDataException on error
      */
     private AccountType(final AccountTypeList pList,
-                        final int uId,
-                        final int uControlId,
-                        final boolean isEnabled,
-                        final int uOrder,
+                        final Integer uId,
+                        final Integer uControlId,
+                        final Boolean isEnabled,
+                        final Integer uOrder,
                         final byte[] pName,
                         final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
@@ -541,7 +541,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
         }
 
         @Override
-        public AccountType addNewItem(final DataItem pItem) {
+        public AccountType addCopyItem(final DataItem pItem) {
             /* Can only clone an AccountType */
             if (!(pItem instanceof AccountType)) {
                 return null;
@@ -570,7 +570,7 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * @param pActType the Name of the account type
          * @throws JDataException on error
          */
-        public void addItem(final String pActType) throws JDataException {
+        public void addBasicItem(final String pActType) throws JDataException {
             /* Create a new Account Type */
             AccountType myActType = new AccountType(this, pActType);
 
@@ -605,9 +605,9 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * @param pDesc the Description of the account type
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final boolean isEnabled,
-                                final int uOrder,
+        public void addOpenItem(final Integer uId,
+                                final Boolean isEnabled,
+                                final Integer uOrder,
                                 final String pActType,
                                 final String pDesc) throws JDataException {
             /* Create a new Account Type */
@@ -640,10 +640,10 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
          * @param pDesc the Encrypted Description of the account type
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final boolean isEnabled,
-                                  final int uOrder,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Boolean isEnabled,
+                                  final Integer uOrder,
                                   final byte[] pActType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Account Type */

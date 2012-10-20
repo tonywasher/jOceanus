@@ -247,7 +247,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @param pId the id of the item
      * @throws JDataException on error
      */
-    protected abstract void loadItem(int pId) throws JDataException;
+    protected abstract void loadItem(Integer pId) throws JDataException;
 
     /**
      * Set a field value for an item.
@@ -311,7 +311,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             while (next()) {
                 /* Read in the results */
                 theTable.loadResults(theResults);
-                int myId = theTable.getIntegerValue(DataItem.FIELD_ID);
+                Integer myId = theTable.getIntegerValue(DataItem.FIELD_ID);
 
                 /* Load the next item */
                 loadItem(myId);

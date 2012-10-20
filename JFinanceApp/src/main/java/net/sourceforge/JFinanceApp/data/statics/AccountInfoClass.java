@@ -34,47 +34,47 @@ public enum AccountInfoClass implements StaticInterface {
     /**
      * Maturity Date.
      */
-    MATURITY(1, 0, DataType.DATEDAY),
+    Maturity(1, 0, DataType.DATEDAY),
 
     /**
      * Parent Id.
      */
-    PARENT(2, 1),
+    Parent(2, 1),
 
     /**
      * Alias Id.
      */
-    ALIAS(3, 2),
+    Alias(3, 2),
 
     /**
      * WebSite.
      */
-    WEBSITE(4, 3, DataType.CHARARRAY),
+    WebSite(4, 3, DataType.CHARARRAY),
 
     /**
      * Customer #.
      */
-    CUSTNO(5, 4, DataType.CHARARRAY),
+    CustNo(5, 4, DataType.CHARARRAY),
 
     /**
      * User Id.
      */
-    USERID(6, 5, DataType.CHARARRAY),
+    UserId(6, 5, DataType.CHARARRAY),
 
     /**
      * Password.
      */
-    PASSWORD(7, 6, DataType.CHARARRAY),
+    Password(7, 6, DataType.CHARARRAY),
 
     /**
      * Account.
      */
-    ACCOUNT(8, 7, DataType.CHARARRAY),
+    Account(8, 7, DataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    NOTES(9, 8, DataType.CHARARRAY);
+    Notes(9, 8, DataType.CHARARRAY);
 
     /**
      * Class Id.

@@ -24,7 +24,6 @@ package net.sourceforge.JFinanceApp.sheets;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.sheets.SheetDataItem;
-import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
 import net.sourceforge.JFinanceApp.data.EventData;
 import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
 import net.sourceforge.JFinanceApp.data.FinanceData;
@@ -40,34 +39,19 @@ public class SheetEventData extends SheetDataItem<EventData> {
     private static final String AREA_EVENTDATA = EventData.LIST_NAME;
 
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 5;
-
-    /**
-     * ControlKey column.
-     */
-    private static final int COL_CONTROL = 1;
-
-    /**
      * Event column.
      */
-    private static final int COL_EVENT = 2;
+    private static final int COL_EVENT = COL_CONTROLID + 1;
 
     /**
      * InfoType column.
      */
-    private static final int COL_INFOTYPE = 3;
+    private static final int COL_INFOTYPE = COL_EVENT + 1;
 
     /**
      * Data column.
      */
-    private static final int COL_DATA = 4;
-
-    /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one?
-     */
-    private boolean isBackup = false;
+    private static final int COL_DATA = COL_INFOTYPE + 1;
 
     /**
      * Events data list.
@@ -81,9 +65,6 @@ public class SheetEventData extends SheetDataItem<EventData> {
     protected SheetEventData(final FinanceReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_EVENTDATA);
-
-        /* Note whether this is a backup */
-        isBackup = (pReader.getType() == SheetType.BACKUP);
 
         /* Access the Lists */
         FinanceData myData = pReader.getData();
@@ -99,9 +80,6 @@ public class SheetEventData extends SheetDataItem<EventData> {
         /* Call super constructor */
         super(pWriter, AREA_EVENTDATA);
 
-        /* Note whether this is a backup */
-        isBackup = (pWriter.getType() == SheetType.BACKUP);
-
         /* Access the Events list */
         theList = pWriter.getData().getEventData();
         setDataList(theList);
@@ -112,76 +90,33 @@ public class SheetEventData extends SheetDataItem<EventData> {
      * @throws JDataException on error
      */
     @Override
-    protected void loadItem() throws JDataException {
+    protected void loadSecureItem() throws JDataException {
+        /* Access the IDs */
+        int myID = loadInteger(COL_ID);
+        int myControlId = loadInteger(COL_CONTROLID);
+        int myEventId = loadInteger(COL_EVENT);
+        int myInfoId = loadInteger(COL_INFOTYPE);
 
-        /* If this is a backup load */
-        if (isBackup) {
-            /* Access the IDs */
-            int myID = loadInteger(COL_ID);
-            int myControlId = loadInteger(COL_CONTROL);
-            int myEventId = loadInteger(COL_EVENT);
-            int myInfoId = loadInteger(COL_INFOTYPE);
+        /* Access the binary values */
+        byte[] myValue = loadBytes(COL_DATA);
 
-            /* Access the binary values */
-            byte[] myValue = loadBytes(COL_DATA);
-
-            /* Load the item */
-            theList.addSecureItem(myID, myControlId, myInfoId, myEventId, myValue);
-
-            /* else this is a load from an edit-able spreadsheet */
-            // } else {
-            /* Access the Account */
-            // int myID = loadInteger(0);
-
-            /* Load the item */
-            // theList.addItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myUnits, myTransType,
-            // myTaxCredit, myDilution, myYears);
-        }
+        /* Load the item */
+        theList.addSecureItem(myID, myControlId, myInfoId, myEventId, myValue);
     }
 
     @Override
-    protected void insertItem(final EventData pItem) throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
-            writeInteger(COL_EVENT, pItem.getEvent().getId());
-            writeInteger(COL_INFOTYPE, pItem.getInfoType().getId());
-            writeBytes(COL_DATA, pItem.getValueBytes());
-
-            /* else we are creating an edit-able spreadsheet */
-            // } else {
-            /* Set the fields */
-            // writeInteger(0, pItem.getId());
-        }
-    }
-
-    @Override
-    protected void preProcessOnWrite() throws JDataException {
-        /* Ignore if we are creating a backup */
-        if (isBackup) {
-            return;
-        }
-
-        /* Write titles */
-        // writeString(0, Event.fieldName(Event.FIELD_ID));
+    protected void insertSecureItem(final EventData pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeInteger(COL_EVENT, pItem.getEvent().getId());
+        writeInteger(COL_INFOTYPE, pItem.getInfoType().getId());
+        writeBytes(COL_DATA, pItem.getValueBytes());
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the five columns as the range */
-            nameRange(NUM_COLS);
-
-            /* else this is an edit-able spreadsheet */
-            // } else {
-            /* Set the four columns as the range */
-            // nameRange(4);
-
-            /* Hide the ID column */
-            // setHiddenColumn(0);
-        }
+        /* Set the range */
+        nameRange(COL_DATA);
     }
 }

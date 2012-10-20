@@ -136,7 +136,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
     }
 
     /**
-     * Construct a copy of a ControlData.
+     * Copy Constructor.
      * @param pList the associated list
      * @param pSource The source
      */
@@ -147,7 +147,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
     }
 
     /**
-     * Standard Constructor.
+     * Secure Constructor.
      * @param pList the owning list
      * @param uId the id
      * @param uVersion the data version
@@ -155,9 +155,9 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
      * @throws JDataException on error
      */
     private ControlData(final ControlDataList pList,
-                        final int uId,
-                        final int uVersion,
-                        final int uControlId) throws JDataException {
+                        final Integer uId,
+                        final Integer uVersion,
+                        final Integer uControlId) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -184,14 +184,14 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
     }
 
     /**
-     * Limited (no security) constructor.
+     * Open (no security) constructor.
      * @param pList the owning list
      * @param uId the id
      * @param uVersion the data version
      */
     private ControlData(final ControlDataList pList,
-                        final int uId,
-                        final int uVersion) {
+                        final Integer uId,
+                        final Integer uVersion) {
         /* Initialise the item */
         super(pList, uId);
 
@@ -333,7 +333,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
         }
 
         @Override
-        public ControlData addNewItem(final DataItem pItem) {
+        public ControlData addCopyItem(final DataItem pItem) {
             /* Can only clone a ControlData */
             if (!(pItem instanceof ControlData)) {
                 return null;
@@ -358,13 +358,11 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          * @param uControlId the controlId
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uVersion,
-                                  final int uControlId) throws JDataException {
-            ControlData myControl;
-
+        public void addSecureItem(final Integer uId,
+                                  final Integer uVersion,
+                                  final Integer uControlId) throws JDataException {
             /* Create the ControlData */
-            myControl = new ControlData(this, uId, uVersion, uControlId);
+            ControlData myControl = new ControlData(this, uId, uVersion, uControlId);
 
             /* Check that this ControlId has not been previously added */
             if (!isIdUnique(uId)) {
@@ -387,12 +385,10 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
          * @param uVersion the version
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final int uVersion) throws JDataException {
-            ControlData myControl;
-
+        public void addOpenItem(final Integer uId,
+                                final Integer uVersion) throws JDataException {
             /* Create the ControlData */
-            myControl = new ControlData(this, uId, uVersion);
+            ControlData myControl = new ControlData(this, uId, uVersion);
 
             /* Only one static is allowed */
             if (theControl != null) {

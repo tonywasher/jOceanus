@@ -69,7 +69,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     }
 
     /**
-     * Construct a copy of a TaxRegime.
+     * Copy Constructor.
      * @param pList The list to associate the TaxRegime with
      * @param pTaxRegime The TaxRegime to copy
      */
@@ -79,7 +79,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     }
 
     /**
-     * Construct a standard TaxRegime on load.
+     * Basic Constructor.
      * @param pList The list to associate the TaxRegime with
      * @param sName Name of TaxRegime
      * @throws JDataException on error
@@ -90,7 +90,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     }
 
     /**
-     * Construct a tax regime on load.
+     * Open Constructor.
      * @param pList The list to associate the TaxRegime with
      * @param uId the id of the new item
      * @param isEnabled is the regime enabled
@@ -100,16 +100,16 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
      * @throws JDataException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final int uId,
-                      final boolean isEnabled,
-                      final int uOrder,
+                      final Integer uId,
+                      final Boolean isEnabled,
+                      final Integer uOrder,
                       final String pName,
                       final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard TaxRegime on load.
+     * Secure Constructor.
      * @param pList The list to associate the TaxRegime with
      * @param uId ID of TaxRegime
      * @param uControlId the control id of the new item
@@ -120,10 +120,10 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
      * @throws JDataException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final int uId,
-                      final int uControlId,
-                      final boolean isEnabled,
-                      final int uOrder,
+                      final Integer uId,
+                      final Integer uControlId,
+                      final Boolean isEnabled,
+                      final Integer uOrder,
                       final byte[] pName,
                       final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
@@ -237,7 +237,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @return the newly added item
          */
         @Override
-        public TaxRegime addNewItem(final DataItem pItem) {
+        public TaxRegime addCopyItem(final DataItem pItem) {
             /* Can only clone a TaxRegime */
             if (!(pItem instanceof TaxRegime)) {
                 return null;
@@ -270,7 +270,7 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @param pTaxRegime the Name of the tax regime
          * @throws JDataException on error
          */
-        public void addItem(final String pTaxRegime) throws JDataException {
+        public void addBasicItem(final String pTaxRegime) throws JDataException {
             /* Create a new tax regime */
             TaxRegime myTaxRegime = new TaxRegime(this, pTaxRegime);
 
@@ -305,9 +305,9 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @param pDesc the Description of the tax regime
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final boolean isEnabled,
-                                final int uOrder,
+        public void addOpenItem(final Integer uId,
+                                final Boolean isEnabled,
+                                final Integer uOrder,
                                 final String pTaxRegime,
                                 final String pDesc) throws JDataException {
             /* Create a new Tax Regime */
@@ -340,10 +340,10 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
          * @param pDesc the Encrypted Description of the tax regime
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final boolean isEnabled,
-                                  final int uOrder,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Boolean isEnabled,
+                                  final Integer uOrder,
                                   final byte[] pTaxRegime,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new tax regime */

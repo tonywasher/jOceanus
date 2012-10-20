@@ -34,7 +34,8 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
+import net.sourceforge.JFinanceApp.data.TaxYearNew.TaxYearNewList;
+import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoClass;
 import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
 import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 
@@ -42,7 +43,7 @@ import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeL
  * Representation of an information extension of a TaxYear.
  * @author Tony Washer
  */
-public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType> implements
+public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYearNew, TaxYearInfoType> implements
         Comparable<TaxYearInfo> {
     /**
      * Object name.
@@ -74,8 +75,8 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
      * Obtain TaxYear.
      * @return the TaxYear
      */
-    public TaxYear getTaxYear() {
-        return getOwner(getValueSet(), TaxYear.class);
+    public TaxYearNew getTaxYear() {
+        return getOwner(getValueSet(), TaxYearNew.class);
     }
 
     /**
@@ -92,8 +93,8 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
      * @param pValueSet the valueSet
      * @return the TaxYear
      */
-    public static TaxYear getTaxYear(final ValueSet pValueSet) {
-        return getOwner(pValueSet, TaxYear.class);
+    public static TaxYearNew getTaxYear(final ValueSet pValueSet) {
+        return getOwner(pValueSet, TaxYearNew.class);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
     }
 
     /**
-     * Construct a copy of a TaxYearInfo.
+     * Copy Constructor.
      * @param pList the list
      * @param pInfo The Info to copy
      */
@@ -124,7 +125,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
      * @param pType the type
      */
     private TaxYearInfo(final TaxInfoList pList,
-                        final TaxYear pTaxYear,
+                        final TaxYearNew pTaxYear,
                         final TaxYearInfoType pType) {
         /* Initialise the item */
         super(pList);
@@ -135,7 +136,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
     }
 
     /**
-     * Encrypted constructor.
+     * Secure constructor.
      * @param pList the list
      * @param uId the id
      * @param uControlId the control id
@@ -145,9 +146,9 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
      * @throws JDataException on error
      */
     private TaxYearInfo(final TaxInfoList pList,
-                        final int uId,
-                        final int uControlId,
-                        final int uInfoTypeId,
+                        final Integer uId,
+                        final Integer uControlId,
+                        final Integer uInfoTypeId,
                         final int uTaxYearId,
                         final byte[] pValue) throws JDataException {
         /* Initialise the item */
@@ -165,8 +166,8 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
             setValueInfoType(myType);
 
             /* Look up the TaxYear */
-            TaxYearList myTaxYears = myData.getTaxYears();
-            TaxYear myTaxYear = myTaxYears.findItemById(uTaxYearId);
+            TaxYearNewList myTaxYears = myData.getNewTaxYears();
+            TaxYearNew myTaxYear = myTaxYears.findItemById(uTaxYearId);
             if (myTaxYear == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid TaxYear Id");
             }
@@ -194,7 +195,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
     }
 
     /**
-     * Open Text constructor.
+     * Open constructor.
      * @param pList the list
      * @param uId the id
      * @param pInfoType the info type
@@ -203,9 +204,9 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
      * @throws JDataException on error
      */
     private TaxYearInfo(final TaxInfoList pList,
-                        final int uId,
+                        final Integer uId,
                         final TaxYearInfoType pInfoType,
-                        final TaxYear pTaxYear,
+                        final TaxYearNew pTaxYear,
                         final String pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId, pInfoType, pTaxYear);
@@ -270,7 +271,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
 
         /* Access TaxYears and InfoTypes */
         FinanceData myData = getDataSet();
-        TaxYearList myTaxYears = myData.getTaxYears();
+        TaxYearNewList myTaxYears = myData.getNewTaxYears();
         TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
 
         /* Update to use the local copy of the Types */
@@ -279,8 +280,8 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the TaxYears */
-        TaxYear myTaxYear = getTaxYear();
-        TaxYear myNewYear = myTaxYears.findItemById(myTaxYear.getId());
+        TaxYearNew myTaxYear = getTaxYear();
+        TaxYearNew myNewYear = myTaxYears.findItemById(myTaxYear.getId());
         setValueOwner(myNewYear);
     }
 
@@ -349,7 +350,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
     /**
      * TaxYearInfoList.
      */
-    public static class TaxInfoList extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType> {
+    public static class TaxInfoList extends DataInfoList<TaxYearInfo, TaxYearNew, TaxYearInfoType> {
         /**
          * Local Report fields.
          */
@@ -408,7 +409,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
         }
 
         @Override
-        public TaxYearInfo addNewItem(final DataItem pItem) {
+        public TaxYearInfo addCopyItem(final DataItem pItem) {
             /* Can only clone a TaxYearInfo */
             if (!(pItem instanceof TaxYearInfo)) {
                 return null;
@@ -425,7 +426,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
         }
 
         @Override
-        protected TaxYearInfo addNewItem(final TaxYear pOwner,
+        protected TaxYearInfo addNewItem(final TaxYearNew pOwner,
                                          final TaxYearInfoType pInfoType) {
             /* Allocate the new entry and add to list */
             TaxYearInfo myInfo = new TaxYearInfo(this, pOwner, pInfoType);
@@ -444,10 +445,10 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
          * @param pValue the data
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final int uInfoTypeId,
-                                  final int uTaxYearId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Integer uInfoTypeId,
+                                  final Integer uTaxYearId,
                                   final byte[] pValue) throws JDataException {
             /* Create the info */
             TaxYearInfo myInfo = new TaxYearInfo(this, uId, uControlId, uInfoTypeId, uTaxYearId, pValue);
@@ -473,22 +474,27 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType>
          * Add a TaxYearInfo to the list.
          * @param uId the Id of the tax info
          * @param pTaxYear the tax Year
-         * @param pInfoType the Name of the account info type
+         * @param pInfoClass the Class of the account info type
          * @param pValue the value of the tax info
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final TaxYear pTaxYear,
-                                final String pInfoType,
+        public void addOpenItem(final Integer uId,
+                                final TaxYearNew pTaxYear,
+                                final TaxYearInfoClass pInfoClass,
                                 final String pValue) throws JDataException {
+            /* Ignore item if it is null */
+            if (pValue == null) {
+                return;
+            }
+
             /* Access the data set */
             FinanceData myData = getDataSet();
 
             /* Look up the Info Type */
-            TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByName(pInfoType);
+            TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pTaxYear, "TaxYear has invalid Tax Info Type ["
-                        + pInfoType + "]");
+                throw new JDataException(ExceptionClass.DATA, pTaxYear,
+                        "TaxYear has invalid Tax Info Class [" + pInfoClass + "]");
             }
 
             /* Create a new Tax Info */

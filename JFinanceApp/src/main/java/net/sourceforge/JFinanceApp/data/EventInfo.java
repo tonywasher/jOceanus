@@ -37,8 +37,9 @@ import net.sourceforge.JDecimal.JDecimalParser;
 import net.sourceforge.JDecimal.JDilution;
 import net.sourceforge.JDecimal.JMoney;
 import net.sourceforge.JDecimal.JUnits;
-import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.Event.EventList;
+import net.sourceforge.JFinanceApp.data.AccountNew.AccountNewList;
+import net.sourceforge.JFinanceApp.data.EventNew.EventNewList;
+import net.sourceforge.JFinanceApp.data.statics.EventInfoClass;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
 
@@ -46,7 +47,7 @@ import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
  * Representation of an information extension of an event.
  * @author Tony Washer
  */
-public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> implements Comparable<EventInfo> {
+public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType> implements Comparable<EventInfo> {
     /**
      * Object name.
      */
@@ -93,15 +94,15 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
      * Obtain Event.
      * @return the Event
      */
-    public Event getEvent() {
-        return getOwner(getValueSet(), Event.class);
+    public EventNew getEvent() {
+        return getOwner(getValueSet(), EventNew.class);
     }
 
     /**
      * Obtain Account.
      * @return the Account
      */
-    public Account getAccount() {
+    public AccountNew getAccount() {
         return getAccount(getValueSet());
     }
 
@@ -119,8 +120,8 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
      * @param pValueSet the valueSet
      * @return the Event
      */
-    public static Event getEvent(final ValueSet pValueSet) {
-        return getOwner(pValueSet, Event.class);
+    public static EventNew getEvent(final ValueSet pValueSet) {
+        return getOwner(pValueSet, EventNew.class);
     }
 
     /**
@@ -128,15 +129,15 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
      * @param pValueSet the valueSet
      * @return the Account
      */
-    public static Account getAccount(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
+    public static AccountNew getAccount(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ACCOUNT, AccountNew.class);
     }
 
     /**
      * Set Account.
      * @param pAccount the account
      */
-    private void setValueAccount(final Account pAccount) {
+    private void setValueAccount(final AccountNew pAccount) {
         getValueSet().setValue(FIELD_ACCOUNT, pAccount);
     }
 
@@ -151,7 +152,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
     }
 
     /**
-     * Construct a copy of an EventInfo.
+     * Copy Constructor.
      * @param pList the list
      * @param pInfo The Info to copy
      */
@@ -168,7 +169,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
      * @param pType the type
      */
     private EventInfo(final EventInfoList pList,
-                      final Event pEvent,
+                      final EventNew pEvent,
                       final EventInfoType pType) {
         /* Initialise the item */
         super(pList);
@@ -179,7 +180,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
     }
 
     /**
-     * Encrypted constructor.
+     * Secure constructor.
      * @param pList the list
      * @param uId the id
      * @param uControlId the control id
@@ -189,10 +190,10 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
      * @throws JDataException on error
      */
     private EventInfo(final EventInfoList pList,
-                      final int uId,
-                      final int uControlId,
-                      final int uInfoTypeId,
-                      final int uEventId,
+                      final Integer uId,
+                      final Integer uControlId,
+                      final Integer uInfoTypeId,
+                      final Integer uEventId,
                       final byte[] pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId, uControlId, uInfoTypeId, uEventId);
@@ -209,8 +210,8 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
             setValueInfoType(myType);
 
             /* Look up the Event */
-            EventList myEvents = myData.getEvents();
-            Event myEvent = myEvents.findItemById(uEventId);
+            EventNewList myEvents = myData.getNewEvents();
+            EventNew myEvent = myEvents.findItemById(uEventId);
             if (myEvent == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
             }
@@ -221,8 +222,8 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
                 case INTEGER:
                     setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        AccountList myAccounts = myData.getAccounts();
-                        Account myAccount = myAccounts.findItemById(getValue(Integer.class));
+                        AccountNewList myAccounts = myData.getNewAccounts();
+                        AccountNew myAccount = myAccounts.findItemById(getValue(Integer.class));
                         if (myAccount == null) {
                             throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
                         }
@@ -252,7 +253,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
     }
 
     /**
-     * Open Text constructor.
+     * Open constructor.
      * @param pList the list
      * @param uId the id
      * @param pInfoType the info type
@@ -261,9 +262,9 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
      * @throws JDataException on error
      */
     private EventInfo(final EventInfoList pList,
-                      final int uId,
+                      final Integer uId,
                       final EventInfoType pInfoType,
-                      final Event pEvent,
+                      final EventNew pEvent,
                       final Object pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId, pInfoType, pEvent);
@@ -328,7 +329,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
 
         /* Access Events and InfoTypes */
         FinanceData myData = getDataSet();
-        EventList myEvents = myData.getEvents();
+        EventNewList myEvents = myData.getNewEvents();
         EventInfoTypeList myTypes = myData.getEventInfoTypes();
 
         /* Update to use the local copy of the Types */
@@ -339,15 +340,15 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
         /* If we are using an account */
         if (myType.isLink()) {
             /* Update to use the local copy of the accounts */
-            AccountList myAccounts = myData.getAccounts();
-            Account myAccount = getAccount();
-            Account myNewAct = myAccounts.findItemById(myAccount.getId());
+            AccountNewList myAccounts = myData.getNewAccounts();
+            AccountNew myAccount = getAccount();
+            AccountNew myNewAct = myAccounts.findItemById(myAccount.getId());
             setValueAccount(myNewAct);
         }
 
         /* Update to use the local copy of the Events */
-        Event myEvent = getEvent();
-        Event myNewEvent = myEvents.findItemById(myEvent.getId());
+        EventNew myEvent = getEvent();
+        EventNew myNewEvent = myEvents.findItemById(myEvent.getId());
         setValueOwner(myNewEvent);
     }
 
@@ -395,8 +396,8 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
                     setValueValue(pValue);
                     bValueOK = true;
                 }
-                if ((pValue instanceof Account) && (myType.isLink())) {
-                    Account myAccount = (Account) pValue;
+                if ((pValue instanceof AccountNew) && (myType.isLink())) {
+                    AccountNew myAccount = (AccountNew) pValue;
                     setValueValue(myAccount.getId());
                     setValueAccount(myAccount);
                     bValueOK = true;
@@ -442,7 +443,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
     /**
      * EventInfoList.
      */
-    public static class EventInfoList extends DataInfoList<EventInfo, Event, EventInfoType> {
+    public static class EventInfoList extends DataInfoList<EventInfo, EventNew, EventInfoType> {
         /**
          * Local Report fields.
          */
@@ -501,7 +502,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
         }
 
         @Override
-        public EventInfo addNewItem(final DataItem pItem) {
+        public EventInfo addCopyItem(final DataItem pItem) {
             /* Can only clone an EventInfo */
             if (!(pItem instanceof EventInfo)) {
                 return null;
@@ -518,7 +519,7 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
         }
 
         @Override
-        protected EventInfo addNewItem(final Event pOwner,
+        protected EventInfo addNewItem(final EventNew pOwner,
                                        final EventInfoType pInfoType) {
             /* Allocate the new entry and add to list */
             EventInfo myInfo = new EventInfo(this, pOwner, pInfoType);
@@ -537,10 +538,10 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
          * @param pValue the data
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final int uInfoTypeId,
-                                  final int uEventId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Integer uInfoTypeId,
+                                  final Integer uEventId,
                                   final byte[] pValue) throws JDataException {
             /* Create the info */
             EventInfo myInfo = new EventInfo(this, uId, uControlId, uInfoTypeId, uEventId, pValue);
@@ -566,22 +567,22 @@ public class EventInfo extends DataInfo<EventInfo, Event, EventInfoType> impleme
          * Add an EventInfo to the list.
          * @param uId the Id of the info
          * @param pEvent the event
-         * @param pInfoType the Name of the event info type
+         * @param pInfoClass the Class of the event info type
          * @param pValue the value of the event info
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final Event pEvent,
-                                final String pInfoType,
+        public void addOpenItem(final Integer uId,
+                                final EventNew pEvent,
+                                final EventInfoClass pInfoClass,
                                 final Object pValue) throws JDataException {
             /* Access the data set */
             FinanceData myData = getDataSet();
 
             /* Look up the Info Type */
-            EventInfoType myInfoType = myData.getEventInfoTypes().findItemByName(pInfoType);
+            EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pEvent, "Event has invalid Event Info Type ["
-                        + pInfoType + "]");
+                throw new JDataException(ExceptionClass.DATA, pEvent, "Event has invalid Event Info Class ["
+                        + pInfoClass + "]");
             }
 
             /* Create a new Event Info */

@@ -86,7 +86,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
     }
 
     /**
-     * Construct a copy of a InfoType.
+     * Copy Constructor.
      * @param pList The list to associate the EventInfoType with
      * @param pType The InfoType to copy
      */
@@ -96,7 +96,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
     }
 
     /**
-     * Construct a standard InfoType on load.
+     * Basic Constructor.
      * @param pList The list to associate the EventInfoType with
      * @param sName Name of InfoType
      * @throws JDataException on error
@@ -107,7 +107,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
     }
 
     /**
-     * Construct an InfoType on load.
+     * Open Constructor.
      * @param pList The list to associate the InfoType with
      * @param uId the id of the new item
      * @param isEnabled is the type enabled
@@ -117,16 +117,16 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
      * @throws JDataException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
-                          final int uId,
-                          final boolean isEnabled,
-                          final int uOrder,
+                          final Integer uId,
+                          final Boolean isEnabled,
+                          final Integer uOrder,
                           final String pName,
                           final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard InfoType on load.
+     * Secure Constructor.
      * @param pList The list to associate the InfoType with
      * @param uId ID of InfoType
      * @param uControlId the control id of the new item
@@ -137,10 +137,10 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
      * @throws JDataException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
-                          final int uId,
-                          final int uControlId,
-                          final boolean isEnabled,
-                          final int uOrder,
+                          final Integer uId,
+                          final Integer uControlId,
+                          final Boolean isEnabled,
+                          final Integer uOrder,
                           final byte[] pName,
                           final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
@@ -208,7 +208,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
         }
 
         @Override
-        public EventInfoType addNewItem(final DataItem pItem) {
+        public EventInfoType addCopyItem(final DataItem pItem) {
             /* Can only clone an EventInfoType */
             if (!(pItem instanceof EventInfoType)) {
                 return null;
@@ -237,7 +237,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * @param pType the Name of the InfoType
          * @throws JDataException on error
          */
-        public void addItem(final String pType) throws JDataException {
+        public void addBasicItem(final String pType) throws JDataException {
             /* Create a new InfoType */
             EventInfoType myType = new EventInfoType(this, pType);
 
@@ -272,9 +272,9 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * @param pDesc the Description of the InfoType
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final boolean isEnabled,
-                                final int uOrder,
+        public void addOpenItem(final Integer uId,
+                                final Boolean isEnabled,
+                                final Integer uOrder,
                                 final String pInfoType,
                                 final String pDesc) throws JDataException {
             /* Create a new InfoType */
@@ -307,10 +307,10 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
          * @param pDesc the Encrypted Description of the InfoType
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final boolean isEnabled,
-                                  final int uOrder,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Boolean isEnabled,
+                                  final Integer uOrder,
                                   final byte[] pInfoType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new InfoType */

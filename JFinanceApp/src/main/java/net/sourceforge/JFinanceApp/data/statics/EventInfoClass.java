@@ -77,14 +77,9 @@ public enum EventInfoClass implements StaticInterface {
     Dilution(9, 8, DataType.DILUTION),
 
     /**
-     * CashConsideration.
-     */
-    CashConsider(10, 9, DataType.MONEY),
-
-    /**
      * ThirdParty Account.
      */
-    ThirdParty(11, 10);
+    ThirdParty(10, 9);
 
     /**
      * Class Id.

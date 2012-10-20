@@ -26,11 +26,9 @@ import java.util.Date;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetDataItem;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
-import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.AccountPrice;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
@@ -59,34 +57,19 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
     private static final String AREA_SPOTPRICES = "SpotPricesData";
 
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 5;
-
-    /**
-     * ControlKey column.
-     */
-    private static final int COL_CONTROL = 1;
-
-    /**
      * Account column.
      */
-    private static final int COL_ACCOUNT = 2;
+    private static final int COL_ACCOUNT = COL_CONTROLID + 1;
 
     /**
      * Date column.
      */
-    private static final int COL_DATE = 3;
+    private static final int COL_DATE = COL_ACCOUNT + 1;
 
     /**
      * Price column.
      */
-    private static final int COL_PRICE = 4;
-
-    /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one?
-     */
-    private final boolean isBackup;
+    private static final int COL_PRICE = COL_DATE + 1;
 
     /**
      * Prices data list.
@@ -101,9 +84,6 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
         /* Call super constructor */
         super(pReader, AREA_PRICES);
 
-        /* Note whether this is a backup */
-        isBackup = (pReader.getType() == SheetType.BACKUP);
-
         /* Access the Prices list */
         theList = pReader.getData().getPrices();
         setDataList(theList);
@@ -117,109 +97,83 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
         /* Call super constructor */
         super(pWriter, AREA_PRICES);
 
-        /* Note whether this is a backup */
-        isBackup = (pWriter.getType() == SheetType.BACKUP);
-
         /* Access the Prices list */
         theList = pWriter.getData().getPrices();
         setDataList(theList);
     }
 
     @Override
-    protected void loadItem() throws JDataException {
-        /* If this is a backup load */
-        if (isBackup) {
-            /* Access the IDs */
-            int myID = loadInteger(COL_ID);
-            int myControlId = loadInteger(COL_CONTROL);
-            int myActId = loadInteger(COL_ACCOUNT);
+    protected void loadSecureItem() throws JDataException {
+        /* Access the IDs */
+        int myID = loadInteger(COL_ID);
+        int myControlId = loadInteger(COL_CONTROLID);
+        int myActId = loadInteger(COL_ACCOUNT);
 
-            /* Access the rates and end-date */
-            Date myDate = loadDate(COL_DATE);
-            byte[] myPriceBytes = loadBytes(COL_PRICE);
+        /* Access the rates and end-date */
+        Date myDate = loadDate(COL_DATE);
+        byte[] myPriceBytes = loadBytes(COL_PRICE);
 
-            /* Load the item */
-            theList.addSecureItem(myID, myControlId, myDate, myActId, myPriceBytes);
-
-            /* else this is a load from an edit-able spreadsheet */
-        } else {
-            /* Access the Account */
-            int myID = loadInteger(COL_ID);
-            String myAccount = loadString(COL_ACCOUNT - 1);
-
-            /* Access the name and description bytes */
-            Date myDate = loadDate(COL_DATE - 1);
-            String myPrice = loadString(COL_PRICE - 1);
-
-            /* Load the item */
-            theList.addOpenItem(myID, myDate, myAccount, myPrice);
-        }
+        /* Load the item */
+        theList.addSecureItem(myID, myControlId, myDate, myActId, myPriceBytes);
     }
 
     @Override
-    protected void insertItem(final AccountPrice pItem) throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
-            writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
-            writeDate(COL_DATE, pItem.getDate());
-            writeBytes(COL_PRICE, pItem.getPriceBytes());
+    protected void loadOpenItem() throws JDataException {
+        /* Access the Account */
+        int myID = loadInteger(COL_ID);
+        String myAccount = loadString(COL_ACCOUNT);
 
-            /* else we are creating an edit-able spreadsheet */
-        } else {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeString(COL_ACCOUNT, pItem.getAccount().getName());
-            writeDate(COL_DATE, pItem.getDate());
-            writeNumber(COL_PRICE, pItem.getPrice());
-        }
+        /* Access the name and description bytes */
+        Date myDate = loadDate(COL_DATE);
+        String myPrice = loadString(COL_PRICE);
+
+        /* Load the item */
+        theList.addOpenItem(myID, myDate, myAccount, myPrice);
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-        /* Ignore if we are creating a backup */
-        if (isBackup) {
-            return;
-        }
+    protected void insertSecureItem(final AccountPrice pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
+        writeDate(COL_DATE, pItem.getDate());
+        writeBytes(COL_PRICE, pItem.getPriceBytes());
+    }
 
-        /* Create a new row */
-        newRow();
+    @Override
+    protected void insertOpenItem(final AccountPrice pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeString(COL_ACCOUNT, pItem.getAccount().getName());
+        writeDate(COL_DATE, pItem.getDate());
+        writeNumber(COL_PRICE, pItem.getPrice());
+    }
 
+    @Override
+    protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
-        writeHeader(COL_ACCOUNT - 1, AccountPrice.FIELD_ACCOUNT.getName());
-        writeHeader(COL_DATE - 1, AccountPrice.FIELD_DATE.getName());
-        writeHeader(COL_PRICE - 1, AccountPrice.FIELD_PRICE.getName());
+        writeHeader(COL_ACCOUNT, AccountPrice.FIELD_ACCOUNT.getName());
+        writeHeader(COL_DATE, AccountPrice.FIELD_DATE.getName());
+        writeHeader(COL_PRICE, AccountPrice.FIELD_PRICE.getName());
 
-        /* Adjust for Header */
-        adjustForHeader();
+        /* Set the Account column width */
+        setColumnWidth(COL_ACCOUNT, Account.NAMELEN);
+
+        /* Set Price and Date columns */
+        setDateColumn(COL_DATE);
+        setPriceColumn(COL_PRICE);
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the five columns as the range */
-            nameRange(NUM_COLS);
+        /* Set the range */
+        nameRange(COL_PRICE);
 
-            /* else this is an edit-able spreadsheet */
-        } else {
-            /* Set the four columns as the range */
-            nameRange(NUM_COLS - 1);
-
-            /* Hide the ID Column */
-            setHiddenColumn(COL_ID);
-            setIntegerColumn(COL_ID);
-
-            /* Set the Account column width */
-            setColumnWidth(COL_ACCOUNT - 1, Account.NAMELEN);
-            applyDataValidation(COL_ACCOUNT - 1, SheetAccount.AREA_ACCOUNTNAMES);
-
-            /* Set Price and Date columns */
-            setDateColumn(COL_DATE - 1);
-            setPriceColumn(COL_PRICE - 1);
+        /* If we are not creating a backup */
+        if (!isBackup()) {
+            /* Apply validation */
+            applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
         }
     }
 
@@ -283,6 +237,9 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
 
                         /* Access account */
                         myCell = myActRow.getCell(j);
+                        if (myCell == null) {
+                            continue;
+                        }
                         String myAccount = myCell.getStringCellValue();
 
                         /* Handle price which may be missing */

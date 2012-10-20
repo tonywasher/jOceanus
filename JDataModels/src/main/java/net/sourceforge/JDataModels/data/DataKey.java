@@ -269,7 +269,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
     }
 
     /**
-     * Construct a copy of a DataKey.
+     * Copy Constructor.
      * @param pList the list to add to
      * @param pSource The Key to copy
      */
@@ -280,7 +280,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
     }
 
     /**
-     * Construct a DataKey from Database/Backup.
+     * Secure Constructor.
      * @param pList the list to add to
      * @param uId the id of the DataKey
      * @param uControlId the id of the ControlKey
@@ -289,9 +289,9 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
      * @throws JDataException on error
      */
     private DataKey(final DataKeyList pList,
-                    final int uId,
-                    final int uControlId,
-                    final int uKeyTypeId,
+                    final Integer uId,
+                    final Integer uControlId,
+                    final Integer uKeyTypeId,
                     final byte[] pSecurityKey) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
@@ -517,7 +517,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
         }
 
         @Override
-        public DataKey addNewItem(final DataItem pItem) {
+        public DataKey addCopyItem(final DataItem pItem) {
             /* Can only clone a DataKey */
             if (!(pItem instanceof DataKey)) {
                 return null;
@@ -543,9 +543,9 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
          * @return the new item
          * @throws JDataException on error
          */
-        public DataKey addSecureItem(final int uId,
-                                     final int uControlId,
-                                     final int uKeyTypeId,
+        public DataKey addSecureItem(final Integer uId,
+                                     final Integer uControlId,
+                                     final Integer uKeyTypeId,
                                      final byte[] pSecurityKey) throws JDataException {
             /* Create the DataKey */
             DataKey myKey = new DataKey(this, uId, uControlId, uKeyTypeId, pSecurityKey);

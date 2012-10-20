@@ -68,10 +68,10 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
     }
 
     @Override
-    protected void loadEncryptedItem(final int pId,
-                                     final int pControlId,
-                                     final int pInfoTypeId,
-                                     final int pOwnerId,
+    protected void loadEncryptedItem(final Integer pId,
+                                     final Integer pControlId,
+                                     final Integer pInfoTypeId,
+                                     final Integer pOwnerId,
                                      final byte[] pValue) throws JDataException {
         /* Create the item */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);

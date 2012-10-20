@@ -32,15 +32,18 @@ import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.JDateDayRange;
 import net.sourceforge.JFinanceApp.data.Account.AccountList;
 import net.sourceforge.JFinanceApp.data.AccountInfo.AccountInfoList;
+import net.sourceforge.JFinanceApp.data.AccountNew.AccountNewList;
 import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
 import net.sourceforge.JFinanceApp.data.AccountRate.AccountRateList;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
 import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
 import net.sourceforge.JFinanceApp.data.EventInfo.EventInfoList;
+import net.sourceforge.JFinanceApp.data.EventNew.EventNewList;
 import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
 import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
 import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
 import net.sourceforge.JFinanceApp.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.JFinanceApp.data.TaxYearNew.TaxYearNewList;
 import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
 import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
@@ -114,6 +117,11 @@ public class FinanceData extends DataSet<FinanceData> {
     public static final JDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField("TaxYears");
 
     /**
+     * NewTaxYears Field Id.
+     */
+    public static final JDataField FIELD_NEWTAXYEARS = FIELD_DEFS.declareLocalField("NewTaxYears");
+
+    /**
      * TaxInfo Field Id.
      */
     public static final JDataField FIELD_TAXINFO = FIELD_DEFS.declareLocalField("TaxInfo");
@@ -122,6 +130,11 @@ public class FinanceData extends DataSet<FinanceData> {
      * Accounts Field Id.
      */
     public static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField("Accounts");
+
+    /**
+     * NewAccounts Field Id.
+     */
+    public static final JDataField FIELD_NEWACCOUNTS = FIELD_DEFS.declareLocalField("NewAccounts");
 
     /**
      * AccountInfo Field Id.
@@ -147,6 +160,11 @@ public class FinanceData extends DataSet<FinanceData> {
      * Events Field Id.
      */
     public static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField("Events");
+
+    /**
+     * NewEvents Field Id.
+     */
+    public static final JDataField FIELD_NEWEVENTS = FIELD_DEFS.declareLocalField("NewEvents");
 
     /**
      * EventInfo Field Id.
@@ -197,11 +215,17 @@ public class FinanceData extends DataSet<FinanceData> {
         if (FIELD_TAXYEARS.equals(pField)) {
             return (theTaxYears.size() > 0) ? theTaxYears : JDataFieldValue.SkipField;
         }
+        if (FIELD_NEWTAXYEARS.equals(pField)) {
+            return (theNewTaxYears.size() > 0) ? theNewTaxYears : JDataFieldValue.SkipField;
+        }
         if (FIELD_TAXINFO.equals(pField)) {
             return (theTaxInfo.size() > 0) ? theTaxInfo : JDataFieldValue.SkipField;
         }
         if (FIELD_ACCOUNTS.equals(pField)) {
             return (theAccounts.size() > 0) ? theAccounts : JDataFieldValue.SkipField;
+        }
+        if (FIELD_NEWACCOUNTS.equals(pField)) {
+            return (theNewAccounts.size() > 0) ? theNewAccounts : JDataFieldValue.SkipField;
         }
         if (FIELD_ACCOUNTINFO.equals(pField)) {
             return (theAccountInfo.size() > 0) ? theAccountInfo : JDataFieldValue.SkipField;
@@ -217,6 +241,9 @@ public class FinanceData extends DataSet<FinanceData> {
         }
         if (FIELD_EVENTS.equals(pField)) {
             return (theEvents.size() > 0) ? theEvents : JDataFieldValue.SkipField;
+        }
+        if (FIELD_NEWEVENTS.equals(pField)) {
+            return (theNewEvents.size() > 0) ? theNewEvents : JDataFieldValue.SkipField;
         }
         if (FIELD_EVENTINFO.equals(pField)) {
             return (theEventInfo.size() > 0) ? theEventInfo : JDataFieldValue.SkipField;
@@ -296,9 +323,19 @@ public class FinanceData extends DataSet<FinanceData> {
     private TaxYearList theTaxYears = null;
 
     /**
+     * NewTaxYears.
+     */
+    private TaxYearNewList theNewTaxYears = null;
+
+    /**
      * Accounts.
      */
     private AccountList theAccounts = null;
+
+    /**
+     * NewAccounts.
+     */
+    private AccountNewList theNewAccounts = null;
 
     /**
      * Rates.
@@ -319,6 +356,11 @@ public class FinanceData extends DataSet<FinanceData> {
      * Events.
      */
     private EventList theEvents = null;
+
+    /**
+     * NewEvents.
+     */
+    private EventNewList theNewEvents = null;
 
     /**
      * EventValues.
@@ -418,6 +460,14 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
+     * Obtain NewTaxYears.
+     * @return the NewTaxYears
+     */
+    public TaxYearNewList getNewTaxYears() {
+        return theNewTaxYears;
+    }
+
+    /**
      * Obtain TaxInfo.
      * @return the Tax Info
      */
@@ -431,6 +481,14 @@ public class FinanceData extends DataSet<FinanceData> {
      */
     public AccountList getAccounts() {
         return theAccounts;
+    }
+
+    /**
+     * Obtain NewAccounts.
+     * @return the NewAccounts
+     */
+    public AccountNewList getNewAccounts() {
+        return theNewAccounts;
     }
 
     /**
@@ -471,6 +529,14 @@ public class FinanceData extends DataSet<FinanceData> {
      */
     public EventList getEvents() {
         return theEvents;
+    }
+
+    /**
+     * Obtain New Events.
+     * @return the Events
+     */
+    public EventNewList getNewEvents() {
+        return theNewEvents;
     }
 
     /**
@@ -541,13 +607,16 @@ public class FinanceData extends DataSet<FinanceData> {
         theActInfoTypes = new AccountInfoTypeList(this);
         theEventInfoTypes = new EventInfoTypeList(this);
         theTaxYears = new TaxYearList(this);
+        theNewTaxYears = new TaxYearNewList(this);
         theTaxInfo = new TaxInfoList(this);
         theAccounts = new AccountList(this);
+        theNewAccounts = new AccountNewList(this);
         theAccountInfo = new AccountInfoList(this);
         theRates = new AccountRateList(this);
         thePrices = new AccountPriceList(this);
         thePatterns = new PatternList(this);
         theEvents = new EventList(this);
+        theNewEvents = new EventNewList(this);
         theEventInfo = new EventInfoList(this);
         theEventData = new EventDataList(this);
         theEventValues = new EventValueList(this);
@@ -591,13 +660,16 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Build the data extract */
         myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.UPDATE);
+        myExtract.theNewTaxYears = theNewTaxYears.deriveList(ListStyle.UPDATE);
         myExtract.theTaxInfo = theTaxInfo.deriveList(ListStyle.UPDATE);
         myExtract.theAccounts = theAccounts.deriveList(ListStyle.UPDATE);
+        myExtract.theNewAccounts = theNewAccounts.deriveList(ListStyle.UPDATE);
         myExtract.theAccountInfo = theAccountInfo.deriveList(ListStyle.UPDATE);
         myExtract.theRates = theRates.deriveList(ListStyle.UPDATE);
         myExtract.thePrices = thePrices.deriveList(ListStyle.UPDATE);
         myExtract.thePatterns = thePatterns.deriveList(ListStyle.UPDATE);
         myExtract.theEvents = theEvents.deriveList(ListStyle.UPDATE);
+        myExtract.theNewEvents = theNewEvents.deriveList(ListStyle.UPDATE);
         myExtract.theEventInfo = theEventInfo.deriveList(ListStyle.UPDATE);
         myExtract.theEventData = theEventData.deriveList(ListStyle.UPDATE);
         myExtract.theEventValues = theEventValues.deriveList(ListStyle.UPDATE);
@@ -629,13 +701,16 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Build the data extract */
         myExtract.theTaxYears = theTaxYears.cloneList(this);
+        myExtract.theNewTaxYears = theNewTaxYears.cloneList(this);
         myExtract.theTaxInfo = theTaxInfo.cloneList(this);
         myExtract.theAccounts = theAccounts.cloneList(this);
+        myExtract.theNewAccounts = theNewAccounts.cloneList(this);
         myExtract.theAccountInfo = theAccountInfo.cloneList(this);
         myExtract.theRates = theRates.cloneList(this);
         myExtract.thePrices = thePrices.cloneList(this);
         myExtract.thePatterns = thePatterns.cloneList(this);
         myExtract.theEvents = theEvents.cloneList(this);
+        myExtract.theNewEvents = theNewEvents.cloneList(this);
         myExtract.theEventInfo = theEventInfo.cloneList(this);
         myExtract.theEventData = theEventData.cloneList(this);
         myExtract.theEventValues = theEventValues.cloneList(this);
@@ -676,13 +751,16 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Build the data differences */
         myDiffers.theTaxYears = theTaxYears.deriveDifferences(pOld.getTaxYears());
+        myDiffers.theNewTaxYears = theNewTaxYears.deriveDifferences(pOld.getNewTaxYears());
         myDiffers.theTaxInfo = theTaxInfo.deriveDifferences(pOld.getTaxInfo());
         myDiffers.theAccounts = theAccounts.deriveDifferences(pOld.getAccounts());
+        myDiffers.theNewAccounts = theNewAccounts.deriveDifferences(pOld.getNewAccounts());
         myDiffers.theAccountInfo = theAccountInfo.deriveDifferences(pOld.getAccountInfo());
         myDiffers.theRates = theRates.deriveDifferences(pOld.getRates());
         myDiffers.thePrices = thePrices.deriveDifferences(pOld.getPrices());
         myDiffers.thePatterns = thePatterns.deriveDifferences(pOld.getPatterns());
         myDiffers.theEvents = theEvents.deriveDifferences(pOld.getEvents());
+        myDiffers.theNewEvents = theNewEvents.deriveDifferences(pOld.getNewEvents());
         myDiffers.theEventInfo = theEventInfo.deriveDifferences(pOld.getEventInfo());
         myDiffers.theEventData = theEventData.deriveDifferences(pOld.getEventData());
         myDiffers.theEventValues = theEventValues.deriveDifferences(pOld.getEventValues());
@@ -716,13 +794,16 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* ReBase the data items */
         theTaxYears.reBase(pOld.getTaxYears());
+        theNewTaxYears.reBase(pOld.getNewTaxYears());
         theTaxInfo.reBase(pOld.getTaxInfo());
         theAccounts.reBase(pOld.getAccounts());
+        theNewAccounts.reBase(pOld.getNewAccounts());
         theAccountInfo.reBase(pOld.getAccountInfo());
         theRates.reBase(pOld.getRates());
         thePrices.reBase(pOld.getPrices());
         thePatterns.reBase(pOld.getPatterns());
         theEvents.reBase(pOld.getEvents());
+        theNewEvents.reBase(pOld.getNewEvents());
         theEventInfo.reBase(pOld.getEventInfo());
         theEventData.reBase(pOld.getEventData());
         theEventValues.reBase(pOld.getEventValues());
@@ -742,13 +823,16 @@ public class FinanceData extends DataSet<FinanceData> {
         addList(theActInfoTypes);
         addList(theEventInfoTypes);
         addList(theTaxYears);
+        addList(theNewTaxYears);
         addList(theTaxInfo);
         addList(theAccounts);
+        addList(theNewAccounts);
         addList(theAccountInfo);
         addList(theRates);
         addList(thePrices);
         addList(thePatterns);
         addList(theEvents);
+        addList(theNewEvents);
         addList(theEventInfo);
         addList(theEventData);
         addList(theEventValues);

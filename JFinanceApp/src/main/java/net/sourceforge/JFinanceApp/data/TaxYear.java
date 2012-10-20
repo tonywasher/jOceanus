@@ -834,8 +834,8 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
      * @throws JDataException on error
      */
     private TaxYear(final TaxYearList pList,
-                    final int uId,
-                    final int uRegimeId,
+                    final Integer uId,
+                    final Integer uRegimeId,
                     final Date pDate,
                     final String pAllowance,
                     final String pRentalAllow,
@@ -1573,7 +1573,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @return the newly added item
          */
         @Override
-        public TaxYear addNewItem(final DataItem pTaxYear) {
+        public TaxYear addCopyItem(final DataItem pTaxYear) {
             /* Can only clone a TaxYear */
             if (!(pTaxYear instanceof TaxYear)) {
                 return null;
@@ -1717,7 +1717,7 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @throws JDataException on error
          * @throws JDataException
          */
-        public void addItem(final int uId,
+        public void addItem(final Integer uId,
                             final String pRegime,
                             final Date pDate,
                             final String pAllowance,
@@ -1786,8 +1786,8 @@ public class TaxYear extends DataItem implements Comparable<TaxYear> {
          * @throws JDataException on error
          * @throws JDataException
          */
-        public void addOpenItem(final int uId,
-                                final int uRegimeId,
+        public void addOpenItem(final Integer uId,
+                                final Integer uRegimeId,
                                 final Date pDate,
                                 final String pAllowance,
                                 final String pRentalAllow,

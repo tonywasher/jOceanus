@@ -228,9 +228,9 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
      * @throws JDataException on error
      */
     private EventValue(final EventValueList pList,
-                       final int uId,
-                       final int uInfoTypeId,
-                       final int uEventId,
+                       final Integer uId,
+                       final Integer uInfoTypeId,
+                       final Integer uEventId,
                        final Integer pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
@@ -552,9 +552,9 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
          * @param pValue the value
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final int uInfoTypeId,
-                                final int uEventId,
+        public void addOpenItem(final Integer uId,
+                                final Integer uInfoTypeId,
+                                final Integer uEventId,
                                 final Integer pValue) throws JDataException {
             /* Create the info */
             EventValue myInfo = new EventValue(this, uId, uInfoTypeId, uEventId, pValue);
@@ -593,7 +593,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         }
 
         @Override
-        public EventValue addNewItem(final DataItem pElement) {
+        public EventValue addCopyItem(final DataItem pElement) {
             /* Can only clone an EventValue */
             if (!(pElement instanceof EventValue)) {
                 return null;

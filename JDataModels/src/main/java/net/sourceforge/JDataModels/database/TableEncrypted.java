@@ -50,11 +50,11 @@ public abstract class TableEncrypted<T extends EncryptedItem & Comparable<? supe
      * @param pControlId the ControlKey id of the item
      * @throws JDataException on error
      */
-    protected abstract void loadItem(final int pId,
-                                     final int pControlId) throws JDataException;
+    protected abstract void loadItem(final Integer pId,
+                                     final Integer pControlId) throws JDataException;
 
     @Override
-    protected void loadItem(final int pId) throws JDataException {
+    protected void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         int myControlId = myTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);

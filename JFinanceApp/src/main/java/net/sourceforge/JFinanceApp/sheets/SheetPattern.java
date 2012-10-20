@@ -26,12 +26,10 @@ import java.util.Date;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetDataItem;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
-import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.FinanceData;
@@ -54,59 +52,44 @@ public class SheetPattern extends SheetDataItem<Pattern> {
     private static final String AREA_PATTERNS = Pattern.LIST_NAME;
 
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 10;
-
-    /**
-     * ControlKey column.
-     */
-    private static final int COL_CONTROL = 1;
-
-    /**
      * Account column.
      */
-    private static final int COL_ACCOUNT = 2;
+    private static final int COL_ACCOUNT = COL_CONTROLID + 1;
 
     /**
      * Date column.
      */
-    private static final int COL_DATE = 3;
+    private static final int COL_DATE = COL_ACCOUNT + 1;
 
     /**
      * Description column.
      */
-    private static final int COL_DESC = 4;
+    private static final int COL_DESC = COL_DATE + 1;
 
     /**
      * isCredit column.
      */
-    private static final int COL_CREDIT = 5;
+    private static final int COL_CREDIT = COL_DESC + 1;
 
     /**
      * Amount column.
      */
-    private static final int COL_AMOUNT = 6;
+    private static final int COL_AMOUNT = COL_CREDIT + 1;
 
     /**
      * Partner column.
      */
-    private static final int COL_PARTNER = 7;
+    private static final int COL_PARTNER = COL_AMOUNT + 1;
 
     /**
      * TransType column.
      */
-    private static final int COL_TRAN = 8;
+    private static final int COL_TRAN = COL_PARTNER + 1;
 
     /**
      * Frequency column.
      */
-    private static final int COL_FREQ = 9;
-
-    /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one.
-     */
-    private final boolean isBackup;
+    private static final int COL_FREQ = COL_TRAN + 1;
 
     /**
      * Patterns data list.
@@ -126,9 +109,6 @@ public class SheetPattern extends SheetDataItem<Pattern> {
         /* Call super constructor */
         super(pReader, AREA_PATTERNS);
 
-        /* Note whether this is a backup */
-        isBackup = (pReader.getType() == SheetType.BACKUP);
-
         /* Access the Lists */
         FinanceData myData = pReader.getData();
         theAccounts = myData.getAccounts();
@@ -144,149 +124,122 @@ public class SheetPattern extends SheetDataItem<Pattern> {
         /* Call super constructor */
         super(pWriter, AREA_PATTERNS);
 
-        /* Note whether this is a backup */
-        isBackup = (pWriter.getType() == SheetType.BACKUP);
-
         /* Access the Patterns list */
         theList = pWriter.getData().getPatterns();
         setDataList(theList);
     }
 
     @Override
-    protected void loadItem() throws JDataException {
+    protected void loadSecureItem() throws JDataException {
+        /* Access the IDs */
+        int myID = loadInteger(COL_ID);
+        int myControlId = loadInteger(COL_CONTROLID);
+        int myActId = loadInteger(COL_ACCOUNT);
+        int myPartId = loadInteger(COL_PARTNER);
+        int myTranId = loadInteger(COL_TRAN);
+        int myFreqId = loadInteger(COL_FREQ);
 
-        /* If this is a backup load */
-        if (isBackup) {
-            /* Access the IDs */
-            int myID = loadInteger(COL_ID);
-            int myControlId = loadInteger(COL_CONTROL);
-            int myActId = loadInteger(COL_ACCOUNT);
-            int myPartId = loadInteger(COL_PARTNER);
-            int myTranId = loadInteger(COL_TRAN);
-            int myFreqId = loadInteger(COL_FREQ);
+        /* Access the date and credit flag */
+        Date myDate = loadDate(COL_DATE);
+        boolean isCredit = loadBoolean(COL_CREDIT);
 
-            /* Access the date and credit flag */
-            Date myDate = loadDate(COL_DATE);
-            boolean isCredit = loadBoolean(COL_CREDIT);
+        /* Access the binary values */
+        byte[] myDesc = loadBytes(COL_DESC);
+        byte[] myAmount = loadBytes(COL_AMOUNT);
 
-            /* Access the binary values */
-            byte[] myDesc = loadBytes(COL_DESC);
-            byte[] myAmount = loadBytes(COL_AMOUNT);
-
-            /* Load the item */
-            theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myActId, myPartId, myTranId,
-                                  myFreqId, isCredit);
-
-            /* else this is a load from an edit-able spreadsheet */
-        } else {
-            /* Access the Account */
-            int myID = loadInteger(COL_ID);
-            String myAccount = loadString(COL_ACCOUNT - 1);
-            String myPartner = loadString(COL_PARTNER - 1);
-            String myTransType = loadString(COL_TRAN - 1);
-            String myFrequency = loadString(COL_FREQ - 1);
-
-            /* Access the name and description bytes */
-            Date myDate = loadDate(COL_DATE - 1);
-            Boolean isCredit = loadBoolean(COL_CREDIT - 1);
-
-            /* Access the binary values */
-            String myDesc = loadString(COL_DESC - 1);
-            String myAmount = loadString(COL_AMOUNT - 1);
-
-            /* Load the item */
-            theList.addOpenItem(myID, myDate, myDesc, myAmount, myAccount, myPartner, myTransType,
-                                myFrequency, isCredit);
-        }
+        /* Load the item */
+        theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myActId, myPartId, myTranId,
+                              myFreqId, isCredit);
     }
 
     @Override
-    protected void insertItem(final Pattern pItem) throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
-            writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
-            writeInteger(COL_PARTNER, pItem.getPartner().getId());
-            writeInteger(COL_TRAN, pItem.getTransType().getId());
-            writeInteger(COL_FREQ, pItem.getFrequency().getId());
-            writeDate(COL_DATE, pItem.getDate());
-            writeBoolean(COL_CREDIT, pItem.isCredit());
-            writeBytes(COL_DESC, pItem.getDescBytes());
-            writeBytes(COL_AMOUNT, pItem.getAmountBytes());
+    protected void loadOpenItem() throws JDataException {
+        /* Access the Account */
+        int myID = loadInteger(COL_ID);
+        String myAccount = loadString(COL_ACCOUNT);
+        String myPartner = loadString(COL_PARTNER);
+        String myTransType = loadString(COL_TRAN);
+        String myFrequency = loadString(COL_FREQ);
 
-            /* else we are creating an edit-able spreadsheet */
-        } else {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeString(COL_ACCOUNT - 1, pItem.getAccount().getName());
-            writeString(COL_PARTNER - 1, pItem.getPartner().getName());
-            writeString(COL_TRAN - 1, pItem.getTransType().getName());
-            writeString(COL_FREQ - 1, pItem.getFrequency().getName());
-            writeDate(COL_DATE - 1, pItem.getDate());
-            writeBoolean(COL_CREDIT - 1, pItem.isCredit());
-            writeString(COL_DESC - 1, pItem.getDesc());
-            writeNumber(COL_AMOUNT - 1, pItem.getAmount());
-        }
+        /* Access the date and credit flag */
+        Date myDate = loadDate(COL_DATE);
+        Boolean isCredit = loadBoolean(COL_CREDIT);
+
+        /* Access the string values */
+        String myDesc = loadString(COL_DESC);
+        String myAmount = loadString(COL_AMOUNT);
+
+        /* Load the item */
+        theList.addOpenItem(myID, myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency,
+                            isCredit);
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-        /* Ignore if we are creating a backup */
-        if (isBackup) {
-            return;
-        }
+    protected void insertSecureItem(final Pattern pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
+        writeInteger(COL_PARTNER, pItem.getPartner().getId());
+        writeInteger(COL_TRAN, pItem.getTransType().getId());
+        writeInteger(COL_FREQ, pItem.getFrequency().getId());
+        writeDate(COL_DATE, pItem.getDate());
+        writeBoolean(COL_CREDIT, pItem.isCredit());
+        writeBytes(COL_DESC, pItem.getDescBytes());
+        writeBytes(COL_AMOUNT, pItem.getAmountBytes());
+    }
 
-        /* Create a new row */
-        newRow();
+    @Override
+    protected void insertOpenItem(final Pattern pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeString(COL_ACCOUNT, pItem.getAccount().getName());
+        writeString(COL_PARTNER, pItem.getPartner().getName());
+        writeString(COL_TRAN, pItem.getTransType().getName());
+        writeString(COL_FREQ, pItem.getFrequency().getName());
+        writeDate(COL_DATE, pItem.getDate());
+        writeBoolean(COL_CREDIT, pItem.isCredit());
+        writeString(COL_DESC, pItem.getDesc());
+        writeNumber(COL_AMOUNT, pItem.getAmount());
+    }
 
+    @Override
+    protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
-        writeHeader(COL_ACCOUNT - 1, Pattern.FIELD_ACCOUNT.getName());
-        writeHeader(COL_DATE - 1, Event.FIELD_DATE.getName());
-        writeHeader(COL_DESC - 1, Event.FIELD_DESC.getName());
-        writeHeader(COL_CREDIT - 1, Pattern.FIELD_ISCREDIT.getName());
-        writeHeader(COL_AMOUNT - 1, Event.FIELD_AMOUNT.getName());
-        writeHeader(COL_PARTNER - 1, Pattern.FIELD_PARTNER.getName());
-        writeHeader(COL_TRAN - 1, Event.FIELD_TRNTYP.getName());
-        writeHeader(COL_FREQ - 1, Pattern.FIELD_FREQ.getName());
+        writeHeader(COL_ACCOUNT, Pattern.FIELD_ACCOUNT.getName());
+        writeHeader(COL_DATE, Event.FIELD_DATE.getName());
+        writeHeader(COL_DESC, Event.FIELD_DESC.getName());
+        writeHeader(COL_CREDIT, Pattern.FIELD_ISCREDIT.getName());
+        writeHeader(COL_AMOUNT, Event.FIELD_AMOUNT.getName());
+        writeHeader(COL_PARTNER, Pattern.FIELD_PARTNER.getName());
+        writeHeader(COL_TRAN, Event.FIELD_TRNTYP.getName());
+        writeHeader(COL_FREQ, Pattern.FIELD_FREQ.getName());
 
-        /* Adjust for Header */
-        adjustForHeader();
+        /* Set the Account column width */
+        setColumnWidth(COL_ACCOUNT, Account.NAMELEN);
+        setColumnWidth(COL_DESC, Event.DESCLEN);
+        setColumnWidth(COL_PARTNER, Account.NAMELEN);
+        setColumnWidth(COL_TRAN, StaticData.NAMELEN);
+        setColumnWidth(COL_FREQ, StaticData.NAMELEN);
+
+        /* Set Number columns */
+        setDateColumn(COL_DATE);
+        setBooleanColumn(COL_CREDIT);
+        setMoneyColumn(COL_AMOUNT);
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the ten columns as the range */
-            nameRange(NUM_COLS);
+        /* Set the range */
+        nameRange(COL_FREQ);
 
-            /* else this is an edit-able spreadsheet */
-        } else {
-            /* Set the nine columns as the range */
-            nameRange(NUM_COLS - 1);
-
-            /* Hide the ID column */
-            setHiddenColumn(COL_ID);
-            setIntegerColumn(COL_ID);
-
-            /* Set the Account column width */
-            setColumnWidth(COL_ACCOUNT - 1, Account.NAMELEN);
-            applyDataValidation(COL_ACCOUNT - 1, SheetAccount.AREA_ACCOUNTNAMES);
-            setColumnWidth(COL_DESC - 1, Event.DESCLEN);
-            setColumnWidth(COL_PARTNER - 1, Account.NAMELEN);
-            applyDataValidation(COL_PARTNER - 1, SheetAccount.AREA_ACCOUNTNAMES);
-            setColumnWidth(COL_TRAN - 1, StaticData.NAMELEN);
-            applyDataValidation(COL_TRAN - 1, SheetTransactionType.AREA_TRANSTYPENAMES);
-            setColumnWidth(COL_FREQ - 1, StaticData.NAMELEN);
-            applyDataValidation(COL_FREQ - 1, SheetFrequency.AREA_FREQUENCYNAMES);
-
-            /* Set Number columns */
-            setDateColumn(COL_DATE - 1);
-            setBooleanColumn(COL_CREDIT - 1);
-            setMoneyColumn(COL_AMOUNT - 1);
+        /* If we are not creating a backup */
+        if (!isBackup()) {
+            /* Apply Validation */
+            applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
+            applyDataValidation(COL_PARTNER, SheetAccount.AREA_ACCOUNTNAMES);
+            applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
+            applyDataValidation(COL_FREQ, SheetFrequency.AREA_FREQUENCYNAMES);
         }
     }
 

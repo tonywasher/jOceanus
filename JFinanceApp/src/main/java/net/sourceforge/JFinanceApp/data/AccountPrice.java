@@ -241,7 +241,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     }
 
     /**
-     * Construct a copy of a Price.
+     * Copy Constructor.
      * @param pList the list
      * @param pPrice The Price
      */
@@ -252,7 +252,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     }
 
     /**
-     * Constructor for a newly inserted price.
+     * Edit Constructor.
      * @param pList the list
      * @param pAccount the account
      */
@@ -264,7 +264,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     }
 
     /**
-     * Constructor.
+     * Open Constructor.
      * @param pList the list
      * @param uId the id
      * @param pAccount the account
@@ -273,7 +273,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @throws JDataException on error
      */
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                         final int uId,
+                         final Integer uId,
                          final Account pAccount,
                          final Date pDate,
                          final String pPrice) throws JDataException {
@@ -305,7 +305,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     }
 
     /**
-     * Constructor.
+     * Secure Constructor.
      * @param pList the list
      * @param uId the id
      * @param uControlId the control id
@@ -315,9 +315,9 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
      * @throws JDataException on error
      */
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                         final int uId,
-                         final int uControlId,
-                         final int uAccountId,
+                         final Integer uId,
+                         final Integer uControlId,
+                         final Integer uAccountId,
                          final Date pDate,
                          final byte[] pPrice) throws JDataException {
         /* Initialise the item */
@@ -605,7 +605,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
          * @return the newly added item
          */
         @Override
-        public AccountPrice addNewItem(final DataItem pPrice) {
+        public AccountPrice addCopyItem(final DataItem pPrice) {
             if (pPrice instanceof AccountPrice) {
                 AccountPrice myPrice = new AccountPrice(this, (AccountPrice) pPrice);
                 add(myPrice);
@@ -762,7 +762,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
          * @param pPrice the price
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
+        public void addOpenItem(final Integer uId,
                                 final Date pDate,
                                 final String pAccount,
                                 final String pPrice) throws JDataException {
@@ -808,10 +808,10 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
          * @param pPrice the price
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
                                   final Date pDate,
-                                  final int uAccountId,
+                                  final Integer uAccountId,
                                   final byte[] pPrice) throws JDataException {
             /* Create the price and PricePoint */
             AccountPrice myPrice = new AccountPrice(this, uId, uControlId, uAccountId, pDate, pPrice);

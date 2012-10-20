@@ -1296,7 +1296,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     /**
-     * Construct a copy of an Account.
+     * Copy Constructor.
      * @param pList the list
      * @param pAccount The Account to copy
      */
@@ -1313,7 +1313,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     /**
-     * Standard constructor for account added from Database/Backup.
+     * Secure constructor.
      * @param pList the List to add to
      * @param uId the Account id
      * @param uControlId the control id
@@ -1333,10 +1333,10 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
-                    final int uId,
-                    final int uControlId,
+                    final Integer uId,
+                    final Integer uControlId,
                     final byte[] pName,
-                    final int uAcTypeId,
+                    final Integer uAcTypeId,
                     final byte[] pDesc,
                     final Date pMaturity,
                     final Date pClose,
@@ -1398,7 +1398,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     /**
-     * Standard constructor for account added from SpreadSheet.
+     * Open constructor.
      * @param pList the List to add to
      * @param uId the id
      * @param sName the Name of the account
@@ -1417,9 +1417,9 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
-                    final int uId,
+                    final Integer uId,
                     final String sName,
-                    final int uAcTypeId,
+                    final Integer uAcTypeId,
                     final String pDesc,
                     final Date pMaturity,
                     final Date pClose,
@@ -1478,7 +1478,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     /**
-     * Constructor.
+     * Edit Constructor.
      * @param pList the list
      */
     public Account(final AccountList pList) {
@@ -2419,7 +2419,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @return the newly added item
          */
         @Override
-        public Account addNewItem(final DataItem pAccount) {
+        public Account addCopyItem(final DataItem pAccount) {
             /* Can only clone an Account */
             if (!(pAccount instanceof Account)) {
                 return null;
@@ -2607,7 +2607,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @param pNotes notes
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
+        public void addOpenItem(final Integer uId,
                                 final String pName,
                                 final String pAcType,
                                 final String pDesc,
@@ -2688,10 +2688,10 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @param pNotes the Encrypted Notes for the account
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
                                   final byte[] pName,
-                                  final int uAcTypeId,
+                                  final Integer uAcTypeId,
                                   final byte[] pDesc,
                                   final Date pMaturity,
                                   final Date pClosed,

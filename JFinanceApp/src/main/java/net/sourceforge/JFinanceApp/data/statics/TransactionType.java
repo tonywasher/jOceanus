@@ -74,7 +74,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Construct a copy of a Transaction Type.
+     * Copy Constructor.
      * @param pList The list to associate the Transaction Type with
      * @param pTransType The Transaction Type to copy
      */
@@ -84,7 +84,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Construct a standard Transaction type on load.
+     * Basic Constructor.
      * @param pList The list to associate the Transaction Type with
      * @param sName Name of Transaction Type
      * @throws JDataException on error
@@ -95,7 +95,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     }
 
     /**
-     * Construct a standard transaction type on load.
+     * Open Constructor.
      * @param pList The list to associate the Transaction Type with
      * @param uId ID of Transaction Type
      * @param isEnabled is the TransType enabled
@@ -105,16 +105,16 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
      * @throws JDataException on error
      */
     private TransactionType(final TransTypeList pList,
-                            final int uId,
-                            final boolean isEnabled,
-                            final int uOrder,
+                            final Integer uId,
+                            final Boolean isEnabled,
+                            final Integer uOrder,
                             final String pName,
                             final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard Transaction type on load.
+     * Secure Constructor.
      * @param pList The list to associate the Transaction Type with
      * @param uId ID of Transaction Type
      * @param uControlId the control id of the new item
@@ -125,10 +125,10 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
      * @throws JDataException on error
      */
     private TransactionType(final TransTypeList pList,
-                            final int uId,
-                            final int uControlId,
-                            final boolean isEnabled,
-                            final int uOrder,
+                            final Integer uId,
+                            final Integer uControlId,
+                            final Boolean isEnabled,
+                            final Integer uOrder,
                             final byte[] pName,
                             final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
@@ -488,7 +488,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @return the newly added item
          */
         @Override
-        public TransactionType addNewItem(final DataItem pItem) {
+        public TransactionType addCopyItem(final DataItem pItem) {
             /* Can only clone a TransactionType */
             if (!(pItem instanceof TransactionType)) {
                 return null;
@@ -521,7 +521,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @param pTransType the Name of the transaction type
          * @throws JDataException on error
          */
-        public void addItem(final String pTransType) throws JDataException {
+        public void addBasicItem(final String pTransType) throws JDataException {
             /* Create a new Transaction Type */
             TransactionType myTransType = new TransactionType(this, pTransType);
 
@@ -556,9 +556,9 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @param pDesc the Description of the transaction type
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final boolean isEnabled,
-                                final int uOrder,
+        public void addOpenItem(final Integer uId,
+                                final Boolean isEnabled,
+                                final Integer uOrder,
                                 final String pTranType,
                                 final String pDesc) throws JDataException {
             /* Create a new Transaction Type */
@@ -591,10 +591,10 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
          * @param pDesc the Encrypted Description of the transaction type
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final boolean isEnabled,
-                                  final int uOrder,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Boolean isEnabled,
+                                  final Integer uOrder,
                                   final byte[] pTransType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Transaction Type */

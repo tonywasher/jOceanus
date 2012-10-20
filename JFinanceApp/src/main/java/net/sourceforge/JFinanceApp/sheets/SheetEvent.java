@@ -26,12 +26,10 @@ import java.util.Date;
 
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.StaticData;
 import net.sourceforge.JDataModels.data.TaskControl;
 import net.sourceforge.JDataModels.sheets.SheetDataItem;
 import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
-import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
 import net.sourceforge.JFinanceApp.data.Account;
 import net.sourceforge.JFinanceApp.data.Event;
 import net.sourceforge.JFinanceApp.data.Event.EventList;
@@ -55,69 +53,54 @@ public class SheetEvent extends SheetDataItem<Event> {
     private static final String AREA_EVENTS = Event.LIST_NAME;
 
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 10;
-
-    /**
-     * ControlKey column.
-     */
-    private static final int COL_CONTROL = 1;
-
-    /**
      * Date column.
      */
-    private static final int COL_DATE = 2;
+    private static final int COL_DATE = COL_CONTROLID + 1;
 
     /**
      * Description column.
      */
-    private static final int COL_DESC = 3;
+    private static final int COL_DESC = COL_DATE + 1;
 
     /**
      * Amount column.
      */
-    private static final int COL_AMOUNT = 4;
+    private static final int COL_AMOUNT = COL_DESC + 1;
 
     /**
      * Debit column.
      */
-    private static final int COL_DEBIT = 5;
+    private static final int COL_DEBIT = COL_AMOUNT + 1;
 
     /**
      * Credit column.
      */
-    private static final int COL_CREDIT = 6;
+    private static final int COL_CREDIT = COL_DEBIT + 1;
 
     /**
      * Units column.
      */
-    private static final int COL_UNITS = 7;
+    private static final int COL_UNITS = COL_CREDIT + 1;
 
     /**
      * Dilution column.
      */
-    private static final int COL_DILUTION = 8;
+    private static final int COL_DILUTION = COL_UNITS + 1;
 
     /**
      * TransType column.
      */
-    private static final int COL_TRAN = 9;
+    private static final int COL_TRAN = COL_DILUTION + 1;
 
     /**
      * TaxCredit column.
      */
-    private static final int COL_TAXCRED = 10;
+    private static final int COL_TAXCRED = COL_TRAN + 1;
 
     /**
      * Years column.
      */
-    private static final int COL_YEARS = 11;
-
-    /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one.
-     */
-    private final boolean isBackup;
+    private static final int COL_YEARS = COL_TAXCRED + 1;
 
     /**
      * Events data list.
@@ -131,9 +114,6 @@ public class SheetEvent extends SheetDataItem<Event> {
     protected SheetEvent(final FinanceReader pReader) {
         /* Call super constructor */
         super(pReader, AREA_EVENTS);
-
-        /* Note whether this is a backup */
-        isBackup = (pReader.getType() == SheetType.BACKUP);
 
         /* Access the Lists */
         FinanceData myData = pReader.getData();
@@ -149,160 +129,133 @@ public class SheetEvent extends SheetDataItem<Event> {
         /* Call super constructor */
         super(pWriter, AREA_EVENTS);
 
-        /* Note whether this is a backup */
-        isBackup = (pWriter.getType() == SheetType.BACKUP);
-
         /* Access the Events list */
         theList = pWriter.getData().getEvents();
         setDataList(theList);
     }
 
     @Override
-    protected void loadItem() throws JDataException {
+    protected void loadSecureItem() throws JDataException {
+        /* Access the IDs */
+        int myID = loadInteger(COL_ID);
+        int myControlId = loadInteger(COL_CONTROLID);
+        int myDebitId = loadInteger(COL_DEBIT);
+        int myCreditId = loadInteger(COL_CREDIT);
+        int myTranId = loadInteger(COL_TRAN);
 
-        /* If this is a backup load */
-        if (isBackup) {
-            /* Access the IDs */
-            int myID = loadInteger(COL_ID);
-            int myControlId = loadInteger(COL_CONTROL);
-            int myDebitId = loadInteger(COL_DEBIT);
-            int myCreditId = loadInteger(COL_CREDIT);
-            int myTranId = loadInteger(COL_TRAN);
+        /* Access the date and years */
+        Date myDate = loadDate(COL_DATE);
+        Integer myYears = loadInteger(COL_YEARS);
 
-            /* Access the date and years */
-            Date myDate = loadDate(COL_DATE);
-            Integer myYears = loadInteger(COL_YEARS);
+        /* Access the binary values */
+        byte[] myDesc = loadBytes(COL_DESC);
+        byte[] myAmount = loadBytes(COL_AMOUNT);
+        byte[] myTaxCredit = loadBytes(COL_TAXCRED);
+        byte[] myUnits = loadBytes(COL_UNITS);
+        byte[] myDilution = loadBytes(COL_DILUTION);
 
-            /* Access the binary values */
-            byte[] myDesc = loadBytes(COL_DESC);
-            byte[] myAmount = loadBytes(COL_AMOUNT);
-            byte[] myTaxCredit = loadBytes(COL_TAXCRED);
-            byte[] myUnits = loadBytes(COL_UNITS);
-            byte[] myDilution = loadBytes(COL_DILUTION);
-
-            /* Load the item */
-            theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId,
-                                  myUnits, myTranId, myTaxCredit, myDilution, myYears);
-
-            /* else this is a load from an edit-able spreadsheet */
-        } else {
-            /* Access the Account */
-            int myID = loadInteger(COL_ID);
-            String myDebit = loadString(COL_DEBIT - 1);
-            String myCredit = loadString(COL_CREDIT - 1);
-            String myTransType = loadString(COL_TRAN - 1);
-
-            /* Access the date and name and description bytes */
-            Date myDate = loadDate(COL_DATE - 1);
-            Integer myYears = loadInteger(COL_YEARS - 1);
-
-            /* Access the binary values */
-            String myDesc = loadString(COL_DESC - 1);
-            String myAmount = loadString(COL_AMOUNT - 1);
-            String myUnits = loadString(COL_UNITS - 1);
-            String myTaxCredit = loadString(COL_TAXCRED - 1);
-            String myDilution = loadString(COL_DILUTION - 1);
-
-            /* Load the item */
-            theList.addOpenItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myUnits, myTransType,
-                                myTaxCredit, myDilution, myYears);
-        }
+        /* Load the item */
+        theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myUnits,
+                              myTranId, myTaxCredit, myDilution, myYears);
     }
 
     @Override
-    protected void insertItem(final Event pItem) throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
-            writeDate(COL_DATE, pItem.getDate());
-            writeInteger(COL_DEBIT, pItem.getDebit().getId());
-            writeInteger(COL_CREDIT, pItem.getCredit().getId());
-            writeInteger(COL_TRAN, pItem.getTransType().getId());
-            writeBytes(COL_DESC, pItem.getDescBytes());
-            writeBytes(COL_AMOUNT, pItem.getAmountBytes());
-            writeBytes(COL_UNITS, pItem.getUnitsBytes());
-            writeBytes(COL_DILUTION, pItem.getDilutionBytes());
-            writeBytes(COL_TAXCRED, pItem.getTaxCreditBytes());
-            writeInteger(COL_YEARS, pItem.getYears());
+    protected void loadOpenItem() throws JDataException {
+        /* Access the Account */
+        int myID = loadInteger(COL_ID);
+        String myDebit = loadString(COL_DEBIT);
+        String myCredit = loadString(COL_CREDIT);
+        String myTransType = loadString(COL_TRAN);
 
-            /* else we are creating an edit-able spreadsheet */
-        } else {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeDate(COL_DATE - 1, pItem.getDate());
-            writeString(COL_DESC - 1, pItem.getDesc());
-            writeNumber(COL_AMOUNT - 1, pItem.getAmount());
-            writeString(COL_DEBIT - 1, pItem.getDebit().getName());
-            writeString(COL_CREDIT - 1, pItem.getCredit().getName());
-            writeNumber(COL_UNITS - 1, pItem.getUnits());
-            writeNumber(COL_DILUTION - 1, pItem.getDilution());
-            writeString(COL_TRAN - 1, pItem.getTransType().getName());
-            writeNumber(COL_TAXCRED - 1, pItem.getTaxCredit());
-            writeInteger(COL_YEARS - 1, pItem.getYears());
-        }
+        /* Access the date and name and description bytes */
+        Date myDate = loadDate(COL_DATE);
+        Integer myYears = loadInteger(COL_YEARS);
+
+        /* Access the binary values */
+        String myDesc = loadString(COL_DESC);
+        String myAmount = loadString(COL_AMOUNT);
+        String myUnits = loadString(COL_UNITS);
+        String myTaxCredit = loadString(COL_TAXCRED);
+        String myDilution = loadString(COL_DILUTION);
+
+        /* Load the item */
+        theList.addOpenItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myUnits, myTransType,
+                            myTaxCredit, myDilution, myYears);
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-        /* Ignore if we are creating a backup */
-        if (isBackup) {
-            return;
-        }
+    protected void insertSecureItem(final Event pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeDate(COL_DATE, pItem.getDate());
+        writeInteger(COL_DEBIT, pItem.getDebit().getId());
+        writeInteger(COL_CREDIT, pItem.getCredit().getId());
+        writeInteger(COL_TRAN, pItem.getTransType().getId());
+        writeBytes(COL_DESC, pItem.getDescBytes());
+        writeBytes(COL_AMOUNT, pItem.getAmountBytes());
+        writeBytes(COL_UNITS, pItem.getUnitsBytes());
+        writeBytes(COL_DILUTION, pItem.getDilutionBytes());
+        writeBytes(COL_TAXCRED, pItem.getTaxCreditBytes());
+        writeInteger(COL_YEARS, pItem.getYears());
+    }
 
-        /* Create a new row */
-        newRow();
+    @Override
+    protected void insertOpenItem(final Event pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeDate(COL_DATE, pItem.getDate());
+        writeString(COL_DESC, pItem.getDesc());
+        writeNumber(COL_AMOUNT, pItem.getAmount());
+        writeString(COL_DEBIT, pItem.getDebit().getName());
+        writeString(COL_CREDIT, pItem.getCredit().getName());
+        writeNumber(COL_UNITS, pItem.getUnits());
+        writeNumber(COL_DILUTION, pItem.getDilution());
+        writeString(COL_TRAN, pItem.getTransType().getName());
+        writeNumber(COL_TAXCRED, pItem.getTaxCredit());
+        writeInteger(COL_YEARS, pItem.getYears());
+    }
 
+    @Override
+    protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
-        writeHeader(COL_DATE - 1, Event.FIELD_DATE.getName());
-        writeHeader(COL_DESC - 1, Event.FIELD_DESC.getName());
-        writeHeader(COL_AMOUNT - 1, Event.FIELD_AMOUNT.getName());
-        writeHeader(COL_DEBIT - 1, Event.FIELD_DEBIT.getName());
-        writeHeader(COL_CREDIT - 1, Event.FIELD_CREDIT.getName());
-        writeHeader(COL_UNITS - 1, Event.FIELD_UNITS.getName());
-        writeHeader(COL_DILUTION - 1, Event.FIELD_DILUTION.getName());
-        writeHeader(COL_TRAN - 1, Event.FIELD_TRNTYP.getName());
-        writeHeader(COL_TAXCRED - 1, Event.FIELD_TAXCREDIT.getName());
-        writeHeader(COL_YEARS - 1, Event.FIELD_YEARS.getName());
+        writeHeader(COL_DATE, Event.FIELD_DATE.getName());
+        writeHeader(COL_DESC, Event.FIELD_DESC.getName());
+        writeHeader(COL_AMOUNT, Event.FIELD_AMOUNT.getName());
+        writeHeader(COL_DEBIT, Event.FIELD_DEBIT.getName());
+        writeHeader(COL_CREDIT, Event.FIELD_CREDIT.getName());
+        writeHeader(COL_UNITS, Event.FIELD_UNITS.getName());
+        writeHeader(COL_DILUTION, Event.FIELD_DILUTION.getName());
+        writeHeader(COL_TRAN, Event.FIELD_TRNTYP.getName());
+        writeHeader(COL_TAXCRED, Event.FIELD_TAXCREDIT.getName());
+        writeHeader(COL_YEARS, Event.FIELD_YEARS.getName());
 
-        /* Adjust for Header */
-        adjustForHeader();
+        /* Set the Account column width */
+        setColumnWidth(COL_DESC, Event.DESCLEN);
+        setColumnWidth(COL_DEBIT, Account.NAMELEN);
+        setColumnWidth(COL_CREDIT, Account.NAMELEN);
+        setColumnWidth(COL_TRAN, StaticData.NAMELEN);
+
+        /* Set Number columns */
+        setDateColumn(COL_DATE);
+        setMoneyColumn(COL_AMOUNT);
+        setUnitsColumn(COL_UNITS);
+        setDilutionColumn(COL_DILUTION);
+        setMoneyColumn(COL_TAXCRED);
+        setIntegerColumn(COL_YEARS);
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the twelve columns as the range */
-            nameRange(NUM_COLS);
+        /* Set the range */
+        nameRange(COL_YEARS);
 
-            /* else this is an edit-able spreadsheet */
-        } else {
-            /* Set the eleven columns as the range */
-            nameRange(NUM_COLS - 1);
-
-            /* Hide the ID column */
-            setHiddenColumn(COL_ID);
-            setIntegerColumn(COL_ID);
-
-            /* Set the Account column width */
-            setColumnWidth(COL_DESC - 1, Event.DESCLEN);
-            setColumnWidth(COL_DEBIT - 1, Account.NAMELEN);
-            applyDataValidation(COL_DEBIT - 1, SheetAccount.AREA_ACCOUNTNAMES);
-            setColumnWidth(COL_CREDIT - 1, Account.NAMELEN);
-            applyDataValidation(COL_CREDIT - 1, SheetAccount.AREA_ACCOUNTNAMES);
-            setColumnWidth(COL_TRAN - 1, StaticData.NAMELEN);
-            applyDataValidation(COL_TRAN - 1, SheetTransactionType.AREA_TRANSTYPENAMES);
-
-            /* Set Number columns */
-            setDateColumn(COL_DATE - 1);
-            setMoneyColumn(COL_AMOUNT - 1);
-            setUnitsColumn(COL_UNITS - 1);
-            setDilutionColumn(COL_DILUTION - 1);
-            setMoneyColumn(COL_TAXCRED - 1);
-            setIntegerColumn(COL_YEARS - 1);
+        /* If we are not creating a backup */
+        if (!isBackup()) {
+            /* Apply validation */
+            applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
+            applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
+            applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
         }
     }
 

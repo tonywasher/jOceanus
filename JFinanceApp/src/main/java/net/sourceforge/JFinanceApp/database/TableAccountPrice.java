@@ -80,8 +80,8 @@ public class TableAccountPrice extends TableEncrypted<AccountPrice> {
     }
 
     @Override
-    protected void loadItem(final int pId,
-                            final int pControlId) throws JDataException {
+    protected void loadItem(final Integer pId,
+                            final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         int myAccountId = myTableDef.getIntegerValue(AccountPrice.FIELD_ACCOUNT);

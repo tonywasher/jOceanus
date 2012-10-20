@@ -60,15 +60,15 @@ public abstract class TableDataInfo<T extends DataInfo<T, ?, ?>> extends TableEn
      * @param pValue the value
      * @throws JDataException on error
      */
-    protected abstract void loadTheItem(final int pId,
-                                        final int pControlId,
-                                        final int pInfoTypeId,
-                                        final int pOwnerId,
+    protected abstract void loadTheItem(final Integer pId,
+                                        final Integer pControlId,
+                                        final Integer pInfoTypeId,
+                                        final Integer pOwnerId,
                                         final byte[] pValue) throws JDataException;
 
     @Override
-    protected void loadItem(final int pId,
-                            final int pControlId) throws JDataException {
+    protected void loadItem(final Integer pId,
+                            final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         int myInfoType = myTableDef.getIntegerValue(DataInfo.FIELD_INFOTYPE);

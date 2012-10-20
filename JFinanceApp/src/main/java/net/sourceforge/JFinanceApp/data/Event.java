@@ -723,7 +723,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * Construct a copy of an Event.
+     * Copy Constructor.
      * @param pList the event list
      * @param pEvent The Event to copy
      */
@@ -762,7 +762,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * Standard constructor for a newly inserted event.
+     * Edit constructor.
      * @param pList the list
      */
     public Event(final EncryptedList<? extends Event> pList) {
@@ -776,7 +776,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * constructor for load from encrypted.
+     * Secure constructor.
      * @param pList the list
      * @param uId the id
      * @param uControlId the controlId
@@ -793,13 +793,13 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @throws JDataException on error
      */
     protected Event(final EncryptedList<? extends Event> pList,
-                    final int uId,
-                    final int uControlId,
+                    final Integer uId,
+                    final Integer uControlId,
                     final Date pDate,
                     final byte[] pDesc,
-                    final int uDebit,
-                    final int uCredit,
-                    final int uTransType,
+                    final Integer uDebit,
+                    final Integer uCredit,
+                    final Integer uTransType,
                     final byte[] pAmount,
                     final byte[] pUnits,
                     final byte[] pTaxCredit,
@@ -867,7 +867,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * Standard constructor.
+     * Open constructor.
      * @param pList the list
      * @param uId the id
      * @param pDate the date
@@ -883,7 +883,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      * @throws JDataException on error
      */
     protected Event(final EncryptedList<? extends Event> pList,
-                    final int uId,
+                    final Integer uId,
                     final Date pDate,
                     final String pDesc,
                     final Account pDebit,
@@ -1945,7 +1945,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         public EventList getViewList() {
             /* Build an empty List */
             EventList myList = getEmptyList();
-            myList.setStyle(ListStyle.VIEW);
+            myList.setStyle(ListStyle.COPY);
 
             /* Return it */
             return myList;
@@ -2049,7 +2049,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @return the newly added item
          */
         @Override
-        public Event addNewItem(final DataItem pItem) {
+        public Event addCopyItem(final DataItem pItem) {
             if (pItem instanceof Event) {
                 Event myEvent = new Event(this, (Event) pItem);
                 add(myEvent);
@@ -2094,7 +2094,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @param pYears the years
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
+        public void addOpenItem(final Integer uId,
                                 final Date pDate,
                                 final String pDesc,
                                 final String pAmount,
@@ -2166,15 +2166,15 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          * @param pYears the years
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
                                   final Date pDate,
                                   final byte[] pDesc,
                                   final byte[] pAmount,
-                                  final int uDebitId,
-                                  final int uCreditId,
+                                  final Integer uDebitId,
+                                  final Integer uCreditId,
                                   final byte[] pUnits,
-                                  final int uTransId,
+                                  final Integer uTransId,
                                   final byte[] pTaxCredit,
                                   final byte[] pDilution,
                                   final Integer pYears) throws JDataException {

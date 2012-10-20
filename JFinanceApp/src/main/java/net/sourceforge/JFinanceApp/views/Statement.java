@@ -419,7 +419,7 @@ public class Statement implements JDataContents {
         }
 
         @Override
-        public StatementLine addNewItem(final DataItem pElement) {
+        public StatementLine addCopyItem(final DataItem pElement) {
             /* Can only clone a StatementLine */
             if (!(pElement instanceof StatementLine)) {
                 return null;

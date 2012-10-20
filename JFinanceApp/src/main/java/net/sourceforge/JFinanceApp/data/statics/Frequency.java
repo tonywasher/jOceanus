@@ -69,7 +69,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
     }
 
     /**
-     * Construct a copy of a Frequency.
+     * Copy Constructor.
      * @param pList The list to associate the Frequency with
      * @param pFrequency The frequency to copy
      */
@@ -79,7 +79,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
     }
 
     /**
-     * Construct a standard Frequency on load.
+     * Basic Constructor.
      * @param pList The list to associate the Frequency with
      * @param sName Name of Frequency
      * @throws JDataException on error
@@ -90,7 +90,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
     }
 
     /**
-     * Construct a standard frequency on load.
+     * Open Constructor.
      * @param pList The list to associate the Frequency with
      * @param uId ID of Frequency
      * @param isEnabled is the frequency enabled
@@ -100,16 +100,16 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
      * @throws JDataException on error
      */
     private Frequency(final FrequencyList pList,
-                      final int uId,
-                      final boolean isEnabled,
-                      final int uOrder,
+                      final Integer uId,
+                      final Boolean isEnabled,
+                      final Integer uOrder,
                       final String pName,
                       final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard Frequency on load.
+     * Secure Constructor.
      * @param pList The list to associate the Frequency with
      * @param uId ID of Frequency
      * @param uControlId the control id of the new item
@@ -120,10 +120,10 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
      * @throws JDataException on error
      */
     private Frequency(final FrequencyList pList,
-                      final int uId,
-                      final int uControlId,
-                      final boolean isEnabled,
-                      final int uOrder,
+                      final Integer uId,
+                      final Integer uControlId,
+                      final Boolean isEnabled,
+                      final Integer uOrder,
                       final byte[] pName,
                       final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
@@ -204,7 +204,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @return the newly added item
          */
         @Override
-        public Frequency addNewItem(final DataItem pItem) {
+        public Frequency addCopyItem(final DataItem pItem) {
             /* Can only clone a Frequency */
             if (!(pItem instanceof Frequency)) {
                 return null;
@@ -229,7 +229,7 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @param pFrequency the Name of the frequency
          * @throws JDataException on error
          */
-        public void addItem(final String pFrequency) throws JDataException {
+        public void addBasicItem(final String pFrequency) throws JDataException {
             /* Create a new Frequency */
             Frequency myFrequency = new Frequency(this, pFrequency);
 
@@ -264,9 +264,9 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @param pDesc the Description of the frequency
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final boolean isEnabled,
-                                final int uOrder,
+        public void addOpenItem(final Integer uId,
+                                final Boolean isEnabled,
+                                final Integer uOrder,
                                 final String pFrequency,
                                 final String pDesc) throws JDataException {
             /* Create a new Frequency */
@@ -299,10 +299,10 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
          * @param pDesc the Encrypted Description of the frequency
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final boolean isEnabled,
-                                  final int uOrder,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Boolean isEnabled,
+                                  final Integer uOrder,
                                   final byte[] pFrequency,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Frequency */

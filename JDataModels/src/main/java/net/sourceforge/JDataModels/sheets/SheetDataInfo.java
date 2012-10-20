@@ -32,29 +32,19 @@ import net.sourceforge.JDataModels.data.DataInfo;
  */
 public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?>> extends SheetDataItem<T> {
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 6;
-
-    /**
-     * ControlId column.
-     */
-    private static final int COL_CONTROL = 1;
-
-    /**
      * InfoType column.
      */
-    private static final int COL_INFOTYPE = 2;
+    private static final int COL_INFOTYPE = COL_CONTROLID + 1;
 
     /**
      * Owner column.
      */
-    private static final int COL_OWNER = 3;
+    private static final int COL_OWNER = COL_INFOTYPE + 1;
 
     /**
      * Value column.
      */
-    private static final int COL_VALUE = 4;
+    private static final int COL_VALUE = COL_OWNER + 1;
 
     /**
      * Load the Static Data from backup.
@@ -65,10 +55,10 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?>> extends SheetDa
      * @param pValue the value
      * @throws JDataException on error
      */
-    protected abstract void loadEncryptedItem(final int pId,
-                                              final int pControlId,
-                                              final int pInfoTypeId,
-                                              final int pOwnerId,
+    protected abstract void loadEncryptedItem(final Integer pId,
+                                              final Integer pControlId,
+                                              final Integer pInfoTypeId,
+                                              final Integer pOwnerId,
                                               final byte[] pValue) throws JDataException;
 
     /**
@@ -94,10 +84,10 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?>> extends SheetDa
     }
 
     @Override
-    protected void loadItem() throws JDataException {
+    protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
         int myID = loadInteger(COL_ID);
-        int myControlId = loadInteger(COL_CONTROL);
+        int myControlId = loadInteger(COL_CONTROLID);
         int myInfoTypeId = loadInteger(COL_INFOTYPE);
         int myOwnerId = loadInteger(COL_OWNER);
 
@@ -109,22 +99,18 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?>> extends SheetDa
     }
 
     @Override
-    protected void insertItem(final T pItem) throws JDataException {
+    protected void insertSecureItem(final T pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROL, pItem.getControlKey().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
         writeInteger(COL_INFOTYPE, pItem.getInfoTypeId());
         writeInteger(COL_OWNER, pItem.getOwnerId());
         writeBytes(COL_VALUE, pItem.getValueBytes());
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-    }
-
-    @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* Set the five columns as the range */
-        nameRange(NUM_COLS);
+        /* Set the range */
+        nameRange(COL_VALUE);
     }
 }

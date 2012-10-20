@@ -62,7 +62,7 @@ public class TableControl extends DatabaseTable<ControlData> {
     }
 
     @Override
-    protected void loadItem(final int pId) throws JDataException {
+    protected void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         int myVers = myTableDef.getIntegerValue(ControlData.FIELD_VERSION);

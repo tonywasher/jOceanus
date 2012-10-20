@@ -349,7 +349,7 @@ public class ViewPrice extends AccountPrice {
         }
 
         @Override
-        public ViewPrice addNewItem(final DataItem pElement) {
+        public ViewPrice addCopyItem(final DataItem pElement) {
             throw new UnsupportedOperationException();
         }
 

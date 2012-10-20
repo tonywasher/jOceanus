@@ -428,7 +428,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     /**
-     * Construct a copy of a Static data.
+     * Copy Constructor.
      * @param pList The list to associate the Static Data with
      * @param pSource The static data to copy
      */
@@ -439,7 +439,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     /**
-     * Initial constructor for unencrypted data.
+     * Basic Constructor.
      * @param pList The list to associate the Static Data with
      * @param pValue the name of the new item
      * @throws JDataException on error
@@ -459,7 +459,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     /**
-     * Clear Text constructor.
+     * Open constructor.
      * @param pList The list to associate the Static Data with
      * @param uId the id of the new item
      * @param isEnabled is the account type enabled
@@ -469,9 +469,9 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @throws JDataException on error
      */
     protected StaticData(final StaticList<T, E> pList,
-                         final int uId,
-                         final boolean isEnabled,
-                         final int uOrder,
+                         final Integer uId,
+                         final Boolean isEnabled,
+                         final Integer uOrder,
                          final String pValue,
                          final String pDesc) throws JDataException {
         /* Call super constructor */
@@ -497,7 +497,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     /**
-     * Encrypted constructor.
+     * Secure constructor.
      * @param pList The list to associate the Static Data with
      * @param uId the id of the new item
      * @param uControlId the control id of the new item
@@ -508,10 +508,10 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @throws JDataException on error
      */
     protected StaticData(final StaticList<T, E> pList,
-                         final int uId,
-                         final int uControlId,
-                         final boolean isEnabled,
-                         final int uOrder,
+                         final Integer uId,
+                         final Integer uControlId,
+                         final Boolean isEnabled,
+                         final Integer uOrder,
                          final byte[] pValue,
                          final byte[] pDesc) throws JDataException {
         /* Call super constructor */
@@ -782,7 +782,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
          * @param iOrder the order to check for
          * @return The # of instances of the order
          */
-        protected int countInstances(final int iOrder) {
+        protected int countInstances(final Integer iOrder) {
             /* Access the iterator */
             Iterator<T> myIterator = iterator();
             int iCount = 0;

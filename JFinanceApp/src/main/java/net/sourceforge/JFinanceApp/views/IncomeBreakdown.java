@@ -581,7 +581,7 @@ public class IncomeBreakdown implements JDataContents {
                 /* else we need to record the event */
             } else {
                 /* Add a copy of the event to the list */
-                theEvents.addNewItem(pEvent);
+                theEvents.addCopyItem(pEvent);
             }
         }
 

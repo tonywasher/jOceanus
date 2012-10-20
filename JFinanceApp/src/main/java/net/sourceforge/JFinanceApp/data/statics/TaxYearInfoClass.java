@@ -34,102 +34,102 @@ public enum TaxYearInfoClass implements StaticInterface {
     /**
      * Personal Allowance.
      */
-    ALLOWANCE(1, 0, DataType.MONEY),
+    Allowance(1, 0, DataType.MONEY),
 
     /**
      * Low Tax Band.
      */
-    LOTAXBAND(2, 1, DataType.MONEY),
+    LoTaxBand(2, 1, DataType.MONEY),
 
     /**
      * Basic Tax Band.
      */
-    BASICTAXBAND(3, 2, DataType.MONEY),
+    BasicTaxBand(3, 2, DataType.MONEY),
 
     /**
      * Rental Allowance.
      */
-    RENTALALLOW(4, 3, DataType.MONEY),
+    RentalAllow(4, 3, DataType.MONEY),
 
     /**
      * Capital Allowance.
      */
-    CAPITALALLOW(5, 4, DataType.MONEY),
+    CapitalAllow(5, 4, DataType.MONEY),
 
     /**
      * Low Age Allowance.
      */
-    LOAGEALLOW(6, 5, DataType.MONEY),
+    LoAgeAllow(6, 5, DataType.MONEY),
 
     /**
      * High Age Allowance.
      */
-    HIAGEALLOW(7, 6, DataType.MONEY),
+    HiAgeAllow(7, 6, DataType.MONEY),
 
     /**
      * Age Allowance Limit.
      */
-    AGEALLOWLIMIT(8, 7, DataType.MONEY),
+    AgeAllowLimit(8, 7, DataType.MONEY),
 
     /**
      * Additional Allowance Limit.
      */
-    ADDALLOWLIMIT(9, 8, DataType.MONEY),
+    AddAllowLimit(9, 8, DataType.MONEY),
 
     /**
      * Additional Income Threshold.
      */
-    ADDINCOMETHOLD(10, 9, DataType.MONEY),
+    AddIncomeThold(10, 9, DataType.MONEY),
 
     /**
      * Low Tax Rate.
      */
-    LOTAXRATE(11, 10, DataType.RATE),
+    LoTaxRate(11, 10, DataType.RATE),
 
     /**
      * Basic Tax Rate.
      */
-    BASICTAXRATE(12, 11, DataType.RATE),
+    BasicTaxRate(12, 11, DataType.RATE),
 
     /**
      * High Tax Rate.
      */
-    HITAXRATE(13, 12, DataType.RATE),
+    HiTaxRate(13, 12, DataType.RATE),
 
     /**
      * Interest Tax Rate.
      */
-    INTTAXRATE(14, 13, DataType.RATE),
+    IntTaxRate(14, 13, DataType.RATE),
 
     /**
      * Dividend Tax Rate.
      */
-    DIVTAXRATE(15, 14, DataType.RATE),
+    DivTaxRate(15, 14, DataType.RATE),
 
     /**
      * High Dividend Tax Rate.
      */
-    HIDIVTAXRATE(16, 15, DataType.RATE),
+    HiDivTaxRate(16, 15, DataType.RATE),
 
     /**
      * Additional Tax Rate.
      */
-    ADDTAXRATE(17, 16, DataType.RATE),
+    AddTaxRate(17, 16, DataType.RATE),
 
     /**
      * Additional Dividend Tax Rate.
      */
-    ADDDIVTAXRATE(18, 17, DataType.RATE),
+    AddDivTaxRate(18, 17, DataType.RATE),
 
     /**
      * Capital Tax Rate.
      */
-    CAPTAXRATE(19, 18, DataType.RATE),
+    CapTaxRate(19, 18, DataType.RATE),
 
     /**
      * High Capital Tax Rate.
      */
-    HICAPTAXRATE(20, 19, DataType.RATE);
+    HiCapTaxRate(20, 19, DataType.RATE);
 
     /**
      * Class Id.

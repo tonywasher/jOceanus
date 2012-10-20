@@ -61,7 +61,7 @@ public class TableControlKeys extends DatabaseTable<ControlKey> {
     }
 
     @Override
-    protected void loadItem(final int pId) throws JDataException {
+    protected void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         byte[] myHash = myTableDef.getBinaryValue(ControlKey.FIELD_PASSHASH);

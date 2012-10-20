@@ -38,14 +38,9 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     private static final String SHEET_NAME = ControlKey.class.getSimpleName();
 
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 2;
-
-    /**
      * KeyData column.
      */
-    private static final int COL_KEYDATA = 1;
+    private static final int COL_KEYDATA = COL_ID + 1;
 
     /**
      * ControlKey data list.
@@ -80,9 +75,9 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     }
 
     @Override
-    protected void loadItem() throws JDataException {
+    protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
-        int myID = loadInteger(COL_ID);
+        Integer myID = loadInteger(COL_ID);
 
         /* Access the binary values */
         byte[] myHash = loadBytes(COL_KEYDATA);
@@ -92,19 +87,15 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     }
 
     @Override
-    protected void insertItem(final ControlKey pItem) throws JDataException {
+    protected void insertSecureItem(final ControlKey pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
         writeBytes(COL_KEYDATA, pItem.getHashBytes());
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-    }
-
-    @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* Set the two columns as the range */
-        nameRange(NUM_COLS);
+        /* Set the range */
+        nameRange(COL_KEYDATA);
     }
 }

@@ -26,6 +26,7 @@ import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataManager.JDataFields;
 import net.sourceforge.JDataManager.JDataFields.JDataField;
 import net.sourceforge.JDataManager.ValueSet;
+import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.JGordianKnot.EncryptedValueSet;
 
 /**
@@ -101,6 +102,14 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
+     * Obtain Value as underlying object.
+     * @return the Value
+     */
+    public EncryptedField<?> getField() {
+        return getField(getValueSet());
+    }
+
+    /**
      * Obtain Encrypted Bytes.
      * @return the Bytes
      */
@@ -151,6 +160,15 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     public static <X> X getValue(final EncryptedValueSet pValueSet,
                                  final Class<X> pClass) {
         return pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
+    }
+
+    /**
+     * Obtain Value as encrypted field.
+     * @param pValueSet the valueSet
+     * @return the Value
+     */
+    public static EncryptedField<?> getField(final EncryptedValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
     }
 
     /**
@@ -208,7 +226,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
-     * Construct a copy of a DataInfo.
+     * Copy Constructor.
      * @param pList the list
      * @param pInfo The Info to copy
      */
@@ -219,7 +237,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
-     * Construct a new DataInfo.
+     * Edit Constructor.
      * @param pList the list
      */
     protected DataInfo(final DataInfoList<?, O, I> pList) {
@@ -228,7 +246,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
-     * Encrypted constructor.
+     * Secure constructor.
      * @param pList the list
      * @param uId the id
      * @param uControlId the control id

@@ -86,8 +86,8 @@ public class TableEvent extends TableEncrypted<Event> {
 
     /* Load the event */
     @Override
-    protected void loadItem(final int pId,
-                            final int pControlId) throws JDataException {
+    protected void loadItem(final Integer pId,
+                            final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Date myDate = myTableDef.getDateValue(Event.FIELD_DATE);

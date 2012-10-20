@@ -328,7 +328,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     }
 
     /**
-     * Construct a copy of a Rate Period.
+     * Copy Constructor.
      * @param pList the list
      * @param pPeriod The Period to copy
      */
@@ -339,7 +339,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     }
 
     /**
-     * Constructor.
+     * Edit Constructor.
      * @param pList the list
      */
     public AccountRate(final AccountRateList pList) {
@@ -348,7 +348,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     }
 
     /**
-     * Constructor.
+     * Open Constructor.
      * @param pList the list
      * @param uId the id
      * @param pAccount the account
@@ -358,7 +358,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @throws JDataException on error
      */
     private AccountRate(final AccountRateList pList,
-                        final int uId,
+                        final Integer uId,
                         final Account pAccount,
                         final Date pEndDate,
                         final String pRate,
@@ -398,7 +398,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     }
 
     /**
-     * Constructor.
+     * Secure Constructor.
      * @param pList the list
      * @param uId the id
      * @param uControlId the control id
@@ -409,9 +409,9 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
      * @throws JDataException on error
      */
     private AccountRate(final AccountRateList pList,
-                        final int uId,
-                        final int uControlId,
-                        final int uAccountId,
+                        final Integer uId,
+                        final Integer uControlId,
+                        final Integer uAccountId,
                         final Date pEndDate,
                         final byte[] pRate,
                         final byte[] pBonus) throws JDataException {
@@ -744,7 +744,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          * @return the newly added item
          */
         @Override
-        public AccountRate addNewItem(final DataItem pRate) {
+        public AccountRate addCopyItem(final DataItem pRate) {
             /* Can only clone an AccountRate */
             if (!(pRate instanceof AccountRate)) {
                 return null;
@@ -848,7 +848,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          * @param pBonus the Bonus
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
+        public void addOpenItem(final Integer uId,
                                 final String pAccount,
                                 final String pRate,
                                 final Date pDate,
@@ -895,9 +895,9 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          * @param pBonus the Bonus
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final int uAccountId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Integer uAccountId,
                                   final byte[] pRate,
                                   final Date pDate,
                                   final byte[] pBonus) throws JDataException {

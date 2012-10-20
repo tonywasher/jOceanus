@@ -314,7 +314,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
      * Set Max Id.
      * @param uMaxId the Maximum Id
      */
-    public void setMaxId(final int uMaxId) {
+    public void setMaxId(final Integer uMaxId) {
         theMgr.setMaxId(uMaxId);
     }
 
@@ -344,7 +344,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
      */
     protected DataList(final DataList<T> pSource) {
         super(pSource.getBaseClass(), new IdManager<T>(pSource.getGranularity()));
-        theStyle = ListStyle.VIEW;
+        theStyle = ListStyle.COPY;
         theMgr = (IdManager<T>) getIndex();
         theBase = pSource;
         theDataSet = pSource.getDataSet();
@@ -425,7 +425,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
             }
 
             /* Copy the item */
-            DataItem myItem = pList.addNewItem(myCurr);
+            DataItem myItem = pList.addCopyItem(myCurr);
 
             /* If this is a Clone list */
             if (isClone) {
@@ -463,7 +463,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
             /* If the item does not exist */
             if (myItem == null) {
                 /* Insert a new item */
-                myItem = myList.addNewItem(myCurr);
+                myItem = myList.addCopyItem(myCurr);
                 myItem.getValueSet().setVersion(1);
 
                 /* else the item exists in the old list */
@@ -471,7 +471,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
                 /* If the item has changed */
                 if (!myCurr.equals(myItem)) {
                     /* Copy the item */
-                    DataItem myNew = myList.addNewItem(myCurr);
+                    DataItem myNew = myList.addCopyItem(myCurr);
                     myNew.setBase(myItem);
 
                     /* Ensure that we record the correct history */
@@ -490,7 +490,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
         while (myIterator.hasNext()) {
             /* Insert a new item */
             DataItem myCurr = myIterator.next();
-            DataItem myItem = myList.addNewItem(myCurr);
+            DataItem myItem = myList.addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.getValueSet().setDeletion(true);
         }
@@ -552,7 +552,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
         while (myIterator.hasNext()) {
             /* Insert a new item */
             T myCurr = myIterator.next();
-            T myItem = addNewItem(myCurr);
+            T myItem = addCopyItem(myCurr);
             myItem.setBase(null);
             myItem.getValueSet().setDeletion(true);
         }
@@ -563,7 +563,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
      * @param uId the Id to check
      * @return Whether the id is unique <code>true/false</code>
      */
-    public boolean isIdUnique(final int uId) {
+    public boolean isIdUnique(final Integer uId) {
         /* Ask the Id Manager for the answer */
         return theMgr.isIdUnique(uId);
     }
@@ -736,11 +736,11 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
     }
 
     /**
-     * Create a new element in the core list from an edit session (to be over-written).
+     * Create a new element in the list copied from another element (to be over-written).
      * @param pElement - element to base new item on
      * @return the newly allocated item
      */
-    public abstract T addNewItem(final DataItem pElement);
+    public abstract T addCopyItem(final DataItem pElement);
 
     /**
      * Create a new empty element in the edit list (to be over-written).
@@ -819,11 +819,6 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
          * List of changes to be applied to database.
          */
         UPDATE,
-
-        /**
-         * Temporary View for validation purposes.
-         */
-        VIEW,
 
         /**
          * List of differences.

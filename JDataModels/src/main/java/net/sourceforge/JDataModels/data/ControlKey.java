@@ -218,7 +218,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
     }
 
     /**
-     * Construct a copy of a ControlKey.
+     * Copy Constructor.
      * @param pList the list the copy belongs to
      * @param pSource The Key to copy
      */
@@ -241,14 +241,14 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
     }
 
     /**
-     * Constructor for loading an encrypted ControlKey.
+     * Secure Constructor.
      * @param pList the list to which to add the key to
      * @param uId the id of the ControlKey
      * @param pHashBytes the hash bytes
      * @throws JDataException on error
      */
     private ControlKey(final ControlKeyList pList,
-                       final int uId,
+                       final Integer uId,
                        final byte[] pHashBytes) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
@@ -530,7 +530,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
         }
 
         @Override
-        public ControlKey addNewItem(final DataItem pItem) {
+        public ControlKey addCopyItem(final DataItem pItem) {
             /* Can only clone a ControlKey */
             if (!(pItem instanceof ControlKey)) {
                 return null;
@@ -554,7 +554,7 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
          * @return the new item
          * @throws JDataException on error
          */
-        public ControlKey addSecureItem(final int uId,
+        public ControlKey addSecureItem(final Integer uId,
                                         final byte[] pHashBytes) throws JDataException {
             /* Create the ControlKey */
             ControlKey myKey = new ControlKey(this, uId, pHashBytes);

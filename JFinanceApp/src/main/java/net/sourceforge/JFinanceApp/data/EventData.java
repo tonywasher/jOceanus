@@ -315,10 +315,10 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
      * @throws JDataException on error
      */
     private EventData(final EventDataList pList,
-                      final int uId,
-                      final int uControlId,
-                      final int uInfoTypeId,
-                      final int uEventId,
+                      final Integer uId,
+                      final Integer uControlId,
+                      final Integer uInfoTypeId,
+                      final Integer uEventId,
                       final byte[] pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
@@ -665,10 +665,10 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
          * @param pValue the data
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final int uInfoTypeId,
-                                  final int uEventId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Integer uInfoTypeId,
+                                  final Integer uEventId,
                                   final byte[] pValue) throws JDataException {
             /* Create the info */
             EventData myInfo = new EventData(this, uId, uControlId, uInfoTypeId, uEventId, pValue);
@@ -707,7 +707,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
         }
 
         @Override
-        public EventData addNewItem(final DataItem pElement) {
+        public EventData addCopyItem(final DataItem pElement) {
             /* Can only clone an EventData */
             if (!(pElement instanceof EventData)) {
                 return null;

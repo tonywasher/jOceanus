@@ -84,10 +84,10 @@ public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
     }
 
     @Override
-    protected void loadEncryptedItem(final int pId,
-                                     final int pControlId,
-                                     final boolean isEnabled,
-                                     final int iOrder,
+    protected void loadEncryptedItem(final Integer pId,
+                                     final Integer pControlId,
+                                     final Boolean isEnabled,
+                                     final Integer iOrder,
                                      final byte[] pName,
                                      final byte[] pDesc) throws JDataException {
         /* Create the item */
@@ -95,9 +95,9 @@ public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
     }
 
     @Override
-    protected void loadClearTextItem(final int pId,
-                                     final boolean isEnabled,
-                                     final int iOrder,
+    protected void loadClearTextItem(final Integer pId,
+                                     final Boolean isEnabled,
+                                     final Integer iOrder,
                                      final String pName,
                                      final String pDesc) throws JDataException {
         /* Create the item */
@@ -158,7 +158,7 @@ public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
                     /* Ignore TaxRegime */
                     if (!TaxRegime.OBJECT_NAME.equals(myValue)) {
                         /* Add the value into the finance tables */
-                        myList.addItem(myValue);
+                        myList.addBasicItem(myValue);
                     }
 
                     /* Report the progress */

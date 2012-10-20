@@ -77,8 +77,8 @@ public class TableEventData extends TableEncrypted<EventData> {
     }
 
     @Override
-    protected void loadItem(final int pId,
-                            final int pControlId) throws JDataException {
+    protected void loadItem(final Integer pId,
+                            final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         int myInfoTypId = myTableDef.getIntegerValue(EventData.FIELD_INFOTYPE);

@@ -74,7 +74,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
     }
 
     /**
-     * Construct a copy of a Tax Type.
+     * Copy Constructor.
      * @param pList The list to associate the Tax Type with
      * @param pTaxType The Tax Type to copy
      */
@@ -84,7 +84,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
     }
 
     /**
-     * Construct a standard Tax type on load.
+     * Basic Constructor.
      * @param pList The list to associate the Tax Type with
      * @param sName Name of Tax Type
      * @throws JDataException on error
@@ -95,7 +95,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
     }
 
     /**
-     * Construct a standard tax type on load.
+     * Open Constructor.
      * @param pList The list to associate the Tax Type with
      * @param uId ID of TaxType
      * @param isEnabled is the TaxType enabled
@@ -105,16 +105,16 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
      * @throws JDataException on error
      */
     private TaxType(final TaxTypeList pList,
-                    final int uId,
-                    final boolean isEnabled,
-                    final int uOrder,
+                    final Integer uId,
+                    final Boolean isEnabled,
+                    final Integer uOrder,
                     final String pName,
                     final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
-     * Construct a standard TaxType on load.
+     * Secure Constructor.
      * @param pList The list to associate the TaxType with
      * @param uId ID of TaxType
      * @param uControlId the control id of the new item
@@ -125,10 +125,10 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
      * @throws JDataException on error
      */
     private TaxType(final TaxTypeList pList,
-                    final int uId,
-                    final int uControlId,
-                    final boolean isEnabled,
-                    final int uOrder,
+                    final Integer uId,
+                    final Integer uControlId,
+                    final Boolean isEnabled,
+                    final Integer uOrder,
                     final byte[] sName,
                     final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, sName, pDesc);
@@ -231,7 +231,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @return the newly added item
          */
         @Override
-        public TaxType addNewItem(final DataItem pItem) {
+        public TaxType addCopyItem(final DataItem pItem) {
             /* Can only clone a TaxType */
             if (!(pItem instanceof TaxType)) {
                 return null;
@@ -264,7 +264,7 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @param pTaxType the Name of the tax type
          * @throws JDataException on error
          */
-        public void addItem(final String pTaxType) throws JDataException {
+        public void addBasicItem(final String pTaxType) throws JDataException {
             /* Create a new Tax Type */
             TaxType myTaxType = new TaxType(this, pTaxType);
 
@@ -299,9 +299,9 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @param pDesc the Description of the tax type
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final boolean isEnabled,
-                                final int uOrder,
+        public void addOpenItem(final Integer uId,
+                                final Boolean isEnabled,
+                                final Integer uOrder,
                                 final String pTaxType,
                                 final String pDesc) throws JDataException {
             /* Create a new Tax Type */
@@ -334,10 +334,10 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
          * @param pDesc the Encrypted Description of the tax type
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final boolean isEnabled,
-                                  final int uOrder,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Boolean isEnabled,
+                                  final Integer uOrder,
                                   final byte[] pTaxType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Tax Type */

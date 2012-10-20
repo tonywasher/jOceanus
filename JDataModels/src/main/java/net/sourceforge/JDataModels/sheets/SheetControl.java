@@ -25,9 +25,7 @@ package net.sourceforge.JDataModels.sheets;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.ControlData;
 import net.sourceforge.JDataModels.data.ControlData.ControlDataList;
-import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
 
 /**
  * SheetDataItem extension for ControlData.
@@ -40,24 +38,14 @@ public class SheetControl extends SheetDataItem<ControlData> {
     private static final String SHEET_NAME = ControlData.class.getSimpleName();
 
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 3;
-
-    /**
      * Version column.
      */
-    private static final int COL_VERSION = 1;
+    private static final int COL_VERSION = COL_ID + 1;
 
     /**
      * ControlKey column.
      */
-    private static final int COL_CONTROL = 2;
-
-    /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one.
-     */
-    private boolean isBackup = false;
+    private static final int COL_CONTROLID = COL_VERSION + 1;
 
     /**
      * ControlData data list.
@@ -71,9 +59,6 @@ public class SheetControl extends SheetDataItem<ControlData> {
     protected SheetControl(final SheetReader<?> pReader) {
         /* Call super constructor */
         super(pReader, SHEET_NAME);
-
-        /* Note whether this is a backup */
-        isBackup = (pReader.getType() == SheetType.BACKUP);
 
         /* Access the Lists */
         DataSet<?> myData = pReader.getData();
@@ -89,91 +74,63 @@ public class SheetControl extends SheetDataItem<ControlData> {
         /* Call super constructor */
         super(pWriter, SHEET_NAME);
 
-        /* Note whether this is a backup */
-        isBackup = (pWriter.getType() == SheetType.BACKUP);
-
         /* Access the Control list */
         theList = pWriter.getData().getControlData();
         setDataList(theList);
     }
 
     @Override
-    protected void loadItem() throws JDataException {
-        /* If this is a backup */
-        if (isBackup) {
-            /* Access the IDs */
-            int myID = loadInteger(COL_ID);
-            int myVersion = loadInteger(COL_VERSION);
+    protected void loadSecureItem() throws JDataException {
+        /* Access the IDs */
+        Integer myID = loadInteger(COL_ID);
+        Integer myVersion = loadInteger(COL_VERSION);
 
-            /* Access the Control Key */
-            int myControl = loadInteger(COL_CONTROL);
+        /* Access the Control Key */
+        Integer myControl = loadInteger(COL_CONTROLID);
 
-            /* Add the Control */
-            theList.addSecureItem(myID, myVersion, myControl);
-
-            /* else this is plain text */
-        } else {
-            /* Access the Version */
-            int myID = loadInteger(COL_ID);
-            int myVersion = loadInteger(COL_VERSION);
-
-            /* Add the Control */
-            theList.addOpenItem(myID, myVersion);
-        }
+        /* Add the Control */
+        theList.addSecureItem(myID, myVersion, myControl);
     }
 
     @Override
-    protected void insertItem(final ControlData pItem) throws JDataException {
-        /* If this is a backup */
-        if (isBackup) {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeInteger(COL_VERSION, pItem.getDataVersion());
-            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
+    protected void loadOpenItem() throws JDataException {
+        /* Access the IDs */
+        Integer myID = loadInteger(COL_ID);
+        Integer myVersion = loadInteger(COL_VERSION);
 
-            /* else just write the data version */
-        } else {
-            writeInteger(COL_ID, pItem.getId());
-            writeInteger(COL_VERSION, pItem.getDataVersion());
-        }
+        /* Access the Control Key */
+        Integer myControl = loadInteger(COL_CONTROLID);
+
+        /* Add the Control */
+        theList.addSecureItem(myID, myVersion, myControl);
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-        /* Ignore if this is a backup */
-        if (isBackup) {
-            return;
-        }
+    protected void insertSecureItem(final ControlData pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_VERSION, pItem.getDataVersion());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+    }
 
-        /* Create a new row */
-        newRow();
+    @Override
+    protected void insertOpenItem(final ControlData pItem) throws JDataException {
+        writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_VERSION, pItem.getDataVersion());
+    }
 
+    @Override
+    protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
         writeHeader(COL_VERSION, ControlData.FIELD_VERSION.getName());
 
-        /* Adjust for Header */
-        adjustForHeader();
+        /* Set default column types */
+        setIntegerColumn(COL_VERSION);
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the three columns as the range */
-            nameRange(NUM_COLS);
-
-            /* else */
-        } else {
-            /* Set the two columns as the range */
-            nameRange(NUM_COLS - 1);
-
-            /* Set the Id column as hidden */
-            setHiddenColumn(COL_ID);
-
-            /* Set default column types */
-            setIntegerColumn(COL_ID);
-            setIntegerColumn(COL_VERSION);
-        }
+        /* Set the range */
+        nameRange(isBackup() ? COL_CONTROLID : COL_VERSION);
     }
 }

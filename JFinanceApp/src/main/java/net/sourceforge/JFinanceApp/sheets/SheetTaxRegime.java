@@ -95,10 +95,10 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
      * @throws JDataException on error
      */
     @Override
-    protected void loadEncryptedItem(final int pId,
-                                     final int pControlId,
-                                     final boolean isEnabled,
-                                     final int iOrder,
+    protected void loadEncryptedItem(final Integer pId,
+                                     final Integer pControlId,
+                                     final Boolean isEnabled,
+                                     final Integer iOrder,
                                      final byte[] pName,
                                      final byte[] pDesc) throws JDataException {
         /* Create the item */
@@ -115,9 +115,9 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
      * @throws JDataException on error
      */
     @Override
-    protected void loadClearTextItem(final int pId,
-                                     final boolean isEnabled,
-                                     final int iOrder,
+    protected void loadClearTextItem(final Integer pId,
+                                     final Boolean isEnabled,
+                                     final Integer iOrder,
                                      final String pName,
                                      final String pDesc) throws JDataException {
         /* Create the item */
@@ -175,7 +175,7 @@ public class SheetTaxRegime extends SheetStaticData<TaxRegime> {
                     Cell myCell = myRow.getCell(myCol);
 
                     /* Add the value into the finance tables */
-                    myList.addItem(myCell.getStringCellValue());
+                    myList.addBasicItem(myCell.getStringCellValue());
 
                     /* Report the progress */
                     myCount++;

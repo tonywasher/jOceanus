@@ -574,7 +574,7 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
             }
 
             /* Create the new Item */
-            T myItem = theList.addNewItem(myRow);
+            T myItem = theList.addCopyItem(myRow);
 
             /* Determine the row # */
             int myRowNo = myItem.indexOf();

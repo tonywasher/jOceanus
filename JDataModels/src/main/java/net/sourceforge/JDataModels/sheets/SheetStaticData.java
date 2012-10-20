@@ -25,7 +25,6 @@ package net.sourceforge.JDataModels.sheets;
 import net.sourceforge.JDataManager.JDataException;
 import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to a static data type.
@@ -34,34 +33,24 @@ import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
  */
 public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetDataItem<T> {
     /**
-     * Number of columns.
-     */
-    private static final int NUM_COLS = 6;
-
-    /**
-     * ControlId column.
-     */
-    private static final int COL_CONTROL = 1;
-
-    /**
      * Enabled column.
      */
-    private static final int COL_ENABLED = 2;
+    private static final int COL_ENABLED = COL_CONTROLID + 1;
 
     /**
      * Order column.
      */
-    private static final int COL_ORDER = 3;
+    private static final int COL_ORDER = COL_ENABLED + 1;
 
     /**
      * Name column.
      */
-    private static final int COL_NAME = 4;
+    private static final int COL_NAME = COL_ORDER + 1;
 
     /**
      * Description column.
      */
-    private static final int COL_DESC = 5;
+    private static final int COL_DESC = COL_NAME + 1;
 
     /**
      * Load the Static Data from backup.
@@ -73,10 +62,10 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
      * @param pDesc the description
      * @throws JDataException on error
      */
-    protected abstract void loadEncryptedItem(final int pId,
-                                              final int pControlId,
-                                              final boolean isEnabled,
-                                              final int iOrder,
+    protected abstract void loadEncryptedItem(final Integer pId,
+                                              final Integer pControlId,
+                                              final Boolean isEnabled,
+                                              final Integer iOrder,
                                               final byte[] pName,
                                               final byte[] pDesc) throws JDataException;
 
@@ -89,16 +78,11 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
      * @param pDesc the description
      * @throws JDataException on error
      */
-    protected abstract void loadClearTextItem(final int pId,
-                                              final boolean isEnabled,
-                                              final int iOrder,
+    protected abstract void loadClearTextItem(final Integer pId,
+                                              final Boolean isEnabled,
+                                              final Integer iOrder,
                                               final String pName,
                                               final String pDesc) throws JDataException;
-
-    /**
-     * Is the spreadsheet a backup spreadsheet or an edit-able one.
-     */
-    private boolean isBackup = false;
 
     /**
      * The name of the items.
@@ -114,9 +98,6 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
                               final String pRange) {
         /* Call super constructor */
         super(pReader, pRange);
-
-        /* Note whether this is a backup */
-        isBackup = (pReader.getType() == SheetType.BACKUP);
     }
 
     /**
@@ -133,114 +114,92 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
 
         /* Record the names */
         theNames = pNames;
-
-        /* Note whether this is a backup */
-        isBackup = (pWriter.getType() == SheetType.BACKUP);
     }
 
     @Override
-    protected void loadItem() throws JDataException {
-        /* If this is a backup load */
-        if (isBackup) {
-            /* Access the IDs */
-            int myID = loadInteger(COL_ID);
-            int myControlId = loadInteger(COL_CONTROL);
-            boolean myEnabled = loadBoolean(COL_ENABLED);
-            int myOrder = loadInteger(COL_ORDER);
+    protected void loadSecureItem() throws JDataException {
+        /* Access the IDs */
+        Integer myID = loadInteger(COL_ID);
+        Integer myControlId = loadInteger(COL_CONTROLID);
+        Boolean myEnabled = loadBoolean(COL_ENABLED);
+        Integer myOrder = loadInteger(COL_ORDER);
 
-            /* Access the name and description bytes */
-            byte[] myNameBytes = loadBytes(COL_NAME);
-            byte[] myDescBytes = loadBytes(COL_DESC);
+        /* Access the name and description bytes */
+        byte[] myNameBytes = loadBytes(COL_NAME);
+        byte[] myDescBytes = loadBytes(COL_DESC);
 
-            /* Load the item */
-            loadEncryptedItem(myID, myControlId, myEnabled, myOrder, myNameBytes, myDescBytes);
-
-            /* else this is a load from an edit-able spreadsheet */
-        } else {
-            /* Access the IDs */
-            int myID = loadInteger(COL_ID);
-            boolean myEnabled = loadBoolean(COL_ENABLED - 1);
-            int myOrder = loadInteger(COL_ORDER - 1);
-
-            /* Access the name and description bytes */
-            String myName = loadString(COL_NAME - 1);
-            String myDesc = loadString(COL_DESC - 1);
-
-            /* Load the item */
-            loadClearTextItem(myID, myEnabled, myOrder, myName, myDesc);
-        }
+        /* Load the item */
+        loadEncryptedItem(myID, myControlId, myEnabled, myOrder, myNameBytes, myDescBytes);
     }
 
     @Override
-    protected void insertItem(final T pItem) throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeInteger(COL_CONTROL, pItem.getControlKey().getId());
-            writeBoolean(COL_ENABLED, pItem.getEnabled());
-            writeInteger(COL_ORDER, pItem.getOrder());
-            writeBytes(COL_NAME, pItem.getNameBytes());
-            writeBytes(COL_DESC, pItem.getDescBytes());
+    protected void loadOpenItem() throws JDataException {
+        /* Access the IDs */
+        Integer myID = loadInteger(COL_ID);
+        Boolean myEnabled = loadBoolean(COL_ENABLED);
+        Integer myOrder = loadInteger(COL_ORDER);
 
-            /* else we are creating an edit-able spreadsheet */
-        } else {
-            /* Set the fields */
-            writeInteger(COL_ID, pItem.getId());
-            writeBoolean(COL_ENABLED - 1, pItem.getEnabled());
-            writeInteger(COL_ORDER - 1, pItem.getOrder());
-            writeString(COL_NAME, pItem.getName());
-            writeString(COL_DESC, pItem.getDesc());
-        }
+        /* Access the name and description bytes */
+        String myName = loadString(COL_NAME);
+        String myDesc = loadString(COL_DESC);
+
+        /* Load the item */
+        loadClearTextItem(myID, myEnabled, myOrder, myName, myDesc);
     }
 
     @Override
-    protected void preProcessOnWrite() throws JDataException {
-        /* Ignore if this is a backup */
-        if (isBackup) {
-            return;
-        }
+    protected void insertSecureItem(final T pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeBoolean(COL_ENABLED, pItem.getEnabled());
+        writeInteger(COL_ORDER, pItem.getOrder());
+        writeString(COL_NAME, pItem.getName());
+        writeString(COL_DESC, pItem.getDesc());
+    }
 
-        /* Create a new row */
-        newRow();
+    @Override
+    protected void insertOpenItem(final T pItem) throws JDataException {
+        /* Set the fields */
+        writeInteger(COL_ID, pItem.getId());
+        writeBoolean(COL_ENABLED, pItem.getEnabled());
+        writeInteger(COL_ORDER, pItem.getOrder());
+        writeString(COL_NAME, pItem.getName());
+        writeString(COL_DESC, pItem.getDesc());
+    }
 
+    @Override
+    protected void formatSheetHeader() throws JDataException {
         /* Write titles */
         writeHeader(COL_ID, DataItem.FIELD_ID.getName());
-        writeHeader(COL_ORDER - 1, StaticData.FIELD_ORDER.getName());
-        writeHeader(COL_ENABLED - 1, StaticData.FIELD_ENABLED.getName());
-        writeHeader(COL_NAME - 1, StaticData.FIELD_NAME.getName());
-        writeHeader(COL_DESC - 1, StaticData.FIELD_DESC.getName());
+        writeHeader(COL_ORDER, StaticData.FIELD_ORDER.getName());
+        writeHeader(COL_ENABLED, StaticData.FIELD_ENABLED.getName());
+        writeHeader(COL_NAME, StaticData.FIELD_NAME.getName());
+        writeHeader(COL_DESC, StaticData.FIELD_DESC.getName());
 
-        /* Adjust for Header */
-        adjustForHeader();
+        /* Set the Id column as hidden */
+        setHiddenColumn(COL_ID);
+
+        /* Set default column types */
+        setIntegerColumn(COL_ID);
+        setBooleanColumn(COL_ENABLED);
+        setIntegerColumn(COL_ORDER);
+
+        /* Set the name column width */
+        setColumnWidth(COL_NAME, StaticData.NAMELEN);
+
+        /* Set description column width */
+        setColumnWidth(COL_DESC, StaticData.DESCLEN);
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* If we are creating a backup */
-        if (isBackup) {
-            /* Set the six columns as the range */
-            nameRange(NUM_COLS);
+        /* Set the range */
+        nameRange(COL_DESC);
 
-            /* else this is an edit-able spreadsheet */
-        } else {
-            /* Set the five columns as the range */
-            nameRange(NUM_COLS - 1);
-
-            /* Set the Id column as hidden */
-            setHiddenColumn(COL_ID);
-
-            /* Set default column types */
-            setIntegerColumn(COL_ID);
-            setBooleanColumn(COL_ENABLED - 1);
-            setIntegerColumn(COL_ORDER - 1);
-
-            /* Set the name column width and range */
-            nameColumnRange(COL_NAME - 1, theNames);
-            setColumnWidth(COL_NAME - 1, StaticData.NAMELEN);
-
-            /* Set description column width */
-            setColumnWidth(COL_DESC - 1, StaticData.DESCLEN);
+        /* If we are not creating a backup */
+        if (!isBackup()) {
+            /* Set the name column range */
+            nameColumnRange(COL_NAME, theNames);
         }
     }
 }

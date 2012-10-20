@@ -33,7 +33,7 @@ public class IdManager<T extends DataItem & Comparable<? super T>> extends Order
     /**
      * The maximum id.
      */
-    private int theMaxId = 0;
+    private Integer theMaxId = 0;
 
     /**
      * Constructor.
@@ -47,7 +47,7 @@ public class IdManager<T extends DataItem & Comparable<? super T>> extends Order
      * Get Max Id.
      * @return the Maximum Id
      */
-    protected int getMaxId() {
+    protected Integer getMaxId() {
         return theMaxId;
     }
 
@@ -55,7 +55,7 @@ public class IdManager<T extends DataItem & Comparable<? super T>> extends Order
      * Set Max Id.
      * @param uMaxId the Maximum Id
      */
-    protected void setMaxId(final int uMaxId) {
+    protected void setMaxId(final Integer uMaxId) {
         if (uMaxId > theMaxId) {
             theMaxId = uMaxId;
         }
@@ -66,9 +66,9 @@ public class IdManager<T extends DataItem & Comparable<? super T>> extends Order
      * @param uId the Id to check
      * @return Whether the id is unique <code>true/false</code>
      */
-    protected boolean isIdUnique(final int uId) {
+    protected boolean isIdUnique(final Integer uId) {
         /* Its unique if its unassigned or greater than the max id */
-        if ((uId == 0) || (uId > theMaxId)) {
+        if ((uId == null) || (uId == 0) || (uId > theMaxId)) {
             return true;
         }
 
@@ -81,10 +81,10 @@ public class IdManager<T extends DataItem & Comparable<? super T>> extends Order
      * @param pItem the item
      */
     protected void setNewId(final DataItem pItem) {
-        int myId = pItem.getId();
+        Integer myId = pItem.getId();
 
         /* If we need to generate a new id */
-        if (myId == 0) {
+        if ((myId == null) || (myId == 0)) {
             /* Increment and use the max Id */
             theMaxId++;
             pItem.setId(theMaxId);

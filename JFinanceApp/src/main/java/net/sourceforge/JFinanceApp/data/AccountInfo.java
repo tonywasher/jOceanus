@@ -36,7 +36,8 @@ import net.sourceforge.JDataModels.data.DataItem;
 import net.sourceforge.JDataModels.data.DataList;
 import net.sourceforge.JDataModels.data.DataSet;
 import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JFinanceApp.data.Account.AccountList;
+import net.sourceforge.JFinanceApp.data.AccountNew.AccountNewList;
+import net.sourceforge.JFinanceApp.data.statics.AccountInfoClass;
 import net.sourceforge.JFinanceApp.data.statics.AccountInfoType;
 import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeList;
 
@@ -44,7 +45,7 @@ import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeL
  * Representation of an information extension of an account.
  * @author Tony Washer
  */
-public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType> implements
+public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoType> implements
         Comparable<AccountInfo> {
     /**
      * Object name.
@@ -92,8 +93,8 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
      * Obtain Account.
      * @return the Account
      */
-    public Account getAccount() {
-        return getOwner(getValueSet(), Account.class);
+    public AccountNew getAccount() {
+        return getOwner(getValueSet(), AccountNew.class);
     }
 
     /**
@@ -110,15 +111,15 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
      * @param pValueSet the valueSet
      * @return the Account
      */
-    public static Account getAccount(final ValueSet pValueSet) {
-        return getOwner(pValueSet, Account.class);
+    public static AccountNew getAccount(final ValueSet pValueSet) {
+        return getOwner(pValueSet, AccountNew.class);
     }
 
     /**
      * Set Account.
      * @param pAccount the account
      */
-    private void setValueAccount(final Account pAccount) {
+    private void setValueAccount(final AccountNew pAccount) {
         getValueSet().setValue(FIELD_ACCOUNT, pAccount);
     }
 
@@ -133,7 +134,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
     }
 
     /**
-     * Construct a copy of a AccountInfo.
+     * Copy Constructor.
      * @param pList the list
      * @param pInfo The Info to copy
      */
@@ -150,7 +151,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
      * @param pType the type
      */
     private AccountInfo(final AccountInfoList pList,
-                        final Account pAccount,
+                        final AccountNew pAccount,
                         final AccountInfoType pType) {
         /* Initialise the item */
         super(pList);
@@ -161,7 +162,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
     }
 
     /**
-     * Encrypted constructor.
+     * Secure constructor.
      * @param pList the list
      * @param uId the id
      * @param uControlId the control id
@@ -171,10 +172,10 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
      * @throws JDataException on error
      */
     private AccountInfo(final AccountInfoList pList,
-                        final int uId,
-                        final int uControlId,
-                        final int uInfoTypeId,
-                        final int uAccountId,
+                        final Integer uId,
+                        final Integer uControlId,
+                        final Integer uInfoTypeId,
+                        final Integer uAccountId,
                         final byte[] pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId, uControlId, uInfoTypeId, uAccountId);
@@ -191,8 +192,8 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
             setValueInfoType(myType);
 
             /* Look up the Account */
-            AccountList myAccounts = myData.getAccounts();
-            Account myAccount = myAccounts.findItemById(uAccountId);
+            AccountNewList myAccounts = myData.getNewAccounts();
+            AccountNew myAccount = myAccounts.findItemById(uAccountId);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
             }
@@ -230,7 +231,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
     }
 
     /**
-     * Open Text constructor.
+     * Open constructor.
      * @param pList the list
      * @param uId the id
      * @param pInfoType the info type
@@ -239,9 +240,9 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
      * @throws JDataException on error
      */
     private AccountInfo(final AccountInfoList pList,
-                        final int uId,
+                        final Integer uId,
                         final AccountInfoType pInfoType,
-                        final Account pAccount,
+                        final AccountNew pAccount,
                         final Object pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId, pInfoType, pAccount);
@@ -305,7 +306,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
 
         /* Access Accounts and InfoTypes */
         FinanceData myData = getDataSet();
-        AccountList myAccounts = myData.getAccounts();
+        AccountNewList myAccounts = myData.getNewAccounts();
         AccountInfoTypeList myTypes = myData.getActInfoTypes();
 
         /* Update to use the local copy of the Types */
@@ -314,8 +315,8 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the Accounts */
-        Account myAccount = getAccount();
-        Account myNewAct = myAccounts.findItemById(myAccount.getId());
+        AccountNew myAccount = getAccount();
+        AccountNew myNewAct = myAccounts.findItemById(myAccount.getId());
         setValueOwner(myNewAct);
     }
 
@@ -351,8 +352,8 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
         boolean bValueOK = false;
         switch (myType.getDataType()) {
             case INTEGER:
-                if (pValue instanceof Account) {
-                    Account myAccount = (Account) pValue;
+                if (pValue instanceof AccountNew) {
+                    AccountNew myAccount = (AccountNew) pValue;
                     setValueValue(myAccount.getId());
                     setValueAccount(myAccount);
                     bValueOK = true;
@@ -386,7 +387,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
     /**
      * AccountInfoList.
      */
-    public static class AccountInfoList extends DataInfoList<AccountInfo, Account, AccountInfoType> {
+    public static class AccountInfoList extends DataInfoList<AccountInfo, AccountNew, AccountInfoType> {
         /**
          * Local Report fields.
          */
@@ -445,7 +446,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
         }
 
         @Override
-        public AccountInfo addNewItem(final DataItem pItem) {
+        public AccountInfo addCopyItem(final DataItem pItem) {
             /* Can only clone an AccountInfo */
             if (!(pItem instanceof AccountInfo)) {
                 return null;
@@ -462,7 +463,7 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
         }
 
         @Override
-        protected AccountInfo addNewItem(final Account pOwner,
+        protected AccountInfo addNewItem(final AccountNew pOwner,
                                          final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
             AccountInfo myInfo = new AccountInfo(this, pOwner, pInfoType);
@@ -481,10 +482,10 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
          * @param pValue the data
          * @throws JDataException on error
          */
-        public void addSecureItem(final int uId,
-                                  final int uControlId,
-                                  final int uInfoTypeId,
-                                  final int uAccountId,
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final Integer uInfoTypeId,
+                                  final Integer uAccountId,
                                   final byte[] pValue) throws JDataException {
             /* Create the info */
             AccountInfo myInfo = new AccountInfo(this, uId, uControlId, uInfoTypeId, uAccountId, pValue);
@@ -510,22 +511,22 @@ public class AccountInfo extends DataInfo<AccountInfo, Account, AccountInfoType>
          * Add an AccountInfo to the list.
          * @param uId the Id of the info
          * @param pAccount the account
-         * @param pInfoType the Name of the account info type
+         * @param pInfoClass the Class of the account info type
          * @param pValue the value of the account info
          * @throws JDataException on error
          */
-        public void addOpenItem(final int uId,
-                                final Account pAccount,
-                                final String pInfoType,
+        public void addOpenItem(final Integer uId,
+                                final AccountNew pAccount,
+                                final AccountInfoClass pInfoClass,
                                 final Object pValue) throws JDataException {
             /* Access the data set */
             FinanceData myData = getDataSet();
 
             /* Look up the Info Type */
-            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByName(pInfoType);
+            AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
                 throw new JDataException(ExceptionClass.DATA, pAccount,
-                        "Account has invalid Account Info Type [" + pInfoType + "]");
+                        "Account has invalid Account Info Class [" + pInfoClass + "]");
             }
 
             /* Create a new Account Info Type */

@@ -409,7 +409,7 @@ public class SpotPrices implements JDataContents {
 
         /* Disable Add a new item */
         @Override
-        public SpotPrice addNewItem(final DataItem pElement) {
+        public SpotPrice addCopyItem(final DataItem pElement) {
             throw new UnsupportedOperationException();
         }
 

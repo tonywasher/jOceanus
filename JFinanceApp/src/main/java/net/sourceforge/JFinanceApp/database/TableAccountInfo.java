@@ -61,10 +61,10 @@ public class TableAccountInfo extends TableDataInfo<AccountInfo> {
     }
 
     @Override
-    protected void loadTheItem(final int pId,
-                               final int pControlId,
-                               final int pInfoTypeId,
-                               final int pOwnerId,
+    protected void loadTheItem(final Integer pId,
+                               final Integer pControlId,
+                               final Integer pInfoTypeId,
+                               final Integer pOwnerId,
                                final byte[] pValue) throws JDataException {
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);

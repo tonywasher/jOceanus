@@ -667,7 +667,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
      */
     protected DataItem(final DataList<?> pList,
                        final DataItem pBase) {
-        /* Initialise as a ReportItem */
+        /* Initialise using standard constructor */
         this(pList, pBase.getId());
 
         /* Initialise the valueSet */
@@ -740,7 +740,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
             case CLONE:
             case DIFFER:
             case COPY:
-            case VIEW:
             default:
                 break;
         }
