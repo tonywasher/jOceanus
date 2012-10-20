@@ -65,8 +65,8 @@ public class TableControl extends DatabaseTable<ControlData> {
     protected void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        int myVers = myTableDef.getIntegerValue(ControlData.FIELD_VERSION);
-        int myControl = myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY);
+        Integer myVers = myTableDef.getIntegerValue(ControlData.FIELD_VERSION);
+        Integer myControl = myTableDef.getIntegerValue(ControlData.FIELD_CONTROLKEY);
 
         /* Add into the list */
         theList.addSecureItem(pId, myVers, myControl);

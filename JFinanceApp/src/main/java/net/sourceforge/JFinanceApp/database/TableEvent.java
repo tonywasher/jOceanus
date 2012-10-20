@@ -93,10 +93,10 @@ public class TableEvent extends TableEncrypted<Event> {
         Date myDate = myTableDef.getDateValue(Event.FIELD_DATE);
         byte[] myDesc = myTableDef.getBinaryValue(Event.FIELD_DESC);
         byte[] myAmount = myTableDef.getBinaryValue(Event.FIELD_AMOUNT);
-        int myDebitId = myTableDef.getIntegerValue(Event.FIELD_DEBIT);
-        int myCreditId = myTableDef.getIntegerValue(Event.FIELD_CREDIT);
+        Integer myDebitId = myTableDef.getIntegerValue(Event.FIELD_DEBIT);
+        Integer myCreditId = myTableDef.getIntegerValue(Event.FIELD_CREDIT);
         byte[] myUnits = myTableDef.getBinaryValue(Event.FIELD_UNITS);
-        int myTranType = myTableDef.getIntegerValue(Event.FIELD_TRNTYP);
+        Integer myTranType = myTableDef.getIntegerValue(Event.FIELD_TRNTYP);
         byte[] myTaxCred = myTableDef.getBinaryValue(Event.FIELD_TAXCREDIT);
         byte[] myDilution = myTableDef.getBinaryValue(Event.FIELD_DILUTION);
         Integer myYears = myTableDef.getIntegerValue(Event.FIELD_YEARS);

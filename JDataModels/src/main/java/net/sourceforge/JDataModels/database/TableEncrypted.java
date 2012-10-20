@@ -57,7 +57,7 @@ public abstract class TableEncrypted<T extends EncryptedItem & Comparable<? supe
     protected void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        int myControlId = myTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
+        Integer myControlId = myTableDef.getIntegerValue(EncryptedItem.FIELD_CONTROL);
 
         /* Add into the list */
         loadItem(pId, myControlId);

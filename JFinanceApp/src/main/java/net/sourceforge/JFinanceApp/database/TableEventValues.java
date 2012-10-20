@@ -79,9 +79,9 @@ public class TableEventValues extends DatabaseTable<EventValue> {
     public void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        int myInfoType = myTableDef.getIntegerValue(EventValue.FIELD_INFOTYPE);
-        int myEvent = myTableDef.getIntegerValue(EventValue.FIELD_EVENT);
-        int myValue = myTableDef.getIntegerValue(EventValue.FIELD_VALUE);
+        Integer myInfoType = myTableDef.getIntegerValue(EventValue.FIELD_INFOTYPE);
+        Integer myEvent = myTableDef.getIntegerValue(EventValue.FIELD_EVENT);
+        Integer myValue = myTableDef.getIntegerValue(EventValue.FIELD_VALUE);
 
         /* Add into the list */
         theList.addOpenItem(pId, myInfoType, myEvent, myValue);

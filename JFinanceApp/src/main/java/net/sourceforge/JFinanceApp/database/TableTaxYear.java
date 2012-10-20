@@ -111,7 +111,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Date myYear = myTableDef.getDateValue(TaxYear.FIELD_TAXYEAR);
-        int myRegime = myTableDef.getIntegerValue(TaxYear.FIELD_REGIME);
+        Integer myRegime = myTableDef.getIntegerValue(TaxYear.FIELD_REGIME);
         String myAllowance = myTableDef.getStringValue(TaxYear.FIELD_ALLOW);
         String myRentalAllow = myTableDef.getStringValue(TaxYear.FIELD_RENTAL);
         String myLoBand = myTableDef.getStringValue(TaxYear.FIELD_LOBAND);

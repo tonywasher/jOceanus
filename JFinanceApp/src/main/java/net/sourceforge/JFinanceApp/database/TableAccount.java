@@ -93,7 +93,7 @@ public class TableAccount extends TableEncrypted<Account> {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         byte[] myName = myTableDef.getBinaryValue(Account.FIELD_NAME);
-        int myActTypeId = myTableDef.getIntegerValue(Account.FIELD_TYPE);
+        Integer myActTypeId = myTableDef.getIntegerValue(Account.FIELD_TYPE);
         byte[] myDesc = myTableDef.getBinaryValue(Account.FIELD_DESC);
         Date myMaturity = myTableDef.getDateValue(Account.FIELD_MATURITY);
         Date myClosed = myTableDef.getDateValue(Account.FIELD_CLOSE);

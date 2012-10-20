@@ -205,8 +205,8 @@ public class SheetTaxYearNew extends SheetDataItem<TaxYearNew> {
     @Override
     protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
-        int myID = loadInteger(COL_ID);
-        int myRegimeId = loadInteger(COL_REGIME);
+        Integer myID = loadInteger(COL_ID);
+        Integer myRegimeId = loadInteger(COL_REGIME);
 
         /* Access the dates */
         Date myYear = loadDate(COL_TAXYEAR);
@@ -218,7 +218,7 @@ public class SheetTaxYearNew extends SheetDataItem<TaxYearNew> {
     @Override
     protected void loadOpenItem() throws JDataException {
         /* Access the ID */
-        int myID = loadInteger(COL_ID);
+        Integer myID = loadInteger(COL_ID);
 
         /* Access the Strings */
         String myTaxRegime = loadString(COL_REGIME);

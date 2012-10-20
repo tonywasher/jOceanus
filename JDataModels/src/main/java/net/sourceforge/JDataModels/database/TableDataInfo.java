@@ -71,8 +71,8 @@ public abstract class TableDataInfo<T extends DataInfo<T, ?, ?>> extends TableEn
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        int myInfoType = myTableDef.getIntegerValue(DataInfo.FIELD_INFOTYPE);
-        int myOwner = myTableDef.getIntegerValue(DataInfo.FIELD_OWNER);
+        Integer myInfoType = myTableDef.getIntegerValue(DataInfo.FIELD_INFOTYPE);
+        Integer myOwner = myTableDef.getIntegerValue(DataInfo.FIELD_OWNER);
         byte[] myValue = myTableDef.getBinaryValue(DataInfo.FIELD_VALUE);
 
         /* Add into the list */

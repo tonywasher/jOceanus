@@ -81,8 +81,8 @@ public class TableEventData extends TableEncrypted<EventData> {
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        int myInfoTypId = myTableDef.getIntegerValue(EventData.FIELD_INFOTYPE);
-        int myEventId = myTableDef.getIntegerValue(EventData.FIELD_EVENT);
+        Integer myInfoTypId = myTableDef.getIntegerValue(EventData.FIELD_INFOTYPE);
+        Integer myEventId = myTableDef.getIntegerValue(EventData.FIELD_EVENT);
         byte[] myValue = myTableDef.getBinaryValue(EventData.FIELD_VALUE);
 
         /* Add into the list */

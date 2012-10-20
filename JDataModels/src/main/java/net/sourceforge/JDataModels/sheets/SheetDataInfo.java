@@ -86,10 +86,10 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?>> extends SheetDa
     @Override
     protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
-        int myID = loadInteger(COL_ID);
-        int myControlId = loadInteger(COL_CONTROLID);
-        int myInfoTypeId = loadInteger(COL_INFOTYPE);
-        int myOwnerId = loadInteger(COL_OWNER);
+        Integer myID = loadInteger(COL_ID);
+        Integer myControlId = loadInteger(COL_CONTROLID);
+        Integer myInfoTypeId = loadInteger(COL_INFOTYPE);
+        Integer myOwnerId = loadInteger(COL_OWNER);
 
         /* Access the value bytes */
         byte[] myValueBytes = loadBytes(COL_VALUE);

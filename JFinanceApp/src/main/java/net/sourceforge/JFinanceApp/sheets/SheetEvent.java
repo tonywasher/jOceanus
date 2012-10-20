@@ -137,11 +137,11 @@ public class SheetEvent extends SheetDataItem<Event> {
     @Override
     protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
-        int myID = loadInteger(COL_ID);
-        int myControlId = loadInteger(COL_CONTROLID);
-        int myDebitId = loadInteger(COL_DEBIT);
-        int myCreditId = loadInteger(COL_CREDIT);
-        int myTranId = loadInteger(COL_TRAN);
+        Integer myID = loadInteger(COL_ID);
+        Integer myControlId = loadInteger(COL_CONTROLID);
+        Integer myDebitId = loadInteger(COL_DEBIT);
+        Integer myCreditId = loadInteger(COL_CREDIT);
+        Integer myTranId = loadInteger(COL_TRAN);
 
         /* Access the date and years */
         Date myDate = loadDate(COL_DATE);
@@ -162,7 +162,7 @@ public class SheetEvent extends SheetDataItem<Event> {
     @Override
     protected void loadOpenItem() throws JDataException {
         /* Access the Account */
-        int myID = loadInteger(COL_ID);
+        Integer myID = loadInteger(COL_ID);
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
         String myTransType = loadString(COL_TRAN);

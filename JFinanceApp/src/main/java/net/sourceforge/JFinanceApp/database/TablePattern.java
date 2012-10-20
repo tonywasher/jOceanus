@@ -102,14 +102,14 @@ public class TablePattern extends TableEncrypted<Pattern> {
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        int myAccountId = myTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
+        Integer myAccountId = myTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
         Date myDate = myTableDef.getDateValue(Event.FIELD_DATE);
         byte[] myDesc = myTableDef.getBinaryValue(Event.FIELD_DESC);
         byte[] myAmount = myTableDef.getBinaryValue(Event.FIELD_AMOUNT);
-        int myPartnerId = myTableDef.getIntegerValue(Pattern.FIELD_PARTNER);
-        int myTranType = myTableDef.getIntegerValue(Event.FIELD_TRNTYP);
+        Integer myPartnerId = myTableDef.getIntegerValue(Pattern.FIELD_PARTNER);
+        Integer myTranType = myTableDef.getIntegerValue(Event.FIELD_TRNTYP);
         boolean isCredit = myTableDef.getBooleanValue(Pattern.FIELD_ISCREDIT);
-        int myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
+        Integer myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myAccountId, myPartnerId,

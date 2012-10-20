@@ -151,10 +151,11 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     protected void insertSecureItem(final T pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
         writeBoolean(COL_ENABLED, pItem.getEnabled());
         writeInteger(COL_ORDER, pItem.getOrder());
-        writeString(COL_NAME, pItem.getName());
-        writeString(COL_DESC, pItem.getDesc());
+        writeBytes(COL_NAME, pItem.getNameBytes());
+        writeBytes(COL_DESC, pItem.getDescBytes());
     }
 
     @Override

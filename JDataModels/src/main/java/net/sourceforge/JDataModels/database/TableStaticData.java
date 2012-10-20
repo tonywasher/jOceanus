@@ -76,8 +76,8 @@ public abstract class TableStaticData<T extends StaticData<T, ?>> extends TableE
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
-        int myOrder = myTableDef.getIntegerValue(StaticData.FIELD_ORDER);
+        Boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
+        Integer myOrder = myTableDef.getIntegerValue(StaticData.FIELD_ORDER);
         byte[] myType = myTableDef.getBinaryValue(StaticData.FIELD_NAME);
         byte[] myDesc = myTableDef.getBinaryValue(StaticData.FIELD_DESC);
 

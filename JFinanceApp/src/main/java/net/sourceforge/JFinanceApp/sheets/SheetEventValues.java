@@ -88,10 +88,10 @@ public class SheetEventValues extends SheetDataItem<EventValue> {
     @Override
     protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
-        int myID = loadInteger(COL_ID);
-        int myEventId = loadInteger(COL_EVENT);
-        int myInfoId = loadInteger(COL_INFOTYPE);
-        int myValue = loadInteger(COL_VALUE);
+        Integer myID = loadInteger(COL_ID);
+        Integer myEventId = loadInteger(COL_EVENT);
+        Integer myInfoId = loadInteger(COL_INFOTYPE);
+        Integer myValue = loadInteger(COL_VALUE);
 
         /* Add the Value */
         theList.addOpenItem(myID, myInfoId, myEventId, myValue);

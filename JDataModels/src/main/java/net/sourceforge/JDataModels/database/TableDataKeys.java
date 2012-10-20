@@ -66,8 +66,8 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
     protected void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        int myControl = myTableDef.getIntegerValue(DataKey.FIELD_CONTROLKEY);
-        int myKeyType = myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE);
+        Integer myControl = myTableDef.getIntegerValue(DataKey.FIELD_CONTROLKEY);
+        Integer myKeyType = myTableDef.getIntegerValue(DataKey.FIELD_KEYTYPE);
         byte[] myKey = myTableDef.getBinaryValue(DataKey.FIELD_KEYDEF);
 
         /* Add into the list */

@@ -86,7 +86,7 @@ public class TableAccountNew extends TableEncrypted<AccountNew> {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         byte[] myName = myTableDef.getBinaryValue(Account.FIELD_NAME);
-        int myActTypeId = myTableDef.getIntegerValue(Account.FIELD_TYPE);
+        Integer myActTypeId = myTableDef.getIntegerValue(Account.FIELD_TYPE);
         byte[] myDesc = myTableDef.getBinaryValue(Account.FIELD_DESC);
         Date myClosed = myTableDef.getDateValue(Account.FIELD_CLOSE);
 

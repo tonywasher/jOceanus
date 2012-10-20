@@ -105,9 +105,9 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
     @Override
     protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
-        int myID = loadInteger(COL_ID);
-        int myControlId = loadInteger(COL_CONTROLID);
-        int myActId = loadInteger(COL_ACCOUNT);
+        Integer myID = loadInteger(COL_ID);
+        Integer myControlId = loadInteger(COL_CONTROLID);
+        Integer myActId = loadInteger(COL_ACCOUNT);
 
         /* Access the rates and end-date */
         Date myDate = loadDate(COL_DATE);
@@ -120,7 +120,7 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
     @Override
     protected void loadOpenItem() throws JDataException {
         /* Access the Account */
-        int myID = loadInteger(COL_ID);
+        Integer myID = loadInteger(COL_ID);
         String myAccount = loadString(COL_ACCOUNT);
 
         /* Access the name and description bytes */

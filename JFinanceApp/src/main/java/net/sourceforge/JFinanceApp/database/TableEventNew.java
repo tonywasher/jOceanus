@@ -91,9 +91,9 @@ public class TableEventNew extends TableEncrypted<EventNew> {
         Date myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
         byte[] myDesc = myTableDef.getBinaryValue(EventBase.FIELD_DESC);
         byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
-        int myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
-        int myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
-        int myTranType = myTableDef.getIntegerValue(EventBase.FIELD_TRNTYP);
+        Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
+        Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
+        Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_TRNTYP);
 
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myTranType);

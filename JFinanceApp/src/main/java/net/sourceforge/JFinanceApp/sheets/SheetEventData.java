@@ -92,10 +92,10 @@ public class SheetEventData extends SheetDataItem<EventData> {
     @Override
     protected void loadSecureItem() throws JDataException {
         /* Access the IDs */
-        int myID = loadInteger(COL_ID);
-        int myControlId = loadInteger(COL_CONTROLID);
-        int myEventId = loadInteger(COL_EVENT);
-        int myInfoId = loadInteger(COL_INFOTYPE);
+        Integer myID = loadInteger(COL_ID);
+        Integer myControlId = loadInteger(COL_CONTROLID);
+        Integer myEventId = loadInteger(COL_EVENT);
+        Integer myInfoId = loadInteger(COL_INFOTYPE);
 
         /* Access the binary values */
         byte[] myValue = loadBytes(COL_DATA);

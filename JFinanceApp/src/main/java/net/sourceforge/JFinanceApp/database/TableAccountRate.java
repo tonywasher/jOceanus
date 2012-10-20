@@ -85,7 +85,7 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        int myAccountId = myTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT);
+        Integer myAccountId = myTableDef.getIntegerValue(AccountRate.FIELD_ACCOUNT);
         byte[] myRate = myTableDef.getBinaryValue(AccountRate.FIELD_RATE);
         byte[] myBonus = myTableDef.getBinaryValue(AccountRate.FIELD_BONUS);
         Date myEndDate = myTableDef.getDateValue(AccountRate.FIELD_ENDDATE);

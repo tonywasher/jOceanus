@@ -87,7 +87,7 @@ public class TableTaxYearNew extends DatabaseTable<TaxYearNew> {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Date myYear = myTableDef.getDateValue(TaxYearBase.FIELD_TAXYEAR);
-        int myRegime = myTableDef.getIntegerValue(TaxYearBase.FIELD_REGIME);
+        Integer myRegime = myTableDef.getIntegerValue(TaxYearBase.FIELD_REGIME);
 
         /* Add into the list */
         theList.addSecureItem(pId, myRegime, myYear);
