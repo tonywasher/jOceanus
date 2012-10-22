@@ -1,0 +1,18 @@
+<document>
+  <properties>
+    <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    <title>${svnComponent} Demo</title>
+  </properties>
+  <body>
+    <section name="Overview">
+      <p>Demo of ${svnComponent} capabilities.</p>
+    </section>
+
+    <section name="Demo">
+      <applet code = '${packageMain}' 
+        archive = '${demoJar}.jar'
+        width = "450" 
+        height = "300"></applet>      
+    </section>
+  </body>
+</document>

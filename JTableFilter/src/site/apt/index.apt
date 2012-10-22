@@ -1,5 +1,0 @@
-JTableFilter Project
-
-  JTableFilter is an extension of the TableRowSorter class. It utilises the natural ordering of rows rather than requiring the user to choose a sort order.
-  
-

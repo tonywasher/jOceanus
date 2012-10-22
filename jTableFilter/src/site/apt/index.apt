@@ -1,0 +1,8 @@
+jTableFilter Project
+
+  jTableFilter is a subComponent of the jArgo project
+
+  It provides an extension of the TableRowSorter class that utilises the natural ordering of rows rather
+than requiring the user to specify a sort order.
+  
+
