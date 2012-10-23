@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.preferences;
+package net.sourceforge.jArgo.jDataModels.preferences;
 
 import java.awt.Color;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JFieldSet.RenderConfig;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jFieldSet.RenderConfig;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet;
 
 /**
  * Preferences for rendering.

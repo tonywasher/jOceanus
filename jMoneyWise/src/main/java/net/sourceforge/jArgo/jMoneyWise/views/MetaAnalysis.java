@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,44 +20,44 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.views;
+package net.sourceforge.jArgo.jMoneyWise.views;
 
 import java.util.Calendar;
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TaxYear;
-import net.sourceforge.JFinanceApp.data.statics.AccountType;
-import net.sourceforge.JFinanceApp.data.statics.TaxClass;
-import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
-import net.sourceforge.JFinanceApp.data.statics.TaxType;
-import net.sourceforge.JFinanceApp.data.statics.TransClass;
-import net.sourceforge.JFinanceApp.data.statics.TransactionType;
-import net.sourceforge.JFinanceApp.views.Analysis.ActDetail;
-import net.sourceforge.JFinanceApp.views.Analysis.AnalysisBucket;
-import net.sourceforge.JFinanceApp.views.Analysis.AnalysisState;
-import net.sourceforge.JFinanceApp.views.Analysis.AssetAccount;
-import net.sourceforge.JFinanceApp.views.Analysis.AssetSummary;
-import net.sourceforge.JFinanceApp.views.Analysis.AssetTotal;
-import net.sourceforge.JFinanceApp.views.Analysis.BucketList;
-import net.sourceforge.JFinanceApp.views.Analysis.DebtAccount;
-import net.sourceforge.JFinanceApp.views.Analysis.ExternalAccount;
-import net.sourceforge.JFinanceApp.views.Analysis.ExternalTotal;
-import net.sourceforge.JFinanceApp.views.Analysis.MarketTotal;
-import net.sourceforge.JFinanceApp.views.Analysis.MoneyAccount;
-import net.sourceforge.JFinanceApp.views.Analysis.TaxDetail;
-import net.sourceforge.JFinanceApp.views.Analysis.TransDetail;
-import net.sourceforge.JFinanceApp.views.Analysis.TransSummary;
-import net.sourceforge.JFinanceApp.views.Analysis.TransTotal;
-import net.sourceforge.JFinanceApp.views.Analysis.ValueAccount;
-import net.sourceforge.JFinanceApp.views.ChargeableEvent.ChargeableEventList;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYear;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransactionType;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.ActDetail;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.AnalysisBucket;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.AnalysisState;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.AssetAccount;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.AssetSummary;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.AssetTotal;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.BucketList;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.DebtAccount;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.ExternalAccount;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.ExternalTotal;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.MarketTotal;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.MoneyAccount;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.TaxDetail;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.TransDetail;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.TransSummary;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.TransTotal;
+import net.sourceforge.jArgo.jMoneyWise.views.Analysis.ValueAccount;
+import net.sourceforge.jArgo.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet;
 
 /**
  * Class to further analyse an analysis, primarily to calculate tax liability.

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.jArgo.jDataModels.ui;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -34,8 +34,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.table.JTableHeader;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
 
 /**
  * Template class to provide mouse support for a table.

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.database;
+package net.sourceforge.jArgo.jDataModels.database;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,15 +29,15 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.DataState;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.TaskControl;
+import net.sourceforge.jArgo.jDataManager.DataState;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.data.TaskControl;
 
 /**
  * Database Table class. This controls should be extended for each DataType/Table.

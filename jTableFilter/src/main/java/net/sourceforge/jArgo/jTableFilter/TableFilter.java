@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JTableFilter;
+package net.sourceforge.jArgo.jTableFilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import java.util.List;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.JTableFilter.TableFilter.TableFilterModel;
+import net.sourceforge.jArgo.jTableFilter.TableFilter.TableFilterModel;
 
 /**
  * RowSorter to provide filtering capabilities with natural sorting.

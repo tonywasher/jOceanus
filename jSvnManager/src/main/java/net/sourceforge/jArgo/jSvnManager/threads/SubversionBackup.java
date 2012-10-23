@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,17 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.threads;
+package net.sourceforge.jArgo.jSvnManager.threads;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.threads.ThreadStatus;
-import net.sourceforge.JDataModels.threads.WorkerThread;
-import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JGordianKnot.PasswordHash;
-import net.sourceforge.JGordianKnot.SecureManager;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
-import net.sourceforge.JSvnManager.tasks.Backup;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.threads.ThreadStatus;
+import net.sourceforge.jArgo.jDataModels.threads.WorkerThread;
+import net.sourceforge.jArgo.jDataModels.views.DataControl;
+import net.sourceforge.jArgo.jGordianKnot.PasswordHash;
+import net.sourceforge.jArgo.jGordianKnot.SecureManager;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jArgo.jSvnManager.tasks.Backup;
 
 /**
  * Thread to handle subVersion backups.

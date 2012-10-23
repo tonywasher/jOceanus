@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDateDay.Demo;
+package net.sourceforge.jArgo.jDateDay.Demo;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -53,14 +53,14 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.sourceforge.JDateButton.JDateConfig;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayButton;
-import net.sourceforge.JDateDay.JDateDayCellEditor;
-import net.sourceforge.JDateDay.JDateDayCellRenderer;
-import net.sourceforge.JDateDay.JDateDayConfig;
-import net.sourceforge.JDateDay.JDateDayFormatter;
-import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JDateDay.JDateDayRangeSelect;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayButton;
+import net.sourceforge.jArgo.jDateDay.JDateDayCellEditor;
+import net.sourceforge.jArgo.jDateDay.JDateDayCellRenderer;
+import net.sourceforge.jArgo.jDateDay.JDateDayConfig;
+import net.sourceforge.jArgo.jDateDay.JDateDayFormatter;
+import net.sourceforge.jArgo.jDateDay.JDateDayRange;
+import net.sourceforge.jArgo.jDateDay.JDateDayRangeSelect;
 
 /**
  * <p>

@@ -1,7 +1,7 @@
 <document>
   <properties>
     <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
-    <title>JDateDay Release Notes</title>
+    <title>jDateDay Release Notes</title>
   </properties>
   <body>
     <section name="Overview">
@@ -12,7 +12,7 @@ felt that it would be more useful to split the JDateButton functionality out, ba
     </section>
     <section name="Build History">
       <dl>
-<dt>v1.0.0-b1</dt> <dd>initial upload of code</dd>
+        <dt>v1.0.0-b1</dt> <dd>initial upload of code</dd>
       </dl>
     </section>
   </body>

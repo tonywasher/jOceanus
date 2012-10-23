@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.database;
+package net.sourceforge.jArgo.jDataModels.database;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.data.StaticData;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataModels.data.StaticData;
 
 /**
  * Database table class for Static Data Items. Each data type that represents Static Data should extend this

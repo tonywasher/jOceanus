@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.jArgo.jDataModels.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,8 +31,8 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 
-import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JEventManager.JEventPanel;
+import net.sourceforge.jArgo.jDataModels.views.UpdateSet;
+import net.sourceforge.jArgo.jEventManager.JEventPanel;
 
 /**
  * Save buttons panel.

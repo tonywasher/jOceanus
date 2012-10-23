@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +21,7 @@
  * $Date$
  ******************************************************************************/
 /**
- * Views of FinanceApp data.
+ * Views of MoneyWise data.
  */
-package net.sourceforge.JFinanceApp.views;
+package net.sourceforge.jArgo.jMoneyWise.views;
 

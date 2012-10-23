@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,15 +20,15 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.data;
+package net.sourceforge.jArgo.jSvnManager.data;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
 
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;

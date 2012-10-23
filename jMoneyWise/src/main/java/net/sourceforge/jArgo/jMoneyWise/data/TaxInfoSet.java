@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.jArgo.jMoneyWise.data;
 
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataModels.data.DataInfoSet;
-import net.sourceforge.JFinanceApp.data.TaxYearInfo.TaxInfoList;
-import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoClass;
-import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType;
-import net.sourceforge.JFinanceApp.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataModels.data.DataInfoSet;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxYearInfoClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxYearInfoType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 
 /**
  * TaxInfoSet class.

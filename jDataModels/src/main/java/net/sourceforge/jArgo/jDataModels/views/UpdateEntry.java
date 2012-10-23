@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.views;
+package net.sourceforge.jArgo.jDataModels.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
 
 /**
  * Update entry items.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui.controls;
+package net.sourceforge.jArgo.jMoneyWise.ui.controls;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -38,19 +38,19 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-import net.sourceforge.JDataManager.Difference;
 import net.sourceforge.JDateButton.JDateButton;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayButton;
-import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TaxYear;
-import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
-import net.sourceforge.JFinanceApp.views.EventAnalysis;
-import net.sourceforge.JFinanceApp.views.EventAnalysis.AnalysisYear;
-import net.sourceforge.JFinanceApp.views.View;
-import net.sourceforge.JSortedList.OrderedListIterator;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayButton;
+import net.sourceforge.jArgo.jDateDay.JDateDayRange;
+import net.sourceforge.jArgo.jEventManager.JEventPanel;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYear;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jArgo.jMoneyWise.views.EventAnalysis;
+import net.sourceforge.jArgo.jMoneyWise.views.EventAnalysis.AnalysisYear;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
+import net.sourceforge.jArgo.jSortedList.OrderedListIterator;
 
 /**
  * Report selection panel.

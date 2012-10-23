@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.database;
+package net.sourceforge.jArgo.jMoneyWise.database;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.database.Database;
-import net.sourceforge.JDataModels.preferences.DatabasePreferences;
-import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.database.Database;
+import net.sourceforge.jArgo.jDataModels.preferences.DatabasePreferences;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
 
 /**
  * Database extension for FinanceData.

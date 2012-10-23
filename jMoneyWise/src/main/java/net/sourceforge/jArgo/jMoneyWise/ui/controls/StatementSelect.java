@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui.controls;
+package net.sourceforge.jArgo.jMoneyWise.ui.controls;
 
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -33,8 +33,8 @@ import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFinanceApp.data.Account;
+import net.sourceforge.jArgo.jEventManager.JEventPanel;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
 
 /**
  * Statement type selection panel.

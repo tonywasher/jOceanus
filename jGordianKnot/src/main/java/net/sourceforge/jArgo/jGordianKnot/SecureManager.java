@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot;
+package net.sourceforge.jArgo.jGordianKnot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,8 +29,8 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 
 /**
  * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that

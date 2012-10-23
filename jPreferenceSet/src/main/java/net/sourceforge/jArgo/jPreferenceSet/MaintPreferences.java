@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JPreferenceSet;
+package net.sourceforge.jArgo.jPreferenceSet;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -41,12 +41,12 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JEventManager.ActionDetailEvent;
-import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFieldSet.RenderManager;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataManager;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jEventManager.ActionDetailEvent;
+import net.sourceforge.jArgo.jEventManager.JEventPanel;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
 
 /**
  * Preference maintenance panel.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,29 +20,29 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.jArgo.jMoneyWise.data;
 
 import java.util.Date;
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.EncryptedItem;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JDecimalParser;
-import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedRate;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataFormatter;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.data.EncryptedItem;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JDecimalParser;
+import net.sourceforge.jArgo.jDecimal.JRate;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedData.EncryptedRate;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedValueSet;
+import net.sourceforge.jArgo.jMoneyWise.data.Account.AccountList;
 
 /**
  * AccountRate data type.

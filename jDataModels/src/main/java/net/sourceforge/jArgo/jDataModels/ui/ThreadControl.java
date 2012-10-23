@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.jArgo.jDataModels.ui;
 
 /**
  * Control interface for threads.

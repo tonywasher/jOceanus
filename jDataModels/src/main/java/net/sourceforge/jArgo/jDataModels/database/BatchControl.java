@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.database;
+package net.sourceforge.jArgo.jDataModels.database;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.DataState;
-import net.sourceforge.JDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataManager.DataState;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
 
 /**
  * Batch control class. This controls updating data lists after the commit of the batch.

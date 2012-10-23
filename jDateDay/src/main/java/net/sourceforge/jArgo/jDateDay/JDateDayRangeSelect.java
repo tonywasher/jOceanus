@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDateDay;
+package net.sourceforge.jArgo.jDateDay;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;

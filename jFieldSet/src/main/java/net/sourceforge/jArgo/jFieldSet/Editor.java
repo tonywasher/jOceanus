@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFieldSet;
+package net.sourceforge.jArgo.jFieldSet;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,13 +40,13 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 import javax.swing.table.TableCellEditor;
 
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayCellEditor;
-import net.sourceforge.JDateDay.JDateDayFormatter;
-import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JDecimal.JDecimal;
-import net.sourceforge.JDecimal.JDecimalParser;
-import net.sourceforge.JFieldSet.Renderer.RendererFieldValue;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayCellEditor;
+import net.sourceforge.jArgo.jDateDay.JDateDayFormatter;
+import net.sourceforge.jArgo.jDateDay.JDateDayRange;
+import net.sourceforge.jArgo.jDecimal.JDecimal;
+import net.sourceforge.jArgo.jDecimal.JDecimalParser;
+import net.sourceforge.jArgo.jFieldSet.Renderer.RendererFieldValue;
 
 /**
  * Cell editors.

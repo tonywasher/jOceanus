@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.help;
+package net.sourceforge.jArgo.jMoneyWise.help;
 
-import net.sourceforge.JHelpManager.HelpException;
-import net.sourceforge.JHelpManager.HelpModule;
+import net.sourceforge.jArgo.jHelpManager.HelpException;
+import net.sourceforge.jArgo.jHelpManager.HelpModule;
 
 /**
  * Help Module for FinanceApp.

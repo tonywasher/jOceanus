@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataValues;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataValues;
 
 /**
  * ValueSet class.

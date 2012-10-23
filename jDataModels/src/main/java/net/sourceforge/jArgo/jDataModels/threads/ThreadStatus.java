@@ -20,17 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.threads;
+package net.sourceforge.jArgo.jDataModels.threads;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.TaskControl;
-import net.sourceforge.JDataModels.ui.StatusBar;
-import net.sourceforge.JDataModels.ui.StatusBar.StatusData;
-import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JGordianKnot.SecureManager;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.data.TaskControl;
+import net.sourceforge.jArgo.jDataModels.ui.StatusBar;
+import net.sourceforge.jArgo.jDataModels.ui.StatusBar.StatusData;
+import net.sourceforge.jArgo.jDataModels.views.DataControl;
+import net.sourceforge.jArgo.jGordianKnot.SecureManager;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet;
 
 /**
  * Thread Status.

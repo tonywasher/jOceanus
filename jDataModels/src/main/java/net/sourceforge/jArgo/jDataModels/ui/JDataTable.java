@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.jArgo.jDataModels.ui;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -35,17 +35,17 @@ import javax.swing.JViewport;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
 
-import net.sourceforge.JDataManager.EditState;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.ui.JDataTableColumn.RowColumnModel;
-import net.sourceforge.JDataModels.ui.JDataTableModel.RowTableModel;
-import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JEventManager.JEventTable;
-import net.sourceforge.JFieldSet.Editor.ComboBoxSelector;
-import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JTableFilter.TableFilter;
+import net.sourceforge.jArgo.jDataManager.EditState;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableColumn.RowColumnModel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableModel.RowTableModel;
+import net.sourceforge.jArgo.jDataModels.views.UpdateSet;
+import net.sourceforge.jArgo.jEventManager.JEventTable;
+import net.sourceforge.jArgo.jFieldSet.Editor.ComboBoxSelector;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
+import net.sourceforge.jArgo.jTableFilter.TableFilter;
 
 /**
  * Template class to provide a table to handle a data type.

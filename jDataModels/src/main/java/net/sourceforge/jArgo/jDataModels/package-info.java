@@ -23,5 +23,5 @@
 /**
  * Main window package.
  */
-package net.sourceforge.JDataModels;
+package net.sourceforge.jArgo.jDataModels;
 

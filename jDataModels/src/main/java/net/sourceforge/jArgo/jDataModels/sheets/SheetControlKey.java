@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.sheets;
+package net.sourceforge.jArgo.jDataModels.sheets;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.ControlKey;
-import net.sourceforge.JDataModels.data.ControlKey.ControlKeyList;
-import net.sourceforge.JDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.ControlKey;
+import net.sourceforge.jArgo.jDataModels.data.ControlKey.ControlKeyList;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
 
 /**
  * SheetDataItem extension for ControlKey.

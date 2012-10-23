@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.database;
+package net.sourceforge.jArgo.jDataModels.database;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -34,14 +34,14 @@ import java.util.ListIterator;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JDilution;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JDecimal.JUnits;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JDilution;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jDecimal.JPrice;
+import net.sourceforge.jArgo.jDecimal.JRate;
+import net.sourceforge.jArgo.jDecimal.JUnits;
 
 /**
  * Column definition classes handling data-type specifics.

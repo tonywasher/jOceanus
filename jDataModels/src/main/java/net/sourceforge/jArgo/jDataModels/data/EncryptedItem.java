@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.data.ControlKey.ControlKeyList;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
-import net.sourceforge.JGordianKnot.EncryptionGenerator;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataModels.data.ControlKey.ControlKeyList;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedData.EncryptedField;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedValueSet;
+import net.sourceforge.jArgo.jGordianKnot.EncryptionGenerator;
 
 /**
  * Encrypted Data Item and List.

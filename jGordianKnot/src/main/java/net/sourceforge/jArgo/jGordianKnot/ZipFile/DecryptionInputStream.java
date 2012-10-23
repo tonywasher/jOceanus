@@ -20,16 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot.ZipFile;
+package net.sourceforge.jArgo.jGordianKnot.ZipFile;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.crypto.Cipher;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JGordianKnot.SymmetricKey;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jGordianKnot.SymmetricKey;
 
 /**
  * Provide an decryptInputStream wrapper. This class simply wraps an input buffer and processes it as a Zip

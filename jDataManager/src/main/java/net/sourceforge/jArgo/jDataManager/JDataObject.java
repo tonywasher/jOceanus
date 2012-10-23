@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 
-import net.sourceforge.JDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
 
 /**
  * Data object formatting and interfaces.

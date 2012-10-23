@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JPreferenceSet;
+package net.sourceforge.jArgo.jPreferenceSet;
 
 import java.awt.Component;
 import java.io.File;

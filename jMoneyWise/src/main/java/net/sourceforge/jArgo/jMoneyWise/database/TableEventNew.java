@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,25 +20,24 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.database;
+package net.sourceforge.jArgo.jMoneyWise.database;
 
 import java.util.Date;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.database.ColumnDefinition;
-import net.sourceforge.JDataModels.database.Database;
-import net.sourceforge.JDataModels.database.TableDefinition;
-import net.sourceforge.JDataModels.database.TableEncrypted;
-import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.EventBase;
-import net.sourceforge.JFinanceApp.data.EventNew;
-import net.sourceforge.JFinanceApp.data.EventNew.EventNewList;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JGordianKnot.EncryptedData;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition;
+import net.sourceforge.jArgo.jDataModels.database.Database;
+import net.sourceforge.jArgo.jDataModels.database.TableDefinition;
+import net.sourceforge.jArgo.jDataModels.database.TableEncrypted;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedData;
+import net.sourceforge.jArgo.jMoneyWise.data.EventBase;
+import net.sourceforge.jArgo.jMoneyWise.data.EventNew;
+import net.sourceforge.jArgo.jMoneyWise.data.EventNew.EventNewList;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
 
 /**
  * TableEncrypted extension for Event.
@@ -105,17 +104,17 @@ public class TableEventNew extends TableEncrypted<EventNew> {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (EventBase.FIELD_DATE.equals(iField)) {
-            myTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
+            myTableDef.setDateValue(EventBase.FIELD_DATE, pItem.getDate());
         } else if (EventBase.FIELD_DESC.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
+            myTableDef.setBinaryValue(EventBase.FIELD_DESC, pItem.getDescBytes());
         } else if (EventBase.FIELD_AMOUNT.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
+            myTableDef.setBinaryValue(EventBase.FIELD_AMOUNT, pItem.getAmountBytes());
         } else if (EventBase.FIELD_DEBIT.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_DEBIT, pItem.getDebit().getId());
+            myTableDef.setIntegerValue(EventBase.FIELD_DEBIT, pItem.getDebit().getId());
         } else if (EventBase.FIELD_CREDIT.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_CREDIT, pItem.getCredit().getId());
+            myTableDef.setIntegerValue(EventBase.FIELD_CREDIT, pItem.getCredit().getId());
         } else if (EventBase.FIELD_TRNTYP.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
+            myTableDef.setIntegerValue(EventBase.FIELD_TRNTYP, pItem.getTransType().getId());
         } else {
             super.setFieldValue(pItem, iField);
         }

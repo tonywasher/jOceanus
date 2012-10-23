@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFieldSet;
+package net.sourceforge.jArgo.jFieldSet;
 
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
 
 /**
  * Basic Field interface.

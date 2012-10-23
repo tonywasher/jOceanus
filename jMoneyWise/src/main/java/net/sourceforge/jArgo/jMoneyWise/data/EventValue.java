@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,21 +20,21 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.jArgo.jMoneyWise.data;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.Event.EventList;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataFormatter;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jArgo.jMoneyWise.data.Event.EventList;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.EventInfoType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
 
 /**
  * EventValue data type.

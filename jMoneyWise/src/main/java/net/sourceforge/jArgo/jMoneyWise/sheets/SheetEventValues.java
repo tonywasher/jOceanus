@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.sheets;
+package net.sourceforge.jArgo.jMoneyWise.sheets;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.sheets.SheetDataItem;
-import net.sourceforge.JFinanceApp.data.EventValue;
-import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
-import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.sheets.SheetDataItem;
+import net.sourceforge.jArgo.jMoneyWise.data.EventValue;
+import net.sourceforge.jArgo.jMoneyWise.data.EventValue.EventValueList;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
 
 /**
  * SheetDataItem extension for Event Values.

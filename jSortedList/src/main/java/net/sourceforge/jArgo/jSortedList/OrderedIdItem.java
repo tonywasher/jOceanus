@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSortedList;
+package net.sourceforge.jArgo.jSortedList;
 
 /**
  * Interface for items that wish to belong to an OrderedIdList.

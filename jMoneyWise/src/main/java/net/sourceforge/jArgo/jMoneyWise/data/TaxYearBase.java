@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,25 +20,25 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.jArgo.jMoneyWise.data;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
-import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
-import net.sourceforge.JSortedList.OrderedListIterator;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayRange;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
+import net.sourceforge.jArgo.jSortedList.OrderedListIterator;
 
 /**
  * Tax Year Class representing taxation parameters for a tax year.

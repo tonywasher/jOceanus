@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui;
+package net.sourceforge.jArgo.jMoneyWise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,55 +36,55 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.ui.ErrorPanel;
-import net.sourceforge.JDataModels.ui.JDataTable;
-import net.sourceforge.JDataModels.ui.JDataTableColumn;
-import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.JDataModels.ui.JDataTableModel;
-import net.sourceforge.JDataModels.ui.JDataTableMouse;
-import net.sourceforge.JDataModels.views.UpdateEntry;
-import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayFormatter;
-import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JDateDay.JDateDayRangeSelect;
-import net.sourceforge.JDecimal.JDecimalFormatter;
-import net.sourceforge.JDecimal.JDecimalParser;
-import net.sourceforge.JDecimal.JDilution;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JUnits;
-import net.sourceforge.JFieldSet.Editor.CalendarEditor;
-import net.sourceforge.JFieldSet.Editor.ComboBoxEditor;
-import net.sourceforge.JFieldSet.Editor.DilutionEditor;
-import net.sourceforge.JFieldSet.Editor.IntegerEditor;
-import net.sourceforge.JFieldSet.Editor.MoneyEditor;
-import net.sourceforge.JFieldSet.Editor.StringEditor;
-import net.sourceforge.JFieldSet.Editor.UnitsEditor;
-import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JFieldSet.Renderer.CalendarRenderer;
-import net.sourceforge.JFieldSet.Renderer.DecimalRenderer;
-import net.sourceforge.JFieldSet.Renderer.IntegerRenderer;
-import net.sourceforge.JFieldSet.Renderer.StringRenderer;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.AccountType;
-import net.sourceforge.JFinanceApp.data.statics.TransactionType;
-import net.sourceforge.JFinanceApp.ui.MainTab.ActionRequest;
-import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
-import net.sourceforge.JFinanceApp.ui.controls.StatementSelect;
-import net.sourceforge.JFinanceApp.ui.controls.StatementSelect.StatementType;
-import net.sourceforge.JFinanceApp.views.Statement;
-import net.sourceforge.JFinanceApp.views.Statement.StatementLine;
-import net.sourceforge.JFinanceApp.views.Statement.StatementLines;
-import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataFormatter;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.ui.ErrorPanel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTable;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableColumn;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableModel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableMouse;
+import net.sourceforge.jArgo.jDataModels.views.UpdateEntry;
+import net.sourceforge.jArgo.jDataModels.views.UpdateSet;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayFormatter;
+import net.sourceforge.jArgo.jDateDay.JDateDayRange;
+import net.sourceforge.jArgo.jDateDay.JDateDayRangeSelect;
+import net.sourceforge.jArgo.jDecimal.JDecimalFormatter;
+import net.sourceforge.jArgo.jDecimal.JDecimalParser;
+import net.sourceforge.jArgo.jDecimal.JDilution;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jDecimal.JUnits;
+import net.sourceforge.jArgo.jFieldSet.Editor.CalendarEditor;
+import net.sourceforge.jArgo.jFieldSet.Editor.ComboBoxEditor;
+import net.sourceforge.jArgo.jFieldSet.Editor.DilutionEditor;
+import net.sourceforge.jArgo.jFieldSet.Editor.IntegerEditor;
+import net.sourceforge.jArgo.jFieldSet.Editor.MoneyEditor;
+import net.sourceforge.jArgo.jFieldSet.Editor.StringEditor;
+import net.sourceforge.jArgo.jFieldSet.Editor.UnitsEditor;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
+import net.sourceforge.jArgo.jFieldSet.Renderer.CalendarRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.DecimalRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.IntegerRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.StringRenderer;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.Event;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransactionType;
+import net.sourceforge.jArgo.jMoneyWise.ui.MainTab.ActionRequest;
+import net.sourceforge.jArgo.jMoneyWise.ui.controls.ComboSelect;
+import net.sourceforge.jArgo.jMoneyWise.ui.controls.StatementSelect;
+import net.sourceforge.jArgo.jMoneyWise.ui.controls.StatementSelect.StatementType;
+import net.sourceforge.jArgo.jMoneyWise.views.Statement;
+import net.sourceforge.jArgo.jMoneyWise.views.Statement.StatementLine;
+import net.sourceforge.jArgo.jMoneyWise.views.Statement.StatementLines;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
 
 /**
  * Account Statement Table.

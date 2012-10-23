@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,25 +20,25 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.database;
+package net.sourceforge.jArgo.jMoneyWise.database;
 
 import java.util.Date;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.database.ColumnDefinition;
-import net.sourceforge.JDataModels.database.Database;
-import net.sourceforge.JDataModels.database.TableDefinition;
-import net.sourceforge.JDataModels.database.TableEncrypted;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.Pattern;
-import net.sourceforge.JFinanceApp.data.Pattern.PatternList;
-import net.sourceforge.JGordianKnot.EncryptedData;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition;
+import net.sourceforge.jArgo.jDataModels.database.Database;
+import net.sourceforge.jArgo.jDataModels.database.TableDefinition;
+import net.sourceforge.jArgo.jDataModels.database.TableEncrypted;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedData;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.Event;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.Pattern;
+import net.sourceforge.jArgo.jMoneyWise.data.Pattern.PatternList;
 
 /**
  * TabelEncrypted extension for Pattern.

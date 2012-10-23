@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui;
+package net.sourceforge.jArgo.jMoneyWise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,21 +41,21 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.ui.ErrorPanel;
-import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFinanceApp.data.TaxYear;
-import net.sourceforge.JFinanceApp.ui.controls.ReportSelect;
-import net.sourceforge.JFinanceApp.ui.controls.ReportSelect.ReportType;
-import net.sourceforge.JFinanceApp.views.AnalysisReport;
-import net.sourceforge.JFinanceApp.views.EventAnalysis;
-import net.sourceforge.JFinanceApp.views.EventAnalysis.AnalysisYear;
-import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataManager;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataModels.ui.ErrorPanel;
+import net.sourceforge.jArgo.jDataModels.views.DataControl;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jEventManager.JEventPanel;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYear;
+import net.sourceforge.jArgo.jMoneyWise.ui.controls.ReportSelect;
+import net.sourceforge.jArgo.jMoneyWise.ui.controls.ReportSelect.ReportType;
+import net.sourceforge.jArgo.jMoneyWise.views.AnalysisReport;
+import net.sourceforge.jArgo.jMoneyWise.views.EventAnalysis;
+import net.sourceforge.jArgo.jMoneyWise.views.EventAnalysis.AnalysisYear;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
 
 /**
  * Report Panel.

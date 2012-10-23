@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Jira: Java Jira Link
+ * jJira: Java Jira Link
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JiraAccess.data;
+package net.sourceforge.jArgo.jJira.data;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JiraAccess.soap.JiraSoapService;
-import net.sourceforge.JiraAccess.soap.RemoteGroup;
-import net.sourceforge.JiraAccess.soap.RemoteProjectRole;
-import net.sourceforge.JiraAccess.soap.RemoteUser;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jJira.soap.JiraSoapService;
+import net.sourceforge.jArgo.jJira.soap.RemoteGroup;
+import net.sourceforge.jArgo.jJira.soap.RemoteProjectRole;
+import net.sourceforge.jArgo.jJira.soap.RemoteUser;
 
 /**
  * Handles security for a jira server.

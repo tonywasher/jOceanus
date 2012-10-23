@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.jArgo.jMoneyWise.data;
 
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataModels.data.DataInfoSet;
-import net.sourceforge.JFinanceApp.data.AccountInfo.AccountInfoList;
-import net.sourceforge.JFinanceApp.data.statics.AccountInfoClass;
-import net.sourceforge.JFinanceApp.data.statics.AccountInfoType;
-import net.sourceforge.JFinanceApp.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataModels.data.DataInfoSet;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountInfoClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountInfoType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 
 /**
  * AccountInfoSet class.

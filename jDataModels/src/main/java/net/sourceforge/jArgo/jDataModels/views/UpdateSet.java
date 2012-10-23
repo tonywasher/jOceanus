@@ -20,24 +20,24 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.views;
+package net.sourceforge.jArgo.jDataModels.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.EditState;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.ui.ErrorPanel;
-import net.sourceforge.JDataModels.ui.SaveButtons;
-import net.sourceforge.JEventManager.JEventObject;
+import net.sourceforge.jArgo.jDataManager.EditState;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.ui.ErrorPanel;
+import net.sourceforge.jArgo.jDataModels.ui.SaveButtons;
+import net.sourceforge.jArgo.jEventManager.JEventObject;
 
 /**
  * Provides control of a set of update-able DataLists.

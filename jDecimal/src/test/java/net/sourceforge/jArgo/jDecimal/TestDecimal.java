@@ -20,7 +20,8 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDecimal;
+package net.sourceforge.jArgo.jDecimal;
+
 
 /**
  * JDecimal test class.
@@ -63,6 +64,7 @@ public final class TestDecimal {
         myPrice = myDPrice.getPrice(myDilution);
 
         /* Set to null */
-        myFormat = null;
+        myFormat.trim();
+        myPrice.setZero();
     }
 }

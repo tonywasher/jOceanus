@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 
 import java.awt.Dimension;
 
@@ -35,7 +35,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
 
 /**
  * Data Window display class.

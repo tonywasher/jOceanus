@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot;
+package net.sourceforge.jArgo.jGordianKnot;
 
-import net.sourceforge.JDataManager.DataConverter;
+import net.sourceforge.jArgo.jDataManager.DataConverter;
 
 import org.bouncycastle.util.Arrays;
 

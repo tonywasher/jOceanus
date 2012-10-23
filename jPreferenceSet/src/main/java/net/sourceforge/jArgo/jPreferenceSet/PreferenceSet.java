@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JPreferenceSet;
+package net.sourceforge.jArgo.jPreferenceSet;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -31,17 +31,17 @@ import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JEventManager.JEventObject;
-import net.sourceforge.JFieldSet.JFieldSetItem;
-import net.sourceforge.JFieldSet.RenderState;
+import net.sourceforge.jArgo.jDataManager.DataConverter;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jEventManager.JEventObject;
+import net.sourceforge.jArgo.jFieldSet.JFieldSetItem;
+import net.sourceforge.jArgo.jFieldSet.RenderState;
 
 /**
  * Wrapper class for java preferences.

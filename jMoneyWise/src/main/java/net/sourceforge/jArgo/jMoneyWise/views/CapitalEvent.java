@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,29 +20,29 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.views;
+package net.sourceforge.jArgo.jMoneyWise.views;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JDecimal;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JDecimal.JUnits;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.TransClass;
-import net.sourceforge.JSortedList.OrderedIdItem;
-import net.sourceforge.JSortedList.OrderedIdList;
-import net.sourceforge.JSortedList.OrderedListIterator;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JDecimal;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jDecimal.JPrice;
+import net.sourceforge.jArgo.jDecimal.JUnits;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.Event;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransClass;
+import net.sourceforge.jArgo.jSortedList.OrderedIdItem;
+import net.sourceforge.jArgo.jSortedList.OrderedIdList;
+import net.sourceforge.jArgo.jSortedList.OrderedListIterator;
 
 /**
  * Capital Events relating to asset movements.

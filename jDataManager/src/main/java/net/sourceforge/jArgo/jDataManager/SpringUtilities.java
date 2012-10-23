@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 
 import java.awt.Component;
 

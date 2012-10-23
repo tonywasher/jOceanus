@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot.ZipFile;
+package net.sourceforge.jArgo.jGordianKnot.ZipFile;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,27 +20,27 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.views;
+package net.sourceforge.jArgo.jMoneyWise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.DataState;
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.EditState;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.AccountPrice;
-import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.AccountType;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
+import net.sourceforge.jArgo.jDataManager.DataState;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.EditState;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.data.EncryptedItem.EncryptedList;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JPrice;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedValueSet;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountPrice;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountPrice.AccountPriceList;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountType;
 
 /**
  * Extension of AccountPrice to cater for spot prices.

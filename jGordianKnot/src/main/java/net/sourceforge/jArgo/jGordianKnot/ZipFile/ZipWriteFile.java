@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot.ZipFile;
+package net.sourceforge.jArgo.jGordianKnot.ZipFile;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -31,14 +31,14 @@ import java.security.Signature;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JGordianKnot.AsymmetricKey;
-import net.sourceforge.JGordianKnot.MsgDigest;
-import net.sourceforge.JGordianKnot.PasswordHash;
-import net.sourceforge.JGordianKnot.SecurityGenerator;
-import net.sourceforge.JGordianKnot.SymKeyType;
-import net.sourceforge.JGordianKnot.SymmetricKey;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jGordianKnot.AsymmetricKey;
+import net.sourceforge.jArgo.jGordianKnot.MsgDigest;
+import net.sourceforge.jArgo.jGordianKnot.PasswordHash;
+import net.sourceforge.jArgo.jGordianKnot.SecurityGenerator;
+import net.sourceforge.jArgo.jGordianKnot.SymKeyType;
+import net.sourceforge.jArgo.jGordianKnot.SymmetricKey;
 
 /**
  * Class used to build a ZipFile.

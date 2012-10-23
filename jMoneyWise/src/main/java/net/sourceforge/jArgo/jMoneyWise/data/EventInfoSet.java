@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,28 +20,28 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.jArgo.jMoneyWise.data;
 
 import java.util.EnumMap;
 import java.util.Map;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JDecimal.JDilution;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JUnits;
-import net.sourceforge.JFinanceApp.data.EventData.EventDataList;
-import net.sourceforge.JFinanceApp.data.EventValue.EventValueList;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoClass;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoType.EventInfoTypeList;
-import net.sourceforge.JFinanceApp.data.statics.TransactionType;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDataModels.data.DataList.ListStyle;
+import net.sourceforge.jArgo.jDecimal.JDilution;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jDecimal.JUnits;
+import net.sourceforge.jArgo.jMoneyWise.data.EventData.EventDataList;
+import net.sourceforge.jArgo.jMoneyWise.data.EventValue.EventValueList;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.EventInfoClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.EventInfoType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransactionType;
 
 /**
  * EventInfoSet data type.

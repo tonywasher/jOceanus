@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels;
+package net.sourceforge.jArgo.jDataModels;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -41,27 +41,27 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataWindow;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.threads.CreateBackup;
-import net.sourceforge.JDataModels.threads.CreateDatabase;
-import net.sourceforge.JDataModels.threads.CreateExtract;
-import net.sourceforge.JDataModels.threads.LoadBackup;
-import net.sourceforge.JDataModels.threads.LoadDatabase;
-import net.sourceforge.JDataModels.threads.LoadExtract;
-import net.sourceforge.JDataModels.threads.PurgeDatabase;
-import net.sourceforge.JDataModels.threads.RenewSecurity;
-import net.sourceforge.JDataModels.threads.StoreDatabase;
-import net.sourceforge.JDataModels.threads.ThreadStatus;
-import net.sourceforge.JDataModels.threads.UpdatePassword;
-import net.sourceforge.JDataModels.threads.WorkerThread;
-import net.sourceforge.JDataModels.ui.StatusBar;
-import net.sourceforge.JDataModels.ui.ThreadControl;
-import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JHelpManager.HelpModule;
-import net.sourceforge.JHelpManager.HelpWindow;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataManager;
+import net.sourceforge.jArgo.jDataManager.JDataWindow;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.threads.CreateBackup;
+import net.sourceforge.jArgo.jDataModels.threads.CreateDatabase;
+import net.sourceforge.jArgo.jDataModels.threads.CreateExtract;
+import net.sourceforge.jArgo.jDataModels.threads.LoadBackup;
+import net.sourceforge.jArgo.jDataModels.threads.LoadDatabase;
+import net.sourceforge.jArgo.jDataModels.threads.LoadExtract;
+import net.sourceforge.jArgo.jDataModels.threads.PurgeDatabase;
+import net.sourceforge.jArgo.jDataModels.threads.RenewSecurity;
+import net.sourceforge.jArgo.jDataModels.threads.StoreDatabase;
+import net.sourceforge.jArgo.jDataModels.threads.ThreadStatus;
+import net.sourceforge.jArgo.jDataModels.threads.UpdatePassword;
+import net.sourceforge.jArgo.jDataModels.threads.WorkerThread;
+import net.sourceforge.jArgo.jDataModels.ui.StatusBar;
+import net.sourceforge.jArgo.jDataModels.ui.ThreadControl;
+import net.sourceforge.jArgo.jDataModels.views.DataControl;
+import net.sourceforge.jArgo.jHelpManager.HelpModule;
+import net.sourceforge.jArgo.jHelpManager.HelpWindow;
 
 /**
  * Main window for application.

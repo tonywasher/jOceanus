@@ -1,4 +1,5 @@
 /*******************************************************************************
+ * jJira: Java Jira Link
  * Copyright 2012 Tony Washer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JiraAccess;
+package net.sourceforge.jArgo.jJira;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
-import net.sourceforge.JiraAccess.data.Server;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jJira.data.Server;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
 
 public class TestJira {
     /**

@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedData.EncryptedField;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedValueSet;
 
 /**
  * Representation of an information extension of a DataItem.
@@ -312,7 +312,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
      * @param <O> the Owner Type
      * @param <I> the DataInfo Type
      */
-    protected abstract static class DataInfoList<T extends DataInfo<T, O, I> & Comparable<T>, O extends DataItem, I extends StaticData<I, ?>>
+    public abstract static class DataInfoList<T extends DataInfo<T, O, I> & Comparable<T>, O extends DataItem, I extends StaticData<I, ?>>
             extends EncryptedList<T> {
         /**
          * Local Report fields.

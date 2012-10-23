@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot;
+package net.sourceforge.jArgo.jGordianKnot;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JGordianKnot.DataHayStack.DigestNeedle;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jGordianKnot.DataHayStack.DigestNeedle;
 
 /**
  * Wrapper class for MessageDigest. This allows transformation to and from the external digest format and

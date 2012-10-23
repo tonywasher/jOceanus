@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * Package to handle user interface for JSvnManager.
  */
-package net.sourceforge.JSvnManager.ui;
+package net.sourceforge.jArgo.jSvnManager.ui;
 

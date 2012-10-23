@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.threads;
+package net.sourceforge.jArgo.jSvnManager.threads;
 
 import java.io.File;
 import java.util.Collection;
@@ -28,14 +28,14 @@ import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JSvnManager.data.Branch;
-import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.JSvnManager.data.JSvnReporter.ReportTask;
-import net.sourceforge.JSvnManager.data.Repository;
-import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
-import net.sourceforge.JSvnManager.tasks.Directory;
-import net.sourceforge.JSvnManager.tasks.VersionMgr;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jSvnManager.data.Branch;
+import net.sourceforge.jArgo.jSvnManager.data.JSvnReporter.ReportStatus;
+import net.sourceforge.jArgo.jSvnManager.data.JSvnReporter.ReportTask;
+import net.sourceforge.jArgo.jSvnManager.data.Repository;
+import net.sourceforge.jArgo.jSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.jArgo.jSvnManager.tasks.Directory;
+import net.sourceforge.jArgo.jSvnManager.tasks.VersionMgr;
 
 /**
  * Thread to handle creation of branch tags.

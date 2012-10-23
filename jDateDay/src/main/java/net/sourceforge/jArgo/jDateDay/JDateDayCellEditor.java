@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDateDay;
+package net.sourceforge.jArgo.jDateDay;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;

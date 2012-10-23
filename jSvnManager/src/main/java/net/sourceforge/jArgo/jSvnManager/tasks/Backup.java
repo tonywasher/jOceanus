@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.tasks;
+package net.sourceforge.jArgo.jSvnManager.tasks;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,18 +28,18 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.TaskControl;
-import net.sourceforge.JDataModels.preferences.BackupPreferences;
-import net.sourceforge.JGordianKnot.PasswordHash;
-import net.sourceforge.JGordianKnot.SecureManager;
-import net.sourceforge.JGordianKnot.ZipFile.ZipFileEntry;
-import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
-import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
-import net.sourceforge.JSvnManager.data.Repository;
-import net.sourceforge.JSvnManager.data.SubVersionPreferences;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataModels.data.TaskControl;
+import net.sourceforge.jArgo.jDataModels.preferences.BackupPreferences;
+import net.sourceforge.jArgo.jGordianKnot.PasswordHash;
+import net.sourceforge.jArgo.jGordianKnot.SecureManager;
+import net.sourceforge.jArgo.jGordianKnot.ZipFile.ZipFileEntry;
+import net.sourceforge.jArgo.jGordianKnot.ZipFile.ZipReadFile;
+import net.sourceforge.jArgo.jGordianKnot.ZipFile.ZipWriteFile;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jArgo.jSvnManager.data.Repository;
+import net.sourceforge.jArgo.jSvnManager.data.SubVersionPreferences;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNException;

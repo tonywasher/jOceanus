@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.tasks;
+package net.sourceforge.jArgo.jSvnManager.tasks;
 
 import java.io.File;
 import java.util.Collection;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JSvnManager.data.Branch;
-import net.sourceforge.JSvnManager.data.JSvnReporter.ReportStatus;
-import net.sourceforge.JSvnManager.data.Repository;
-import net.sourceforge.JSvnManager.data.Tag;
-import net.sourceforge.JSvnManager.data.WorkingCopy;
-import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jSvnManager.data.Branch;
+import net.sourceforge.jArgo.jSvnManager.data.JSvnReporter.ReportStatus;
+import net.sourceforge.jArgo.jSvnManager.data.Repository;
+import net.sourceforge.jArgo.jSvnManager.data.Tag;
+import net.sourceforge.jArgo.jSvnManager.data.WorkingCopy;
+import net.sourceforge.jArgo.jSvnManager.data.WorkingCopy.WorkingCopySet;
 
 import org.tmatesoft.svn.core.SVNCancelException;
 import org.tmatesoft.svn.core.SVNDepth;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.sheets;
+package net.sourceforge.jArgo.jMoneyWise.sheets;
 
-import net.sourceforge.JDataModels.data.TaskControl;
-import net.sourceforge.JDataModels.sheets.SheetWriter;
-import net.sourceforge.JFinanceApp.data.FinanceData;
+import net.sourceforge.jArgo.jDataModels.data.TaskControl;
+import net.sourceforge.jArgo.jDataModels.sheets.SheetWriter;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
 
 /**
  * SheetWriter extension for FinanceData.

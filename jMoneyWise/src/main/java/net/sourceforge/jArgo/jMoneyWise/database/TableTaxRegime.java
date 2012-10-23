@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,15 +20,15 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.database;
+package net.sourceforge.jArgo.jMoneyWise.database;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.database.Database;
-import net.sourceforge.JDataModels.database.TableStaticData;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
-import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.database.Database;
+import net.sourceforge.jArgo.jDataModels.database.TableStaticData;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
 
 /**
  * TableStaticData extension for TaxRegime.

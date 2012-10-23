@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.preferences;
+package net.sourceforge.jArgo.jDataModels.preferences;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.database.BatchControl;
-import net.sourceforge.JDataModels.database.JDBCDriver;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.database.BatchControl;
+import net.sourceforge.jArgo.jDataModels.database.JDBCDriver;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet;
 
 /**
  * Preferences for a database.

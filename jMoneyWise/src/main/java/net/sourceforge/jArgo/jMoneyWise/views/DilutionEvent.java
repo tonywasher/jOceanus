@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,31 +20,31 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.views;
+package net.sourceforge.jArgo.jMoneyWise.views;
 
 import java.util.Date;
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JDecimalParser;
-import net.sourceforge.JDecimal.JDilutedPrice;
-import net.sourceforge.JDecimal.JDilution;
-import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
-import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.TransactionType;
-import net.sourceforge.JSortedList.OrderedIdItem;
-import net.sourceforge.JSortedList.OrderedIdList;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JDecimalParser;
+import net.sourceforge.jArgo.jDecimal.JDilutedPrice;
+import net.sourceforge.jArgo.jDecimal.JDilution;
+import net.sourceforge.jArgo.jDecimal.JPrice;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountPrice.AccountPriceList;
+import net.sourceforge.jArgo.jMoneyWise.data.Event;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransactionType;
+import net.sourceforge.jArgo.jSortedList.OrderedIdItem;
+import net.sourceforge.jArgo.jSortedList.OrderedIdList;
 
 /**
  * Dilution Events relating to stock dilution.

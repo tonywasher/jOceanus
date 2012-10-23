@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.ui;
+package net.sourceforge.jArgo.jSvnManager.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -35,7 +35,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingWorker;
 
-import net.sourceforge.JSvnManager.data.JSvnReporter.ReportTask;
+import net.sourceforge.jArgo.jSvnManager.data.JSvnReporter.ReportTask;
 
 /**
  * Status window for SubVersion operations.

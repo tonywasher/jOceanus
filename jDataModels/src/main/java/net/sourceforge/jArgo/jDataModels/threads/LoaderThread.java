@@ -20,14 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.threads;
+package net.sourceforge.jArgo.jDataModels.threads;
 
 import java.util.concurrent.ExecutionException;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.views.DataControl;
 
 /**
  * A wrapper for a worker thread that loads a DataSet.

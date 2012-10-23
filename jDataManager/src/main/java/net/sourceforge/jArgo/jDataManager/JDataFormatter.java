@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -28,14 +28,14 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sourceforge.JDataManager.JDataObject.JDataDifference;
-import net.sourceforge.JDataManager.JDataObject.JDataFormat;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayFormatter;
-import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JDecimal.JDecimal;
-import net.sourceforge.JDecimal.JDecimalFormatter;
-import net.sourceforge.JDecimal.JDecimalParser;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataDifference;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFormat;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayFormatter;
+import net.sourceforge.jArgo.jDateDay.JDateDayRange;
+import net.sourceforge.jArgo.jDecimal.JDecimal;
+import net.sourceforge.jArgo.jDecimal.JDecimalFormatter;
+import net.sourceforge.jArgo.jDecimal.JDecimalParser;
 
 /**
  * Generic Data object formatter.

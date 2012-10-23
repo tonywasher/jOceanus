@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDataModels.data.StaticData.StaticInterface;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedString;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.StaticData.StaticInterface;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedData.EncryptedString;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedValueSet;
 
 /**
  * Template for a Static Data item and List.

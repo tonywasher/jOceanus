@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JHelpManager;
+package net.sourceforge.jArgo.jHelpManager;
 
 import java.awt.Dimension;
 import java.io.IOException;

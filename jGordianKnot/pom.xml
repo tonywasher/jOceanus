@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.JGordianKnot</groupId>
-  <artifactId>JGordianKnot</artifactId>
+  <groupId>net.sourceforge.jArgo</groupId>
+  <artifactId>jGordianKnot</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
   <name>JGordianKnot Security Framework</name>
   <description>A Security framework for Java</description>
@@ -18,18 +18,18 @@
       <version>v9.20</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.JDataManager</groupId>
-      <artifactId>JDataManager</artifactId>
+      <groupId>net.sourceforge.jArgo</groupId>
+      <artifactId>jDataManager</artifactId>
       <version>v1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.JDecimal</groupId>
-      <artifactId>JDecimal</artifactId>
+      <groupId>net.sourceforge.jArgo</groupId>
+      <artifactId>jDecimal</artifactId>
       <version>v1.0.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.JDateDay</groupId>
-      <artifactId>JDateDay</artifactId>
+      <groupId>net.sourceforge.jArgo</groupId>
+      <artifactId>jDateDay</artifactId>
       <version>v1.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
@@ -65,10 +65,11 @@
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
     <svnHost>Tony-HP</svnHost>
     <svnRepository>Finance</svnRepository>
-    <svnComponent>JGordianKnot</svnComponent>
+    <svnComponent>jGordianKnot</svnComponent>
     <svnBranch>v1.0.0</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnLocation>branches/${svnBranch}</svnLocation>
+    <packageName>net.sourceforge.jArgo.${svnComponent}</packageName>
   </properties>
   <build>
     <resources>
@@ -101,7 +102,7 @@
         <configuration>
           <archive>
             <manifest>
-              <packageName>net.sourceforge.JGordianKnot</packageName>
+              <packageName>${pacakageName}</packageName>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>

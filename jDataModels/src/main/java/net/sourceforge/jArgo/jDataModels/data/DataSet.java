@@ -20,26 +20,26 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDataModels.data.ControlData.ControlDataList;
-import net.sourceforge.JDataModels.data.ControlKey.ControlKeyList;
-import net.sourceforge.JDataModels.data.DataKey.DataKeyList;
-import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.JDataModels.preferences.DataListPreferences;
-import net.sourceforge.JGordianKnot.PasswordHash;
-import net.sourceforge.JGordianKnot.SecureManager;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDataModels.data.ControlData.ControlDataList;
+import net.sourceforge.jArgo.jDataModels.data.ControlKey.ControlKeyList;
+import net.sourceforge.jArgo.jDataModels.data.DataKey.DataKeyList;
+import net.sourceforge.jArgo.jDataModels.data.DataList.ListStyle;
+import net.sourceforge.jArgo.jDataModels.data.EncryptedItem.EncryptedList;
+import net.sourceforge.jArgo.jDataModels.preferences.DataListPreferences;
+import net.sourceforge.jArgo.jGordianKnot.PasswordHash;
+import net.sourceforge.jArgo.jGordianKnot.SecureManager;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
 
 /**
  * DataSet definition and list. A DataSet is a set of DataLists backed by the three security lists.

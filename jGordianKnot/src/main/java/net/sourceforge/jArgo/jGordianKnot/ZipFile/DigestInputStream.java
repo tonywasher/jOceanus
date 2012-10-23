@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot.ZipFile;
+package net.sourceforge.jArgo.jGordianKnot.ZipFile;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JGordianKnot.MsgDigest;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jGordianKnot.MsgDigest;
 
 /**
  * Provides a digest InputStream. This class simply calculates a digest of the data in the stream at this

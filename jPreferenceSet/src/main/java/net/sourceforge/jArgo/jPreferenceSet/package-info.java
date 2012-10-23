@@ -23,5 +23,5 @@
 /**
  * Preference Set Manager.
  */
-package net.sourceforge.JPreferenceSet;
+package net.sourceforge.jArgo.jPreferenceSet;
 

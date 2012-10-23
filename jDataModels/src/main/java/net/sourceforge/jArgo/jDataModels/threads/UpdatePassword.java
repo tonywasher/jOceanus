@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.threads;
+package net.sourceforge.jArgo.jDataModels.threads;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.views.DataControl;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.views.DataControl;
 
 /**
  * Thread to change the password. The user will be prompted for a new password and this will be used to create

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,37 +20,37 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.views;
+package net.sourceforge.jArgo.jMoneyWise.views;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JDecimal.JUnits;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.AccountPrice;
-import net.sourceforge.JFinanceApp.data.AccountPrice.AccountPriceList;
-import net.sourceforge.JFinanceApp.data.AccountRate;
-import net.sourceforge.JFinanceApp.data.AccountRate.AccountRateList;
-import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TaxYear;
-import net.sourceforge.JFinanceApp.data.statics.AccountType;
-import net.sourceforge.JFinanceApp.data.statics.TaxBucket;
-import net.sourceforge.JFinanceApp.data.statics.TaxClass;
-import net.sourceforge.JFinanceApp.data.statics.TaxType;
-import net.sourceforge.JFinanceApp.data.statics.TransClass;
-import net.sourceforge.JFinanceApp.data.statics.TransactionType;
-import net.sourceforge.JFinanceApp.views.CapitalEvent.CapitalEventList;
-import net.sourceforge.JFinanceApp.views.ChargeableEvent.ChargeableEventList;
-import net.sourceforge.JSortedList.OrderedIdItem;
-import net.sourceforge.JSortedList.OrderedIdList;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jDecimal.JPrice;
+import net.sourceforge.jArgo.jDecimal.JRate;
+import net.sourceforge.jArgo.jDecimal.JUnits;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountPrice;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountPrice.AccountPriceList;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountRate;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountRate.AccountRateList;
+import net.sourceforge.jArgo.jMoneyWise.data.Event;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYear;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxBucket;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransactionType;
+import net.sourceforge.jArgo.jMoneyWise.views.CapitalEvent.CapitalEventList;
+import net.sourceforge.jArgo.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.jArgo.jSortedList.OrderedIdItem;
+import net.sourceforge.jArgo.jSortedList.OrderedIdList;
 
 /**
  * Data Analysis.

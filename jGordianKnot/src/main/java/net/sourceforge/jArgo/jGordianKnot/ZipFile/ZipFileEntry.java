@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot.ZipFile;
+package net.sourceforge.jArgo.jGordianKnot.ZipFile;
 
 import java.security.Signature;
 import java.security.SignatureException;
@@ -29,9 +29,9 @@ import java.util.zip.ZipEntry;
 
 import javax.crypto.Mac;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JGordianKnot.AsymmetricKey;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jGordianKnot.AsymmetricKey;
 
 /**
  * Class represents an encrypted file in the Zip file.

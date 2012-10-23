@@ -24,5 +24,5 @@
  * Tasks for subversion.
  * @author Tony Washer
  */
-package net.sourceforge.JSvnManager.tasks;
+package net.sourceforge.jArgo.jSvnManager.tasks;
 

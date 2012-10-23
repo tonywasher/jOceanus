@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.database;
+package net.sourceforge.jArgo.jDataModels.database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,24 +34,24 @@ import java.util.Map;
 
 import javax.swing.SortOrder;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.database.ColumnDefinition.BinaryColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.BooleanColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.DateColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.IdColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.IntegerColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.LongColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.MoneyColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.RateColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.ReferenceColumn;
-import net.sourceforge.JDataModels.database.ColumnDefinition.StringColumn;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JGordianKnot.CipherSet;
-import net.sourceforge.JGordianKnot.SymmetricKey;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.BinaryColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.BooleanColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.DateColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.IdColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.IntegerColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.LongColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.MoneyColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.RateColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.ReferenceColumn;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.StringColumn;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jDecimal.JRate;
+import net.sourceforge.jArgo.jGordianKnot.CipherSet;
+import net.sourceforge.jArgo.jGordianKnot.SymmetricKey;
 
 /**
  * Database field definition class. Maps each dataType to a database field.

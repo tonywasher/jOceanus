@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.JFieldSet</groupId>
-  <artifactId>JFieldSet</artifactId>
+  <groupId>net.sourceforge.jArgo</groupId>
+  <artifactId>jFieldSet</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
   <name>Java FieldSet Manager</name>
   <description>Generic Java Swing Field Set Manager</description>
@@ -9,8 +9,8 @@
   <!--<url>http://sourceforge.net/projects/jdatebutton/</url>-->
   <dependencies>
     <dependency>
-      <groupId>net.sourceforge.JDataManager</groupId>
-      <artifactId>JDataManager</artifactId>
+      <groupId>net.sourceforge.jArgo</groupId>
+      <artifactId>jDataManager</artifactId>
       <version>v1.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
@@ -46,10 +46,11 @@
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
     <svnHost>Tony-HP</svnHost>
     <svnRepository>Finance</svnRepository>
-    <svnComponent>JFieldSet</svnComponent>
+    <svnComponent>jFieldSet</svnComponent>
     <svnBranch>v1.0.0</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnLocation>branches/${svnBranch}</svnLocation>
+    <packageName>net.sourceforge.jArgo.${svnComponent}</packageName>
   </properties>
   <build>
     <resources>
@@ -66,7 +67,7 @@
         <configuration>
           <archive>
             <manifest>
-              <packageName>net.sourceforge.JFieldSet</packageName>
+              <packageName>${packageName}</packageName>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
           </archive>

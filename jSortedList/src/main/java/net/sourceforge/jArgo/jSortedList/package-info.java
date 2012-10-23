@@ -24,5 +24,5 @@
  * Sorted Linked list. Extension of {@link java.util.List} that provides a sorted linked list implementation
  * with the ability for objects to be hidden on the list.
  */
-package net.sourceforge.JSortedList;
+package net.sourceforge.jArgo.jSortedList;
 

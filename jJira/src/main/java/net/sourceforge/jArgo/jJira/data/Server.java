@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Jira: Java Jira Link
+ * jJira: Java Jira Link
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JiraAccess.data;
+package net.sourceforge.jArgo.jJira.data;
 
 import java.awt.Color;
 import java.net.MalformedURLException;
@@ -33,22 +33,22 @@ import java.util.Properties;
 
 import javax.xml.rpc.ServiceException;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
-import net.sourceforge.JiraAccess.data.Security.Group;
-import net.sourceforge.JiraAccess.data.Security.Role;
-import net.sourceforge.JiraAccess.data.Security.User;
-import net.sourceforge.JiraAccess.soap.AbstractRemoteConstant;
-import net.sourceforge.JiraAccess.soap.JiraSoapService;
-import net.sourceforge.JiraAccess.soap.JiraSoapServiceServiceLocator;
-import net.sourceforge.JiraAccess.soap.RemoteFilter;
-import net.sourceforge.JiraAccess.soap.RemoteIssue;
-import net.sourceforge.JiraAccess.soap.RemoteIssueType;
-import net.sourceforge.JiraAccess.soap.RemotePriority;
-import net.sourceforge.JiraAccess.soap.RemoteProject;
-import net.sourceforge.JiraAccess.soap.RemoteResolution;
-import net.sourceforge.JiraAccess.soap.RemoteStatus;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jJira.data.Security.Group;
+import net.sourceforge.jArgo.jJira.data.Security.Role;
+import net.sourceforge.jArgo.jJira.data.Security.User;
+import net.sourceforge.jArgo.jJira.soap.AbstractRemoteConstant;
+import net.sourceforge.jArgo.jJira.soap.JiraSoapService;
+import net.sourceforge.jArgo.jJira.soap.JiraSoapServiceServiceLocator;
+import net.sourceforge.jArgo.jJira.soap.RemoteFilter;
+import net.sourceforge.jArgo.jJira.soap.RemoteIssue;
+import net.sourceforge.jArgo.jJira.soap.RemoteIssueType;
+import net.sourceforge.jArgo.jJira.soap.RemotePriority;
+import net.sourceforge.jArgo.jJira.soap.RemoteProject;
+import net.sourceforge.jArgo.jJira.soap.RemoteResolution;
+import net.sourceforge.jArgo.jJira.soap.RemoteStatus;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
 
 import org.apache.log4j.PropertyConfigurator;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui;
+package net.sourceforge.jArgo.jMoneyWise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,34 +40,34 @@ import javax.swing.LayoutStyle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.DataState;
-import net.sourceforge.JDataManager.EditState;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JDataModels.ui.ErrorPanel;
-import net.sourceforge.JDataModels.ui.SaveButtons;
-import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JDataModels.views.UpdateEntry;
-import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayButton;
-import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFieldSet.ItemField;
-import net.sourceforge.JFieldSet.ItemField.FieldSet;
-import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JFieldSet.ValueField;
-import net.sourceforge.JFieldSet.ValueField.ValueClass;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.Account.AccountList;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.statics.AccountType;
-import net.sourceforge.JFinanceApp.data.statics.AccountType.AccountTypeList;
-import net.sourceforge.JFinanceApp.ui.controls.AccountSelect;
-import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.jArgo.jDataManager.DataState;
+import net.sourceforge.jArgo.jDataManager.EditState;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFormatter;
+import net.sourceforge.jArgo.jDataManager.JDataManager;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataModels.data.DataList.ListStyle;
+import net.sourceforge.jArgo.jDataModels.ui.ErrorPanel;
+import net.sourceforge.jArgo.jDataModels.ui.SaveButtons;
+import net.sourceforge.jArgo.jDataModels.views.DataControl;
+import net.sourceforge.jArgo.jDataModels.views.UpdateEntry;
+import net.sourceforge.jArgo.jDataModels.views.UpdateSet;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayButton;
+import net.sourceforge.jArgo.jEventManager.JEventPanel;
+import net.sourceforge.jArgo.jFieldSet.ItemField;
+import net.sourceforge.jArgo.jFieldSet.ItemField.FieldSet;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
+import net.sourceforge.jArgo.jFieldSet.ValueField;
+import net.sourceforge.jArgo.jFieldSet.ValueField.ValueClass;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountType;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountType.AccountTypeList;
+import net.sourceforge.jArgo.jMoneyWise.ui.controls.AccountSelect;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
 
 /**
  * Account maintenance panel.

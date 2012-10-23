@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.views;
+package net.sourceforge.jArgo.jDataModels.views;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,18 +29,18 @@ import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.database.Database;
-import net.sourceforge.JDataModels.preferences.RenderPreferences;
-import net.sourceforge.JDataModels.preferences.SecurityPreferences;
-import net.sourceforge.JDataModels.sheets.SpreadSheet;
-import net.sourceforge.JEventManager.JEventObject;
-import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JGordianKnot.SecureManager;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataManager;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.database.Database;
+import net.sourceforge.jArgo.jDataModels.preferences.RenderPreferences;
+import net.sourceforge.jArgo.jDataModels.preferences.SecurityPreferences;
+import net.sourceforge.jArgo.jDataModels.sheets.SpreadSheet;
+import net.sourceforge.jArgo.jEventManager.JEventObject;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
+import net.sourceforge.jArgo.jGordianKnot.SecureManager;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
 
 /**
  * Provides top-level control of data.

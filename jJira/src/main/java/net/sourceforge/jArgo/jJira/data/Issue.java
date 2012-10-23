@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Jira: Java Jira Link
+ * jJira: Java Jira Link
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JiraAccess.data;
+package net.sourceforge.jArgo.jJira.data;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -28,21 +28,21 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JiraAccess.data.Project.Component;
-import net.sourceforge.JiraAccess.data.Project.Version;
-import net.sourceforge.JiraAccess.data.Security.User;
-import net.sourceforge.JiraAccess.data.Server.IssueType;
-import net.sourceforge.JiraAccess.data.Server.Priority;
-import net.sourceforge.JiraAccess.data.Server.Resolution;
-import net.sourceforge.JiraAccess.data.Server.Status;
-import net.sourceforge.JiraAccess.soap.JiraSoapService;
-import net.sourceforge.JiraAccess.soap.RemoteComment;
-import net.sourceforge.JiraAccess.soap.RemoteComponent;
-import net.sourceforge.JiraAccess.soap.RemoteFieldValue;
-import net.sourceforge.JiraAccess.soap.RemoteIssue;
-import net.sourceforge.JiraAccess.soap.RemoteVersion;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jJira.data.Project.Component;
+import net.sourceforge.jArgo.jJira.data.Project.Version;
+import net.sourceforge.jArgo.jJira.data.Security.User;
+import net.sourceforge.jArgo.jJira.data.Server.IssueType;
+import net.sourceforge.jArgo.jJira.data.Server.Priority;
+import net.sourceforge.jArgo.jJira.data.Server.Resolution;
+import net.sourceforge.jArgo.jJira.data.Server.Status;
+import net.sourceforge.jArgo.jJira.soap.JiraSoapService;
+import net.sourceforge.jArgo.jJira.soap.RemoteComment;
+import net.sourceforge.jArgo.jJira.soap.RemoteComponent;
+import net.sourceforge.jArgo.jJira.soap.RemoteFieldValue;
+import net.sourceforge.jArgo.jJira.soap.RemoteIssue;
+import net.sourceforge.jArgo.jJira.soap.RemoteVersion;
 
 /**
  * Represents a Jira issue.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui;
+package net.sourceforge.jArgo.jMoneyWise.ui;
 
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -45,32 +45,32 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.EditState;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.SpringUtilities;
-import net.sourceforge.JDataModels.ui.ErrorPanel;
-import net.sourceforge.JDataModels.ui.SaveButtons;
-import net.sourceforge.JDataModels.views.DataControl;
-import net.sourceforge.JDataModels.views.UpdateEntry;
-import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFieldSet.ItemField;
-import net.sourceforge.JFieldSet.ItemField.FieldSet;
-import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JFieldSet.ValueField;
-import net.sourceforge.JFieldSet.ValueField.ValueClass;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.data.TaxYear;
-import net.sourceforge.JFinanceApp.data.TaxYear.TaxYearList;
-import net.sourceforge.JFinanceApp.data.statics.TaxRegime;
-import net.sourceforge.JFinanceApp.data.statics.TaxRegime.TaxRegimeList;
-import net.sourceforge.JFinanceApp.ui.controls.TaxYearSelect;
-import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.jArgo.jDataManager.EditState;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataManager;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataManager.SpringUtilities;
+import net.sourceforge.jArgo.jDataModels.ui.ErrorPanel;
+import net.sourceforge.jArgo.jDataModels.ui.SaveButtons;
+import net.sourceforge.jArgo.jDataModels.views.DataControl;
+import net.sourceforge.jArgo.jDataModels.views.UpdateEntry;
+import net.sourceforge.jArgo.jDataModels.views.UpdateSet;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jDecimal.JRate;
+import net.sourceforge.jArgo.jEventManager.JEventPanel;
+import net.sourceforge.jArgo.jFieldSet.ItemField;
+import net.sourceforge.jArgo.jFieldSet.ItemField.FieldSet;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
+import net.sourceforge.jArgo.jFieldSet.ValueField;
+import net.sourceforge.jArgo.jFieldSet.ValueField.ValueClass;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYear;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
+import net.sourceforge.jArgo.jMoneyWise.ui.controls.TaxYearSelect;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
 
 /**
  * TaxYear maintenance panel.

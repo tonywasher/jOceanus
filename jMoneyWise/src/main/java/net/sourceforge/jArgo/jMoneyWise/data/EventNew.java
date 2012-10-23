@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,32 +20,32 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.data;
+package net.sourceforge.jArgo.jMoneyWise.data;
 
 import java.util.Date;
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JDecimal.JDilution;
-import net.sourceforge.JDecimal.JMoney;
-import net.sourceforge.JDecimal.JRate;
-import net.sourceforge.JDecimal.JUnits;
-import net.sourceforge.JFinanceApp.data.AccountNew.AccountNewList;
-import net.sourceforge.JFinanceApp.data.Event.EventDateRange;
-import net.sourceforge.JFinanceApp.data.TaxYearNew.TaxYearNewList;
-import net.sourceforge.JFinanceApp.data.statics.EventInfoClass;
-import net.sourceforge.JFinanceApp.data.statics.TransactionType;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataFormatter;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayRange;
+import net.sourceforge.jArgo.jDecimal.JDilution;
+import net.sourceforge.jArgo.jDecimal.JMoney;
+import net.sourceforge.jArgo.jDecimal.JRate;
+import net.sourceforge.jArgo.jDecimal.JUnits;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountNew.AccountNewList;
+import net.sourceforge.jArgo.jMoneyWise.data.Event.EventDateRange;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYearNew.TaxYearNewList;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.EventInfoClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TransactionType;
 
 /**
  * New version of Event DataItem utilising EventInfo.

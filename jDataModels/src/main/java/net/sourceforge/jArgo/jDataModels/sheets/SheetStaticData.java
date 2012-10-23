@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.sheets;
+package net.sourceforge.jArgo.jDataModels.sheets;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.StaticData;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.StaticData;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to a static data type.

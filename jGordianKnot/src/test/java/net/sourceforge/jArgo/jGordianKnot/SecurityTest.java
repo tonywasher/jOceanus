@@ -1,4 +1,4 @@
-package net.sourceforge.JGordianKnot;
+package net.sourceforge.jArgo.jGordianKnot;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -15,12 +15,12 @@ import java.util.Set;
 
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JGordianKnot.ZipFile.ZipFileContents;
-import net.sourceforge.JGordianKnot.ZipFile.ZipFileEntry;
-import net.sourceforge.JGordianKnot.ZipFile.ZipReadFile;
-import net.sourceforge.JGordianKnot.ZipFile.ZipWriteFile;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jGordianKnot.ZipFile.ZipFileContents;
+import net.sourceforge.jArgo.jGordianKnot.ZipFile.ZipFileEntry;
+import net.sourceforge.jArgo.jGordianKnot.ZipFile.ZipReadFile;
+import net.sourceforge.jArgo.jGordianKnot.ZipFile.ZipWriteFile;
 
 public class SecurityTest {
     /**

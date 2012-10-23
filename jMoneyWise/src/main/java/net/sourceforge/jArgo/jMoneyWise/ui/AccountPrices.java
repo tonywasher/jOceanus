@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui;
+package net.sourceforge.jArgo.jMoneyWise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,35 +29,35 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataFormatter;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.ui.ErrorPanel;
-import net.sourceforge.JDataModels.ui.JDataTable;
-import net.sourceforge.JDataModels.ui.JDataTableColumn;
-import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.JDataModels.ui.JDataTableModel;
-import net.sourceforge.JDataModels.ui.JDataTableMouse;
-import net.sourceforge.JDataModels.views.UpdateEntry;
-import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayFormatter;
-import net.sourceforge.JDateDay.JDateDayRange;
-import net.sourceforge.JDecimal.JDecimalFormatter;
-import net.sourceforge.JDecimal.JDecimalParser;
-import net.sourceforge.JDecimal.JPrice;
-import net.sourceforge.JFieldSet.Editor.CalendarEditor;
-import net.sourceforge.JFieldSet.Editor.PriceEditor;
-import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JFieldSet.Renderer.CalendarRenderer;
-import net.sourceforge.JFieldSet.Renderer.DecimalRenderer;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.AccountPrice;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.views.View;
-import net.sourceforge.JFinanceApp.views.ViewPrice;
-import net.sourceforge.JFinanceApp.views.ViewPrice.ViewPriceList;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataFormatter;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataModels.ui.ErrorPanel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTable;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableColumn;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableModel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableMouse;
+import net.sourceforge.jArgo.jDataModels.views.UpdateEntry;
+import net.sourceforge.jArgo.jDataModels.views.UpdateSet;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayFormatter;
+import net.sourceforge.jArgo.jDateDay.JDateDayRange;
+import net.sourceforge.jArgo.jDecimal.JDecimalFormatter;
+import net.sourceforge.jArgo.jDecimal.JDecimalParser;
+import net.sourceforge.jArgo.jDecimal.JPrice;
+import net.sourceforge.jArgo.jFieldSet.Editor.CalendarEditor;
+import net.sourceforge.jArgo.jFieldSet.Editor.PriceEditor;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
+import net.sourceforge.jArgo.jFieldSet.Renderer.CalendarRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.DecimalRenderer;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.AccountPrice;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
+import net.sourceforge.jArgo.jMoneyWise.views.ViewPrice;
+import net.sourceforge.jArgo.jMoneyWise.views.ViewPrice.ViewPriceList;
 
 /**
  * Account Prices Table.

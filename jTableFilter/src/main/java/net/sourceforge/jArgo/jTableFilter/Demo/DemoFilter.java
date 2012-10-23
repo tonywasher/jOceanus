@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JTableFilter.Demo;
+package net.sourceforge.jArgo.jTableFilter.Demo;
 
 import java.awt.Dimension;
 import java.awt.HeadlessException;
@@ -46,8 +46,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.JTableFilter.TableFilter;
-import net.sourceforge.JTableFilter.TableFilter.TableFilterModel;
+import net.sourceforge.jArgo.jTableFilter.TableFilter;
+import net.sourceforge.jArgo.jTableFilter.TableFilter.TableFilterModel;
 
 /**
  * Demo application for JTableFilter.

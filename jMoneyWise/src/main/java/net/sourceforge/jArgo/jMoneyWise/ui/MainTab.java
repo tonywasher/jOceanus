@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui;
+package net.sourceforge.jArgo.jMoneyWise.ui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -34,25 +34,25 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.MainWindow;
-import net.sourceforge.JDataModels.threads.ThreadStatus;
-import net.sourceforge.JDateDay.JDateDayRangeSelect;
-import net.sourceforge.JEventManager.ActionDetailEvent;
-import net.sourceforge.JFinanceApp.core.LoadArchive;
-import net.sourceforge.JFinanceApp.data.Account;
-import net.sourceforge.JFinanceApp.data.Event;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.help.FinanceHelp;
-import net.sourceforge.JFinanceApp.ui.controls.ComboSelect;
-import net.sourceforge.JFinanceApp.views.View;
-import net.sourceforge.JHelpManager.HelpException;
-import net.sourceforge.JHelpManager.HelpModule;
-import net.sourceforge.JSvnManager.threads.SubversionBackup;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataModels.MainWindow;
+import net.sourceforge.jArgo.jDataModels.threads.ThreadStatus;
+import net.sourceforge.jArgo.jDateDay.JDateDayRangeSelect;
+import net.sourceforge.jArgo.jEventManager.ActionDetailEvent;
+import net.sourceforge.jArgo.jHelpManager.HelpException;
+import net.sourceforge.jArgo.jHelpManager.HelpModule;
+import net.sourceforge.jArgo.jMoneyWise.core.LoadArchive;
+import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.Event;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.help.FinanceHelp;
+import net.sourceforge.jArgo.jMoneyWise.ui.controls.ComboSelect;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
+import net.sourceforge.jArgo.jSvnManager.threads.SubversionBackup;
 
 /**
- * Main Window for JFinanceApp.
+ * Main Window for jMoneyWise.
  * @author Tony Washer
  */
 public class MainTab extends MainWindow<FinanceData> {

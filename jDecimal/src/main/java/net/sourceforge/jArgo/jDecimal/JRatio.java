@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDecimal;
+package net.sourceforge.jArgo.jDecimal;
 
 /**
  * Represents a Ratio object.

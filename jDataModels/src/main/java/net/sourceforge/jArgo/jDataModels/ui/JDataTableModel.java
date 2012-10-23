@@ -20,23 +20,23 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.jArgo.jDataModels.ui;
 
 import java.util.ResourceBundle;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.JFieldSet.RenderManager.PopulateRenderData;
-import net.sourceforge.JFieldSet.RenderManager.RenderData;
-import net.sourceforge.JFieldSet.Renderer.RendererFieldValue;
-import net.sourceforge.JTableFilter.TableFilter;
-import net.sourceforge.JTableFilter.TableFilter.TableFilterModel;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.jArgo.jFieldSet.RenderManager.PopulateRenderData;
+import net.sourceforge.jArgo.jFieldSet.RenderManager.RenderData;
+import net.sourceforge.jArgo.jFieldSet.Renderer.RendererFieldValue;
+import net.sourceforge.jArgo.jTableFilter.TableFilter;
+import net.sourceforge.jArgo.jTableFilter.TableFilter.TableFilterModel;
 
 /**
  * Data Table model class.

@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
-import net.sourceforge.JSortedList.OrderedIdIndex;
+import net.sourceforge.jArgo.jSortedList.OrderedIdIndex;
 
 /**
  * Id Manager for data list. Allocates new IDs and checks for uniqueness.

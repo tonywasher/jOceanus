@@ -20,23 +20,23 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDataModels.data.DataInfo.DataInfoList;
-import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JDataModels.data.StaticData.StaticInterface;
-import net.sourceforge.JDataModels.data.StaticData.StaticList;
-import net.sourceforge.JGordianKnot.EncryptedData.EncryptedField;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.DataInfo.DataInfoList;
+import net.sourceforge.jArgo.jDataModels.data.DataList.ListStyle;
+import net.sourceforge.jArgo.jDataModels.data.StaticData.StaticInterface;
+import net.sourceforge.jArgo.jDataModels.data.StaticData.StaticList;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedData.EncryptedField;
 
 /**
  * Representation of an information set extension of a DataItem.

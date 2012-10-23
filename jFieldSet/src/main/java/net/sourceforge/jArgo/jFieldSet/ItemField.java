@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFieldSet;
+package net.sourceforge.jArgo.jFieldSet;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -32,8 +32,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JFieldSet.Renderer.RendererFieldValue;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jFieldSet.Renderer.RendererFieldValue;
 
 /**
  * Extension of ValueField to handle a DataItem field.

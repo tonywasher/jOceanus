@@ -24,5 +24,5 @@
  * User interface classes for JDataModels.
  * @author Tony Washer
  */
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.jArgo.jDataModels.ui;
 

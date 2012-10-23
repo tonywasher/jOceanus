@@ -20,15 +20,15 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.threads;
+package net.sourceforge.jArgo.jDataModels.threads;
 
 import java.util.List;
 
 import javax.swing.SwingWorker;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.ui.StatusBar;
-import net.sourceforge.JDataModels.ui.StatusBar.StatusData;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.ui.StatusBar;
+import net.sourceforge.jArgo.jDataModels.ui.StatusBar.StatusData;
 
 /**
  * A wrapper for a worker thread.

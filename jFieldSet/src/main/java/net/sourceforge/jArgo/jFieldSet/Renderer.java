@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFieldSet;
+package net.sourceforge.jArgo.jFieldSet;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -30,12 +30,12 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.JDateDay.JDateDayCellRenderer;
-import net.sourceforge.JDateDay.JDateDayFormatter;
-import net.sourceforge.JDecimal.JDecimal;
-import net.sourceforge.JDecimal.JDecimalFormatter;
-import net.sourceforge.JFieldSet.RenderManager.PopulateRenderData;
-import net.sourceforge.JFieldSet.RenderManager.RenderData;
+import net.sourceforge.jArgo.jDateDay.JDateDayCellRenderer;
+import net.sourceforge.jArgo.jDateDay.JDateDayFormatter;
+import net.sourceforge.jArgo.jDecimal.JDecimal;
+import net.sourceforge.jArgo.jDecimal.JDecimalFormatter;
+import net.sourceforge.jArgo.jFieldSet.RenderManager.PopulateRenderData;
+import net.sourceforge.jArgo.jFieldSet.RenderManager.RenderData;
 
 /**
  * Cell renderers.

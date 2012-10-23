@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDecimal;
+package net.sourceforge.jArgo.jDecimal;
 
 /**
  * Represents a Dilution object. Many shares are quoted with a diluted price which must be rectified by a

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JHelpManager;
+package net.sourceforge.jArgo.jHelpManager;
 
 /**
  * Exception indicating that there was a failure in the help system.

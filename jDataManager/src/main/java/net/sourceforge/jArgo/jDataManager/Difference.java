@@ -20,11 +20,11 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 
 import java.util.Arrays;
 
-import net.sourceforge.JDataManager.JDataObject.JDataDiffers;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataDiffers;
 
 /**
  * Difference enum and utility.

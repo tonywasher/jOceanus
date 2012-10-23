@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot;
+package net.sourceforge.jArgo.jGordianKnot;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -44,7 +44,7 @@ import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
-import net.sourceforge.JDataManager.SpringUtilities;
+import net.sourceforge.jArgo.jDataManager.SpringUtilities;
 
 /**
  * Dialog to request a password. Will also ask for password confirmation if required.

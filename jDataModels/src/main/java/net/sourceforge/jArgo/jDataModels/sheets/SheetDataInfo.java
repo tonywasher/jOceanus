@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.sheets;
+package net.sourceforge.jArgo.jDataModels.sheets;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.data.DataInfo;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.data.DataInfo;
 
 /**
  * Extension of SheetDataItem class for accessing a sheet that is related to a data info type.

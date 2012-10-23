@@ -23,5 +23,5 @@
 /**
  * JDataModel.sheets is a package that simply maps data-types to and from backup spreadsheets.
  */
-package net.sourceforge.JDataModels.sheets;
+package net.sourceforge.jArgo.jDataModels.sheets;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Jira: Java Jira Link
+ * jJira: Java Jira Link
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JiraAccess.data;
+package net.sourceforge.jArgo.jJira.data;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet;
 
 /**
  * Jira Preferences.

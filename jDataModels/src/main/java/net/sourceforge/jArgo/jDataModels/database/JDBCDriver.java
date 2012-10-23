@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.database;
+package net.sourceforge.jArgo.jDataModels.database;
 
-import net.sourceforge.JDataModels.database.ColumnDefinition.ColumnType;
-import net.sourceforge.JDataModels.preferences.DatabasePreferences;
+import net.sourceforge.jArgo.jDataModels.database.ColumnDefinition.ColumnType;
+import net.sourceforge.jArgo.jDataModels.preferences.DatabasePreferences;
 
 /**
  * Database Drivers. Also code that encapsulates differences between databases.

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * Classes to manage the POM file.
  */
-package net.sourceforge.JSvnManager.project;
+package net.sourceforge.jArgo.jSvnManager.project;
 

@@ -20,19 +20,19 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.JDataManager.DataState;
-import net.sourceforge.JDataManager.EditState;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JSortedList.OrderedIdList;
-import net.sourceforge.JSortedList.OrderedListIterator;
+import net.sourceforge.jArgo.jDataManager.DataState;
+import net.sourceforge.jArgo.jDataManager.EditState;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jSortedList.OrderedIdList;
+import net.sourceforge.jArgo.jSortedList.OrderedListIterator;
 
 /**
  * Generic implementation of a DataList for DataItems.

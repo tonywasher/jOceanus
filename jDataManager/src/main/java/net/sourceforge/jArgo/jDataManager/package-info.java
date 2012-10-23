@@ -23,5 +23,5 @@
 /**
  * Class to provide a Data window allowing a user to walk the various data chains.
  */
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 

@@ -23,5 +23,5 @@
 /**
  * Table filter package.
  */
-package net.sourceforge.JTableFilter;
+package net.sourceforge.jArgo.jTableFilter;
 

@@ -23,5 +23,5 @@
 /**
  * Java Swing Field Set.
  */
-package net.sourceforge.JFieldSet;
+package net.sourceforge.jArgo.jFieldSet;
 

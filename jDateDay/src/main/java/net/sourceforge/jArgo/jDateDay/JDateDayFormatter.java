@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDateDay;
+package net.sourceforge.jArgo.jDateDay;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -29,7 +29,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import net.sourceforge.JDateButton.JDateFormatter;
-import net.sourceforge.JEventManager.JEventObject;
+import net.sourceforge.jArgo.jEventManager.JEventObject;
 
 /**
  * Formatter for Date objects.

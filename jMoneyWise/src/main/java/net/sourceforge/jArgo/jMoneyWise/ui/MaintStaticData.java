@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.ui;
+package net.sourceforge.jArgo.jMoneyWise.ui;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -30,28 +30,28 @@ import java.util.ResourceBundle;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JDataModels.data.StaticData;
-import net.sourceforge.JDataModels.data.StaticData.StaticList;
-import net.sourceforge.JDataModels.ui.ErrorPanel;
-import net.sourceforge.JDataModels.ui.JDataTable;
-import net.sourceforge.JDataModels.ui.JDataTableColumn;
-import net.sourceforge.JDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.JDataModels.ui.JDataTableModel;
-import net.sourceforge.JDataModels.views.UpdateEntry;
-import net.sourceforge.JDataModels.views.UpdateSet;
-import net.sourceforge.JFieldSet.Editor.BooleanEditor;
-import net.sourceforge.JFieldSet.Editor.StringEditor;
-import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JFieldSet.Renderer.BooleanRenderer;
-import net.sourceforge.JFieldSet.Renderer.IntegerRenderer;
-import net.sourceforge.JFieldSet.Renderer.StringRenderer;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.views.View;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList.ListStyle;
+import net.sourceforge.jArgo.jDataModels.data.StaticData;
+import net.sourceforge.jArgo.jDataModels.data.StaticData.StaticList;
+import net.sourceforge.jArgo.jDataModels.ui.ErrorPanel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTable;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableColumn;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
+import net.sourceforge.jArgo.jDataModels.ui.JDataTableModel;
+import net.sourceforge.jArgo.jDataModels.views.UpdateEntry;
+import net.sourceforge.jArgo.jDataModels.views.UpdateSet;
+import net.sourceforge.jArgo.jFieldSet.Editor.StringEditor;
+import net.sourceforge.jArgo.jFieldSet.Editor.BooleanEditor;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
+import net.sourceforge.jArgo.jFieldSet.Renderer.BooleanRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.IntegerRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.StringRenderer;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
 
 /**
  * Static Data Table.

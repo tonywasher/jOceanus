@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.ui;
+package net.sourceforge.jArgo.jDataModels.ui;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -32,8 +32,8 @@ import java.awt.print.PrinterJob;
 import javax.swing.JComponent;
 import javax.swing.RepaintManager;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 
 /**
  * Print Utilities class.

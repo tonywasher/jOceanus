@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,5 +24,5 @@
  * Threads for subversion.
  * @author Tony Washer
  */
-package net.sourceforge.JSvnManager.threads;
+package net.sourceforge.jArgo.jSvnManager.threads;
 

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.database;
+package net.sourceforge.jArgo.jDataModels.database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,11 +31,11 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Properties;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.DataSet;
-import net.sourceforge.JDataModels.data.TaskControl;
-import net.sourceforge.JDataModels.preferences.DatabasePreferences;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataModels.data.DataSet;
+import net.sourceforge.jArgo.jDataModels.data.TaskControl;
+import net.sourceforge.jArgo.jDataModels.preferences.DatabasePreferences;
 
 /**
  * Class that encapsulates a database connection.

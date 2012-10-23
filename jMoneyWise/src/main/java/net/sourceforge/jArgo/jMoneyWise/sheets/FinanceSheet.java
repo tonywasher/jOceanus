@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.sheets;
+package net.sourceforge.jArgo.jMoneyWise.sheets;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,17 +28,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.ControlData.ControlDataList;
-import net.sourceforge.JDataModels.data.TaskControl;
-import net.sourceforge.JDataModels.preferences.BackupPreferences;
-import net.sourceforge.JDataModels.sheets.SheetReader;
-import net.sourceforge.JDataModels.sheets.SheetReader.SheetHelper;
-import net.sourceforge.JDataModels.sheets.SheetWriter;
-import net.sourceforge.JDataModels.sheets.SpreadSheet;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.views.DilutionEvent.DilutionEventList;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataModels.data.ControlData.ControlDataList;
+import net.sourceforge.jArgo.jDataModels.data.TaskControl;
+import net.sourceforge.jArgo.jDataModels.preferences.BackupPreferences;
+import net.sourceforge.jArgo.jDataModels.sheets.SheetReader;
+import net.sourceforge.jArgo.jDataModels.sheets.SheetReader.SheetHelper;
+import net.sourceforge.jArgo.jDataModels.sheets.SheetWriter;
+import net.sourceforge.jArgo.jDataModels.sheets.SpreadSheet;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.views.DilutionEvent.DilutionEventList;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;

@@ -20,23 +20,23 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFieldSet;
+package net.sourceforge.jArgo.jFieldSet;
 
 import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.table.JTableHeader;
 
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDateDay.JDateDayFormatter;
-import net.sourceforge.JDecimal.JDecimalFormatter;
-import net.sourceforge.JFieldSet.Renderer.BooleanRenderer;
-import net.sourceforge.JFieldSet.Renderer.CalendarRenderer;
-import net.sourceforge.JFieldSet.Renderer.DecimalRenderer;
-import net.sourceforge.JFieldSet.Renderer.IntegerRenderer;
-import net.sourceforge.JFieldSet.Renderer.RowCell;
-import net.sourceforge.JFieldSet.Renderer.StringRenderer;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataManager;
+import net.sourceforge.jArgo.jDateDay.JDateDayFormatter;
+import net.sourceforge.jArgo.jDecimal.JDecimalFormatter;
+import net.sourceforge.jArgo.jFieldSet.Renderer.BooleanRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.CalendarRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.DecimalRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.IntegerRenderer;
+import net.sourceforge.jArgo.jFieldSet.Renderer.RowCell;
+import net.sourceforge.jArgo.jFieldSet.Renderer.StringRenderer;
 
 /**
  * Class to determine rendering details for an item.

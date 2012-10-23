@@ -20,25 +20,25 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDataModels.data.DataKey.DataKeyList;
-import net.sourceforge.JGordianKnot.CipherSet;
-import net.sourceforge.JGordianKnot.EncryptionGenerator;
-import net.sourceforge.JGordianKnot.HashMode;
-import net.sourceforge.JGordianKnot.PasswordHash;
-import net.sourceforge.JGordianKnot.SecureManager;
-import net.sourceforge.JGordianKnot.SecurityGenerator;
-import net.sourceforge.JGordianKnot.SymKeyType;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.DataKey.DataKeyList;
+import net.sourceforge.jArgo.jGordianKnot.CipherSet;
+import net.sourceforge.jArgo.jGordianKnot.EncryptionGenerator;
+import net.sourceforge.jArgo.jGordianKnot.HashMode;
+import net.sourceforge.jArgo.jGordianKnot.PasswordHash;
+import net.sourceforge.jArgo.jGordianKnot.SecureManager;
+import net.sourceforge.jArgo.jGordianKnot.SecurityGenerator;
+import net.sourceforge.jArgo.jGordianKnot.SymKeyType;
 
 /**
  * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the

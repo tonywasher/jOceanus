@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JPreferenceSet;
+package net.sourceforge.jArgo.jPreferenceSet;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -50,21 +50,21 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDateDay.JDateDayButton;
-import net.sourceforge.JEventManager.JEventPanel;
-import net.sourceforge.JFieldSet.RenderManager;
-import net.sourceforge.JFieldSet.ValueField;
-import net.sourceforge.JFieldSet.ValueField.ValueClass;
-import net.sourceforge.JPreferenceSet.PreferenceSet.BooleanPreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.ColorPreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.DatePreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.EnumPreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.IntegerPreference;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceItem;
-import net.sourceforge.JPreferenceSet.PreferenceSet.PreferenceType;
-import net.sourceforge.JPreferenceSet.PreferenceSet.StringPreference;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDateDay.JDateDayButton;
+import net.sourceforge.jArgo.jEventManager.JEventPanel;
+import net.sourceforge.jArgo.jFieldSet.RenderManager;
+import net.sourceforge.jArgo.jFieldSet.ValueField;
+import net.sourceforge.jArgo.jFieldSet.ValueField.ValueClass;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet.BooleanPreference;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet.ColorPreference;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet.DatePreference;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet.EnumPreference;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet.IntegerPreference;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet.PreferenceItem;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet.PreferenceType;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet.StringPreference;
 
 /**
  * Preference Set panel.

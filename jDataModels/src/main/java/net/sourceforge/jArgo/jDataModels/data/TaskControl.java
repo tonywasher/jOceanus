@@ -20,9 +20,9 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
-import net.sourceforge.JGordianKnot.SecureManager;
+import net.sourceforge.jArgo.jGordianKnot.SecureManager;
 
 /**
  * Status control interface for use by threads to report status and to detect cancellation.

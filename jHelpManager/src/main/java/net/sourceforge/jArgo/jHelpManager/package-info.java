@@ -23,5 +23,5 @@
 /**
  * Simple help manager class.
  */
-package net.sourceforge.JHelpManager;
+package net.sourceforge.jArgo.jHelpManager;
 

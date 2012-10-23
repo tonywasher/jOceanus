@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -47,7 +47,7 @@ import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
 
 /**
  * Data Item.

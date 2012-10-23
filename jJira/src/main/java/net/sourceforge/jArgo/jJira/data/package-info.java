@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Jira: Java Jira Link
+ * jJira: Java Jira Link
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,5 +23,5 @@
 /**
  * Package to provide an easy to use link into Jira from Java.
  */
-package net.sourceforge.JiraAccess.data;
+package net.sourceforge.jArgo.jJira.data;
 

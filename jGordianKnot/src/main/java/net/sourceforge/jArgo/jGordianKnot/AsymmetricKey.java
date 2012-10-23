@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JGordianKnot;
+package net.sourceforge.jArgo.jGordianKnot;
 
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
@@ -39,15 +39,15 @@ import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 import javax.crypto.ShortBufferException;
 
-import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataContents;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JGordianKnot.DataHayStack.AsymModeNeedle;
-import net.sourceforge.JGordianKnot.DataHayStack.SymKeyNeedle;
+import net.sourceforge.jArgo.jDataManager.DataConverter;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jGordianKnot.DataHayStack.AsymModeNeedle;
+import net.sourceforge.jArgo.jGordianKnot.DataHayStack.SymKeyNeedle;
 
 /**
  * Asymmetric Key class. Note that the RSA asymmetric key cannot be used for bulk encryption due to

@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.JDateDay</groupId>
-  <artifactId>JDateDay</artifactId>
+  <groupId>net.sourceforge.jArgo</groupId>
+  <artifactId>jDateDay</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
   <name>Java DateDay</name>
   <description>Implementation of a DateDay</description>
@@ -13,8 +13,8 @@
       <version>v1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.JEventManager</groupId>
-      <artifactId>JEventManager</artifactId>
+      <groupId>net.sourceforge.jArgo</groupId>
+      <artifactId>jEventManager</artifactId>
       <version>v1.0.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
@@ -47,15 +47,17 @@
     <url>http://${svnHost}/viewvc/${svnRepository}/${svnComponent}/${svnLocation}</url>
   </scm>
   <properties>
-    <demo-name>${project.artifactId}-${project.version}</demo-name>
-    <demo-dir>${project.build.directory}/site/demo</demo-dir>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
     <svnHost>Tony-HP</svnHost>
     <svnRepository>Finance</svnRepository>
-    <svnComponent>JDateDay</svnComponent>
+    <svnComponent>jDateDay</svnComponent>
     <svnBranch>v1.0.0</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnLocation>branches/${svnBranch}</svnLocation>
+    <packageName>net.sourceforge.jArgo.${svnComponent}</packageName>
+    <packageMain>${packageName}.Demo.JDateDayExample</packageMain>
+    <demoJar>${project.artifactId}-${project.version}</demoJar>
+    <demoLoc>${project.build.directory}/site/demo</demoLoc>
   </properties>
   <build>
     <resources>
@@ -101,7 +103,7 @@
                   <type>${project.packaging}</type>
                 </artifactItem>
               </artifactItems>
-              <outputDirectory>${demo-dir}</outputDirectory>
+              <outputDirectory>${demoLoc}</outputDirectory>
             </configuration>
           </execution>          
           <execution>
@@ -111,7 +113,7 @@
               <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <outputDirectory>${demo-dir}</outputDirectory>
+              <outputDirectory>${demoLoc}</outputDirectory>
             </configuration>
           </execution>
         </executions>
@@ -123,10 +125,10 @@
         <configuration>
           <archive>
             <manifest>
-              <packageName>net.sourceforge.JDateDay</packageName>
+              <packageName>${packageName}</packageName>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <MainClass>net.sourceforge.JDateDay.Demo.JDateDayExample</MainClass>
+              <MainClass>{packageMain}</MainClass>
             </manifest>
           </archive>
         </configuration>

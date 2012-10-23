@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JDataManager: Java Data Manager
+ * JEventManager: Java Event Manager
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JEventManager;
+package net.sourceforge.jArgo.jEventManager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,8 +31,8 @@ import java.util.ListIterator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JEventManager.JEventRegistration.ActionRegistration;
-import net.sourceforge.JEventManager.JEventRegistration.ChangeRegistration;
+import net.sourceforge.jArgo.jEventManager.JEventRegistration.ActionRegistration;
+import net.sourceforge.jArgo.jEventManager.JEventRegistration.ChangeRegistration;
 
 /**
  * EventManager implementation. This maintains a list of ChangeListeners/ActionListeners and allows the caller

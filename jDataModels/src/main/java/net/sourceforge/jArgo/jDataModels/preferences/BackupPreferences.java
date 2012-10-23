@@ -20,10 +20,10 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.preferences;
+package net.sourceforge.jArgo.jDataModels.preferences;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet;
 
 /**
  * Backup preferences.

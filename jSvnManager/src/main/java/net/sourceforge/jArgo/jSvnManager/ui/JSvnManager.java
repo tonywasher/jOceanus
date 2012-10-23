@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Subversion: Java SubVersion Management
+ * JSvnManager: Java SubVersion Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSvnManager.ui;
+package net.sourceforge.jArgo.jSvnManager.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,22 +34,22 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
-import net.sourceforge.JDataManager.JDataManager;
-import net.sourceforge.JDataManager.JDataManager.JDataEntry;
-import net.sourceforge.JDataManager.JDataWindow;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
-import net.sourceforge.JSvnManager.data.Branch;
-import net.sourceforge.JSvnManager.data.Branch.BranchOpType;
-import net.sourceforge.JSvnManager.data.Repository;
-import net.sourceforge.JSvnManager.data.Tag;
-import net.sourceforge.JSvnManager.data.WorkingCopy.WorkingCopySet;
-import net.sourceforge.JSvnManager.threads.CreateBranchTags;
-import net.sourceforge.JSvnManager.threads.CreateNewBranch;
-import net.sourceforge.JSvnManager.threads.CreateTagExtract;
-import net.sourceforge.JSvnManager.threads.CreateWorkingCopy;
-import net.sourceforge.JSvnManager.threads.DiscoverData;
-import net.sourceforge.JSvnManager.threads.RevertWorkingCopy;
-import net.sourceforge.JSvnManager.threads.UpdateWorkingCopy;
+import net.sourceforge.jArgo.jDataManager.JDataManager;
+import net.sourceforge.jArgo.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jArgo.jDataManager.JDataWindow;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jArgo.jSvnManager.data.Branch;
+import net.sourceforge.jArgo.jSvnManager.data.Branch.BranchOpType;
+import net.sourceforge.jArgo.jSvnManager.data.Repository;
+import net.sourceforge.jArgo.jSvnManager.data.Tag;
+import net.sourceforge.jArgo.jSvnManager.data.WorkingCopy.WorkingCopySet;
+import net.sourceforge.jArgo.jSvnManager.threads.CreateBranchTags;
+import net.sourceforge.jArgo.jSvnManager.threads.CreateNewBranch;
+import net.sourceforge.jArgo.jSvnManager.threads.CreateTagExtract;
+import net.sourceforge.jArgo.jSvnManager.threads.CreateWorkingCopy;
+import net.sourceforge.jArgo.jSvnManager.threads.DiscoverData;
+import net.sourceforge.jArgo.jSvnManager.threads.RevertWorkingCopy;
+import net.sourceforge.jArgo.jSvnManager.threads.UpdateWorkingCopy;
 
 import org.tmatesoft.svn.core.wc.SVNRevision;
 

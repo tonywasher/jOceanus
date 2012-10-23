@@ -20,13 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.preferences;
+package net.sourceforge.jArgo.jDataModels.preferences;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JGordianKnot.SecureManager;
-import net.sourceforge.JGordianKnot.SecurityGenerator;
-import net.sourceforge.JGordianKnot.SecurityProvider;
-import net.sourceforge.JPreferenceSet.PreferenceSet;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jGordianKnot.SecureManager;
+import net.sourceforge.jArgo.jGordianKnot.SecurityGenerator;
+import net.sourceforge.jArgo.jGordianKnot.SecurityProvider;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceSet;
 
 /**
  * Security preferences.

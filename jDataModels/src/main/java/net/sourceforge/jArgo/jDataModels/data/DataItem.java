@@ -20,26 +20,26 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.data;
+package net.sourceforge.jArgo.jDataModels.data;
 
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.DataState;
-import net.sourceforge.JDataManager.Difference;
-import net.sourceforge.JDataManager.EditState;
-import net.sourceforge.JDataManager.ItemValidation;
-import net.sourceforge.JDataManager.ItemValidation.ErrorElement;
-import net.sourceforge.JDataManager.JDataFields;
-import net.sourceforge.JDataManager.JDataFields.JDataField;
-import net.sourceforge.JDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.JDataManager.JDataObject.JDataValues;
-import net.sourceforge.JDataManager.ValueSet;
-import net.sourceforge.JDataManager.ValueSetHistory;
-import net.sourceforge.JDataModels.data.DataList.ListStyle;
-import net.sourceforge.JFieldSet.JFieldSetItem;
-import net.sourceforge.JFieldSet.RenderState;
-import net.sourceforge.JGordianKnot.EncryptedValueSet;
-import net.sourceforge.JSortedList.OrderedIdItem;
+import net.sourceforge.jArgo.jDataManager.DataState;
+import net.sourceforge.jArgo.jDataManager.Difference;
+import net.sourceforge.jArgo.jDataManager.EditState;
+import net.sourceforge.jArgo.jDataManager.ItemValidation;
+import net.sourceforge.jArgo.jDataManager.ItemValidation.ErrorElement;
+import net.sourceforge.jArgo.jDataManager.JDataFields;
+import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataValues;
+import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataManager.ValueSetHistory;
+import net.sourceforge.jArgo.jDataModels.data.DataList.ListStyle;
+import net.sourceforge.jArgo.jFieldSet.JFieldSetItem;
+import net.sourceforge.jArgo.jFieldSet.RenderState;
+import net.sourceforge.jArgo.jGordianKnot.EncryptedValueSet;
+import net.sourceforge.jArgo.jSortedList.OrderedIdItem;
 
 /**
  * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means

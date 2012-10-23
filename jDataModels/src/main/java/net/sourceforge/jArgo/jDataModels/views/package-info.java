@@ -23,5 +23,5 @@
 /**
  * Provides top-level control of data.
  */
-package net.sourceforge.JDataModels.views;
+package net.sourceforge.jArgo.jDataModels.views;
 

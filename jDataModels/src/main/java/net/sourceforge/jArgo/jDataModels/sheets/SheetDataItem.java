@@ -20,22 +20,22 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataModels.sheets;
+package net.sourceforge.jArgo.jDataModels.sheets;
 
 import java.util.Date;
 import java.util.Iterator;
 
-import net.sourceforge.JDataManager.DataConverter;
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataManager.JDataException.ExceptionClass;
-import net.sourceforge.JDataModels.data.DataItem;
-import net.sourceforge.JDataModels.data.DataList;
-import net.sourceforge.JDataModels.data.EncryptedItem.EncryptedList;
-import net.sourceforge.JDataModels.data.TaskControl;
-import net.sourceforge.JDataModels.sheets.SheetWriter.CellStyleType;
-import net.sourceforge.JDataModels.sheets.SpreadSheet.SheetType;
-import net.sourceforge.JDateDay.JDateDay;
-import net.sourceforge.JDecimal.JDecimal;
+import net.sourceforge.jArgo.jDataManager.DataConverter;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
+import net.sourceforge.jArgo.jDataModels.data.DataList;
+import net.sourceforge.jArgo.jDataModels.data.EncryptedItem.EncryptedList;
+import net.sourceforge.jArgo.jDataModels.data.TaskControl;
+import net.sourceforge.jArgo.jDataModels.sheets.SheetWriter.CellStyleType;
+import net.sourceforge.jArgo.jDataModels.sheets.SpreadSheet.SheetType;
+import net.sourceforge.jArgo.jDateDay.JDateDay;
+import net.sourceforge.jArgo.jDecimal.JDecimal;
 
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JFinanceApp: Finance Application
+ * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,17 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JFinanceApp.core;
+package net.sourceforge.jArgo.jMoneyWise.core;
 
-import net.sourceforge.JDataManager.JDataException;
-import net.sourceforge.JDataModels.database.Database;
-import net.sourceforge.JDataModels.preferences.BackupPreferences;
-import net.sourceforge.JDataModels.threads.LoaderThread;
-import net.sourceforge.JDataModels.threads.ThreadStatus;
-import net.sourceforge.JFinanceApp.data.FinanceData;
-import net.sourceforge.JFinanceApp.sheets.FinanceSheet;
-import net.sourceforge.JFinanceApp.views.View;
-import net.sourceforge.JPreferenceSet.PreferenceManager;
+import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataModels.database.Database;
+import net.sourceforge.jArgo.jDataModels.preferences.BackupPreferences;
+import net.sourceforge.jArgo.jDataModels.threads.LoaderThread;
+import net.sourceforge.jArgo.jDataModels.threads.ThreadStatus;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
+import net.sourceforge.jArgo.jMoneyWise.sheets.FinanceSheet;
+import net.sourceforge.jArgo.jMoneyWise.views.View;
+import net.sourceforge.jArgo.jPreferenceSet.PreferenceManager;
 
 /**
  * LoaderThread extension to load an archive spreadsheet.

@@ -1,16 +1,16 @@
 <document>
   <properties>
     <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
-    <title>JDateDay Demo</title>
+    <title>${svnComponent} Demo</title>
   </properties>
   <body>
     <section name="Overview">
-      <p>Demo of JDateDay capabilities.</p>
+      <p>Demo of ${svnComponent} capabilities.</p>
     </section>
 
     <section name="Demo">
-      <applet code = 'net.sourceforge.JDateDay.Demo.JDateDayExample' 
-        archive = '${demo-name}.jar'
+      <applet code = '${packageMain}' 
+        archive = '${demoJar}.jar'
         width = "510" 
         height = "300"></applet>      
     </section>

@@ -23,5 +23,5 @@
 /**
  * JDataModel.database is a package that simply maps data-types to and from the database.
  */
-package net.sourceforge.JDataModels.database;
+package net.sourceforge.jArgo.jDataModels.database;
 

@@ -20,12 +20,12 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JDataManager;
+package net.sourceforge.jArgo.jDataManager;
 
 import java.util.List;
 import java.util.ListIterator;
 
-import net.sourceforge.JDataManager.JDataObject.JDataDifference;
+import net.sourceforge.jArgo.jDataManager.JDataObject.JDataDifference;
 
 /**
  * Debug Detail class that holds details of links to other objects.

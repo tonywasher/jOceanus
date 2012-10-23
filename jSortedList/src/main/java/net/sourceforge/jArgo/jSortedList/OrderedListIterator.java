@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.JSortedList;
+package net.sourceforge.jArgo.jSortedList;
 
 import java.util.ConcurrentModificationException;
 import java.util.ListIterator;
