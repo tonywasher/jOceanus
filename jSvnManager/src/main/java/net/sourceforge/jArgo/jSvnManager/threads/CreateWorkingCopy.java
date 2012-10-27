@@ -32,6 +32,7 @@ import net.sourceforge.jArgo.jDataManager.JDataException;
 import net.sourceforge.jArgo.jSvnManager.data.Branch;
 import net.sourceforge.jArgo.jSvnManager.data.JSvnReporter.ReportStatus;
 import net.sourceforge.jArgo.jSvnManager.data.JSvnReporter.ReportTask;
+import net.sourceforge.jArgo.jSvnManager.data.Repository;
 import net.sourceforge.jArgo.jSvnManager.data.WorkingCopy.WorkingCopySet;
 import net.sourceforge.jArgo.jSvnManager.tasks.CheckOut;
 import net.sourceforge.jArgo.jSvnManager.tasks.Directory;

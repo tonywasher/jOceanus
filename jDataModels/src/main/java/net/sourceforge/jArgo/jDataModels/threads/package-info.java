@@ -23,5 +23,5 @@
 /**
  * Package containing utility threads to handle background tasks.
  */
-package net.sourceforge.JDataModels.threads;
+package net.sourceforge.jArgo.jDataModels.threads;
 
