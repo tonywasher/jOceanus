@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jArgo.jDataManager.JDataFields;
 import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jArgo.jDataManager.JDataObject.JDataContents;
@@ -46,7 +47,7 @@ import net.sourceforge.jArgo.jGordianKnot.EncryptedData.EncryptedField;
  * @param <I> the Info Type that applies to this item
  * @param <E> the Info type class
  */
-public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
+public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
         implements JDataContents {
     /**
      * Report fields.
@@ -110,7 +111,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
     /**
      * The DataInfoList for the InfoSet.
      */
-    private DataInfoList<T, O, I> theInfoList;
+    private DataInfoList<T, O, I, E> theInfoList;
 
     /**
      * The Map of the DataInfo.
@@ -124,7 +125,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
      * @param pTypeList the infoTypeList for the set
      */
     protected DataInfoSet(final O pOwner,
-                          final DataInfoList<T, O, I> pInfoList,
+                          final DataInfoList<T, O, I, E> pInfoList,
                           final StaticList<I, E> pTypeList) {
         /* Store the Owner and Info List */
         theOwner = pOwner;
@@ -255,15 +256,57 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I>, O extends DataIte
     }
 
     /**
+     * Register Info.
+     * @param pInfo the info to register
+     * @throws JDataException on error
+     */
+    public void registerInfo(final T pInfo) throws JDataException {
+        /* Obtain the existing Map value */
+        E myClass = pInfo.getInfoClass();
+        T myValue = theMap.get(myClass);
+
+        /* Reject if duplicate */
+        if (myValue != null) {
+            throw new JDataException(ExceptionClass.DATA, pInfo, "Duplicate information type");
+        }
+
+        /* Add to the map */
+        theMap.put(myClass, pInfo);
+    }
+
+    /**
+     * deRegister Info.
+     * @param pInfo the info to deRegister
+     */
+    public void deRegisterInfo(final T pInfo) {
+        /* Obtain the existing Map value */
+        E myClass = pInfo.getInfoClass();
+
+        /* Remove from the map */
+        theMap.remove(myClass);
+    }
+
+    /**
      * reLink to Lists.
      * @param pInfoList the infoList for the info values
      * @param pTypeList the infoTypeList for the set
      */
-    public void relinkToDataSet(final DataInfoList<T, O, I> pInfoList,
+    public void relinkToDataSet(final DataInfoList<T, O, I, E> pInfoList,
                                 final StaticList<I, E> pTypeList) {
         /* Update to use the new lists */
         theInfoList = pInfoList;
         theTypeList = pTypeList;
+    }
+
+    /**
+     * Mark active items.
+     */
+    public void markActiveItems() {
+        /* Loop through each existing value */
+        for (T myValue : theMap.values()) {
+            /* Touch the infoType */
+            myValue.getInfoType().touchItem(theOwner);
+        }
     }
 
     /**

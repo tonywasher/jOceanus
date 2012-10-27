@@ -162,7 +162,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
             return isActive();
         }
         if (FIELD_BASE.equals(pField)) {
-            return getBase();
+            return (theBase == null) ? JDataFieldValue.SkipField : theBase;
         }
         if (FIELD_STATE.equals(pField)) {
             return getState();
@@ -739,7 +739,6 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
             /* Nothing special for other styles */
             case CLONE:
             case DIFFER:
-            case COPY:
             default:
                 break;
         }
@@ -855,7 +854,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
     /**
      * Apply changes to the item from a changed version. Overwritten by objects that have changes
      * @param pElement the changed element.
-     * @return were changes made
+     * @return were changes made?
      */
     public boolean applyChanges(final DataItem pElement) {
         return false;

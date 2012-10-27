@@ -24,6 +24,7 @@ package net.sourceforge.jArgo.jMoneyWise.data;
 
 import java.util.Date;
 
+import net.sourceforge.jArgo.jDataManager.Difference;
 import net.sourceforge.jArgo.jDataManager.JDataException;
 import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jArgo.jDataManager.JDataFields;
@@ -45,8 +46,8 @@ import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountInfoType.AccountInfo
  * Representation of an information extension of an account.
  * @author Tony Washer
  */
-public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoType> implements
-        Comparable<AccountInfo> {
+public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass>
+        implements Comparable<AccountInfo> {
     /**
      * Object name.
      */
@@ -89,12 +90,25 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
         return getInfoType(getValueSet(), AccountInfoType.class);
     }
 
+    @Override
+    public AccountInfoClass getInfoClass() {
+        return getInfoType().getInfoClass();
+    }
+
+    /**
+     * Obtain Account.
+     * @return the Account
+     */
+    public AccountNew getOwnerAccount() {
+        return getOwner(getValueSet(), AccountNew.class);
+    }
+
     /**
      * Obtain Account.
      * @return the Account
      */
     public AccountNew getAccount() {
-        return getOwner(getValueSet(), AccountNew.class);
+        return getAccount(getValueSet());
     }
 
     /**
@@ -107,12 +121,12 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     }
 
     /**
-     * Obtain Account.
+     * Obtain Owner Account.
      * @param pValueSet the valueSet
      * @return the Account
      */
     public static AccountNew getAccount(final ValueSet pValueSet) {
-        return getOwner(pValueSet, AccountNew.class);
+        return pValueSet.getValue(FIELD_ACCOUNT, AccountNew.class);
     }
 
     /**
@@ -221,9 +235,9 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
                     throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
             }
 
-            /* Access the EventInfoSet and register this data */
-            // EventInfoSet mySet = myEvent.getInfoSet();
-            // mySet.registerData(this);
+            /* Access the AccountInfoSet and register this data */
+            AccountInfoSet mySet = myAccount.getInfoSet();
+            mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
@@ -251,21 +265,21 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
             /* Set the value */
             setValue(pValue);
 
-            /* Access the EventInfoSet and register this data */
-            // EventInfoSet mySet = myEvent.getInfoSet();
-            // mySet.registerData(this);
+            /* Access the AccountInfoSet and register this data */
+            AccountInfoSet mySet = pAccount.getInfoSet();
+            mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
-    // @Override
-    // public void deRegister() {
-    /* Access the EventInfoSet and register this value */
-    // EventInfoSet mySet = getEvent().getInfoSet();
-    // mySet.deRegisterData(this);
-    // }
+    @Override
+    public void deRegister() {
+        /* Access the AccountInfoSet and register this value */
+        AccountInfoSet mySet = getOwnerAccount().getInfoSet();
+        mySet.deRegisterInfo(this);
+    }
 
     /**
      * Compare this data to another to establish sort order.
@@ -284,7 +298,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
         }
 
         /* Compare the Accounts */
-        int iDiff = getAccount().compareTo(pThat.getAccount());
+        int iDiff = getOwnerAccount().compareTo(pThat.getOwnerAccount());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -315,9 +329,17 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the Accounts */
-        AccountNew myAccount = getAccount();
+        AccountNew myAccount = getOwnerAccount();
         AccountNew myNewAct = myAccounts.findItemById(myAccount.getId());
         setValueOwner(myNewAct);
+
+        /* If the value is a link */
+        if (myType.isLink()) {
+            /* Update account value */
+            myAccount = getAccount();
+            myNewAct = myAccounts.findItemById(myAccount.getId());
+            setValueAccount(myNewAct);
+        }
     }
 
     @Override
@@ -385,9 +407,40 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     }
 
     /**
+     * Update accountInfo from an accountInfo extract.
+     * @param pActInfo the changed accountInfo
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final DataItem pActInfo) {
+        /* Can only update from AccountInfo */
+        if (!(pActInfo instanceof AccountInfo)) {
+            return false;
+        }
+
+        /* Access as AccountInfo */
+        AccountInfo myActInfo = (AccountInfo) pActInfo;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Update the value if required */
+        if (!Difference.isEqual(getField(), myActInfo.getField())) {
+            setValueValue(myActInfo.getField());
+            if (getInfoType().isLink()) {
+                setValueAccount(myActInfo.getAccount());
+            }
+        }
+
+        /* Check for changes */
+        return checkForHistory();
+    }
+
+    /**
      * AccountInfoList.
      */
-    public static class AccountInfoList extends DataInfoList<AccountInfo, AccountNew, AccountInfoType> {
+    public static class AccountInfoList extends
+            DataInfoList<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass> {
         /**
          * Local Report fields.
          */
@@ -519,6 +572,11 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
                                 final AccountNew pAccount,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws JDataException {
+            /* Ignore item if it is null */
+            if (pValue == null) {
+                return;
+            }
+
             /* Access the data set */
             FinanceData myData = getDataSet();
 

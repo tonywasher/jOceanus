@@ -26,6 +26,7 @@ import net.sourceforge.jArgo.jDataManager.JDataException;
 import net.sourceforge.jArgo.jDataManager.JDataFields;
 import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.StaticData.StaticInterface;
 import net.sourceforge.jArgo.jGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.jArgo.jGordianKnot.EncryptedValueSet;
 
@@ -35,8 +36,9 @@ import net.sourceforge.jArgo.jGordianKnot.EncryptedValueSet;
  * @param <T> the data type
  * @param <O> the Owner DataItem that is extended by this item
  * @param <I> the Info Type that applies to this item
+ * @param <E> the Info Class that applies to this item
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, I extends StaticData<I, ?>>
+public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
         extends EncryptedItem implements Comparable<T> {
     /**
      * Maximum DataLength.
@@ -74,6 +76,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
      * @return the InfoTypeId
      */
     public abstract I getInfoType();
+
+    /**
+     * Obtain InfoClass.
+     * @return the InfoClass
+     */
+    public abstract E getInfoClass();
 
     /**
      * Obtain InfoTypeId.
@@ -214,6 +222,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
+     * Set value.
+     * @param pValue the value
+     */
+    protected void setValueValue(final EncryptedField<?> pValue) {
+        ValueSet myValues = getValueSet();
+        myValues.setDeletion(false);
+        myValues.setValue(FIELD_VALUE, pValue);
+    }
+
+    /**
      * Set Object Value.
      * @param <X> the object type
      * @param pBytes the value
@@ -230,8 +248,8 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
      * @param pList the list
      * @param pInfo The Info to copy
      */
-    protected DataInfo(final DataInfoList<?, O, I> pList,
-                       final DataInfo<T, O, I> pInfo) {
+    protected DataInfo(final DataInfoList<T, O, I, E> pList,
+                       final DataInfo<T, O, I, E> pInfo) {
         /* Set standard values */
         super(pList, pInfo);
     }
@@ -240,7 +258,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
      * Edit Constructor.
      * @param pList the list
      */
-    protected DataInfo(final DataInfoList<?, O, I> pList) {
+    protected DataInfo(final DataInfoList<T, O, I, E> pList) {
         /* Set standard values */
         super(pList, 0);
     }
@@ -254,7 +272,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
      * @param uOwnerId the owner id
      * @throws JDataException on error
      */
-    protected DataInfo(final DataInfoList<?, O, I> pList,
+    protected DataInfo(final DataInfoList<T, O, I, E> pList,
                        final int uId,
                        final int uControlId,
                        final int uInfoTypeId,
@@ -288,13 +306,13 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
     }
 
     /**
-     * Plain Text constructor.
+     * Basic constructor.
      * @param pList the list
      * @param uId the id
      * @param pInfoType the info type
      * @param pOwner the owner
      */
-    protected DataInfo(final DataInfoList<?, O, I> pList,
+    protected DataInfo(final DataInfoList<T, O, I, E> pList,
                        final int uId,
                        final I pInfoType,
                        final O pOwner) {
@@ -311,8 +329,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
      * @param <T> the DataType
      * @param <O> the Owner Type
      * @param <I> the DataInfo Type
+     * @param <E> the Info Class that applies to this item
      */
-    public abstract static class DataInfoList<T extends DataInfo<T, O, I> & Comparable<T>, O extends DataItem, I extends StaticData<I, ?>>
+    public abstract static class DataInfoList<T extends DataInfo<T, O, I, E> & Comparable<T>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
             extends EncryptedList<T> {
         /**
          * Local Report fields.
@@ -341,12 +360,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I>, O extends DataItem, 
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        protected DataInfoList(final DataInfoList<T, O, I> pSource) {
+        protected DataInfoList(final DataInfoList<T, O, I, E> pSource) {
             super(pSource);
         }
 
         @Override
-        protected abstract DataInfoList<T, O, I> getEmptyList();
+        protected abstract DataInfoList<T, O, I, E> getEmptyList();
 
         /**
          * Add new item to the list.

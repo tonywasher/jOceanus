@@ -47,7 +47,8 @@ import net.sourceforge.jArgo.jMoneyWise.data.statics.EventInfoType.EventInfoType
  * Representation of an information extension of an event.
  * @author Tony Washer
  */
-public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType> implements Comparable<EventInfo> {
+public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, EventInfoClass> implements
+        Comparable<EventInfo> {
     /**
      * Object name.
      */
@@ -88,6 +89,11 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType> impl
     @Override
     public EventInfoType getInfoType() {
         return getInfoType(getValueSet(), EventInfoType.class);
+    }
+
+    @Override
+    public EventInfoClass getInfoClass() {
+        return getInfoType().getInfoClass();
     }
 
     /**
@@ -244,8 +250,8 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType> impl
             }
 
             /* Access the EventInfoSet and register this data */
-            // EventInfoSet mySet = myEvent.getInfoSet();
-            // mySet.registerData(this);
+            EventNewInfoSet mySet = myEvent.getInfoSet();
+            mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
@@ -275,20 +281,20 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType> impl
             setValue(pValue);
 
             /* Access the EventInfoSet and register this data */
-            // EventInfoSet mySet = myEvent.getInfoSet();
-            // mySet.registerData(this);
+            EventNewInfoSet mySet = pEvent.getInfoSet();
+            mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
-    // @Override
-    // public void deRegister() {
-    /* Access the EventInfoSet and register this value */
-    // EventInfoSet mySet = getEvent().getInfoSet();
-    // mySet.deRegisterData(this);
-    // }
+    @Override
+    public void deRegister() {
+        /* Access the EventInfoSet and register this value */
+        EventNewInfoSet mySet = getEvent().getInfoSet();
+        mySet.deRegisterInfo(this);
+    }
 
     /**
      * Compare this data to another to establish sort order.
@@ -443,7 +449,8 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType> impl
     /**
      * EventInfoList.
      */
-    public static class EventInfoList extends DataInfoList<EventInfo, EventNew, EventInfoType> {
+    public static class EventInfoList extends
+            DataInfoList<EventInfo, EventNew, EventInfoType, EventInfoClass> {
         /**
          * Local Report fields.
          */

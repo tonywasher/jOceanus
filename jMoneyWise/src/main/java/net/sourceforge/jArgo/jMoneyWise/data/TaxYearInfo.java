@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.jArgo.jMoneyWise.data;
 
+import net.sourceforge.jArgo.jDataManager.Difference;
 import net.sourceforge.jArgo.jDataManager.JDataException;
 import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jArgo.jDataManager.JDataFields;
@@ -43,8 +44,8 @@ import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfo
  * Representation of an information extension of a TaxYear.
  * @author Tony Washer
  */
-public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYearNew, TaxYearInfoType> implements
-        Comparable<TaxYearInfo> {
+public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYearNew, TaxYearInfoType, TaxYearInfoClass>
+        implements Comparable<TaxYearInfo> {
     /**
      * Object name.
      */
@@ -69,6 +70,11 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYearNew, TaxYearInfoTy
     @Override
     public TaxYearInfoType getInfoType() {
         return getInfoType(getValueSet(), TaxYearInfoType.class);
+    }
+
+    @Override
+    public TaxYearInfoClass getInfoClass() {
+        return getInfoType().getInfoClass();
     }
 
     /**
@@ -185,9 +191,9 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYearNew, TaxYearInfoTy
                     throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
             }
 
-            /* Access the EventInfoSet and register this data */
-            // EventInfoSet mySet = myEvent.getInfoSet();
-            // mySet.registerData(this);
+            /* Access the TaxInfoSet and register this data */
+            TaxInfoSet mySet = myTaxYear.getInfoSet();
+            mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
@@ -216,21 +222,21 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYearNew, TaxYearInfoTy
             /* Set the value */
             setValue(pValue);
 
-            /* Access the EventInfoSet and register this data */
-            // EventInfoSet mySet = myEvent.getInfoSet();
-            // mySet.registerData(this);
+            /* Access the TaxInfoSet and register this data */
+            TaxInfoSet mySet = pTaxYear.getInfoSet();
+            mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
     }
 
-    // @Override
-    // public void deRegister() {
-    /* Access the EventInfoSet and register this value */
-    // EventInfoSet mySet = getEvent().getInfoSet();
-    // mySet.deRegisterData(this);
-    // }
+    @Override
+    public void deRegister() {
+        /* Access the TaxInfoSet and deRegister this value */
+        TaxInfoSet mySet = getTaxYear().getInfoSet();
+        mySet.deRegisterInfo(this);
+    }
 
     /**
      * Compare this data to another to establish sort order.
@@ -348,9 +354,37 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYearNew, TaxYearInfoTy
     }
 
     /**
+     * Update taxInfo from a taxInfo extract.
+     * @param pTaxInfo the changed taxInfo
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final DataItem pTaxInfo) {
+        /* Can only update from TaxYearInfo */
+        if (!(pTaxInfo instanceof TaxYearInfo)) {
+            return false;
+        }
+
+        /* Access as TaxInfo */
+        TaxYearInfo myTaxInfo = (TaxYearInfo) pTaxInfo;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Update the value if required */
+        if (!Difference.isEqual(getField(), myTaxInfo.getField())) {
+            setValueValue(myTaxInfo.getField());
+        }
+
+        /* Check for changes */
+        return checkForHistory();
+    }
+
+    /**
      * TaxYearInfoList.
      */
-    public static class TaxInfoList extends DataInfoList<TaxYearInfo, TaxYearNew, TaxYearInfoType> {
+    public static class TaxInfoList extends
+            DataInfoList<TaxYearInfo, TaxYearNew, TaxYearInfoType, TaxYearInfoClass> {
         /**
          * Local Report fields.
          */
@@ -370,6 +404,16 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYearNew, TaxYearInfoTy
         @Override
         public FinanceData getDataSet() {
             return (FinanceData) super.getDataSet();
+        }
+
+        /**
+         * Set base list for Edit InfoList.
+         * @param pBase the base list
+         */
+        protected void setBase(final TaxInfoList pBase) {
+            /* Set the style and base */
+            setStyle(ListStyle.EDIT);
+            super.setBase(pBase);
         }
 
         /**

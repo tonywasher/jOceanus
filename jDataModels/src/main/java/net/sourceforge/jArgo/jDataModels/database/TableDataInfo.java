@@ -30,7 +30,7 @@ import net.sourceforge.jArgo.jDataModels.data.DataInfo;
  * Database table class for DataInfo Items. Each data type that represents DataInfo should extend this class.
  * @param <T> the data type
  */
-public abstract class TableDataInfo<T extends DataInfo<T, ?, ?>> extends TableEncrypted<T> {
+public abstract class TableDataInfo<T extends DataInfo<T, ?, ?, ?>> extends TableEncrypted<T> {
     /**
      * Constructor.
      * @param pDatabase the database control

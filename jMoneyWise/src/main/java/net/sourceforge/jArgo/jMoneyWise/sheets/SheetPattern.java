@@ -31,6 +31,7 @@ import net.sourceforge.jArgo.jDataModels.data.TaskControl;
 import net.sourceforge.jArgo.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jArgo.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jArgo.jMoneyWise.data.Account;
+import net.sourceforge.jArgo.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jArgo.jMoneyWise.data.Event;
 import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
 import net.sourceforge.jArgo.jMoneyWise.data.Pattern;
@@ -99,7 +100,7 @@ public class SheetPattern extends SheetDataItem<Pattern> {
     /**
      * Accounts data list.
      */
-    private Account.AccountList theAccounts = null;
+    private AccountList theAccounts = null;
 
     /**
      * Constructor for loading a spreadsheet.

@@ -31,6 +31,7 @@ import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jArgo.jDataManager.JDataFields;
 import net.sourceforge.jArgo.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jArgo.jDataManager.ValueSet;
+import net.sourceforge.jArgo.jDataModels.data.DataItem;
 import net.sourceforge.jArgo.jDataModels.data.DataList;
 import net.sourceforge.jArgo.jDataModels.data.EncryptedItem;
 import net.sourceforge.jArgo.jDateDay.JDateDay;
@@ -506,12 +507,6 @@ public abstract class AccountBase extends EncryptedItem implements Comparable<Ac
                           final AccountBase pAccount) {
         /* Set standard values */
         super(pList, pAccount);
-
-        /* If this is a build of edit from Core */
-        // if ((getStyle() == ListStyle.EDIT) && (pAccount.getStyle() == ListStyle.CORE)) {
-        /* Copy the flags */
-        // copyFlags(pAccount);
-        // }
     }
 
     /**
@@ -738,6 +733,54 @@ public abstract class AccountBase extends EncryptedItem implements Comparable<Ac
      */
     public void setClose(final JDateDay pDate) {
         setValueClose(pDate);
+    }
+
+    /**
+     * Mark active items.
+     */
+    protected void markActiveItems() {
+        /* mark the account type referred to */
+        getActType().touchItem(this);
+    }
+
+    /**
+     * Update base account from an edited account.
+     * @param pAccount the edited account
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final DataItem pAccount) {
+        /* Can only update from an account */
+        if (!(pAccount instanceof AccountBase)) {
+            return false;
+        }
+
+        AccountBase myAccount = (AccountBase) pAccount;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Update the Name if required */
+        if (!Difference.isEqual(getName(), myAccount.getName())) {
+            setValueName(myAccount.getNameField());
+        }
+
+        /* Update the description if required */
+        if (!Difference.isEqual(getDesc(), myAccount.getDesc())) {
+            setValueDesc(myAccount.getDescField());
+        }
+
+        /* Update the account type if required */
+        if (!Difference.isEqual(getActType(), myAccount.getActType())) {
+            setValueType(myAccount.getActType());
+        }
+
+        /* Update the close if required */
+        if (!Difference.isEqual(getClose(), myAccount.getClose())) {
+            setValueClose(myAccount.getClose());
+        }
+        /* Check for changes */
+        return checkForHistory();
     }
 
     /**

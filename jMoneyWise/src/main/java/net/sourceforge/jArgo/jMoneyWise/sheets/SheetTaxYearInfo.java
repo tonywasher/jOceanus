@@ -23,9 +23,12 @@
 package net.sourceforge.jArgo.jMoneyWise.sheets;
 
 import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jArgo.jDataModels.sheets.SheetDataInfo;
+import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
 import net.sourceforge.jArgo.jMoneyWise.data.TaxYearInfo;
 import net.sourceforge.jArgo.jMoneyWise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYearNew.TaxYearNewList;
 
 /**
  * SheetDataInfo extension for TaxYearInfo.
@@ -36,6 +39,11 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
      * NamedArea for TaxYearInfo.
      */
     private static final String AREA_TAXYEARINFO = TaxYearInfo.LIST_NAME;
+
+    /**
+     * TaxYear data list.
+     */
+    private final TaxYearNewList theTaxYears;
 
     /**
      * TaxYearInfo data list.
@@ -51,7 +59,9 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
         super(pReader, AREA_TAXYEARINFO);
 
         /* Access the InfoType list */
-        theList = pReader.getData().getTaxInfo();
+        FinanceData myData = pReader.getData();
+        theTaxYears = myData.getNewTaxYears();
+        theList = myData.getTaxInfo();
         setDataList(theList);
     }
 
@@ -64,6 +74,7 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
         super(pWriter, AREA_TAXYEARINFO);
 
         /* Access the InfoType list */
+        theTaxYears = null;
         theList = pWriter.getData().getTaxInfo();
         setDataList(theList);
     }
@@ -76,5 +87,19 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
                                      final byte[] pValue) throws JDataException {
         /* Create the item */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        // theData.calculateDateRange();
+
+        /* Mark active items */
+        theTaxYears.markActiveItems();
+
+        /* Validate the tax years */
+        theTaxYears.validate();
+        if (theTaxYears.hasErrors()) {
+            throw new JDataException(ExceptionClass.VALIDATE, theTaxYears, "Validation error");
+        }
     }
 }

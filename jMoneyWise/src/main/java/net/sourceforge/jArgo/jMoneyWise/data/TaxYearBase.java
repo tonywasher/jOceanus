@@ -280,7 +280,9 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
      */
     @Override
     public void validate() {
+        /* Access details */
         JDateDay myDate = getTaxYear();
+        TaxRegime myTaxRegime = getTaxRegime();
         TaxYearBaseList<?> myList = (TaxYearBaseList<?>) getList();
 
         /* The date must not be null */
@@ -301,9 +303,9 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
         }
 
         /* TaxRegime must be non-null */
-        if (getTaxRegime() == null) {
+        if (myTaxRegime == null) {
             addError("TaxRegime must be non-null", FIELD_REGIME);
-        } else if (!getTaxRegime().getEnabled()) {
+        } else if (!myTaxRegime.getEnabled()) {
             addError("TaxRegime must be enabled", FIELD_REGIME);
         }
     }
@@ -341,6 +343,41 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
      */
     public void setTaxRegime(final TaxRegime pTaxRegime) {
         setValueTaxRegime(pTaxRegime);
+    }
+
+    /**
+     * Mark active items.
+     */
+    protected void markActiveItems() {
+        /* mark the tax regime referred to */
+        getTaxRegime().touchItem(this);
+    }
+
+    /**
+     * Update taxYear from a taxYear extract.
+     * @param pTaxYear the changed taxYear
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final DataItem pTaxYear) {
+        /* Can only update from TaxYear */
+        if (!(pTaxYear instanceof TaxYearBase)) {
+            return false;
+        }
+
+        /* Access as TaxYear */
+        TaxYearNew myTaxYear = (TaxYearNew) pTaxYear;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Update the tax regime if required */
+        if (!Difference.isEqual(getTaxRegime(), myTaxYear.getTaxRegime())) {
+            setTaxRegime(myTaxYear.getTaxRegime());
+        }
+
+        /* Check for changes */
+        return checkForHistory();
     }
 
     /**
@@ -460,16 +497,16 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
         /**
          * Mark active items.
          */
-        protected void markActiveItems() {
+        public void markActiveItems() {
             /* Access the list iterator */
             Iterator<T> myIterator = listIterator();
 
-            /* Loop through the Prices */
+            /* Loop through the Years */
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
 
-                /* mark the tax regime referred to */
-                myCurr.getTaxRegime().touchItem(myCurr);
+                /* mark the items referred to */
+                myCurr.markActiveItems();
             }
         }
     }

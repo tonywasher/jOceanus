@@ -36,9 +36,11 @@ import net.sourceforge.jArgo.jDataModels.data.DataSet;
 import net.sourceforge.jArgo.jDateDay.JDateDay;
 import net.sourceforge.jArgo.jDecimal.JMoney;
 import net.sourceforge.jArgo.jDecimal.JRate;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxYearInfoClass;
+import net.sourceforge.jArgo.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.jArgo.jSortedList.OrderedListIterator;
 
 /**
@@ -183,84 +185,66 @@ public class TaxYearNew extends TaxYearBase {
             return hasInfoSet ? theInfoSet : JDataFieldValue.SkipField;
         }
         if (FIELD_ALLOW.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.Allowance) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.Allowance);
         }
         if (FIELD_RENTAL.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.RentalAllow) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.RentalAllow);
         }
         if (FIELD_LOAGAL.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.LoAgeAllow) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.LoAgeAllow);
         }
         if (FIELD_HIAGAL.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.HiAgeAllow) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.HiAgeAllow);
         }
         if (FIELD_LOBAND.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.LoTaxBand) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.LoTaxBand);
         }
         if (FIELD_BSBAND.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.BasicTaxBand)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.BasicTaxBand);
         }
         if (FIELD_CAPALW.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.CapitalAllow)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.CapitalAllow);
         }
         if (FIELD_AGELMT.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.AgeAllowLimit)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.AgeAllowLimit);
         }
         if (FIELD_ADDLMT.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.AddAllowLimit)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.AddAllowLimit);
         }
         if (FIELD_ADDBDY.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.AddIncomeThold)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.AddIncomeThold);
         }
         if (FIELD_LOTAX.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.LoTaxRate) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.LoTaxRate);
         }
         if (FIELD_BASTAX.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.BasicTaxRate)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.BasicTaxRate);
         }
         if (FIELD_HITAX.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.HiTaxRate) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.HiTaxRate);
         }
         if (FIELD_INTTAX.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.IntTaxRate) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.IntTaxRate);
         }
         if (FIELD_DIVTAX.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.DivTaxRate) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.DivTaxRate);
         }
         if (FIELD_HDVTAX.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.HiDivTaxRate)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.HiDivTaxRate);
         }
         if (FIELD_ADDTAX.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.AddTaxRate) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.AddTaxRate);
         }
         if (FIELD_ADVTAX.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.AddDivTaxRate)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.AddDivTaxRate);
         }
         if (FIELD_CAPTAX.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(TaxYearInfoClass.CapTaxRate) : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.CapTaxRate);
         }
         if (FIELD_HCPTAX.equals(pField)) {
-            return hasInfoSet
-                             ? theInfoSet.getField(TaxYearInfoClass.HiCapTaxRate)
-                             : JDataFieldValue.SkipField;
+            return getInfoSetValue(TaxYearInfoClass.HiCapTaxRate);
         }
-        return JDataFieldValue.UnknownField;
+        return super.getFieldValue(pField);
     }
 
     /**
@@ -272,6 +256,14 @@ public class TaxYearNew extends TaxYearBase {
      * TaxInfoSet.
      */
     private final TaxInfoSet theInfoSet;
+
+    /**
+     * Obtain InfoSet.
+     * @return the infoSet
+     */
+    protected TaxInfoSet getInfoSet() {
+        return theInfoSet;
+    }
 
     /**
      * Obtain Allowance.
@@ -630,6 +622,19 @@ public class TaxYearNew extends TaxYearBase {
         theInfoSet.setValue(pInfoClass, pValue);
     }
 
+    /**
+     * Get an infoSet value.
+     * @param pInfoClass the class of info to get
+     * @return the value to set
+     */
+    private Object getInfoSetValue(final TaxYearInfoClass pInfoClass) {
+        /* Access value of object */
+        Object myValue = hasInfoSet ? theInfoSet.getField(pInfoClass) : null;
+
+        /* Return the value */
+        return (myValue != null) ? myValue : JDataFieldValue.SkipField;
+    }
+
     @Override
     public TaxYearNew getBase() {
         return (TaxYearNew) super.getBase();
@@ -648,6 +653,8 @@ public class TaxYearNew extends TaxYearBase {
         /* switch on list type */
         switch (getList().getStyle()) {
             case EDIT:
+            case CLONE:
+            case CORE:
                 theInfoSet = new TaxInfoSet(pTaxYear.theInfoSet);
                 hasInfoSet = true;
                 break;
@@ -674,8 +681,7 @@ public class TaxYearNew extends TaxYearBase {
         super(pList, uId, uRegimeId, pDate);
 
         /* Create the InfoSet */
-        FinanceData myData = getDataSet();
-        theInfoSet = new TaxInfoSet(this, myData.getTaxInfo(), myData.getTaxInfoTypes());
+        theInfoSet = new TaxInfoSet(this, pList.getTaxInfo(), pList.getTaxInfoTypes());
         hasInfoSet = true;
     }
 
@@ -695,22 +701,8 @@ public class TaxYearNew extends TaxYearBase {
         super(pList, uId, pRegime, pDate);
 
         /* Create the InfoSet */
-        FinanceData myData = getDataSet();
-        theInfoSet = new TaxInfoSet(this, myData.getTaxInfo(), myData.getTaxInfoTypes());
+        theInfoSet = new TaxInfoSet(this, pList.getTaxInfo(), pList.getTaxInfoTypes());
         hasInfoSet = true;
-    }
-
-    @Override
-    protected void relinkToDataSet() {
-        /* Invoke underlying re-link */
-        super.relinkToDataSet();
-
-        /* If we have an InfoSet */
-        if (hasInfoSet) {
-            /* Update to use the new lists */
-            FinanceData myData = getDataSet();
-            theInfoSet.relinkToDataSet(myData.getTaxInfo(), myData.getTaxInfoTypes());
-        }
     }
 
     /**
@@ -718,14 +710,18 @@ public class TaxYearNew extends TaxYearBase {
      */
     @Override
     public void validate() {
+        /* Validate underlying details */
+        super.validate();
+
+        /* Access TaxYear details */
         JDateDay myDate = getTaxYear();
+        TaxRegime myTaxRegime = getTaxRegime();
         TaxYearNewList myList = (TaxYearNewList) getList();
-        TaxYearNew myPrev;
 
         /* Check underlying fields */
         if (myDate != null) {
             /* The year must be one greater than the preceding element */
-            myPrev = myList.peekPrevious(this);
+            TaxYearNew myPrev = myList.peekPrevious(this);
             if ((myPrev != null) && (myDate.getYear() != myPrev.getTaxYear().getYear() + 1)) {
                 addError("There can be no gaps in the list", FIELD_TAXYEAR);
             }
@@ -814,7 +810,7 @@ public class TaxYearNew extends TaxYearBase {
         }
 
         /* If the tax regime is additional */
-        if ((getTaxRegime() != null) && (getTaxRegime().hasAdditionalTaxBand())) {
+        if ((myTaxRegime != null) && (myTaxRegime.hasAdditionalTaxBand())) {
             /* The addAllowLimit must be non-null */
             if ((getAddAllowLimit() == null) || (!getAddAllowLimit().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_ADDLMT);
@@ -837,13 +833,13 @@ public class TaxYearNew extends TaxYearBase {
         }
 
         /* If the tax regime does not have capital gains as income */
-        if ((getTaxRegime() != null) && (!getTaxRegime().hasCapitalGainsAsIncome())) {
+        if ((myTaxRegime != null) && (!myTaxRegime.hasCapitalGainsAsIncome())) {
             /* The capitalRate must be non-null */
             if ((getCapTaxRate() == null) || (!getCapTaxRate().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_CAPTAX);
             }
 
-            /* The hiCapTaxRate must be positive */
+            /* The hiCapTaxRate if it exists must be positive */
             if ((getHiCapTaxRate() != null) && (!getHiCapTaxRate().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_HCPTAX);
             }
@@ -853,6 +849,15 @@ public class TaxYearNew extends TaxYearBase {
         if (!hasErrors()) {
             setValidEdit();
         }
+    }
+
+    @Override
+    protected void markActiveItems() {
+        /* mark underlying items */
+        super.markActiveItems();
+
+        /* Mark infoSet items */
+        theInfoSet.markActiveItems();
     }
 
     /**
@@ -871,6 +876,16 @@ public class TaxYearNew extends TaxYearBase {
         }
 
         /**
+         * The TaxInfo List.
+         */
+        private TaxInfoList theInfoList = null;
+
+        /**
+         * The TaxInfoType list.
+         */
+        private TaxYearInfoTypeList theInfoTypeList = null;
+
+        /**
          * The NewYear.
          */
         private TaxYearNew theNewYear = null;
@@ -878,6 +893,22 @@ public class TaxYearNew extends TaxYearBase {
         @Override
         public String listName() {
             return LIST_NAME;
+        }
+
+        /**
+         * Obtain the taxInfoList.
+         * @return the tax info list
+         */
+        public TaxInfoList getTaxInfo() {
+            return theInfoList;
+        }
+
+        /**
+         * Obtain the taxInfoTypeList.
+         * @return the tax info type list
+         */
+        public TaxYearInfoTypeList getTaxInfoTypes() {
+            return theInfoTypeList;
         }
 
         /**
@@ -894,6 +925,11 @@ public class TaxYearNew extends TaxYearBase {
          */
         public TaxYearNewList(final FinanceData pData) {
             super(pData, TaxYearNew.class);
+
+            /* Use dataSet info lists */
+            FinanceData myData = getDataSet();
+            theInfoList = myData.getTaxInfo();
+            theInfoTypeList = myData.getTaxInfoTypes();
         }
 
         /**
@@ -911,7 +947,16 @@ public class TaxYearNew extends TaxYearBase {
 
         @Override
         public TaxYearNewList cloneList(final DataSet<?> pDataSet) {
-            return (TaxYearNewList) super.cloneList(pDataSet);
+            /* Clone the list */
+            TaxYearNewList myList = (TaxYearNewList) super.cloneList(pDataSet);
+
+            /* Use dataSet info lists */
+            FinanceData myData = getDataSet();
+            theInfoList = myData.getTaxInfo();
+            theInfoTypeList = myData.getTaxInfoTypes();
+
+            /* Return the clone */
+            return myList;
         }
 
         @Override
@@ -934,6 +979,13 @@ public class TaxYearNew extends TaxYearBase {
             TaxYearNewList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
 
+            /* Store InfoType list */
+            myList.theInfoTypeList = theInfoTypeList;
+
+            /* Create info List */
+            myList.theInfoList = theInfoList.getEmptyList();
+            myList.theInfoList.setBase(theInfoList);
+
             /* Create a new tax year based on the passed tax year */
             TaxYearNew myYear = new TaxYearNew(myList, pTaxYear);
             myList.add(myYear);
@@ -950,6 +1002,13 @@ public class TaxYearNew extends TaxYearBase {
             /* Build an empty List */
             TaxYearNewList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
+
+            /* Store InfoType list */
+            myList.theInfoTypeList = theInfoTypeList;
+
+            /* Create info List */
+            myList.theInfoList = theInfoList.getEmptyList();
+            myList.theInfoList.setBase(theInfoList);
 
             /* Access the existing tax years */
             FinanceData myData = getDataSet();
@@ -980,7 +1039,7 @@ public class TaxYearNew extends TaxYearBase {
         @Override
         public TaxYearNew addCopyItem(final DataItem pTaxYear) {
             /* Can only clone a TaxYear */
-            if (!(pTaxYear instanceof TaxYear)) {
+            if (!(pTaxYear instanceof TaxYearNew)) {
                 return null;
             }
 
@@ -1021,14 +1080,6 @@ public class TaxYearNew extends TaxYearBase {
                 throw new JDataException(ExceptionClass.DATA, myTaxYear, "Duplicate TaxYear");
             }
 
-            /* Validate the tax year */
-            myTaxYear.validate();
-
-            /* Handle validation failure */
-            if (myTaxYear.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTaxYear, "Failed validation");
-            }
-
             /* Add the TaxYear to the end of the list */
             append(myTaxYear);
         }
@@ -1061,14 +1112,6 @@ public class TaxYearNew extends TaxYearBase {
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {
                 throw new JDataException(ExceptionClass.DATA, myTaxYear, "Duplicate TaxYear");
-            }
-
-            /* Validate the tax year */
-            myTaxYear.validate();
-
-            /* Handle validation failure */
-            if (myTaxYear.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTaxYear, "Failed validation");
             }
 
             /* Add the TaxYear to the end of the list */

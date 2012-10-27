@@ -30,7 +30,7 @@ import net.sourceforge.jArgo.jDataModels.data.DataInfo;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?>> extends SheetDataItem<T> {
+public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>> extends SheetDataItem<T> {
     /**
      * InfoType column.
      */

@@ -128,7 +128,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
             return theEdit;
         }
         if (FIELD_BASE.equals(pField)) {
-            return theBase;
+            return (theBase == null) ? JDataFieldValue.SkipField : theBase;
         }
         if (FIELD_CLASS.equals(pField)) {
             return getBaseClass().getSimpleName();
@@ -603,7 +603,6 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
      */
     public void findEditState() {
         boolean isDirty = false;
-        boolean isError = false;
         boolean isValid = false;
 
         /* Create an iterator for the list */
@@ -632,8 +631,8 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
                         isValid = true;
                         break;
                     case ERROR:
-                        isError = true;
-                        break;
+                        theEdit = EditState.ERROR;
+                        return;
                     default:
                         break;
                 }
@@ -641,9 +640,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
         }
 
         /* Set state */
-        if (isError) {
-            theEdit = EditState.ERROR;
-        } else if (isDirty) {
+        if (isDirty) {
             theEdit = EditState.DIRTY;
         } else if (isValid) {
             theEdit = EditState.VALID;
@@ -665,9 +662,6 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
         /* Loop through the items */
         while (myIterator.hasNext()) {
             T myCurr = myIterator.next();
-
-            /* Clear Errors */
-            myCurr.clearErrors();
 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {

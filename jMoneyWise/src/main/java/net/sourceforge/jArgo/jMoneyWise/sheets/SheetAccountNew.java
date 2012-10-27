@@ -287,16 +287,16 @@ public class SheetAccountNew extends SheetDataItem<AccountNew> {
 
                     /* Handle parent which may be missing */
                     myCell = myRow.getCell(myCol + iAdjust++);
-                    String myParent = null;
+                    AccountNew myParent = null;
                     if (myCell != null) {
-                        myParent = myCell.getStringCellValue();
+                        myParent = myList.findItemByName(myCell.getStringCellValue());
                     }
 
                     /* Handle alias which may be missing */
                     myCell = myRow.getCell(myCol + iAdjust++);
-                    String myAlias = null;
+                    AccountNew myAlias = null;
                     if (myCell != null) {
-                        myAlias = myCell.getStringCellValue();
+                        myAlias = myList.findItemByName(myCell.getStringCellValue());
                     }
 
                     /* Handle closed which may be missing */

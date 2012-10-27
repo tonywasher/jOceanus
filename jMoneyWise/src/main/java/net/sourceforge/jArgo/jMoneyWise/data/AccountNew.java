@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jArgo.jDataManager.DataState;
+import net.sourceforge.jArgo.jDataManager.Difference;
 import net.sourceforge.jArgo.jDataManager.JDataException;
 import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jArgo.jDataManager.JDataFields;
@@ -36,7 +37,6 @@ import net.sourceforge.jArgo.jDataModels.data.DataList;
 import net.sourceforge.jArgo.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jArgo.jDataModels.data.DataSet;
 import net.sourceforge.jArgo.jDateDay.JDateDay;
-import net.sourceforge.jArgo.jMoneyWise.data.FinanceData.LoadState;
 import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jArgo.jMoneyWise.data.statics.AccountType.AccountTypeList;
@@ -177,61 +177,61 @@ public class AccountNew extends AccountBase {
             return hasInfoSet ? theInfoSet : JDataFieldValue.SkipField;
         }
         if (FIELD_MATURITY.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.Maturity) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.Maturity);
         }
         if (FIELD_PARENT.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.Parent) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.Parent);
         }
         if (FIELD_ALIAS.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.Alias) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.Alias);
         }
         if (FIELD_WEBSITE.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.WebSite) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.WebSite);
         }
         if (FIELD_CUSTNO.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.CustNo) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.CustNo);
         }
         if (FIELD_USERID.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.UserId) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.UserId);
         }
         if (FIELD_PASSWORD.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.Password) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.Password);
         }
         if (FIELD_ACCOUNT.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.Account) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.Account);
         }
         if (FIELD_NOTES.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(AccountInfoClass.Notes) : JDataFieldValue.SkipField;
+            return getInfoSetValue(AccountInfoClass.Notes);
         }
         if (FIELD_EVTFIRST.equals(pField)) {
-            return theEarliest;
+            return (theEarliest != null) ? theEarliest : JDataFieldValue.SkipField;
         }
         if (FIELD_EVTLAST.equals(pField)) {
-            return theLatest;
+            return (theLatest != null) ? theLatest : JDataFieldValue.SkipField;
         }
         if (FIELD_INITPRC.equals(pField)) {
-            return theInitPrice;
+            return (theInitPrice != null) ? theInitPrice : JDataFieldValue.SkipField;
         }
         if (FIELD_HASDEBTS.equals(pField)) {
-            return hasDebts;
+            return hasDebts ? hasDebts : JDataFieldValue.SkipField;
         }
         if (FIELD_HASRATES.equals(pField)) {
-            return hasRates;
+            return hasRates ? hasRates : JDataFieldValue.SkipField;
         }
         if (FIELD_HASPRICE.equals(pField)) {
-            return hasPrices;
+            return hasPrices ? hasPrices : JDataFieldValue.SkipField;
         }
         if (FIELD_HASPATT.equals(pField)) {
-            return hasPatterns;
+            return hasPatterns ? hasPatterns : JDataFieldValue.SkipField;
         }
         if (FIELD_ISPATT.equals(pField)) {
-            return isPatterned;
+            return isPatterned ? isPatterned : JDataFieldValue.SkipField;
         }
         if (FIELD_ISPARENT.equals(pField)) {
-            return isParent;
+            return isParent ? isParent : JDataFieldValue.SkipField;
         }
         if (FIELD_ISALIASD.equals(pField)) {
-            return isAliasedTo;
+            return isAliasedTo ? isAliasedTo : JDataFieldValue.SkipField;
         }
         if (FIELD_ISCLSABL.equals(pField)) {
             return isCloseable;
@@ -250,6 +250,14 @@ public class AccountNew extends AccountBase {
      * AccountInfoSet.
      */
     private final AccountInfoSet theInfoSet;
+
+    /**
+     * Obtain InfoSet.
+     * @return the infoSet
+     */
+    protected AccountInfoSet getInfoSet() {
+        return theInfoSet;
+    }
 
     /**
      * Earliest Event.
@@ -638,6 +646,112 @@ public class AccountNew extends AccountBase {
     }
 
     /**
+     * Close the account.
+     */
+    public void closeAccount() {
+        /* Close the account */
+        setClose(theLatest.getDate());
+    }
+
+    /**
+     * Re-open the account.
+     */
+    public void reOpenAccount() {
+        /* Reopen the account */
+        setClose(null);
+    }
+
+    /**
+     * Clear the active account flags.
+     */
+    @Override
+    public void clearActive() {
+        super.clearActive();
+
+        /* Reset flags */
+        isCloseable = true;
+        theEarliest = null;
+        theLatest = null;
+        theInitPrice = null;
+        hasDebts = false;
+        hasRates = false;
+        hasPrices = false;
+        hasPatterns = false;
+        isPatterned = false;
+        isParent = false;
+        isAliasedTo = false;
+    }
+
+    /**
+     * Touch an account.
+     * @param pObject the object touch the account
+     */
+    @Override
+    public void touchItem(final DataItem pObject) {
+        /* Note that the account is Active */
+        super.touchItem(pObject);
+
+        /* If we are being touched by a rate */
+        if (pObject instanceof AccountRate) {
+            /* Note flags */
+            hasRates = true;
+
+            /* If we are being touched by a price */
+        } else if (pObject instanceof AccountPrice) {
+            /* Note flags */
+            hasPrices = true;
+            if (theInitPrice == null) {
+                theInitPrice = (AccountPrice) pObject;
+            }
+
+            /* If we are being touched by a pattern */
+        } else if (pObject instanceof Pattern) {
+            /* Access as pattern */
+            Pattern myPattern = (Pattern) pObject;
+
+            /* Note flags */
+            if (Difference.isEqual(myPattern.getAccount(), this)) {
+                hasPatterns = true;
+            }
+            if (Difference.isEqual(myPattern.getPartner(), this)) {
+                isPatterned = true;
+            }
+
+            /* If we are being touched by an event */
+        } else if (pObject instanceof Event) {
+            /* Access as event */
+            Event myEvent = (Event) pObject;
+
+            /* Record the event */
+            if (theEarliest == null) {
+                theEarliest = myEvent;
+            }
+            theLatest = myEvent;
+
+            /* If we have a parent, touch it */
+            if (getParent() != null) {
+                getParent().touchItem(pObject);
+            }
+
+            /* If we are being touched by another account */
+        } else if (pObject instanceof Account) {
+            /* Access as account */
+            Account myAccount = (Account) pObject;
+
+            /* Note flags */
+            if (Difference.isEqual(myAccount.getAlias(), this)) {
+                isAliasedTo = true;
+            }
+            if (Difference.isEqual(myAccount.getParent(), this)) {
+                isParent = true;
+                if (myAccount.isDebt()) {
+                    hasDebts = true;
+                }
+            }
+        }
+    }
+
+    /**
      * Set a new maturity date.
      * @param pDate the new date
      * @throws JDataException on error
@@ -733,6 +847,65 @@ public class AccountNew extends AccountBase {
 
         /* Set the value */
         theInfoSet.setValue(pInfoClass, pValue);
+    }
+
+    /**
+     * Get an infoSet value.
+     * @param pInfoClass the class of info to get
+     * @return the value to set
+     */
+    private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
+        Object myValue;
+
+        switch (pInfoClass) {
+            case Parent:
+            case Alias:
+                /* Access account of object */
+                myValue = hasInfoSet ? theInfoSet.getAccount(pInfoClass) : null;
+                break;
+            default:
+                /* Access value of object */
+                myValue = hasInfoSet ? theInfoSet.getField(pInfoClass) : null;
+                break;
+
+        }
+        /* Return the value */
+        return (myValue != null) ? myValue : JDataFieldValue.SkipField;
+    }
+
+    @Override
+    protected void markActiveItems() {
+        /* mark underlying items */
+        super.markActiveItems();
+
+        /* Access values */
+        AccountNew myParent = getParent();
+        AccountNew myAlias = getAlias();
+        Boolean isClosed = isClosed();
+
+        /* If we have a parent, mark the parent */
+        if (myParent != null) {
+            myParent.touchItem(this);
+            if (!isClosed) {
+                myParent.setNonCloseable();
+            }
+        }
+
+        /* If we have an alias, mark the alias */
+        if (myAlias != null) {
+            myAlias.touchItem(this);
+            if (!isClosed) {
+                myAlias.setNonCloseable();
+            }
+        }
+
+        /* If we have patterns or are touched by patterns, then we are not close-able */
+        if (hasPatterns || isPatterned) {
+            setNonCloseable();
+        }
+
+        /* Mark infoSet items */
+        theInfoSet.markActiveItems();
     }
 
     /**
@@ -885,64 +1058,32 @@ public class AccountNew extends AccountBase {
          * @throws JDataException on error
          */
         public void markActiveItems() throws JDataException {
+            /* Access dataSet */
+            FinanceData myData = getDataSet();
+
+            /* Mark active items referenced by rates */
+            myData.getRates().markActiveItems();
+
+            /* Mark active items referenced by prices */
+            myData.getPrices().markActiveItems();
+
+            /* Mark active items referenced by patterns */
+            myData.getPatterns().markActiveItems();
+
             /* Access the iterator */
             Iterator<AccountNew> myIterator = iterator();
-            AccountNew myCurr;
 
             /* Loop through the accounts */
             while (myIterator.hasNext()) {
-                myCurr = myIterator.next();
-                /* If we have a parent, mark the parent */
-                if (myCurr.getParent() != null) {
-                    myCurr.getParent().touchItem(myCurr);
-                    if (!myCurr.isClosed()) {
-                        myCurr.getParent().setNonCloseable();
-                    }
-                }
+                AccountNew myCurr = myIterator.next();
 
-                /* If we have an alias, mark the alias */
-                if (myCurr.getAlias() != null) {
-                    myCurr.getAlias().touchItem(myCurr);
-                    if (!myCurr.isClosed()) {
-                        myCurr.getAlias().setNonCloseable();
-                    }
-                }
-
-                /* Mark the AccountType */
-                AccountType myType = myCurr.getActType();
-                myType.touchItem(myCurr);
-
-                /* If we are a child and have no latest event, then we are not close-able */
-                /*
-                 * if ((myCurr.isChild()) && (myCurr.getLatest() == null)) { myCurr.setNonCloseable(); }
-                 */
-
-                /* If we have patterns or are touched by patterns, then we are not close-able */
-                if (myCurr.hasPatterns || myCurr.isPatterned) {
-                    myCurr.setNonCloseable();
-                }
+                /* mark active items */
+                myCurr.markActiveItems();
 
                 /* If we have a close date and a latest event */
                 if ((myCurr.getClose() != null) && (myCurr.getLatest() != null)) {
-                    /* Check whether we need to adjust the date */
+                    /* Ensure that we use the correct latest event date */
                     myCurr.adjustClosed();
-                }
-            }
-
-            /* If we are in final loading stage */
-            if (getDataSet().getLoadState() == LoadState.FINAL) {
-                /* Access a new iterator */
-                myIterator = listIterator();
-
-                /* Loop through the accounts */
-                while (myIterator.hasNext()) {
-                    myCurr = myIterator.next();
-
-                    /* Validate the account */
-                    myCurr.validate();
-                    if (myCurr.hasErrors()) {
-                        throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
-                    }
                 }
             }
         }
@@ -1016,67 +1157,6 @@ public class AccountNew extends AccountBase {
 
             /* Add the Account to the list */
             append(myAccount);
-        }
-
-        /**
-         * Validate newly loaded accounts. This is deliberately deferred until after loading of the
-         * Rates/Patterns/Prices so as to validate the interrelationships
-         * @throws JDataException on error
-         */
-        public void validateLoadedAccounts() throws JDataException {
-            FinanceData myData = getDataSet();
-            AccountNew myCurr;
-
-            /* Mark active items referenced by rates */
-            myData.getRates().markActiveItems();
-
-            /* Mark active items referenced by prices */
-            myData.getPrices().markActiveItems();
-
-            /* Mark active items referenced by patterns */
-            myData.getPatterns().markActiveItems();
-
-            /* Access the iterator */
-            Iterator<AccountNew> myIterator = iterator();
-
-            /* Loop through the items */
-            while (myIterator.hasNext()) {
-                myCurr = myIterator.next();
-
-                /* If the account has a parent Id */
-                if (myCurr.getParentId() != null) {
-                    /* Set the parent */
-                    myCurr.setParent(findItemById(myCurr.getParentId()));
-                    myCurr.getParent().touchItem(myCurr);
-                }
-
-                /* If the account has an alias Id */
-                if (myCurr.getAliasId() != null) {
-                    /* Set the alias */
-                    myCurr.setAlias(findItemById(myCurr.getAliasId()));
-                    myCurr.getAlias().touchItem(myCurr);
-                }
-
-                /* Mark the AccountType */
-                AccountType myType = myCurr.getActType();
-                myType.touchItem(myCurr);
-            }
-
-            /* Create another iterator */
-            myIterator = iterator();
-
-            /* Loop through the items */
-            while (myIterator.hasNext()) {
-                myCurr = myIterator.next();
-
-                /* Validate the account */
-                myCurr.validate();
-
-                /* Handle validation failure */
-                if (myCurr.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
-                }
-            }
         }
     }
 }

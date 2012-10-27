@@ -282,13 +282,18 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
             if (bContinue) {
                 bContinue = SheetTaxYear.loadArchive(pTask, myHelper, myData, myRange);
             }
-
+            if (bContinue) {
+                bContinue = SheetTaxYearNew.loadArchive(pTask, myHelper, myData, myRange);
+            }
             if (bContinue) {
                 myData.calculateDateRange();
             }
 
             if (bContinue) {
                 bContinue = SheetAccount.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountNew.loadArchive(pTask, myHelper, myData);
             }
             if (bContinue) {
                 bContinue = SheetAccountRate.loadArchive(pTask, myHelper, myData);

@@ -861,8 +861,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, "Rate on ["
-                        + myData.getDataFormatter().formatObject(new JDateDay(pDate))
-                        + "] has invalid Account [" + pAccount + "]");
+                        + myData.getDataFormatter().formatObject(pDate) + "] has invalid Account ["
+                        + pAccount + "]");
             }
 
             /* Create the ratePeriod */

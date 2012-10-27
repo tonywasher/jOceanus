@@ -861,13 +861,18 @@ public class FinanceData extends DataSet<FinanceData> {
         theTransTypes.clearActive();
         theTaxRegimes.clearActive();
         theFrequencys.clearActive();
+        theTaxInfoTypes.clearActive();
+        theActInfoTypes.clearActive();
+        theEventInfoTypes.clearActive();
 
         /* Reset the flags on the accounts and tax years */
         theAccounts.clearActive();
         theTaxYears.clearActive();
+        theNewTaxYears.clearActive();
 
         /* Note active items referenced by tax years */
         theTaxYears.markActiveItems();
+        theNewTaxYears.markActiveItems();
     }
 
     /**

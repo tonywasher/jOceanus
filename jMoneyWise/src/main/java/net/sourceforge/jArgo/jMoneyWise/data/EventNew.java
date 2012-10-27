@@ -133,34 +133,34 @@ public class EventNew extends EventBase {
             return hasInfoSet ? theInfoSet : JDataFieldValue.SkipField;
         }
         if (FIELD_DEBTUNITS.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.DebitUnits) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.DebitUnits);
         }
         if (FIELD_CREDUNITS.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.CreditUnits) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.CreditUnits);
         }
         if (FIELD_TAXCREDIT.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.TaxCredit) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.TaxCredit);
         }
         if (FIELD_DILUTION.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.Dilution) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.Dilution);
         }
         if (FIELD_YEARS.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.QualifyYears) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.QualifyYears);
         }
         if (FIELD_NATINS.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.NatInsurance) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.NatInsurance);
         }
         if (FIELD_BENEFIT.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.Benefit) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.Benefit);
         }
         if (FIELD_PENSION.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.Pension) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.Pension);
         }
         if (FIELD_XFERDELAY.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.XferDelay) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.XferDelay);
         }
         if (FIELD_THIRDPARTY.equals(pField)) {
-            return hasInfoSet ? theInfoSet.getField(EventInfoClass.ThirdParty) : JDataFieldValue.SkipField;
+            return getInfoSetValue(EventInfoClass.ThirdParty);
         }
 
         /* Pass onwards */
@@ -176,6 +176,14 @@ public class EventNew extends EventBase {
      * EventInfoSet.
      */
     private final EventNewInfoSet theInfoSet;
+
+    /**
+     * Obtain InfoSet.
+     * @return the infoSet
+     */
+    protected EventNewInfoSet getInfoSet() {
+        return theInfoSet;
+    }
 
     /**
      * Obtain Debit Units.
@@ -704,6 +712,19 @@ public class EventNew extends EventBase {
 
         /* Set the value */
         theInfoSet.setValue(pInfoClass, pValue);
+    }
+
+    /**
+     * Get an infoSet value.
+     * @param pInfoClass the class of info to get
+     * @return the value to set
+     */
+    private Object getInfoSetValue(final EventInfoClass pInfoClass) {
+        /* Access value of object */
+        Object myValue = hasInfoSet ? theInfoSet.getField(pInfoClass) : null;
+
+        /* Return the value */
+        return (myValue != null) ? myValue : JDataFieldValue.SkipField;
     }
 
     /**

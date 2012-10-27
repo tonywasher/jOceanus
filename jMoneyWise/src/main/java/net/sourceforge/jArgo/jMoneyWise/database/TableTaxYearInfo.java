@@ -23,12 +23,14 @@
 package net.sourceforge.jArgo.jMoneyWise.database;
 
 import net.sourceforge.jArgo.jDataManager.JDataException;
+import net.sourceforge.jArgo.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jArgo.jDataModels.data.DataSet;
 import net.sourceforge.jArgo.jDataModels.database.Database;
 import net.sourceforge.jArgo.jDataModels.database.TableDataInfo;
 import net.sourceforge.jArgo.jMoneyWise.data.FinanceData;
 import net.sourceforge.jArgo.jMoneyWise.data.TaxYearInfo;
 import net.sourceforge.jArgo.jMoneyWise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.jArgo.jMoneyWise.data.TaxYearNew.TaxYearNewList;
 
 /**
  * TableDataInfo extension for TaxYearInfo.
@@ -39,6 +41,11 @@ public class TableTaxYearInfo extends TableDataInfo<TaxYearInfo> {
      * The name of the table.
      */
     protected static final String TABLE_NAME = TaxYearInfo.LIST_NAME;
+
+    /**
+     * TaxYear data list.
+     */
+    private TaxYearNewList theTaxYears = null;
 
     /**
      * The TaxInfo list.
@@ -56,6 +63,7 @@ public class TableTaxYearInfo extends TableDataInfo<TaxYearInfo> {
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
+        theTaxYears = myData.getNewTaxYears();
         theList = myData.getTaxInfo();
         setList(theList);
     }
@@ -70,4 +78,16 @@ public class TableTaxYearInfo extends TableDataInfo<TaxYearInfo> {
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
     }
 
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        // theData.calculateDateRange();
+        /* Mark active items */
+        theTaxYears.markActiveItems();
+
+        /* Validate the tax years */
+        theTaxYears.validate();
+        if (theTaxYears.hasErrors()) {
+            throw new JDataException(ExceptionClass.VALIDATE, theTaxYears, "Validation error");
+        }
+    }
 }

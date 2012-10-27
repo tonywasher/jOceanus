@@ -353,11 +353,6 @@ public class SheetTaxYearNew extends SheetDataItem<TaxYearNew> {
         }
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JDataException {
-        theData.calculateDateRange();
-    }
-
     /**
      * Load the TaxYears from an archive.
      * @param pTask the task control
@@ -525,6 +520,15 @@ public class SheetTaxYearNew extends SheetDataItem<TaxYearNew> {
 
                 /* Sort the list */
                 myList.reSort();
+
+                /* Mark active items */
+                myList.markActiveItems();
+
+                /* Validate the tax years */
+                myList.validate();
+                if (myList.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
+                }
             }
 
             /* Handle exceptions */
