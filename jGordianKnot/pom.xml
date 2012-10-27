@@ -4,18 +4,13 @@
   <artifactId>jGordianKnot</artifactId>
   <version>v1.0.0-SNAPSHOT</version>
   <name>JGordianKnot Security Framework</name>
-  <description>A Security framework for Java</description>
+  <description>A Security framework for Java. This embeds the 7Zip SDK v9.20 which is under public domain license</description>
   <inceptionYear>2012</inceptionYear>
   <dependencies>
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
       <version>1.47</version>
-    </dependency>
-    <dependency>
-      <groupId>org.7-Zip</groupId>
-      <artifactId>lzmaSDK</artifactId>
-      <version>v9.20</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.jArgo</groupId>
