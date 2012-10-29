@@ -1,13 +1,21 @@
 JGordianKnot Project
 
-  JGordianKnot is a security suite for Java based on the BouncyCastle cryptography library. 
+  jGordianKnot is a subComponent of the jOceanus project.
+
+  jGordianKnot is a security suite for Java based on the BouncyCastle cryptography library. 
   
-  Encryption is performed using a set of keys called a <<CipherSet>> (one for each supported algorithm). A subset of the keys is selected at random from the CipherSet and the plaintext is encrypted by each key in turn. The types of the keys used are encoded into output ciphertext along with the randomly chosen initialisation vector.
+  Encryption is performed using a set of keys called a <<CipherSet>> (one for each supported algorithm). A subset of
+the keys is selected at random from the CipherSet and the plaintext is encrypted by each key in turn. The types of
+the keys used are encoded into output ciphertext along with the randomly chosen initialisation vector.
 
   A CipherSet may be defined by a <<PasswordHash>>. This PasswordHash is build from a randomly selected set of three
-MessageDigest algorithms using an interleaved variant of PBKDF2. As the three hashes are calculated from the password, intermediate results are periodically swapped between the hashes. Two of the resultant hashes are combined to provide the external hash representation. The third hash is used to generate the key definitions for a CipherSet.
+MessageDigest algorithms using an interleaved variant of PBKDF2. As the three hashes are calculated from the password,
+ntermediate results are periodically swapped between the hashes. Two of the resultant hashes are combined to provide
+the external hash representation. The third hash is used to generate the key definitions for a CipherSet.
 
-  Asymmetric Keys based on the Elliptic Curve algorithm are also supported. Elliptic Curve Diffie-Hellman is used to derive a CipherSet for a pair of AsymmetricKeys. RSA is not supported owing to issues with KeySize. It is in fact coded but disabled.
+  Asymmetric Keys based on the Elliptic Curve algorithm are also supported. Elliptic Curve Diffie-Hellman is used to
+derive a CipherSet for a pair of AsymmetricKeys. RSA is not supported owing to issues with KeySize. It is in fact coded
+but disabled.
 
   The following symmetric key algorithms are supported for 128/256 byte keys.
 
@@ -53,7 +61,10 @@ MessageDigest algorithms using an interleaved variant of PBKDF2. As the three ha
 
 ZipFile support
 
-  In addition to Encryption services, JGordianKnot also provides support for to creating and reading encrypted ZipFiles. This is built on top of the Java ZipFile support and utilises the encryption facilities of JGordianKnot to encrypt and decrypt each file entry. LZMA compression is also provided (based on the 7-Zip LZMA SDK), which provides significantly improved compression other the Deflation standard Jav method.
+  In addition to Encryption services, JGordianKnot also provides support for to creating and reading encrypted ZipFiles.
+This is built on top of the Java ZipFile support and utilises the encryption facilities of JGordianKnot to encrypt and
+decrypt each file entry. LZMA compression is also provided (based on the 7-Zip LZMA SDK), which provides significantly
+improved compression other the Deflation standard Java method.
 
   The ZipFile directory is additionally encrypted, so as to restrict information leakage.
 

@@ -1,4 +1,7 @@
-JDataManager Project
+jDataManager Project
 
-  JDataManager provides a window to walk through data structures. It supports a set of interfaces that allow conforming objects to declare internal fields which are then displayed in an HTML window. 
+  jDataManager is a subComponent of the jOceanus project.
+
+  jDataManager provides a window to walk through data structures. It supports a
+set of interfaces that allow conforming objects to declare internal fields which are then displayed in an HTML window. 
   

@@ -1,6 +1,6 @@
 jTableFilter Project
 
-  jTableFilter is a subComponent of the jArgo project
+  jTableFilter is a subComponent of the jOceanus project
 
   It provides an extension of the TableRowSorter class that utilises the natural ordering of rows rather
 than requiring the user to specify a sort order.

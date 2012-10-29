@@ -1,4 +1,6 @@
-Jira Project
+jJira Project
 
-  Jira is a wrapper function on top of the SOAP Jira access to make it easy for a source control system such as 
+  jJira is a subComponent of the jOceanus project.
+
+  jJira is a wrapper function on top of the SOAP Jira access to make it easy for a source control system such as 
 SubVersion to interface with Jira, without having to deal with the interface method.

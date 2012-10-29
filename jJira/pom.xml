@@ -1,11 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>net.sourceforge.jArgo</groupId>
+  <parent>
+    <groupId>net.sourceforge.jOceanus</groupId>
+    <artifactId>jOceanus</artifactId>
+    <version>v1.1.0-SNAPSHOT</version>   
+  </parent>
   <artifactId>jJira</artifactId>
   <version>v1.1.0-SNAPSHOT</version>
   <name>Java Jira Access Link</name>
   <description>Jira Generic Access facilities for Java</description>
-  <inceptionYear>2012</inceptionYear>
   <profiles>
     <profile>
       <id>buildclient</id>
@@ -44,13 +47,13 @@
 	</plugins>
       </build>
       <properties>
-	<jira.soapclient.jiraurl>http://Tony-HP:8080</jira.soapclient.jiraurl>
+	<jira.soapclient.jiraurl>http://${svnHost}:8080</jira.soapclient.jiraurl>
        </properties>
     </profile>
   </profiles>
   <dependencies>
     <dependency>
-      <groupId>net.sourceforge.jArgo</groupId>
+      <groupId>net.sourceforge.jOceanus</groupId>
       <artifactId>jDataModels</artifactId>
       <version>v1.1.0-SNAPSHOT</version>
     </dependency>
@@ -81,28 +84,6 @@
       <version>1.2.8</version>
     </dependency>
   </dependencies>
-  <licenses>
-    <license>
-      <name>The Apache Software License, Version 2.0</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-      <distribution>manual</distribution>
-    </license>
-  </licenses>
-  <developers>
-    <developer>
-      <id>tony</id>
-      <name>Tony Washer</name>
-      <email>Tony.Washer@yahoo.co.uk</email>
-      <roles>
-        <role>architect</role>
-        <role>developer</role>
-      </roles>
-    </developer>
-  </developers>
-  <issueManagement>
-    <system>Jira</system>
-    <url>http://${svnHost}:8080/</url>
-  </issueManagement>
   <scm>
     <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnComponent}</connection>
     <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnComponent}</developerConnection>
@@ -110,22 +91,13 @@
     <url>http://${svnHost}/viewvc/${svnRepository}/${svnComponent}/${svnLocation}</url>
   </scm>
   <properties>
-    <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
-    <svnHost>Tony-HP</svnHost>
-    <svnRepository>Finance</svnRepository>
     <svnComponent>jJira</svnComponent>
     <svnBranch>v1.1.0</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnLocation>branches/${svnBranch}</svnLocation>
-    <packageName>net.sourceforge.jArgo.${svnComponent}</packageName>
+    <packageName>${project.groupId}.${svnComponent}</packageName>
   </properties>
   <build>
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
     <plugins>
       <plugin>
 	<groupId>org.codehaus.mojo</groupId>
@@ -169,70 +141,9 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.5.1</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-        </configuration>
       </plugin>
     </plugins>
   </build>
-  <reporting>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-project-info-reports-plugin</artifactId>
-        <version>2.5.1</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.9.1</version>
-        <configuration>
-          <configLocation>src/main/checkstyle/checks.xml</configLocation>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.7.1</version>
-        <configuration>
-           <targetJdk>1.7</targetJdk>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jxr-plugin</artifactId>
-        <version>2.3</version>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.8.1</version>
-        <configuration>
-          <show>public</show>
-          <nohelp>true</nohelp>
-        </configuration>
-      </plugin>
-    </plugins>
-  </reporting>
 </project>

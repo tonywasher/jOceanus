@@ -1,19 +1,11 @@
 <document>
   <properties>
     <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
-    <title>JSortedList Release Notes</title>
+    <title>jSortedList Release Notes</title>
   </properties>
   <body>
     <section name="Overview">
-      <p>Extension of {@link java.util.List} that provides a sorted linked list implementation</p>
-        <ul>
-          <li>Null objects are not allowed.</li>
-          <li>Duplicate objects are not allowed</li>
-          <li>The semantics of the <b>add</b> method are changed such that the element is added at its natural
-position in the list rather than at the end of the list. Methods that attempt to specify the position of an
-object are disallowed.</li>
-          <li>The {@link #subList} method is not supported.</li>
-        </ul>
+      <p>Extension of java.util.List that provides a sorted linked list implementation</p>
     </section>
 
     <section name="Build History">

@@ -1,8 +1,13 @@
-JDecimal Project
+jDecimal Project
 
-  JDecimal is a package that provides a Decimal implementation in many ways similar to that provided by BigDecimal, except that the class is mutable, allowing for much faster arithmetic.
+  jDecimal is a subComponent of the jOceanus project
+
+  jDecimal is a package that provides a Decimal implementation in many ways similar to that provided by BigDecimal,
+except that the class is mutable, allowing for much faster arithmetic.
 
   Rather than deal with arbitrarily large numbers, JDecimal stores the value as a simple long, and so is not suitable for
 extremely large values, since precision will be lost. Users should continue to use BigDecimal for these situations.
 
-  This implementation is particularly suited to financial applications since a monetary value of $10,000,000,000,000,000.00 can easily be accommodated within a long. As long as you are not dealing with the US National Debt, this will be sufficient for most purposes.
+  This implementation is particularly suited to financial applications since a monetary value of
+$10,000,000,000,000,000.00 can easily be accommodated within a long. As long as you are not dealing with the
+US National Debt, this will be sufficient for most purposes.

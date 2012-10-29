@@ -1,14 +1,17 @@
-JSortedList Project
+jSortedList Project
 
-  JSortedList provides a sorted LinkedList implementation of the generic List interface. 
+  jSorted list is a subComponent of the jOceanus project.
+
+  jSortedList provides a sorted LinkedList implementation of the generic List interface. 
   
-  The basic list implementation is <<JOrderedList>> which provides a simple LinkedList. Elements that are added to the
-list are added in the apprpriate position according to their natural ordering. Attempts to explicitly select the 
+  The basic list implementation is <<OrderedList>> which provides a simple LinkedList. Elements that are added to the
+list are added in the appropriate position according to their natural ordering. Attempts to explicitly select the 
 position of an element are rejected. Null elements are not allowed and an element cannot appear twice in the same list. 
   
   Speedy access to an element is provided by holding a reference to every 32nd element in the list. Hence when using
 random access on the list to obtain the element at a specific index, the search can begin at the nearest reference point
-ensuring that no more than 32 elements are ever searched. In a similar fashion a binary search using these references is used to locate both an element in the list and the insert point for an element.
+ensuring that no more than 32 elements are ever searched. In a similar fashion a binary search using these references
+is used to locate both an element in the list and the insert point for an element.
 
   A variant list implementation <<OrderedIdList>> is provided which extends the basic implementation for elements which 
 provide a unique invariant id such as an Integer. This id is used in a hash map to provide fast mapping from element to 

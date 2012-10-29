@@ -1,5 +1,7 @@
-JFieldSet Project
+jFieldSet Project
 
-  JFieldSet provides a generic manager for a set of java swing components. 
+  jFieldSet is a subComponent of the jOceanus project.
+
+  jFieldSet provides a generic manager for a set of java swing components. 
   
 

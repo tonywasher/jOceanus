@@ -1,7 +1,7 @@
-<document>
+ <document>
   <properties>
     <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
-    <title>JSvnManager Release Notes</title>
+    <title>jSvnManager Release Notes</title>
   </properties>
   <body>
     <section name="Overview">
@@ -10,7 +10,7 @@
 
     <section name="Build History">
       <dl>
-<dt>v1.0.0-b1</dt> <dd>initial upload of code</dd> <dd></dd>
+        <dt>v1.0.0-b1</dt> <dd>initial upload of code</dd> <dd></dd>
       </dl>
     </section>
   </body>
