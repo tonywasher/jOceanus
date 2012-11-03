@@ -56,7 +56,7 @@ public class JRate extends JDecimal {
      */
     public JRate(final String pSource) {
         /* Parse the string and correct the scale */
-        JDecimalParser.parseDecimalValue(pSource.trim(), this);
+        JDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(NUM_DECIMALS);
     }
 

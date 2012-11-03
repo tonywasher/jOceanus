@@ -499,7 +499,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
      * Remove the last changes for the history buffer and restore values from it.
      */
     public void popHistory() {
-        theHistory.popTheHistory();
+        rewindToVersion(theList.getVersion());
     }
 
     /**
@@ -507,10 +507,20 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
      * @param pVersion the version to rewind to
      */
     public void rewindToVersion(final int pVersion) {
+        /* If the item was newly created */
+        if (getOriginalValues().getVersion() > pVersion) {
+            /* Remove from list */
+            unLink();
+            deRegister();
+
+            /* Return */
+            return;
+        }
+
         /* Loop while version is too high */
         while (theValueSet.getVersion() > pVersion) {
             /* Pop history */
-            popHistory();
+            theHistory.popTheHistory();
         }
 
         /* clear errors */
@@ -523,7 +533,9 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
      * @return <code>true/false</code>
      */
     public Difference fieldChanged(final JDataField pField) {
-        return (pField != null) ? theHistory.fieldChanged(pField) : Difference.Identical;
+        return ((pField != null) && (pField.isValueSetField()))
+                                                               ? theHistory.fieldChanged(pField)
+                                                               : Difference.Identical;
     }
 
     /**

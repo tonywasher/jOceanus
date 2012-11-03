@@ -23,9 +23,13 @@
 package net.sourceforge.jOceanus.jDataModels.data;
 
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sourceforge.jOceanus.jDataManager.DataState;
+import net.sourceforge.jOceanus.jDataManager.Difference;
+import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -34,7 +38,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfo.DataInfoList;
-import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticInterface;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticList;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
@@ -106,7 +109,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     /**
      * The InfoTypes for the InfoSet.
      */
-    private StaticList<I, E> theTypeList;
+    private final StaticList<I, E> theTypeList;
 
     /**
      * The DataInfoList for the InfoSet.
@@ -121,15 +124,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     /**
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
-     * @param pInfoList the infoList for the info values
      * @param pTypeList the infoTypeList for the set
      */
     protected DataInfoSet(final O pOwner,
-                          final DataInfoList<T, O, I, E> pInfoList,
                           final StaticList<I, E> pTypeList) {
-        /* Store the Owner and Info List */
+        /* Store the Owner and InfoType List */
         theOwner = pOwner;
-        theInfoList = pInfoList;
         theTypeList = pTypeList;
         theClass = theTypeList.getEnumClass();
 
@@ -138,22 +138,10 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     }
 
     /**
-     * Constructor.
+     * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
      */
-    protected DataInfoSet(final DataInfoSet<T, O, I, E> pSource) {
-        /* Store the Owner and Info List */
-        theOwner = pSource.theOwner;
-        theInfoList = pSource.theInfoList.getEmptyList();
-        theTypeList = pSource.theTypeList;
-        theClass = pSource.theClass;
-
-        /* Mark the InfoList as EDIT */
-        theInfoList.setStyle(ListStyle.EDIT);
-
-        /* Create the Map */
-        theMap = new EnumMap<E, T>(theClass);
-
+    protected void cloneDataInfoSet(final DataInfoSet<T, O, I, E> pSource) {
         /* Clone the InfoSet for each Event in the underlying Map */
         for (Entry<E, T> myEntry : pSource.theMap.entrySet()) {
             /* Create the new value */
@@ -211,6 +199,19 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     protected T getInfo(final E pInfoClass) {
         /* Return the info */
         return theMap.get(pInfoClass);
+    }
+
+    /**
+     * Determine whether a particular field has changed in this edit view.
+     * @param pInfoClass the class to test
+     * @return <code>true/false</code>
+     */
+    public Difference fieldChanged(final E pInfoClass) {
+        /* Access the info */
+        T myInfo = getInfo(pInfoClass);
+
+        /* Return change details */
+        return (myInfo != null) && myInfo.hasHistory() ? Difference.Different : Difference.Identical;
     }
 
     /**
@@ -287,15 +288,12 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     }
 
     /**
-     * reLink to Lists.
+     * set the infoList.
      * @param pInfoList the infoList for the info values
-     * @param pTypeList the infoTypeList for the set
      */
-    public void relinkToDataSet(final DataInfoList<T, O, I, E> pInfoList,
-                                final StaticList<I, E> pTypeList) {
+    protected void setInfoList(final DataInfoList<T, O, I, E> pInfoList) {
         /* Update to use the new lists */
         theInfoList = pInfoList;
-        theTypeList = pTypeList;
     }
 
     /**
@@ -310,14 +308,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     }
 
     /**
-     * Set version.
-     * @param pVersion the version to set
-     */
-    public void setVersion(final int pVersion) {
-        theInfoList.setVersion(pVersion);
-    }
-
-    /**
      * Determine whether the set has changes.
      * @return <code>true/false</code>
      */
@@ -326,7 +316,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
 
         /* Push history for each existing value */
         for (T myValue : theMap.values()) {
-            /* Create the new value */
+            /* Check for history */
             bChanges |= myValue.hasHistory();
         }
 
@@ -349,9 +339,20 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * Pop history.
      */
     public void popHistory() {
-        /* Push history for each existing value */
-        for (T myValue : theMap.values()) {
-            /* Create the new value */
+        /* Iterate through table values */
+        Iterator<T> myIterator = theMap.values().iterator();
+        while (myIterator.hasNext()) {
+            T myValue = myIterator.next();
+
+            /* If the entry should be removed */
+            if (myValue.getOriginalValues().getVersion() > theInfoList.getVersion()) {
+                /* Remove the value */
+                myIterator.remove();
+                myValue.unLink();
+                continue;
+            }
+
+            /* Pop the value */
             myValue.popHistory();
         }
     }
@@ -363,13 +364,52 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     public boolean checkForHistory() {
         boolean bChanges = false;
 
-        /* Push history for each existing value */
+        /* Check for history for each existing value */
         for (T myValue : theMap.values()) {
-            /* Create the new value */
+            /* Check for history */
             bChanges |= myValue.checkForHistory();
         }
 
         /* return result */
         return bChanges;
+    }
+
+    /**
+     * Get the EditState for this item.
+     * @return the EditState
+     */
+    public EditState getEditState() {
+        /* Check for history for each existing value */
+        for (T myValue : theMap.values()) {
+            /* If we have changes */
+            if (myValue.hasHistory()) {
+                /* Note that new state is changed */
+                return EditState.VALID;
+            }
+        }
+
+        /* Default to clean */
+        return EditState.CLEAN;
+    }
+
+    /**
+     * Get the State for this infoSet.
+     * @return the State
+     */
+    public DataState getState() {
+        /* Default to clean */
+        DataState myState = DataState.CLEAN;
+
+        /* Check for history for each existing value */
+        for (T myValue : theMap.values()) {
+            /* If we have changes */
+            if (myValue.getState() != DataState.CLEAN) {
+                /* Note that new state is changed */
+                myState = DataState.CHANGED;
+            }
+        }
+
+        /* return result */
+        return myState;
     }
 }

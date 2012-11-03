@@ -48,21 +48,28 @@ public class TaxInfoSet extends DataInfoSet<TaxYearInfo, TaxYearNew, TaxYearInfo
     /**
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
-     * @param pInfoList the infoList for the info values
      * @param pTypeList the infoTypeList for the set
      */
     protected TaxInfoSet(final TaxYearNew pOwner,
-                         final TaxInfoList pInfoList,
                          final TaxYearInfoTypeList pTypeList) {
         /* Store the Owner and Info List */
-        super(pOwner, pInfoList, pTypeList);
+        super(pOwner, pTypeList);
     }
 
     /**
-     * Constructor.
-     * @param pSource source InfoSet
+     * Set the infoList.
+     * @param pInfoList source InfoSet
      */
-    protected TaxInfoSet(final TaxInfoSet pSource) {
-        super(pSource);
+    protected void setInfoList(final TaxInfoList pInfoList) {
+        super.setInfoList(pInfoList);
+    }
+
+    /**
+     * Clone the dataInfoSet.
+     * @param pSource the InfoSet to clone
+     */
+    protected void cloneDataInfoSet(final TaxInfoSet pSource) {
+        /* Clone the dataInfoSet */
+        super.cloneDataInfoSet(pSource);
     }
 }

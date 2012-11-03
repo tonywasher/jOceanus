@@ -252,8 +252,10 @@ public class ValueField extends JTextField {
      * startEdit.
      */
     private void startEdit() {
-        /* Save the current colour */
-        theCache = getForeground();
+        /* Save the current colour (if not already recorded) */
+        if (theCache == null) {
+            theCache = getForeground();
+        }
 
         /* Show the edit text */
         setText(theModel.getEdit());
@@ -284,6 +286,9 @@ public class ValueField extends JTextField {
             if (theSelf.equals(e.getSource())) {
                 /* Check for finish of edit */
                 finishEdit();
+
+                /* Restart the edit, since we have not exited the field */
+                startEdit();
             }
         }
     }
@@ -530,8 +535,12 @@ public class ValueField extends JTextField {
 
         @Override
         protected Object parseValue(final String pValue) {
-            /* Return the parsed value */
-            return new JMoney(pValue);
+            /* Parse the value */
+            try {
+                return new JMoney(pValue);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
 
         @Override
@@ -590,8 +599,12 @@ public class ValueField extends JTextField {
 
         @Override
         protected Object parseValue(final String pValue) {
-            /* Return the parsed value */
-            return new JRate(pValue);
+            /* Parse the value */
+            try {
+                return new JRate(pValue);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
 
         @Override
@@ -650,8 +663,12 @@ public class ValueField extends JTextField {
 
         @Override
         protected Object parseValue(final String pValue) {
-            /* Return the parsed value */
-            return new JUnits(pValue);
+            /* Parse the value */
+            try {
+                return new JUnits(pValue);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
 
         @Override
@@ -710,8 +727,12 @@ public class ValueField extends JTextField {
 
         @Override
         protected Object parseValue(final String pValue) {
-            /* Return the parsed value */
-            return new JPrice(pValue);
+            /* Parse the value */
+            try {
+                return new JPrice(pValue);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
 
         @Override
@@ -770,8 +791,12 @@ public class ValueField extends JTextField {
 
         @Override
         protected Object parseValue(final String pValue) {
-            /* Return the parsed value */
-            return new JDilution(pValue);
+            /* Parse the value */
+            try {
+                return new JDilution(pValue);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
         }
 
         @Override

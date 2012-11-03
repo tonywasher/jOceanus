@@ -764,6 +764,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
             if (myCurr.getOriginalValues().getVersion() > pVersion) {
                 /* Remove from list */
                 myIterator.remove();
+                myCurr.deRegister();
 
                 /* Re-Loop */
                 continue;

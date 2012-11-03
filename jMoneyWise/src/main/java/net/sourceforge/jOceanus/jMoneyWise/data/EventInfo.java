@@ -473,6 +473,16 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
         }
 
         /**
+         * Set base list for Edit InfoList.
+         * @param pBase the base list
+         */
+        protected void setBase(final EventInfoList pBase) {
+            /* Set the style and base */
+            setStyle(ListStyle.EDIT);
+            super.setBase(pBase);
+        }
+
+        /**
          * Construct an empty CORE account list.
          * @param pData the DataSet for the list
          */

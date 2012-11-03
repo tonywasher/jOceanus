@@ -37,7 +37,9 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
 
@@ -525,7 +527,8 @@ public class AccountNew extends AccountBase {
         /* switch on list type */
         switch (getList().getStyle()) {
             case EDIT:
-                theInfoSet = new AccountInfoSet(pAccount.theInfoSet);
+                theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes());
+                theInfoSet.setInfoList(pList.getAccountInfo());
                 hasInfoSet = true;
                 break;
             default:
@@ -533,6 +536,7 @@ public class AccountNew extends AccountBase {
                 hasInfoSet = false;
                 break;
         }
+
         /* If this is a build of edit from Core */
         if ((getStyle() == ListStyle.EDIT) && (pAccount.getStyle() == ListStyle.CORE)) {
             /* Copy the flags */
@@ -562,8 +566,8 @@ public class AccountNew extends AccountBase {
         super(pList, uId, uControlId, pName, uAcTypeId, pDesc, pClose);
 
         /* Create the InfoSet */
-        FinanceData myData = getDataSet();
-        theInfoSet = new AccountInfoSet(this, myData.getAccountInfo(), myData.getActInfoTypes());
+        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes());
+        theInfoSet.setInfoList(pList.getAccountInfo());
         hasInfoSet = true;
     }
 
@@ -587,8 +591,8 @@ public class AccountNew extends AccountBase {
         super(pList, uId, sName, uAcTypeId, pDesc, pClose);
 
         /* Create the InfoSet */
-        FinanceData myData = getDataSet();
-        theInfoSet = new AccountInfoSet(this, myData.getAccountInfo(), myData.getActInfoTypes());
+        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes());
+        theInfoSet.setInfoList(pList.getAccountInfo());
         hasInfoSet = true;
     }
 
@@ -600,23 +604,9 @@ public class AccountNew extends AccountBase {
         super(pList);
 
         /* Build InfoSet */
-        FinanceData myData = getDataSet();
-        theInfoSet = new AccountInfoSet(this, myData.getAccountInfo().getEmptyList(),
-                myData.getActInfoTypes());
+        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes());
+        theInfoSet.setInfoList(pList.getAccountInfo());
         hasInfoSet = true;
-    }
-
-    @Override
-    protected void relinkToDataSet() {
-        /* Invoke underlying re-link */
-        super.relinkToDataSet();
-
-        /* If we have an InfoSet */
-        if (hasInfoSet) {
-            /* Update to use the new lists */
-            FinanceData myData = getDataSet();
-            theInfoSet.relinkToDataSet(myData.getAccountInfo(), myData.getActInfoTypes());
-        }
     }
 
     /**
@@ -937,6 +927,16 @@ public class AccountNew extends AccountBase {
         }
 
         /**
+         * The AccountInfo List.
+         */
+        private AccountInfoList theInfoList = null;
+
+        /**
+         * The AccountInfoType list.
+         */
+        private AccountInfoTypeList theInfoTypeList = null;
+
+        /**
          * The account.
          */
         private AccountNew theAccount = null;
@@ -955,7 +955,29 @@ public class AccountNew extends AccountBase {
         }
 
         /**
-         * Construct an empty CORE TaxYear list.
+         * Obtain the accountInfoList.
+         * @return the account info list
+         */
+        public AccountInfoList getAccountInfo() {
+            if (theInfoList == null) {
+                theInfoList = getDataSet().getAccountInfo();
+            }
+            return theInfoList;
+        }
+
+        /**
+         * Obtain the accountInfoTypeList.
+         * @return the account info type list
+         */
+        public AccountInfoTypeList getActInfoTypes() {
+            if (theInfoTypeList == null) {
+                theInfoTypeList = getDataSet().getActInfoTypes();
+            }
+            return theInfoTypeList;
+        }
+
+        /**
+         * Construct an empty CORE Account list.
          * @param pData the DataSet for the list
          */
         public AccountNewList(final FinanceData pData) {
@@ -999,6 +1021,14 @@ public class AccountNew extends AccountBase {
             /* Build an empty Extract List */
             AccountNewList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
+
+            /* Store InfoType list */
+            myList.theInfoTypeList = getActInfoTypes();
+
+            /* Create info List */
+            AccountInfoList myActInfo = getAccountInfo();
+            myList.theInfoList = myActInfo.getEmptyList();
+            myList.theInfoList.setBase(myActInfo);
 
             /* Create a new account based on the passed account */
             myList.theAccount = new AccountNew(myList, pAccount);

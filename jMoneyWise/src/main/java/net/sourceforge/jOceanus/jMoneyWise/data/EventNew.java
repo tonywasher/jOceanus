@@ -43,8 +43,10 @@ import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventDateRange;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearNew.TaxYearNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 
 /**
@@ -230,7 +232,7 @@ public class EventNew extends EventBase {
      * @param pList the event list
      * @param pEvent The Event to copy
      */
-    public EventNew(final EventBaseList<? extends EventBase> pList,
+    public EventNew(final EventNewList pList,
                     final EventNew pEvent) {
         /* Set standard values */
         super(pList, pEvent);
@@ -238,7 +240,8 @@ public class EventNew extends EventBase {
         /* switch on list type */
         switch (getList().getStyle()) {
             case EDIT:
-                theInfoSet = new EventNewInfoSet(pEvent.theInfoSet);
+                theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes());
+                theInfoSet.setInfoList(pList.getEventInfo());
                 hasInfoSet = true;
                 break;
             default:
@@ -270,14 +273,13 @@ public class EventNew extends EventBase {
      * Edit constructor.
      * @param pList the list
      */
-    public EventNew(final EventBaseList<? extends EventBase> pList) {
+    public EventNew(final EventNewList pList) {
         super(pList);
         setControlKey(pList.getControlKey());
 
         /* Build InfoSet */
-        FinanceData myData = getDataSet();
-        theInfoSet = new EventNewInfoSet(this, myData.getEventInfo().getEmptyList(),
-                myData.getEventInfoTypes());
+        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes());
+        theInfoSet.setInfoList(pList.getEventInfo());
         hasInfoSet = true;
     }
 
@@ -294,7 +296,7 @@ public class EventNew extends EventBase {
      * @param pAmount the amount
      * @throws JDataException on error
      */
-    protected EventNew(final EventBaseList<? extends EventBase> pList,
+    protected EventNew(final EventNewList pList,
                        final Integer uId,
                        final Integer uControlId,
                        final Date pDate,
@@ -307,8 +309,8 @@ public class EventNew extends EventBase {
         super(pList, uId, uControlId, pDate, pDesc, uDebit, uCredit, uTransType, pAmount);
 
         /* Create the InfoSet */
-        FinanceData myData = getDataSet();
-        theInfoSet = new EventNewInfoSet(this, myData.getEventInfo(), myData.getEventInfoTypes());
+        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes());
+        theInfoSet.setInfoList(pList.getEventInfo());
         hasInfoSet = true;
     }
 
@@ -324,7 +326,7 @@ public class EventNew extends EventBase {
      * @param pAmount the amount
      * @throws JDataException on error
      */
-    protected EventNew(final EventBaseList<? extends EventBase> pList,
+    protected EventNew(final EventNewList pList,
                        final Integer uId,
                        final Date pDate,
                        final String pDesc,
@@ -336,8 +338,8 @@ public class EventNew extends EventBase {
         super(pList, uId, pDate, pDesc, pDebit, pCredit, pTransType, pAmount);
 
         /* Create the InfoSet */
-        FinanceData myData = getDataSet();
-        theInfoSet = new EventNewInfoSet(this, myData.getEventInfo(), myData.getEventInfoTypes());
+        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes());
+        theInfoSet.setInfoList(pList.getEventInfo());
         hasInfoSet = true;
     }
 
@@ -748,6 +750,38 @@ public class EventNew extends EventBase {
         }
 
         /**
+         * The EventInfo List.
+         */
+        private EventInfoList theInfoList = null;
+
+        /**
+         * The EventInfoType list.
+         */
+        private EventInfoTypeList theInfoTypeList = null;
+
+        /**
+         * Obtain the eventInfoList.
+         * @return the event info list
+         */
+        public EventInfoList getEventInfo() {
+            if (theInfoList == null) {
+                theInfoList = getDataSet().getEventInfo();
+            }
+            return theInfoList;
+        }
+
+        /**
+         * Obtain the eventInfoTypeList.
+         * @return the event info type list
+         */
+        public EventInfoTypeList getEventInfoTypes() {
+            if (theInfoTypeList == null) {
+                theInfoTypeList = getDataSet().getEventInfoTypes();
+            }
+            return theInfoTypeList;
+        }
+
+        /**
          * Construct an empty CORE event list.
          * @param pData the DataSet for the list
          */
@@ -806,6 +840,14 @@ public class EventNew extends EventBase {
             EventNewList myList = getEmptyList();
             myList.setStyle(ListStyle.EDIT);
             myList.setRange(pRange);
+
+            /* Store InfoType list */
+            myList.theInfoTypeList = getEventInfoTypes();
+
+            /* Create info List */
+            EventInfoList myEventInfo = getEventInfo();
+            myList.theInfoList = myEventInfo.getEmptyList();
+            myList.theInfoList.setBase(myEventInfo);
 
             /* Loop through the Events extracting relevant elements */
             Iterator<EventNew> myIterator = iterator();

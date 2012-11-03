@@ -151,13 +151,16 @@ public class ItemField extends ValueField {
      */
     private void renderField(final RenderManager pRenderMgr,
                              final JFieldSetItem pItem) {
+        /* Obtain the state */
+        RenderState myState = pItem.getRenderState(theField);
+
         /* Determine the standard colours */
-        Color myFore = pRenderMgr.getForeground(pItem, theField);
+        Color myFore = pRenderMgr.getForeground(myState);
         Color myBack = pRenderMgr.getStandardBackground();
 
         /* Determine the Font and ToolTip */
-        Font myFont = pRenderMgr.getFont(pItem, theField, isFixed);
-        String myTip = pRenderMgr.getToolTip(pItem, theField);
+        Font myFont = pRenderMgr.getFont(myState, isFixed);
+        String myTip = pRenderMgr.getToolTip(myState, pItem, theField);
 
         theComponent.setForeground(myFore);
         if (!(theComponent instanceof JButton)) {
@@ -167,7 +170,7 @@ public class ItemField extends ValueField {
         theComponent.setFont(myFont);
 
         /* If we have an error */
-        if (pItem.getRenderState(theField).isError()) {
+        if (myState.isError()) {
             /* If the component is an ItemField */
             if (theComponent instanceof ItemField) {
                 ItemField myField = (ItemField) theComponent;

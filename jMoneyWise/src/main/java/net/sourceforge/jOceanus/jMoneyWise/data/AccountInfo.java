@@ -463,6 +463,16 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
         }
 
         /**
+         * Set base list for Edit InfoList.
+         * @param pBase the base list
+         */
+        protected void setBase(final AccountInfoList pBase) {
+            /* Set the style and base */
+            setStyle(ListStyle.EDIT);
+            super.setBase(pBase);
+        }
+
+        /**
          * Construct an empty CORE account list.
          * @param pData the DataSet for the list
          */

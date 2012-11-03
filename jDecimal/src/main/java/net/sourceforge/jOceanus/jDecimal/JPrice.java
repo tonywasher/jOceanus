@@ -68,7 +68,7 @@ public class JPrice extends JMoney {
         this();
 
         /* Parse the string and correct the scale */
-        JDecimalParser.parseDecimalValue(pSource.trim(), this);
+        JDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(getCurrency().getDefaultFractionDigits() + XTRA_DECIMALS);
     }
 

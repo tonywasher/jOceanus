@@ -104,7 +104,7 @@ public class JMoney extends JDecimal {
         this();
 
         /* Parse the string and correct the scale */
-        JDecimalParser.parseDecimalValue(pSource.trim(), this);
+        JDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(theCurrency.getDefaultFractionDigits());
     }
 

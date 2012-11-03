@@ -610,8 +610,8 @@ public class FinanceData extends DataSet<FinanceData> {
         theNewTaxYears = new TaxYearNewList(this);
         theTaxInfo = new TaxInfoList(this);
         theAccounts = new AccountList(this);
-        theNewAccounts = new AccountNewList(this);
         theAccountInfo = new AccountInfoList(this);
+        theNewAccounts = new AccountNewList(this);
         theRates = new AccountRateList(this);
         thePrices = new AccountPriceList(this);
         thePatterns = new PatternList(this);

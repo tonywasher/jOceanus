@@ -390,7 +390,7 @@ public class RenderManager {
             /* Initialise toolTip */
             theToolTipText = null;
 
-            /* Has the row changed */
+            /* Obtain the state */
             RenderState myState = pRow.getRenderState();
 
             /* Determine the colour */
@@ -454,8 +454,20 @@ public class RenderManager {
     public Font getFont(final JFieldSetItem pItem,
                         final JDataField pField,
                         final boolean isFixed) {
+        /* Return the toolTip */
+        return getFont(pItem.getRenderState(pField), isFixed);
+    }
+
+    /**
+     * Determine Standard Font.
+     * @param pState render state
+     * @param isFixed is the item fixed width
+     * @return the standard Font for the item
+     */
+    protected Font getFont(final RenderState pState,
+                           final boolean isFixed) {
         /* Switch on the state */
-        switch (pItem.getRenderState(pField)) {
+        switch (pState) {
             case CHANGED:
                 return (isFixed ? FONT_NUMCHANGED : FONT_CHANGED);
             default:
@@ -471,8 +483,22 @@ public class RenderManager {
      */
     public String getToolTip(final JFieldSetItem pItem,
                              final JDataField pField) {
+        /* return the toolTip */
+        return getToolTip(pItem.getRenderState(pField), pItem, pField);
+    }
+
+    /**
+     * Determine Standard ToolTip.
+     * @param pState render state
+     * @param pItem the Item
+     * @param pField the Field
+     * @return the standard ToolTip for the item
+     */
+    protected String getToolTip(final RenderState pState,
+                                final JFieldSetItem pItem,
+                                final JDataField pField) {
         /* Switch on the state */
-        switch (pItem.getRenderState(pField)) {
+        switch (pState) {
             case ERROR:
                 return pItem.getFieldErrors(pField);
             default:

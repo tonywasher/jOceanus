@@ -48,22 +48,29 @@ public class EventNewInfoSet extends DataInfoSet<EventInfo, EventNew, EventInfoT
     /**
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
-     * @param pInfoList the infoList for the info values
      * @param pTypeList the infoTypeList for the set
      */
     protected EventNewInfoSet(final EventNew pOwner,
-                              final EventInfoList pInfoList,
                               final EventInfoTypeList pTypeList) {
         /* Store the Owner and Info List */
-        super(pOwner, pInfoList, pTypeList);
+        super(pOwner, pTypeList);
     }
 
     /**
-     * Constructor.
-     * @param pSource source InfoSet
+     * Set the infoList.
+     * @param pInfoList source InfoSet
      */
-    protected EventNewInfoSet(final EventNewInfoSet pSource) {
-        super(pSource);
+    protected void setInfoList(final EventInfoList pInfoList) {
+        super.setInfoList(pInfoList);
+    }
+
+    /**
+     * Clone the dataInfoSet.
+     * @param pSource the InfoSet to clone
+     */
+    protected void cloneDataInfoSet(final EventNewInfoSet pSource) {
+        /* Clone the dataInfoSet */
+        super.cloneDataInfoSet(pSource);
     }
 
     /**

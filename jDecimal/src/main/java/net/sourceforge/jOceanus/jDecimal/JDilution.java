@@ -71,7 +71,7 @@ public class JDilution extends JDecimal {
      */
     public JDilution(final String pSource) {
         /* Parse the string and correct the scale */
-        JDecimalParser.parseDecimalValue(pSource.trim(), this);
+        JDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(NUM_DECIMALS);
     }
 

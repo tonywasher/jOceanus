@@ -48,22 +48,29 @@ public class AccountInfoSet extends DataInfoSet<AccountInfo, AccountNew, Account
     /**
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
-     * @param pInfoList the infoList for the info values
      * @param pTypeList the infoTypeList for the set
      */
     protected AccountInfoSet(final AccountNew pOwner,
-                             final AccountInfoList pInfoList,
                              final AccountInfoTypeList pTypeList) {
         /* Store the Owner and Info List */
-        super(pOwner, pInfoList, pTypeList);
+        super(pOwner, pTypeList);
     }
 
     /**
-     * Constructor.
-     * @param pSource source InfoSet
+     * Set the infoList.
+     * @param pInfoList source InfoSet
      */
-    protected AccountInfoSet(final AccountInfoSet pSource) {
-        super(pSource);
+    protected void setInfoList(final AccountInfoList pInfoList) {
+        super.setInfoList(pInfoList);
+    }
+
+    /**
+     * Clone the dataInfoSet.
+     * @param pSource the InfoSet to clone
+     */
+    protected void cloneDataInfoSet(final AccountInfoSet pSource) {
+        /* Clone the dataInfoSet */
+        super.cloneDataInfoSet(pSource);
     }
 
     /**

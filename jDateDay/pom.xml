@@ -100,7 +100,7 @@
               <packageName>${packageName}</packageName>
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <MainClass>{packageMain}</MainClass>
+              <MainClass>${packageMain}</MainClass>
             </manifest>
           </archive>
         </configuration>
