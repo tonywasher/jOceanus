@@ -1,0 +1,15 @@
+<document>
+  <properties>
+    <author email="Tony.Washer@yahoo.co.uk">Tony Washer</author>
+    <title>jOceanus Release Notes</title>
+  </properties>
+  <body>
+    <section name="Overview">
+    </section>
+    <section name="Build History">
+      <dl>
+        <dt>v1.1.0-b1</dt> <dd>initial upload of code</dd>
+      </dl>
+    </section>
+  </body>
+</document>

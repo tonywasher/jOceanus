@@ -6,7 +6,6 @@
     <version>v1.1.0-SNAPSHOT</version>   
   </parent>
   <artifactId>jDataModels</artifactId>
-  <version>v1.1.0-SNAPSHOT</version>
   <name>Java Data Models</name>
   <description>Generic Data Model Framework</description>
   <dependencies>
@@ -21,67 +20,64 @@
       <version>9.1-901.jdbc4</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jGordianKnot</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jDataManager</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jFieldSet</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jPreferenceSet</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>v1.1.0-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jSortedList</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jEventManager</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jTableFilter</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jHelpManager</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jDecimal</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sourceforge.jOceanus</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jDateDay</artifactId>
-      <version>v1.0.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
   <scm>
-    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnComponent}</connection>
-    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnComponent}</developerConnection>
+    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</connection>
+    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</developerConnection>
     <tag>HEAD</tag>
-    <url>http://${svnHost}/viewvc/${svnRepository}/${svnComponent}/${svnLocation}</url>
+    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}/${svnComponent}</url>
   </scm>
   <properties>
     <svnComponent>jDataModels</svnComponent>
-    <svnBranch>v1.1.0</svnBranch>
-    <svnTag>SNAPSHOT</svnTag>
-    <svnLocation>branches/${svnBranch}</svnLocation>
     <packageName>${project.groupId}.${svnComponent}</packageName>
   </properties>
   <build>

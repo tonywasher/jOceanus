@@ -6,7 +6,7 @@
   <name>Java Oceanus package</name>
   <description>Parent project for jOceanus</description>
   <inceptionYear>2012</inceptionYear>
-  <!--<url>http://sourceforge.net/projects/jdatebutton/</url>-->
+  <url>http://sourceforge.net/projects/joceanus/site/</url>
   <packaging>pom</packaging>
   <modules>
     <module>jMoneyWise</module>
@@ -23,7 +23,7 @@
     <module>jEventManager</module>
     <module>jFieldSet</module>
     <module>jPreferenceSet</module>
-    <!--<module>JDateButton</module>-->
+    <module>JDateButton</module>
   </modules>
   <licenses>
     <license>
@@ -47,17 +47,28 @@
     <system>Jira</system>
     <url>http://${svnHost}:8080/</url>
   </issueManagement>
+  <scm>
+    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnComponent}</connection>
+    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnComponent}</developerConnection>
+    <tag>HEAD</tag>
+    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}</url>
+  </scm>
   <distributionManagement>
     <site>
       <id>jOceanus.website</id>
       <name>JOceanus Website</name>
-      <url>scp://beaver.codehaus.org/home/projects/mojo/public_html/</url>
+      <url>scp://shell.sourceforge.net/home/project-web/joceanus/htdocs/</url>
     </site>
   </distributionManagement>
   <properties>
     <project.build.sourceEncoding>Cp1252</project.build.sourceEncoding>
     <svnHost>Tony-HP</svnHost>
     <svnRepository>Finance</svnRepository>
+    <svnParent>jOceanus</svnParent>
+    <svnComponent>${svnParent}</svnComponent>
+    <svnBranch>v1.0.0</svnBranch>
+    <svnTag>SNAPSHOT</svnTag>
+    <svnBase>${svnParent}/trunk</svnBase>
   </properties>
   <build>
     <resources>
