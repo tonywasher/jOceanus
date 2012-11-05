@@ -671,9 +671,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return true/false
      */
     public boolean isDeletable() {
-        return ((theLatest == null) && (!isDeleted()) && (!isParent) && (!hasRates)
-                && ((!hasPrices) || (getState() == DataState.NEW)) && (!hasPatterns) && (!isAliasedTo)
-                && (!isPatterned) && (!getActType().isReserved()));
+        return ((theLatest == null) && (!isDeleted()) && (!isParent) && (!hasRates) && ((!hasPrices) || (getState() == DataState.NEW)) && (!hasPatterns)
+                && (!isAliasedTo) && (!isPatterned) && (!getActType().isReserved()));
     }
 
     /**
@@ -1525,7 +1524,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -2296,8 +2295,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Account field id.
@@ -2628,8 +2626,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             /* Look up the Account Type */
             AccountType myActType = myActTypes.findItemByName(pAcType);
             if (myActType == null) {
-                throw new JDataException(ExceptionClass.DATA, "Account [" + pName
-                        + "] has invalid Account Type [" + pAcType + "]");
+                throw new JDataException(ExceptionClass.DATA, "Account [" + pName + "] has invalid Account Type [" + pAcType + "]");
             }
 
             /* If we have a parent */
@@ -2638,8 +2635,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                 /* Look up the Parent */
                 Account myParent = findItemByName(pParent);
                 if (myParent == null) {
-                    throw new JDataException(ExceptionClass.DATA, "Account [" + pName
-                            + "] has invalid Parent [" + pParent + "]");
+                    throw new JDataException(ExceptionClass.DATA, "Account [" + pName + "] has invalid Parent [" + pParent + "]");
                 }
                 myParentId = myParent.getId();
             }
@@ -2650,15 +2646,14 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                 /* Look up the Parent */
                 Account myAlias = findItemByName(pAlias);
                 if (myAlias == null) {
-                    throw new JDataException(ExceptionClass.DATA, "Account [" + pName
-                            + "] has invalid Alias [" + pAlias + "]");
+                    throw new JDataException(ExceptionClass.DATA, "Account [" + pName + "] has invalid Alias [" + pAlias + "]");
                 }
                 myAliasId = myAlias.getId();
             }
 
             /* Create the new account */
-            Account myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, pMaturity, pClosed,
-                    myParentId, myAliasId, pWebSite, pCustNo, pUserId, pPassword, pAccount, pNotes);
+            Account myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, pMaturity, pClosed, myParentId, myAliasId, pWebSite, pCustNo, pUserId,
+                    pPassword, pAccount, pNotes);
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
@@ -2704,8 +2699,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                                   final byte[] pAccount,
                                   final byte[] pNotes) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, pMaturity,
-                    pClosed, pParentId, pAliasId, pWebSite, pCustNo, pUserId, pPassword, pAccount, pNotes);
+            Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, pMaturity, pClosed, pParentId, pAliasId, pWebSite, pCustNo,
+                    pUserId, pPassword, pAccount, pNotes);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(uId)) {
@@ -2722,8 +2717,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         }
 
         /**
-         * Validate newly loaded accounts. This is deliberately deferred until after loading of the
-         * Rates/Patterns/Prices so as to validate the interrelationships
+         * Validate newly loaded accounts. This is deliberately deferred until after loading of the Rates/Patterns/Prices so as to validate the
+         * interrelationships
          * @throws JDataException on error
          */
         public void validateLoadedAccounts() throws JDataException {

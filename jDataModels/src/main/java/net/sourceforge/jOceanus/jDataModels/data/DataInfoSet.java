@@ -31,7 +31,6 @@ import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
@@ -232,7 +231,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         if (bDelete) {
             /* Mark existing value as deleted */
             if (myValue != null) {
-                myValue.markDeleted();
+                myValue.markDeleted(true);
             }
 
             /* Return to caller */
@@ -259,16 +258,15 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     /**
      * Register Info.
      * @param pInfo the info to register
-     * @throws JDataException on error
      */
-    public void registerInfo(final T pInfo) throws JDataException {
+    public void registerInfo(final T pInfo) {
         /* Obtain the existing Map value */
         E myClass = pInfo.getInfoClass();
         T myValue = theMap.get(myClass);
 
         /* Reject if duplicate */
         if (myValue != null) {
-            throw new JDataException(ExceptionClass.DATA, pInfo, "Duplicate information type");
+            throw new IllegalArgumentException("Duplicate information type " + pInfo.getInfoClass());
         }
 
         /* Add to the map */
@@ -314,7 +312,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     public boolean hasHistory() {
         boolean bChanges = false;
 
-        /* Push history for each existing value */
+        /* Loop through each existing value */
         for (T myValue : theMap.values()) {
             /* Check for history */
             bChanges |= myValue.hasHistory();
@@ -328,9 +326,9 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * Push history.
      */
     public void pushHistory() {
-        /* Push history for each existing value */
+        /* Loop through each existing value */
         for (T myValue : theMap.values()) {
-            /* Create the new value */
+            /* Push history for the value */
             myValue.pushHistory();
         }
     }
@@ -364,7 +362,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     public boolean checkForHistory() {
         boolean bChanges = false;
 
-        /* Check for history for each existing value */
+        /* Loop through each existing value */
         for (T myValue : theMap.values()) {
             /* Check for history */
             bChanges |= myValue.checkForHistory();
@@ -375,11 +373,60 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     }
 
     /**
+     * Set values as deleted/restored.
+     * @param bDeleted <code>true/false</code>
+     */
+    public void setDeleted(final boolean bDeleted) {
+        /* If we are restoring */
+        if (!bDeleted) {
+            /* Handle separately */
+            setRestored();
+            return;
+        }
+
+        /* For each existing value */
+        for (T myValue : theMap.values()) {
+            /* If the value is active */
+            if (!myValue.isDeleted()) {
+                /* Set the value as deleted */
+                myValue.setDeleted(true);
+            }
+        }
+    }
+
+    /**
+     * Restore values that we deleted at the same time as the owner.
+     */
+    private void setRestored() {
+        /* Access the version of the owner */
+        int myVersion = theOwner.getValueSetVersion();
+
+        /* We are restoring an edit version if delete was in this session */
+        boolean bEditRestore = (myVersion > 0);
+        if (!bEditRestore) {
+            /* Access underlying version if not editRestore */
+            myVersion = theOwner.getBase().getValueSetVersion();
+        }
+
+        /* For each existing value */
+        for (T myValue : theMap.values()) {
+            /* Access version of value */
+            int myValueVersion = (bEditRestore) ? myValue.getValueSetVersion() : myValue.getBase().getValueSetVersion();
+
+            /* If the value was deleted at same time as owner */
+            if (myValueVersion == myVersion) {
+                /* Set the value as restored */
+                myValue.setDeleted(false);
+            }
+        }
+    }
+
+    /**
      * Get the EditState for this item.
      * @return the EditState
      */
     public EditState getEditState() {
-        /* Check for history for each existing value */
+        /* Loop through each existing value */
         for (T myValue : theMap.values()) {
             /* If we have changes */
             if (myValue.hasHistory()) {
@@ -400,7 +447,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         /* Default to clean */
         DataState myState = DataState.CLEAN;
 
-        /* Check for history for each existing value */
+        /* Loop through each existing value */
         for (T myValue : theMap.values()) {
             /* If we have changes */
             if (myValue.getState() != DataState.CLEAN) {

@@ -454,8 +454,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     /**
      * Compare this rate to another to establish sort order.
      * @param pThat The Rate to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
     public int compareTo(final AccountRate pThat) {
@@ -484,7 +483,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -615,8 +614,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AccountRateList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountRateList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Account Field Id.
@@ -860,8 +858,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Rate on ["
-                        + myData.getDataFormatter().formatObject(pDate) + "] has invalid Account ["
+                throw new JDataException(ExceptionClass.DATA, "Rate on [" + myData.getDataFormatter().formatObject(pDate) + "] has invalid Account ["
                         + pAccount + "]");
             }
 

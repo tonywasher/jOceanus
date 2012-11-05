@@ -72,13 +72,21 @@ public class LoadDatabase<T extends DataSet<T>> extends LoaderThread<T> {
         /* Access database */
         Database<T> myDatabase = theControl.getDatabase();
 
-        /* Load database */
-        T myData = myDatabase.loadDatabase(theStatus);
+        /* Protect against failures */
+        try {
+            /* Load database */
+            T myData = myDatabase.loadDatabase(theStatus);
 
-        /* Check security on the database */
-        myData.checkSecurity(theStatus);
+            /* Check security on the database */
+            myData.checkSecurity(theStatus);
 
-        /* Return the loaded data */
-        return myData;
+            /* Return the loaded data */
+            return myData;
+
+            /* Make sure that the database is closed */
+        } finally {
+            /* Close the database */
+            myDatabase.close();
+        }
     }
 }

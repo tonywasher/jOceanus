@@ -76,9 +76,8 @@ public class Pattern extends Event {
     /**
      * The interesting date range.
      */
-    public static final JDateDayRange RANGE_PATTERN = new JDateDayRange(new JDateDay(BASE_TAXYEAR - 1,
-            Calendar.APRIL, TaxYear.END_OF_MONTH_DAY + 1), new JDateDay(BASE_TAXYEAR, Calendar.APRIL,
-            TaxYear.END_OF_MONTH_DAY));
+    public static final JDateDayRange RANGE_PATTERN = new JDateDayRange(new JDateDay(BASE_TAXYEAR - 1, Calendar.APRIL, TaxYear.END_OF_MONTH_DAY + 1),
+            new JDateDay(BASE_TAXYEAR, Calendar.APRIL, TaxYear.END_OF_MONTH_DAY));
 
     /**
      * Report fields.
@@ -300,8 +299,8 @@ public class Pattern extends Event {
                     final Integer uFreqId,
                     final boolean isCredit) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, uControlId, pDate, pDesc, (isCredit) ? uPartnerId : uAccountId,
-                (isCredit) ? uAccountId : uPartnerId, uTransId, pAmount, null, null, null, null);
+        super(pList, uId, uControlId, pDate, pDesc, (isCredit) ? uPartnerId : uAccountId, (isCredit) ? uAccountId : uPartnerId, uTransId, pAmount, null, null,
+                null, null);
 
         /* Record the IDs */
         setValueFrequency(uFreqId);
@@ -344,8 +343,7 @@ public class Pattern extends Event {
                     final Frequency pFrequency,
                     final boolean isCredit) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, pDate, pDesc, (isCredit) ? pPartner : pAccount, (isCredit) ? pAccount : pPartner,
-                pTransType, pAmount, null, null, null, null);
+        super(pList, uId, pDate, pDesc, (isCredit) ? pPartner : pAccount, (isCredit) ? pAccount : pPartner, pTransType, pAmount, null, null, null, null);
 
         /* Record the values */
         setValueFrequency(pFrequency);
@@ -353,7 +351,7 @@ public class Pattern extends Event {
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Event details */
         super.relinkToDataSet();
 
@@ -610,8 +608,7 @@ public class Pattern extends Event {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PatternList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(PatternList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Account field id.
@@ -823,38 +820,33 @@ public class Pattern extends Event {
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Account ["
+                throw new JDataException(ExceptionClass.DATA, "Pattern on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Account ["
                         + pAccount + "]");
             }
 
             /* Look up the Partner */
             Account myPartner = myAccounts.findItemByName(pPartner);
             if (myPartner == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Partner ["
+                throw new JDataException(ExceptionClass.DATA, "Pattern on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Partner ["
                         + pPartner + "]");
             }
 
             /* Look up the TransType */
             TransactionType myTransType = myTranTypes.findItemByName(pTransType);
             if (myTransType == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid TransType ["
+                throw new JDataException(ExceptionClass.DATA, "Pattern on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid TransType ["
                         + pTransType + "]");
             }
 
             /* Look up the Frequency */
             Frequency myFrequency = myFrequencies.findItemByName(pFrequency);
             if (myFrequency == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Frequency ["
+                throw new JDataException(ExceptionClass.DATA, "Pattern on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Frequency ["
                         + pFrequency + "]");
             }
 
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, uId, myAccount, pDate, pDesc, pAmount, myPartner,
-                    myTransType, myFrequency, isCredit);
+            Pattern myPattern = new Pattern(this, uId, myAccount, pDate, pDesc, pAmount, myPartner, myTransType, myFrequency, isCredit);
 
             /* Validate the pattern */
             myPattern.validate();
@@ -893,8 +885,7 @@ public class Pattern extends Event {
                                   final Integer uFreqId,
                                   final boolean isCredit) throws JDataException {
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, uId, uControlId, uAccountId, pDate, pDesc, pAmount,
-                    uPartnerId, uTransId, uFreqId, isCredit);
+            Pattern myPattern = new Pattern(this, uId, uControlId, uAccountId, pDate, pDesc, pAmount, uPartnerId, uTransId, uFreqId, isCredit);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(uId)) {

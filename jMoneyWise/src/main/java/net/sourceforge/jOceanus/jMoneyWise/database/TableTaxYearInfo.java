@@ -28,9 +28,9 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearNew.TaxYearNewList;
 
 /**
  * TableDataInfo extension for TaxYearInfo.
@@ -45,7 +45,7 @@ public class TableTaxYearInfo extends TableDataInfo<TaxYearInfo> {
     /**
      * TaxYear data list.
      */
-    private TaxYearNewList theTaxYears = null;
+    private TaxYearList theTaxYears = null;
 
     /**
      * The TaxInfo list.
@@ -63,7 +63,7 @@ public class TableTaxYearInfo extends TableDataInfo<TaxYearInfo> {
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theTaxYears = myData.getNewTaxYears();
+        theTaxYears = myData.getTaxYears();
         theList = myData.getTaxInfo();
         setList(theList);
     }

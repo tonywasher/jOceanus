@@ -75,8 +75,7 @@ public class LoadArchive extends LoaderThread<FinanceData> {
 
         /* Load workbook */
         PreferenceManager myMgr = theControl.getPreferenceMgr();
-        FinanceData myData = FinanceSheet.loadArchive(theStatus,
-                                                      myMgr.getPreferenceSet(BackupPreferences.class));
+        FinanceData myData = FinanceSheet.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
 
         /* Initialise the status window */
         theStatus.initTask("Accessing DataStore");
@@ -84,28 +83,36 @@ public class LoadArchive extends LoaderThread<FinanceData> {
         /* Create interface */
         Database<FinanceData> myDatabase = theControl.getDatabase();
 
-        /* Load underlying database */
-        FinanceData myStore = myDatabase.loadDatabase(theStatus);
+        /* Protect against failures */
+        try {
+            /* Load underlying database */
+            FinanceData myStore = myDatabase.loadDatabase(theStatus);
 
-        /* Check security on the database */
-        myStore.checkSecurity(theStatus);
+            /* Check security on the database */
+            myStore.checkSecurity(theStatus);
 
-        /* Initialise the status window */
-        theStatus.initTask("Applying Security");
+            /* Initialise the status window */
+            theStatus.initTask("Applying Security");
 
-        /* Initialise the security, either from database or with a new security control */
-        myData.initialiseSecurity(theStatus, myStore);
+            /* Initialise the security, either from database or with a new security control */
+            myData.initialiseSecurity(theStatus, myStore);
 
-        /* Initialise the status window */
-        theStatus.initTask("Analysing Data");
+            /* Initialise the status window */
+            theStatus.initTask("Analysing Data");
 
-        /* Analyse the Data to ensure that close dates are updated */
-        theControl.analyseData(myData);
+            /* Analyse the Data to ensure that close dates are updated */
+            theControl.analyseData(myData);
 
-        /* Re-base the loaded spreadsheet onto the database image */
-        myData.reBase(myStore);
+            /* Re-base the loaded spreadsheet onto the database image */
+            myData.reBase(myStore);
 
-        /* Return the loaded data */
-        return myData;
+            /* Return the loaded data */
+            return myData;
+
+            /* Make sure that the database is closed */
+        } finally {
+            /* Close the database */
+            myDatabase.close();
+        }
     }
 }

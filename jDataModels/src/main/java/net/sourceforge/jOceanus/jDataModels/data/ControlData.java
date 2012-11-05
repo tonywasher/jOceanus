@@ -30,15 +30,12 @@ import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.ControlKey.ControlKeyList;
 
 /**
- * ControlData definition and list. The Control Data represents the data version of the entire data set,
- * allowing for migration code to be written to map between different versions. It also holds a pointer to the
- * active ControlKey.
+ * ControlData definition and list. The Control Data represents the data version of the entire data set, allowing for migration code to be written to map
+ * between different versions. It also holds a pointer to the active ControlKey.
  * <p>
- * When code is loaded from a database, it is possible that more than one control key will be active. This
- * will occur if a failure occurs when we are writing the results of a renew security request to the database
- * and we have changed some records, but not all to the required controlKey. This record points to the active
- * controlKey. All records that are not encrypted by the correct controlKey should be re-encrypted and written
- * to the database.
+ * When code is loaded from a database, it is possible that more than one control key will be active. This will occur if a failure occurs when we are writing
+ * the results of a renew security request to the database and we have changed some records, but not all to the required controlKey. This record points to the
+ * active controlKey. All records that are not encrypted by the correct controlKey should be re-encrypted and written to the database.
  * @author Tony Washer
  */
 public class ControlData extends DataItem implements Comparable<ControlData> {
@@ -220,7 +217,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 
@@ -260,8 +257,7 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                ControlDataList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ControlDataList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

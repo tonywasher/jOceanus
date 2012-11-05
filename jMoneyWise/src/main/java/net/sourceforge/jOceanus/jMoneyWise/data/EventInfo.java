@@ -47,8 +47,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
  * Representation of an information extension of an event.
  * @author Tony Washer
  */
-public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, EventInfoClass> implements
-        Comparable<EventInfo> {
+public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, EventInfoClass> implements Comparable<EventInfo> {
     /**
      * Object name.
      */
@@ -62,8 +61,7 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfo.class.getSimpleName(),
-            DataInfo.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfo.class.getSimpleName(), DataInfo.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -299,8 +297,7 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
     /**
      * Compare this data to another to establish sort order.
      * @param pThat The EventInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
     public int compareTo(final EventInfo pThat) {
@@ -329,7 +326,7 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -449,13 +446,11 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
     /**
      * EventInfoList.
      */
-    public static class EventInfoList extends
-            DataInfoList<EventInfo, EventNew, EventInfoType, EventInfoClass> {
+    public static class EventInfoList extends DataInfoList<EventInfo, EventNew, EventInfoType, EventInfoClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfoList.class.getSimpleName(),
-                DataInfoList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfoList.class.getSimpleName(), DataInfoList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -598,8 +593,7 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
             /* Look up the Info Type */
             EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pEvent, "Event has invalid Event Info Class ["
-                        + pInfoClass + "]");
+                throw new JDataException(ExceptionClass.DATA, pEvent, "Event has invalid Event Info Class [" + pInfoClass + "]");
             }
 
             /* Create a new Event Info */

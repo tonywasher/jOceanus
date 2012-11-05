@@ -58,8 +58,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EventBase.class.getSimpleName(),
-            EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(EventBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
 
     /**
      * Date Field Id.
@@ -542,8 +541,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
     /**
      * Compare this event to another to establish sort order.
      * @param pThat The Event to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
     public int compareTo(final EventBase pThat) {
@@ -583,7 +581,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -985,8 +983,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventBaseList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Range field id.

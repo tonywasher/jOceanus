@@ -44,7 +44,7 @@ import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventDateRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearNew.TaxYearNewList;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
@@ -632,7 +632,7 @@ public class EventNew extends EventBase {
      */
     public JMoney calculateTaxCredit() {
         FinanceData myData = getDataSet();
-        TaxYearNewList myList = myData.getNewTaxYears();
+        TaxYearList myList = myData.getTaxYears();
 
         /* Ignore unless tax credit is null/zero */
         if ((getTaxCredit() != null) && (getTaxCredit().isNonZero())) {
@@ -645,7 +645,7 @@ public class EventNew extends EventBase {
         }
 
         /* Access the relevant tax year */
-        TaxYearNew myTax = myList.findTaxYearForDate(getDate());
+        TaxYear myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
         JRate myRate = (getTransType().isInterest()) ? myTax.getIntTaxRate() : myTax.getDivTaxRate();

@@ -33,7 +33,6 @@ import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
@@ -63,10 +62,9 @@ public class TableAccountNew extends TableEncrypted<AccountNew> {
         TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        myTableDef.addEncryptedColumn(AccountBase.FIELD_NAME, Account.NAMELEN);
-        ColumnDefinition mySortCol = myTableDef.addReferenceColumn(AccountBase.FIELD_TYPE,
-                                                                   TableAccountType.TABLE_NAME);
-        myTableDef.addNullEncryptedColumn(AccountBase.FIELD_DESC, Account.DESCLEN);
+        myTableDef.addEncryptedColumn(AccountBase.FIELD_NAME, AccountBase.NAMELEN);
+        ColumnDefinition mySortCol = myTableDef.addReferenceColumn(AccountBase.FIELD_TYPE, TableAccountType.TABLE_NAME);
+        myTableDef.addNullEncryptedColumn(AccountBase.FIELD_DESC, AccountBase.DESCLEN);
         myTableDef.addNullDateColumn(AccountBase.FIELD_CLOSE);
 
         /* Declare the sort order */
@@ -85,10 +83,10 @@ public class TableAccountNew extends TableEncrypted<AccountNew> {
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        byte[] myName = myTableDef.getBinaryValue(Account.FIELD_NAME);
-        Integer myActTypeId = myTableDef.getIntegerValue(Account.FIELD_TYPE);
-        byte[] myDesc = myTableDef.getBinaryValue(Account.FIELD_DESC);
-        Date myClosed = myTableDef.getDateValue(Account.FIELD_CLOSE);
+        byte[] myName = myTableDef.getBinaryValue(AccountBase.FIELD_NAME);
+        Integer myActTypeId = myTableDef.getIntegerValue(AccountBase.FIELD_TYPE);
+        byte[] myDesc = myTableDef.getBinaryValue(AccountBase.FIELD_DESC);
+        Date myClosed = myTableDef.getDateValue(AccountBase.FIELD_CLOSE);
 
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, myName, myActTypeId, myDesc, myClosed);
@@ -105,7 +103,7 @@ public class TableAccountNew extends TableEncrypted<AccountNew> {
             myTableDef.setIntegerValue(iField, pItem.getActType().getId());
         } else if (AccountBase.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
-        } else if (Account.FIELD_CLOSE.equals(iField)) {
+        } else if (AccountBase.FIELD_CLOSE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getClose());
         } else {
             super.setFieldValue(pItem, iField);

@@ -46,8 +46,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountI
  * Representation of an information extension of an account.
  * @author Tony Washer
  */
-public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass>
-        implements Comparable<AccountInfo> {
+public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass> implements Comparable<AccountInfo> {
     /**
      * Object name.
      */
@@ -61,8 +60,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountInfo.class.getSimpleName(),
-            DataInfo.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountInfo.class.getSimpleName(), DataInfo.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -207,22 +205,22 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
 
             /* Look up the Account */
             AccountNewList myAccounts = myData.getNewAccounts();
-            AccountNew myAccount = myAccounts.findItemById(uAccountId);
-            if (myAccount == null) {
+            AccountNew myOwner = myAccounts.findItemById(uAccountId);
+            if (myOwner == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
             }
-            setValueOwner(myAccount);
+            setValueOwner(myOwner);
 
             /* Switch on Info Class */
             switch (myType.getDataType()) {
                 case INTEGER:
                     setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        myAccount = myAccounts.findItemById(getValue(Integer.class));
-                        if (myAccount == null) {
+                        AccountNew myLink = myAccounts.findItemById(getValue(Integer.class));
+                        if (myLink == null) {
                             throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
                         }
-                        setValueAccount(myAccount);
+                        setValueAccount(myLink);
                     }
                     break;
                 case DATEDAY:
@@ -236,7 +234,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
             }
 
             /* Access the AccountInfoSet and register this data */
-            AccountInfoSet mySet = myAccount.getInfoSet();
+            AccountInfoSet mySet = myOwner.getInfoSet();
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
@@ -284,8 +282,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     /**
      * Compare this data to another to establish sort order.
      * @param pThat The AccountInfo to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
     public int compareTo(final AccountInfo pThat) {
@@ -314,7 +311,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -439,13 +436,11 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     /**
      * AccountInfoList.
      */
-    public static class AccountInfoList extends
-            DataInfoList<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass> {
+    public static class AccountInfoList extends DataInfoList<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AccountInfoList.class.getSimpleName(), DataInfoList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoList.class.getSimpleName(), DataInfoList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -593,8 +588,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pAccount,
-                        "Account has invalid Account Info Class [" + pInfoClass + "]");
+                throw new JDataException(ExceptionClass.DATA, pAccount, "Account has invalid Account Info Class [" + pInfoClass + "]");
             }
 
             /* Create a new Account Info Type */

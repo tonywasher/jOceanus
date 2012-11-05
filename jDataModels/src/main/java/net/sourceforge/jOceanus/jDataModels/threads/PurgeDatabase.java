@@ -28,8 +28,8 @@ import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 
 /**
- * Thread to purge tables in a database that represent a data set. Existing loaded data will be marked as new
- * so that it will be written to the database via the store command.
+ * Thread to purge tables in a database that represent a data set. Existing loaded data will be marked as new so that it will be written to the database via the
+ * store command.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
@@ -73,18 +73,26 @@ public class PurgeDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
         /* Create interface */
         Database<T> myDatabase = theControl.getDatabase();
 
-        /* Load database */
-        myDatabase.purgeTables(theStatus);
+        /* Protect against failures */
+        try {
+            /* Purge database */
+            myDatabase.purgeTables(theStatus);
 
-        /* Re-base this set on a null set */
-        T myNull = theControl.getNewData();
-        T myData = theControl.getData();
-        myData.reBase(myNull);
+            /* Re-base this set on a null set */
+            T myNull = theControl.getNewData();
+            T myData = theControl.getData();
+            myData.reBase(myNull);
 
-        /* Derive the new set of updates */
-        theControl.deriveUpdates();
+            /* Derive the new set of updates */
+            theControl.deriveUpdates();
 
-        /* Return null */
-        return null;
+            /* Return null */
+            return null;
+
+            /* Make sure that the database is closed */
+        } finally {
+            /* Close the database */
+            myDatabase.close();
+        }
     }
 }

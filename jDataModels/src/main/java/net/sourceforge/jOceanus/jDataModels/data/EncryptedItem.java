@@ -42,8 +42,7 @@ public abstract class EncryptedItem extends DataItem {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EncryptedItem.class.getSimpleName(),
-            DataItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(EncryptedItem.class.getSimpleName(), DataItem.FIELD_DEFS);
 
     @Override
     public EncryptedValueSet getValueSet() {
@@ -100,8 +99,7 @@ public abstract class EncryptedItem extends DataItem {
     }
 
     /**
-     * Standard Constructor. This creates a null encryption generator. This will be overridden when a
-     * ControlKey is assigned to the item.
+     * Standard Constructor. This creates a null encryption generator. This will be overridden when a ControlKey is assigned to the item.
      * @param pList the list that this item is associated with
      * @param uId the Id of the new item (or 0 if not yet known)
      */
@@ -218,7 +216,7 @@ public abstract class EncryptedItem extends DataItem {
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 
@@ -274,8 +272,7 @@ public abstract class EncryptedItem extends DataItem {
      * Encrypted DataList.
      * @param <T> the item type
      */
-    public abstract static class EncryptedList<T extends EncryptedItem & Comparable<? super T>> extends
-            DataList<T> {
+    public abstract static class EncryptedList<T extends EncryptedItem & Comparable<? super T>> extends DataList<T> {
         /**
          * Get the active controlKey.
          * @return the active controlKey
@@ -358,8 +355,8 @@ public abstract class EncryptedItem extends DataItem {
         }
 
         /**
-         * Adopt security from underlying list. If a match for the item is found in the underlying list, its
-         * security is adopted. If no match is found then the security is initialised.
+         * Adopt security from underlying list. If a match for the item is found in the underlying list, its security is adopted. If no match is found then the
+         * security is initialised.
          * @param pTask the task control
          * @param pControl the control key to initialise from
          * @param pBase The base list to adopt from

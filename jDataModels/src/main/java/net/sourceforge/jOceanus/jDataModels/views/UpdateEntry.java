@@ -116,6 +116,10 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
                     myBase = myBaseList.addCopyItem(myCurr);
                     myBase.setNewVersion();
                     myCurr.setBase(myBase);
+                    myCurr.setId(myBase.getId());
+
+                    /* Rebuild the links */
+                    myBase.relinkToDataSet();
                     break;
 
                 /* If this is a deleted or deleted-changed item */

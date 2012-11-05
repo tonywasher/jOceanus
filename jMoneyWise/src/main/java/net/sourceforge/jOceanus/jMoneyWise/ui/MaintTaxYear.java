@@ -67,6 +67,9 @@ import net.sourceforge.jOceanus.jFieldSet.ValueField.ValueClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearBase;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.TaxYearSelect;
@@ -80,7 +83,7 @@ public class MaintTaxYear extends JEventPanel {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 4527130528913817296L;
+    private static final long serialVersionUID = 6563675457151000036L;
 
     /**
      * Padding size.
@@ -106,17 +109,6 @@ public class MaintTaxYear extends JEventPanel {
      * Grid Columns.
      */
     private static final int GRID_COLS = 3;
-
-    /**
-     * Resource Bundle.
-     */
-    // private static final ResourceBundle NLS_BUNDLE =
-    // ResourceBundle.getBundle(MaintTaxYear.class.getName());
-
-    /**
-     * Text for PopUpEnabled.
-     */
-    // private static final String NLS_ENABLED = NLS_BUNDLE.getString("PopUpEnabled");
 
     /**
      * The tax year select panel.
@@ -334,9 +326,14 @@ public class MaintTaxYear extends JEventPanel {
     private final transient UpdateSet theUpdateSet;
 
     /**
-     * The Update Entry.
+     * The TaxYear Update Entry.
      */
-    private final transient UpdateEntry<TaxYear> theUpdateEntry;
+    private final transient UpdateEntry<TaxYear> theYearsEntry;
+
+    /**
+     * The TaxInfo Update Entry.
+     */
+    private final transient UpdateEntry<TaxYearInfo> theInfoEntry;
 
     /**
      * Obtain the tax Year.
@@ -357,7 +354,8 @@ public class MaintTaxYear extends JEventPanel {
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
-        theUpdateEntry = theUpdateSet.registerClass(TaxYear.class);
+        theYearsEntry = theUpdateSet.registerClass(TaxYear.class);
+        theInfoEntry = theUpdateSet.registerClass(TaxYearInfo.class);
 
         /* Create the labels */
         JLabel myYear = new JLabel("Year:");
@@ -388,7 +386,7 @@ public class MaintTaxYear extends JEventPanel {
 
         /* Create the combo box and add to the field set */
         theRegimesBox = new JComboBox<TaxRegime>();
-        theFieldSet.addItemField(theRegimesBox, TaxYear.FIELD_REGIME);
+        theFieldSet.addItemField(theRegimesBox, TaxYearBase.FIELD_REGIME);
 
         /* Create the text fields */
         theYear = new JTextField();
@@ -746,6 +744,7 @@ public class MaintTaxYear extends JEventPanel {
         /* Reset controls */
         theTaxView = null;
         theTaxYear = null;
+        TaxInfoList myInfo = null;
 
         /* If we have a selected tax year */
         if (pTaxYear != null) {
@@ -757,13 +756,15 @@ public class MaintTaxYear extends JEventPanel {
 
             /* Create the view of the tax year */
             theTaxView = theTaxYears.deriveEditList(pTaxYear);
+            myInfo = theTaxView.getTaxInfo();
 
             /* Access the tax year */
             theTaxYear = theTaxView.findTaxYearForDate(pTaxYear.getTaxYear());
         }
 
         /* Store list */
-        theUpdateEntry.setDataList(theTaxView);
+        theYearsEntry.setDataList(theTaxView);
+        theInfoEntry.setDataList(myInfo);
 
         /* notify changes */
         notifyChanges();
@@ -949,18 +950,30 @@ public class MaintTaxYear extends JEventPanel {
                 TaxRegime myRegime = (TaxRegime) evt.getItem();
                 theTaxYear.setTaxRegime(myRegime);
 
-                /* Clear Capital tax rates if required */
-                if (theTaxYear.hasCapitalGainsAsIncome()) {
-                    theTaxYear.setCapTaxRate(null);
-                    theTaxYear.setHiCapTaxRate(null);
-                }
+                /* Protect against exceptions */
+                try {
+                    /* Clear Capital tax rates if required */
+                    if (theTaxYear.hasCapitalGainsAsIncome()) {
+                        theTaxYear.setCapTaxRate(null);
+                        theTaxYear.setHiCapTaxRate(null);
+                    }
 
-                /* Clear Additional values if required */
-                if (!theTaxYear.hasAdditionalTaxBand()) {
-                    theTaxYear.setAddAllowLimit(null);
-                    theTaxYear.setAddIncBound(null);
-                    theTaxYear.setAddTaxRate(null);
-                    theTaxYear.setAddDivTaxRate(null);
+                    /* Clear Additional values if required */
+                    if (!theTaxYear.hasAdditionalTaxBand()) {
+                        theTaxYear.setAddAllowLimit(null);
+                        theTaxYear.setAddIncBound(null);
+                        theTaxYear.setAddTaxRate(null);
+                        theTaxYear.setAddDivTaxRate(null);
+                    }
+
+                    /* Catch exceptions */
+                } catch (JDataException e) {
+                    /* Reset values */
+                    theTaxYear.popHistory();
+
+                    /* Show the error and return */
+                    theError.setError(e);
+                    return;
                 }
 
                 /* Check for changes */
@@ -1135,10 +1148,9 @@ public class MaintTaxYear extends JEventPanel {
                 }
 
                 /* Handle Exceptions */
-            } catch (ClassCastException e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 theTaxYear.popHistory();
-                theTaxYear.pushHistory();
 
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field", e);

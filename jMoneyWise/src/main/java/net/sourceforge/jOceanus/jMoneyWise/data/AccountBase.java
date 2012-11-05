@@ -59,8 +59,7 @@ public abstract class AccountBase extends EncryptedItem implements Comparable<Ac
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBase.class.getSimpleName(),
-            EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
@@ -648,7 +647,7 @@ public abstract class AccountBase extends EncryptedItem implements Comparable<Ac
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -791,8 +790,7 @@ public abstract class AccountBase extends EncryptedItem implements Comparable<Ac
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AccountBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public FinanceData getDataSet() {

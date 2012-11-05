@@ -22,6 +22,7 @@
       <item name="JavaDoc" href="apidocs/index.html" />
     </menu>
 
+    <menu ref="modules"/>
     <menu ref="reports"/>
   </body>
 </project>

@@ -42,8 +42,8 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 
 /**
- * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means
- * that this object can only be held in one list at a time and is unique within that list
+ * Provides the abstract DataItem class as the basis for data items. The implementation of the interface means that this object can only be held in one list at
+ * a time and is unique within that list
  * @see DataList
  */
 public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
@@ -81,6 +81,14 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
     @Override
     public ValueSet getValueSet() {
         return theValueSet;
+    }
+
+    /**
+     * Obtain valueSet version.
+     * @return the valueSet version
+     */
+    public int getValueSetVersion() {
+        return theValueSet.getVersion();
     }
 
     /**
@@ -463,8 +471,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
     }
 
     /**
-     * Set Change history for an update list so that the first and only entry in the change list is the
-     * original values of the base.
+     * Set Change history for an update list so that the first and only entry in the change list is the original values of the base.
      * @param pBase the base item
      */
     public final void setHistory(final DataItem pBase) {
@@ -480,8 +487,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
     }
 
     /**
-     * Check to see whether any changes were made. If no changes were made remove last saved history since it
-     * is not needed.
+     * Check to see whether any changes were made. If no changes were made remove last saved history since it is not needed.
      * @return <code>true</code> if changes were made, <code>false</code> otherwise
      */
     public boolean checkForHistory() {
@@ -533,9 +539,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
      * @return <code>true/false</code>
      */
     public Difference fieldChanged(final JDataField pField) {
-        return ((pField != null) && (pField.isValueSetField()))
-                                                               ? theHistory.fieldChanged(pField)
-                                                               : Difference.Identical;
+        return ((pField != null) && (pField.isValueSetField())) ? theHistory.fieldChanged(pField) : Difference.Identical;
     }
 
     /**
@@ -637,7 +641,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
     /**
      * Re-link all references to current DataSet.
      */
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
     }
 
     /**
@@ -662,9 +666,7 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
         theHistory = new ValueSetHistory();
 
         /* Allocate initial value set and declare it */
-        ValueSet myValues = (this instanceof EncryptedItem)
-                                                           ? new EncryptedValueSet(this)
-                                                           : new ValueSet(this);
+        ValueSet myValues = (this instanceof EncryptedItem) ? new EncryptedValueSet(this) : new ValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);
 

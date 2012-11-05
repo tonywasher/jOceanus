@@ -221,8 +221,22 @@ public class UpdateSet extends JEventObject implements JDataContents {
 
             /* If the list exists */
             if (myDataList != null) {
-                /* Rewind the version and determine edit state */
+                /* Rewind the version */
                 myDataList.rewindToVersion(theVersion);
+            }
+        }
+
+        /* Loop through the items in the list */
+        myIterator = theList.iterator();
+        while (myIterator.hasNext()) {
+            /* Access list */
+            UpdateEntry<?> myEntry = myIterator.next();
+            DataList<?> myDataList = myEntry.getDataList();
+
+            /* If the list exists */
+            if (myDataList != null) {
+                /* determine edit state */
+                myDataList.validate();
                 myDataList.findEditState();
             }
         }

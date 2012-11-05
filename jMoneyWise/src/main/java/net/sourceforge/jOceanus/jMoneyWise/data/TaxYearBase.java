@@ -265,7 +265,7 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         FinanceData myData = getDataSet();
         TaxRegimeList myRegimes = myData.getTaxRegimes();
 
@@ -366,7 +366,7 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
         }
 
         /* Access as TaxYear */
-        TaxYearNew myTaxYear = (TaxYearNew) pTaxYear;
+        TaxYearBase myTaxYear = (TaxYearBase) pTaxYear;
 
         /* Store the current detail into history */
         pushHistory();
@@ -388,8 +388,7 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                TaxYearBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public FinanceData getDataSet() {

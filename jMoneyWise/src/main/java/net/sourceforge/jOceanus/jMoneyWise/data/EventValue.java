@@ -339,7 +339,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Access Events and InfoTypes */
         FinanceData myData = getDataSet();
         EventList myEvents = myData.getEvents();
@@ -470,8 +470,7 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventValueList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventValueList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

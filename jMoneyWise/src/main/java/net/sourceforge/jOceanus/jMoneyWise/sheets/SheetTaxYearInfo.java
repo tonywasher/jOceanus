@@ -26,9 +26,9 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearNew.TaxYearNewList;
 
 /**
  * SheetDataInfo extension for TaxYearInfo.
@@ -43,7 +43,7 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
     /**
      * TaxYear data list.
      */
-    private final TaxYearNewList theTaxYears;
+    private final TaxYearList theTaxYears;
 
     /**
      * TaxYearInfo data list.
@@ -60,7 +60,7 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
 
         /* Access the InfoType list */
         FinanceData myData = pReader.getData();
-        theTaxYears = myData.getNewTaxYears();
+        theTaxYears = myData.getTaxYears();
         theList = myData.getTaxInfo();
         setDataList(theList);
     }

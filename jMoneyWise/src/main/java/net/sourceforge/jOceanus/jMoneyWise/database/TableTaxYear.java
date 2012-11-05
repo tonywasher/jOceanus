@@ -36,6 +36,7 @@ import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearBase;
 
 /**
  * DatabaseTable extension for TaxYear.
@@ -55,7 +56,7 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
     /**
      * The DataSet.
      */
-    private FinanceData theData = null;
+    // private FinanceData theData = null;
 
     /**
      * Constructor.
@@ -66,28 +67,8 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
         TableDefinition myTableDef = getTableDef();
 
         /* define the columns */
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(TaxYear.FIELD_TAXYEAR);
-        myTableDef.addReferenceColumn(TaxYear.FIELD_REGIME, TableTaxRegime.TABLE_NAME);
-        myTableDef.addMoneyColumn(TaxYear.FIELD_ALLOW);
-        myTableDef.addMoneyColumn(TaxYear.FIELD_RENTAL);
-        myTableDef.addMoneyColumn(TaxYear.FIELD_LOBAND);
-        myTableDef.addMoneyColumn(TaxYear.FIELD_BSBAND);
-        myTableDef.addMoneyColumn(TaxYear.FIELD_LOAGAL);
-        myTableDef.addMoneyColumn(TaxYear.FIELD_HIAGAL);
-        myTableDef.addMoneyColumn(TaxYear.FIELD_AGELMT);
-        myTableDef.addNullMoneyColumn(TaxYear.FIELD_ADDLMT);
-        myTableDef.addRateColumn(TaxYear.FIELD_LOTAX);
-        myTableDef.addRateColumn(TaxYear.FIELD_BASTAX);
-        myTableDef.addRateColumn(TaxYear.FIELD_HITAX);
-        myTableDef.addRateColumn(TaxYear.FIELD_INTTAX);
-        myTableDef.addRateColumn(TaxYear.FIELD_DIVTAX);
-        myTableDef.addRateColumn(TaxYear.FIELD_HDVTAX);
-        myTableDef.addNullRateColumn(TaxYear.FIELD_ADDTAX);
-        myTableDef.addNullRateColumn(TaxYear.FIELD_ADVTAX);
-        myTableDef.addNullMoneyColumn(TaxYear.FIELD_ADDBDY);
-        myTableDef.addNullMoneyColumn(TaxYear.FIELD_CAPALW);
-        myTableDef.addNullRateColumn(TaxYear.FIELD_CAPTAX);
-        myTableDef.addNullRateColumn(TaxYear.FIELD_HCPTAX);
+        ColumnDefinition myDateCol = myTableDef.addDateColumn(TaxYearBase.FIELD_TAXYEAR);
+        myTableDef.addReferenceColumn(TaxYearBase.FIELD_REGIME, TableTaxRegime.TABLE_NAME);
 
         /* Declare the sort order */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -96,49 +77,20 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theData = myData;
+        // theData = myData;
         theList = myData.getTaxYears();
         setList(theList);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JDataException {
-        theData.calculateDateRange();
     }
 
     @Override
     public void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        Date myYear = myTableDef.getDateValue(TaxYear.FIELD_TAXYEAR);
-        Integer myRegime = myTableDef.getIntegerValue(TaxYear.FIELD_REGIME);
-        String myAllowance = myTableDef.getStringValue(TaxYear.FIELD_ALLOW);
-        String myRentalAllow = myTableDef.getStringValue(TaxYear.FIELD_RENTAL);
-        String myLoBand = myTableDef.getStringValue(TaxYear.FIELD_LOBAND);
-        String myBasicBand = myTableDef.getStringValue(TaxYear.FIELD_BSBAND);
-        String myLoAgeAllow = myTableDef.getStringValue(TaxYear.FIELD_LOAGAL);
-        String myHiAgeAllow = myTableDef.getStringValue(TaxYear.FIELD_HIAGAL);
-        String myAgeAllowLimit = myTableDef.getStringValue(TaxYear.FIELD_AGELMT);
-        String myAddAllowLimit = myTableDef.getStringValue(TaxYear.FIELD_ADDLMT);
-        String myLoTaxRate = myTableDef.getStringValue(TaxYear.FIELD_LOTAX);
-        String myBasicTaxRate = myTableDef.getStringValue(TaxYear.FIELD_BASTAX);
-        String myHiTaxRate = myTableDef.getStringValue(TaxYear.FIELD_HITAX);
-        String myIntTaxRate = myTableDef.getStringValue(TaxYear.FIELD_INTTAX);
-        String myDivTaxRate = myTableDef.getStringValue(TaxYear.FIELD_DIVTAX);
-        String myHiDivTaxRate = myTableDef.getStringValue(TaxYear.FIELD_HDVTAX);
-        String myAddTaxRate = myTableDef.getStringValue(TaxYear.FIELD_ADDTAX);
-        String myAddDivTaxRate = myTableDef.getStringValue(TaxYear.FIELD_ADVTAX);
-        String myAddIncBound = myTableDef.getStringValue(TaxYear.FIELD_ADDBDY);
-        String myCapitalAllow = myTableDef.getStringValue(TaxYear.FIELD_CAPALW);
-        String myCapTaxRate = myTableDef.getStringValue(TaxYear.FIELD_CAPTAX);
-        String myHiCapTaxRate = myTableDef.getStringValue(TaxYear.FIELD_HCPTAX);
+        Date myYear = myTableDef.getDateValue(TaxYearBase.FIELD_TAXYEAR);
+        Integer myRegime = myTableDef.getIntegerValue(TaxYearBase.FIELD_REGIME);
 
         /* Add into the list */
-        theList.addOpenItem(pId, myRegime, myYear, myAllowance, myRentalAllow, myLoAgeAllow, myHiAgeAllow,
-                            myCapitalAllow, myAgeAllowLimit, myAddAllowLimit, myLoBand, myBasicBand,
-                            myAddIncBound, myLoTaxRate, myBasicTaxRate, myHiTaxRate, myIntTaxRate,
-                            myDivTaxRate, myHiDivTaxRate, myAddTaxRate, myAddDivTaxRate, myCapTaxRate,
-                            myHiCapTaxRate);
+        theList.addSecureItem(pId, myRegime, myYear);
     }
 
     @Override
@@ -146,50 +98,10 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (TaxYear.FIELD_TAXYEAR.equals(iField)) {
+        if (TaxYearBase.FIELD_TAXYEAR.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getTaxYear());
-        } else if (TaxYear.FIELD_REGIME.equals(iField)) {
+        } else if (TaxYearBase.FIELD_REGIME.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getTaxRegime().getId());
-        } else if (TaxYear.FIELD_ALLOW.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getAllowance());
-        } else if (TaxYear.FIELD_RENTAL.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getRentalAllowance());
-        } else if (TaxYear.FIELD_LOBAND.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getLoBand());
-        } else if (TaxYear.FIELD_BSBAND.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getBasicBand());
-        } else if (TaxYear.FIELD_LOAGAL.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getLoAgeAllow());
-        } else if (TaxYear.FIELD_HIAGAL.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getHiAgeAllow());
-        } else if (TaxYear.FIELD_AGELMT.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getAgeAllowLimit());
-        } else if (TaxYear.FIELD_ADDLMT.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getAddAllowLimit());
-        } else if (TaxYear.FIELD_LOTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getLoTaxRate());
-        } else if (TaxYear.FIELD_BASTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getBasicTaxRate());
-        } else if (TaxYear.FIELD_HITAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getHiTaxRate());
-        } else if (TaxYear.FIELD_INTTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getIntTaxRate());
-        } else if (TaxYear.FIELD_DIVTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getDivTaxRate());
-        } else if (TaxYear.FIELD_HDVTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getHiDivTaxRate());
-        } else if (TaxYear.FIELD_ADDTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getAddTaxRate());
-        } else if (TaxYear.FIELD_ADVTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getAddDivTaxRate());
-        } else if (TaxYear.FIELD_ADDBDY.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getAddIncBound());
-        } else if (TaxYear.FIELD_CAPALW.equals(iField)) {
-            myTableDef.setMoneyValue(iField, pItem.getCapitalAllow());
-        } else if (TaxYear.FIELD_CAPTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getCapTaxRate());
-        } else if (TaxYear.FIELD_HCPTAX.equals(iField)) {
-            myTableDef.setRateValue(iField, pItem.getHiCapTaxRate());
         } else {
             super.setFieldValue(pItem, iField);
         }

@@ -44,7 +44,6 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventValue.EventValueList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearNew.TaxYearNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
@@ -115,11 +114,6 @@ public class FinanceData extends DataSet<FinanceData> {
      * TaxYears Field Id.
      */
     public static final JDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField("TaxYears");
-
-    /**
-     * NewTaxYears Field Id.
-     */
-    public static final JDataField FIELD_NEWTAXYEARS = FIELD_DEFS.declareLocalField("NewTaxYears");
 
     /**
      * TaxInfo Field Id.
@@ -214,9 +208,6 @@ public class FinanceData extends DataSet<FinanceData> {
         }
         if (FIELD_TAXYEARS.equals(pField)) {
             return (theTaxYears.size() > 0) ? theTaxYears : JDataFieldValue.SkipField;
-        }
-        if (FIELD_NEWTAXYEARS.equals(pField)) {
-            return (theNewTaxYears.size() > 0) ? theNewTaxYears : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXINFO.equals(pField)) {
             return (theTaxInfo.size() > 0) ? theTaxInfo : JDataFieldValue.SkipField;
@@ -321,11 +312,6 @@ public class FinanceData extends DataSet<FinanceData> {
      * TaxYears.
      */
     private TaxYearList theTaxYears = null;
-
-    /**
-     * NewTaxYears.
-     */
-    private TaxYearNewList theNewTaxYears = null;
 
     /**
      * Accounts.
@@ -457,14 +443,6 @@ public class FinanceData extends DataSet<FinanceData> {
      */
     public TaxYearList getTaxYears() {
         return theTaxYears;
-    }
-
-    /**
-     * Obtain NewTaxYears.
-     * @return the NewTaxYears
-     */
-    public TaxYearNewList getNewTaxYears() {
-        return theNewTaxYears;
     }
 
     /**
@@ -607,7 +585,6 @@ public class FinanceData extends DataSet<FinanceData> {
         theActInfoTypes = new AccountInfoTypeList(this);
         theEventInfoTypes = new EventInfoTypeList(this);
         theTaxYears = new TaxYearList(this);
-        theNewTaxYears = new TaxYearNewList(this);
         theTaxInfo = new TaxInfoList(this);
         theAccounts = new AccountList(this);
         theAccountInfo = new AccountInfoList(this);
@@ -660,7 +637,6 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Build the data extract */
         myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.UPDATE);
-        myExtract.theNewTaxYears = theNewTaxYears.deriveList(ListStyle.UPDATE);
         myExtract.theTaxInfo = theTaxInfo.deriveList(ListStyle.UPDATE);
         myExtract.theAccounts = theAccounts.deriveList(ListStyle.UPDATE);
         myExtract.theNewAccounts = theNewAccounts.deriveList(ListStyle.UPDATE);
@@ -701,7 +677,6 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Build the data extract */
         myExtract.theTaxYears = theTaxYears.cloneList(this);
-        myExtract.theNewTaxYears = theNewTaxYears.cloneList(this);
         myExtract.theTaxInfo = theTaxInfo.cloneList(this);
         myExtract.theAccounts = theAccounts.cloneList(this);
         myExtract.theNewAccounts = theNewAccounts.cloneList(this);
@@ -751,7 +726,6 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* Build the data differences */
         myDiffers.theTaxYears = theTaxYears.deriveDifferences(pOld.getTaxYears());
-        myDiffers.theNewTaxYears = theNewTaxYears.deriveDifferences(pOld.getNewTaxYears());
         myDiffers.theTaxInfo = theTaxInfo.deriveDifferences(pOld.getTaxInfo());
         myDiffers.theAccounts = theAccounts.deriveDifferences(pOld.getAccounts());
         myDiffers.theNewAccounts = theNewAccounts.deriveDifferences(pOld.getNewAccounts());
@@ -794,7 +768,6 @@ public class FinanceData extends DataSet<FinanceData> {
 
         /* ReBase the data items */
         theTaxYears.reBase(pOld.getTaxYears());
-        theNewTaxYears.reBase(pOld.getNewTaxYears());
         theTaxInfo.reBase(pOld.getTaxInfo());
         theAccounts.reBase(pOld.getAccounts());
         theNewAccounts.reBase(pOld.getNewAccounts());
@@ -823,7 +796,6 @@ public class FinanceData extends DataSet<FinanceData> {
         addList(theActInfoTypes);
         addList(theEventInfoTypes);
         addList(theTaxYears);
-        addList(theNewTaxYears);
         addList(theTaxInfo);
         addList(theAccounts);
         addList(theNewAccounts);
@@ -868,11 +840,9 @@ public class FinanceData extends DataSet<FinanceData> {
         /* Reset the flags on the accounts and tax years */
         theAccounts.clearActive();
         theTaxYears.clearActive();
-        theNewTaxYears.clearActive();
 
         /* Note active items referenced by tax years */
         theTaxYears.markActiveItems();
-        theNewTaxYears.markActiveItems();
     }
 
     /**

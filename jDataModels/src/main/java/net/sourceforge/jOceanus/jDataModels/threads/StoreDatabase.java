@@ -73,28 +73,36 @@ public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
         /* Create interface */
         Database<T> myDatabase = theControl.getDatabase();
 
-        /* Store database */
-        myDatabase.updateDatabase(theStatus, theControl.getUpdates());
+        /* Protect against failures */
+        try {
+            /* Store database */
+            myDatabase.updateDatabase(theStatus, theControl.getUpdates());
 
-        /* Initialise the status window */
-        theStatus.initTask("Verifying Store");
+            /* Initialise the status window */
+            theStatus.initTask("Verifying Store");
 
-        /* Load database */
-        T myData = myDatabase.loadDatabase(theStatus);
+            /* Load database */
+            T myData = myDatabase.loadDatabase(theStatus);
 
-        /* Create a difference set between the two data copies */
-        DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());
+            /* Create a difference set between the two data copies */
+            DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());
 
-        /* If the difference set is non-empty */
-        if (!myDiff.isEmpty()) {
-            /* Throw an exception */
-            throw new JDataException(ExceptionClass.DATA, myDiff, "DataStore is inconsistent");
+            /* If the difference set is non-empty */
+            if (!myDiff.isEmpty()) {
+                /* Throw an exception */
+                throw new JDataException(ExceptionClass.DATA, myDiff, "DataStore is inconsistent");
+            }
+
+            /* Derive new update list */
+            theControl.deriveUpdates();
+
+            /* Return null */
+            return null;
+
+            /* Make sure that the database is closed */
+        } finally {
+            /* Close the database */
+            myDatabase.close();
         }
-
-        /* Derive new update list */
-        theControl.deriveUpdates();
-
-        /* Return null */
-        return null;
     }
 }

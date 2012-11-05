@@ -36,9 +36,8 @@ import net.sourceforge.jOceanus.jGordianKnot.SymKeyType;
 import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
 
 /**
- * DataKey definition and list. The Data Key represents a SymmetricKey that is secured via a the ControlKey.
- * For a single control key, one DataKey is allocated for each available SymmetricKey Type and the set forms a
- * CipherSet for encryption purposes.
+ * DataKey definition and list. The Data Key represents a SymmetricKey that is secured via a the ControlKey. For a single control key, one DataKey is allocated
+ * for each available SymmetricKey Type and the set forms a CipherSet for encryption purposes.
  * @author Tony Washer
  */
 public class DataKey extends DataItem implements Comparable<DataKey> {
@@ -418,7 +417,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 
@@ -457,8 +456,7 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(DataKeyList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(DataKeyList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

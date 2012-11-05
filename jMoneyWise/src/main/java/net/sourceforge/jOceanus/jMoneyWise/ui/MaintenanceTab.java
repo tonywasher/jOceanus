@@ -63,11 +63,6 @@ public class MaintenanceTab extends JEventPanel {
     private static final String TITLE_TAXYEARS = NLS_BUNDLE.getString("TabTaxYear");
 
     /**
-     * TaxYears tab title.
-     */
-    private static final String TITLE_TAXYEARSNEW = "NewTaxYears";
-
-    /**
      * Preferences tab title.
      */
     private static final String TITLE_PREFERENCES = NLS_BUNDLE.getString("TabPreference");
@@ -106,11 +101,6 @@ public class MaintenanceTab extends JEventPanel {
      * The TaxYear Panel.
      */
     private final MaintTaxYear theTaxYearTab;
-
-    /**
-     * The TaxYearNew Panel.
-     */
-    private final MaintTaxNewYear theTaxYearNewTab;
 
     /**
      * The Preferences Panel.
@@ -177,11 +167,6 @@ public class MaintenanceTab extends JEventPanel {
         theTabs.addTab(TITLE_TAXYEARS, theTaxYearTab);
         theTaxYearTab.addChangeListener(myListener);
 
-        /* Create the TaxYearsNewe Tab */
-        theTaxYearNewTab = new MaintTaxNewYear(theView);
-        theTabs.addTab(TITLE_TAXYEARSNEW, theTaxYearNewTab);
-        theTaxYearNewTab.addChangeListener(myListener);
-
         /* Create the Preferences Tab */
         thePreferences = new MaintPreferences(theView.getPreferenceMgr(), theView.getRenderMgr(),
                 theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
@@ -214,7 +199,6 @@ public class MaintenanceTab extends JEventPanel {
         /* Refresh sub-panels */
         theAccountTab.refreshData();
         theTaxYearTab.refreshData();
-        theTaxYearNewTab.refreshData();
         thePatternYear.refreshData();
         theStatic.refreshData();
 
@@ -231,9 +215,6 @@ public class MaintenanceTab extends JEventPanel {
         boolean hasUpdates = theAccountTab.hasUpdates();
         if (!hasUpdates) {
             hasUpdates = theTaxYearTab.hasUpdates();
-        }
-        if (!hasUpdates) {
-            hasUpdates = theTaxYearNewTab.hasUpdates();
         }
         if (!hasUpdates) {
             hasUpdates = thePreferences.hasUpdates();
@@ -293,14 +274,6 @@ public class MaintenanceTab extends JEventPanel {
             theTabs.setEnabledAt(iIndex, !hasUpdates || theTaxYearTab.hasUpdates());
         }
 
-        /* Access the TaxYearNew index */
-        iIndex = theTabs.indexOfTab(TITLE_TAXYEARSNEW);
-
-        /* Enable/Disable the TaxYear tab */
-        if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theTaxYearNewTab.hasUpdates());
-        }
-
         /* Access the Properties panel */
         iIndex = theTabs.indexOfTab(TITLE_PREFERENCES);
 
@@ -345,11 +318,6 @@ public class MaintenanceTab extends JEventPanel {
         } else if (myComponent.equals(theTaxYearTab)) {
             /* Set the debug focus */
             theTaxYearTab.determineFocus();
-
-            /* If the selected component is TaxYear */
-        } else if (myComponent.equals(theTaxYearNewTab)) {
-            /* Set the debug focus */
-            theTaxYearNewTab.determineFocus();
 
             /* If the selected component is Preferences */
         } else if (myComponent.equals(thePreferences)) {

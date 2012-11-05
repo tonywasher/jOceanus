@@ -454,9 +454,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             closeStmt();
 
         } catch (SQLException e) {
-            theDatabase.close();
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert " + getTableName(),
-                    e);
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert " + getTableName(), e);
         }
 
         /* Return to caller */
@@ -539,9 +537,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
                 }
             }
         } catch (SQLException e) {
-            theDatabase.close();
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to update " + getTableName(),
-                    e);
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to update " + getTableName(), e);
         }
 
         /* Return to caller */
@@ -555,13 +551,11 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @throws JDataException on error
      */
     private boolean updateItem(final T pItem) throws JDataException {
-        ValueSet myCurr;
-        ValueSet myBase;
-        boolean isUpdated = false;
 
         /* Access the object and base */
-        myCurr = pItem.getValueSet();
-        myBase = pItem.getOriginalValues();
+        ValueSet myCurr = pItem.getValueSet();
+        ValueSet myBase = pItem.getOriginalValues();
+        boolean isUpdated = false;
 
         /* Loop through the fields */
         for (ColumnDefinition myCol : theTable.getColumns()) {
@@ -668,9 +662,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             /* Close the Statement */
             closeStmt();
         } catch (SQLException e) {
-            theDatabase.close();
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete " + getTableName(),
-                    e);
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete " + getTableName(), e);
         }
 
         /* Return to caller */
@@ -697,7 +689,6 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
                 executeStatement(myCreate);
             }
         } catch (SQLException e) {
-            theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, "Failed to create " + getTableName(), e);
         }
     }
@@ -722,7 +713,6 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             myDrop = theTable.getDropTableString();
             executeStatement(myDrop);
         } catch (SQLException e) {
-            theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, "Failed to drop " + getTableName(), e);
         }
     }
@@ -738,7 +728,6 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
         } catch (SQLException e) {
-            theDatabase.close();
             throw new JDataException(ExceptionClass.SQLSERVER, "Failed to purge " + getTableName(), e);
         }
     }

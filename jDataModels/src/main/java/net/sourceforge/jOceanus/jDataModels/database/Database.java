@@ -164,7 +164,7 @@ public abstract class Database<T extends DataSet<T>> {
     /**
      * Close the connection to the database rolling back any outstanding transaction.
      */
-    protected void close() {
+    public void close() {
         /* Ignore if no connection */
         if (theConn == null) {
             return;
@@ -298,7 +298,7 @@ public abstract class Database<T extends DataSet<T>> {
                 theConn.commit();
             } catch (SQLException e) {
                 close();
-                throw new JDataException(ExceptionClass.SQLSERVER, "Failed to commit transction", e);
+                throw new JDataException(ExceptionClass.SQLSERVER, "Failed to commit transaction", e);
             }
 
             /* Commit the batch */

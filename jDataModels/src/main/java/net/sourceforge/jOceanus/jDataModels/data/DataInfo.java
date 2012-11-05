@@ -38,8 +38,8 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
  * @param <I> the Info Type that applies to this item
  * @param <E> the Info Class that applies to this item
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
-        extends EncryptedItem implements Comparable<T> {
+public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface> extends
+        EncryptedItem implements Comparable<T> {
     /**
      * Maximum DataLength.
      */
@@ -48,8 +48,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataInfo.class.getSimpleName(),
-            EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(DataInfo.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -167,7 +166,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      */
     public static <X> X getValue(final EncryptedValueSet pValueSet,
                                  final Class<X> pClass) {
-        return pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
+        return pValueSet.isDeletion() ? null : pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
     }
 
     /**
@@ -297,12 +296,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
 
     /**
      * Mark deleted.
+     * @param bDeleted
      */
-    public void markDeleted() {
-        /* Set null deletion value */
-        ValueSet myValues = getValueSet();
-        myValues.setValue(FIELD_VALUE, null);
-        myValues.setDeletion(true);
+    public void markDeleted(final boolean bDeleted) {
+        /* Set deletion indication */
+        getValueSet().setDeletion(bDeleted);
     }
 
     /**
@@ -336,8 +334,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(DataInfoList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(DataInfoList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

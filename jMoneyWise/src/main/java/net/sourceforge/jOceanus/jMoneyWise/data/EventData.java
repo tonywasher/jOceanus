@@ -403,8 +403,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
     /**
      * Compare this data to another to establish sort order.
      * @param pThat The EventData to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
     public int compareTo(final EventData pThat) {
@@ -433,7 +432,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -595,8 +594,7 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventDataList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventDataList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

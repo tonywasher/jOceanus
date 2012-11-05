@@ -929,9 +929,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                     myValue.negate();
                     isCredit = false;
                 }
-                EventData myData = theInfoSet.getNewData(isCredit
-                                                                 ? EventInfoClass.CreditUnits
-                                                                 : EventInfoClass.DebitUnits);
+                EventData myData = theInfoSet.getNewData(isCredit ? EventInfoClass.CreditUnits : EventInfoClass.DebitUnits);
                 myData.setUnits(myValue);
             }
 
@@ -981,8 +979,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     /**
      * Compare this event to another to establish sort order.
      * @param pThat The Event to compare to
-     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the
-     *         sort order
+     * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
      */
     @Override
     public int compareTo(final Event pThat) {
@@ -1022,7 +1019,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -1227,8 +1224,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     }
 
     /**
-     * Is an event allowed between these two accounts, used for more detailed analysis once the event is
-     * deemed valid based on the account types.
+     * Is an event allowed between these two accounts, used for more detailed analysis once the event is deemed valid based on the account types.
      * @param pTrans The transaction type of the event
      * @param pDebit the debit account
      * @param pCredit the credit account
@@ -1367,8 +1363,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         }
 
         /* Check valid Credit/Debit combination */
-        if ((myTransType != null) && (myCredit != null) && (myDebit != null)
-                && (!isValidEvent(myTransType, myDebit, myCredit))) {
+        if ((myTransType != null) && (myCredit != null) && (myDebit != null) && (!isValidEvent(myTransType, myDebit, myCredit))) {
             addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
             addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
         }
@@ -1381,11 +1376,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         }
 
         /* Money must be zero for stock split/demerger */
-        if ((myAmount != null)
-                && (myAmount.isNonZero())
-                && (myTransType != null)
-                && ((myTransType.isStockDemerger()) || (myTransType.isStockSplit()) || (myTransType
-                        .isStockTakeover()))) {
+        if ((myAmount != null) && (myAmount.isNonZero()) && (myTransType != null)
+                && ((myTransType.isStockDemerger()) || (myTransType.isStockSplit()) || (myTransType.isStockTakeover()))) {
             addError("Amount must be zero for Stock Split/Demerger/Takeover", FIELD_AMOUNT);
         }
 
@@ -1422,17 +1414,14 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                     if ((myCredit.isPriced()) && (myDebit.isPriced())) {
                         /* TranType must be stock split or dividend between same account */
                         if ((myTransType == null)
-                                || ((!myTransType.isDividend()) && (!myTransType.isStockSplit())
-                                        && (!myTransType.isAdminCharge()) && (!myTransType.isStockDemerger()) && (!myTransType
-                                            .isStockTakeover()))) {
+                                || ((!myTransType.isDividend()) && (!myTransType.isStockSplit()) && (!myTransType.isAdminCharge())
+                                        && (!myTransType.isStockDemerger()) && (!myTransType.isStockTakeover()))) {
                             addError("Units can only refer to a single priced asset unless "
-                                             + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend",
-                                     FIELD_UNITS);
+                                    + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_UNITS);
                         }
 
                         /* Dividend between priced requires identical credit/debit */
-                        if ((myTransType != null) && (myTransType.isDividend())
-                                && (!Difference.isEqual(myCredit, myDebit))) {
+                        if ((myTransType != null) && (myTransType.isDividend()) && (!Difference.isEqual(myCredit, myDebit))) {
                             addError("Unit Dividends between assets must be between same asset", FIELD_UNITS);
                         }
                     }
@@ -1444,9 +1433,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 }
 
                 /* Units must not be negative unless it is stock split */
-                if ((!myUnits.isPositive())
-                        && ((myTransType == null) || ((!myTransType.isStockSplit()) && (!myTransType
-                                .isAdminCharge())))) {
+                if ((!myUnits.isPositive()) && ((myTransType == null) || ((!myTransType.isStockSplit()) && (!myTransType.isAdminCharge())))) {
                     addError("Units must be positive unless this is a StockSplit/AdminCharge", FIELD_UNITS);
                 }
 
@@ -1858,8 +1845,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * Range field id.
@@ -2113,30 +2099,26 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             /* Look up the Transaction Type */
             TransactionType myTransType = myData.getTransTypes().findItemByName(pTransType);
             if (myTransType == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Transact Type ["
+                throw new JDataException(ExceptionClass.DATA, "Event on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Transact Type ["
                         + pTransType + "]");
             }
 
             /* Look up the Credit Account */
             Account myCredit = myAccounts.findItemByName(pCredit);
             if (myCredit == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Credit account ["
+                throw new JDataException(ExceptionClass.DATA, "Event on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Credit account ["
                         + pCredit + "]");
             }
 
             /* Look up the Debit Account */
             Account myDebit = myAccounts.findItemByName(pDebit);
             if (myDebit == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Debit account ["
+                throw new JDataException(ExceptionClass.DATA, "Event on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Debit account ["
                         + pDebit + "]");
             }
 
             /* Create the new Event */
-            Event myEvent = new Event(this, uId, pDate, pDesc, myDebit, myCredit, myTransType, pAmount,
-                    pUnits, pTaxCredit, pDilution, pYears);
+            Event myEvent = new Event(this, uId, pDate, pDesc, myDebit, myCredit, myTransType, pAmount, pUnits, pTaxCredit, pDilution, pYears);
 
             /* Validate the event */
             myEvent.validate();
@@ -2179,8 +2161,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                                   final byte[] pDilution,
                                   final Integer pYears) throws JDataException {
             /* Create the new Event */
-            Event myEvent = new Event(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId,
-                    pAmount, pUnits, pTaxCredit, pDilution, pYears);
+            Event myEvent = new Event(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId, pAmount, pUnits, pTaxCredit, pDilution, pYears);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(uId)) {

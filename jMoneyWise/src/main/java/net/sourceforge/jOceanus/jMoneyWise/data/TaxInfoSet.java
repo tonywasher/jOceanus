@@ -33,7 +33,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearI
  * TaxInfoSet class.
  * @author Tony Washer
  */
-public class TaxInfoSet extends DataInfoSet<TaxYearInfo, TaxYearNew, TaxYearInfoType, TaxYearInfoClass> {
+public class TaxInfoSet extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
     /**
      * Report fields.
      */
@@ -50,7 +50,7 @@ public class TaxInfoSet extends DataInfoSet<TaxYearInfo, TaxYearNew, TaxYearInfo
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
      */
-    protected TaxInfoSet(final TaxYearNew pOwner,
+    protected TaxInfoSet(final TaxYear pOwner,
                          final TaxYearInfoTypeList pTypeList) {
         /* Store the Owner and Info List */
         super(pOwner, pTypeList);

@@ -283,9 +283,6 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
                 bContinue = SheetTaxYear.loadArchive(pTask, myHelper, myData, myRange);
             }
             if (bContinue) {
-                bContinue = SheetTaxYearNew.loadArchive(pTask, myHelper, myData, myRange);
-            }
-            if (bContinue) {
                 myData.calculateDateRange();
             }
 

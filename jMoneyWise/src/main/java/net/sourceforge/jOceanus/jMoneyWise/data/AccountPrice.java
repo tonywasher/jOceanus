@@ -403,7 +403,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     }
 
     @Override
-    protected void relinkToDataSet() {
+    public void relinkToDataSet() {
         /* Update the Encryption details */
         super.relinkToDataSet();
 
@@ -545,8 +545,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AccountPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -773,8 +772,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Price on ["
-                        + myData.getDataFormatter().formatObject(new JDateDay(pDate))
+                throw new JDataException(ExceptionClass.DATA, "Price on [" + myData.getDataFormatter().formatObject(new JDateDay(pDate))
                         + "] has invalid Account [" + pAccount + "]");
             }
 
@@ -783,8 +781,7 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
-                        + myPrice.getId() + ">");
+                throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <" + myPrice.getId() + ">");
             }
 
             /* Validate the price */
