@@ -50,7 +50,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
  * TaxYear DataItem utilising TaxYearInfo.
  * @author Tony Washer
  */
-public class TaxYear extends TaxYearBase {
+public class TaxYear
+        extends TaxYearBase {
     /**
      * Object name.
      */
@@ -59,7 +60,8 @@ public class TaxYear extends TaxYearBase {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Value must be positive error text.
@@ -666,7 +668,8 @@ public class TaxYear extends TaxYearBase {
         DataState myState = super.getState();
 
         /* If we should use the InfoSet */
-        if ((myState == DataState.CLEAN) && (useInfoSet)) {
+        if ((myState == DataState.CLEAN)
+            && (useInfoSet)) {
             /* Get state for infoSet */
             myState = theInfoSet.getState();
         }
@@ -681,7 +684,8 @@ public class TaxYear extends TaxYearBase {
         EditState myState = super.getEditState();
 
         /* If we should use the InfoSet */
-        if ((myState == EditState.CLEAN) && (useInfoSet)) {
+        if ((myState == EditState.CLEAN)
+            && (useInfoSet)) {
             /* Get state for infoSet */
             myState = theInfoSet.getEditState();
         }
@@ -696,7 +700,8 @@ public class TaxYear extends TaxYearBase {
         boolean hasHistory = super.hasHistory();
 
         /* If we should use the InfoSet */
-        if ((!hasHistory) && (useInfoSet)) {
+        if ((!hasHistory)
+            && (useInfoSet)) {
             /* Check history for infoSet */
             hasHistory = theInfoSet.hasHistory();
         }
@@ -785,16 +790,14 @@ public class TaxYear extends TaxYearBase {
         /* switch on list type */
         switch (getList().getStyle()) {
             case EDIT:
-                theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes());
-                theInfoSet.setInfoList(pList.getTaxInfo());
+                theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
                 theInfoSet.cloneDataInfoSet(pTaxYear.getInfoSet());
                 hasInfoSet = true;
                 useInfoSet = true;
                 break;
             case CLONE:
             case CORE:
-                theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes());
-                theInfoSet.setInfoList(pList.getTaxInfo());
+                theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
                 hasInfoSet = true;
                 useInfoSet = false;
                 break;
@@ -822,8 +825,7 @@ public class TaxYear extends TaxYearBase {
         super(pList, uId, uRegimeId, pDate);
 
         /* Create the InfoSet */
-        theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes());
-        theInfoSet.setInfoList(pList.getTaxInfo());
+        theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
         hasInfoSet = true;
         useInfoSet = false;
     }
@@ -844,8 +846,7 @@ public class TaxYear extends TaxYearBase {
         super(pList, uId, pRegime, pDate);
 
         /* Create the InfoSet */
-        theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes());
-        theInfoSet.setInfoList(pList.getTaxInfo());
+        theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
         hasInfoSet = true;
         useInfoSet = false;
     }
@@ -867,123 +868,150 @@ public class TaxYear extends TaxYearBase {
         if (myDate != null) {
             /* The year must be one greater than the preceding element */
             TaxYear myPrev = myList.peekPrevious(this);
-            if ((myPrev != null) && (myDate.getYear() != myPrev.getTaxYear().getYear() + 1)) {
+            if ((myPrev != null)
+                && (myDate.getYear() != myPrev.getTaxYear().getYear() + 1)) {
                 addError("There can be no gaps in the list", FIELD_TAXYEAR);
             }
         }
 
         /* The allowance must be non-null */
-        if ((getAllowance() == null) || (!getAllowance().isPositive())) {
+        if ((getAllowance() == null)
+            || (!getAllowance().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_ALLOW);
         }
 
         /* The rental allowance must be non-null */
-        if ((getRentalAllowance() == null) || (!getRentalAllowance().isPositive())) {
+        if ((getRentalAllowance() == null)
+            || (!getRentalAllowance().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_RENTAL);
         }
 
         /* The loAgeAllow must be non-null */
-        if ((getLoAgeAllow() == null) || (!getLoAgeAllow().isPositive())) {
+        if ((getLoAgeAllow() == null)
+            || (!getLoAgeAllow().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_LOAGAL);
         }
 
         /* The loAgeAllow must be greater than Allowance */
-        if ((getLoAgeAllow() != null) && (getAllowance() != null) && (getLoAgeAllow().compareTo(getAllowance()) < 0)) {
+        if ((getLoAgeAllow() != null)
+            && (getAllowance() != null)
+            && (getLoAgeAllow().compareTo(getAllowance()) < 0)) {
             addError("Value must be greater than allowance", FIELD_LOAGAL);
         }
 
         /* The hiAgeAllow must be non-null */
-        if ((getHiAgeAllow() == null) || (!getHiAgeAllow().isPositive())) {
+        if ((getHiAgeAllow() == null)
+            || (!getHiAgeAllow().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_HIAGAL);
         }
 
         /* The hiAgeAllow must be greater than loAgeAllowance */
-        if ((getHiAgeAllow() != null) && (getLoAgeAllow() != null) && (getHiAgeAllow().compareTo(getLoAgeAllow()) < 0)) {
+        if ((getHiAgeAllow() != null)
+            && (getLoAgeAllow() != null)
+            && (getHiAgeAllow().compareTo(getLoAgeAllow()) < 0)) {
             addError("Value must be greater than low age allowance", FIELD_HIAGAL);
         }
 
         /* The ageAllowLimit must be non-null */
-        if ((getAgeAllowLimit() == null) || (!getAgeAllowLimit().isPositive())) {
+        if ((getAgeAllowLimit() == null)
+            || (!getAgeAllowLimit().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_AGELMT);
         }
 
         /* The capitalAllow must be non-null */
-        if ((getCapitalAllow() == null) || (!getCapitalAllow().isPositive())) {
+        if ((getCapitalAllow() == null)
+            || (!getCapitalAllow().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_CAPALW);
         }
 
         /* The loBand must be non-null */
-        if ((getLoBand() == null) || (!getLoBand().isPositive())) {
+        if ((getLoBand() == null)
+            || (!getLoBand().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_LOBAND);
         }
 
         /* The basicBand must be non-null */
-        if ((getBasicBand() == null) || (!getBasicBand().isPositive())) {
+        if ((getBasicBand() == null)
+            || (!getBasicBand().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_BSBAND);
         }
 
         /* The loRate must be non-null */
-        if ((getLoTaxRate() == null) || (!getLoTaxRate().isPositive())) {
+        if ((getLoTaxRate() == null)
+            || (!getLoTaxRate().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_LOTAX);
         }
 
         /* The basicRate must be non-null */
-        if ((getBasicTaxRate() == null) || (!getBasicTaxRate().isPositive())) {
+        if ((getBasicTaxRate() == null)
+            || (!getBasicTaxRate().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_BASTAX);
         }
 
         /* The hiRate must be non-null */
-        if ((getHiTaxRate() == null) || (!getHiTaxRate().isPositive())) {
+        if ((getHiTaxRate() == null)
+            || (!getHiTaxRate().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_HITAX);
         }
 
         /* The intRate must be non-null */
-        if ((getIntTaxRate() == null) || (!getIntTaxRate().isPositive())) {
+        if ((getIntTaxRate() == null)
+            || (!getIntTaxRate().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_INTTAX);
         }
 
         /* The divRate must be non-null */
-        if ((getDivTaxRate() == null) || (!getDivTaxRate().isPositive())) {
+        if ((getDivTaxRate() == null)
+            || (!getDivTaxRate().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_DIVTAX);
         }
 
         /* The hiDivRate must be non-null */
-        if ((getHiDivTaxRate() == null) || (!getHiDivTaxRate().isPositive())) {
+        if ((getHiDivTaxRate() == null)
+            || (!getHiDivTaxRate().isPositive())) {
             addError(ERROR_POSITIVE, FIELD_HDVTAX);
         }
 
         /* If the tax regime is additional */
-        if ((myTaxRegime != null) && (myTaxRegime.hasAdditionalTaxBand())) {
+        if ((myTaxRegime != null)
+            && (myTaxRegime.hasAdditionalTaxBand())) {
             /* The addAllowLimit must be non-null */
-            if ((getAddAllowLimit() == null) || (!getAddAllowLimit().isPositive())) {
+            if ((getAddAllowLimit() == null)
+                || (!getAddAllowLimit().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_ADDLMT);
             }
 
             /* The addIncBound must be non-null */
-            if ((getAddIncBound() == null) || (!getAddIncBound().isPositive())) {
+            if ((getAddIncBound() == null)
+                || (!getAddIncBound().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_ADDBDY);
             }
 
             /* The addRate must be non-null */
-            if ((getAddTaxRate() == null) || (!getAddTaxRate().isPositive())) {
+            if ((getAddTaxRate() == null)
+                || (!getAddTaxRate().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_ADDTAX);
             }
 
             /* The addDivRate must be non-null */
-            if ((getAddDivTaxRate() == null) || (!getAddDivTaxRate().isPositive())) {
+            if ((getAddDivTaxRate() == null)
+                || (!getAddDivTaxRate().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_ADVTAX);
             }
         }
 
         /* If the tax regime does not have capital gains as income */
-        if ((myTaxRegime != null) && (!myTaxRegime.hasCapitalGainsAsIncome())) {
+        if ((myTaxRegime != null)
+            && (!myTaxRegime.hasCapitalGainsAsIncome())) {
             /* The capitalRate must be non-null */
-            if ((getCapTaxRate() == null) || (!getCapTaxRate().isPositive())) {
+            if ((getCapTaxRate() == null)
+                || (!getCapTaxRate().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_CAPTAX);
             }
 
             /* The hiCapTaxRate if it exists must be positive */
-            if ((getHiCapTaxRate() != null) && (!getHiCapTaxRate().isPositive())) {
+            if ((getHiCapTaxRate() != null)
+                && (!getHiCapTaxRate().isPositive())) {
                 addError(ERROR_POSITIVE, FIELD_HCPTAX);
             }
         }
@@ -1006,7 +1034,8 @@ public class TaxYear extends TaxYearBase {
     /**
      * The Tax Year List class.
      */
-    public static class TaxYearList extends TaxYearBaseList<TaxYear> {
+    public static class TaxYearList
+            extends TaxYearBaseList<TaxYear> {
         /**
          * Local Report fields.
          */
@@ -1084,8 +1113,10 @@ public class TaxYear extends TaxYearBase {
         }
 
         @Override
-        protected TaxYearList getEmptyList() {
-            return new TaxYearList(this);
+        protected TaxYearList getEmptyList(final ListStyle pStyle) {
+            TaxYearList myList = new TaxYearList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -1111,16 +1142,14 @@ public class TaxYear extends TaxYearBase {
          */
         public TaxYearList deriveEditList(final TaxYear pTaxYear) {
             /* Build an empty List */
-            TaxYearList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            TaxYearList myList = getEmptyList(ListStyle.EDIT);
 
             /* Store InfoType list */
             myList.theInfoTypeList = getTaxInfoTypes();
 
             /* Create info List */
             TaxInfoList myTaxInfo = getTaxInfo();
-            myList.theInfoList = myTaxInfo.getEmptyList();
-            myList.theInfoList.setBase(myTaxInfo);
+            myList.theInfoList = myTaxInfo.getEmptyList(ListStyle.EDIT);
 
             /* Create a new tax year based on the passed tax year */
             TaxYear myYear = new TaxYear(myList, pTaxYear);
@@ -1136,15 +1165,14 @@ public class TaxYear extends TaxYearBase {
          */
         public TaxYearList deriveNewEditList() {
             /* Build an empty List */
-            TaxYearList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            TaxYearList myList = getEmptyList(ListStyle.EDIT);
 
             /* Store InfoType list */
             myList.theInfoTypeList = theInfoTypeList;
 
             /* Create info List */
-            myList.theInfoList = theInfoList.getEmptyList();
-            myList.theInfoList.setBase(theInfoList);
+            TaxInfoList myTaxInfo = getTaxInfo();
+            myList.theInfoList = myTaxInfo.getEmptyList(ListStyle.EDIT);
 
             /* Access the existing tax years */
             FinanceData myData = getDataSet();
@@ -1237,8 +1265,11 @@ public class TaxYear extends TaxYearBase {
             TaxRegimeList myList = myData.getTaxRegimes();
             TaxRegime myTaxRegime = myList.findItemByName(pRegime);
             if (myTaxRegime == null) {
-                throw new JDataException(ExceptionClass.DATA, "TaxYear on <" + myFormatter.formatObject(new JDateDay(pDate)) + "> has invalid TaxRegime <"
-                        + pRegime + ">");
+                throw new JDataException(ExceptionClass.DATA, "TaxYear on <"
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "> has invalid TaxRegime <"
+                                                              + pRegime
+                                                              + ">");
             }
 
             /* Create the tax year */

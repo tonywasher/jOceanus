@@ -47,7 +47,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
  * EventData data type.
  * @author Tony Washer
  */
-public class EventData extends EncryptedItem implements Comparable<EventData> {
+public class EventData
+        extends EncryptedItem
+        implements Comparable<EventData> {
     /**
      * The name of the object.
      */
@@ -478,15 +480,18 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
                 case Benefit:
                     JMoney myMoney = getMoney();
                     if (myMoney == null) {
-                        addError(myType.getName() + " must be non-null", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be non-null", FIELD_VALUE);
                     } else if (!myMoney.isPositive()) {
-                        addError(myType.getName() + " must be positive", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be positive", FIELD_VALUE);
                     }
                     break;
                 case Dilution:
                     JDilution myDilution = getDilution();
                     if (myDilution == null) {
-                        addError(myType.getName() + " must be non-null", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be non-null", FIELD_VALUE);
                     } else if (myDilution.outOfRange()) {
                         addError("Dilution factor value is outside allowed range (0-1)", FIELD_VALUE);
                     }
@@ -495,9 +500,11 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
                 case DebitUnits:
                     JUnits myUnits = getUnits();
                     if (myUnits == null) {
-                        addError(myType.getName() + " must be non-null", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be non-null", FIELD_VALUE);
                     } else if (!myUnits.isPositive()) {
-                        addError(myType.getName() + " must be positive", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be positive", FIELD_VALUE);
                     }
                     break;
                 default:
@@ -590,7 +597,8 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
     /**
      * List class for EventData.
      */
-    public static class EventDataList extends EncryptedList<EventData> {
+    public static class EventDataList
+            extends EncryptedList<EventData> {
         /**
          * Local Report fields.
          */
@@ -635,8 +643,10 @@ public class EventData extends EncryptedItem implements Comparable<EventData> {
         }
 
         @Override
-        protected EventDataList getEmptyList() {
-            return new EventDataList(this);
+        protected EventDataList getEmptyList(final ListStyle pStyle) {
+            EventDataList myList = new EventDataList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override

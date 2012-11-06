@@ -34,7 +34,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * TransactionType data type.
  * @author Tony Washer
  */
-public class TransactionType extends StaticData<TransactionType, TransClass> {
+public class TransactionType
+        extends StaticData<TransactionType, TransClass> {
     /**
      * Object name.
      */
@@ -43,7 +44,8 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -65,7 +67,8 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
 
     @Override
     public boolean isActive() {
-        return super.isActive() || isHiddenType();
+        return super.isActive()
+               || isHiddenType();
     }
 
     @Override
@@ -424,12 +427,12 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
     /**
      * Represents a list of {@link TransactionType} objects.
      */
-    public static class TransTypeList extends StaticList<TransactionType, TransClass> {
+    public static class TransTypeList
+            extends StaticList<TransactionType, TransClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TransTypeList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TransTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -463,8 +466,10 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
         }
 
         @Override
-        protected TransTypeList getEmptyList() {
-            return new TransTypeList(this);
+        protected TransTypeList getEmptyList(final ListStyle pStyle) {
+            TransTypeList myList = new TransTypeList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -598,8 +603,7 @@ public class TransactionType extends StaticData<TransactionType, TransClass> {
                                   final byte[] pTransType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Transaction Type */
-            TransactionType myTransType = new TransactionType(this, uId, uControlId, isEnabled, uOrder,
-                    pTransType, pDesc);
+            TransactionType myTransType = new TransactionType(this, uId, uControlId, isEnabled, uOrder, pTransType, pDesc);
 
             /* Check that this TransTypeId has not been previously added */
             if (!isIdUnique(uId)) {

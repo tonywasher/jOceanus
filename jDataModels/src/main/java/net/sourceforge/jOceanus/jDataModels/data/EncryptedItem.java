@@ -38,7 +38,8 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptionGenerator;
  * Encrypted Data Item and List.
  * @author Tony Washer
  */
-public abstract class EncryptedItem extends DataItem {
+public abstract class EncryptedItem
+        extends DataItem {
     /**
      * Report fields.
      */
@@ -70,6 +71,15 @@ public abstract class EncryptedItem extends DataItem {
      */
     public ControlKey getControlKey() {
         return getControlKey(getValueSet());
+    }
+
+    /**
+     * Get the ControlKeyId for this item.
+     * @return the ControlKeyId
+     */
+    public Integer getControlKeyId() {
+        ControlKey myKey = getControlKey();
+        return (myKey == null) ? null : myKey.getId();
     }
 
     /**
@@ -164,8 +174,10 @@ public abstract class EncryptedItem extends DataItem {
         Object myCurrent = myValueSet.getValue(pField);
 
         /* Handle bad usage */
-        if ((myCurrent != null) && (!EncryptedField.class.isInstance(myCurrent))) {
-            throw new IllegalArgumentException("Encrypted access for non-encrypted field " + pField.getName());
+        if ((myCurrent != null)
+            && (!EncryptedField.class.isInstance(myCurrent))) {
+            throw new IllegalArgumentException("Encrypted access for non-encrypted field "
+                                               + pField.getName());
         }
 
         /* Create the new encrypted value */
@@ -272,7 +284,8 @@ public abstract class EncryptedItem extends DataItem {
      * Encrypted DataList.
      * @param <T> the item type
      */
-    public abstract static class EncryptedList<T extends EncryptedItem & Comparable<? super T>> extends DataList<T> {
+    public abstract static class EncryptedList<T extends EncryptedItem & Comparable<? super T>>
+            extends DataList<T> {
         /**
          * Get the active controlKey.
          * @return the active controlKey
@@ -345,7 +358,8 @@ public abstract class EncryptedItem extends DataItem {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -399,7 +413,8 @@ public abstract class EncryptedItem extends DataItem {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }

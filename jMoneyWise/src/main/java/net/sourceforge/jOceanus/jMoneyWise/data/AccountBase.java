@@ -37,7 +37,6 @@ import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
 
@@ -45,7 +44,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeL
  * Account data type.
  * @author Tony Washer
  */
-public abstract class AccountBase extends EncryptedItem implements Comparable<AccountBase> {
+public abstract class AccountBase
+        extends EncryptedItem
+        implements Comparable<AccountBase> {
     /**
      * Account Name length.
      */
@@ -669,7 +670,7 @@ public abstract class AccountBase extends EncryptedItem implements Comparable<Ac
         AccountType myType = getActType();
         String myName = getName();
         String myDesc = getDesc();
-        AccountList myList = (AccountList) getList();
+        AccountBaseList<?> myList = (AccountBaseList<?>) getList();
 
         /* AccountType must be non-null */
         if (myType == null) {
@@ -786,7 +787,8 @@ public abstract class AccountBase extends EncryptedItem implements Comparable<Ac
      * The Account List class.
      * @param <T> the dataType
      */
-    public abstract static class AccountBaseList<T extends AccountBase> extends EncryptedList<T> {
+    public abstract static class AccountBaseList<T extends AccountBase>
+            extends EncryptedList<T> {
         /**
          * Local Report fields.
          */

@@ -113,7 +113,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     /**
      * The DataInfoList for the InfoSet.
      */
-    private DataInfoList<T, O, I, E> theInfoList;
+    private final DataInfoList<T, O, I, E> theInfoList;
 
     /**
      * The Map of the DataInfo.
@@ -124,12 +124,15 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
+     * @param pInfoList the infoList for the set
      */
     protected DataInfoSet(final O pOwner,
-                          final StaticList<I, E> pTypeList) {
+                          final StaticList<I, E> pTypeList,
+                          final DataInfoList<T, O, I, E> pInfoList) {
         /* Store the Owner and InfoType List */
         theOwner = pOwner;
         theTypeList = pTypeList;
+        theInfoList = pInfoList;
         theClass = theTypeList.getEnumClass();
 
         /* Create the Map */
@@ -231,7 +234,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         if (bDelete) {
             /* Mark existing value as deleted */
             if (myValue != null) {
-                myValue.markDeleted(true);
+                myValue.markDeleted();
             }
 
             /* Return to caller */
@@ -283,15 +286,6 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
 
         /* Remove from the map */
         theMap.remove(myClass);
-    }
-
-    /**
-     * set the infoList.
-     * @param pInfoList the infoList for the info values
-     */
-    protected void setInfoList(final DataInfoList<T, O, I, E> pInfoList) {
-        /* Update to use the new lists */
-        theInfoList = pInfoList;
     }
 
     /**

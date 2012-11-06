@@ -27,32 +27,30 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
+import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
-import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedCharArray;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData.LoadState;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
 
 /**
- * Account data type.
+ * Account DataItem utilising AccountInfo.
  * @author Tony Washer
  */
-public class Account extends EncryptedItem implements Comparable<Account> {
+public class Account
+        extends AccountBase {
     /**
      * Object name.
      */
@@ -61,12 +59,43 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
+
+    /**
+     * Account WebSite length.
+     */
+    public static final int WSITELEN = 50;
+
+    /**
+     * Account CustNo length.
+     */
+    public static final int CUSTLEN = 20;
+
+    /**
+     * Account UserId length.
+     */
+    public static final int UIDLEN = 20;
+
+    /**
+     * Account PassWord length.
+     */
+    public static final int PWDLEN = 20;
+
+    /**
+     * Account details length.
+     */
+    public static final int ACTLEN = 20;
+
+    /**
+     * Account Notes length.
+     */
+    public static final int NOTELEN = 500;
 
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountBase.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -74,69 +103,54 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     /**
-     * Name Field Id.
+     * AccountInfoSet field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField("Name");
-
-    /**
-     * Description Field Id.
-     */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
-
-    /**
-     * AccountType Field Id.
-     */
-    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareEqualityValueField("AccountType");
+    public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
 
     /**
      * Maturity Field Id.
      */
-    public static final JDataField FIELD_MATURITY = FIELD_DEFS.declareDerivedValueField("Maturity");
-
-    /**
-     * Close Field Id.
-     */
-    public static final JDataField FIELD_CLOSE = FIELD_DEFS.declareEqualityValueField("CloseDate");
+    public static final JDataField FIELD_MATURITY = FIELD_DEFS.declareEqualityField("Maturity");
 
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField("Parent");
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityField("Parent");
 
     /**
      * Alias Field Id.
      */
-    public static final JDataField FIELD_ALIAS = FIELD_DEFS.declareEqualityValueField("Alias");
+    public static final JDataField FIELD_ALIAS = FIELD_DEFS.declareEqualityField("Alias");
 
     /**
      * WebSite Field Id.
      */
-    public static final JDataField FIELD_WEBSITE = FIELD_DEFS.declareEqualityValueField("WebSite");
+    public static final JDataField FIELD_WEBSITE = FIELD_DEFS.declareEqualityField("WebSite");
 
     /**
      * CustNo Field Id.
      */
-    public static final JDataField FIELD_CUSTNO = FIELD_DEFS.declareEqualityValueField("CustomerNo");
+    public static final JDataField FIELD_CUSTNO = FIELD_DEFS.declareEqualityField("CustomerNo");
 
     /**
      * UserId Field Id.
      */
-    public static final JDataField FIELD_USERID = FIELD_DEFS.declareEqualityValueField("UserId");
+    public static final JDataField FIELD_USERID = FIELD_DEFS.declareEqualityField("UserId");
 
     /**
      * Password Field Id.
      */
-    public static final JDataField FIELD_PASSWORD = FIELD_DEFS.declareEqualityValueField("Password");
+    public static final JDataField FIELD_PASSWORD = FIELD_DEFS.declareEqualityField("Password");
 
     /**
      * Account Details Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField("Account");
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
 
     /**
      * Notes Field Id.
      */
-    public static final JDataField FIELD_NOTES = FIELD_DEFS.declareEqualityValueField("Notes");
+    public static final JDataField FIELD_NOTES = FIELD_DEFS.declareEqualityField("Notes");
 
     /**
      * firstEvent Field Id.
@@ -194,46 +208,48 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     public static final JDataField FIELD_ISCLSABL = FIELD_DEFS.declareLocalField("isCloseable");
 
     @Override
-    public String formatObject() {
-        return getName();
-    }
-
-    @Override
-    public String toString() {
-        return formatObject();
-    }
-
-    @Override
     public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
+        if (FIELD_INFOSET.equals(pField)) {
+            return hasInfoSet ? theInfoSet : JDataFieldValue.SkipField;
+        }
+
+        /* Handle InfoSet fields */
+        AccountInfoClass myClass = getFieldClass(pField);
+        if (myClass != null) {
+            return getInfoSetValue(myClass);
+        }
+
+        /* Handle flags */
         if (FIELD_EVTFIRST.equals(pField)) {
-            return theEarliest;
+            return (theEarliest != null) ? theEarliest : JDataFieldValue.SkipField;
         }
         if (FIELD_EVTLAST.equals(pField)) {
-            return theLatest;
+            return (theLatest != null) ? theLatest : JDataFieldValue.SkipField;
         }
         if (FIELD_INITPRC.equals(pField)) {
-            return theInitPrice;
+            return (theInitPrice != null) ? theInitPrice : JDataFieldValue.SkipField;
         }
         if (FIELD_HASDEBTS.equals(pField)) {
-            return hasDebts;
+            return hasDebts ? hasDebts : JDataFieldValue.SkipField;
         }
         if (FIELD_HASRATES.equals(pField)) {
-            return hasRates;
+            return hasRates ? hasRates : JDataFieldValue.SkipField;
         }
         if (FIELD_HASPRICE.equals(pField)) {
-            return hasPrices;
+            return hasPrices ? hasPrices : JDataFieldValue.SkipField;
         }
         if (FIELD_HASPATT.equals(pField)) {
-            return hasPatterns;
+            return hasPatterns ? hasPatterns : JDataFieldValue.SkipField;
         }
         if (FIELD_ISPATT.equals(pField)) {
-            return isPatterned;
+            return isPatterned ? isPatterned : JDataFieldValue.SkipField;
         }
         if (FIELD_ISPARENT.equals(pField)) {
-            return isParent;
+            return isParent ? isParent : JDataFieldValue.SkipField;
         }
         if (FIELD_ISALIASD.equals(pField)) {
-            return isAliasedTo;
+            return isAliasedTo ? isAliasedTo : JDataFieldValue.SkipField;
         }
         if (FIELD_ISCLSABL.equals(pField)) {
             return isCloseable;
@@ -244,44 +260,63 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     /**
-     * Account Name length.
+     * Obtain the class of the field if it is an infoSet field.
+     * @param pField the field
+     * @return the class
      */
-    public static final int NAMELEN = 30;
+    private static AccountInfoClass getFieldClass(final JDataField pField) {
+        if (FIELD_MATURITY.equals(pField)) {
+            return AccountInfoClass.Maturity;
+        }
+        if (FIELD_PARENT.equals(pField)) {
+            return AccountInfoClass.Parent;
+        }
+        if (FIELD_ALIAS.equals(pField)) {
+            return AccountInfoClass.Alias;
+        }
+        if (FIELD_WEBSITE.equals(pField)) {
+            return AccountInfoClass.WebSite;
+        }
+        if (FIELD_CUSTNO.equals(pField)) {
+            return AccountInfoClass.CustNo;
+        }
+        if (FIELD_USERID.equals(pField)) {
+            return AccountInfoClass.UserId;
+        }
+        if (FIELD_PASSWORD.equals(pField)) {
+            return AccountInfoClass.Password;
+        }
+        if (FIELD_ACCOUNT.equals(pField)) {
+            return AccountInfoClass.Account;
+        }
+        if (FIELD_NOTES.equals(pField)) {
+            return AccountInfoClass.Notes;
+        }
+        return null;
+    }
 
     /**
-     * Account Description length.
+     * Do we have an InfoSet.
      */
-    public static final int DESCLEN = 50;
+    private final boolean hasInfoSet;
 
     /**
-     * Account WebSite length.
+     * Should we use infoSet for DataState etc.
      */
-    public static final int WSITELEN = 50;
+    private final boolean useInfoSet;
 
     /**
-     * Account CustNo length.
+     * AccountInfoSet.
      */
-    public static final int CUSTLEN = 20;
+    private final AccountInfoSet theInfoSet;
 
     /**
-     * Account UserId length.
+     * Obtain InfoSet.
+     * @return the infoSet
      */
-    public static final int UIDLEN = 20;
-
-    /**
-     * Account PassWord length.
-     */
-    public static final int PWDLEN = 20;
-
-    /**
-     * Account details length.
-     */
-    public static final int ACTLEN = 20;
-
-    /**
-     * Account Notes length.
-     */
-    public static final int NOTELEN = 500;
+    protected AccountInfoSet getInfoSet() {
+        return theInfoSet;
+    }
 
     /**
      * Earliest Event.
@@ -339,51 +374,11 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     private boolean isAliasedTo = false;
 
     /**
-     * Obtain Name.
-     * @return the name
+     * Obtain Maturity.
+     * @return the maturity date
      */
-    public String getName() {
-        return getName(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted name.
-     * @return the bytes
-     */
-    public byte[] getNameBytes() {
-        return getNameBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Name Field.
-     * @return the Field
-     */
-    private EncryptedString getNameField() {
-        return getNameField(getValueSet());
-    }
-
-    /**
-     * Obtain Description.
-     * @return the description
-     */
-    public String getDesc() {
-        return getDesc(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted description.
-     * @return the bytes
-     */
-    public byte[] getDescBytes() {
-        return getDescBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Description Field.
-     * @return the Field
-     */
-    private EncryptedString getDescField() {
-        return getDescField(getValueSet());
+    public JDateDay getMaturity() {
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Maturity, JDateDay.class) : null;
     }
 
     /**
@@ -391,7 +386,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the parent
      */
     public Account getParent() {
-        return getParent(getValueSet());
+        return hasInfoSet ? theInfoSet.getAccount(AccountInfoClass.Parent) : null;
     }
 
     /**
@@ -399,7 +394,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the parent id
      */
     public Integer getParentId() {
-        return getParentId(getValueSet());
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Parent, Integer.class) : null;
     }
 
     /**
@@ -407,7 +402,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the alias
      */
     public Account getAlias() {
-        return getAlias(getValueSet());
+        return hasInfoSet ? theInfoSet.getAccount(AccountInfoClass.Alias) : null;
     }
 
     /**
@@ -415,7 +410,55 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return the alias id
      */
     public Integer getAliasId() {
-        return getAliasId(getValueSet());
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Alias, Integer.class) : null;
+    }
+
+    /**
+     * Obtain WebSite.
+     * @return the webSite
+     */
+    public char[] getWebSite() {
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.WebSite, char[].class) : null;
+    }
+
+    /**
+     * Obtain CustNo.
+     * @return the customer #
+     */
+    public char[] getCustNo() {
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.CustNo, char[].class) : null;
+    }
+
+    /**
+     * Obtain UserId.
+     * @return the userId
+     */
+    public char[] getUserId() {
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.UserId, char[].class) : null;
+    }
+
+    /**
+     * Obtain Password.
+     * @return the password
+     */
+    public char[] getPassword() {
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Password, char[].class) : null;
+    }
+
+    /**
+     * Obtain Account.
+     * @return the account
+     */
+    public char[] getAccount() {
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Account, char[].class) : null;
+    }
+
+    /**
+     * Obtain Notes.
+     * @return the notes
+     */
+    public char[] getNotes() {
+        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Notes, char[].class) : null;
     }
 
     /**
@@ -440,182 +483,6 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      */
     public AccountPrice getInitPrice() {
         return theInitPrice;
-    }
-
-    /**
-     * Obtain Account Type.
-     * @return the type
-     */
-    public AccountType getActType() {
-        return getAccountType(getValueSet());
-    }
-
-    /**
-     * Obtain Order.
-     * @return the order
-     */
-    public int getOrder() {
-        return getOrder(getValueSet());
-    }
-
-    /**
-     * Obtain Maturity.
-     * @return the date
-     */
-    public JDateDay getMaturity() {
-        return getMaturity(getValueSet());
-    }
-
-    /**
-     * Obtain Close.
-     * @return the date
-     */
-    public JDateDay getClose() {
-        return getClose(getValueSet());
-    }
-
-    /**
-     * Obtain WebSite.
-     * @return the webSite
-     */
-    public char[] getWebSite() {
-        return getWebSite(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted webSite.
-     * @return the bytes
-     */
-    public byte[] getWebSiteBytes() {
-        return getWebSiteBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted webSite Field.
-     * @return the Field
-     */
-    private EncryptedCharArray getWebSiteField() {
-        return getWebSiteField(getValueSet());
-    }
-
-    /**
-     * Obtain CustNo.
-     * @return the custNo
-     */
-    public char[] getCustNo() {
-        return getCustNo(getValueSet());
-    }
-
-    /**
-     * Obtain encrypted custNo.
-     * @return the bytes
-     */
-    public byte[] getCustNoBytes() {
-        return getCustNoBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted CustomerNo Field.
-     * @return the Field
-     */
-    private EncryptedCharArray getCustNoField() {
-        return getCustNoField(getValueSet());
-    }
-
-    /**
-     * Obtain userId.
-     * @return the userId
-     */
-    public char[] getUserId() {
-        return getUserId(getValueSet());
-    }
-
-    /**
-     * Obtain encrypted userId.
-     * @return the bytes
-     */
-    public byte[] getUserIdBytes() {
-        return getUserIdBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted UserId Field.
-     * @return the Field
-     */
-    private EncryptedCharArray getUserIdField() {
-        return getUserIdField(getValueSet());
-    }
-
-    /**
-     * Obtain Password.
-     * @return the password
-     */
-    public char[] getPassword() {
-        return getPassword(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted password.
-     * @return the bytes
-     */
-    public byte[] getPasswordBytes() {
-        return getPasswordBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Password Field.
-     * @return the Field
-     */
-    private EncryptedCharArray getPasswordField() {
-        return getPasswordField(getValueSet());
-    }
-
-    /**
-     * Obtain Account details.
-     * @return the account details
-     */
-    public char[] getAccount() {
-        return getAccount(getValueSet());
-    }
-
-    /**
-     * Obtain encrypted account details.
-     * @return the bytes
-     */
-    public byte[] getAccountBytes() {
-        return getAccountBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Account details Field.
-     * @return the Field
-     */
-    private EncryptedCharArray getAccountField() {
-        return getAccountField(getValueSet());
-    }
-
-    /**
-     * Obtain Notes.
-     * @return the notes
-     */
-    public char[] getNotes() {
-        return getNotes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted notes.
-     * @return the bytes
-     */
-    public byte[] getNotesBytes() {
-        return getNotesBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Notes Field.
-     * @return the Field
-     */
-    private EncryptedCharArray getNotesField() {
-        return getNotesField(getValueSet());
     }
 
     /**
@@ -671,599 +538,124 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @return true/false
      */
     public boolean isDeletable() {
-        return ((theLatest == null) && (!isDeleted()) && (!isParent) && (!hasRates) && ((!hasPrices) || (getState() == DataState.NEW)) && (!hasPatterns)
-                && (!isAliasedTo) && (!isPatterned) && (!getActType().isReserved()));
-    }
-
-    /**
-     * Obtain Name.
-     * @param pValueSet the valueSet
-     * @return the Name
-     */
-    public static String getName(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_NAME, String.class);
-    }
-
-    /**
-     * Obtain Encrypted Name.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getNameBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_NAME);
-    }
-
-    /**
-     * Obtain Encrypted name field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedString getNameField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NAME, EncryptedString.class);
-    }
-
-    /**
-     * Obtain Description.
-     * @param pValueSet the valueSet
-     * @return the description
-     */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
-    }
-
-    /**
-     * Obtain Encrypted description.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
-    }
-
-    /**
-     * Obtain Encrypted description field.
-     * @param pValueSet the valueSet
-     * @return the Field
-     */
-    private static EncryptedString getDescField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
-    }
-
-    /**
-     * Obtain AccountType.
-     * @param pValueSet the valueSet
-     * @return the AccountType
-     */
-    public static AccountType getAccountType(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TYPE, AccountType.class);
-    }
-
-    /**
-     * Obtain Order.
-     * @param pValueSet the valueSet
-     * @return the Order
-     */
-    public static Integer getOrder(final ValueSet pValueSet) {
-        Object myType = pValueSet.getValue(FIELD_TYPE);
-        if (myType instanceof AccountType) {
-            return ((AccountType) myType).getOrder();
-        }
-        return null;
-    }
-
-    /**
-     * Obtain Maturity.
-     * @param pValueSet the valueSet
-     * @return the Maturity
-     */
-    public static JDateDay getMaturity(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_MATURITY, JDateDay.class);
-    }
-
-    /**
-     * Obtain Close date.
-     * @param pValueSet the valueSet
-     * @return the date
-     */
-    public static JDateDay getClose(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CLOSE, JDateDay.class);
-    }
-
-    /**
-     * Obtain Parent.
-     * @param pValueSet the valueSet
-     * @return the Parent
-     */
-    public static Account getParent(final ValueSet pValueSet) {
-        Object myAccount = pValueSet.getValue(FIELD_PARENT);
-        if (myAccount instanceof Account) {
-            return (Account) myAccount;
-        }
-        return null;
-    }
-
-    /**
-     * Obtain Parent Id.
-     * @param pValueSet the valueSet
-     * @return the Parent Id
-     */
-    public static Integer getParentId(final ValueSet pValueSet) {
-        Object myAccount = pValueSet.getValue(FIELD_PARENT);
-        if (myAccount instanceof Account) {
-            return ((Account) myAccount).getId();
-        }
-        if (myAccount instanceof Integer) {
-            return (Integer) myAccount;
-        }
-        return null;
-    }
-
-    /**
-     * Obtain Alias.
-     * @param pValueSet the valueSet
-     * @return the Alias
-     */
-    public static Account getAlias(final ValueSet pValueSet) {
-        Object myAccount = pValueSet.getValue(FIELD_ALIAS);
-        if (myAccount instanceof Account) {
-            return (Account) myAccount;
-        }
-        return null;
-    }
-
-    /**
-     * Obtain Alias Id.
-     * @param pValueSet the valueSet
-     * @return the Alias Id
-     */
-    public static Integer getAliasId(final ValueSet pValueSet) {
-        Object myAccount = pValueSet.getValue(FIELD_ALIAS);
-        if (myAccount instanceof Account) {
-            return ((Account) myAccount).getId();
-        }
-        if (myAccount instanceof Integer) {
-            return (Integer) myAccount;
-        }
-        return null;
-    }
-
-    /**
-     * Obtain webSite.
-     * @param pValueSet the valueSet
-     * @return the webSite
-     */
-    public static char[] getWebSite(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_WEBSITE, char[].class);
-    }
-
-    /**
-     * Obtain Encrypted webSite.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getWebSiteBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_WEBSITE);
-    }
-
-    /**
-     * Obtain webSite field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedCharArray getWebSiteField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_WEBSITE, EncryptedCharArray.class);
-    }
-
-    /**
-     * Obtain custNo.
-     * @param pValueSet the valueSet
-     * @return the custNo
-     */
-    public static char[] getCustNo(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_CUSTNO, char[].class);
-    }
-
-    /**
-     * Obtain Encrypted custNo.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getCustNoBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_CUSTNO);
-    }
-
-    /**
-     * Obtain Encrypted custNo field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedCharArray getCustNoField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CUSTNO, EncryptedCharArray.class);
-    }
-
-    /**
-     * Obtain userId.
-     * @param pValueSet the valueSet
-     * @return the userId
-     */
-    public static char[] getUserId(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_USERID, char[].class);
-    }
-
-    /**
-     * Obtain Encrypted userId.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getUserIdBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_USERID);
-    }
-
-    /**
-     * Obtain Encrypted userId field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedCharArray getUserIdField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_USERID, EncryptedCharArray.class);
-    }
-
-    /**
-     * Obtain password.
-     * @param pValueSet the valueSet
-     * @return the Password
-     */
-    public static char[] getPassword(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_PASSWORD, char[].class);
-    }
-
-    /**
-     * Obtain Encrypted password.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getPasswordBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_PASSWORD);
-    }
-
-    /**
-     * Obtain Encrypted Password field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedCharArray getPasswordField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_PASSWORD, EncryptedCharArray.class);
-    }
-
-    /**
-     * Obtain Account Details.
-     * @param pValueSet the valueSet
-     * @return the Account details
-     */
-    public static char[] getAccount(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_ACCOUNT, char[].class);
-    }
-
-    /**
-     * Obtain Encrypted Account.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getAccountBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_ACCOUNT);
-    }
-
-    /**
-     * Obtain Encrypted Account field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedCharArray getAccountField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ACCOUNT, EncryptedCharArray.class);
-    }
-
-    /**
-     * Obtain Notes.
-     * @param pValueSet the valueSet
-     * @return the Notes
-     */
-    public static char[] getNotes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_NOTES, char[].class);
-    }
-
-    /**
-     * Obtain Encrypted Notes.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getNotesBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_NOTES);
-    }
-
-    /**
-     * Obtain Encrypted Notes field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedCharArray getNotesField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_NOTES, EncryptedCharArray.class);
-    }
-
-    /**
-     * Set name value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueName(final String pValue) throws JDataException {
-        setEncryptedValue(FIELD_NAME, pValue);
-    }
-
-    /**
-     * Set name value.
-     * @param pBytes the value
-     * @throws JDataException on error
-     */
-    private void setValueName(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_NAME, pBytes, String.class);
-    }
-
-    /**
-     * Set name value.
-     * @param pValue the value
-     */
-    private void setValueName(final EncryptedString pValue) {
-        getValueSet().setValue(FIELD_NAME, pValue);
-    }
-
-    /**
-     * Set description value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueDesc(final String pValue) throws JDataException {
-        setEncryptedValue(FIELD_DESC, pValue);
-    }
-
-    /**
-     * Set description value.
-     * @param pBytes the value
-     * @throws JDataException on error
-     */
-    private void setValueDesc(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_DESC, pBytes, String.class);
-    }
-
-    /**
-     * Set description value.
-     * @param pValue the value
-     */
-    private void setValueDesc(final EncryptedString pValue) {
-        getValueSet().setValue(FIELD_DESC, pValue);
-    }
-
-    /**
-     * Set account type value.
-     * @param pValue the value
-     */
-    private void setValueType(final AccountType pValue) {
-        getValueSet().setValue(FIELD_TYPE, pValue);
-    }
-
-    /**
-     * Set account type id.
-     * @param pValue the value
-     */
-    private void setValueType(final Integer pValue) {
-        getValueSet().setValue(FIELD_TYPE, pValue);
-    }
-
-    /**
-     * Set maturity value.
-     * @param pValue the value
-     */
-    private void setValueMaturity(final JDateDay pValue) {
-        getValueSet().setValue(FIELD_MATURITY, pValue);
-    }
-
-    /**
-     * Set close value.
-     * @param pValue the value
-     */
-    private void setValueClose(final JDateDay pValue) {
-        getValueSet().setValue(FIELD_CLOSE, pValue);
-    }
-
-    /**
-     * Set parent value.
-     * @param pValue the value
-     */
-    private void setValueParent(final Account pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set parent id.
-     * @param pValue the value
-     */
-    private void setValueParent(final Integer pValue) {
-        getValueSet().setValue(FIELD_PARENT, pValue);
-    }
-
-    /**
-     * Set alias value.
-     * @param pValue the value
-     */
-    private void setValueAlias(final Account pValue) {
-        getValueSet().setValue(FIELD_ALIAS, pValue);
-    }
-
-    /**
-     * Set alias id.
-     * @param pValue the value
-     */
-    private void setValueAlias(final Integer pValue) {
-        getValueSet().setValue(FIELD_ALIAS, pValue);
-    }
-
-    /**
-     * Set webSite value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueWebSite(final char[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_WEBSITE, pValue);
-    }
-
-    /**
-     * Set webSite value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueWebSite(final byte[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_WEBSITE, pValue, String.class);
-    }
-
-    /**
-     * Set webSite value.
-     * @param pValue the value
-     */
-    private void setValueWebSite(final EncryptedCharArray pValue) {
-        getValueSet().setValue(FIELD_WEBSITE, pValue);
-    }
-
-    /**
-     * Set custNo value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueCustNo(final char[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_CUSTNO, pValue);
-    }
-
-    /**
-     * Set custNo value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueCustNo(final byte[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_CUSTNO, pValue, String.class);
-    }
-
-    /**
-     * Set custNo value.
-     * @param pValue the value
-     */
-    private void setValueCustNo(final EncryptedCharArray pValue) {
-        getValueSet().setValue(FIELD_CUSTNO, pValue);
-    }
-
-    /**
-     * Set userId value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueUserId(final char[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_USERID, pValue);
-    }
-
-    /**
-     * Set userId value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueUserId(final byte[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_USERID, pValue, String.class);
-    }
-
-    /**
-     * Set userId value.
-     * @param pValue the value
-     */
-    private void setValueUserId(final EncryptedCharArray pValue) {
-        getValueSet().setValue(FIELD_USERID, pValue);
-    }
-
-    /**
-     * Set passWord value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValuePassword(final char[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_PASSWORD, pValue);
-    }
-
-    /**
-     * Set passWord value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValuePassword(final byte[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_PASSWORD, pValue, String.class);
-    }
-
-    /**
-     * Set passWord value.
-     * @param pValue the value
-     */
-    private void setValuePassword(final EncryptedCharArray pValue) {
-        getValueSet().setValue(FIELD_PASSWORD, pValue);
-    }
-
-    /**
-     * Set account value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueAccount(final char[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_ACCOUNT, pValue);
-    }
-
-    /**
-     * Set account value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueAccount(final byte[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_ACCOUNT, pValue, String.class);
-    }
-
-    /**
-     * Set account value.
-     * @param pValue the value
-     */
-    private void setValueAccount(final EncryptedCharArray pValue) {
-        getValueSet().setValue(FIELD_ACCOUNT, pValue);
-    }
-
-    /**
-     * Set notes value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueNotes(final char[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_NOTES, pValue);
-    }
-
-    /**
-     * Set notes value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueNotes(final byte[] pValue) throws JDataException {
-        setEncryptedValue(FIELD_NOTES, pValue, String.class);
-    }
-
-    /**
-     * Set notes value.
-     * @param pValue the value
-     */
-    private void setValueNotes(final EncryptedCharArray pValue) {
-        getValueSet().setValue(FIELD_NOTES, pValue);
+        return ((theLatest == null)
+                && (!isDeleted())
+                && (!isParent)
+                && (!hasRates)
+                && ((!hasPrices) || (getState() == DataState.NEW))
+                && (!hasPatterns)
+                && (!isAliasedTo)
+                && (!isPatterned) && (!getActType().isReserved()));
     }
 
     @Override
-    public FinanceData getDataSet() {
-        return (FinanceData) super.getDataSet();
+    public DataState getState() {
+        /* Pop history for self */
+        DataState myState = super.getState();
+
+        /* If we should use the InfoSet */
+        if ((myState == DataState.CLEAN)
+            && (useInfoSet)) {
+            /* Get state for infoSet */
+            myState = theInfoSet.getState();
+        }
+
+        /* Return the state */
+        return myState;
+    }
+
+    @Override
+    public EditState getEditState() {
+        /* Pop history for self */
+        EditState myState = super.getEditState();
+
+        /* If we should use the InfoSet */
+        if ((myState == EditState.CLEAN)
+            && (useInfoSet)) {
+            /* Get state for infoSet */
+            myState = theInfoSet.getEditState();
+        }
+
+        /* Return the state */
+        return myState;
+    }
+
+    @Override
+    public boolean hasHistory() {
+        /* Check for history for self */
+        boolean hasHistory = super.hasHistory();
+
+        /* If we should use the InfoSet */
+        if ((!hasHistory)
+            && (useInfoSet)) {
+            /* Check history for infoSet */
+            hasHistory = theInfoSet.hasHistory();
+        }
+
+        /* Return details */
+        return hasHistory;
+    }
+
+    @Override
+    public void pushHistory() {
+        /* Push history for self */
+        super.pushHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Push history for infoSet */
+            theInfoSet.pushHistory();
+        }
+    }
+
+    @Override
+    public void popHistory() {
+        /* Pop history for self */
+        super.popHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Pop history for infoSet */
+            theInfoSet.popHistory();
+        }
+    }
+
+    @Override
+    public boolean checkForHistory() {
+        /* Check for history for self */
+        boolean bChanges = super.checkForHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Check for history for infoSet */
+            bChanges |= theInfoSet.checkForHistory();
+        }
+
+        /* return result */
+        return bChanges;
+    }
+
+    @Override
+    public Difference fieldChanged(final JDataField pField) {
+        /* Handle InfoSet fields */
+        AccountInfoClass myClass = getFieldClass(pField);
+        if (myClass != null) {
+            return (useInfoSet) ? theInfoSet.fieldChanged(myClass) : Difference.Identical;
+        }
+
+        /* Check super fields */
+        return super.fieldChanged(pField);
+    }
+
+    @Override
+    public void setDeleted(final boolean bDeleted) {
+        /* Pass call to infoSet if required */
+        if (useInfoSet) {
+            theInfoSet.setDeleted(bDeleted);
+        }
+
+        /* Pass call onwards */
+        super.setDeleted(bDeleted);
     }
 
     @Override
@@ -1304,8 +696,30 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         /* Set standard values */
         super(pList, pAccount);
 
+        /* switch on list type */
+        switch (getList().getStyle()) {
+            case EDIT:
+                theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
+                theInfoSet.cloneDataInfoSet(pAccount.getInfoSet());
+                hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
+                break;
+            default:
+                theInfoSet = null;
+                hasInfoSet = false;
+                useInfoSet = false;
+                break;
+        }
+
         /* If this is a build of edit from Core */
-        if ((getStyle() == ListStyle.EDIT) && (pAccount.getStyle() == ListStyle.CORE)) {
+        if ((getStyle() == ListStyle.EDIT)
+            && (pAccount.getStyle() == ListStyle.CORE)) {
             /* Copy the flags */
             copyFlags(pAccount);
         }
@@ -1319,16 +733,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pName the Encrypted Name of the account
      * @param uAcTypeId the Account type id
      * @param pDesc the Encrypted Description of the account
-     * @param pMaturity the Maturity date for the account
      * @param pClose the Close date for the account
-     * @param pParentId the Parent id (or -1 if no parent)
-     * @param pAliasId the Alias id (or -1 if no parent)
-     * @param pWebSite the Encrypted WebSite of the account
-     * @param pCustNo the Encrypted CustomerId of the account
-     * @param pUserId the Encrypted UserId of the account
-     * @param pPassword the Encrypted Password of the account
-     * @param pAccount the Encrypted Account details of the account
-     * @param pNotes the Encrypted Notes for the account
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
@@ -1337,63 +742,14 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                     final byte[] pName,
                     final Integer uAcTypeId,
                     final byte[] pDesc,
-                    final Date pMaturity,
-                    final Date pClose,
-                    final Integer pParentId,
-                    final Integer pAliasId,
-                    final byte[] pWebSite,
-                    final byte[] pCustNo,
-                    final byte[] pUserId,
-                    final byte[] pPassword,
-                    final byte[] pAccount,
-                    final byte[] pNotes) throws JDataException {
+                    final Date pClose) throws JDataException {
         /* Initialise the item */
-        super(pList, uId);
+        super(pList, uId, uControlId, pName, uAcTypeId, pDesc, pClose);
 
-        /* Protect against exceptions */
-        try {
-            /* Store the IDs */
-            setValueType(uAcTypeId);
-            setValueParent(pParentId);
-            setValueAlias(pAliasId);
-
-            /* Set ControlId */
-            setControlKey(uControlId);
-
-            /* Look up the Account Type */
-            FinanceData myData = getDataSet();
-            AccountTypeList myTypes = myData.getAccountTypes();
-            AccountType myActType = myTypes.findItemById(uAcTypeId);
-            if (myActType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
-            }
-            setValueType(myActType);
-
-            /* Parse the maturity date if it exists */
-            if (pMaturity != null) {
-                setValueMaturity(new JDateDay(pMaturity));
-            }
-
-            /* Parse the closed date if it exists */
-            if (pClose != null) {
-                setValueClose(new JDateDay(pClose));
-            }
-
-            /* Record the encrypted values */
-            setValueName(pName);
-            setValueDesc(pDesc);
-            setValueWebSite(pWebSite);
-            setValueCustNo(pCustNo);
-            setValueUserId(pUserId);
-            setValuePassword(pPassword);
-            setValueAccount(pAccount);
-            setValueNotes(pNotes);
-
-            /* Catch Exceptions */
-        } catch (JDataException e) {
-            /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
-        }
+        /* Create the InfoSet */
+        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
     }
 
     /**
@@ -1403,16 +759,7 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param sName the Name of the account
      * @param uAcTypeId the Account type id
      * @param pDesc the description
-     * @param pMaturity the Maturity date for the account
      * @param pClose the Close date for the account
-     * @param pParentId the Parent id (or -1 if no parent)
-     * @param pAliasId the Alias id (or -1 if no parent)
-     * @param pWebSite the WebSite of the account
-     * @param pCustNo the CustomerId of the account
-     * @param pUserId the UserId of the account
-     * @param pPassword the Password of the account
-     * @param pAccount the Account details of the account
-     * @param pNotes the Notes for the account
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
@@ -1420,60 +767,14 @@ public class Account extends EncryptedItem implements Comparable<Account> {
                     final String sName,
                     final Integer uAcTypeId,
                     final String pDesc,
-                    final Date pMaturity,
-                    final Date pClose,
-                    final Integer pParentId,
-                    final Integer pAliasId,
-                    final char[] pWebSite,
-                    final char[] pCustNo,
-                    final char[] pUserId,
-                    final char[] pPassword,
-                    final char[] pAccount,
-                    final char[] pNotes) throws JDataException {
+                    final Date pClose) throws JDataException {
         /* Initialise the item */
-        super(pList, uId);
+        super(pList, uId, sName, uAcTypeId, pDesc, pClose);
 
-        /* Protect against exceptions */
-        try {
-            /* Store the IDs */
-            setValueType(uAcTypeId);
-            setValueParent(pParentId);
-            setValueAlias(pAliasId);
-
-            /* Record the encrypted values */
-            setValueName(sName);
-            setValueDesc(pDesc);
-            setValueWebSite(pWebSite);
-            setValueCustNo(pCustNo);
-            setValueUserId(pUserId);
-            setValuePassword(pPassword);
-            setValueAccount(pAccount);
-            setValueNotes(pNotes);
-
-            /* Look up the Account Type */
-            FinanceData myData = getDataSet();
-            AccountTypeList myTypes = myData.getAccountTypes();
-            AccountType myActType = myTypes.findItemById(uAcTypeId);
-            if (myActType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
-            }
-            setValueType(myActType);
-
-            /* Parse the maturity date if it exists */
-            if (pMaturity != null) {
-                setValueMaturity(new JDateDay(pMaturity));
-            }
-
-            /* Parse the closed date if it exists */
-            if (pClose != null) {
-                setValueClose(new JDateDay(pClose));
-            }
-
-            /* Catch Exceptions */
-        } catch (JDataException e) {
-            /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
-        }
+        /* Create the InfoSet */
+        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
+        hasInfoSet = true;
+        useInfoSet = false;
     }
 
     /**
@@ -1481,481 +782,55 @@ public class Account extends EncryptedItem implements Comparable<Account> {
      * @param pList the list
      */
     public Account(final AccountList pList) {
-        super(pList, 0);
-        setControlKey(pList.getControlKey());
+        super(pList);
+
+        /* Build InfoSet */
+        theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
     }
 
-    @Override
-    public int compareTo(final Account pThat) {
-        /* Handle the trivial cases */
-        if (this == pThat) {
-            return 0;
-        }
-        if (pThat == null) {
-            return -1;
-        }
-
-        /* If we are comparing owner with non-owner */
-        if (isOwner() != pThat.isOwner()) {
-            /* List owners first */
-            return (isOwner()) ? -1 : 1;
-        }
-
-        /* If we are comparing alias with non-alias */
-        if (isAlias() != pThat.isAlias()) {
-            /* List alias after non-alias */
-            return (isAlias()) ? 1 : -1;
-        }
-
-        /* Check the order */
-        int iDiff = (getOrder() - pThat.getOrder());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Check the names */
-        iDiff = Difference.compareObject(getName(), pThat.getName());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* Compare the underlying id */
-        return super.compareId(pThat);
+    /**
+     * Set non-closeable.
+     */
+    public void setNonCloseable() {
+        /* Record the status */
+        isCloseable = false;
     }
 
-    @Override
-    public void relinkToDataSet() {
-        /* Update the Encryption details */
-        super.relinkToDataSet();
-
-        /* Access Account types */
-        FinanceData myData = getDataSet();
-        AccountTypeList myTypes = myData.getAccountTypes();
-        AccountList myList = myData.getAccounts();
-
-        /* Update to use the local copy of the AccountTypes */
-        AccountType myType = getActType();
-        AccountType myNewType = myTypes.findItemById(myType.getId());
-        setValueType(myNewType);
-
-        /* If we have a parent */
-        Account myAct = getParent();
-        if (myAct != null) {
-            /* Update it */
-            Account myNewAct = myList.findItemById(myAct.getId());
-            setValueParent(myNewAct);
+    /**
+     * Adjust closed date.
+     * @throws JDataException on error
+     */
+    public void adjustClosed() throws JDataException {
+        /* If we have a latest event that is later than the close */
+        if (getClose().compareTo(theLatest.getDate()) < 0) {
+            /* Record the more accurate date */
+            setClose(theLatest.getDate());
         }
 
-        /* If we have an alias */
-        myAct = getAlias();
-        if (myAct != null) {
-            /* Update it */
-            Account myNewAct = myList.findItemById(myAct.getId());
-            setValueAlias(myNewAct);
+        /* If the maturity is null for a bond set it to close date */
+        if (isBond()
+            && getMaturity() == null) {
+            /* Record a date for maturity */
+            setMaturity(theLatest.getDate());
         }
     }
 
     /**
-     * Is the account priced?
-     * @return true/false
+     * Close the account.
      */
-    public boolean isPriced() {
-        return getActType().isPriced();
+    public void closeAccount() {
+        /* Close the account */
+        setClose(theLatest.getDate());
     }
 
     /**
-     * Is the account the market?
-     * @return true/false
+     * Re-open the account.
      */
-    protected boolean isMarket() {
-        return getActType().isMarket();
-    }
-
-    /**
-     * Is the account external?
-     * @return true/false
-     */
-    public boolean isExternal() {
-        return getActType().isExternal();
-    }
-
-    /**
-     * Is the account special?
-     * @return true/false
-     */
-    protected boolean isSpecial() {
-        return getActType().isSpecial();
-    }
-
-    /**
-     * Is the account internal?
-     * @return true/false
-     */
-    protected boolean isInternal() {
-        return getActType().isInternal();
-    }
-
-    /**
-     * Is the account inheritance?
-     * @return true/false
-     */
-    protected boolean isInheritance() {
-        return getActType().isInheritance();
-    }
-
-    /**
-     * Is the account the taxman?
-     * @return true/false
-     */
-    protected boolean isTaxMan() {
-        return getActType().isTaxMan();
-    }
-
-    /**
-     * Is the account money?
-     * @return true/false
-     */
-    public boolean isMoney() {
-        return getActType().isMoney();
-    }
-
-    /**
-     * Is the account cash?
-     * @return true/false
-     */
-    protected boolean isCash() {
-        return getActType().isCash();
-    }
-
-    /**
-     * Is the account writeOff?
-     * @return true/false
-     */
-    protected boolean isWriteOff() {
-        return getActType().isWriteOff();
-    }
-
-    /**
-     * Is the account and endowment?
-     * @return true/false
-     */
-    protected boolean isEndowment() {
-        return getActType().isEndowment();
-    }
-
-    /**
-     * Is the account an owner?
-     * @return true/false
-     */
-    public boolean isOwner() {
-        return getActType().isOwner();
-    }
-
-    /**
-     * Is the account taxFree?
-     * @return true/false
-     */
-    public boolean isTaxFree() {
-        return getActType().isTaxFree();
-    }
-
-    /**
-     * Is the account a UnitTrust?
-     * @return true/false
-     */
-    public boolean isUnitTrust() {
-        return getActType().isUnitTrust();
-    }
-
-    /**
-     * Is the account a debt?
-     * @return true/false
-     */
-    public boolean isDebt() {
-        return getActType().isDebt();
-    }
-
-    /**
-     * Is the account a child?
-     * @return true/false
-     */
-    public boolean isChild() {
-        return getActType().isChild();
-    }
-
-    /**
-     * Is the account a bond?
-     * @return true/false
-     */
-    public boolean isBond() {
-        return getActType().isBond();
-    }
-
-    /**
-     * Is the account benefit?
-     * @return true/false
-     */
-    public boolean isBenefit() {
-        return getActType().isBenefit();
-    }
-
-    /**
-     * Is the account a LifeBond?
-     * @return true/false
-     */
-    public boolean isLifeBond() {
-        return getActType().isLifeBond();
-    }
-
-    /**
-     * Is the account capital?
-     * @return true/false
-     */
-    public boolean isCapital() {
-        return getActType().isCapital();
-    }
-
-    /**
-     * Is the account capitalGains?
-     * @return true/false
-     */
-    public boolean isCapitalGains() {
-        return getActType().isCapitalGains();
-    }
-
-    /**
-     * Validate the account.
-     */
-    @Override
-    public void validate() {
-        AccountType myType = getActType();
-        String myName = getName();
-        String myDesc = getDesc();
-        Account myParent = getParent();
-        Account myAlias = getAlias();
-        AccountList myList = (AccountList) getList();
-        FinanceData mySet = getDataSet();
-
-        /* AccountType must be non-null */
-        if (myType == null) {
-            addError("AccountType must be non-null", FIELD_TYPE);
-        } else if (!myType.getEnabled()) {
-            addError("AccountType must be enabled", FIELD_TYPE);
-        }
-
-        /* Name must be non-null */
-        if (myName == null) {
-            addError("Name must be non-null", FIELD_NAME);
-
-            /* Check that the name is unique */
-        } else {
-            /* The name must not be too long */
-            if (myName.length() > NAMELEN) {
-                addError("Name is too long", FIELD_NAME);
-            }
-
-            if (myList.countInstances(myName) > 1) {
-                addError("Name must be unique", FIELD_NAME);
-            }
-        }
-
-        /* The description must not be too long */
-        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
-            addError("Description is too long", FIELD_DESC);
-        }
-
-        /* If the account is priced */
-        if (myType.isPriced()) {
-            /* If this account has an alias */
-            if (myAlias != null) {
-                /* Must not have prices */
-                if (hasPrices) {
-                    addError("Aliased account has prices", FIELD_TYPE);
-                }
-
-                /* Alias account must have prices */
-                if ((!myAlias.hasPrices) && (myAlias.theEarliest != null)) {
-                    addError("Alias account has no prices", FIELD_TYPE);
-                }
-
-                /* else this is a standard account */
-            } else {
-                /* Must have prices */
-                if ((!hasPrices) && (theEarliest != null)) {
-                    addError("Priced account has no prices", FIELD_TYPE);
-                }
-            }
-
-            /* else the account is not priced */
-        } else {
-            /* Prices cannot exist */
-            if (hasPrices) {
-                addError("non-Priced account has prices", FIELD_TYPE);
-            }
-        }
-
-        /* If the account is not a child then parent cannot exist */
-        if (!myType.isChild()) {
-            if (myParent != null) {
-                addError("Non-child account has parent", FIELD_PARENT);
-            }
-
-            /* else we should have a parent */
-        } else {
-            /* If data has been fully loaded we have no parent */
-            if ((mySet.getLoadState() != LoadState.INITIAL) && (myParent == null)) {
-                addError("Child Account must have parent", FIELD_PARENT);
-            }
-
-            /* if we have a parent */
-            if (myParent != null) {
-                /* check that any parent is owner */
-                if (!myParent.isOwner()) {
-                    addError("Parent account must be owner", FIELD_PARENT);
-                }
-
-                /* If we are open then parent must be open */
-                if (!isClosed() && myParent.isClosed()) {
-                    addError("Parent account must not be closed", FIELD_PARENT);
-                }
-            }
-        }
-
-        /* If we have an alias */
-        if (myAlias != null) {
-            /* Access the alias type */
-            AccountType myAliasType = myAlias.getActType();
-
-            /* Cannot alias to self */
-            if (Difference.isEqual(this, myAlias)) {
-                addError("Cannot alias to self", FIELD_ALIAS);
-
-                /* Cannot alias to same type */
-            } else if (Difference.isEqual(myType, myAliasType)) {
-                addError("Cannot alias to same account type", FIELD_ALIAS);
-            }
-
-            /* Must be alias type */
-            if (!myType.canAlias()) {
-                addError("This account type cannot alias", FIELD_ALIAS);
-            }
-
-            /* Must not be aliased to */
-            if (isAliasedTo) {
-                addError("This account is already aliased to", FIELD_ALIAS);
-            }
-
-            /* Alias must be alias type */
-            if (!myAliasType.canAlias()) {
-                addError("The alias account type is invalid", FIELD_ALIAS);
-            }
-
-            /* Alias cannot be aliased */
-            if (myAlias.isAlias()) {
-                addError("The alias account is already aliased", FIELD_ALIAS);
-            }
-        }
-
-        /* If the account has rates then it must be money-based */
-        if ((hasRates) && (!myType.isMoney())) {
-            addError("non-Money account has rates", FIELD_TYPE);
-        }
-
-        /* If the account has a maturity rate then it must be a bond */
-        if ((getMaturity() != null) && (!myType.isBond())) {
-            addError("non-Bond has maturity date", FIELD_MATURITY);
-        }
-
-        /* Open Bond accounts must have maturity */
-        if ((myType.isBond()) && !isClosed() && (getMaturity() == null)) {
-            addError("Bond must have maturity date", FIELD_MATURITY);
-        }
-
-        /* If data has been fully loaded and the account is closed it must be closeable */
-        if ((mySet.getLoadState() != LoadState.INITIAL) && (isClosed()) && (!isCloseable())) {
-            addError("Non-closeable account is closed", FIELD_CLOSE);
-        }
-
-        /* The WebSite must not be too long */
-        if ((getWebSite() != null) && (getWebSite().length > WSITELEN)) {
-            addError("WebSite is too long", FIELD_WEBSITE);
-        }
-
-        /* The CustNo must not be too long */
-        if ((getCustNo() != null) && (getCustNo().length > CUSTLEN)) {
-            addError("Customer No. is too long", FIELD_CUSTNO);
-        }
-
-        /* The UserId must not be too long */
-        if ((getUserId() != null) && (getUserId().length > UIDLEN)) {
-            addError("UserId is too long", FIELD_USERID);
-        }
-
-        /* The Password must not be too long */
-        if ((getPassword() != null) && (getPassword().length > PWDLEN)) {
-            addError("Password is too long", FIELD_PASSWORD);
-        }
-
-        /* The Account must not be too long */
-        if ((getAccount() != null) && (getAccount().length > ACTLEN)) {
-            addError("Account is too long", FIELD_ACCOUNT);
-        }
-
-        /* The Notes must not be too long */
-        if ((getNotes() != null) && (getNotes().length > NOTELEN)) {
-            addError("WebSite is too long", FIELD_NOTES);
-        }
-
-        /* Set validation flag */
-        boolean isValid = !hasErrors();
-        if (isValid) {
-            setValidEdit();
-        }
-    }
-
-    /**
-     * Get the value of an account on a specific date.
-     * @param pDate The date of the valuation
-     * @return Valuation of account
-     */
-    public JMoney getValue(final JDateDay pDate) {
-        /* Initialise money */
-        JMoney myValue = new JMoney();
-
-        /* Access the Events */
-        FinanceData mySet = getDataSet();
-        EventList myEvents = mySet.getEvents();
-
-        /* Loop through the Events extracting relevant elements */
-        Iterator<Event> myIterator = myEvents.iterator();
-        while (myIterator.hasNext()) {
-            /* Check the range */
-            Event myCurr = myIterator.next();
-            int myResult = pDate.compareTo(myCurr.getDate());
-
-            /* Handle out of range */
-            if (myResult == -1) {
-                break;
-            }
-
-            /* If this Event relates to this account */
-            if (myCurr.relatesTo(this)) {
-                /* Access the amount */
-                JMoney myAmount = myCurr.getAmount();
-
-                /* If this is a credit add the value */
-                if (this.compareTo(myCurr.getCredit()) == 0) {
-                    myValue.addAmount(myAmount);
-
-                    /* else subtract from value */
-                } else {
-                    myValue.subtractAmount(myAmount);
-                }
-            }
-        }
-
-        /* Return the value */
-        return myValue;
+    public void reOpenAccount() {
+        /* Reopen the account */
+        setClose(null);
     }
 
     /**
@@ -2019,7 +894,6 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             /* Access as event */
             Event myEvent = (Event) pObject;
 
-            /* Note flags */
             /* Record the event */
             if (theEarliest == null) {
                 theEarliest = myEvent;
@@ -2050,262 +924,357 @@ public class Account extends EncryptedItem implements Comparable<Account> {
     }
 
     /**
-     * Set non-closeable.
-     */
-    public void setNonCloseable() {
-        /* Record the status */
-        isCloseable = false;
-    }
-
-    /**
-     * Adjust closed date.
-     */
-    public void adjustClosed() {
-        /* If we have a latest event that is later than the close */
-        if (getClose().compareTo(theLatest.getDate()) < 0) {
-            /* Record the more accurate date */
-            setClose(theLatest.getDate());
-        }
-
-        /* If the maturity is null for a bond set it to close date */
-        if (isBond() && getMaturity() == null) {
-            /* Record a date for maturity */
-            setMaturity(theLatest.getDate());
-        }
-    }
-
-    /**
-     * Close the account.
-     */
-    public void closeAccount() {
-        /* Close the account */
-        setClose(theLatest.getDate());
-    }
-
-    /**
-     * Re-open the account.
-     */
-    public void reOpenAccount() {
-        /* Reopen the account */
-        setClose(null);
-    }
-
-    /**
-     * Set a new description.
-     * @param pDesc the description
-     * @throws JDataException on error
-     */
-    public void setDescription(final String pDesc) throws JDataException {
-        setValueDesc(pDesc);
-    }
-
-    /**
      * Set a new maturity date.
      * @param pDate the new date
+     * @throws JDataException on error
      */
-    public void setMaturity(final JDateDay pDate) {
-        setValueMaturity(pDate);
-    }
-
-    /**
-     * Set a new close date.
-     * @param pDate the new date
-     */
-    public void setClose(final JDateDay pDate) {
-        setValueClose(pDate);
+    public void setMaturity(final JDateDay pDate) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Maturity, pDate);
     }
 
     /**
      * Set a new parent.
      * @param pParent the new parent
+     * @throws JDataException on error
      */
-    public void setParent(final Account pParent) {
-        setValueParent(pParent);
+    public void setParent(final Account pParent) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Parent, pParent);
     }
 
     /**
      * Set a new alias.
      * @param pAlias the new alias
-     */
-    public void setAlias(final Account pAlias) {
-        setValueAlias(pAlias);
-    }
-
-    /**
-     * Set a new account name.
-     * @param pName the new name
      * @throws JDataException on error
      */
-    public void setAccountName(final String pName) throws JDataException {
-        setValueName(pName);
+    public void setAlias(final Account pAlias) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Alias, pAlias);
     }
 
     /**
-     * Set a new account type.
-     * @param pType the new type
-     */
-    public void setActType(final AccountType pType) {
-        setValueType(pType);
-    }
-
-    /**
-     * Set a new web site.
-     * @param pWebSite the new site
+     * Set a new WebSite.
+     * @param pWebSite the new webSite
      * @throws JDataException on error
      */
     public void setWebSite(final char[] pWebSite) throws JDataException {
-        setValueWebSite(pWebSite);
+        setInfoSetValue(AccountInfoClass.WebSite, pWebSite);
     }
 
     /**
-     * Set a new customer number.
-     * @param pCustNo the new number
+     * Set a new CustNo.
+     * @param pCustNo the new custNo
      * @throws JDataException on error
      */
     public void setCustNo(final char[] pCustNo) throws JDataException {
-        setValueCustNo(pCustNo);
+        setInfoSetValue(AccountInfoClass.CustNo, pCustNo);
     }
 
     /**
      * Set a new UserId.
-     * @param pUserId the new id
+     * @param pUserId the new userId
      * @throws JDataException on error
      */
     public void setUserId(final char[] pUserId) throws JDataException {
-        setValueUserId(pUserId);
+        setInfoSetValue(AccountInfoClass.UserId, pUserId);
     }
 
     /**
-     * Set a new password.
+     * Set a new Password.
      * @param pPassword the new password
      * @throws JDataException on error
      */
     public void setPassword(final char[] pPassword) throws JDataException {
-        setValuePassword(pPassword);
+        setInfoSetValue(AccountInfoClass.Password, pPassword);
     }
 
     /**
-     * Set a new account.
+     * Set a new Account.
      * @param pAccount the new account
      * @throws JDataException on error
      */
     public void setAccount(final char[] pAccount) throws JDataException {
-        setValueAccount(pAccount);
+        setInfoSetValue(AccountInfoClass.Account, pAccount);
     }
 
     /**
-     * Set a new notes.
+     * Set a new Notes.
      * @param pNotes the new notes
      * @throws JDataException on error
      */
     public void setNotes(final char[] pNotes) throws JDataException {
-        setValueNotes(pNotes);
+        setInfoSetValue(AccountInfoClass.Notes, pNotes);
     }
 
     /**
-     * Update base account from an edited account.
-     * @param pAccount the edited account
-     * @return whether changes have been made
+     * Set an infoSet value.
+     * @param pInfoClass the class of info to set
+     * @param pValue the value to set
+     * @throws JDataException on error
+     */
+    private void setInfoSetValue(final AccountInfoClass pInfoClass,
+                                 final Object pValue) throws JDataException {
+        /* Reject if there is no infoSet */
+        if (!hasInfoSet) {
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid call to set InfoSet value");
+        }
+
+        /* Set the value */
+        theInfoSet.setValue(pInfoClass, pValue);
+    }
+
+    /**
+     * Get an infoSet value.
+     * @param pInfoClass the class of info to get
+     * @return the value to set
+     */
+    private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
+        Object myValue;
+
+        switch (pInfoClass) {
+            case Parent:
+            case Alias:
+                /* Access account of object */
+                myValue = hasInfoSet ? theInfoSet.getAccount(pInfoClass) : null;
+                break;
+            default:
+                /* Access value of object */
+                myValue = hasInfoSet ? theInfoSet.getField(pInfoClass) : null;
+                break;
+
+        }
+        /* Return the value */
+        return (myValue != null) ? myValue : JDataFieldValue.SkipField;
+    }
+
+    @Override
+    protected void markActiveItems() {
+        /* mark underlying items */
+        super.markActiveItems();
+
+        /* Access values */
+        Account myParent = getParent();
+        Account myAlias = getAlias();
+        Boolean isClosed = isClosed();
+
+        /* If we have a parent, mark the parent */
+        if (myParent != null) {
+            myParent.touchItem(this);
+            if (!isClosed) {
+                myParent.setNonCloseable();
+            }
+        }
+
+        /* If we have an alias, mark the alias */
+        if (myAlias != null) {
+            myAlias.touchItem(this);
+            if (!isClosed) {
+                myAlias.setNonCloseable();
+            }
+        }
+
+        /* If we have patterns or are touched by patterns, then we are not close-able */
+        if (hasPatterns
+            || isPatterned) {
+            setNonCloseable();
+        }
+
+        /* Mark infoSet items */
+        theInfoSet.markActiveItems();
+    }
+
+    /**
+     * Validate the account.
      */
     @Override
-    public boolean applyChanges(final DataItem pAccount) {
-        /* Can only update from an account */
-        if (!(pAccount instanceof Account)) {
-            return false;
+    public void validate() {
+        AccountType myType = getActType();
+        Account myParent = getParent();
+        Account myAlias = getAlias();
+        FinanceData mySet = getDataSet();
+
+        /* If the account is priced */
+        if (myType.isPriced()) {
+            /* If this account has an alias */
+            if (myAlias != null) {
+                /* Must not have prices */
+                if (hasPrices) {
+                    addError("Aliased account has prices", FIELD_TYPE);
+                }
+
+                /* Alias account must have prices */
+                if ((!myAlias.hasPrices)
+                    && (myAlias.theEarliest != null)) {
+                    addError("Alias account has no prices", FIELD_TYPE);
+                }
+
+                /* else this is a standard account */
+            } else {
+                /* Must have prices */
+                if ((!hasPrices)
+                    && (theEarliest != null)) {
+                    addError("Priced account has no prices", FIELD_TYPE);
+                }
+            }
+
+            /* else the account is not priced */
+        } else {
+            /* Prices cannot exist */
+            if (hasPrices) {
+                addError("non-Priced account has prices", FIELD_TYPE);
+            }
         }
 
-        Account myAccount = (Account) pAccount;
+        /* If the account is not a child then parent cannot exist */
+        if (!myType.isChild()) {
+            if (myParent != null) {
+                addError("Non-child account has parent", FIELD_PARENT);
+            }
 
-        /* Store the current detail into history */
-        pushHistory();
+            /* else we should have a parent */
+        } else {
+            /* If data has been fully loaded we have no parent */
+            if ((mySet.getLoadState() != LoadState.INITIAL)
+                && (myParent == null)) {
+                addError("Child Account must have parent", FIELD_PARENT);
+            }
 
-        /* Update the Name if required */
-        if (!Difference.isEqual(getName(), myAccount.getName())) {
-            setValueName(myAccount.getNameField());
+            /* if we have a parent */
+            if (myParent != null) {
+                /* check that any parent is owner */
+                if (!myParent.isOwner()) {
+                    addError("Parent account must be owner", FIELD_PARENT);
+                }
+
+                /* If we are open then parent must be open */
+                if (!isClosed()
+                    && myParent.isClosed()) {
+                    addError("Parent account must not be closed", FIELD_PARENT);
+                }
+            }
         }
 
-        /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myAccount.getDesc())) {
-            setValueDesc(myAccount.getDescField());
+        /* If we have an alias */
+        if (myAlias != null) {
+            /* Access the alias type */
+            AccountType myAliasType = myAlias.getActType();
+
+            /* Cannot alias to self */
+            if (Difference.isEqual(this, myAlias)) {
+                addError("Cannot alias to self", FIELD_ALIAS);
+
+                /* Cannot alias to same type */
+            } else if (Difference.isEqual(myType, myAliasType)) {
+                addError("Cannot alias to same account type", FIELD_ALIAS);
+            }
+
+            /* Must be alias type */
+            if (!myType.canAlias()) {
+                addError("This account type cannot alias", FIELD_ALIAS);
+            }
+
+            /* Must not be aliased to */
+            if (isAliasedTo) {
+                addError("This account is already aliased to", FIELD_ALIAS);
+            }
+
+            /* Alias must be alias type */
+            if (!myAliasType.canAlias()) {
+                addError("The alias account type is invalid", FIELD_ALIAS);
+            }
+
+            /* Alias cannot be aliased */
+            if (myAlias.isAlias()) {
+                addError("The alias account is already aliased", FIELD_ALIAS);
+            }
         }
 
-        /* Update the account type if required */
-        if (!Difference.isEqual(getActType(), myAccount.getActType())) {
-            setValueType(myAccount.getActType());
+        /* If the account has rates then it must be money-based */
+        if ((hasRates)
+            && (!myType.isMoney())) {
+            addError("non-Money account has rates", FIELD_TYPE);
         }
 
-        /* Update the maturity if required */
-        if (!Difference.isEqual(getMaturity(), myAccount.getMaturity())) {
-            setValueMaturity(myAccount.getMaturity());
+        /* If the account has a maturity rate then it must be a bond */
+        if ((getMaturity() != null)
+            && (!myType.isBond())) {
+            addError("non-Bond has maturity date", FIELD_MATURITY);
         }
 
-        /* Update the close if required */
-        if (!Difference.isEqual(getClose(), myAccount.getClose())) {
-            setValueClose(myAccount.getClose());
+        /* Open Bond accounts must have maturity */
+        if ((myType.isBond())
+            && !isClosed()
+            && (getMaturity() == null)) {
+            addError("Bond must have maturity date", FIELD_MATURITY);
         }
 
-        /* Update the parent if required */
-        if (!Difference.isEqual(getParent(), myAccount.getParent())) {
-            setValueParent(myAccount.getParent());
+        /* If data has been fully loaded and the account is closed it must be closeable */
+        if ((mySet.getLoadState() != LoadState.INITIAL)
+            && (isClosed())
+            && (!isCloseable())) {
+            addError("Non-closeable account is closed", FIELD_CLOSE);
         }
 
-        /* Update the alias if required */
-        if (!Difference.isEqual(getAlias(), myAccount.getAlias())) {
-            setValueAlias(myAccount.getAlias());
+        /* The WebSite must not be too long */
+        if ((getWebSite() != null)
+            && (getWebSite().length > WSITELEN)) {
+            addError("WebSite is too long", FIELD_WEBSITE);
         }
 
-        /* Update the WebSite if required */
-        if (!Difference.isEqual(getWebSite(), myAccount.getWebSite())) {
-            setValueWebSite(myAccount.getWebSiteField());
+        /* The CustNo must not be too long */
+        if ((getCustNo() != null)
+            && (getCustNo().length > CUSTLEN)) {
+            addError("Customer No. is too long", FIELD_CUSTNO);
         }
 
-        /* Update the customer number if required */
-        if (!Difference.isEqual(getCustNo(), myAccount.getCustNo())) {
-            setValueCustNo(myAccount.getCustNoField());
+        /* The UserId must not be too long */
+        if ((getUserId() != null)
+            && (getUserId().length > UIDLEN)) {
+            addError("UserId is too long", FIELD_USERID);
         }
 
-        /* Update the UserId if required */
-        if (!Difference.isEqual(getUserId(), myAccount.getUserId())) {
-            setValueUserId(myAccount.getUserIdField());
+        /* The Password must not be too long */
+        if ((getPassword() != null)
+            && (getPassword().length > PWDLEN)) {
+            addError("Password is too long", FIELD_PASSWORD);
         }
 
-        /* Update the Password if required */
-        if (!Difference.isEqual(getPassword(), myAccount.getPassword())) {
-            setValuePassword(myAccount.getPasswordField());
+        /* The Account must not be too long */
+        if ((getAccount() != null)
+            && (getAccount().length > ACTLEN)) {
+            addError("Account is too long", FIELD_ACCOUNT);
         }
 
-        /* Update the account if required */
-        if (!Difference.isEqual(getAccount(), myAccount.getAccount())) {
-            setValueAccount(myAccount.getAccountField());
+        /* The Notes must not be too long */
+        if ((getNotes() != null)
+            && (getNotes().length > NOTELEN)) {
+            addError("WebSite is too long", FIELD_NOTES);
         }
 
-        /* Update the notes if required */
-        if (!Difference.isEqual(getNotes(), myAccount.getNotes())) {
-            setValueNotes(myAccount.getNotesField());
+        /* Set validation flag */
+        boolean isValid = !hasErrors();
+        if (isValid) {
+            setValidEdit();
         }
-
-        /* Check for changes */
-        return checkForHistory();
     }
 
     /**
-     * AccountList class.
+     * The Account List class.
      */
-    public static class AccountList extends EncryptedList<Account> {
+    public static class AccountList
+            extends AccountBaseList<Account> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountList.class.getSimpleName(), DataList.FIELD_DEFS);
-
-        /**
-         * Account field id.
-         */
-        public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountList.class.getSimpleName(), AccountBaseList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
+
+        /**
+         * Account field id.
+         */
+        public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -2314,6 +1283,16 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             }
             return super.getFieldValue(pField);
         }
+
+        /**
+         * The AccountInfo List.
+         */
+        private AccountInfoList theInfoList = null;
+
+        /**
+         * The AccountInfoType list.
+         */
+        private AccountInfoTypeList theInfoTypeList = null;
 
         /**
          * The account.
@@ -2325,11 +1304,6 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             return LIST_NAME;
         }
 
-        @Override
-        public FinanceData getDataSet() {
-            return (FinanceData) super.getDataSet();
-        }
-
         /**
          * Obtain the account.
          * @return the account
@@ -2339,11 +1313,33 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         }
 
         /**
-         * Construct an empty CORE account list.
+         * Obtain the accountInfoList.
+         * @return the account info list
+         */
+        public AccountInfoList getAccountInfo() {
+            if (theInfoList == null) {
+                theInfoList = getDataSet().getAccountInfo();
+            }
+            return theInfoList;
+        }
+
+        /**
+         * Obtain the accountInfoTypeList.
+         * @return the account info type list
+         */
+        public AccountInfoTypeList getActInfoTypes() {
+            if (theInfoTypeList == null) {
+                theInfoTypeList = getDataSet().getActInfoTypes();
+            }
+            return theInfoTypeList;
+        }
+
+        /**
+         * Construct an empty CORE Account list.
          * @param pData the DataSet for the list
          */
-        protected AccountList(final FinanceData pData) {
-            super(Account.class, pData);
+        public AccountList(final FinanceData pData) {
+            super(pData, Account.class);
         }
 
         /**
@@ -2355,8 +1351,10 @@ public class Account extends EncryptedItem implements Comparable<Account> {
         }
 
         @Override
-        protected AccountList getEmptyList() {
-            return new AccountList(this);
+        protected AccountList getEmptyList(final ListStyle pStyle) {
+            AccountList myList = new AccountList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -2381,12 +1379,18 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          */
         public AccountList deriveEditList(final Account pAccount) {
             /* Build an empty Extract List */
-            AccountList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            AccountList myList = getEmptyList(ListStyle.EDIT);
 
-            /* Create a new account based on the passed account */
-            myList.theAccount = new Account(myList, pAccount);
-            myList.add(myList.theAccount);
+            /* Store InfoType list */
+            myList.theInfoTypeList = getActInfoTypes();
+
+            /* Create info List */
+            AccountInfoList myActInfo = getAccountInfo();
+            myList.theInfoList = myActInfo.getEmptyList(ListStyle.EDIT);
+            populateList(myList);
+
+            /* Find the interesting account */
+            myList.theAccount = myList.findItemById(pAccount.getId());
 
             /* Return the List */
             return myList;
@@ -2399,8 +1403,15 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          */
         public AccountList deriveEditList(final AccountType pType) {
             /* Build an empty Extract List */
-            AccountList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            AccountList myList = getEmptyList(ListStyle.EDIT);
+
+            /* Store InfoType list */
+            myList.theInfoTypeList = getActInfoTypes();
+
+            /* Create info List */
+            AccountInfoList myActInfo = getAccountInfo();
+            myList.theInfoList = myActInfo.getEmptyList(ListStyle.EDIT);
+            populateList(myList);
 
             /* Create a new account */
             myList.theAccount = new Account(myList);
@@ -2442,288 +1453,8 @@ public class Account extends EncryptedItem implements Comparable<Account> {
          * @throws JDataException on error
          */
         public void markActiveItems() throws JDataException {
-            /* Access the iterator */
-            Iterator<Account> myIterator = iterator();
-            Account myCurr;
-
-            /* Loop through the accounts */
-            while (myIterator.hasNext()) {
-                myCurr = myIterator.next();
-                /* If we have a parent, mark the parent */
-                if (myCurr.getParent() != null) {
-                    myCurr.getParent().touchItem(myCurr);
-                    if (!myCurr.isClosed()) {
-                        myCurr.getParent().setNonCloseable();
-                    }
-                }
-
-                /* If we have an alias, mark the alias */
-                if (myCurr.getAlias() != null) {
-                    myCurr.getAlias().touchItem(myCurr);
-                    if (!myCurr.isClosed()) {
-                        myCurr.getAlias().setNonCloseable();
-                    }
-                }
-
-                /* Mark the AccountType */
-                AccountType myType = myCurr.getActType();
-                myType.touchItem(myCurr);
-
-                /* If we are a child and have no latest event, then we are not close-able */
-                /*
-                 * if ((myCurr.isChild()) && (myCurr.getLatest() == null)) { myCurr.setNonCloseable(); }
-                 */
-
-                /* If we have patterns or are touched by patterns, then we are not close-able */
-                if (myCurr.hasPatterns || myCurr.isPatterned) {
-                    myCurr.setNonCloseable();
-                }
-
-                /* If we have a close date and a latest event */
-                if ((myCurr.getClose() != null) && (myCurr.getLatest() != null)) {
-                    /* Check whether we need to adjust the date */
-                    myCurr.adjustClosed();
-                }
-            }
-
-            /* If we are in final loading stage */
-            if (getDataSet().getLoadState() == LoadState.FINAL) {
-                /* Access a new iterator */
-                myIterator = listIterator();
-
-                /* Loop through the accounts */
-                while (myIterator.hasNext()) {
-                    myCurr = myIterator.next();
-
-                    /* Validate the account */
-                    myCurr.validate();
-                    if (myCurr.hasErrors()) {
-                        throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
-                    }
-                }
-            }
-        }
-
-        /**
-         * Count the instances of a string.
-         * @param pName the string to check for
-         * @return The Item if present (or null)
-         */
-        protected int countInstances(final String pName) {
-            /* Access the iterator */
-            Iterator<Account> myIterator = iterator();
-            int iCount = 0;
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                Account myCurr = myIterator.next();
-                if (pName.equals(myCurr.getName())) {
-                    iCount++;
-                }
-            }
-
-            /* Return to caller */
-            return iCount;
-        }
-
-        /**
-         * Search for a particular item by Name.
-         * @param pName Name of item
-         * @return The Item if present (or null)
-         */
-        public Account findItemByName(final String pName) {
-            /* Access the iterator */
-            Iterator<Account> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                Account myCurr = myIterator.next();
-                if (pName.equals(myCurr.getName())) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
-        }
-
-        /**
-         * Get the market account from the list.
-         * @return the Market account
-         */
-        public Account getMarket() {
-            /* Access the iterator */
-            Iterator<Account> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                Account myCurr = myIterator.next();
-                if (myCurr.isMarket()) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
-        }
-
-        /**
-         * Get the TaxMan account from the list.
-         * @return the TaxMan account
-         */
-        public Account getTaxMan() {
-            /* Access the iterator */
-            Iterator<Account> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                Account myCurr = myIterator.next();
-                if (myCurr.isTaxMan()) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
-        }
-
-        /**
-         * Add an Account.
-         * @param uId the is
-         * @param pName the Name of the account
-         * @param pAcType the Name of the account type
-         * @param pDesc the description of the account
-         * @param pMaturity the Maturity date for a bond (or null)
-         * @param pClosed the Close Date for the account (or null)
-         * @param pParent the Name of the parent account (or null)
-         * @param pAlias the Name of the alias account (or null)
-         * @param pWebSite the webSite
-         * @param pCustNo the customer no
-         * @param pUserId the user id
-         * @param pPassword the password
-         * @param pAccount the account details
-         * @param pNotes notes
-         * @throws JDataException on error
-         */
-        public void addOpenItem(final Integer uId,
-                                final String pName,
-                                final String pAcType,
-                                final String pDesc,
-                                final Date pMaturity,
-                                final Date pClosed,
-                                final String pParent,
-                                final String pAlias,
-                                final char[] pWebSite,
-                                final char[] pCustNo,
-                                final char[] pUserId,
-                                final char[] pPassword,
-                                final char[] pAccount,
-                                final char[] pNotes) throws JDataException {
-            /* Access the account types and accounts */
+            /* Access dataSet */
             FinanceData myData = getDataSet();
-            AccountTypeList myActTypes = myData.getAccountTypes();
-
-            /* Look up the Account Type */
-            AccountType myActType = myActTypes.findItemByName(pAcType);
-            if (myActType == null) {
-                throw new JDataException(ExceptionClass.DATA, "Account [" + pName + "] has invalid Account Type [" + pAcType + "]");
-            }
-
-            /* If we have a parent */
-            Integer myParentId = null;
-            if (pParent != null) {
-                /* Look up the Parent */
-                Account myParent = findItemByName(pParent);
-                if (myParent == null) {
-                    throw new JDataException(ExceptionClass.DATA, "Account [" + pName + "] has invalid Parent [" + pParent + "]");
-                }
-                myParentId = myParent.getId();
-            }
-
-            /* If we have a parent */
-            Integer myAliasId = null;
-            if (pAlias != null) {
-                /* Look up the Parent */
-                Account myAlias = findItemByName(pAlias);
-                if (myAlias == null) {
-                    throw new JDataException(ExceptionClass.DATA, "Account [" + pName + "] has invalid Alias [" + pAlias + "]");
-                }
-                myAliasId = myAlias.getId();
-            }
-
-            /* Create the new account */
-            Account myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, pMaturity, pClosed, myParentId, myAliasId, pWebSite, pCustNo, pUserId,
-                    pPassword, pAccount, pNotes);
-
-            /* Check that this Account has not been previously added */
-            if (findItemByName(myAccount.getName()) != null) {
-                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
-            }
-
-            /* Add the Account to the list */
-            append(myAccount);
-        }
-
-        /**
-         * Add an Account.
-         * @param uId the Id of the account
-         * @param uControlId the control id
-         * @param pName the Encrypted Name of the account
-         * @param uAcTypeId the Id of the account type
-         * @param pDesc the Encrypted Description of the account (or null)
-         * @param pMaturity the Maturity date for a bond (or null)
-         * @param pClosed the Close Date for the account (or null)
-         * @param pParentId the Id of the parent account (or -1)
-         * @param pAliasId the Id of the alias account (or -1)
-         * @param pWebSite the Encrypted WebSite of the account
-         * @param pCustNo the Encrypted CustomerId of the account
-         * @param pUserId the Encrypted UserId of the account
-         * @param pPassword the Encrypted Password of the account
-         * @param pAccount the Encrypted Account details of the account
-         * @param pNotes the Encrypted Notes for the account
-         * @throws JDataException on error
-         */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
-                                  final byte[] pName,
-                                  final Integer uAcTypeId,
-                                  final byte[] pDesc,
-                                  final Date pMaturity,
-                                  final Date pClosed,
-                                  final Integer pParentId,
-                                  final Integer pAliasId,
-                                  final byte[] pWebSite,
-                                  final byte[] pCustNo,
-                                  final byte[] pUserId,
-                                  final byte[] pPassword,
-                                  final byte[] pAccount,
-                                  final byte[] pNotes) throws JDataException {
-            /* Create the new account */
-            Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, pMaturity, pClosed, pParentId, pAliasId, pWebSite, pCustNo,
-                    pUserId, pPassword, pAccount, pNotes);
-
-            /* Check that this AccountId has not been previously added */
-            if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate AccountId");
-            }
-
-            /* Check that this Account has not been previously added */
-            if (findItemByName(myAccount.getName()) != null) {
-                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
-            }
-
-            /* Add the Account to the list */
-            append(myAccount);
-        }
-
-        /**
-         * Validate newly loaded accounts. This is deliberately deferred until after loading of the Rates/Patterns/Prices so as to validate the
-         * interrelationships
-         * @throws JDataException on error
-         */
-        public void validateLoadedAccounts() throws JDataException {
-            FinanceData myData = getDataSet();
-            Account myCurr;
 
             /* Mark active items referenced by rates */
             myData.getRates().markActiveItems();
@@ -2737,44 +1468,94 @@ public class Account extends EncryptedItem implements Comparable<Account> {
             /* Access the iterator */
             Iterator<Account> myIterator = iterator();
 
-            /* Loop through the items */
+            /* Loop through the accounts */
             while (myIterator.hasNext()) {
-                myCurr = myIterator.next();
+                Account myCurr = myIterator.next();
 
-                /* If the account has a parent Id */
-                if (myCurr.getParentId() != null) {
-                    /* Set the parent */
-                    myCurr.setParent(findItemById(myCurr.getParentId()));
-                    myCurr.getParent().touchItem(myCurr);
-                }
+                /* mark active items */
+                myCurr.markActiveItems();
 
-                /* If the account has an alias Id */
-                if (myCurr.getAliasId() != null) {
-                    /* Set the alias */
-                    myCurr.setAlias(findItemById(myCurr.getAliasId()));
-                    myCurr.getAlias().touchItem(myCurr);
-                }
-
-                /* Mark the AccountType */
-                AccountType myType = myCurr.getActType();
-                myType.touchItem(myCurr);
-            }
-
-            /* Create another iterator */
-            myIterator = iterator();
-
-            /* Loop through the items */
-            while (myIterator.hasNext()) {
-                myCurr = myIterator.next();
-
-                /* Validate the account */
-                myCurr.validate();
-
-                /* Handle validation failure */
-                if (myCurr.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
+                /* If we have a close date and a latest event */
+                if ((myCurr.getClose() != null)
+                    && (myCurr.getLatest() != null)) {
+                    /* Ensure that we use the correct latest event date */
+                    myCurr.adjustClosed();
                 }
             }
+        }
+
+        /**
+         * Add an Account.
+         * @param uId the is
+         * @param pName the Name of the account
+         * @param pAcType the Name of the account type
+         * @param pDesc the description of the account
+         * @param pClosed the Close Date for the account (or null)
+         * @return the new account
+         * @throws JDataException on error
+         */
+        public Account addOpenItem(final Integer uId,
+                                   final String pName,
+                                   final String pAcType,
+                                   final String pDesc,
+                                   final Date pClosed) throws JDataException {
+            /* Access the account types and accounts */
+            FinanceData myData = getDataSet();
+            AccountTypeList myActTypes = myData.getAccountTypes();
+
+            /* Look up the Account Type */
+            AccountType myActType = myActTypes.findItemByName(pAcType);
+            if (myActType == null) {
+                throw new JDataException(ExceptionClass.DATA, "Account ["
+                                                              + pName
+                                                              + "] has invalid Account Type ["
+                                                              + pAcType
+                                                              + "]");
+            }
+            /* Create the new account */
+            Account myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, pClosed);
+
+            /* Check that this Account has not been previously added */
+            if (findItemByName(myAccount.getName()) != null) {
+                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
+            }
+
+            /* Add the Account to the list */
+            append(myAccount);
+            return myAccount;
+        }
+
+        /**
+         * Add an Account.
+         * @param uId the Id of the account
+         * @param uControlId the control id
+         * @param pName the Encrypted Name of the account
+         * @param uAcTypeId the Id of the account type
+         * @param pDesc the Encrypted Description of the account (or null)
+         * @param pClosed the Close Date for the account (or null)
+         * @throws JDataException on error
+         */
+        public void addSecureItem(final Integer uId,
+                                  final Integer uControlId,
+                                  final byte[] pName,
+                                  final Integer uAcTypeId,
+                                  final byte[] pDesc,
+                                  final Date pClosed) throws JDataException {
+            /* Create the new account */
+            Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, pClosed);
+
+            /* Check that this AccountId has not been previously added */
+            if (!isIdUnique(uId)) {
+                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate AccountId");
+            }
+
+            /* Check that this Account has not been previously added */
+            if (findItemByName(myAccount.getName()) != null) {
+                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
+            }
+
+            /* Add the Account to the list */
+            append(myAccount);
         }
     }
 }

@@ -33,12 +33,12 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountI
  * AccountInfoSet class.
  * @author Tony Washer
  */
-public class AccountInfoSet extends DataInfoSet<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass> {
+public class AccountInfoSet
+        extends DataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoSet.class.getSimpleName(),
-            DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoSet.class.getSimpleName(), DataInfoSet.FIELD_DEFS);
 
     @Override
     public JDataFields getDataFields() {
@@ -49,19 +49,13 @@ public class AccountInfoSet extends DataInfoSet<AccountInfo, AccountNew, Account
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
+     * @param pInfoList the InfoList for the set
      */
-    protected AccountInfoSet(final AccountNew pOwner,
-                             final AccountInfoTypeList pTypeList) {
+    protected AccountInfoSet(final Account pOwner,
+                             final AccountInfoTypeList pTypeList,
+                             final AccountInfoList pInfoList) {
         /* Store the Owner and Info List */
-        super(pOwner, pTypeList);
-    }
-
-    /**
-     * Set the infoList.
-     * @param pInfoList source InfoSet
-     */
-    protected void setInfoList(final AccountInfoList pInfoList) {
-        super.setInfoList(pInfoList);
+        super(pOwner, pTypeList, pInfoList);
     }
 
     /**
@@ -78,7 +72,7 @@ public class AccountInfoSet extends DataInfoSet<AccountInfo, AccountNew, Account
      * @param pInfoClass the Info Class
      * @return the account
      */
-    public AccountNew getAccount(final AccountInfoClass pInfoClass) {
+    public Account getAccount(final AccountInfoClass pInfoClass) {
         /* Access existing entry */
         AccountInfo myValue = getInfo(pInfoClass);
 

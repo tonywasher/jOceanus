@@ -42,7 +42,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearBase;
  * DatabaseTable extension for TaxYear.
  * @author Tony Washer
  */
-public class TableTaxYear extends DatabaseTable<TaxYear> {
+public class TableTaxYear
+        extends DatabaseTable<TaxYear> {
     /**
      * The name of the TaxYears table.
      */
@@ -52,11 +53,6 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
      * The TaxYear list.
      */
     private TaxYearList theList = null;
-
-    /**
-     * The DataSet.
-     */
-    // private FinanceData theData = null;
 
     /**
      * Constructor.
@@ -77,7 +73,6 @@ public class TableTaxYear extends DatabaseTable<TaxYear> {
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        // theData = myData;
         theList = myData.getTaxYears();
         setList(theList);
     }

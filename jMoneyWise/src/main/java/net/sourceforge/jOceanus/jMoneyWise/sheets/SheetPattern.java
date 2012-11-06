@@ -31,7 +31,6 @@ import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
@@ -46,7 +45,8 @@ import org.apache.poi.ss.util.CellReference;
  * SheetDataItem extension for Pattern.
  * @author Tony Washer
  */
-public class SheetPattern extends SheetDataItem<Pattern> {
+public class SheetPattern
+        extends SheetDataItem<Pattern> {
     /**
      * NamedArea for Patterns.
      */
@@ -98,11 +98,6 @@ public class SheetPattern extends SheetDataItem<Pattern> {
     private final PatternList theList;
 
     /**
-     * Accounts data list.
-     */
-    private AccountList theAccounts = null;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -111,9 +106,7 @@ public class SheetPattern extends SheetDataItem<Pattern> {
         super(pReader, AREA_PATTERNS);
 
         /* Access the Lists */
-        FinanceData myData = pReader.getData();
-        theAccounts = myData.getAccounts();
-        theList = myData.getPatterns();
+        theList = pReader.getData().getPatterns();
         setDataList(theList);
     }
 
@@ -149,8 +142,7 @@ public class SheetPattern extends SheetDataItem<Pattern> {
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myActId, myPartId, myTranId,
-                              myFreqId, isCredit);
+        theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myActId, myPartId, myTranId, myFreqId, isCredit);
     }
 
     @Override
@@ -171,8 +163,7 @@ public class SheetPattern extends SheetDataItem<Pattern> {
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        theList.addOpenItem(myID, myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency,
-                            isCredit);
+        theList.addOpenItem(myID, myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency, isCredit);
     }
 
     @Override
@@ -244,11 +235,6 @@ public class SheetPattern extends SheetDataItem<Pattern> {
         }
     }
 
-    @Override
-    protected void postProcessOnLoad() throws JDataException {
-        theAccounts.validateLoadedAccounts();
-    }
-
     /**
      * Load the Patterns from an archive.
      * @param pTask the task control
@@ -310,8 +296,7 @@ public class SheetPattern extends SheetDataItem<Pattern> {
                     String myFrequency = myRow.getCell(myCol + iAdjust++).getStringCellValue();
 
                     /* Add the value into the finance tables */
-                    myList.addOpenItem(0, myDate, myDesc, myAmount, myAccount, myPartner, myTransType,
-                                       myFrequency, isCredit);
+                    myList.addOpenItem(0, myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency, isCredit);
 
                     /* Report the progress */
                     myCount++;

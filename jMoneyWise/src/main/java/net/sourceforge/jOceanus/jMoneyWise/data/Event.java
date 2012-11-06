@@ -62,7 +62,9 @@ import net.sourceforge.jOceanus.jMoneyWise.views.Statement.StatementLine;
  * Event data type.
  * @author Tony Washer
  */
-public class Event extends EncryptedItem implements Comparable<Event> {
+public class Event
+        extends EncryptedItem
+        implements Comparable<Event> {
     /**
      * The name of the object.
      */
@@ -71,7 +73,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     /**
      * The name of the object.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Event Description length.
@@ -924,7 +927,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 JUnits myValue = myUnits;
                 setValueUnits(myUnits);
                 boolean isCredit = pCredit.isPriced();
-                if ((isStockSplit() || isAdminCharge()) && (!myUnits.isPositive())) {
+                if ((isStockSplit() || isAdminCharge())
+                    && (!myUnits.isPositive())) {
                     myValue = new JUnits(myValue);
                     myValue.negate();
                     isCredit = false;
@@ -1085,7 +1089,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 if (!isCredit) {
                     myResult = pType.isDividend();
                 } else {
-                    myResult = (pType.isMoney() || pType.isCapital() || pType.isDeferred());
+                    myResult = (pType.isMoney()
+                                || pType.isCapital() || pType.isDeferred());
                 }
                 break;
             case STOCKDEMERGER:
@@ -1350,7 +1355,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         if (myCredit == null) {
             addError("Credit account must be non-null", FIELD_CREDIT);
             /* And valid for transaction type */
-        } else if ((myTransType != null) && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
+        } else if ((myTransType != null)
+                   && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
             addError("Invalid credit account for transaction", FIELD_CREDIT);
         }
 
@@ -1358,12 +1364,16 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         if (myDebit == null) {
             addError("Debit account must be non-null", FIELD_DEBIT);
             /* And valid for transaction type */
-        } else if ((myTransType != null) && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
+        } else if ((myTransType != null)
+                   && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
             addError("Invalid debit account for transaction", FIELD_DEBIT);
         }
 
         /* Check valid Credit/Debit combination */
-        if ((myTransType != null) && (myCredit != null) && (myDebit != null) && (!isValidEvent(myTransType, myDebit, myCredit))) {
+        if ((myTransType != null)
+            && (myCredit != null)
+            && (myDebit != null)
+            && (!isValidEvent(myTransType, myDebit, myCredit))) {
             addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
             addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
         }
@@ -1376,27 +1386,35 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         }
 
         /* Money must be zero for stock split/demerger */
-        if ((myAmount != null) && (myAmount.isNonZero()) && (myTransType != null)
-                && ((myTransType.isStockDemerger()) || (myTransType.isStockSplit()) || (myTransType.isStockTakeover()))) {
+        if ((myAmount != null)
+            && (myAmount.isNonZero())
+            && (myTransType != null)
+            && ((myTransType.isStockDemerger())
+                || (myTransType.isStockSplit()) || (myTransType.isStockTakeover()))) {
             addError("Amount must be zero for Stock Split/Demerger/Takeover", FIELD_AMOUNT);
         }
 
         /* Ignore remaining checks for Patterns */
         if (!(this instanceof Pattern)) {
             /* Check for valid priced credit account */
-            if ((myCredit != null) && (myCredit.isPriced())) {
+            if ((myCredit != null)
+                && (myCredit.isPriced())) {
                 /* If the date of this event is prior to the first price */
                 AccountPrice myPrice = myCredit.getInitPrice();
-                if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
+                if ((myPrice != null)
+                    && (getDate().compareTo(myPrice.getDate()) < 0)) {
                     addError("Event Date is prior to first priced date for Credit Account", FIELD_DATE);
                 }
             }
 
             /* Check for valid priced debit account */
-            if ((myDebit != null) && (myDebit.isPriced()) && (!Difference.isEqual(myCredit, myDebit))) {
+            if ((myDebit != null)
+                && (myDebit.isPriced())
+                && (!Difference.isEqual(myCredit, myDebit))) {
                 /* If the date of this event is prior to the first price */
                 AccountPrice myPrice = myDebit.getInitPrice();
-                if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
+                if ((myPrice != null)
+                    && (getDate().compareTo(myPrice.getDate()) < 0)) {
                     addError("Event Date is prior to first priced date for Debit Account", FIELD_DATE);
                 }
             }
@@ -1404,24 +1422,31 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             /* If we have units */
             if (myUnits != null) {
                 /* If we have credit/debit accounts */
-                if ((myDebit != null) && (myCredit != null)) {
+                if ((myDebit != null)
+                    && (myCredit != null)) {
                     /* Units are only allowed if credit or debit is priced */
-                    if ((!myCredit.isPriced()) && (!myDebit.isPriced())) {
+                    if ((!myCredit.isPriced())
+                        && (!myDebit.isPriced())) {
                         addError("Units are only allowed involving assets", FIELD_UNITS);
                     }
 
                     /* If both credit/debit are both priced */
-                    if ((myCredit.isPriced()) && (myDebit.isPriced())) {
+                    if ((myCredit.isPriced())
+                        && (myDebit.isPriced())) {
                         /* TranType must be stock split or dividend between same account */
                         if ((myTransType == null)
-                                || ((!myTransType.isDividend()) && (!myTransType.isStockSplit()) && (!myTransType.isAdminCharge())
-                                        && (!myTransType.isStockDemerger()) && (!myTransType.isStockTakeover()))) {
+                            || ((!myTransType.isDividend())
+                                && (!myTransType.isStockSplit())
+                                && (!myTransType.isAdminCharge())
+                                && (!myTransType.isStockDemerger()) && (!myTransType.isStockTakeover()))) {
                             addError("Units can only refer to a single priced asset unless "
-                                    + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_UNITS);
+                                     + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_UNITS);
                         }
 
                         /* Dividend between priced requires identical credit/debit */
-                        if ((myTransType != null) && (myTransType.isDividend()) && (!Difference.isEqual(myCredit, myDebit))) {
+                        if ((myTransType != null)
+                            && (myTransType.isDividend())
+                            && (!Difference.isEqual(myCredit, myDebit))) {
                             addError("Unit Dividends between assets must be between same asset", FIELD_UNITS);
                         }
                     }
@@ -1433,7 +1458,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 }
 
                 /* Units must not be negative unless it is stock split */
-                if ((!myUnits.isPositive()) && ((myTransType == null) || ((!myTransType.isStockSplit()) && (!myTransType.isAdminCharge())))) {
+                if ((!myUnits.isPositive())
+                    && ((myTransType == null) || ((!myTransType.isStockSplit()) && (!myTransType.isAdminCharge())))) {
                     addError("Units must be positive unless this is a StockSplit/AdminCharge", FIELD_UNITS);
                 }
 
@@ -1449,7 +1475,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             /* If we have a dilution */
             if (myDilution != null) {
                 /* If the dilution is not allowed */
-                if ((!needsDilution(myTransType)) && (!myTransType.isStockSplit())) {
+                if ((!needsDilution(myTransType))
+                    && (!myTransType.isStockSplit())) {
                     addError("Dilution factor given where not allowed", FIELD_DILUTION);
                 }
 
@@ -1464,21 +1491,26 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             }
 
             /* If we are a taxable gain */
-            if ((myTransType != null) && (myTransType.isTaxableGain())) {
+            if ((myTransType != null)
+                && (myTransType.isTaxableGain())) {
                 /* Years must be positive */
-                if ((myYears == null) || (myYears <= 0)) {
+                if ((myYears == null)
+                    || (myYears <= 0)) {
                     addError("Years must be non-zero and positive", FIELD_YEARS);
                 }
 
                 /* Tax Credit must be non-null and positive */
-                if ((myTaxCred == null) || (!myTaxCred.isPositive())) {
+                if ((myTaxCred == null)
+                    || (!myTaxCred.isPositive())) {
                     addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
                 }
 
                 /* If we need a tax credit */
-            } else if ((myTransType != null) && (needsTaxCredit(myTransType, myDebit))) {
+            } else if ((myTransType != null)
+                       && (needsTaxCredit(myTransType, myDebit))) {
                 /* Tax Credit must be non-null and positive */
-                if ((myTaxCred == null) || (!myTaxCred.isPositive())) {
+                if ((myTaxCred == null)
+                    || (!myTaxCred.isPositive())) {
                     addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
                 }
 
@@ -1563,7 +1595,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
      */
     public boolean isDividendReInvestment() {
         /* Check for dividend re-investment */
-        if ((getTransType() != null) && (!getTransType().isDividend())) {
+        if ((getTransType() != null)
+            && (!getTransType().isDividend())) {
             return false;
         }
         return ((getCredit() != null) && (getCredit().isPriced()));
@@ -1618,7 +1651,8 @@ public class Event extends EncryptedItem implements Comparable<Event> {
                 /* Check for dividend/interest */
             case DIVIDEND:
             case INTEREST:
-                return (pDebit != null) && !pDebit.isTaxFree();
+                return (pDebit != null)
+                       && !pDebit.isTaxFree();
             default:
                 return false;
         }
@@ -1656,12 +1690,14 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         TaxYearList myList = myData.getTaxYears();
 
         /* Ignore unless tax credit is null/zero */
-        if ((getTaxCredit() != null) && (getTaxCredit().isNonZero())) {
+        if ((getTaxCredit() != null)
+            && (getTaxCredit().isNonZero())) {
             return getTaxCredit();
         }
 
         /* Ignore unless transaction type is interest/dividend */
-        if ((getTransType() == null) || ((!getTransType().isInterest()) && (!getTransType().isDividend()))) {
+        if ((getTransType() == null)
+            || ((!getTransType().isInterest()) && (!getTransType().isDividend()))) {
             return getTaxCredit();
         }
 
@@ -1841,7 +1877,9 @@ public class Event extends EncryptedItem implements Comparable<Event> {
     /**
      * List class for Events.
      */
-    public static class EventList extends EncryptedList<Event> implements EventDateRange {
+    public static class EventList
+            extends EncryptedList<Event>
+            implements EventDateRange {
         /**
          * Local Report fields.
          */
@@ -1905,8 +1943,10 @@ public class Event extends EncryptedItem implements Comparable<Event> {
         }
 
         @Override
-        protected EventList getEmptyList() {
-            return new EventList(this);
+        protected EventList getEmptyList(final ListStyle pStyle) {
+            EventList myList = new EventList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -1930,8 +1970,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          */
         public EventList getViewList() {
             /* Build an empty List */
-            EventList myList = getEmptyList();
-            myList.setStyle(ListStyle.COPY);
+            EventList myList = getEmptyList(ListStyle.COPY);
 
             /* Return it */
             return myList;
@@ -1944,8 +1983,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          */
         public EventList deriveEditList(final JDateDayRange pRange) {
             /* Build an empty List */
-            EventList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            EventList myList = getEmptyList(ListStyle.EDIT);
             myList.theRange = pRange;
 
             /* Loop through the Events extracting relevant elements */
@@ -1980,8 +2018,7 @@ public class Event extends EncryptedItem implements Comparable<Event> {
          */
         public EventList deriveEditList(final TaxYear pTaxYear) throws JDataException {
             /* Build an empty List */
-            EventList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            EventList myList = getEmptyList(ListStyle.EDIT);
             myList.theRange = pTaxYear.getRange();
 
             /* Access the underlying data */
@@ -2099,22 +2136,31 @@ public class Event extends EncryptedItem implements Comparable<Event> {
             /* Look up the Transaction Type */
             TransactionType myTransType = myData.getTransTypes().findItemByName(pTransType);
             if (myTransType == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Transact Type ["
-                        + pTransType + "]");
+                throw new JDataException(ExceptionClass.DATA, "Event on ["
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Transact Type ["
+                                                              + pTransType
+                                                              + "]");
             }
 
             /* Look up the Credit Account */
             Account myCredit = myAccounts.findItemByName(pCredit);
             if (myCredit == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Credit account ["
-                        + pCredit + "]");
+                throw new JDataException(ExceptionClass.DATA, "Event on ["
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Credit account ["
+                                                              + pCredit
+                                                              + "]");
             }
 
             /* Look up the Debit Account */
             Account myDebit = myAccounts.findItemByName(pDebit);
             if (myDebit == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Debit account ["
-                        + pDebit + "]");
+                throw new JDataException(ExceptionClass.DATA, "Event on ["
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Debit account ["
+                                                              + pDebit
+                                                              + "]");
             }
 
             /* Create the new Event */

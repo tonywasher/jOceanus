@@ -50,7 +50,8 @@ import net.sourceforge.jOceanus.jTableFilter.TableFilter;
  * Extension of Event to cater for statements.
  * @author Tony Washer
  */
-public class Statement implements JDataContents {
+public class Statement
+        implements JDataContents {
     /**
      * Report fields.
      */
@@ -357,12 +358,12 @@ public class Statement implements JDataContents {
     /**
      * The Statement Lines.
      */
-    public static class StatementLines extends EncryptedList<StatementLine> {
+    public static class StatementLines
+            extends EncryptedList<StatementLine> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(StatementLines.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(StatementLines.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -408,7 +409,7 @@ public class Statement implements JDataContents {
         }
 
         @Override
-        protected StatementLines getEmptyList() {
+        protected StatementLines getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
 
@@ -451,7 +452,8 @@ public class Statement implements JDataContents {
     /**
      * Statement line.
      */
-    public static class StatementLine extends Event {
+    public static class StatementLine
+            extends Event {
         /**
          * Report fields.
          */

@@ -25,7 +25,9 @@ package net.sourceforge.jOceanus.jMoneyWise.data;
 import java.util.Date;
 import java.util.Iterator;
 
+import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
+import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -41,7 +43,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventDateRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -53,7 +55,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
  * New version of Event DataItem utilising EventInfo.
  * @author Tony Washer
  */
-public class EventNew extends EventBase {
+public class EventNew
+        extends EventBase {
     /**
      * The name of the object.
      */
@@ -62,7 +65,8 @@ public class EventNew extends EventBase {
     /**
      * The name of the object.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -131,38 +135,15 @@ public class EventNew extends EventBase {
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
             return hasInfoSet ? theInfoSet : JDataFieldValue.SkipField;
         }
-        if (FIELD_DEBTUNITS.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.DebitUnits);
-        }
-        if (FIELD_CREDUNITS.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.CreditUnits);
-        }
-        if (FIELD_TAXCREDIT.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.TaxCredit);
-        }
-        if (FIELD_DILUTION.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.Dilution);
-        }
-        if (FIELD_YEARS.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.QualifyYears);
-        }
-        if (FIELD_NATINS.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.NatInsurance);
-        }
-        if (FIELD_BENEFIT.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.Benefit);
-        }
-        if (FIELD_PENSION.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.Pension);
-        }
-        if (FIELD_XFERDELAY.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.XferDelay);
-        }
-        if (FIELD_THIRDPARTY.equals(pField)) {
-            return getInfoSetValue(EventInfoClass.ThirdParty);
+
+        /* Handle InfoSet fields */
+        EventInfoClass myClass = getFieldClass(pField);
+        if (myClass != null) {
+            return getInfoSetValue(myClass);
         }
 
         /* Pass onwards */
@@ -170,9 +151,53 @@ public class EventNew extends EventBase {
     }
 
     /**
+     * Obtain the class of the field if it is an infoSet field.
+     * @param pField the field
+     * @return the class
+     */
+    private static EventInfoClass getFieldClass(final JDataField pField) {
+        if (FIELD_DEBTUNITS.equals(pField)) {
+            return EventInfoClass.DebitUnits;
+        }
+        if (FIELD_CREDUNITS.equals(pField)) {
+            return EventInfoClass.CreditUnits;
+        }
+        if (FIELD_TAXCREDIT.equals(pField)) {
+            return EventInfoClass.TaxCredit;
+        }
+        if (FIELD_DILUTION.equals(pField)) {
+            return EventInfoClass.Dilution;
+        }
+        if (FIELD_YEARS.equals(pField)) {
+            return EventInfoClass.QualifyYears;
+        }
+        if (FIELD_NATINS.equals(pField)) {
+            return EventInfoClass.NatInsurance;
+        }
+        if (FIELD_BENEFIT.equals(pField)) {
+            return EventInfoClass.Benefit;
+        }
+        if (FIELD_PENSION.equals(pField)) {
+            return EventInfoClass.Pension;
+        }
+        if (FIELD_XFERDELAY.equals(pField)) {
+            return EventInfoClass.XferDelay;
+        }
+        if (FIELD_THIRDPARTY.equals(pField)) {
+            return EventInfoClass.ThirdParty;
+        }
+        return null;
+    }
+
+    /**
      * Do we have an InfoSet.
      */
     private final boolean hasInfoSet;
+
+    /**
+     * Should we use infoSet for DataState etc.
+     */
+    private final boolean useInfoSet;
 
     /**
      * EventInfoSet.
@@ -227,6 +252,116 @@ public class EventNew extends EventBase {
         return hasInfoSet ? theInfoSet.getValue(EventInfoClass.QualifyYears, Integer.class) : null;
     }
 
+    @Override
+    public DataState getState() {
+        /* Pop history for self */
+        DataState myState = super.getState();
+
+        /* If we should use the InfoSet */
+        if ((myState == DataState.CLEAN)
+            && (useInfoSet)) {
+            /* Get state for infoSet */
+            myState = theInfoSet.getState();
+        }
+
+        /* Return the state */
+        return myState;
+    }
+
+    @Override
+    public EditState getEditState() {
+        /* Pop history for self */
+        EditState myState = super.getEditState();
+
+        /* If we should use the InfoSet */
+        if ((myState == EditState.CLEAN)
+            && (useInfoSet)) {
+            /* Get state for infoSet */
+            myState = theInfoSet.getEditState();
+        }
+
+        /* Return the state */
+        return myState;
+    }
+
+    @Override
+    public boolean hasHistory() {
+        /* Check for history for self */
+        boolean hasHistory = super.hasHistory();
+
+        /* If we should use the InfoSet */
+        if ((!hasHistory)
+            && (useInfoSet)) {
+            /* Check history for infoSet */
+            hasHistory = theInfoSet.hasHistory();
+        }
+
+        /* Return details */
+        return hasHistory;
+    }
+
+    @Override
+    public void pushHistory() {
+        /* Push history for self */
+        super.pushHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Push history for infoSet */
+            theInfoSet.pushHistory();
+        }
+    }
+
+    @Override
+    public void popHistory() {
+        /* Pop history for self */
+        super.popHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Pop history for infoSet */
+            theInfoSet.popHistory();
+        }
+    }
+
+    @Override
+    public boolean checkForHistory() {
+        /* Check for history for self */
+        boolean bChanges = super.checkForHistory();
+
+        /* If we should use the InfoSet */
+        if (useInfoSet) {
+            /* Check for history for infoSet */
+            bChanges |= theInfoSet.checkForHistory();
+        }
+
+        /* return result */
+        return bChanges;
+    }
+
+    @Override
+    public Difference fieldChanged(final JDataField pField) {
+        /* Handle InfoSet fields */
+        EventInfoClass myClass = getFieldClass(pField);
+        if (myClass != null) {
+            return (useInfoSet) ? theInfoSet.fieldChanged(myClass) : Difference.Identical;
+        }
+
+        /* Check super fields */
+        return super.fieldChanged(pField);
+    }
+
+    @Override
+    public void setDeleted(final boolean bDeleted) {
+        /* Pass call to infoSet if required */
+        if (useInfoSet) {
+            theInfoSet.setDeleted(bDeleted);
+        }
+
+        /* Pass call onwards */
+        super.setDeleted(bDeleted);
+    }
+
     /**
      * Copy Constructor.
      * @param pList the event list
@@ -240,13 +375,21 @@ public class EventNew extends EventBase {
         /* switch on list type */
         switch (getList().getStyle()) {
             case EDIT:
-                theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes());
-                theInfoSet.setInfoList(pList.getEventInfo());
+                theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
+                theInfoSet.cloneDataInfoSet(pEvent.getInfoSet());
                 hasInfoSet = true;
+                useInfoSet = true;
+                break;
+            case CLONE:
+            case CORE:
+                theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
+                hasInfoSet = true;
+                useInfoSet = false;
                 break;
             default:
                 theInfoSet = null;
                 hasInfoSet = false;
+                useInfoSet = false;
                 break;
         }
     }
@@ -278,9 +421,9 @@ public class EventNew extends EventBase {
         setControlKey(pList.getControlKey());
 
         /* Build InfoSet */
-        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes());
-        theInfoSet.setInfoList(pList.getEventInfo());
+        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
         hasInfoSet = true;
+        useInfoSet = true;
     }
 
     /**
@@ -309,9 +452,9 @@ public class EventNew extends EventBase {
         super(pList, uId, uControlId, pDate, pDesc, uDebit, uCredit, uTransType, pAmount);
 
         /* Create the InfoSet */
-        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes());
-        theInfoSet.setInfoList(pList.getEventInfo());
+        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
         hasInfoSet = true;
+        useInfoSet = false;
     }
 
     /**
@@ -330,30 +473,29 @@ public class EventNew extends EventBase {
                        final Integer uId,
                        final Date pDate,
                        final String pDesc,
-                       final AccountNew pDebit,
-                       final AccountNew pCredit,
+                       final Account pDebit,
+                       final Account pCredit,
                        final TransactionType pTransType,
                        final String pAmount) throws JDataException {
         /* Initialise item */
         super(pList, uId, pDate, pDesc, pDebit, pCredit, pTransType, pAmount);
 
         /* Create the InfoSet */
-        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes());
-        theInfoSet.setInfoList(pList.getEventInfo());
+        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
         hasInfoSet = true;
+        useInfoSet = false;
     }
 
     /**
-     * Is an event allowed between these two accounts, used for more detailed analysis once the event is
-     * deemed valid based on the account types.
+     * Is an event allowed between these two accounts, used for more detailed analysis once the event is deemed valid based on the account types.
      * @param pTrans The transaction type of the event
      * @param pDebit the debit account
      * @param pCredit the credit account
      * @return true/false
      */
     public static boolean isValidEvent(final TransactionType pTrans,
-                                       final AccountNew pDebit,
-                                       final AccountNew pCredit) {
+                                       final Account pDebit,
+                                       final Account pCredit) {
         /* Generally we must not be recursive */
         boolean myResult = !Difference.isEqual(pDebit, pCredit);
 
@@ -401,8 +543,8 @@ public class EventNew extends EventBase {
     public void validate() {
         JDateDay myDate = getDate();
         String myDesc = getDesc();
-        AccountNew myDebit = getDebit();
-        AccountNew myCredit = getCredit();
+        Account myDebit = getDebit();
+        Account myCredit = getCredit();
         JMoney myAmount = getAmount();
         TransactionType myTransType = getTransType();
         JUnits myUnits = getDebitUnits();
@@ -460,7 +602,8 @@ public class EventNew extends EventBase {
         if (myCredit == null) {
             addError("Credit account must be non-null", FIELD_CREDIT);
             /* And valid for transaction type */
-        } else if ((myTransType != null) && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
+        } else if ((myTransType != null)
+                   && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
             addError("Invalid credit account for transaction", FIELD_CREDIT);
         }
 
@@ -468,13 +611,16 @@ public class EventNew extends EventBase {
         if (myDebit == null) {
             addError("Debit account must be non-null", FIELD_DEBIT);
             /* And valid for transaction type */
-        } else if ((myTransType != null) && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
+        } else if ((myTransType != null)
+                   && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
             addError("Invalid debit account for transaction", FIELD_DEBIT);
         }
 
         /* Check valid Credit/Debit combination */
-        if ((myTransType != null) && (myCredit != null) && (myDebit != null)
-                && (!isValidEvent(myTransType, myDebit, myCredit))) {
+        if ((myTransType != null)
+            && (myCredit != null)
+            && (myDebit != null)
+            && (!isValidEvent(myTransType, myDebit, myCredit))) {
             addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
             addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
         }
@@ -488,29 +634,34 @@ public class EventNew extends EventBase {
 
         /* Money must be zero for stock split/demerger */
         if ((myAmount != null)
-                && (myAmount.isNonZero())
-                && (myTransType != null)
-                && ((myTransType.isStockDemerger()) || (myTransType.isStockSplit()) || (myTransType
-                        .isStockTakeover()))) {
+            && (myAmount.isNonZero())
+            && (myTransType != null)
+            && ((myTransType.isStockDemerger())
+                || (myTransType.isStockSplit()) || (myTransType.isStockTakeover()))) {
             addError("Amount must be zero for Stock Split/Demerger/Takeover", FIELD_AMOUNT);
         }
 
         /* Ignore remaining checks for Patterns */
         // if (!(this instanceof Pattern)) {
         /* Check for valid priced credit account */
-        if ((myCredit != null) && (myCredit.isPriced())) {
+        if ((myCredit != null)
+            && (myCredit.isPriced())) {
             /* If the date of this event is prior to the first price */
             AccountPrice myPrice = myCredit.getInitPrice();
-            if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
+            if ((myPrice != null)
+                && (getDate().compareTo(myPrice.getDate()) < 0)) {
                 addError("Event Date is prior to first priced date for Credit Account", FIELD_DATE);
             }
         }
 
         /* Check for valid priced debit account */
-        if ((myDebit != null) && (myDebit.isPriced()) && (!Difference.isEqual(myCredit, myDebit))) {
+        if ((myDebit != null)
+            && (myDebit.isPriced())
+            && (!Difference.isEqual(myCredit, myDebit))) {
             /* If the date of this event is prior to the first price */
             AccountPrice myPrice = myDebit.getInitPrice();
-            if ((myPrice != null) && (getDate().compareTo(myPrice.getDate()) < 0)) {
+            if ((myPrice != null)
+                && (getDate().compareTo(myPrice.getDate()) < 0)) {
                 addError("Event Date is prior to first priced date for Debit Account", FIELD_DATE);
             }
         }
@@ -518,27 +669,31 @@ public class EventNew extends EventBase {
         /* If we have units */
         if (myUnits != null) {
             /* If we have credit/debit accounts */
-            if ((myDebit != null) && (myCredit != null)) {
+            if ((myDebit != null)
+                && (myCredit != null)) {
                 /* Units are only allowed if credit or debit is priced */
-                if ((!myCredit.isPriced()) && (!myDebit.isPriced())) {
+                if ((!myCredit.isPriced())
+                    && (!myDebit.isPriced())) {
                     addError("Units are only allowed involving assets", FIELD_DEBTUNITS);
                 }
 
                 /* If both credit/debit are both priced */
-                if ((myCredit.isPriced()) && (myDebit.isPriced())) {
+                if ((myCredit.isPriced())
+                    && (myDebit.isPriced())) {
                     /* TranType must be stock split or dividend between same account */
                     if ((myTransType == null)
-                            || ((!myTransType.isDividend()) && (!myTransType.isStockSplit())
-                                    && (!myTransType.isAdminCharge()) && (!myTransType.isStockDemerger()) && (!myTransType
-                                        .isStockTakeover()))) {
+                        || ((!myTransType.isDividend())
+                            && (!myTransType.isStockSplit())
+                            && (!myTransType.isAdminCharge())
+                            && (!myTransType.isStockDemerger()) && (!myTransType.isStockTakeover()))) {
                         addError("Units can only refer to a single priced asset unless "
-                                         + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend",
-                                 FIELD_DEBTUNITS);
+                                 + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_DEBTUNITS);
                     }
 
                     /* Dividend between priced requires identical credit/debit */
-                    if ((myTransType != null) && (myTransType.isDividend())
-                            && (!Difference.isEqual(myCredit, myDebit))) {
+                    if ((myTransType != null)
+                        && (myTransType.isDividend())
+                        && (!Difference.isEqual(myCredit, myDebit))) {
                         addError("Unit Dividends between assets must be between same asset", FIELD_DEBTUNITS);
                     }
                 }
@@ -551,8 +706,7 @@ public class EventNew extends EventBase {
 
             /* Units must not be negative unless it is stock split */
             if ((!myUnits.isPositive())
-                    && ((myTransType == null) || ((!myTransType.isStockSplit()) && (!myTransType
-                            .isAdminCharge())))) {
+                && ((myTransType == null) || ((!myTransType.isStockSplit()) && (!myTransType.isAdminCharge())))) {
                 addError("Units must be positive unless this is a StockSplit/AdminCharge", FIELD_DEBTUNITS);
             }
 
@@ -568,7 +722,8 @@ public class EventNew extends EventBase {
         /* If we have a dilution */
         if (myDilution != null) {
             /* If the dilution is not allowed */
-            if ((!needsDilution(myTransType)) && (!myTransType.isStockSplit())) {
+            if ((!needsDilution(myTransType))
+                && (!myTransType.isStockSplit())) {
                 addError("Dilution factor given where not allowed", FIELD_DILUTION);
             }
 
@@ -583,21 +738,26 @@ public class EventNew extends EventBase {
         }
 
         /* If we are a taxable gain */
-        if ((myTransType != null) && (myTransType.isTaxableGain())) {
+        if ((myTransType != null)
+            && (myTransType.isTaxableGain())) {
             /* Years must be positive */
-            if ((myYears == null) || (myYears <= 0)) {
+            if ((myYears == null)
+                || (myYears <= 0)) {
                 addError("Years must be non-zero and positive", FIELD_YEARS);
             }
 
             /* Tax Credit must be non-null and positive */
-            if ((myTaxCred == null) || (!myTaxCred.isPositive())) {
+            if ((myTaxCred == null)
+                || (!myTaxCred.isPositive())) {
                 addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
             }
 
             /* If we need a tax credit */
-        } else if ((myTransType != null) && (needsTaxCredit(myTransType, myDebit))) {
+        } else if ((myTransType != null)
+                   && (needsTaxCredit(myTransType, myDebit))) {
             /* Tax Credit must be non-null and positive */
-            if ((myTaxCred == null) || (!myTaxCred.isPositive())) {
+            if ((myTaxCred == null)
+                || (!myTaxCred.isPositive())) {
                 addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
             }
 
@@ -635,12 +795,14 @@ public class EventNew extends EventBase {
         TaxYearList myList = myData.getTaxYears();
 
         /* Ignore unless tax credit is null/zero */
-        if ((getTaxCredit() != null) && (getTaxCredit().isNonZero())) {
+        if ((getTaxCredit() != null)
+            && (getTaxCredit().isNonZero())) {
             return getTaxCredit();
         }
 
         /* Ignore unless transaction type is interest/dividend */
-        if ((getTransType() == null) || ((!getTransType().isInterest()) && (!getTransType().isDividend()))) {
+        if ((getTransType() == null)
+            || ((!getTransType().isInterest()) && (!getTransType().isDividend()))) {
             return getTaxCredit();
         }
 
@@ -732,12 +894,12 @@ public class EventNew extends EventBase {
     /**
      * The Event List class.
      */
-    public static class EventNewList extends EventBaseList<EventNew> {
+    public static class EventNewList
+            extends EventBaseList<EventNew> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventNewList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventNewList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -798,8 +960,10 @@ public class EventNew extends EventBase {
         }
 
         @Override
-        protected EventNewList getEmptyList() {
-            return new EventNewList(this);
+        protected EventNewList getEmptyList(final ListStyle pStyle) {
+            EventNewList myList = new EventNewList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -823,7 +987,7 @@ public class EventNew extends EventBase {
          */
         public EventNewList getViewList() {
             /* Build an empty List */
-            EventNewList myList = getEmptyList();
+            EventNewList myList = getEmptyList(ListStyle.COPY);
             myList.setStyle(ListStyle.COPY);
 
             /* Return it */
@@ -837,8 +1001,7 @@ public class EventNew extends EventBase {
          */
         public EventNewList deriveEditList(final JDateDayRange pRange) {
             /* Build an empty List */
-            EventNewList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            EventNewList myList = getEmptyList(ListStyle.EDIT);
             myList.setRange(pRange);
 
             /* Store InfoType list */
@@ -846,8 +1009,7 @@ public class EventNew extends EventBase {
 
             /* Create info List */
             EventInfoList myEventInfo = getEventInfo();
-            myList.theInfoList = myEventInfo.getEmptyList();
-            myList.theInfoList.setBase(myEventInfo);
+            myList.theInfoList = myEventInfo.getEmptyList(ListStyle.EDIT);
 
             /* Loop through the Events extracting relevant elements */
             Iterator<EventNew> myIterator = iterator();
@@ -879,7 +1041,7 @@ public class EventNew extends EventBase {
          * @return the edit list
          * @throws JDataException on error
          */
-        // public EventNewList deriveEditList(final TaxYearNew pTaxYear) throws JDataException {
+        // public EventNewList deriveEditList(final TaxYear pTaxYear) throws JDataException {
         // /* Build an empty List */
         // EventNewList myList = getEmptyList();
         // myList.setStyle(ListStyle.EDIT);
@@ -989,42 +1151,40 @@ public class EventNew extends EventBase {
             /* Access the accounts */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
-            AccountNewList myAccounts = myData.getNewAccounts();
+            AccountList myAccounts = myData.getAccounts();
 
             /* Look up the Transaction Type */
             TransactionType myTransType = myData.getTransTypes().findItemByName(pTransType);
             if (myTransType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Transact Type ["
-                        + pTransType + "]");
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Transact Type ["
+                                                              + pTransType
+                                                              + "]");
             }
 
             /* Look up the Credit Account */
-            AccountNew myCredit = myAccounts.findItemByName(pCredit);
+            Account myCredit = myAccounts.findItemByName(pCredit);
             if (myCredit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Credit account ["
-                        + pCredit + "]");
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Credit account ["
+                                                              + pCredit
+                                                              + "]");
             }
 
             /* Look up the Debit Account */
-            AccountNew myDebit = myAccounts.findItemByName(pDebit);
+            Account myDebit = myAccounts.findItemByName(pDebit);
             if (myDebit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
-                        + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Debit account ["
-                        + pDebit + "]");
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Debit account ["
+                                                              + pDebit
+                                                              + "]");
             }
 
             /* Create the new Event */
             EventNew myEvent = new EventNew(this, uId, pDate, pDesc, myDebit, myCredit, myTransType, pAmount);
-
-            /* Validate the event */
-            myEvent.validate();
-
-            /* Handle validation failure */
-            if (myEvent.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myEvent, "Failed validation");
-            }
 
             /* Add the Event to the list */
             append(myEvent);
@@ -1052,20 +1212,11 @@ public class EventNew extends EventBase {
                                   final Integer uCreditId,
                                   final Integer uTransId) throws JDataException {
             /* Create the new Event */
-            EventNew myEvent = new EventNew(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId,
-                    uTransId, pAmount);
+            EventNew myEvent = new EventNew(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId, pAmount);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(uId)) {
                 throw new JDataException(ExceptionClass.DATA, myEvent, "Duplicate EventId");
-            }
-
-            /* Validate the event */
-            myEvent.validate();
-
-            /* Handle validation failure */
-            if (myEvent.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myEvent, "Failed validation");
             }
 
             /* Add the Event to the list */

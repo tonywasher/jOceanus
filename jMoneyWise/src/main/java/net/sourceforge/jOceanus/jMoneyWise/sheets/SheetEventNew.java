@@ -49,7 +49,8 @@ import org.apache.poi.ss.util.CellReference;
  * SheetDataItem extension for Event.
  * @author Tony Washer
  */
-public class SheetEventNew extends SheetDataItem<EventNew> {
+public class SheetEventNew
+        extends SheetDataItem<EventNew> {
     /**
      * NamedArea for Events.
      */
@@ -243,11 +244,13 @@ public class SheetEventNew extends SheetDataItem<EventNew> {
             for (Integer j = pRange.getMinYear(); j <= pRange.getMaxYear(); j++) {
                 /* Find the range of cells */
                 String myRangeName = j.toString();
-                myRangeName = "Finance" + myRangeName.substring(2);
+                myRangeName = "Finance"
+                              + myRangeName.substring(2);
                 AreaReference myRange = pHelper.resolveAreaReference(myRangeName);
 
                 /* Declare the new stage */
-                if (!pTask.setNewStage("Events from " + j)) {
+                if (!pTask.setNewStage("Events from "
+                                       + j)) {
                     return false;
                 }
 
@@ -260,7 +263,8 @@ public class SheetEventNew extends SheetDataItem<EventNew> {
                     int myCol = myTop.getCol();
 
                     /* Count the number of Events */
-                    int myTotal = myBottom.getRow() - myTop.getRow();
+                    int myTotal = myBottom.getRow()
+                                  - myTop.getRow();
 
                     /* Declare the number of steps */
                     if (!pTask.setNumSteps(myTotal)) {
@@ -274,16 +278,22 @@ public class SheetEventNew extends SheetDataItem<EventNew> {
                         int iAdjust = 0;
 
                         /* Access date */
-                        Date myDate = myRow.getCell(myCol + iAdjust++).getDateCellValue();
+                        Date myDate = myRow.getCell(myCol
+                                                    + iAdjust++).getDateCellValue();
 
                         /* Access the values */
-                        String myDesc = myRow.getCell(myCol + iAdjust++).getStringCellValue();
-                        String myAmount = pHelper.formatNumericCell(myRow.getCell(myCol + iAdjust++));
-                        String myDebit = myRow.getCell(myCol + iAdjust++).getStringCellValue();
-                        String myCredit = myRow.getCell(myCol + iAdjust++).getStringCellValue();
+                        String myDesc = myRow.getCell(myCol
+                                                      + iAdjust++).getStringCellValue();
+                        String myAmount = pHelper.formatNumericCell(myRow.getCell(myCol
+                                                                                  + iAdjust++));
+                        String myDebit = myRow.getCell(myCol
+                                                       + iAdjust++).getStringCellValue();
+                        String myCredit = myRow.getCell(myCol
+                                                        + iAdjust++).getStringCellValue();
 
                         /* Handle Dilution which may be missing */
-                        Cell myCell = myRow.getCell(myCol + iAdjust++);
+                        Cell myCell = myRow.getCell(myCol
+                                                    + iAdjust++);
                         String myDilution = null;
                         if (myCell != null) {
                             myDilution = pHelper.formatNumericCell(myCell);
@@ -293,32 +303,35 @@ public class SheetEventNew extends SheetDataItem<EventNew> {
                         }
 
                         /* Handle Units which may be missing */
-                        myCell = myRow.getCell(myCol + iAdjust++);
+                        myCell = myRow.getCell(myCol
+                                               + iAdjust++);
                         String myUnits = null;
                         if (myCell != null) {
                             myUnits = pHelper.formatNumericCell(myCell);
                         }
 
                         /* Handle transaction type */
-                        String myTranType = myRow.getCell(myCol + iAdjust++).getStringCellValue();
+                        String myTranType = myRow.getCell(myCol
+                                                          + iAdjust++).getStringCellValue();
 
                         /* Handle Tax Credit which may be missing */
-                        myCell = myRow.getCell(myCol + iAdjust++);
+                        myCell = myRow.getCell(myCol
+                                               + iAdjust++);
                         String myTaxCredit = null;
                         if (myCell != null) {
                             myTaxCredit = pHelper.formatNumericCell(myCell);
                         }
 
                         /* Handle Years which may be missing */
-                        myCell = myRow.getCell(myCol + iAdjust++);
+                        myCell = myRow.getCell(myCol
+                                               + iAdjust++);
                         Integer myYears = null;
                         if (myCell != null) {
                             myYears = pHelper.parseIntegerCell(myCell);
                         }
 
                         /* Add the event */
-                        EventNew myEvent = myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit,
-                                                              myTranType);
+                        EventNew myEvent = myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myTranType);
 
                         /* Add information relating to the account */
                         myInfoList.addOpenItem(0, myEvent, EventInfoClass.DebitUnits, myUnits);
@@ -328,13 +341,15 @@ public class SheetEventNew extends SheetDataItem<EventNew> {
 
                         /* Report the progress */
                         myCount++;
-                        if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                        if (((myCount % mySteps) == 0)
+                            && (!pTask.setStepsDone(myCount))) {
                             return false;
                         }
                     }
 
                     /* Sort the list */
                     myList.reSort();
+                    myInfoList.reSort();
                 }
             }
         } catch (JDataException e) {

@@ -34,7 +34,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * AccountType data type.
  * @author Tony Washer
  */
-public class AccountType extends StaticData<AccountType, AccountClass> {
+public class AccountType
+        extends StaticData<AccountType, AccountClass> {
     /**
      * Object name.
      */
@@ -43,7 +44,8 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -482,12 +484,12 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
     /**
      * Represents a list of {@link AccountType} objects.
      */
-    public static class AccountTypeList extends StaticList<AccountType, AccountClass> {
+    public static class AccountTypeList
+            extends StaticList<AccountType, AccountClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AccountTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -521,8 +523,10 @@ public class AccountType extends StaticData<AccountType, AccountClass> {
         }
 
         @Override
-        protected AccountTypeList getEmptyList() {
-            return new AccountTypeList(this);
+        protected AccountTypeList getEmptyList(final ListStyle pStyle) {
+            AccountTypeList myList = new AccountTypeList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override

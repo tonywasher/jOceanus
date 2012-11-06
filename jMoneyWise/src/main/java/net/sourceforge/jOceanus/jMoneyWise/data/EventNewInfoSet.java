@@ -33,12 +33,12 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
  * EventInfoSet class.
  * @author Tony Washer
  */
-public class EventNewInfoSet extends DataInfoSet<EventInfo, EventNew, EventInfoType, EventInfoClass> {
+public class EventNewInfoSet
+        extends DataInfoSet<EventInfo, EventNew, EventInfoType, EventInfoClass> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoSet.class.getSimpleName(),
-            DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoSet.class.getSimpleName(), DataInfoSet.FIELD_DEFS);
 
     @Override
     public JDataFields getDataFields() {
@@ -49,19 +49,13 @@ public class EventNewInfoSet extends DataInfoSet<EventInfo, EventNew, EventInfoT
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
-     */
-    protected EventNewInfoSet(final EventNew pOwner,
-                              final EventInfoTypeList pTypeList) {
-        /* Store the Owner and Info List */
-        super(pOwner, pTypeList);
-    }
-
-    /**
-     * Set the infoList.
      * @param pInfoList source InfoSet
      */
-    protected void setInfoList(final EventInfoList pInfoList) {
-        super.setInfoList(pInfoList);
+    protected EventNewInfoSet(final EventNew pOwner,
+                              final EventInfoTypeList pTypeList,
+                              final EventInfoList pInfoList) {
+        /* Store the Owner and Info List */
+        super(pOwner, pTypeList, pInfoList);
     }
 
     /**
@@ -78,7 +72,7 @@ public class EventNewInfoSet extends DataInfoSet<EventInfo, EventNew, EventInfoT
      * @param pInfoClass the Info Class
      * @return the account
      */
-    public AccountNew getAccount(final EventInfoClass pInfoClass) {
+    public Account getAccount(final EventInfoClass pInfoClass) {
         /* Access existing entry */
         EventInfo myValue = getInfo(pInfoClass);
 

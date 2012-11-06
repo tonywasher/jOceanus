@@ -30,8 +30,8 @@ import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
  * Database table class for Encrypted Items. Each data type that uses encrypted data should extend this class.
  * @param <T> the data type
  */
-public abstract class TableEncrypted<T extends EncryptedItem & Comparable<? super T>> extends
-        DatabaseTable<T> {
+public abstract class TableEncrypted<T extends EncryptedItem & Comparable<? super T>>
+        extends DatabaseTable<T> {
     /**
      * Constructor.
      * @param pDatabase the database control
@@ -69,7 +69,7 @@ public abstract class TableEncrypted<T extends EncryptedItem & Comparable<? supe
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (EncryptedItem.FIELD_CONTROL.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
+            myTableDef.setIntegerValue(iField, pItem.getControlKeyId());
         } else {
             super.setFieldValue(pItem, iField);
         }

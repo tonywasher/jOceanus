@@ -48,7 +48,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
  * AccountRate data type.
  * @author Tony Washer
  */
-public class AccountRate extends EncryptedItem implements Comparable<AccountRate> {
+public class AccountRate
+        extends EncryptedItem
+        implements Comparable<AccountRate> {
     /**
      * Object name.
      */
@@ -57,7 +59,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -512,7 +515,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             AccountRate myCurr = myList.peekNext(this);
 
             /* Can only have null date on last entry for account */
-            if ((myCurr != null) && (Difference.isEqual(myCurr.getAccount(), getAccount()))) {
+            if ((myCurr != null)
+                && (Difference.isEqual(myCurr.getAccount(), getAccount()))) {
                 addError("Null date is only allowed on last date", FIELD_ENDDATE);
             }
 
@@ -524,18 +528,21 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             }
 
             /* The date must be in-range (unless it is the last one) */
-            if ((myList.peekNext(this) != null) && (mySet.getDateRange().compareTo(myDate) != 0)) {
+            if ((myList.peekNext(this) != null)
+                && (mySet.getDateRange().compareTo(myDate) != 0)) {
                 addError("Date must be within range", FIELD_ENDDATE);
             }
         }
 
         /* The rate must be non-zero */
-        if ((getRate() == null) || (!getRate().isPositive())) {
+        if ((getRate() == null)
+            || (!getRate().isPositive())) {
             addError("Rate must be positive", FIELD_RATE);
         }
 
         /* The bonus rate must be non-zero if it exists */
-        if ((getBonus() != null) && ((!getBonus().isNonZero()) || (!getBonus().isPositive()))) {
+        if ((getBonus() != null)
+            && ((!getBonus().isNonZero()) || (!getBonus().isPositive()))) {
             addError("Bonus Rate must be non-Zero and positive", FIELD_BONUS);
         }
 
@@ -610,7 +617,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
     /**
      * List class.
      */
-    public static class AccountRateList extends EncryptedList<AccountRate> {
+    public static class AccountRateList
+            extends EncryptedList<AccountRate> {
         /**
          * Local Report fields.
          */
@@ -674,8 +682,10 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
         }
 
         @Override
-        protected AccountRateList getEmptyList() {
-            return new AccountRateList(this);
+        protected AccountRateList getEmptyList(final ListStyle pStyle) {
+            AccountRateList myList = new AccountRateList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -700,8 +710,7 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
          */
         public AccountRateList deriveEditList(final Account pAccount) {
             /* Build an empty List */
-            AccountRateList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            AccountRateList myList = getEmptyList(ListStyle.EDIT);
 
             /* Store the account */
             myList.theAccount = pAccount;
@@ -780,7 +789,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 AccountRate myCurr = myIterator.next();
-                if ((pDate.equals(myCurr.getEndDate())) && (pAccount.equals(myCurr.getAccount()))) {
+                if ((pDate.equals(myCurr.getEndDate()))
+                    && (pAccount.equals(myCurr.getAccount()))) {
                     iCount++;
                 }
             }
@@ -828,7 +838,8 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
                 JDateDay myDate = myCurr.getDate();
 
                 /* break loop if we have the correct record */
-                if ((myDate == null) || (myDate.compareTo(pDate) >= 0)) {
+                if ((myDate == null)
+                    || (myDate.compareTo(pDate) >= 0)) {
                     return myCurr;
                 }
             }
@@ -858,8 +869,11 @@ public class AccountRate extends EncryptedItem implements Comparable<AccountRate
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Rate on [" + myData.getDataFormatter().formatObject(pDate) + "] has invalid Account ["
-                        + pAccount + "]");
+                throw new JDataException(ExceptionClass.DATA, "Rate on ["
+                                                              + myData.getDataFormatter().formatObject(pDate)
+                                                              + "] has invalid Account ["
+                                                              + pAccount
+                                                              + "]");
             }
 
             /* Create the ratePeriod */

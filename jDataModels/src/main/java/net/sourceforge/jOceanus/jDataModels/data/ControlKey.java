@@ -41,11 +41,13 @@ import net.sourceforge.jOceanus.jGordianKnot.SecurityGenerator;
 import net.sourceforge.jOceanus.jGordianKnot.SymKeyType;
 
 /**
- * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the
- * dataKeys. It maintains a map of the associated DataKeys.
+ * ControlKey definition and list. The Control Key represents the passwordHash that controls securing of the dataKeys. It maintains a map of the associated
+ * DataKeys.
  * @author Tony Washer
  */
-public class ControlKey extends DataItem implements Comparable<ControlKey> {
+public class ControlKey
+        extends DataItem
+        implements Comparable<ControlKey> {
     /**
      * Object name.
      */
@@ -54,7 +56,8 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -466,12 +469,12 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
     /**
      * ControlKey List.
      */
-    public static class ControlKeyList extends DataList<ControlKey> {
+    public static class ControlKeyList
+            extends DataList<ControlKey> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ControlKeyList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ControlKeyList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -510,8 +513,10 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
         }
 
         @Override
-        protected ControlKeyList getEmptyList() {
-            return new ControlKeyList(this);
+        protected ControlKeyList getEmptyList(final ListStyle pStyle) {
+            ControlKeyList myList = new ControlKeyList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -561,7 +566,9 @@ public class ControlKey extends DataItem implements Comparable<ControlKey> {
 
             /* Check that this KeyId has not been previously added */
             if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate ControlKeyId (" + uId + ")");
+                throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate ControlKeyId ("
+                                                                     + uId
+                                                                     + ")");
             }
 
             /* Add to the list */

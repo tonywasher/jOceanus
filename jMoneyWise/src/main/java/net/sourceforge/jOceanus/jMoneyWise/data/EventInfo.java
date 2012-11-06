@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -37,7 +38,7 @@ import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventNew.EventNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
@@ -47,7 +48,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
  * Representation of an information extension of an event.
  * @author Tony Washer
  */
-public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, EventInfoClass> implements Comparable<EventInfo> {
+public class EventInfo
+        extends DataInfo<EventInfo, EventNew, EventInfoType, EventInfoClass>
+        implements Comparable<EventInfo> {
     /**
      * Object name.
      */
@@ -56,7 +59,8 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -75,10 +79,12 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if ((FIELD_ACCOUNT.equals(pField)) && !getInfoType().isLink()) {
+        if ((FIELD_ACCOUNT.equals(pField))
+            && !getInfoType().isLink()) {
             return JDataFieldValue.SkipField;
         }
-        if ((FIELD_VALUE.equals(pField)) && getInfoType().isLink()) {
+        if ((FIELD_VALUE.equals(pField))
+            && getInfoType().isLink()) {
             return JDataFieldValue.SkipField;
         }
         return super.getFieldValue(pField);
@@ -106,7 +112,7 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
      * Obtain Account.
      * @return the Account
      */
-    public AccountNew getAccount() {
+    public Account getAccount() {
         return getAccount(getValueSet());
     }
 
@@ -133,15 +139,15 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
      * @param pValueSet the valueSet
      * @return the Account
      */
-    public static AccountNew getAccount(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ACCOUNT, AccountNew.class);
+    public static Account getAccount(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
     /**
      * Set Account.
      * @param pAccount the account
      */
-    private void setValueAccount(final AccountNew pAccount) {
+    private void setValueAccount(final Account pAccount) {
         getValueSet().setValue(FIELD_ACCOUNT, pAccount);
     }
 
@@ -164,6 +170,7 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
                         final EventInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
+        setControlKey(pList.getControlKey());
     }
 
     /**
@@ -177,6 +184,7 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
                       final EventInfoType pType) {
         /* Initialise the item */
         super(pList);
+        setControlKey(pList.getControlKey());
 
         /* Record the Detail */
         setValueInfoType(pType);
@@ -215,19 +223,19 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
 
             /* Look up the Event */
             EventNewList myEvents = myData.getNewEvents();
-            EventNew myEvent = myEvents.findItemById(uEventId);
-            if (myEvent == null) {
+            EventNew myOwner = myEvents.findItemById(uEventId);
+            if (myOwner == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
             }
-            setValueOwner(myEvent);
+            setValueOwner(myOwner);
 
             /* Switch on Info Class */
             switch (myType.getDataType()) {
                 case INTEGER:
                     setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        AccountNewList myAccounts = myData.getNewAccounts();
-                        AccountNew myAccount = myAccounts.findItemById(getValue(Integer.class));
+                        AccountList myAccounts = myData.getAccounts();
+                        Account myAccount = myAccounts.findItemById(getValue(Integer.class));
                         if (myAccount == null) {
                             throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
                         }
@@ -248,7 +256,7 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
             }
 
             /* Access the EventInfoSet and register this data */
-            EventNewInfoSet mySet = myEvent.getInfoSet();
+            EventNewInfoSet mySet = myOwner.getInfoSet();
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
@@ -343,16 +351,20 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
         /* If we are using an account */
         if (myType.isLink()) {
             /* Update to use the local copy of the accounts */
-            AccountNewList myAccounts = myData.getNewAccounts();
-            AccountNew myAccount = getAccount();
-            AccountNew myNewAct = myAccounts.findItemById(myAccount.getId());
+            AccountList myAccounts = myData.getAccounts();
+            Account myAccount = getAccount();
+            Account myNewAct = myAccounts.findItemById(myAccount.getId());
             setValueAccount(myNewAct);
         }
 
         /* Update to use the local copy of the Events */
         EventNew myEvent = getEvent();
-        EventNew myNewEvent = myEvents.findItemById(myEvent.getId());
-        setValueOwner(myNewEvent);
+        EventNew myOwner = myEvents.findItemById(myEvent.getId());
+        setValueOwner(myOwner);
+
+        /* Access the TaxInfoSet and register this data */
+        EventNewInfoSet mySet = myOwner.getInfoSet();
+        mySet.registerInfo(this);
     }
 
     @Override
@@ -395,12 +407,14 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
         boolean bValueOK = false;
         switch (myType.getDataType()) {
             case INTEGER:
-                if ((pValue instanceof Integer) && (!myType.isLink())) {
+                if ((pValue instanceof Integer)
+                    && (!myType.isLink())) {
                     setValueValue(pValue);
                     bValueOK = true;
                 }
-                if ((pValue instanceof AccountNew) && (myType.isLink())) {
-                    AccountNew myAccount = (AccountNew) pValue;
+                if ((pValue instanceof Account)
+                    && (myType.isLink())) {
+                    Account myAccount = (Account) pValue;
                     setValueValue(myAccount.getId());
                     setValueAccount(myAccount);
                     bValueOK = true;
@@ -444,9 +458,40 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
     }
 
     /**
+     * Update eventInfo from an eventInfo extract.
+     * @param pEventInfo the changed eventInfo
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final DataItem pEventInfo) {
+        /* Can only update from EventInfo */
+        if (!(pEventInfo instanceof EventInfo)) {
+            return false;
+        }
+
+        /* Access as EventInfo */
+        EventInfo myEventInfo = (EventInfo) pEventInfo;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Update the value if required */
+        if (!Difference.isEqual(getField(), myEventInfo.getField())) {
+            setValueValue(myEventInfo.getField());
+            if (getInfoType().isLink()) {
+                setValueAccount(myEventInfo.getAccount());
+            }
+        }
+
+        /* Check for changes */
+        return checkForHistory();
+    }
+
+    /**
      * EventInfoList.
      */
-    public static class EventInfoList extends DataInfoList<EventInfo, EventNew, EventInfoType, EventInfoClass> {
+    public static class EventInfoList
+            extends DataInfoList<EventInfo, EventNew, EventInfoType, EventInfoClass> {
         /**
          * Local Report fields.
          */
@@ -494,8 +539,10 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
         }
 
         @Override
-        protected EventInfoList getEmptyList() {
-            return new EventInfoList(this);
+        protected EventInfoList getEmptyList(final ListStyle pStyle) {
+            EventInfoList myList = new EventInfoList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -593,7 +640,9 @@ public class EventInfo extends DataInfo<EventInfo, EventNew, EventInfoType, Even
             /* Look up the Info Type */
             EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pEvent, "Event has invalid Event Info Class [" + pInfoClass + "]");
+                throw new JDataException(ExceptionClass.DATA, pEvent, "Event has invalid Event Info Class ["
+                                                                      + pInfoClass
+                                                                      + "]");
             }
 
             /* Create a new Event Info */

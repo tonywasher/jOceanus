@@ -113,7 +113,8 @@ public final class EncryptedData {
      * The generic encrypted object class.
      * @param <T> the field type
      */
-    public abstract static class EncryptedField<T> implements JDataFormat, JDataDiffers {
+    public abstract static class EncryptedField<T>
+            implements JDataFormat, JDataDiffers {
         /**
          * Encryption CipherSet.
          */
@@ -133,6 +134,14 @@ public final class EncryptedData {
          * Data formatter.
          */
         private final JDataFormatter theFormatter;
+
+        /**
+         * Obtain the formatter.
+         * @return the formatter
+         */
+        protected JDataFormatter getFormatter() {
+            return theFormatter;
+        }
 
         /**
          * Constructor.
@@ -276,8 +285,7 @@ public final class EncryptedData {
             theCipherSet = pCipherSet;
 
             /* If we need to renew the encryption */
-            if ((pField == null)
-                    || (Difference.getDifference(pCipherSet, pField.getCipherSet()).isDifferent())
+            if ((pField == null) || (Difference.getDifference(pCipherSet, pField.getCipherSet()).isDifferent())
                     || (Difference.getDifference(getValue(), pField.getValue()).isDifferent())) {
                 /* encrypt the value */
                 encryptValue();
@@ -359,7 +367,8 @@ public final class EncryptedData {
     /**
      * The encrypted String class.
      */
-    public static final class EncryptedString extends EncryptedField<String> {
+    public static final class EncryptedString
+            extends EncryptedField<String> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -416,7 +425,8 @@ public final class EncryptedData {
     /**
      * The encrypted Short class.
      */
-    public static final class EncryptedShort extends EncryptedField<Short> {
+    public static final class EncryptedShort
+            extends EncryptedField<Short> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -473,7 +483,8 @@ public final class EncryptedData {
     /**
      * The encrypted Integer class.
      */
-    public static final class EncryptedInteger extends EncryptedField<Integer> {
+    public static final class EncryptedInteger
+            extends EncryptedField<Integer> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -530,7 +541,8 @@ public final class EncryptedData {
     /**
      * The encrypted Long class.
      */
-    public static final class EncryptedLong extends EncryptedField<Long> {
+    public static final class EncryptedLong
+            extends EncryptedField<Long> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -587,7 +599,8 @@ public final class EncryptedData {
     /**
      * The encrypted Float class.
      */
-    public static final class EncryptedFloat extends EncryptedField<Float> {
+    public static final class EncryptedFloat
+            extends EncryptedField<Float> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -644,7 +657,8 @@ public final class EncryptedData {
     /**
      * The encrypted Double class.
      */
-    public static final class EncryptedDouble extends EncryptedField<Double> {
+    public static final class EncryptedDouble
+            extends EncryptedField<Double> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -701,7 +715,8 @@ public final class EncryptedData {
     /**
      * The encrypted Boolean class.
      */
-    public static final class EncryptedBoolean extends EncryptedField<Boolean> {
+    public static final class EncryptedBoolean
+            extends EncryptedField<Boolean> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -758,11 +773,23 @@ public final class EncryptedData {
     /**
      * The encrypted Date class.
      */
-    public static final class EncryptedDate extends EncryptedField<Date> {
+    public static final class EncryptedDate
+            extends EncryptedField<Date> {
         /**
          * Date Formatter.
          */
-        private final JDateDayFormatter theFormatter;
+        private JDateDayFormatter theDateFormatter = null;
+
+        /**
+         * Obtain the formatter.
+         * @return the formatter
+         */
+        private JDateDayFormatter getDateFormatter() {
+            if (theDateFormatter == null) {
+                theDateFormatter = getFormatter().getDateFormatter();
+            }
+            return theDateFormatter;
+        }
 
         /**
          * Constructor.
@@ -775,7 +802,6 @@ public final class EncryptedData {
                                 final JDataFormatter pFormatter,
                                 final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pFormatter, pEncrypted);
-            theFormatter = pFormatter.getDateFormatter();
         }
 
         /**
@@ -789,7 +815,6 @@ public final class EncryptedData {
                                 final JDataFormatter pFormatter,
                                 final Date pUnencrypted) throws JDataException {
             super(pCipherSet, pFormatter, pUnencrypted);
-            theFormatter = pFormatter.getDateFormatter();
         }
 
         @Override
@@ -797,7 +822,8 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then a date */
-                return theFormatter.parseDate(DataConverter.byteArrayToString(pBytes));
+                String myInput = DataConverter.byteArrayToString(pBytes);
+                return getDateFormatter().parseDate(myInput);
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
@@ -812,7 +838,8 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
-                return DataConverter.stringToByteArray(theFormatter.formatDate(getValue()));
+                String myInput = getDateFormatter().formatDate(getValue());
+                return DataConverter.stringToByteArray(myInput);
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
@@ -824,11 +851,23 @@ public final class EncryptedData {
     /**
      * The encrypted DateDay class.
      */
-    public static final class EncryptedDateDay extends EncryptedField<JDateDay> {
+    public static final class EncryptedDateDay
+            extends EncryptedField<JDateDay> {
         /**
          * Date Formatter.
          */
-        private final JDateDayFormatter theFormatter;
+        private JDateDayFormatter theDateFormatter = null;
+
+        /**
+         * Obtain the formatter.
+         * @return the formatter
+         */
+        private JDateDayFormatter getDateFormatter() {
+            if (theDateFormatter == null) {
+                theDateFormatter = getFormatter().getDateFormatter();
+            }
+            return theDateFormatter;
+        }
 
         /**
          * Constructor.
@@ -841,7 +880,6 @@ public final class EncryptedData {
                                    final JDataFormatter pFormatter,
                                    final byte[] pEncrypted) throws JDataException {
             super(pCipherSet, pFormatter, pEncrypted);
-            theFormatter = pFormatter.getDateFormatter();
         }
 
         /**
@@ -855,7 +893,6 @@ public final class EncryptedData {
                                    final JDataFormatter pFormatter,
                                    final JDateDay pUnencrypted) throws JDataException {
             super(pCipherSet, pFormatter, pUnencrypted);
-            theFormatter = pFormatter.getDateFormatter();
         }
 
         @Override
@@ -863,7 +900,8 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and then an integer */
-                return theFormatter.parseDateDay(DataConverter.byteArrayToString(pBytes));
+                String myInput = DataConverter.byteArrayToString(pBytes);
+                return getDateFormatter().parseDateDay(myInput);
 
                 /* Catch Exceptions */
             } catch (ParseException e) {
@@ -878,7 +916,8 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the date to a string and then a byte array */
-                return DataConverter.stringToByteArray(theFormatter.formatDateDay(getValue()));
+                String myInput = getDateFormatter().formatDateDay(getValue());
+                return DataConverter.stringToByteArray(myInput);
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
@@ -890,7 +929,8 @@ public final class EncryptedData {
     /**
      * The encrypted CharArray class.
      */
-    public static final class EncryptedCharArray extends EncryptedField<char[]> {
+    public static final class EncryptedCharArray
+            extends EncryptedField<char[]> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -931,7 +971,8 @@ public final class EncryptedData {
     /**
      * The encrypted BigInteger class.
      */
-    public static final class EncryptedBigInteger extends EncryptedField<BigInteger> {
+    public static final class EncryptedBigInteger
+            extends EncryptedField<BigInteger> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -972,7 +1013,8 @@ public final class EncryptedData {
     /**
      * The encrypted BigDecimal class.
      */
-    public static final class EncryptedBigDecimal extends EncryptedField<BigDecimal> {
+    public static final class EncryptedBigDecimal
+            extends EncryptedField<BigDecimal> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -1014,7 +1056,8 @@ public final class EncryptedData {
      * The encrypted Decimal class.
      * @param <X> the decimal type
      */
-    public abstract static class EncryptedDecimal<X extends JDecimal> extends EncryptedField<X> {
+    public abstract static class EncryptedDecimal<X extends JDecimal>
+            extends EncryptedField<X> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -1046,7 +1089,8 @@ public final class EncryptedData {
             /* Protect against exceptions */
             try {
                 /* Convert the byte array to a string and parse it */
-                return parseValue(DataConverter.byteArrayToString(pBytes));
+                String myInput = DataConverter.byteArrayToString(pBytes);
+                return parseValue(myInput);
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
@@ -1082,7 +1126,8 @@ public final class EncryptedData {
     /**
      * The encrypted Money class.
      */
-    public static final class EncryptedMoney extends EncryptedDecimal<JMoney> {
+    public static final class EncryptedMoney
+            extends EncryptedDecimal<JMoney> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -1118,7 +1163,8 @@ public final class EncryptedData {
     /**
      * The encrypted Units class.
      */
-    public static final class EncryptedUnits extends EncryptedDecimal<JUnits> {
+    public static final class EncryptedUnits
+            extends EncryptedDecimal<JUnits> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -1154,7 +1200,8 @@ public final class EncryptedData {
     /**
      * The encrypted Rate class.
      */
-    public static final class EncryptedRate extends EncryptedDecimal<JRate> {
+    public static final class EncryptedRate
+            extends EncryptedDecimal<JRate> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -1190,7 +1237,8 @@ public final class EncryptedData {
     /**
      * The encrypted Price class.
      */
-    public static final class EncryptedPrice extends EncryptedDecimal<JPrice> {
+    public static final class EncryptedPrice
+            extends EncryptedDecimal<JPrice> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -1226,7 +1274,8 @@ public final class EncryptedData {
     /**
      * The encrypted Dilution class.
      */
-    public static final class EncryptedDilution extends EncryptedDecimal<JDilution> {
+    public static final class EncryptedDilution
+            extends EncryptedDecimal<JDilution> {
         /**
          * Constructor.
          * @param pCipherSet the cipherSet

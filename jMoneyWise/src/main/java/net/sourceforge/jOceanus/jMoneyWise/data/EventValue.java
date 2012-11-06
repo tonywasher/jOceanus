@@ -40,7 +40,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
  * EventValue data type.
  * @author Tony Washer
  */
-public class EventValue extends DataItem implements Comparable<EventValue> {
+public class EventValue
+        extends DataItem
+        implements Comparable<EventValue> {
     /**
      * Object name.
      */
@@ -49,7 +51,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -380,17 +383,21 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
                 case QualifyYears:
                 case XferDelay:
                     if (getValue() == null) {
-                        addError(myType.getName() + " must be non-null", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be non-null", FIELD_VALUE);
                     } else if (getValue() <= 0) {
-                        addError(myType.getName() + " must be positive", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be positive", FIELD_VALUE);
                     }
                     break;
                 case ThirdParty:
                     Account myAccount = getAccount();
                     if (myAccount == null) {
-                        addError(myType.getName() + " must be non-null", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be non-null", FIELD_VALUE);
                     } else if (!myAccount.isMoney()) {
-                        addError(myType.getName() + " must be money account", FIELD_VALUE);
+                        addError(myType.getName()
+                                 + " must be money account", FIELD_VALUE);
                     }
                     break;
                 default:
@@ -466,7 +473,8 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
     /**
      * List class for EventValues.
      */
-    public static class EventValueList extends DataList<EventValue> {
+    public static class EventValueList
+            extends DataList<EventValue> {
         /**
          * Local Report fields.
          */
@@ -488,8 +496,10 @@ public class EventValue extends DataItem implements Comparable<EventValue> {
         }
 
         @Override
-        protected EventValueList getEmptyList() {
-            return new EventValueList(this);
+        protected EventValueList getEmptyList(final ListStyle pStyle) {
+            EventValueList myList = new EventValueList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override

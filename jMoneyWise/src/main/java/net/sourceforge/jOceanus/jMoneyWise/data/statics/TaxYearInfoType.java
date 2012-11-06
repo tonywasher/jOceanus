@@ -35,7 +35,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * TaxYearInfoType data type.
  * @author Tony Washer
  */
-public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClass> {
+public class TaxYearInfoType
+        extends StaticData<TaxYearInfoType, TaxYearInfoClass> {
     /**
      * Object name.
      */
@@ -44,7 +45,8 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -141,12 +143,12 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
     /**
      * Represents a list of {@link TaxYearInfoType} objects.
      */
-    public static class TaxYearInfoTypeList extends StaticList<TaxYearInfoType, TaxYearInfoClass> {
+    public static class TaxYearInfoTypeList
+            extends StaticList<TaxYearInfoType, TaxYearInfoClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                TaxYearInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -180,8 +182,10 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
         }
 
         @Override
-        protected TaxYearInfoTypeList getEmptyList() {
-            return new TaxYearInfoTypeList(this);
+        protected TaxYearInfoTypeList getEmptyList(final ListStyle pStyle) {
+            TaxYearInfoTypeList myList = new TaxYearInfoTypeList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -306,8 +310,7 @@ public class TaxYearInfoType extends StaticData<TaxYearInfoType, TaxYearInfoClas
                                   final byte[] pInfoType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new TaxYear Info Type */
-            TaxYearInfoType myInfoType = new TaxYearInfoType(this, uId, uControlId, isEnabled, uOrder,
-                    pInfoType, pDesc);
+            TaxYearInfoType myInfoType = new TaxYearInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(uId)) {

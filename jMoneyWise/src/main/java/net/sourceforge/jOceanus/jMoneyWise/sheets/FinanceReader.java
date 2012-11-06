@@ -30,7 +30,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
  * SheetReader extension for FinanceData.
  * @author Tony Washer
  */
-public class FinanceReader extends SheetReader<FinanceData> {
+public class FinanceReader
+        extends SheetReader<FinanceData> {
     /**
      * Thread control.
      */
@@ -65,10 +66,10 @@ public class FinanceReader extends SheetReader<FinanceData> {
         addSheet(new SheetTaxYear(this));
         addSheet(new SheetTaxYearInfo(this));
         addSheet(new SheetAccount(this));
-        addSheet(new SheetAccountInfo(this));
         addSheet(new SheetAccountRate(this));
         addSheet(new SheetAccountPrice(this));
         addSheet(new SheetPattern(this));
+        addSheet(new SheetAccountInfo(this));
         addSheet(new SheetEvent(this));
         addSheet(new SheetEventInfo(this));
         addSheet(new SheetEventData(this));

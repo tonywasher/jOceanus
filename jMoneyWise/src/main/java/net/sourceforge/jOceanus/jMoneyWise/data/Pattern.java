@@ -52,7 +52,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTyp
  * Pattern data type.
  * @author Tony Washer
  */
-public class Pattern extends Event {
+public class Pattern
+        extends Event {
     /**
      * The name of the object.
      */
@@ -61,7 +62,8 @@ public class Pattern extends Event {
     /**
      * The name of the object.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Interesting TaxYear.
@@ -412,13 +414,16 @@ public class Pattern extends Event {
                 TaxYear myBase = myList.findTaxYearForDate(getDate());
 
                 /* Ignore if no maturity or else not this year */
-                if ((myDate == null) || (myBase == null) || (myBase.compareTo(pTaxYear) != 0)) {
+                if ((myDate == null)
+                    || (myBase == null)
+                    || (myBase.compareTo(pTaxYear) != 0)) {
                     return null;
                 }
             }
 
             /* Calculate the difference in years */
-            iAdjust = pTaxYear.getTaxYear().getYear() - RANGE_PATTERN.getEnd().getYear();
+            iAdjust = pTaxYear.getTaxYear().getYear()
+                      - RANGE_PATTERN.getEnd().getYear();
 
             /* Adjust the date to fall into the tax year */
             pDate.copyDate(getDate());
@@ -463,7 +468,8 @@ public class Pattern extends Event {
                 myDate = new JDateDay(getDate());
 
                 /* Calculate the difference in years */
-                iAdjust = pTaxYear.getTaxYear().getYear() - RANGE_PATTERN.getEnd().getYear();
+                iAdjust = pTaxYear.getTaxYear().getYear()
+                          - RANGE_PATTERN.getEnd().getYear();
 
                 /* Adjust the date to fall into the tax year */
                 myDate.copyDate(getDate());
@@ -604,7 +610,9 @@ public class Pattern extends Event {
     /**
      * The list.
      */
-    public static class PatternList extends EncryptedList<Pattern> implements EventDateRange {
+    public static class PatternList
+            extends EncryptedList<Pattern>
+            implements EventDateRange {
         /**
          * Local Report fields.
          */
@@ -673,8 +681,10 @@ public class Pattern extends Event {
         }
 
         @Override
-        protected PatternList getEmptyList() {
-            return new PatternList(this);
+        protected PatternList getEmptyList(final ListStyle pStyle) {
+            PatternList myList = new PatternList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -699,8 +709,7 @@ public class Pattern extends Event {
          */
         public PatternList deriveEditList(final Account pAccount) {
             /* Build an empty Update */
-            PatternList myList = getEmptyList();
-            myList.setStyle(ListStyle.EDIT);
+            PatternList myList = getEmptyList(ListStyle.EDIT);
             myList.theAccount = pAccount;
 
             /* Access the list iterator */
@@ -729,7 +738,8 @@ public class Pattern extends Event {
 
         @Override
         public boolean isLocked() {
-            return (theAccount != null) && (theAccount.isLocked());
+            return (theAccount != null)
+                   && (theAccount.isLocked());
         }
 
         /**
@@ -820,29 +830,41 @@ public class Pattern extends Event {
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Account ["
-                        + pAccount + "]");
+                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Account ["
+                                                              + pAccount
+                                                              + "]");
             }
 
             /* Look up the Partner */
             Account myPartner = myAccounts.findItemByName(pPartner);
             if (myPartner == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Partner ["
-                        + pPartner + "]");
+                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Partner ["
+                                                              + pPartner
+                                                              + "]");
             }
 
             /* Look up the TransType */
             TransactionType myTransType = myTranTypes.findItemByName(pTransType);
             if (myTransType == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid TransType ["
-                        + pTransType + "]");
+                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid TransType ["
+                                                              + pTransType
+                                                              + "]");
             }
 
             /* Look up the Frequency */
             Frequency myFrequency = myFrequencies.findItemByName(pFrequency);
             if (myFrequency == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on [" + myFormatter.formatObject(new JDateDay(pDate)) + "] has invalid Frequency ["
-                        + pFrequency + "]");
+                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
+                                                              + myFormatter.formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Frequency ["
+                                                              + pFrequency
+                                                              + "]");
             }
 
             /* Create the new pattern */
@@ -889,7 +911,9 @@ public class Pattern extends Event {
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, "Duplicate PatternId <" + uId + ">");
+                throw new JDataException(ExceptionClass.DATA, "Duplicate PatternId <"
+                                                              + uId
+                                                              + ">");
             }
 
             /* Validate the pattern */

@@ -27,16 +27,17 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 
 /**
  * TableDataInfo extension for AccountInfo.
  * @author Tony Washer
  */
-public class TableAccountInfo extends TableDataInfo<AccountInfo> {
+public class TableAccountInfo
+        extends TableDataInfo<AccountInfo> {
     /**
      * The name of the table.
      */
@@ -45,7 +46,7 @@ public class TableAccountInfo extends TableDataInfo<AccountInfo> {
     /**
      * Account data list.
      */
-    private AccountNewList theAccounts = null;
+    private AccountList theAccounts = null;
 
     /**
      * The AccountInfo list.
@@ -63,7 +64,7 @@ public class TableAccountInfo extends TableDataInfo<AccountInfo> {
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theAccounts = myData.getNewAccounts();
+        theAccounts = myData.getAccounts();
         theList = myData.getAccountInfo();
         setList(theList);
     }

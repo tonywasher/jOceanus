@@ -40,7 +40,9 @@ import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
  * for each available SymmetricKey Type and the set forms a CipherSet for encryption purposes.
  * @author Tony Washer
  */
-public class DataKey extends DataItem implements Comparable<DataKey> {
+public class DataKey
+        extends DataItem
+        implements Comparable<DataKey> {
     /**
      * Object name.
      */
@@ -49,7 +51,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -452,7 +455,8 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
     /**
      * DataKey List.
      */
-    public static class DataKeyList extends DataList<DataKey> {
+    public static class DataKeyList
+            extends DataList<DataKey> {
         /**
          * Local Report fields.
          */
@@ -495,8 +499,10 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
         }
 
         @Override
-        protected DataKeyList getEmptyList() {
-            return new DataKeyList(this);
+        protected DataKeyList getEmptyList(final ListStyle pStyle) {
+            DataKeyList myList = new DataKeyList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -550,7 +556,9 @@ public class DataKey extends DataItem implements Comparable<DataKey> {
 
             /* Check that this KeyId has not been previously added */
             if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate DataKeyId (" + uId + ")");
+                throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate DataKeyId ("
+                                                                     + uId
+                                                                     + ")");
             }
 
             /* Add to the list */

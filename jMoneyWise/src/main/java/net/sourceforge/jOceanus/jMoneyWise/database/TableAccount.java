@@ -35,13 +35,15 @@ import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 
 /**
  * TableEncrypted extension for Account.
  * @author Tony Washer
  */
-public class TableAccount extends TableEncrypted<Account> {
+public class TableAccount
+        extends TableEncrypted<Account> {
     /**
      * The name of the Account table.
      */
@@ -61,20 +63,10 @@ public class TableAccount extends TableEncrypted<Account> {
         TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        myTableDef.addEncryptedColumn(Account.FIELD_NAME, Account.NAMELEN);
-        ColumnDefinition mySortCol = myTableDef.addReferenceColumn(Account.FIELD_TYPE,
-                                                                   TableAccountType.TABLE_NAME);
-        myTableDef.addNullEncryptedColumn(Account.FIELD_DESC, Account.DESCLEN);
-        myTableDef.addNullDateColumn(Account.FIELD_MATURITY);
-        myTableDef.addNullDateColumn(Account.FIELD_CLOSE);
-        myTableDef.addNullReferenceColumn(Account.FIELD_PARENT, TABLE_NAME);
-        myTableDef.addNullReferenceColumn(Account.FIELD_ALIAS, TABLE_NAME);
-        myTableDef.addNullEncryptedColumn(Account.FIELD_WEBSITE, Account.WSITELEN);
-        myTableDef.addNullEncryptedColumn(Account.FIELD_CUSTNO, Account.CUSTLEN);
-        myTableDef.addNullEncryptedColumn(Account.FIELD_USERID, Account.UIDLEN);
-        myTableDef.addNullEncryptedColumn(Account.FIELD_PASSWORD, Account.PWDLEN);
-        myTableDef.addNullEncryptedColumn(Account.FIELD_ACCOUNT, Account.ACTLEN);
-        myTableDef.addNullEncryptedColumn(Account.FIELD_NOTES, Account.NOTELEN);
+        myTableDef.addEncryptedColumn(AccountBase.FIELD_NAME, AccountBase.NAMELEN);
+        ColumnDefinition mySortCol = myTableDef.addReferenceColumn(AccountBase.FIELD_TYPE, TableAccountType.TABLE_NAME);
+        myTableDef.addNullEncryptedColumn(AccountBase.FIELD_DESC, AccountBase.DESCLEN);
+        myTableDef.addNullDateColumn(AccountBase.FIELD_CLOSE);
 
         /* Declare the sort order */
         mySortCol.setSortOrder(SortOrder.ASCENDING);
@@ -92,23 +84,13 @@ public class TableAccount extends TableEncrypted<Account> {
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        byte[] myName = myTableDef.getBinaryValue(Account.FIELD_NAME);
-        Integer myActTypeId = myTableDef.getIntegerValue(Account.FIELD_TYPE);
-        byte[] myDesc = myTableDef.getBinaryValue(Account.FIELD_DESC);
-        Date myMaturity = myTableDef.getDateValue(Account.FIELD_MATURITY);
-        Date myClosed = myTableDef.getDateValue(Account.FIELD_CLOSE);
-        Integer myParentId = myTableDef.getIntegerValue(Account.FIELD_PARENT);
-        Integer myAliasId = myTableDef.getIntegerValue(Account.FIELD_ALIAS);
-        byte[] myWebSite = myTableDef.getBinaryValue(Account.FIELD_WEBSITE);
-        byte[] myCustNo = myTableDef.getBinaryValue(Account.FIELD_CUSTNO);
-        byte[] myUserId = myTableDef.getBinaryValue(Account.FIELD_USERID);
-        byte[] myPassword = myTableDef.getBinaryValue(Account.FIELD_PASSWORD);
-        byte[] myAccount = myTableDef.getBinaryValue(Account.FIELD_ACCOUNT);
-        byte[] myNotes = myTableDef.getBinaryValue(Account.FIELD_NOTES);
+        byte[] myName = myTableDef.getBinaryValue(AccountBase.FIELD_NAME);
+        Integer myActTypeId = myTableDef.getIntegerValue(AccountBase.FIELD_TYPE);
+        byte[] myDesc = myTableDef.getBinaryValue(AccountBase.FIELD_DESC);
+        Date myClosed = myTableDef.getDateValue(AccountBase.FIELD_CLOSE);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myActTypeId, myDesc, myMaturity, myClosed, myParentId,
-                              myAliasId, myWebSite, myCustNo, myUserId, myPassword, myAccount, myNotes);
+        theList.addSecureItem(pId, pControlId, myName, myActTypeId, myDesc, myClosed);
     }
 
     @Override
@@ -116,33 +98,14 @@ public class TableAccount extends TableEncrypted<Account> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (Account.FIELD_NAME.equals(iField)) {
+        if (AccountBase.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
-        } else if (Account.FIELD_TYPE.equals(iField)) {
+        } else if (AccountBase.FIELD_TYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getActType().getId());
-        } else if (Account.FIELD_DESC.equals(iField)) {
+        } else if (AccountBase.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
-        } else if (Account.FIELD_MATURITY.equals(iField)) {
-            myTableDef.setDateValue(iField, pItem.getMaturity());
-        } else if (Account.FIELD_CLOSE.equals(iField)) {
+        } else if (AccountBase.FIELD_CLOSE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getClose());
-        } else if (Account.FIELD_PARENT.equals(iField)) {
-            myTableDef
-                    .setIntegerValue(iField, (pItem.getParent() != null) ? pItem.getParent().getId() : null);
-        } else if (Account.FIELD_ALIAS.equals(iField)) {
-            myTableDef.setIntegerValue(iField, (pItem.getAlias() != null) ? pItem.getAlias().getId() : null);
-        } else if (Account.FIELD_WEBSITE.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getWebSiteBytes());
-        } else if (Account.FIELD_CUSTNO.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getCustNoBytes());
-        } else if (Account.FIELD_USERID.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getUserIdBytes());
-        } else if (Account.FIELD_PASSWORD.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getPasswordBytes());
-        } else if (Account.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getAccountBytes());
-        } else if (Account.FIELD_NOTES.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getNotesBytes());
         } else {
             super.setFieldValue(pItem, iField);
         }

@@ -37,6 +37,7 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetWriter;
 import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
 
@@ -51,7 +52,8 @@ import org.apache.poi.ss.util.CellReference;
  * SpreadSheet extension for FinanceData.
  * @author Tony Washer
  */
-public class FinanceSheet extends SpreadSheet<FinanceData> {
+public class FinanceSheet
+        extends SpreadSheet<FinanceData> {
     /**
      * Number of base archive load areas. 6xStatic,Dilution,Pattern,Rate,Price,Account,TaxYear,Range+Event.
      */
@@ -204,8 +206,7 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
             return myData;
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook: " + myArchive.getName(),
-                    e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook: " + myArchive.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -290,9 +291,6 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
                 bContinue = SheetAccount.loadArchive(pTask, myHelper, myData);
             }
             if (bContinue) {
-                bContinue = SheetAccountNew.loadArchive(pTask, myHelper, myData);
-            }
-            if (bContinue) {
                 bContinue = SheetAccountRate.loadArchive(pTask, myHelper, myData);
             }
             if (bContinue) {
@@ -305,7 +303,17 @@ public class FinanceSheet extends SpreadSheet<FinanceData> {
                 bContinue = SheetPattern.loadArchive(pTask, myHelper, myData);
             }
             if (bContinue) {
-                myData.getAccounts().validateLoadedAccounts();
+                /* Access the accounts */
+                AccountList myList = myData.getAccounts();
+
+                /* Mark active items */
+                myList.markActiveItems();
+
+                /* Validate the tax years */
+                myList.validate();
+                if (myList.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
+                }
             }
 
             if (bContinue) {

@@ -44,7 +44,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList
  * Extension of AccountPrice to cater for diluted prices.
  * @author Tony Washer
  */
-public class ViewPrice extends AccountPrice {
+public class ViewPrice
+        extends AccountPrice {
     /**
      * Object name.
      */
@@ -53,7 +54,8 @@ public class ViewPrice extends AccountPrice {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -152,7 +154,9 @@ public class ViewPrice extends AccountPrice {
         Account myAccount = getAccount();
 
         /* If we have can look at dilutions */
-        if ((hasDilutions) && (myDate != null) && (myPrice != null)) {
+        if ((hasDilutions)
+            && (myDate != null)
+            && (myPrice != null)) {
             /* Determine the dilution factor for the date */
             JDilution myDilution = myList.getDilutions().getDilutionFactor(myAccount, myDate);
 
@@ -209,12 +213,12 @@ public class ViewPrice extends AccountPrice {
     /**
      * Price List.
      */
-    public static class ViewPriceList extends EncryptedList<ViewPrice> {
+    public static class ViewPriceList
+            extends EncryptedList<ViewPrice> {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ViewPriceList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(ViewPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -227,7 +231,7 @@ public class ViewPrice extends AccountPrice {
         }
 
         @Override
-        protected ViewPriceList getEmptyList() {
+        protected ViewPriceList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
 
@@ -308,7 +312,8 @@ public class ViewPrice extends AccountPrice {
             setStyle(ListStyle.EDIT);
 
             /* Skip to alias if required */
-            if ((pAccount != null) && (pAccount.getAlias() != null)) {
+            if ((pAccount != null)
+                && (pAccount.getAlias() != null)) {
                 theAccount = pAccount.getAlias();
             } else {
                 theAccount = pAccount;

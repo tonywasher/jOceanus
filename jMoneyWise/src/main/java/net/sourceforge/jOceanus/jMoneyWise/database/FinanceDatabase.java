@@ -31,7 +31,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
  * Database extension for FinanceData.
  * @author Tony Washer
  */
-public class FinanceDatabase extends Database<FinanceData> {
+public class FinanceDatabase
+        extends Database<FinanceData> {
     /**
      * Construct a new Database class for load.
      * @param pPreferences the preferences
@@ -61,11 +62,10 @@ public class FinanceDatabase extends Database<FinanceData> {
         addTable(new TableTaxYear(this));
         addTable(new TableTaxYearInfo(this));
         addTable(new TableAccount(this));
-        addTable(new TableAccountNew(this));
-        addTable(new TableAccountInfo(this));
         addTable(new TableAccountRate(this));
         addTable(new TableAccountPrice(this));
         addTable(new TablePattern(this));
+        addTable(new TableAccountInfo(this));
         addTable(new TableEvent(this));
         addTable(new TableEventNew(this));
         addTable(new TableEventInfo(this));

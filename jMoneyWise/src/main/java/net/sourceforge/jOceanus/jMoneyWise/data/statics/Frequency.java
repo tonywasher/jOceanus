@@ -34,7 +34,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * Frequency data type.
  * @author Tony Washer
  */
-public class Frequency extends StaticData<Frequency, FreqClass> {
+public class Frequency
+        extends StaticData<Frequency, FreqClass> {
     /**
      * Object name.
      */
@@ -132,12 +133,12 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
     /**
      * Represents a list of {@link Frequency} objects.
      */
-    public static class FrequencyList extends StaticList<Frequency, FreqClass> {
+    public static class FrequencyList
+            extends StaticList<Frequency, FreqClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(FrequencyList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(FrequencyList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -171,8 +172,10 @@ public class Frequency extends StaticData<Frequency, FreqClass> {
         }
 
         @Override
-        protected FrequencyList getEmptyList() {
-            return new FrequencyList(this);
+        protected FrequencyList getEmptyList(final ListStyle pStyle) {
+            FrequencyList myList = new FrequencyList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override

@@ -38,7 +38,9 @@ import net.sourceforge.jOceanus.jDataModels.data.ControlKey.ControlKeyList;
  * active controlKey. All records that are not encrypted by the correct controlKey should be re-encrypted and written to the database.
  * @author Tony Washer
  */
-public class ControlData extends DataItem implements Comparable<ControlData> {
+public class ControlData
+        extends DataItem
+        implements Comparable<ControlData> {
     /**
      * Object name.
      */
@@ -47,7 +49,8 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -207,7 +210,8 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
         }
 
         /* Compare the Versions */
-        int iDiff = getDataVersion() - pThat.getDataVersion();
+        int iDiff = getDataVersion()
+                    - pThat.getDataVersion();
         if (iDiff != 0) {
             return iDiff;
         }
@@ -253,7 +257,8 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
     /**
      * Control Data List.
      */
-    public static class ControlDataList extends DataList<ControlData> {
+    public static class ControlDataList
+            extends DataList<ControlData> {
         /**
          * Local Report fields.
          */
@@ -309,8 +314,10 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
         }
 
         @Override
-        protected ControlDataList getEmptyList() {
-            return new ControlDataList(this);
+        protected ControlDataList getEmptyList(final ListStyle pStyle) {
+            ControlDataList myList = new ControlDataList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -362,7 +369,9 @@ public class ControlData extends DataItem implements Comparable<ControlData> {
 
             /* Check that this ControlId has not been previously added */
             if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, myControl, "Duplicate ControlId (" + uId + ")");
+                throw new JDataException(ExceptionClass.DATA, myControl, "Duplicate ControlId ("
+                                                                         + uId
+                                                                         + ")");
             }
 
             /* Only one control data is allowed */

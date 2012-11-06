@@ -34,7 +34,6 @@ import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
@@ -44,7 +43,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
  * TabelEncrypted extension for Pattern.
  * @author Tony Washer
  */
-public class TablePattern extends TableEncrypted<Pattern> {
+public class TablePattern
+        extends TableEncrypted<Pattern> {
     /**
      * The name of the Patterns table.
      */
@@ -56,11 +56,6 @@ public class TablePattern extends TableEncrypted<Pattern> {
     private PatternList theList = null;
 
     /**
-     * The accounts list.
-     */
-    private Account.AccountList theAccounts = null;
-
-    /**
      * Constructor.
      * @param pDatabase the database control
      */
@@ -69,8 +64,7 @@ public class TablePattern extends TableEncrypted<Pattern> {
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT,
-                                                                  TableAccount.TABLE_NAME);
+        ColumnDefinition myActCol = myTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
         ColumnDefinition myDateCol = myTableDef.addDateColumn(Event.FIELD_DATE);
         myTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.DESCLEN);
         myTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, EncryptedData.MONEYLEN);
@@ -88,13 +82,7 @@ public class TablePattern extends TableEncrypted<Pattern> {
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
         theList = myData.getPatterns();
-        theAccounts = myData.getAccounts();
         setList(theList);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JDataException {
-        theAccounts.validateLoadedAccounts();
     }
 
     @Override
@@ -112,8 +100,7 @@ public class TablePattern extends TableEncrypted<Pattern> {
         Integer myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myAccountId, myPartnerId,
-                              myTranType, myFreq, isCredit);
+        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myAccountId, myPartnerId, myTranType, myFreq, isCredit);
     }
 
     @Override

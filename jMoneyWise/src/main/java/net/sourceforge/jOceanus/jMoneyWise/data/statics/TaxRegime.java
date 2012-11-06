@@ -34,7 +34,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * TaxRegime data type.
  * @author Tony Washer
  */
-public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
+public class TaxRegime
+        extends StaticData<TaxRegime, TaxRegClass> {
     /**
      * Object name.
      */
@@ -43,7 +44,8 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -173,12 +175,12 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
     /**
      * Represents a list of {@link TaxRegime} objects.
      */
-    public static class TaxRegimeList extends StaticList<TaxRegime, TaxRegClass> {
+    public static class TaxRegimeList
+            extends StaticList<TaxRegime, TaxRegClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxRegimeList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxRegimeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -212,8 +214,10 @@ public class TaxRegime extends StaticData<TaxRegime, TaxRegClass> {
         }
 
         @Override
-        protected TaxRegimeList getEmptyList() {
-            return new TaxRegimeList(this);
+        protected TaxRegimeList getEmptyList(final ListStyle pStyle) {
+            TaxRegimeList myList = new TaxRegimeList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override

@@ -44,7 +44,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearI
  * Representation of an information extension of a TaxYear.
  * @author Tony Washer
  */
-public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> implements Comparable<TaxYearInfo> {
+public class TaxYearInfo
+        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass>
+        implements Comparable<TaxYearInfo> {
     /**
      * Object name.
      */
@@ -53,7 +55,8 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType,
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -120,6 +123,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType,
                           final TaxYearInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
+        setControlKey(pList.getControlKey());
     }
 
     /**
@@ -133,6 +137,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType,
                         final TaxYearInfoType pType) {
         /* Initialise the item */
         super(pList);
+        setControlKey(pList.getControlKey());
 
         /* Record the Detail */
         setValueInfoType(pType);
@@ -171,11 +176,11 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType,
 
             /* Look up the TaxYear */
             TaxYearList myTaxYears = myData.getTaxYears();
-            TaxYear myTaxYear = myTaxYears.findItemById(uTaxYearId);
-            if (myTaxYear == null) {
+            TaxYear myOwner = myTaxYears.findItemById(uTaxYearId);
+            if (myOwner == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid TaxYear Id");
             }
-            setValueOwner(myTaxYear);
+            setValueOwner(myOwner);
 
             /* Switch on Info Class */
             switch (myType.getDataType()) {
@@ -190,7 +195,7 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType,
             }
 
             /* Access the TaxInfoSet and register this data */
-            TaxInfoSet mySet = myTaxYear.getInfoSet();
+            TaxInfoSet mySet = myOwner.getInfoSet();
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
@@ -384,7 +389,8 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType,
     /**
      * TaxYearInfoList.
      */
-    public static class TaxInfoList extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
+    public static class TaxInfoList
+            extends DataInfoList<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
         /**
          * Local Report fields.
          */
@@ -432,8 +438,10 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType,
         }
 
         @Override
-        protected TaxInfoList getEmptyList() {
-            return new TaxInfoList(this);
+        protected TaxInfoList getEmptyList(final ListStyle pStyle) {
+            TaxInfoList myList = new TaxInfoList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -536,7 +544,9 @@ public class TaxYearInfo extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType,
             /* Look up the Info Type */
             TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pTaxYear, "TaxYear has invalid Tax Info Class [" + pInfoClass + "]");
+                throw new JDataException(ExceptionClass.DATA, pTaxYear, "TaxYear has invalid Tax Info Class ["
+                                                                        + pInfoClass
+                                                                        + "]");
             }
 
             /* Create a new Tax Info */

@@ -53,7 +53,8 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * Represents a branch of a component in the repository.
  * @author Tony Washer
  */
-public final class Branch implements JDataContents, Comparable<Branch> {
+public final class Branch
+        implements JDataContents, Comparable<Branch> {
     /**
      * The branch prefix.
      */
@@ -209,6 +210,11 @@ public final class Branch implements JDataContents, Comparable<Branch> {
      * Number of elements.
      */
     private int theNumElements = 0;
+
+    /**
+     * Is this the trunk branch.
+     */
+    private boolean isTrunk = false;
 
     /**
      * The project definition.
@@ -388,13 +394,22 @@ public final class Branch implements JDataContents, Comparable<Branch> {
         /* Build the underlying string */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-        /* Build the initial path */
-        myBuilder.append(theComponent.getBranchesPath());
-        myBuilder.delete(0, theRepository.getBase().length());
-        myBuilder.append(Repository.SEP_URL);
+        /* If this is the trunk branch */
+        if (isTrunk) {
+            /* Build the initial path */
+            myBuilder.append(theComponent.getTrunkPath());
+            myBuilder.delete(0, theRepository.getBase().length());
 
-        /* Build the version directory */
-        myBuilder.append(getBranchName());
+            /* else its a standard branch */
+        } else {
+            /* Build the initial path */
+            myBuilder.append(theComponent.getBranchesPath());
+            myBuilder.delete(0, theRepository.getBase().length());
+            myBuilder.append(Repository.SEP_URL);
+
+            /* Build the version directory */
+            myBuilder.append(getBranchName());
+        }
 
         /* Create the repository path */
         return myBuilder.toString();
@@ -408,12 +423,20 @@ public final class Branch implements JDataContents, Comparable<Branch> {
         /* Build the underlying string */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-        /* Build the initial path */
-        myBuilder.append(theComponent.getBranchesPath());
-        myBuilder.append(Repository.SEP_URL);
+        /* If this is the trunk branch */
+        if (isTrunk) {
+            /* Build the initial path */
+            myBuilder.append(theComponent.getTrunkPath());
 
-        /* Build the version directory */
-        myBuilder.append(getBranchName());
+            /* else its a standard branch */
+        } else {
+            /* Build the initial path */
+            myBuilder.append(theComponent.getBranchesPath());
+            myBuilder.append(Repository.SEP_URL);
+
+            /* Build the version directory */
+            myBuilder.append(getBranchName());
+        }
 
         /* Create the repository path */
         return myBuilder.toString();
@@ -554,11 +577,9 @@ public final class Branch implements JDataContents, Comparable<Branch> {
             SVNURL myURL = getURL();
 
             /* List the members directories */
-            myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.INFINITY,
-                            SVNDirEntry.DIRENT_ALL, new BranchDirHandler());
+            myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.INFINITY, SVNDirEntry.DIRENT_ALL, new BranchDirHandler());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover lastRevision for "
-                    + getBranchName(), e);
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover lastRevision for " + getBranchName(), e);
         } finally {
             theRepository.releaseClientManager(myMgr);
         }
@@ -610,8 +631,7 @@ public final class Branch implements JDataContents, Comparable<Branch> {
                 if (myExisting != null) {
                     /* Check it is identical */
                     if (!myExisting.equals(mySub)) {
-                        throw new JDataException(ExceptionClass.DATA, this,
-                                "Inconsistent dependency for Branch");
+                        throw new JDataException(ExceptionClass.DATA, this, "Inconsistent dependency for Branch");
                     }
                 } else {
                     /* Add dependency */
@@ -633,7 +653,8 @@ public final class Branch implements JDataContents, Comparable<Branch> {
     /**
      * The Directory Entry Handler.
      */
-    private final class BranchDirHandler implements ISVNDirEntryHandler {
+    private final class BranchDirHandler
+            implements ISVNDirEntryHandler {
 
         @Override
         public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
@@ -699,7 +720,9 @@ public final class Branch implements JDataContents, Comparable<Branch> {
     /**
      * List of branches.
      */
-    public static final class BranchList extends OrderedList<Branch> implements JDataContents {
+    public static final class BranchList
+            extends OrderedList<Branch>
+            implements JDataContents {
         /**
          * Report fields.
          */
@@ -764,16 +787,32 @@ public final class Branch implements JDataContents, Comparable<Branch> {
 
             /* Protect against exceptions */
             try {
+                /* Parse project file for trunk */
+                ProjectDefinition myProject = myRepo.parseProjectURL(theComponent.getTrunkPath());
+
+                /* If we have a project definition */
+                if (myProject != null) {
+                    /* Access the name and ignore if it does not start with branch prefix */
+                    String myName = myProject.getDefinition().getVersion();
+                    if (myName.startsWith(BRANCH_PREFIX)) {
+                        /* Strip prefix */
+                        myName = myName.substring(BRANCH_PREFIX.length());
+
+                        /* Create the branch and add to the list */
+                        Branch myBranch = new Branch(theComponent, myName);
+                        myBranch.isTrunk = true;
+                        add(myBranch);
+                    }
+                }
+
                 /* Access the branch directory URL */
                 SVNURL myURL = SVNURL.parseURIEncoded(theComponent.getBranchesPath());
 
                 /* List the branch directories */
-                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
-                                SVNDirEntry.DIRENT_ALL, new ListDirHandler());
+                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
 
             } catch (SVNException e) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover branches for "
-                        + theComponent.getName(), e);
+                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover branches for " + theComponent.getName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -841,8 +880,7 @@ public final class Branch implements JDataContents, Comparable<Branch> {
                                 myDependencies.put(myComponent, myDependency);
                             } else {
                                 /* Throw exception */
-                                throw new JDataException(ExceptionClass.DATA, myBranch,
-                                        "Duplicate component dependency");
+                                throw new JDataException(ExceptionClass.DATA, myBranch, "Duplicate component dependency");
                             }
                         }
                     }
@@ -893,8 +931,7 @@ public final class Branch implements JDataContents, Comparable<Branch> {
                 SVNURL myBranchURL = myBranch.getURL();
 
                 /* If this is parent of the passed URL */
-                if ((pURL.getPath().equals(myBranchURL.getPath()))
-                        || (pURL.getPath().startsWith(myBranchURL.getPath() + "/"))) {
+                if ((pURL.getPath().equals(myBranchURL.getPath())) || (pURL.getPath().startsWith(myBranchURL.getPath() + "/"))) {
                     /* This is the correct branch */
                     return myBranch;
                 }
@@ -1111,7 +1148,8 @@ public final class Branch implements JDataContents, Comparable<Branch> {
         /**
          * The Directory Entry Handler.
          */
-        private final class ListDirHandler implements ISVNDirEntryHandler {
+        private final class ListDirHandler
+                implements ISVNDirEntryHandler {
 
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
@@ -1123,11 +1161,13 @@ public final class Branch implements JDataContents, Comparable<Branch> {
                     return;
                 }
 
-                /* Access the name and ignore if it does not start with v */
+                /* Access the name and ignore if it does not start with branch prefix */
                 String myName = pEntry.getName();
                 if (!myName.startsWith(BRANCH_PREFIX)) {
                     return;
                 }
+
+                /* Strip prefix */
                 myName = myName.substring(BRANCH_PREFIX.length());
 
                 /* Create the branch and add to the list */

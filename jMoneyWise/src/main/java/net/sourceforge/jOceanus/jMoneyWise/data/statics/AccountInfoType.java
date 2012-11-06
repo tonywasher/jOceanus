@@ -35,7 +35,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * AccountInfoType data type.
  * @author Tony Washer
  */
-public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClass> {
+public class AccountInfoType
+        extends StaticData<AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */
@@ -44,7 +45,8 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -149,12 +151,12 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
     /**
      * Represents a list of {@link AccountInfoType} objects.
      */
-    public static class AccountInfoTypeList extends StaticList<AccountInfoType, AccountInfoClass> {
+    public static class AccountInfoTypeList
+            extends StaticList<AccountInfoType, AccountInfoClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                AccountInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -188,8 +190,10 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
         }
 
         @Override
-        protected AccountInfoTypeList getEmptyList() {
-            return new AccountInfoTypeList(this);
+        protected AccountInfoTypeList getEmptyList(final ListStyle pStyle) {
+            AccountInfoTypeList myList = new AccountInfoTypeList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -314,8 +318,7 @@ public class AccountInfoType extends StaticData<AccountInfoType, AccountInfoClas
                                   final byte[] pInfoType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Account Info Type */
-            AccountInfoType myInfoType = new AccountInfoType(this, uId, uControlId, isEnabled, uOrder,
-                    pInfoType, pDesc);
+            AccountInfoType myInfoType = new AccountInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(uId)) {

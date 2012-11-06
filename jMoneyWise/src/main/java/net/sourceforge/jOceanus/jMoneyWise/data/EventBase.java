@@ -40,7 +40,7 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedMoney;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
@@ -49,7 +49,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTyp
  * Event data type.
  * @author Tony Washer
  */
-public abstract class EventBase extends EncryptedItem implements Comparable<EventBase> {
+public abstract class EventBase
+        extends EncryptedItem
+        implements Comparable<EventBase> {
     /**
      * Event Description length.
      */
@@ -158,7 +160,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * Obtain Debit account.
      * @return the debit
      */
-    public AccountNew getDebit() {
+    public Account getDebit() {
         return getDebit(getValueSet());
     }
 
@@ -166,7 +168,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * Obtain Credit account.
      * @return the credit
      */
-    public AccountNew getCredit() {
+    public Account getCredit() {
         return getCredit(getValueSet());
     }
 
@@ -247,8 +249,8 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * @param pValueSet the valueSet
      * @return the Debit Account
      */
-    public static AccountNew getDebit(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DEBIT, AccountNew.class);
+    public static Account getDebit(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DEBIT, Account.class);
     }
 
     /**
@@ -256,8 +258,8 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * @param pValueSet the valueSet
      * @return the Credit Account
      */
-    public static AccountNew getCredit(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CREDIT, AccountNew.class);
+    public static Account getCredit(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CREDIT, Account.class);
     }
 
     /**
@@ -340,7 +342,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * Set debit value.
      * @param pValue the value
      */
-    private void setValueDebit(final AccountNew pValue) {
+    private void setValueDebit(final Account pValue) {
         getValueSet().setValue(FIELD_DEBIT, pValue);
     }
 
@@ -356,7 +358,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * Set credit value.
      * @param pValue the value
      */
-    private void setValueCredit(final AccountNew pValue) {
+    private void setValueCredit(final Account pValue) {
         getValueSet().setValue(FIELD_CREDIT, pValue);
     }
 
@@ -445,7 +447,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
         try {
             /* Access account list */
             FinanceData myData = getDataSet();
-            AccountNewList myAccounts = myData.getNewAccounts();
+            AccountList myAccounts = myData.getAccounts();
 
             /* Store the IDs that we will look up */
             setValueDebit(uDebit);
@@ -457,7 +459,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
             setValueDate(new JDateDay(pDate));
 
             /* Look up the Debit Account */
-            AccountNew myAccount = myAccounts.findItemById(uDebit);
+            Account myAccount = myAccounts.findItemById(uDebit);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Debit Account Id");
             }
@@ -504,8 +506,8 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
                         final Integer uId,
                         final Date pDate,
                         final String pDesc,
-                        final AccountNew pDebit,
-                        final AccountNew pCredit,
+                        final Account pDebit,
+                        final Account pCredit,
                         final TransactionType pTransType,
                         final String pAmount) throws JDataException {
         /* Initialise item */
@@ -587,12 +589,12 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
 
         /* Access Lists */
         FinanceData myData = getDataSet();
-        AccountNewList myAccounts = myData.getNewAccounts();
+        AccountList myAccounts = myData.getAccounts();
         TransTypeList myTranTypes = myData.getTransTypes();
 
         /* Update credit to use the local copy of the Accounts */
-        AccountNew myAct = getCredit();
-        AccountNew myNewAct = myAccounts.findItemById(myAct.getId());
+        Account myAct = getCredit();
+        Account myNewAct = myAccounts.findItemById(myAct.getId());
         setValueCredit(myNewAct);
 
         /* Update debit to use the local copy of the Accounts */
@@ -828,8 +830,8 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      */
     @Override
     public boolean isLocked() {
-        AccountNew myCredit = getCredit();
-        AccountNew myDebit = getDebit();
+        Account myCredit = getCredit();
+        Account myDebit = getDebit();
 
         /* Check credit and debit accounts */
         return (((myCredit != null) && (myCredit.isClosed())) || ((myDebit != null) && (myDebit.isClosed())));
@@ -881,7 +883,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * @return needs tax credit true/false
      */
     public static boolean needsTaxCredit(final TransactionType pTrans,
-                                         final AccountNew pDebit) {
+                                         final Account pDebit) {
         /* Handle null transType */
         if (pTrans == null) {
             return false;
@@ -929,7 +931,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * Set a new debit account.
      * @param pDebit the debit account
      */
-    public void setDebit(final AccountNew pDebit) {
+    public void setDebit(final Account pDebit) {
         setValueDebit(pDebit);
     }
 
@@ -937,7 +939,7 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * Set a new credit account.
      * @param pCredit the credit account
      */
-    public void setCredit(final AccountNew pCredit) {
+    public void setCredit(final Account pCredit) {
         setValueCredit(pCredit);
     }
 
@@ -979,7 +981,8 @@ public abstract class EventBase extends EncryptedItem implements Comparable<Even
      * The Event List class.
      * @param <T> the dataType
      */
-    public abstract static class EventBaseList<T extends EventBase> extends EncryptedList<T> {
+    public abstract static class EventBaseList<T extends EventBase>
+            extends EncryptedList<T> {
         /**
          * Local Report fields.
          */

@@ -33,12 +33,12 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearI
  * TaxInfoSet class.
  * @author Tony Washer
  */
-public class TaxInfoSet extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
+public class TaxInfoSet
+        extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(TaxInfoSet.class.getSimpleName(),
-            DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(TaxInfoSet.class.getSimpleName(), DataInfoSet.FIELD_DEFS);
 
     @Override
     public JDataFields getDataFields() {
@@ -49,19 +49,13 @@ public class TaxInfoSet extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoTyp
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
-     */
-    protected TaxInfoSet(final TaxYear pOwner,
-                         final TaxYearInfoTypeList pTypeList) {
-        /* Store the Owner and Info List */
-        super(pOwner, pTypeList);
-    }
-
-    /**
-     * Set the infoList.
      * @param pInfoList source InfoSet
      */
-    protected void setInfoList(final TaxInfoList pInfoList) {
-        super.setInfoList(pInfoList);
+    protected TaxInfoSet(final TaxYear pOwner,
+                         final TaxYearInfoTypeList pTypeList,
+                         final TaxInfoList pInfoList) {
+        /* Store the Owner and Info List */
+        super(pOwner, pTypeList, pInfoList);
     }
 
     /**

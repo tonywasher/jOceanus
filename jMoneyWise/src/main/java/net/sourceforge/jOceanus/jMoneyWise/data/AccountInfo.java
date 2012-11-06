@@ -37,7 +37,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -46,7 +46,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountI
  * Representation of an information extension of an account.
  * @author Tony Washer
  */
-public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass> implements Comparable<AccountInfo> {
+public class AccountInfo
+        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass>
+        implements Comparable<AccountInfo> {
     /**
      * Object name.
      */
@@ -55,7 +57,8 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -74,10 +77,12 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if ((FIELD_ACCOUNT.equals(pField)) && !getInfoType().isLink()) {
+        if ((FIELD_ACCOUNT.equals(pField))
+            && !getInfoType().isLink()) {
             return JDataFieldValue.SkipField;
         }
-        if ((FIELD_VALUE.equals(pField)) && getInfoType().isLink()) {
+        if ((FIELD_VALUE.equals(pField))
+            && getInfoType().isLink()) {
             return JDataFieldValue.SkipField;
         }
         return super.getFieldValue(pField);
@@ -97,15 +102,15 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
      * Obtain Account.
      * @return the Account
      */
-    public AccountNew getOwnerAccount() {
-        return getOwner(getValueSet(), AccountNew.class);
+    public Account getOwnerAccount() {
+        return getOwner(getValueSet(), Account.class);
     }
 
     /**
      * Obtain Account.
      * @return the Account
      */
-    public AccountNew getAccount() {
+    public Account getAccount() {
         return getAccount(getValueSet());
     }
 
@@ -123,15 +128,15 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
      * @param pValueSet the valueSet
      * @return the Account
      */
-    public static AccountNew getAccount(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ACCOUNT, AccountNew.class);
+    public static Account getAccount(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
     /**
      * Set Account.
      * @param pAccount the account
      */
-    private void setValueAccount(final AccountNew pAccount) {
+    private void setValueAccount(final Account pAccount) {
         getValueSet().setValue(FIELD_ACCOUNT, pAccount);
     }
 
@@ -154,6 +159,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
                           final AccountInfo pInfo) {
         /* Set standard values */
         super(pList, pInfo);
+        setControlKey(pList.getControlKey());
     }
 
     /**
@@ -163,10 +169,11 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
      * @param pType the type
      */
     private AccountInfo(final AccountInfoList pList,
-                        final AccountNew pAccount,
+                        final Account pAccount,
                         final AccountInfoType pType) {
         /* Initialise the item */
         super(pList);
+        setControlKey(pList.getControlKey());
 
         /* Record the Detail */
         setValueInfoType(pType);
@@ -204,8 +211,8 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
             setValueInfoType(myType);
 
             /* Look up the Account */
-            AccountNewList myAccounts = myData.getNewAccounts();
-            AccountNew myOwner = myAccounts.findItemById(uAccountId);
+            AccountList myAccounts = myData.getAccounts();
+            Account myOwner = myAccounts.findItemById(uAccountId);
             if (myOwner == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
             }
@@ -216,7 +223,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
                 case INTEGER:
                     setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        AccountNew myLink = myAccounts.findItemById(getValue(Integer.class));
+                        Account myLink = myAccounts.findItemById(getValue(Integer.class));
                         if (myLink == null) {
                             throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
                         }
@@ -254,7 +261,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     private AccountInfo(final AccountInfoList pList,
                         final Integer uId,
                         final AccountInfoType pInfoType,
-                        final AccountNew pAccount,
+                        final Account pAccount,
                         final Object pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId, pInfoType, pAccount);
@@ -317,7 +324,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
 
         /* Access Accounts and InfoTypes */
         FinanceData myData = getDataSet();
-        AccountNewList myAccounts = myData.getNewAccounts();
+        AccountList myAccounts = myData.getAccounts();
         AccountInfoTypeList myTypes = myData.getActInfoTypes();
 
         /* Update to use the local copy of the Types */
@@ -326,17 +333,21 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the Accounts */
-        AccountNew myAccount = getOwnerAccount();
-        AccountNew myNewAct = myAccounts.findItemById(myAccount.getId());
-        setValueOwner(myNewAct);
+        Account myAccount = getOwnerAccount();
+        Account myOwner = myAccounts.findItemById(myAccount.getId());
+        setValueOwner(myOwner);
 
         /* If the value is a link */
         if (myType.isLink()) {
             /* Update account value */
             myAccount = getAccount();
-            myNewAct = myAccounts.findItemById(myAccount.getId());
+            Account myNewAct = myAccounts.findItemById(myAccount.getId());
             setValueAccount(myNewAct);
         }
+
+        /* Access the AccountInfoSet and register this data */
+        AccountInfoSet mySet = myOwner.getInfoSet();
+        mySet.registerInfo(this);
     }
 
     @Override
@@ -371,8 +382,8 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
         boolean bValueOK = false;
         switch (myType.getDataType()) {
             case INTEGER:
-                if (pValue instanceof AccountNew) {
-                    AccountNew myAccount = (AccountNew) pValue;
+                if (pValue instanceof Account) {
+                    Account myAccount = (Account) pValue;
                     setValueValue(myAccount.getId());
                     setValueAccount(myAccount);
                     bValueOK = true;
@@ -436,7 +447,8 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
     /**
      * AccountInfoList.
      */
-    public static class AccountInfoList extends DataInfoList<AccountInfo, AccountNew, AccountInfoType, AccountInfoClass> {
+    public static class AccountInfoList
+            extends DataInfoList<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
         /**
          * Local Report fields.
          */
@@ -484,8 +496,10 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
         }
 
         @Override
-        protected AccountInfoList getEmptyList() {
-            return new AccountInfoList(this);
+        protected AccountInfoList getEmptyList(final ListStyle pStyle) {
+            AccountInfoList myList = new AccountInfoList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -521,7 +535,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
         }
 
         @Override
-        protected AccountInfo addNewItem(final AccountNew pOwner,
+        protected AccountInfo addNewItem(final Account pOwner,
                                          final AccountInfoType pInfoType) {
             /* Allocate the new entry and add to list */
             AccountInfo myInfo = new AccountInfo(this, pOwner, pInfoType);
@@ -574,7 +588,7 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer uId,
-                                final AccountNew pAccount,
+                                final Account pAccount,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws JDataException {
             /* Ignore item if it is null */
@@ -588,7 +602,9 @@ public class AccountInfo extends DataInfo<AccountInfo, AccountNew, AccountInfoTy
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pAccount, "Account has invalid Account Info Class [" + pInfoClass + "]");
+                throw new JDataException(ExceptionClass.DATA, pAccount, "Account has invalid Account Info Class ["
+                                                                        + pInfoClass
+                                                                        + "]");
             }
 
             /* Create a new Account Info Type */

@@ -48,7 +48,13 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * Represents a component in the repository.
  * @author Tony Washer
  */
-public final class Component implements JDataContents, Comparable<Component> {
+public final class Component
+        implements JDataContents, Comparable<Component> {
+    /**
+     * The trunk directory.
+     */
+    private static final String DIR_TRUNK = "trunk";
+
     /**
      * The branches directory.
      */
@@ -166,6 +172,25 @@ public final class Component implements JDataContents, Comparable<Component> {
     }
 
     /**
+     * Obtain repository path for the trunk.
+     * @return the Trunk path for the component
+     */
+    protected String getTrunkPath() {
+        /* Allocate a builder */
+        StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
+
+        /* Access the base path */
+        myBuilder.append(getURLPath());
+
+        /* Add the trunk directory */
+        myBuilder.append(Repository.SEP_URL);
+        myBuilder.append(DIR_TRUNK);
+
+        /* Create the repository path */
+        return myBuilder.toString();
+    }
+
+    /**
      * Obtain repository path for the branches.
      * @return the Branches path for the component
      */
@@ -173,10 +198,10 @@ public final class Component implements JDataContents, Comparable<Component> {
         /* Allocate a builder */
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-        /* Access the branch path */
+        /* Access the base path */
         myBuilder.append(getURLPath());
 
-        /* Add the tags directory */
+        /* Add the branches directory */
         myBuilder.append(Repository.SEP_URL);
         myBuilder.append(DIR_BRANCHES);
 
@@ -260,7 +285,9 @@ public final class Component implements JDataContents, Comparable<Component> {
     /**
      * List of components.
      */
-    public static final class ComponentList extends OrderedList<Component> implements JDataContents {
+    public static final class ComponentList
+            extends OrderedList<Component>
+            implements JDataContents {
         /**
          * Report fields.
          */
@@ -328,11 +355,9 @@ public final class Component implements JDataContents, Comparable<Component> {
                 SVNURL myURL = SVNURL.parseURIEncoded(theRepository.getPath());
 
                 /* List the component directories */
-                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
-                                SVNDirEntry.DIRENT_ALL, new ListDirHandler());
+                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover components for "
-                        + theRepository.getName(), e);
+                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover components for " + theRepository.getName(), e);
             } finally {
                 theRepository.releaseClientManager(myMgr);
             }
@@ -524,7 +549,8 @@ public final class Component implements JDataContents, Comparable<Component> {
         /**
          * The Directory Entry Handler.
          */
-        private final class ListDirHandler implements ISVNDirEntryHandler {
+        private final class ListDirHandler
+                implements ISVNDirEntryHandler {
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {
                 /* Ignore if not a directory and if it is top-level */

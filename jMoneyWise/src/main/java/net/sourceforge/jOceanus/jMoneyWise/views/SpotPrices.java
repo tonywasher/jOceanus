@@ -46,7 +46,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
  * Extension of AccountPrice to cater for spot prices.
  * @author Tony Washer
  */
-public class SpotPrices implements JDataContents {
+public class SpotPrices
+        implements JDataContents {
     /**
      * Report fields.
      */
@@ -219,12 +220,12 @@ public class SpotPrices implements JDataContents {
     /**
      * The Spot Prices List class.
      */
-    public static class SpotList extends EncryptedList<SpotPrice> {
+    public static class SpotList
+            extends EncryptedList<SpotPrice> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(SpotList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(SpotList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
          * The account type field Id.
@@ -274,7 +275,7 @@ public class SpotPrices implements JDataContents {
         }
 
         @Override
-        protected SpotList getEmptyList() {
+        protected SpotList getEmptyList(final ListStyle pStyle) {
             throw new UnsupportedOperationException();
         }
 
@@ -337,8 +338,9 @@ public class SpotPrices implements JDataContents {
             while (myActIterator.hasNext()) {
                 Account myAccount = myActIterator.next();
                 /* Ignore accounts that are wrong type, have no prices or are aliases */
-                if ((!Difference.isEqual(myAccount.getActType(), theType)) || (!myAccount.isPriced())
-                        || (myAccount.isAlias())) {
+                if ((!Difference.isEqual(myAccount.getActType(), theType))
+                    || (!myAccount.isPriced())
+                    || (myAccount.isAlias())) {
                     continue;
                 }
 
@@ -481,7 +483,8 @@ public class SpotPrices implements JDataContents {
      * Spot Price class.
      * @author Tony Washer
      */
-    public static final class SpotPrice extends AccountPrice {
+    public static final class SpotPrice
+            extends AccountPrice {
         /**
          * Object name.
          */
@@ -490,7 +493,8 @@ public class SpotPrices implements JDataContents {
         /**
          * List name.
          */
-        public static final String LIST_NAME = OBJECT_NAME + "s";
+        public static final String LIST_NAME = OBJECT_NAME
+                                               + "s";
 
         /**
          * Report fields.

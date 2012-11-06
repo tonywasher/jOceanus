@@ -33,7 +33,6 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountNew.AccountNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
@@ -58,7 +57,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
  * FinanceData dataSet.
  * @author Tony Washer
  */
-public class FinanceData extends DataSet<FinanceData> {
+public class FinanceData
+        extends DataSet<FinanceData> {
     /**
      * Money accounting format width.
      */
@@ -67,8 +67,7 @@ public class FinanceData extends DataSet<FinanceData> {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(FinanceData.class.getSimpleName(),
-            DataSet.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(FinanceData.class.getSimpleName(), DataSet.FIELD_DEFS);
 
     /**
      * AccountTypes Field Id.
@@ -124,11 +123,6 @@ public class FinanceData extends DataSet<FinanceData> {
      * Accounts Field Id.
      */
     public static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField("Accounts");
-
-    /**
-     * NewAccounts Field Id.
-     */
-    public static final JDataField FIELD_NEWACCOUNTS = FIELD_DEFS.declareLocalField("NewAccounts");
 
     /**
      * AccountInfo Field Id.
@@ -214,9 +208,6 @@ public class FinanceData extends DataSet<FinanceData> {
         }
         if (FIELD_ACCOUNTS.equals(pField)) {
             return (theAccounts.size() > 0) ? theAccounts : JDataFieldValue.SkipField;
-        }
-        if (FIELD_NEWACCOUNTS.equals(pField)) {
-            return (theNewAccounts.size() > 0) ? theNewAccounts : JDataFieldValue.SkipField;
         }
         if (FIELD_ACCOUNTINFO.equals(pField)) {
             return (theAccountInfo.size() > 0) ? theAccountInfo : JDataFieldValue.SkipField;
@@ -317,11 +308,6 @@ public class FinanceData extends DataSet<FinanceData> {
      * Accounts.
      */
     private AccountList theAccounts = null;
-
-    /**
-     * NewAccounts.
-     */
-    private AccountNewList theNewAccounts = null;
 
     /**
      * Rates.
@@ -462,14 +448,6 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
-     * Obtain NewAccounts.
-     * @return the NewAccounts
-     */
-    public AccountNewList getNewAccounts() {
-        return theNewAccounts;
-    }
-
-    /**
      * Obtain AccountInfo.
      * @return the Account Info
      */
@@ -588,7 +566,6 @@ public class FinanceData extends DataSet<FinanceData> {
         theTaxInfo = new TaxInfoList(this);
         theAccounts = new AccountList(this);
         theAccountInfo = new AccountInfoList(this);
-        theNewAccounts = new AccountNewList(this);
         theRates = new AccountRateList(this);
         thePrices = new AccountPriceList(this);
         thePatterns = new PatternList(this);
@@ -639,7 +616,6 @@ public class FinanceData extends DataSet<FinanceData> {
         myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.UPDATE);
         myExtract.theTaxInfo = theTaxInfo.deriveList(ListStyle.UPDATE);
         myExtract.theAccounts = theAccounts.deriveList(ListStyle.UPDATE);
-        myExtract.theNewAccounts = theNewAccounts.deriveList(ListStyle.UPDATE);
         myExtract.theAccountInfo = theAccountInfo.deriveList(ListStyle.UPDATE);
         myExtract.theRates = theRates.deriveList(ListStyle.UPDATE);
         myExtract.thePrices = thePrices.deriveList(ListStyle.UPDATE);
@@ -679,7 +655,6 @@ public class FinanceData extends DataSet<FinanceData> {
         myExtract.theTaxYears = theTaxYears.cloneList(this);
         myExtract.theTaxInfo = theTaxInfo.cloneList(this);
         myExtract.theAccounts = theAccounts.cloneList(this);
-        myExtract.theNewAccounts = theNewAccounts.cloneList(this);
         myExtract.theAccountInfo = theAccountInfo.cloneList(this);
         myExtract.theRates = theRates.cloneList(this);
         myExtract.thePrices = thePrices.cloneList(this);
@@ -698,10 +673,9 @@ public class FinanceData extends DataSet<FinanceData> {
     }
 
     /**
-     * Construct a difference extract between two DataSets. The difference extract will only contain items
-     * that differ between the two DataSets. Items that are in this list, but not in the old list will be
-     * viewed as inserted. Items that are in the old list but not in this list will be viewed as deleted.
-     * Items that are in both lists but differ will be viewed as changed
+     * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
+     * in this list, but not in the old list will be viewed as inserted. Items that are in the old list but not in this list will be viewed as deleted. Items
+     * that are in both lists but differ will be viewed as changed
      * @param pOld The DataSet to compare to
      * @return the difference extract
      * @throws JDataException on error
@@ -728,7 +702,6 @@ public class FinanceData extends DataSet<FinanceData> {
         myDiffers.theTaxYears = theTaxYears.deriveDifferences(pOld.getTaxYears());
         myDiffers.theTaxInfo = theTaxInfo.deriveDifferences(pOld.getTaxInfo());
         myDiffers.theAccounts = theAccounts.deriveDifferences(pOld.getAccounts());
-        myDiffers.theNewAccounts = theNewAccounts.deriveDifferences(pOld.getNewAccounts());
         myDiffers.theAccountInfo = theAccountInfo.deriveDifferences(pOld.getAccountInfo());
         myDiffers.theRates = theRates.deriveDifferences(pOld.getRates());
         myDiffers.thePrices = thePrices.deriveDifferences(pOld.getPrices());
@@ -770,7 +743,6 @@ public class FinanceData extends DataSet<FinanceData> {
         theTaxYears.reBase(pOld.getTaxYears());
         theTaxInfo.reBase(pOld.getTaxInfo());
         theAccounts.reBase(pOld.getAccounts());
-        theNewAccounts.reBase(pOld.getNewAccounts());
         theAccountInfo.reBase(pOld.getAccountInfo());
         theRates.reBase(pOld.getRates());
         thePrices.reBase(pOld.getPrices());
@@ -798,11 +770,10 @@ public class FinanceData extends DataSet<FinanceData> {
         addList(theTaxYears);
         addList(theTaxInfo);
         addList(theAccounts);
-        addList(theNewAccounts);
-        addList(theAccountInfo);
         addList(theRates);
         addList(thePrices);
         addList(thePatterns);
+        addList(theAccountInfo);
         addList(theEvents);
         addList(theNewEvents);
         addList(theEventInfo);

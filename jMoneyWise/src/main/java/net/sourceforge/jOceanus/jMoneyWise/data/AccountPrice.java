@@ -51,7 +51,9 @@ import net.sourceforge.jOceanus.jMoneyWise.views.SpotPrices.SpotPrice;
  * AccountPrice data type.
  * @author Tony Washer
  */
-public class AccountPrice extends EncryptedItem implements Comparable<AccountPrice> {
+public class AccountPrice
+        extends EncryptedItem
+        implements Comparable<AccountPrice> {
     /**
      * Object name.
      */
@@ -60,7 +62,8 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -444,7 +447,9 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         }
 
         /* The Price must be non-zero */
-        if ((getPrice() == null) || (!getPrice().isNonZero()) || (!getPrice().isPositive())) {
+        if ((getPrice() == null)
+            || (!getPrice().isNonZero())
+            || (!getPrice().isPositive())) {
             addError("Price must be non-Zero and positive", FIELD_PRICE);
         }
 
@@ -541,7 +546,8 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
     /**
      * Price List.
      */
-    public static class AccountPriceList extends EncryptedList<AccountPrice> {
+    public static class AccountPriceList
+            extends EncryptedList<AccountPrice> {
         /**
          * Local Report fields.
          */
@@ -579,8 +585,10 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
         }
 
         @Override
-        protected AccountPriceList getEmptyList() {
-            return new AccountPriceList(this);
+        protected AccountPriceList getEmptyList(final ListStyle pStyle) {
+            AccountPriceList myList = new AccountPriceList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -772,8 +780,11 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
             /* Look up the Account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Price on [" + myData.getDataFormatter().formatObject(new JDateDay(pDate))
-                        + "] has invalid Account [" + pAccount + "]");
+                throw new JDataException(ExceptionClass.DATA, "Price on ["
+                                                              + myData.getDataFormatter().formatObject(new JDateDay(pDate))
+                                                              + "] has invalid Account ["
+                                                              + pAccount
+                                                              + "]");
             }
 
             /* Create the PricePoint */
@@ -781,7 +792,9 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <" + myPrice.getId() + ">");
+                throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
+                                                                       + myPrice.getId()
+                                                                       + ">");
             }
 
             /* Validate the price */
@@ -815,7 +828,9 @@ public class AccountPrice extends EncryptedItem implements Comparable<AccountPri
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <" + uId + ">");
+                throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
+                                                                       + uId
+                                                                       + ">");
             }
 
             /* Validate the price */

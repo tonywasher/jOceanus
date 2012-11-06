@@ -47,7 +47,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
 import net.sourceforge.jOceanus.jDataModels.ui.SaveButtons;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
@@ -63,6 +62,9 @@ import net.sourceforge.jOceanus.jFieldSet.ValueField;
 import net.sourceforge.jOceanus.jFieldSet.ValueField.ValueClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
@@ -73,7 +75,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * Account maintenance panel.
  * @author Tony Washer
  */
-public class MaintAccount extends JEventPanel {
+public class MaintAccount
+        extends JEventPanel {
     /**
      * The Serial Id.
      */
@@ -277,7 +280,12 @@ public class MaintAccount extends JEventPanel {
     /**
      * The view list.
      */
-    private final transient UpdateEntry<Account> theUpdateEntry;
+    private final transient UpdateEntry<Account> theAccountEntry;
+
+    /**
+     * The AccountInfo Update Entry.
+     */
+    private final transient UpdateEntry<AccountInfo> theInfoEntry;
 
     /**
      * Obtain the account.
@@ -298,7 +306,8 @@ public class MaintAccount extends JEventPanel {
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
-        theUpdateEntry = theUpdateSet.registerClass(Account.class);
+        theAccountEntry = theUpdateSet.registerClass(Account.class);
+        theInfoEntry = theUpdateSet.registerClass(AccountInfo.class);
 
         /* Create the labels */
         JLabel myName = new JLabel("Name:");
@@ -322,10 +331,10 @@ public class MaintAccount extends JEventPanel {
         theFieldSet = new FieldSet(theRenderMgr);
 
         /* Create the text fields */
-        theName = new ItemField(ValueClass.String, Account.FIELD_NAME, theFieldSet);
-        theDesc = new ItemField(ValueClass.String, Account.FIELD_DESC, theFieldSet);
-        theName.setColumns(Account.NAMELEN);
-        theDesc.setColumns(Account.DESCLEN);
+        theName = new ItemField(ValueClass.String, AccountBase.FIELD_NAME, theFieldSet);
+        theDesc = new ItemField(ValueClass.String, AccountBase.FIELD_DESC, theFieldSet);
+        theName.setColumns(AccountBase.NAMELEN);
+        theDesc.setColumns(AccountBase.DESCLEN);
 
         /* Create the security fields */
         theWebSite = new ItemField(ValueClass.CharArray, Account.FIELD_WEBSITE, theFieldSet);
@@ -347,7 +356,7 @@ public class MaintAccount extends JEventPanel {
         theAliasBox = new JComboBox<Account>();
 
         /* Add the ComboBoxes to the Field Set */
-        theFieldSet.addItemField(theTypesBox, Account.FIELD_TYPE);
+        theFieldSet.addItemField(theTypesBox, AccountBase.FIELD_TYPE);
         theFieldSet.addItemField(theParentBox, Account.FIELD_PARENT);
         theFieldSet.addItemField(theAliasBox, Account.FIELD_ALIAS);
 
@@ -393,6 +402,7 @@ public class MaintAccount extends JEventPanel {
         theDataEntry = myDataMgr.new JDataEntry(Account.class.getSimpleName());
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry.addAsChildOf(mySection);
+        theDataEntry.setObject(theUpdateSet);
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
@@ -407,18 +417,13 @@ public class MaintAccount extends JEventPanel {
         theButtons.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(theInsButton)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theDelButton)
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED,
-                                                   GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                  .addComponent(theClsButton).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addComponent(theInsButton).addComponent(theDelButton).addComponent(theClsButton));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup().addContainerGap().addComponent(theInsButton)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(theDelButton)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(theClsButton)
+                        .addContainerGap()));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(theInsButton).addComponent(theDelButton)
+                .addComponent(theClsButton));
 
         /* Create the secure panel */
         theSecure = new JPanel();
@@ -429,86 +434,72 @@ public class MaintAccount extends JEventPanel {
         theSecure.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addGroup(myLayout.createSequentialGroup()
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(myWebSite)
-                                                                                        .addComponent(myCustNo)
-                                                                                        .addComponent(myUserId)
-                                                                                        .addComponent(myNotes))
-                                                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                                        .addComponent(theWebSite)
-                                                                                        .addComponent(theNotes)
-                                                                                        .addGroup(myLayout.createSequentialGroup()
-                                                                                                          .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                                                                            .addComponent(theCustNo,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE)
-                                                                                                                            .addComponent(theUserId,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE))
-                                                                                                          .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                          .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                                                            .addComponent(myAccount,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE)
-                                                                                                                            .addComponent(myPassword,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE))
-                                                                                                          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                                                          .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                                                                            .addComponent(theActDetail,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE)
-                                                                                                                            .addComponent(thePassword,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE,
-                                                                                                                                          GroupLayout.PREFERRED_SIZE))))
-                                                                      .addContainerGap()))));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(myWebSite)
-                                                    .addComponent(theWebSite, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(myCustNo)
-                                                    .addComponent(theCustNo, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE)
-                                                    .addComponent(myAccount)
-                                                    .addComponent(theActDetail, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(myUserId)
-                                                    .addComponent(theUserId, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE)
-                                                    .addComponent(myPassword)
-                                                    .addComponent(thePassword, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(myNotes)
-                                                    .addComponent(theNotes, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(
+                                                myLayout.createSequentialGroup()
+                                                        .addGroup(
+                                                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(myWebSite)
+                                                                        .addComponent(myCustNo).addComponent(myUserId).addComponent(myNotes))
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addGroup(
+                                                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(theWebSite)
+                                                                        .addComponent(theNotes)
+                                                                        .addGroup(
+                                                                                myLayout.createSequentialGroup()
+                                                                                        .addGroup(
+                                                                                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                                                                        .addComponent(theCustNo, GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                                                        .addComponent(theUserId, GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE))
+                                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                        .addGroup(
+                                                                                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                                                                                        .addComponent(myAccount, GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                                                        .addComponent(myPassword, GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE))
+                                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                                        .addGroup(
+                                                                                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                                                                        .addComponent(theActDetail, GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE)
+                                                                                                        .addComponent(thePassword, GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE,
+                                                                                                                GroupLayout.PREFERRED_SIZE))))
+                                                        .addContainerGap()))));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myWebSite)
+                                        .addComponent(theWebSite, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myCustNo)
+                                        .addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(myAccount)
+                                        .addComponent(theActDetail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myUserId)
+                                        .addComponent(theUserId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(myPassword)
+                                        .addComponent(thePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myNotes)
+                                        .addComponent(theNotes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))));
 
         /* Create the detail panel */
         theDetail = new JPanel();
@@ -519,87 +510,64 @@ public class MaintAccount extends JEventPanel {
         theDetail.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addGroup(myLayout.createSequentialGroup()
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(theTypLabel)
-                                                                                        .addComponent(myName)
-                                                                                        .addComponent(myDesc)
-                                                                                        .addComponent(theParLabel))
-                                                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                                        .addComponent(theTypesBox,
-                                                                                                      GroupLayout.PREFERRED_SIZE,
-                                                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                                                      GroupLayout.PREFERRED_SIZE)
-                                                                                        .addComponent(theDesc,
-                                                                                                      GroupLayout.PREFERRED_SIZE,
-                                                                                                      GroupLayout.DEFAULT_SIZE,
-                                                                                                      GroupLayout.PREFERRED_SIZE)
-                                                                                        .addGroup(myLayout.createSequentialGroup()
-                                                                                                          .addComponent(theName,
-                                                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                                          .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                          .addComponent(theMatLabel)
-                                                                                                          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                                                          .addComponent(theMatButton,
-                                                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                                        GroupLayout.PREFERRED_SIZE))
-                                                                                        .addGroup(myLayout.createSequentialGroup()
-                                                                                                          .addComponent(theParentBox,
-                                                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                                          .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                                          .addComponent(theAlsLabel)
-                                                                                                          .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                                                          .addComponent(theAliasBox,
-                                                                                                                        GroupLayout.PREFERRED_SIZE,
-                                                                                                                        GroupLayout.DEFAULT_SIZE,
-                                                                                                                        GroupLayout.PREFERRED_SIZE)))))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(theTypLabel)
-                                                    .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(myName)
-                                                    .addComponent(theName, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE)
-                                                    .addComponent(theMatLabel)
-                                                    .addComponent(theMatButton, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(myDesc)
-                                                    .addComponent(theDesc, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(theParLabel)
-                                                    .addComponent(theParentBox, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE)
-                                                    .addComponent(theAlsLabel)
-                                                    .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addContainerGap()));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                                        myLayout.createSequentialGroup()
+                                                .addGroup(
+                                                        myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(theTypLabel)
+                                                                .addComponent(myName).addComponent(myDesc).addComponent(theParLabel))
+                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(
+                                                        myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                                                .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                                                        GroupLayout.PREFERRED_SIZE)
+                                                                .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                                                        GroupLayout.PREFERRED_SIZE)
+                                                                .addGroup(
+                                                                        myLayout.createSequentialGroup()
+                                                                                .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
+                                                                                        GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addComponent(theMatLabel)
+                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(theMatButton, GroupLayout.PREFERRED_SIZE,
+                                                                                        GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                                                .addGroup(
+                                                                        myLayout.createSequentialGroup()
+                                                                                .addComponent(theParentBox, GroupLayout.PREFERRED_SIZE,
+                                                                                        GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                                .addComponent(theAlsLabel)
+                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE,
+                                                                                        GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))))
+                        .addContainerGap()));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(theTypLabel)
+                                        .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myName)
+                                        .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(theMatLabel)
+                                        .addComponent(theMatButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myDesc)
+                                        .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(theParLabel)
+                                        .addComponent(theParentBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(theAlsLabel)
+                                        .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap()));
 
         /* Create the status panel */
         JPanel myStatus = new JPanel();
@@ -610,65 +578,49 @@ public class MaintAccount extends JEventPanel {
         myStatus.setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout
-                .createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addGroup(myLayout.createSequentialGroup()
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(myFirst)
-                                                                                        .addComponent(myLast))
-                                                                      .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                      .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                        .addComponent(theFirst)
-                                                                                        .addComponent(theLast))))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(myFirst)
-                                                    .addComponent(theFirst, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(myLast)
-                                                    .addComponent(theLast, GroupLayout.PREFERRED_SIZE,
-                                                                  GroupLayout.DEFAULT_SIZE,
-                                                                  GroupLayout.PREFERRED_SIZE))
-                                  .addContainerGap()));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addGroup(
+                                                myLayout.createSequentialGroup()
+                                                        .addGroup(
+                                                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(myFirst)
+                                                                        .addComponent(myLast))
+                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addGroup(
+                                                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(theFirst)
+                                                                        .addComponent(theLast)))).addContainerGap()));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myFirst)
+                                        .addComponent(theFirst, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myLast)
+                                        .addComponent(theLast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap()));
 
         /* Create the layout for the panel */
         myLayout = new GroupLayout(this);
         setLayout(myLayout);
 
         /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                    .addComponent(theError)
-                                                    .addComponent(theSelect)
-                                                    .addComponent(theSaveButs)
-                                                    .addGroup(myLayout.createSequentialGroup()
-                                                                      .addComponent(theDetail)
-                                                                      .addComponent(myStatus))
-                                                    .addComponent(theSecure).addComponent(theButtons))
-                                  .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                .addGroup(myLayout.createSequentialGroup()
-                                  .addContainerGap()
-                                  .addComponent(theError)
-                                  .addComponent(theSelect)
-                                  .addContainerGap(GAP_TEN, GAP_THIRTY)
-                                  .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                                    .addComponent(theDetail).addComponent(myStatus))
-                                  .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theSecure)
-                                  .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theButtons)
-                                  .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theSaveButs)
-                                  .addContainerGap()));
+        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(
+                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(theError).addComponent(theSelect)
+                                        .addComponent(theSaveButs).addGroup(myLayout.createSequentialGroup().addComponent(theDetail).addComponent(myStatus))
+                                        .addComponent(theSecure).addComponent(theButtons)).addContainerGap()));
+        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
+                myLayout.createSequentialGroup().addContainerGap().addComponent(theError).addComponent(theSelect).addContainerGap(GAP_TEN, GAP_THIRTY)
+                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(theDetail).addComponent(myStatus))
+                        .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theSecure).addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theButtons)
+                        .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theSaveButs).addContainerGap()));
 
         /* Set initial display */
         showAccount();
@@ -728,13 +680,6 @@ public class MaintAccount extends JEventPanel {
     }
 
     /**
-     * Update Debug view.
-     */
-    public void updateDebug() {
-        theDataEntry.setObject(theActView);
-    }
-
-    /**
      * refreshData.
      */
     public void refreshData() {
@@ -764,7 +709,8 @@ public class MaintAccount extends JEventPanel {
         while (myTypeIterator.hasNext()) {
             AccountType myType = myTypeIterator.next();
             /* Ignore the type if it is reserved or not enabled */
-            if ((myType.isReserved()) || (!myType.getEnabled())) {
+            if ((myType.isReserved())
+                || (!myType.getEnabled())) {
                 continue;
             }
 
@@ -816,7 +762,8 @@ public class MaintAccount extends JEventPanel {
             }
 
             /* Ignore the account if it is closed and we are not showing closed */
-            if (myAcct.isClosed() && (!doShowClosed)) {
+            if (myAcct.isClosed()
+                && (!doShowClosed)) {
                 continue;
             }
 
@@ -864,22 +811,24 @@ public class MaintAccount extends JEventPanel {
         /* Reset controls */
         theActView = null;
         theAccount = null;
+        AccountInfoList myInfo = null;
 
         /* If we have a selected account */
         if (pAccount != null) {
             /* Create the view of the account */
-            theActView = theAccounts.deriveList(ListStyle.EDIT);
+            theActView = theAccounts.deriveEditList(pAccount);
+            myInfo = theActView.getAccountInfo();
 
             /* Access the account */
             theAccount = theActView.findItemByName(pAccount.getName());
         }
 
         /* Set List */
-        theUpdateEntry.setDataList(theActView);
+        theAccountEntry.setDataList(theActView);
+        theInfoEntry.setDataList(myInfo);
 
         /* notify changes */
         notifyChanges();
-        updateDebug();
     }
 
     /**
@@ -900,40 +849,50 @@ public class MaintAccount extends JEventPanel {
 
             /* Set the name */
             theName.setValue(theAccount.getName());
-            theName.setEnabled(!isClosed && !theAccount.isDeleted());
+            theName.setEnabled(!isClosed
+                               && !theAccount.isDeleted());
 
             /* Set the description */
             theDesc.setValue(theAccount.getDesc());
-            theDesc.setEnabled(!isClosed && !theAccount.isDeleted());
+            theDesc.setEnabled(!isClosed
+                               && !theAccount.isDeleted());
 
             /* Set the WebSite */
             theWebSite.setValue(theAccount.getWebSite());
-            theWebSite.setEnabled(!isClosed && !theAccount.isDeleted());
+            theWebSite.setEnabled(!isClosed
+                                  && !theAccount.isDeleted());
 
             /* Set the CustNo */
             theCustNo.setValue(theAccount.getCustNo());
-            theCustNo.setEnabled(!isClosed && !theAccount.isDeleted());
+            theCustNo.setEnabled(!isClosed
+                                 && !theAccount.isDeleted());
 
             /* Set the UserId */
             theUserId.setValue(theAccount.getUserId());
-            theUserId.setEnabled(!isClosed && !theAccount.isDeleted());
+            theUserId.setEnabled(!isClosed
+                                 && !theAccount.isDeleted());
 
             /* Set the Password */
             thePassword.setValue(theAccount.getPassword());
-            thePassword.setEnabled(!isClosed && !theAccount.isDeleted());
+            thePassword.setEnabled(!isClosed
+                                   && !theAccount.isDeleted());
 
             /* Set the WebSite */
             theActDetail.setValue(theAccount.getAccount());
-            theActDetail.setEnabled(!isClosed && !theAccount.isDeleted());
+            theActDetail.setEnabled(!isClosed
+                                    && !theAccount.isDeleted());
 
             /* Set the Notes */
             theNotes.setValue(theAccount.getNotes());
-            theNotes.setEnabled(!isClosed && !theAccount.isDeleted());
+            theNotes.setEnabled(!isClosed
+                                && !theAccount.isDeleted());
 
             /* Set the type */
             theTypesBox.setSelectedItem(myType.getName());
-            theTypesBox.setVisible(theAccount.isDeletable() && (theAccount.getState() == DataState.NEW));
-            theTypLabel.setVisible(theAccount.isDeletable() && (theAccount.getState() == DataState.NEW));
+            theTypesBox.setVisible(theAccount.isDeletable()
+                                   && (theAccount.getState() == DataState.NEW));
+            theTypLabel.setVisible(theAccount.isDeletable()
+                                   && (theAccount.getState() == DataState.NEW));
 
             /* Handle maturity */
             if (myType.isBond()) {
@@ -959,10 +918,12 @@ public class MaintAccount extends JEventPanel {
                 theParentBox.setVisible(false);
                 theParLabel.setVisible(false);
             }
-            theParentBox.setEnabled(!isClosed && !theAccount.isDeleted());
+            theParentBox.setEnabled(!isClosed
+                                    && !theAccount.isDeleted());
 
             /* Handle alias */
-            if (myType.canAlias() && (!theAccount.isAliasedTo())) {
+            if (myType.canAlias()
+                && (!theAccount.isAliasedTo())) {
                 /* If we have alias already populated */
                 if (theAliasBox.getItemCount() > 0) {
                     /* Remove the items */
@@ -1015,7 +976,8 @@ public class MaintAccount extends JEventPanel {
                 theAliasBox.setVisible(false);
                 theAlsLabel.setVisible(false);
             }
-            theAliasBox.setEnabled(!isClosed && !theAccount.isDeleted());
+            theAliasBox.setEnabled(!isClosed
+                                   && !theAccount.isDeleted());
 
             /* Render all fields in the set */
             theFieldSet.renderSet(theAccount);
@@ -1025,12 +987,10 @@ public class MaintAccount extends JEventPanel {
             JDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Set the First Event */
-            theFirst.setText((theAccount.getEarliest() != null) ? myFormatter.formatObject(theAccount
-                    .getEarliest().getDate()) : "N/A");
+            theFirst.setText((theAccount.getEarliest() != null) ? myFormatter.formatObject(theAccount.getEarliest().getDate()) : "N/A");
 
             /* Set the Last Event */
-            theLast.setText((theAccount.getLatest() != null) ? myFormatter.formatObject(theAccount
-                    .getLatest().getDate()) : "N/A");
+            theLast.setText((theAccount.getLatest() != null) ? myFormatter.formatObject(theAccount.getLatest().getDate()) : "N/A");
 
             /* Set text for close button */
             theClsButton.setText((isClosed) ? "ReOpen" : "Close");
@@ -1041,8 +1001,10 @@ public class MaintAccount extends JEventPanel {
             theClsButton.setVisible(!theAccount.isDeleted());
 
             /* Enable buttons */
-            theInsButton.setEnabled(!theAccount.hasChanges() && (!theAccount.getActType().isReserved()));
-            theClsButton.setEnabled((isClosed) || (theAccount.isCloseable()));
+            theInsButton.setEnabled(!theAccount.hasChanges()
+                                    && (!theAccount.getActType().isReserved()));
+            theClsButton.setEnabled((isClosed)
+                                    || (theAccount.isCloseable()));
 
             /* Note that we are finished refreshing data */
             refreshingData = false;
@@ -1102,29 +1064,31 @@ public class MaintAccount extends JEventPanel {
     private void newAccount() {
         /* Create a account View for an empty account */
         theActView = theAccounts.deriveEditList(theSelect.getType());
+        AccountInfoList myInfo = theActView.getAccountInfo();
 
         /* Access the account */
         theAccount = theActView.getAccount();
 
         /* Set List */
-        theUpdateEntry.setDataList(theActView);
+        theAccountEntry.setDataList(theActView);
+        theInfoEntry.setDataList(myInfo);
 
         /* Notify changes */
         notifyChanges();
-        updateDebug();
     }
 
     /**
      * AccountListener class.
      */
-    private final class AccountListener implements ActionListener, ItemListener, PropertyChangeListener,
-            ChangeListener {
+    private final class AccountListener
+            implements ActionListener, ItemListener, PropertyChangeListener, ChangeListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
             Object o = evt.getSource();
 
             /* Ignore selection if refreshing data */
-            if ((refreshingData) || (evt.getStateChange() != ItemEvent.SELECTED)) {
+            if ((refreshingData)
+                || (evt.getStateChange() != ItemEvent.SELECTED)) {
                 return;
             }
 
@@ -1172,10 +1136,9 @@ public class MaintAccount extends JEventPanel {
                 }
 
                 /* Handle Exceptions */
-            } catch (ClassCastException e) {
+            } catch (JDataException e) {
                 /* Reset values */
                 theAccount.popHistory();
-                theAccount.pushHistory();
 
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field", e);
@@ -1191,7 +1154,6 @@ public class MaintAccount extends JEventPanel {
 
                 /* Note that changes have occurred */
                 notifyChanges();
-                updateDebug();
             }
         }
 
@@ -1275,7 +1237,6 @@ public class MaintAccount extends JEventPanel {
 
                 /* Note that changes have occurred */
                 notifyChanges();
-                updateDebug();
             }
         }
 
@@ -1363,7 +1324,6 @@ public class MaintAccount extends JEventPanel {
 
                 /* Note that changes have occurred */
                 notifyChanges();
-                updateDebug();
             }
         }
 

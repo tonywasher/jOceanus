@@ -35,7 +35,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * EventInfoType data type.
  * @author Tony Washer
  */
-public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
+public class EventInfoType
+        extends StaticData<EventInfoType, EventInfoClass> {
     /**
      * Object name.
      */
@@ -44,7 +45,8 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -149,12 +151,12 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
     /**
      * Represents a list of {@link EventInfoType} objects.
      */
-    public static class EventInfoTypeList extends StaticList<EventInfoType, EventInfoClass> {
+    public static class EventInfoTypeList
+            extends StaticList<EventInfoType, EventInfoClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(
-                EventInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfoTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -188,8 +190,10 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
         }
 
         @Override
-        protected EventInfoTypeList getEmptyList() {
-            return new EventInfoTypeList(this);
+        protected EventInfoTypeList getEmptyList(final ListStyle pStyle) {
+            EventInfoTypeList myList = new EventInfoTypeList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
@@ -314,8 +318,7 @@ public class EventInfoType extends StaticData<EventInfoType, EventInfoClass> {
                                   final byte[] pInfoType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new InfoType */
-            EventInfoType myType = new EventInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType,
-                    pDesc);
+            EventInfoType myType = new EventInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(uId)) {

@@ -23,7 +23,6 @@
     <module>jEventManager</module>
     <module>jFieldSet</module>
     <module>jPreferenceSet</module>
-    <module>JDateButton</module>
   </modules>
   <licenses>
     <license>

@@ -79,7 +79,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * TaxYear maintenance panel.
  * @author Tony Washer
  */
-public class MaintTaxYear extends JEventPanel {
+public class MaintTaxYear
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -522,8 +523,7 @@ public class MaintTaxYear extends JEventPanel {
         theAllows.add(theRental);
         theAllows.add(myCapitalAllow);
         theAllows.add(theCapitalAllow);
-        SpringUtilities.makeCompactGrid(theAllows, mySpring, theAllows.getComponentCount() >> 1, 2,
-                                        PADDING_SIZE);
+        SpringUtilities.makeCompactGrid(theAllows, mySpring, theAllows.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Create the limits panel */
         theLimits = new JPanel();
@@ -536,8 +536,7 @@ public class MaintTaxYear extends JEventPanel {
         theLimits.add(theAgeAllowLimit);
         theLimits.add(myAddAllowLimit);
         theLimits.add(theAddAllowLimit);
-        SpringUtilities.makeCompactGrid(theLimits, mySpring, theLimits.getComponentCount() >> 1, 2,
-                                        PADDING_SIZE);
+        SpringUtilities.makeCompactGrid(theLimits, mySpring, theLimits.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Create the bands panel */
         theBands = new JPanel();
@@ -552,8 +551,7 @@ public class MaintTaxYear extends JEventPanel {
         theBands.add(theBasicTaxBand);
         theBands.add(myAddIncBndry);
         theBands.add(theAddIncomeBndry);
-        SpringUtilities.makeCompactGrid(theBands, mySpring, theBands.getComponentCount() >> 1, 2,
-                                        PADDING_SIZE);
+        SpringUtilities.makeCompactGrid(theBands, mySpring, theBands.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Create the standard rates panel */
         theStdRates = new JPanel();
@@ -570,8 +568,7 @@ public class MaintTaxYear extends JEventPanel {
         theStdRates.add(theHiTaxRate);
         theStdRates.add(myAddTaxRate);
         theStdRates.add(theAddTaxRate);
-        SpringUtilities.makeCompactGrid(theStdRates, mySpring, theStdRates.getComponentCount() >> 1, 2,
-                                        PADDING_SIZE);
+        SpringUtilities.makeCompactGrid(theStdRates, mySpring, theStdRates.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Create the extra rates panel */
         theXtraRates = new JPanel();
@@ -588,8 +585,7 @@ public class MaintTaxYear extends JEventPanel {
         theXtraRates.add(theHiDivTaxRate);
         theXtraRates.add(myAddDivTaxRate);
         theXtraRates.add(theAddDivTaxRate);
-        SpringUtilities.makeCompactGrid(theXtraRates, mySpring, theXtraRates.getComponentCount() >> 1, 2,
-                                        PADDING_SIZE);
+        SpringUtilities.makeCompactGrid(theXtraRates, mySpring, theXtraRates.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Create the capital rates panel */
         theCapRates = new JPanel();
@@ -602,8 +598,7 @@ public class MaintTaxYear extends JEventPanel {
         theCapRates.add(theCapTaxRate);
         theCapRates.add(myHiCapTaxRate);
         theCapRates.add(theHiCapTaxRate);
-        SpringUtilities.makeCompactGrid(theCapRates, mySpring, theCapRates.getComponentCount() >> 1, 2,
-                                        PADDING_SIZE);
+        SpringUtilities.makeCompactGrid(theCapRates, mySpring, theCapRates.getComponentCount() >> 1, 2, PADDING_SIZE);
 
         /* Create a grid panel for the details */
         JPanel myGridPanel = new JPanel(new GridLayout(GRID_ROWS, GRID_COLS, PADDING_SIZE, PADDING_SIZE));
@@ -684,13 +679,6 @@ public class MaintTaxYear extends JEventPanel {
     }
 
     /**
-     * Update Debug view.
-     */
-    public void updateDebug() {
-        theDataEntry.setObject(theTaxView);
-    }
-
-    /**
      * RefreshData.
      */
     public void refreshData() {
@@ -749,7 +737,8 @@ public class MaintTaxYear extends JEventPanel {
         /* If we have a selected tax year */
         if (pTaxYear != null) {
             /* If we need to show deleted items */
-            if ((!doShowDeleted) && (pTaxYear.isDeleted())) {
+            if ((!doShowDeleted)
+                && (pTaxYear.isDeleted())) {
                 /* Set the flag correctly */
                 doShowDeleted = true;
             }
@@ -778,103 +767,112 @@ public class MaintTaxYear extends JEventPanel {
         if (theTaxYear != null) {
             /* Access the tax regime */
             TaxRegime myRegime = theTaxYear.getTaxRegime();
+            boolean bActive = !theTaxYear.isDeleted();
+            boolean hasAdditionalTaxBand = myRegime.hasAdditionalTaxBand();
+            boolean hasCapitalGainsAsIncome = myRegime.hasCapitalGainsAsIncome();
 
             /* Set the Year */
             theYear.setText(Integer.toString(theTaxYear.getTaxYear().getYear()));
-            theYear.setEnabled(!theTaxYear.isDeleted());
+            theYear.setEnabled(bActive);
 
             /* Set the Regime */
             theRegimesBox.setSelectedItem(myRegime);
-            theRegimesBox.setEnabled(!theTaxYear.isDeleted());
+            theRegimesBox.setEnabled(bActive);
 
             /* Set the Allowance */
             theAllowance.setValue(theTaxYear.getAllowance());
-            theAllowance.setEnabled(!theTaxYear.isDeleted());
+            theAllowance.setEnabled(bActive);
 
             /* Set the LoAge Allowance */
             theLoAgeAllow.setValue(theTaxYear.getLoAgeAllow());
-            theLoAgeAllow.setEnabled(!theTaxYear.isDeleted());
+            theLoAgeAllow.setEnabled(bActive);
 
             /* Set the HiAge Allowance */
             theHiAgeAllow.setValue(theTaxYear.getHiAgeAllow());
-            theHiAgeAllow.setEnabled(!theTaxYear.isDeleted());
+            theHiAgeAllow.setEnabled(bActive);
 
             /* Set the Capital Allowance */
             theCapitalAllow.setValue(theTaxYear.getCapitalAllow());
-            theCapitalAllow.setEnabled(!theTaxYear.isDeleted());
+            theCapitalAllow.setEnabled(bActive);
 
             /* Set the Rental Allowance */
             theRental.setValue(theTaxYear.getRentalAllowance());
-            theRental.setEnabled(!theTaxYear.isDeleted());
+            theRental.setEnabled(bActive);
 
             /* Set the Age Allowance Limit */
             theAgeAllowLimit.setValue(theTaxYear.getAgeAllowLimit());
-            theAgeAllowLimit.setEnabled(!theTaxYear.isDeleted());
+            theAgeAllowLimit.setEnabled(bActive);
 
             /* Set the Additional Allowance Limit */
             theAddAllowLimit.setValue(theTaxYear.getAddAllowLimit());
-            theAddAllowLimit.setEnabled(!theTaxYear.isDeleted() && theTaxYear.hasAdditionalTaxBand());
+            theAddAllowLimit.setEnabled(bActive
+                                        && hasAdditionalTaxBand);
 
             /* Set the Additional Income Boundary */
             theAddIncomeBndry.setValue(theTaxYear.getAddIncBound());
-            theAddIncomeBndry.setEnabled(!theTaxYear.isDeleted() && theTaxYear.hasAdditionalTaxBand());
+            theAddIncomeBndry.setEnabled(bActive
+                                         && hasAdditionalTaxBand);
 
             /* Set the Low Tax Band */
             theLoTaxBand.setValue(theTaxYear.getLoBand());
-            theLoTaxBand.setEnabled(!theTaxYear.isDeleted());
+            theLoTaxBand.setEnabled(bActive);
 
             /* Set the Basic Tax Band */
             theBasicTaxBand.setValue(theTaxYear.getBasicBand());
-            theBasicTaxBand.setEnabled(!theTaxYear.isDeleted());
+            theBasicTaxBand.setEnabled(bActive);
 
             /* Set the Low Tax Rate */
             theLoTaxRate.setValue(theTaxYear.getLoTaxRate());
-            theLoTaxRate.setEnabled(!theTaxYear.isDeleted());
+            theLoTaxRate.setEnabled(bActive);
 
             /* Set the Basic Tax Rate */
             theBasicTaxRate.setValue(theTaxYear.getBasicTaxRate());
-            theBasicTaxRate.setEnabled(!theTaxYear.isDeleted());
+            theBasicTaxRate.setEnabled(bActive);
 
             /* Set the High Tax Rate */
             theHiTaxRate.setValue(theTaxYear.getHiTaxRate());
-            theHiTaxRate.setEnabled(!theTaxYear.isDeleted());
+            theHiTaxRate.setEnabled(bActive);
 
             /* Set the Interest Tax Rate */
             theIntTaxRate.setValue(theTaxYear.getIntTaxRate());
-            theIntTaxRate.setEnabled(!theTaxYear.isDeleted());
+            theIntTaxRate.setEnabled(bActive);
 
             /* Set the Dividend Tax Rate */
             theDivTaxRate.setValue(theTaxYear.getDivTaxRate());
-            theDivTaxRate.setEnabled(!theTaxYear.isDeleted());
+            theDivTaxRate.setEnabled(bActive);
 
             /* Set the High Dividend Tax Rate */
             theHiDivTaxRate.setValue(theTaxYear.getHiDivTaxRate());
-            theHiDivTaxRate.setEnabled(!theTaxYear.isDeleted());
+            theHiDivTaxRate.setEnabled(bActive);
 
             /* Set the Additional Tax Rate */
             theAddTaxRate.setValue(theTaxYear.getAddTaxRate());
-            theAddTaxRate.setEnabled(!theTaxYear.isDeleted() && theTaxYear.hasAdditionalTaxBand());
+            theAddTaxRate.setEnabled(bActive
+                                     && hasAdditionalTaxBand);
 
             /* Set the Additional Dividend Tax Rate */
             theAddDivTaxRate.setValue(theTaxYear.getAddDivTaxRate());
-            theAddDivTaxRate.setEnabled(!theTaxYear.isDeleted() && theTaxYear.hasAdditionalTaxBand());
+            theAddDivTaxRate.setEnabled(bActive
+                                        && hasAdditionalTaxBand);
 
             /* Set the Capital Tax Rate */
             theCapTaxRate.setValue(theTaxYear.getCapTaxRate());
-            theCapTaxRate.setEnabled(!theTaxYear.isDeleted() && !theTaxYear.hasCapitalGainsAsIncome());
+            theCapTaxRate.setEnabled(bActive
+                                     && !hasCapitalGainsAsIncome);
 
             /* Set the High Capital Tax Rate */
             theHiCapTaxRate.setValue(theTaxYear.getHiCapTaxRate());
-            theHiCapTaxRate.setEnabled(!theTaxYear.isDeleted() && !theTaxYear.hasCapitalGainsAsIncome());
+            theHiCapTaxRate.setEnabled(bActive
+                                       && !hasCapitalGainsAsIncome);
 
             /* Render all fields in the set */
             theFieldSet.renderSet(theTaxYear);
 
             /* Make sure delete buttons are visible */
-            boolean isEndOfList = ((theTaxYears.peekPrevious(theTaxYear) == null) || (theTaxYears
-                    .peekNext(theTaxYear) == null));
-            theDelButton.setVisible(theTaxYear.isDeleted() || ((!theTaxYear.isActive()) && (isEndOfList)));
-            theDelButton.setText(theTaxYear.isDeleted() ? "Recover" : "Delete");
+            boolean isEndOfList = ((theTaxYears.peekPrevious(theTaxYear) == null) || (theTaxYears.peekNext(theTaxYear) == null));
+            theDelButton.setVisible(!bActive
+                                    || ((!theTaxYear.isActive()) && (isEndOfList)));
+            theDelButton.setText(!bActive ? "Recover" : "Delete");
 
             /* else no account */
         } else {
@@ -932,12 +930,13 @@ public class MaintTaxYear extends JEventPanel {
     /**
      * TaxYearListener class.
      */
-    private final class TaxYearListener implements ActionListener, ItemListener, ChangeListener,
-            PropertyChangeListener {
+    private final class TaxYearListener
+            implements ActionListener, ItemListener, ChangeListener, PropertyChangeListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
             /* Ignore selection if refreshing data/not selected */
-            if ((refreshingData) || (evt.getStateChange() == ItemEvent.DESELECTED)) {
+            if ((refreshingData)
+                || (evt.getStateChange() == ItemEvent.DESELECTED)) {
                 return;
             }
 

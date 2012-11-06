@@ -38,8 +38,9 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
  * @param <I> the Info Type that applies to this item
  * @param <E> the Info Class that applies to this item
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface> extends
-        EncryptedItem implements Comparable<T> {
+public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
+        extends EncryptedItem
+        implements Comparable<T> {
     /**
      * Maximum DataLength.
      */
@@ -296,11 +297,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
 
     /**
      * Mark deleted.
-     * @param bDeleted
      */
-    public void markDeleted(final boolean bDeleted) {
+    public void markDeleted() {
         /* Set deletion indication */
-        getValueSet().setDeletion(bDeleted);
+        getValueSet().setDeletion(true);
     }
 
     /**
@@ -362,7 +362,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
         }
 
         @Override
-        protected abstract DataInfoList<T, O, I, E> getEmptyList();
+        protected abstract DataInfoList<T, O, I, E> getEmptyList(final ListStyle pStyle);
 
         /**
          * Add new item to the list.

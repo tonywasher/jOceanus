@@ -40,13 +40,13 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
  * @param <T> the data type
  * @param <E> the static class
  */
-public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> & StaticInterface> extends
-        EncryptedItem implements Comparable<T> {
+public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> & StaticInterface>
+        extends EncryptedItem
+        implements Comparable<T> {
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(StaticData.class.getSimpleName(),
-            EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(StaticData.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -564,8 +564,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid value for " + myClass.getSimpleName()
-                    + ": " + pValue);
+            throw new JDataException(ExceptionClass.DATA, "Invalid value for " + myClass.getSimpleName() + ": " + pValue);
         }
     }
 
@@ -590,8 +589,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid id for " + myClass.getSimpleName() + ": "
-                    + pId);
+            throw new JDataException(ExceptionClass.DATA, "Invalid id for " + myClass.getSimpleName() + ": " + pId);
         }
     }
 

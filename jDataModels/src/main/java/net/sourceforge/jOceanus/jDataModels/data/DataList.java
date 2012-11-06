@@ -39,7 +39,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
  * @author Tony Washer
  * @param <T> the item type
  */
-public abstract class DataList<T extends DataItem & Comparable<? super T>> extends OrderedIdList<Integer, T>
+public abstract class DataList<T extends DataItem & Comparable<? super T>>
+        extends OrderedIdList<Integer, T>
         implements JDataContents {
     /**
      * Local Report fields.
@@ -104,7 +105,10 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
 
     @Override
     public String formatObject() {
-        return getDataFields().getName() + "(" + size() + ")";
+        return getDataFields().getName()
+               + "("
+               + size()
+               + ")";
     }
 
     @Override
@@ -357,9 +361,10 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
 
     /**
      * Obtain an empty list based on this list.
+     * @param the style of the empty list
      * @return the list
      */
-    protected abstract DataList<T> getEmptyList();
+    protected abstract DataList<T> getEmptyList(final ListStyle pStyle);
 
     /**
      * Derive an cloned extract of this list.
@@ -368,8 +373,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
      */
     public DataList<T> cloneList(final DataSet<?> pDataSet) {
         /* Obtain an empty list of the correct style */
-        DataList<T> myList = getEmptyList();
-        myList.theStyle = ListStyle.CLONE;
+        DataList<T> myList = getEmptyList(ListStyle.CLONE);
         myList.theDataSet = pDataSet;
 
         /* Populate the list */
@@ -390,8 +394,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
      */
     public DataList<T> deriveList(final ListStyle pStyle) {
         /* Obtain an empty list of the correct style */
-        DataList<T> myList = getEmptyList();
-        myList.theStyle = pStyle;
+        DataList<T> myList = getEmptyList(pStyle);
 
         /* Populate the list */
         populateList(myList);
@@ -404,7 +407,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
      * Populate a list extract.
      * @param pList the list to populate
      */
-    private void populateList(final DataList<T> pList) {
+    protected void populateList(final DataList<T> pList) {
         /* Determine special styles */
         ListStyle myStyle = pList.getStyle();
         boolean isUpdate = (myStyle == ListStyle.UPDATE);
@@ -420,7 +423,8 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
             DataState myState = myCurr.getState();
 
             /* If this is an UPDATE list, ignore clean elements */
-            if ((isUpdate) && (myState == DataState.CLEAN)) {
+            if ((isUpdate)
+                && (myState == DataState.CLEAN)) {
                 continue;
             }
 
@@ -436,17 +440,15 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
     }
 
     /**
-     * Construct a difference extract between two DataLists. The difference extract will only have items that
-     * differ between the two lists. Items that are in the new list, but not in the old list will be viewed as
-     * inserted. Items that are in the old list but not in the new list will be viewed as deleted. Items that
-     * are in both list but differ will be viewed as changed
+     * Construct a difference extract between two DataLists. The difference extract will only have items that differ between the two lists. Items that are in
+     * the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted. Items
+     * that are in both list but differ will be viewed as changed
      * @param pOld The old list to compare to
      * @return the difference list
      */
     public DataList<T> deriveDifferences(final DataList<T> pOld) {
         /* Obtain an empty list of the correct style */
-        DataList<T> myList = getEmptyList();
-        myList.theStyle = ListStyle.DIFFER;
+        DataList<T> myList = getEmptyList(ListStyle.DIFFER);
 
         /* Access an Id Map of the old list */
         Map<Integer, T> myOld = pOld.getIdMap();
@@ -500,10 +502,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>> exten
     }
 
     /**
-     * Re-base the list against a database image. This method is used to re-synchronise between two sources.
-     * Items that are in this list, but not in the base list will be viewed as inserted. Items that are in the
-     * base list but not in this list list will be viewed as deleted. Items that are in both list but differ
-     * will be viewed as changed
+     * Re-base the list against a database image. This method is used to re-synchronise between two sources. Items that are in this list, but not in the base
+     * list will be viewed as inserted. Items that are in the base list but not in this list list will be viewed as deleted. Items that are in both list but
+     * differ will be viewed as changed
      * @param pBase The base list to re-base on
      */
     public void reBase(final DataList<T> pBase) {

@@ -34,7 +34,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * TaxType data type.
  * @author Tony Washer
  */
-public class TaxType extends StaticData<TaxType, TaxClass> {
+public class TaxType
+        extends StaticData<TaxType, TaxClass> {
     /**
      * Object name.
      */
@@ -43,7 +44,8 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME + "s";
+    public static final String LIST_NAME = OBJECT_NAME
+                                           + "s";
 
     /**
      * Report fields.
@@ -167,12 +169,12 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
     /**
      * Represents a list of {@link TaxType} objects.
      */
-    public static class TaxTypeList extends StaticList<TaxType, TaxClass> {
+    public static class TaxTypeList
+            extends StaticList<TaxType, TaxClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxTypeList.class.getSimpleName(),
-                DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -206,8 +208,10 @@ public class TaxType extends StaticData<TaxType, TaxClass> {
         }
 
         @Override
-        protected TaxTypeList getEmptyList() {
-            return new TaxTypeList(this);
+        protected TaxTypeList getEmptyList(final ListStyle pStyle) {
+            TaxTypeList myList = new TaxTypeList(this);
+            myList.setStyle(pStyle);
+            return myList;
         }
 
         @Override
