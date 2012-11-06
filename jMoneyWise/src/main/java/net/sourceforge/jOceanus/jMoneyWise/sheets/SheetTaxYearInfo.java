@@ -34,11 +34,17 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
  * SheetDataInfo extension for TaxYearInfo.
  * @author Tony Washer
  */
-public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
+public class SheetTaxYearInfo
+        extends SheetDataInfo<TaxYearInfo> {
     /**
      * NamedArea for TaxYearInfo.
      */
     private static final String AREA_TAXYEARINFO = TaxYearInfo.LIST_NAME;
+
+    /**
+     * The DataSet.
+     */
+    private FinanceData theData = null;
 
     /**
      * TaxYear data list.
@@ -59,9 +65,9 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
         super(pReader, AREA_TAXYEARINFO);
 
         /* Access the InfoType list */
-        FinanceData myData = pReader.getData();
-        theTaxYears = myData.getTaxYears();
-        theList = myData.getTaxInfo();
+        theData = pReader.getData();
+        theTaxYears = theData.getTaxYears();
+        theList = theData.getTaxInfo();
         setDataList(theList);
     }
 
@@ -91,7 +97,8 @@ public class SheetTaxYearInfo extends SheetDataInfo<TaxYearInfo> {
 
     @Override
     protected void postProcessOnLoad() throws JDataException {
-        // theData.calculateDateRange();
+        /* Calculate the date range */
+        theData.calculateDateRange();
 
         /* Mark active items */
         theTaxYears.markActiveItems();
