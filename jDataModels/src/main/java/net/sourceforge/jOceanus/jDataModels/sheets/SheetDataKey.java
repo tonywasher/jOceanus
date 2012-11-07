@@ -31,7 +31,8 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
  * SheetDataItem extension for DataKey.
  * @author Tony Washer
  */
-public class SheetDataKey extends SheetDataItem<DataKey> {
+public class SheetDataKey
+        extends SheetDataItem<DataKey> {
     /**
      * SheetName for Keys.
      */
@@ -97,8 +98,8 @@ public class SheetDataKey extends SheetDataItem<DataKey> {
     protected void insertSecureItem(final DataKey pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
-        writeInteger(COL_KEYTYPE, pItem.getKeyType().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        writeInteger(COL_KEYTYPE, pItem.getKeyTypeId());
         writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
     }
 

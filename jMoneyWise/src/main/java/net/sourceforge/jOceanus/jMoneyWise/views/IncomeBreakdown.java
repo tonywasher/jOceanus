@@ -41,7 +41,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
  * Income Breakdown analysis.
  * @author Tony Washer
  */
-public class IncomeBreakdown implements JDataContents {
+public class IncomeBreakdown
+        implements JDataContents {
     /**
      * Buffer length.
      */
@@ -250,17 +251,11 @@ public class IncomeBreakdown implements JDataContents {
                 break;
             case DIVIDEND:
                 if (myDebit.isTaxFree()) {
-                    myRecord = theTaxFreeDividend.findAccountRecord(myDebit.isChild()
-                                                                                     ? myDebit.getParent()
-                                                                                     : myDebit);
+                    myRecord = theTaxFreeDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
                 } else if (myDebit.isUnitTrust()) {
-                    myRecord = theUnitTrustDividend.findAccountRecord(myDebit.isChild()
-                                                                                       ? myDebit.getParent()
-                                                                                       : myDebit);
+                    myRecord = theUnitTrustDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
                 } else {
-                    myRecord = theTaxedDividend.findAccountRecord(myDebit.isChild()
-                                                                                   ? myDebit.getParent()
-                                                                                   : myDebit);
+                    myRecord = theTaxedDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
                 }
                 myRecord.processEvent(pEvent);
                 break;
@@ -282,7 +277,8 @@ public class IncomeBreakdown implements JDataContents {
     /**
      * Totals class.
      */
-    protected static class IncomeTotals implements JDataContents {
+    protected static class IncomeTotals
+            implements JDataContents {
         /**
          * Report fields.
          */
@@ -370,8 +366,8 @@ public class IncomeBreakdown implements JDataContents {
     /**
      * The Account record class.
      */
-    protected static final class AccountRecord implements OrderedIdItem<Integer>, JDataContents,
-            Comparable<AccountRecord> {
+    protected static final class AccountRecord
+            implements OrderedIdItem<Integer>, JDataContents, Comparable<AccountRecord> {
         /**
          * Object name.
          */
@@ -538,9 +534,6 @@ public class IncomeBreakdown implements JDataContents {
          * @param pEvent the event to process
          */
         private void processEvent(final Event pEvent) {
-            /* Add the event to the list */
-            // theEvents.addNewItem(pEvent);
-
             /* Access values */
             JMoney myAmount = pEvent.getAmount();
             JMoney myTax = pEvent.getTaxCredit();
@@ -549,7 +542,7 @@ public class IncomeBreakdown implements JDataContents {
 
             /* If we are NatInsurance/Benefit */
             if ((myTrans.getTranClass() == TransClass.NATINSURANCE)
-                    || (myTrans.getTranClass() == TransClass.BENEFIT)) {
+                || (myTrans.getTranClass() == TransClass.BENEFIT)) {
                 /* Just add to gross */
                 theTotals.theGrossIncome.addAmount(myAmount);
                 theListTotals.theGrossIncome.addAmount(myAmount);
@@ -580,8 +573,8 @@ public class IncomeBreakdown implements JDataContents {
 
                 /* else we need to record the event */
             } else {
-                /* Add a copy of the event to the list */
-                theEvents.addCopyItem(pEvent);
+                /* Add a reference to the event to the list */
+                theEvents.add(pEvent);
             }
         }
 
@@ -630,7 +623,9 @@ public class IncomeBreakdown implements JDataContents {
     /**
      * The RecordList class.
      */
-    public static class RecordList extends OrderedIdList<Integer, AccountRecord> implements JDataContents {
+    public static class RecordList
+            extends OrderedIdList<Integer, AccountRecord>
+            implements JDataContents {
         /**
          * Report fields.
          */
@@ -643,7 +638,10 @@ public class IncomeBreakdown implements JDataContents {
 
         @Override
         public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFields().getName()
+                   + "("
+                   + size()
+                   + ")";
         }
 
         /**

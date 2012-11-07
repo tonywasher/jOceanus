@@ -46,7 +46,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
  * a time and is unique within that list
  * @see DataList
  */
-public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
+public abstract class DataItem
+        implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
     /**
      * Report fields.
      */
@@ -446,7 +447,8 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
      * @return <code>true/false</code>
      */
     public boolean hasHistory() {
-        return (theHistory != null) && (theHistory.hasHistory());
+        return (theHistory != null)
+               && (theHistory.hasHistory());
     }
 
     /**
@@ -750,7 +752,11 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
                 pList.setNewId(this);
                 break;
 
-            /* Nothing special for other styles */
+            /* Creation of copy element not allowed */
+            case COPY:
+                throw new IllegalArgumentException("Illegal creation of COPY element");
+
+                /* Nothing special for other styles */
             case CLONE:
             case DIFFER:
             default:
@@ -890,7 +896,8 @@ public abstract class DataItem implements OrderedIdItem<Integer>, JDataValues, J
             return RenderState.DELETED;
 
             /* Determine Error state */
-        } else if ((hasErrors()) && (hasErrors(pField))) {
+        } else if ((hasErrors())
+                   && (hasErrors(pField))) {
             return RenderState.ERROR;
 
             /* Determine Changed state */

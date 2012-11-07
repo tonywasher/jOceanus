@@ -65,6 +65,7 @@ public class FinanceDatabase
         addTable(new TableAccountRate(this));
         addTable(new TableAccountPrice(this));
         addTable(new TablePattern(this));
+        addTable(new TablePatternNew(this));
         addTable(new TableAccountInfo(this));
         addTable(new TableEvent(this));
         addTable(new TableEventNew(this));

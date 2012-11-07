@@ -26,12 +26,16 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventNew;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventNew.EventNewList;
@@ -161,11 +165,11 @@ public class SheetEventNew
     protected void insertSecureItem(final EventNew pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeDate(COL_DATE, pItem.getDate());
-        writeInteger(COL_DEBIT, pItem.getDebit().getId());
-        writeInteger(COL_CREDIT, pItem.getCredit().getId());
-        writeInteger(COL_TRAN, pItem.getTransType().getId());
+        writeInteger(COL_DEBIT, pItem.getDebitId());
+        writeInteger(COL_CREDIT, pItem.getCreditId());
+        writeInteger(COL_TRAN, pItem.getTransTypeId());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
     }
@@ -177,25 +181,25 @@ public class SheetEventNew
         writeDate(COL_DATE, pItem.getDate());
         writeString(COL_DESC, pItem.getDesc());
         writeNumber(COL_AMOUNT, pItem.getAmount());
-        writeString(COL_DEBIT, pItem.getDebit().getName());
-        writeString(COL_CREDIT, pItem.getCredit().getName());
-        writeString(COL_TRAN, pItem.getTransType().getName());
+        writeString(COL_DEBIT, pItem.getDebitName());
+        writeString(COL_CREDIT, pItem.getCreditName());
+        writeString(COL_TRAN, pItem.getTransTypeName());
     }
 
     @Override
     protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_DATE, Event.FIELD_DATE.getName());
-        writeHeader(COL_DESC, Event.FIELD_DESC.getName());
-        writeHeader(COL_AMOUNT, Event.FIELD_AMOUNT.getName());
-        writeHeader(COL_DEBIT, Event.FIELD_DEBIT.getName());
-        writeHeader(COL_CREDIT, Event.FIELD_CREDIT.getName());
-        writeHeader(COL_TRAN, Event.FIELD_TRNTYP.getName());
+        writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
+        writeHeader(COL_DESC, EventBase.FIELD_DESC.getName());
+        writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
+        writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
+        writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
+        writeHeader(COL_TRAN, EventBase.FIELD_TRNTYP.getName());
 
         /* Set the Account column width */
-        setColumnWidth(COL_DESC, Event.DESCLEN);
-        setColumnWidth(COL_DEBIT, Account.NAMELEN);
-        setColumnWidth(COL_CREDIT, Account.NAMELEN);
+        setColumnWidth(COL_DESC, EventBase.DESCLEN);
+        setColumnWidth(COL_DEBIT, AccountBase.NAMELEN);
+        setColumnWidth(COL_CREDIT, AccountBase.NAMELEN);
         setColumnWidth(COL_TRAN, StaticData.NAMELEN);
 
         /* Set Number columns */
@@ -239,6 +243,10 @@ public class SheetEventNew
             /* Access the list of events */
             EventNewList myList = pData.getNewEvents();
             EventInfoList myInfoList = pData.getEventInfo();
+
+            /* Access the parser */
+            JDataFormatter myFormatter = pData.getDataFormatter();
+            JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Loop through the columns of the table */
             for (Integer j = pRange.getMinYear(); j <= pRange.getMaxYear(); j++) {
@@ -305,9 +313,9 @@ public class SheetEventNew
                         /* Handle Units which may be missing */
                         myCell = myRow.getCell(myCol
                                                + iAdjust++);
-                        String myUnits = null;
+                        String myUnitsVal = null;
                         if (myCell != null) {
-                            myUnits = pHelper.formatNumericCell(myCell);
+                            myUnitsVal = pHelper.formatNumericCell(myCell);
                         }
 
                         /* Handle transaction type */
@@ -333,8 +341,21 @@ public class SheetEventNew
                         /* Add the event */
                         EventNew myEvent = myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myTranType);
 
+                        /* If we have units */
+                        if (myUnitsVal != null) {
+                            JUnits myUnits = myParser.parseUnitsValue(myUnitsVal);
+                            JUnits myValue = myUnits;
+                            boolean isCredit = myEvent.getCredit().isPriced();
+                            if ((myEvent.isStockSplit() || myEvent.isAdminCharge())
+                                && (!myUnits.isPositive())) {
+                                myValue = new JUnits(myValue);
+                                myValue.negate();
+                                isCredit = false;
+                            }
+                            myInfoList.addOpenItem(0, myEvent, isCredit ? EventInfoClass.CreditUnits : EventInfoClass.DebitUnits, myValue);
+                        }
+
                         /* Add information relating to the account */
-                        myInfoList.addOpenItem(0, myEvent, EventInfoClass.DebitUnits, myUnits);
                         myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);
                         myInfoList.addOpenItem(0, myEvent, EventInfoClass.Dilution, myDilution);
                         myInfoList.addOpenItem(0, myEvent, EventInfoClass.QualifyYears, myYears);

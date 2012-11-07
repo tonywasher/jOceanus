@@ -42,7 +42,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
  * TableEncrypted extension for AccountPrice.
  * @author Tony Washer
  */
-public class TableAccountPrice extends TableEncrypted<AccountPrice> {
+public class TableAccountPrice
+        extends TableEncrypted<AccountPrice> {
     /**
      * The name of the Prices table.
      */
@@ -62,8 +63,7 @@ public class TableAccountPrice extends TableEncrypted<AccountPrice> {
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountPrice.FIELD_ACCOUNT,
-                                                                  TableAccount.TABLE_NAME);
+        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountPrice.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
         ColumnDefinition myDateCol = myTableDef.addDateColumn(AccountPrice.FIELD_DATE);
         myTableDef.addEncryptedColumn(AccountPrice.FIELD_PRICE, EncryptedData.PRICELEN);
 
@@ -98,7 +98,7 @@ public class TableAccountPrice extends TableEncrypted<AccountPrice> {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (AccountPrice.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setIntegerValue(AccountPrice.FIELD_ACCOUNT, pItem.getAccount().getId());
+            myTableDef.setIntegerValue(AccountPrice.FIELD_ACCOUNT, pItem.getAccountId());
         } else if (AccountPrice.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(AccountPrice.FIELD_DATE, pItem.getDate());
         } else if (AccountPrice.FIELD_PRICE.equals(iField)) {

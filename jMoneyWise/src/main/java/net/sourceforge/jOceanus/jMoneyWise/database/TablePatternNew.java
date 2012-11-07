@@ -34,55 +34,56 @@ import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData;
+import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventNew;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventNew.EventNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.PatternNew;
+import net.sourceforge.jOceanus.jMoneyWise.data.PatternNew.PatternNewList;
 
 /**
- * TableEncrypted extension for Event.
+ * TabelEncrypted extension for Pattern.
  * @author Tony Washer
  */
-public class TableEventNew
-        extends TableEncrypted<EventNew> {
+public class TablePatternNew
+        extends TableEncrypted<PatternNew> {
     /**
-     * The name of the Events table.
+     * The name of the Patterns table.
      */
-    protected static final String TABLE_NAME = EventNew.LIST_NAME;
+    protected static final String TABLE_NAME = PatternNew.LIST_NAME;
 
     /**
-     * The event list.
+     * The pattern list.
      */
-    private EventNewList theList = null;
+    private PatternNewList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableEventNew(final Database<?> pDatabase) {
+    protected TablePatternNew(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 
-        /* Define the columns */
+        /* Declare the columns */
         ColumnDefinition myDateCol = myTableDef.addDateColumn(EventBase.FIELD_DATE);
         myTableDef.addEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
-        myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_DEBIT, TableAccount.TABLE_NAME);
         myTableDef.addReferenceColumn(EventBase.FIELD_CREDIT, TableAccount.TABLE_NAME);
         myTableDef.addReferenceColumn(EventBase.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
+        myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
+        myTableDef.addReferenceColumn(PatternNew.FIELD_FREQ, TableFrequency.TABLE_NAME);
 
-        /* Declare the sort order */
+        /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
     }
 
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theList = myData.getNewEvents();
+        theList = myData.getNewPatterns();
         setList(theList);
     }
 
-    /* Load the event */
     @Override
     protected void loadItem(final Integer pId,
                             final Integer pControlId) throws JDataException {
@@ -90,17 +91,18 @@ public class TableEventNew
         TableDefinition myTableDef = getTableDef();
         Date myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
         byte[] myDesc = myTableDef.getBinaryValue(EventBase.FIELD_DESC);
-        byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
         Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
         Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
         Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_TRNTYP);
+        byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
+        Integer myFreq = myTableDef.getIntegerValue(PatternNew.FIELD_FREQ);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myTranType);
+        theList.addSecureItem(pId, pControlId, myDate, myDesc, myDebitId, myCreditId, myTranType, myAmount, myFreq);
     }
 
     @Override
-    protected void setFieldValue(final EventNew pItem,
+    protected void setFieldValue(final PatternNew pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
@@ -115,7 +117,9 @@ public class TableEventNew
         } else if (EventBase.FIELD_CREDIT.equals(iField)) {
             myTableDef.setIntegerValue(EventBase.FIELD_CREDIT, pItem.getCreditId());
         } else if (EventBase.FIELD_TRNTYP.equals(iField)) {
-            myTableDef.setIntegerValue(EventBase.FIELD_TRNTYP, pItem.getTransTypeId());
+            myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransTypeId());
+        } else if (PatternNew.FIELD_FREQ.equals(iField)) {
+            myTableDef.setIntegerValue(PatternNew.FIELD_FREQ, pItem.getFrequencyId());
         } else {
             super.setFieldValue(pItem, iField);
         }

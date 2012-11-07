@@ -44,7 +44,9 @@ import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
  * Tax Year Class representing taxation parameters for a tax year.
  * @author Tony Washer
  */
-public abstract class TaxYearBase extends DataItem implements Comparable<TaxYearBase> {
+public abstract class TaxYearBase
+        extends DataItem
+        implements Comparable<TaxYearBase> {
     /**
      * Object name.
      */
@@ -94,6 +96,24 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
      */
     public TaxRegime getTaxRegime() {
         return getTaxRegime(getValueSet());
+    }
+
+    /**
+     * Obtain TaxRegimeId.
+     * @return the taxRegimeId
+     */
+    public Integer getTaxRegimeId() {
+        TaxRegime myRegime = getTaxRegime();
+        return (myRegime == null) ? null : myRegime.getId();
+    }
+
+    /**
+     * Obtain TaxRegimeName.
+     * @return the taxRegimeName
+     */
+    public String getTaxRegimeName() {
+        TaxRegime myRegime = getTaxRegime();
+        return (myRegime == null) ? null : myRegime.getName();
     }
 
     /**
@@ -297,7 +317,8 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
             }
 
             /* The day and month must be 5th April */
-            if ((myDate.getDay() != END_OF_MONTH_DAY) || (myDate.getMonth() != Calendar.APRIL)) {
+            if ((myDate.getDay() != END_OF_MONTH_DAY)
+                || (myDate.getMonth() != Calendar.APRIL)) {
                 addError("Date must be 5th April", FIELD_TAXYEAR);
             }
         }
@@ -384,7 +405,8 @@ public abstract class TaxYearBase extends DataItem implements Comparable<TaxYear
      * The Tax Year List class.
      * @param <T> the dataType
      */
-    public abstract static class TaxYearBaseList<T extends TaxYearBase> extends DataList<T> {
+    public abstract static class TaxYearBaseList<T extends TaxYearBase>
+            extends DataList<T> {
         /**
          * Local Report fields.
          */

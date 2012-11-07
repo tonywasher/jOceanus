@@ -171,7 +171,9 @@ public class FinanceSheet
         }
 
         /* Calculate the number of stages */
-        int myStages = NUM_ARCHIVE_AREAS + pRange.getMaxYear() - pRange.getMinYear();
+        int myStages = NUM_ARCHIVE_AREAS
+                       + pRange.getMaxYear()
+                       - pRange.getMinYear();
 
         /* Declare the number of stages */
         return pTask.setNumStages(myStages);
@@ -206,7 +208,8 @@ public class FinanceSheet
             return myData;
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook: " + myArchive.getName(), e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to load Workbook: "
+                                                           + myArchive.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -301,6 +304,9 @@ public class FinanceSheet
             }
             if (bContinue) {
                 bContinue = SheetPattern.loadArchive(pTask, myHelper, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetPatternNew.loadArchive(pTask, myHelper, myData);
             }
             if (bContinue) {
                 /* Access the accounts */

@@ -41,6 +41,7 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedMoney;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventDateRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
@@ -133,6 +134,24 @@ public abstract class EventBase
     }
 
     /**
+     * Obtain TransTypeId.
+     * @return the transTypeId
+     */
+    public Integer getTransTypeId() {
+        TransactionType myType = getTransType();
+        return (myType == null) ? null : myType.getId();
+    }
+
+    /**
+     * Obtain transTypeName.
+     * @return the transTypeName
+     */
+    public String getTransTypeName() {
+        TransactionType myType = getTransType();
+        return (myType == null) ? null : myType.getName();
+    }
+
+    /**
      * Obtain Amount.
      * @return the amount
      */
@@ -165,11 +184,47 @@ public abstract class EventBase
     }
 
     /**
+     * Obtain DebitId.
+     * @return the debitId
+     */
+    public Integer getDebitId() {
+        Account myAccount = getDebit();
+        return (myAccount == null) ? null : myAccount.getId();
+    }
+
+    /**
+     * Obtain DebitName.
+     * @return the debitName
+     */
+    public String getDebitName() {
+        Account myAccount = getDebit();
+        return (myAccount == null) ? null : myAccount.getName();
+    }
+
+    /**
      * Obtain Credit account.
      * @return the credit
      */
     public Account getCredit() {
         return getCredit(getValueSet());
+    }
+
+    /**
+     * Obtain CreditId.
+     * @return the creditId
+     */
+    public Integer getCreditId() {
+        Account myAccount = getCredit();
+        return (myAccount == null) ? null : myAccount.getId();
+    }
+
+    /**
+     * Obtain CreditName.
+     * @return the creditName
+     */
+    public String getCreditName() {
+        Account myAccount = getCredit();
+        return (myAccount == null) ? null : myAccount.getName();
     }
 
     /**
@@ -649,7 +704,8 @@ public abstract class EventBase
                 if (!isCredit) {
                     myResult = pType.isDividend();
                 } else {
-                    myResult = (pType.isMoney() || pType.isCapital() || pType.isDeferred());
+                    myResult = (pType.isMoney()
+                                || pType.isCapital() || pType.isDeferred());
                 }
                 break;
             case STOCKDEMERGER:
@@ -788,6 +844,56 @@ public abstract class EventBase
     }
 
     /**
+     * Is an event allowed between these two accounts, used for more detailed analysis once the event is deemed valid based on the account types.
+     * @param pTrans The transaction type of the event
+     * @param pDebit the debit account
+     * @param pCredit the credit account
+     * @return true/false
+     */
+    public static boolean isValidEvent(final TransactionType pTrans,
+                                       final Account pDebit,
+                                       final Account pCredit) {
+        /* Generally we must not be recursive */
+        boolean myResult = !Difference.isEqual(pDebit, pCredit);
+
+        /* Switch on the TransType */
+        switch (pTrans.getTranClass()) {
+        /* Dividend */
+            case DIVIDEND:
+                /* If the credit account is capital */
+                if (pCredit.isCapital()) {
+                    /* Debit and credit accounts must be identical */
+                    myResult = !myResult;
+                }
+                break;
+            /* AdminCharge/StockSplit */
+            case ADMINCHARGE:
+            case STOCKSPLIT:
+                /* Debit and credit accounts must be identical */
+                myResult = !myResult;
+                break;
+            /* Interest can be recursive */
+            case INTEREST:
+                myResult = true;
+                break;
+            /* Debt Interest and Rental Income must come from the owner of the debt */
+            case RENTALINCOME:
+            case DEBTINTEREST:
+                myResult = Difference.isEqual(pDebit, pCredit.getParent());
+                break;
+            /* Mortgage payment must be to the owner of the mortgage */
+            case MORTGAGE:
+                myResult = Difference.isEqual(pCredit, pDebit.getParent());
+                break;
+            default:
+                break;
+        }
+
+        /* Return the result */
+        return myResult;
+    }
+
+    /**
      * Determines whether an event relates to an account.
      * @param pAccount The account to check relations with
      * @return related to the account true/false
@@ -843,7 +949,8 @@ public abstract class EventBase
      */
     public boolean isDividendReInvestment() {
         /* Check for dividend re-investment */
-        if ((getTransType() != null) && (!getTransType().isDividend())) {
+        if ((getTransType() != null)
+            && (!getTransType().isDividend())) {
             return false;
         }
         return ((getCredit() != null) && (getCredit().isPriced()));
@@ -898,7 +1005,8 @@ public abstract class EventBase
                 /* Check for dividend/interest */
             case DIVIDEND:
             case INTEREST:
-                return (pDebit != null) && !pDebit.isTaxFree();
+                return (pDebit != null)
+                       && !pDebit.isTaxFree();
             default:
                 return false;
         }
@@ -975,6 +1083,114 @@ public abstract class EventBase
      */
     public void setDate(final JDateDay pDate) {
         setValueDate((pDate == null) ? null : new JDateDay(pDate));
+    }
+
+    /**
+     * Mark active items.
+     */
+    protected void markActiveItems() {
+        /* mark the transaction type referred to */
+        getTransType().touchItem(this);
+
+        /* Mark the credit and debit accounts */
+        getDebit().touchItem(this);
+        getCredit().touchItem(this);
+    }
+
+    /**
+     * Validate the event.
+     */
+    @Override
+    public void validate() {
+        JDateDay myDate = getDate();
+        String myDesc = getDesc();
+        Account myDebit = getDebit();
+        Account myCredit = getCredit();
+        JMoney myAmount = getAmount();
+        TransactionType myTransType = getTransType();
+
+        /* Determine date range to check for */
+        DataList<?> myList = getList();
+        JDateDayRange myRange;
+        if (myList instanceof EventDateRange) {
+            /* Access valid range */
+            EventDateRange myValid = (EventDateRange) myList;
+            myRange = myValid.getValidDateRange();
+        } else {
+            /* Use default range */
+            myRange = getDataSet().getDateRange();
+        }
+
+        /* The date must be non-null */
+        if (myDate == null) {
+            addError("Null date is not allowed", FIELD_DATE);
+
+            /* The date must be in-range */
+        } else if (myRange.compareTo(myDate) != 0) {
+            addError("Date must be within range", FIELD_DATE);
+        }
+
+        /* TransType must be non-null */
+        if (myTransType == null) {
+            addError("TransType must be non-null", FIELD_TRNTYP);
+            /* Must be enabled */
+        } else if (!myTransType.getEnabled()) {
+            addError("TransType must be enabled", FIELD_TRNTYP);
+            /* Must not be hidden */
+        } else if (myTransType.isHiddenType()) {
+            addError("Hidden transaction types are not allowed", FIELD_TRNTYP);
+        }
+
+        /* The description must be non-null */
+        if (myDesc == null) {
+            addError("Description must be non-null", FIELD_DESC);
+            /* and not too long */
+        } else if (myDesc.length() > DESCLEN) {
+            addError("Description is too long", FIELD_DESC);
+        }
+
+        /* Credit account must be non-null */
+        if (myCredit == null) {
+            addError("Credit account must be non-null", FIELD_CREDIT);
+            /* And valid for transaction type */
+        } else if ((myTransType != null)
+                   && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
+            addError("Invalid credit account for transaction", FIELD_CREDIT);
+        }
+
+        /* Debit account must be non-null */
+        if (myDebit == null) {
+            addError("Debit account must be non-null", FIELD_DEBIT);
+            /* And valid for transaction type */
+        } else if ((myTransType != null)
+                   && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
+            addError("Invalid debit account for transaction", FIELD_DEBIT);
+        }
+
+        /* Check valid Credit/Debit combination */
+        if ((myTransType != null)
+            && (myCredit != null)
+            && (myDebit != null)
+            && (!isValidEvent(myTransType, myDebit, myCredit))) {
+            addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
+            addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
+        }
+
+        /* Money must not be null/negative */
+        if (myAmount == null) {
+            addError("Amount must be non-null", FIELD_AMOUNT);
+        } else if (!myAmount.isPositive()) {
+            addError("Amount cannot be negative", FIELD_AMOUNT);
+        }
+
+        /* Money must be zero for stock split/demerger */
+        if ((myAmount != null)
+            && (myAmount.isNonZero())
+            && (myTransType != null)
+            && ((myTransType.isStockDemerger())
+                || (myTransType.isStockSplit()) || (myTransType.isStockTakeover()))) {
+            addError("Amount must be zero for Stock Split/Demerger/Takeover", FIELD_AMOUNT);
+        }
     }
 
     /**

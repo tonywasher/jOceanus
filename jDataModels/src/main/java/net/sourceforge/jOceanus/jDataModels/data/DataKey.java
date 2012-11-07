@@ -108,11 +108,29 @@ public class DataKey
     }
 
     /**
+     * Get the ControlKeyId for this item.
+     * @return the ControlKeyId
+     */
+    public Integer getControlKeyId() {
+        ControlKey myKey = getControlKey();
+        return (myKey == null) ? null : myKey.getId();
+    }
+
+    /**
      * Get the Key Type.
      * @return the key type
      */
     public SymKeyType getKeyType() {
         return getKeyType(getValueSet());
+    }
+
+    /**
+     * Get the Key Type Id.
+     * @return the key type id
+     */
+    public Integer getKeyTypeId() {
+        SymKeyType myType = getKeyType();
+        return (myType == null) ? null : myType.getId();
     }
 
     /**

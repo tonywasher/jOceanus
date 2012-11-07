@@ -34,6 +34,7 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.YearRange;
@@ -257,7 +258,7 @@ public class SheetTaxYear
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
-        writeInteger(COL_REGIME, pItem.getTaxRegime().getId());
+        writeInteger(COL_REGIME, pItem.getTaxRegimeId());
     }
 
     @Override
@@ -265,7 +266,7 @@ public class SheetTaxYear
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
-        writeString(COL_REGIME, pItem.getTaxRegime().getName());
+        writeString(COL_REGIME, pItem.getTaxRegimeName());
         writeNumber(COL_ALLOW, pItem.getAllowance());
         writeNumber(COL_LOAGEALLOW, pItem.getLoAgeAllow());
         writeNumber(COL_HIAGEALLOW, pItem.getHiAgeAllow());
@@ -291,8 +292,8 @@ public class SheetTaxYear
     @Override
     protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_TAXYEAR, TaxYear.FIELD_TAXYEAR.getName());
-        writeHeader(COL_REGIME, TaxYear.FIELD_REGIME.getName());
+        writeHeader(COL_TAXYEAR, TaxYearBase.FIELD_TAXYEAR.getName());
+        writeHeader(COL_REGIME, TaxYearBase.FIELD_REGIME.getName());
         writeHeader(COL_ALLOW, TaxYear.FIELD_ALLOW.getName());
         writeHeader(COL_LOAGEALLOW, TaxYear.FIELD_LOAGAL.getName());
         writeHeader(COL_HIAGEALLOW, TaxYear.FIELD_HIAGAL.getName());

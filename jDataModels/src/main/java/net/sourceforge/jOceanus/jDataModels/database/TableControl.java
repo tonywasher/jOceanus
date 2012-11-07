@@ -31,7 +31,8 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 /**
  * Database table class for ControlData.
  */
-public class TableControl extends DatabaseTable<ControlData> {
+public class TableControl
+        extends DatabaseTable<ControlData> {
     /**
      * The name of the Static table.
      */
@@ -80,7 +81,7 @@ public class TableControl extends DatabaseTable<ControlData> {
         if (ControlData.FIELD_VERSION.equals(pField)) {
             myTableDef.setIntegerValue(pField, pItem.getDataVersion());
         } else if (ControlData.FIELD_CONTROLKEY.equals(pField)) {
-            myTableDef.setIntegerValue(pField, pItem.getControlKey().getId());
+            myTableDef.setIntegerValue(pField, pItem.getControlKeyId());
         } else {
             super.setFieldValue(pItem, pField);
         }

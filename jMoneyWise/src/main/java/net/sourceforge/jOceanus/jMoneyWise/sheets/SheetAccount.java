@@ -32,6 +32,7 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
@@ -148,8 +149,8 @@ public class SheetAccount
     protected void insertSecureItem(final Account pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
-        writeInteger(COL_ACCOUNTTYPE, pItem.getActType().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        writeInteger(COL_ACCOUNTTYPE, pItem.getActTypeId());
         writeDate(COL_CLOSE, pItem.getClose());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
@@ -160,7 +161,7 @@ public class SheetAccount
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
         writeString(COL_NAME, pItem.getName());
-        writeString(COL_ACCOUNTTYPE, pItem.getActType().getName());
+        writeString(COL_ACCOUNTTYPE, pItem.getActTypeName());
         writeString(COL_DESC, pItem.getDesc());
         // if (pItem.getParent() != null) {
         // writeString(COL_PARENT, pItem.getParent().getName());
@@ -181,12 +182,12 @@ public class SheetAccount
     @Override
     protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_NAME, Account.FIELD_NAME.getName());
-        writeHeader(COL_ACCOUNTTYPE, Account.FIELD_TYPE.getName());
-        writeHeader(COL_DESC, Account.FIELD_DESC.getName());
+        writeHeader(COL_NAME, AccountBase.FIELD_NAME.getName());
+        writeHeader(COL_ACCOUNTTYPE, AccountBase.FIELD_TYPE.getName());
+        writeHeader(COL_DESC, AccountBase.FIELD_DESC.getName());
         // writeHeader(COL_PARENT, Account.FIELD_PARENT.getName());
         // writeHeader(COL_ALIAS, Account.FIELD_ALIAS.getName());
-        writeHeader(COL_CLOSE, Account.FIELD_CLOSE.getName());
+        writeHeader(COL_CLOSE, AccountBase.FIELD_CLOSE.getName());
         // writeHeader(COL_MATURITY, Account.FIELD_MATURITY.getName());
         // writeHeader(COL_WEBSITE, Account.FIELD_WEBSITE.getName());
         // writeHeader(COL_CUSTNO, Account.FIELD_CUSTNO.getName());
@@ -196,9 +197,9 @@ public class SheetAccount
         // writeHeader(COL_NOTES, Account.FIELD_NOTES.getName());
 
         /* Set the Account column width */
-        setColumnWidth(COL_NAME, Account.NAMELEN);
+        setColumnWidth(COL_NAME, AccountBase.NAMELEN);
         setColumnWidth(COL_ACCOUNTTYPE, StaticData.NAMELEN);
-        setColumnWidth(COL_DESC, Account.DESCLEN);
+        setColumnWidth(COL_DESC, AccountBase.DESCLEN);
         // setColumnWidth(COL_PARENT, Account.NAMELEN);
         // setColumnWidth(COL_ALIAS, Account.NAMELEN);
 

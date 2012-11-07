@@ -89,6 +89,15 @@ public class ControlData
     }
 
     /**
+     * Get the ControlKeyId for this item.
+     * @return the ControlKeyId
+     */
+    public Integer getControlKeyId() {
+        ControlKey myKey = getControlKey();
+        return (myKey == null) ? null : myKey.getId();
+    }
+
+    /**
      * Get the data version for a ValueSet.
      * @param pValueSet the value set
      * @return data version

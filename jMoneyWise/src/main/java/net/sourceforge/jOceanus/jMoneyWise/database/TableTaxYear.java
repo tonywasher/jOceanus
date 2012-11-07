@@ -96,7 +96,7 @@ public class TableTaxYear
         if (TaxYearBase.FIELD_TAXYEAR.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getTaxYear());
         } else if (TaxYearBase.FIELD_REGIME.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getTaxRegime().getId());
+            myTableDef.setIntegerValue(iField, pItem.getTaxRegimeId());
         } else {
             super.setFieldValue(pItem, iField);
         }

@@ -30,7 +30,8 @@ import net.sourceforge.jOceanus.jDataModels.data.DataInfo;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>> extends SheetDataItem<T> {
+public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
+        extends SheetDataItem<T> {
     /**
      * InfoType column.
      */
@@ -102,7 +103,7 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>> extends Shee
     protected void insertSecureItem(final T pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_INFOTYPE, pItem.getInfoTypeId());
         writeInteger(COL_OWNER, pItem.getOwnerId());
         writeBytes(COL_VALUE, pItem.getValueBytes());

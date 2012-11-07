@@ -29,7 +29,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -44,7 +44,8 @@ import org.apache.poi.ss.util.CellReference;
  * SheetDataItem extension for AccountRate.
  * @author Tony Washer
  */
-public class SheetAccountRate extends SheetDataItem<AccountRate> {
+public class SheetAccountRate
+        extends SheetDataItem<AccountRate> {
     /**
      * NamedArea for Rates.
      */
@@ -141,8 +142,8 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
     protected void insertSecureItem(final AccountRate pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
-        writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        writeInteger(COL_ACCOUNT, pItem.getAccountId());
         writeBytes(COL_RATE, pItem.getRateBytes());
         writeBytes(COL_BONUS, pItem.getBonusBytes());
         writeDate(COL_ENDDATE, pItem.getEndDate());
@@ -152,7 +153,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
     protected void insertOpenItem(final AccountRate pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeString(COL_ACCOUNT, pItem.getAccount().getName());
+        writeString(COL_ACCOUNT, pItem.getAccountName());
         writeNumber(COL_RATE, pItem.getRate());
         writeNumber(COL_BONUS, pItem.getBonus());
         writeDate(COL_ENDDATE, pItem.getEndDate());
@@ -167,7 +168,7 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
         writeHeader(COL_ENDDATE, AccountRate.FIELD_ENDDATE.getName());
 
         /* Set the Account column width */
-        setColumnWidth(COL_ACCOUNT, Account.NAMELEN);
+        setColumnWidth(COL_ACCOUNT, AccountBase.NAMELEN);
 
         /* Set Rate and Date columns */
         setRateColumn(COL_RATE);
@@ -221,7 +222,9 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
                 int myCol = myTop.getCol();
 
                 /* Count the number of rates */
-                int myTotal = myBottom.getRow() - myTop.getRow() + 1;
+                int myTotal = myBottom.getRow()
+                              - myTop.getRow()
+                              + 1;
 
                 /* Access the list of rates */
                 AccountRateList myList = pData.getRates();
@@ -238,22 +241,26 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
                     int iAdjust = 0;
 
                     /* Access account */
-                    Cell myCell = myRow.getCell(myCol + iAdjust++);
+                    Cell myCell = myRow.getCell(myCol
+                                                + iAdjust++);
                     String myAccount = myCell.getStringCellValue();
 
                     /* Handle Rate */
-                    myCell = myRow.getCell(myCol + iAdjust++);
+                    myCell = myRow.getCell(myCol
+                                           + iAdjust++);
                     String myRate = pHelper.formatNumericCell(myCell);
 
                     /* Handle bonus which may be missing */
-                    myCell = myRow.getCell(myCol + iAdjust++);
+                    myCell = myRow.getCell(myCol
+                                           + iAdjust++);
                     String myBonus = null;
                     if (myCell != null) {
                         myBonus = pHelper.formatNumericCell(myCell);
                     }
 
                     /* Handle expiration which may be missing */
-                    myCell = myRow.getCell(myCol + iAdjust++);
+                    myCell = myRow.getCell(myCol
+                                           + iAdjust++);
                     Date myExpiry = null;
                     if (myCell != null) {
                         myExpiry = myCell.getDateCellValue();
@@ -264,7 +271,8 @@ public class SheetAccountRate extends SheetDataItem<AccountRate> {
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0)
+                        && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }

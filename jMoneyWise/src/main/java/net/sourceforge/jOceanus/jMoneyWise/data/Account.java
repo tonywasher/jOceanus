@@ -390,27 +390,11 @@ public class Account
     }
 
     /**
-     * Obtain Parent Id.
-     * @return the parent id
-     */
-    public Integer getParentId() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Parent, Integer.class) : null;
-    }
-
-    /**
      * Obtain Alias.
      * @return the alias
      */
     public Account getAlias() {
         return hasInfoSet ? theInfoSet.getAccount(AccountInfoClass.Alias) : null;
-    }
-
-    /**
-     * Obtain Alias Id.
-     * @return the alias id
-     */
-    public Integer getAliasId() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Alias, Integer.class) : null;
     }
 
     /**
@@ -522,7 +506,7 @@ public class Account
      * @return true/false
      */
     public boolean isAlias() {
-        return (getAliasId() != null);
+        return (getAlias() != null);
     }
 
     /**

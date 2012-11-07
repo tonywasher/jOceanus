@@ -31,7 +31,8 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
  * SheetDataItem extension for ControlData.
  * @author Tony Washer
  */
-public class SheetControl extends SheetDataItem<ControlData> {
+public class SheetControl
+        extends SheetDataItem<ControlData> {
     /**
      * SheetName for ControlData.
      */
@@ -110,7 +111,7 @@ public class SheetControl extends SheetDataItem<ControlData> {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_VERSION, pItem.getDataVersion());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
     }
 
     @Override

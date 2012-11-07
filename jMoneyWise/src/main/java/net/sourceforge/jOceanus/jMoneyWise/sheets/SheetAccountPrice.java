@@ -29,7 +29,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -45,7 +45,8 @@ import org.apache.poi.ss.util.CellReference;
  * SheetDataItem extension for AccountPrice.
  * @author Tony Washer
  */
-public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
+public class SheetAccountPrice
+        extends SheetDataItem<AccountPrice> {
     /**
      * NamedArea for Prices.
      */
@@ -135,8 +136,8 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
     protected void insertSecureItem(final AccountPrice pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
-        writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        writeInteger(COL_ACCOUNT, pItem.getAccountId());
         writeDate(COL_DATE, pItem.getDate());
         writeBytes(COL_PRICE, pItem.getPriceBytes());
     }
@@ -145,7 +146,7 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
     protected void insertOpenItem(final AccountPrice pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeString(COL_ACCOUNT, pItem.getAccount().getName());
+        writeString(COL_ACCOUNT, pItem.getAccountName());
         writeDate(COL_DATE, pItem.getDate());
         writeNumber(COL_PRICE, pItem.getPrice());
     }
@@ -158,7 +159,7 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
         writeHeader(COL_PRICE, AccountPrice.FIELD_PRICE.getName());
 
         /* Set the Account column width */
-        setColumnWidth(COL_ACCOUNT, Account.NAMELEN);
+        setColumnWidth(COL_ACCOUNT, AccountBase.NAMELEN);
 
         /* Set Price and Date columns */
         setDateColumn(COL_DATE);
@@ -214,8 +215,10 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
                 Row myActRow = mySheet.getRow(myTop.getRow());
 
                 /* Count the number of tax classes */
-                int myTotal = (myBottom.getRow() - myTop.getRow() + 1);
-                myTotal *= (myBottom.getCol() - myTop.getCol() - 1);
+                int myTotal = (myBottom.getRow()
+                               - myTop.getRow() + 1);
+                myTotal *= (myBottom.getCol()
+                            - myTop.getCol() - 1);
 
                 /* Declare the number of steps */
                 if (!pTask.setNumSteps(myTotal)) {
@@ -258,7 +261,8 @@ public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
 
                         /* Report the progress */
                         myCount++;
-                        if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                        if (((myCount % mySteps) == 0)
+                            && (!pTask.setStepsDone(myCount))) {
                             return false;
                         }
                     }

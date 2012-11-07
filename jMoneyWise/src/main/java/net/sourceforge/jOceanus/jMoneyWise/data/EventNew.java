@@ -44,8 +44,8 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventDateRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.PatternNew.PatternNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
@@ -252,6 +252,46 @@ public class EventNew
         return hasInfoSet ? theInfoSet.getValue(EventInfoClass.QualifyYears, Integer.class) : null;
     }
 
+    /**
+     * Obtain xferDelay.
+     * @return the xferDelay
+     */
+    public Integer getXferDelay() {
+        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.XferDelay, Integer.class) : null;
+    }
+
+    /**
+     * Obtain National Insurance.
+     * @return the NatInsurance
+     */
+    public JMoney getNatInsurance() {
+        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.NatInsurance, JMoney.class) : null;
+    }
+
+    /**
+     * Obtain Benefit.
+     * @return the Benefit
+     */
+    public JMoney getBenefit() {
+        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.Benefit, JMoney.class) : null;
+    }
+
+    /**
+     * Obtain Pension.
+     * @return the Pension
+     */
+    public JMoney getPension() {
+        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.Pension, JMoney.class) : null;
+    }
+
+    /**
+     * Obtain ThirdParty.
+     * @return the ThirdParty
+     */
+    public Account getThirdParty() {
+        return hasInfoSet ? theInfoSet.getAccount(EventInfoClass.ThirdParty) : null;
+    }
+
     @Override
     public DataState getState() {
         /* Pop history for self */
@@ -400,17 +440,20 @@ public class EventNew
      * @param pLine The Line to copy
      * @throws JDataException on error
      */
-    // protected EventNew(final EventBaseList<? extends EventBase> pList,
-    // final Pattern pLine) throws JDataException {
-    // /* Set standard values */
-    // super(pList, pLine);
+    protected EventNew(final EventNewList pList,
+                       final PatternNew pLine) throws JDataException {
+        /* Set standard values */
+        super(pList, pLine);
+        theInfoSet = new EventNewInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
+        hasInfoSet = true;
+        useInfoSet = true;
 
-    // /* If we need a tax Credit */
-    // if (needsTaxCredit(getTransType(), getDebit())) {
-    // /* Calculate the tax credit */
-    // setTaxCredit(calculateTaxCredit());
-    // }
-    // }
+        /* If we need a tax Credit */
+        if (needsTaxCredit(getTransType(), getDebit())) {
+            /* Calculate the tax credit */
+            setTaxCredit(calculateTaxCredit());
+        }
+    }
 
     /**
      * Edit constructor.
@@ -487,67 +530,15 @@ public class EventNew
     }
 
     /**
-     * Is an event allowed between these two accounts, used for more detailed analysis once the event is deemed valid based on the account types.
-     * @param pTrans The transaction type of the event
-     * @param pDebit the debit account
-     * @param pCredit the credit account
-     * @return true/false
-     */
-    public static boolean isValidEvent(final TransactionType pTrans,
-                                       final Account pDebit,
-                                       final Account pCredit) {
-        /* Generally we must not be recursive */
-        boolean myResult = !Difference.isEqual(pDebit, pCredit);
-
-        /* Switch on the TransType */
-        switch (pTrans.getTranClass()) {
-        /* Dividend */
-            case DIVIDEND:
-                /* If the credit account is capital */
-                if (pCredit.isCapital()) {
-                    /* Debit and credit accounts must be identical */
-                    myResult = !myResult;
-                }
-                break;
-            /* AdminCharge/StockSplit */
-            case ADMINCHARGE:
-            case STOCKSPLIT:
-                /* Debit and credit accounts must be identical */
-                myResult = !myResult;
-                break;
-            /* Interest can be recursive */
-            case INTEREST:
-                myResult = true;
-                break;
-            /* Debt Interest and Rental Income must come from the owner of the debt */
-            case RENTALINCOME:
-            case DEBTINTEREST:
-                myResult = Difference.isEqual(pDebit, pCredit.getParent());
-                break;
-            /* Mortgage payment must be to the owner of the mortgage */
-            case MORTGAGE:
-                myResult = Difference.isEqual(pCredit, pDebit.getParent());
-                break;
-            default:
-                break;
-        }
-
-        /* Return the result */
-        return myResult;
-    }
-
-    /**
      * Validate the event.
      */
     @Override
     public void validate() {
-        JDateDay myDate = getDate();
-        String myDesc = getDesc();
         Account myDebit = getDebit();
         Account myCredit = getCredit();
-        JMoney myAmount = getAmount();
-        TransactionType myTransType = getTransType();
-        JUnits myUnits = getDebitUnits();
+        TransactionType myTrans = getTransType();
+        JUnits myDebitUnits = getDebitUnits();
+        JUnits myCreditUnits = getCreditUnits();
         JMoney myTaxCred = getTaxCredit();
         Integer myYears = getYears();
         JDilution myDilution = getDilution();
@@ -558,91 +549,9 @@ public class EventNew
             return;
         }
 
-        /* Determine date range to check for */
-        DataList<?> myList = getList();
-        JDateDayRange myRange;
-        if (myList instanceof EventDateRange) {
-            /* Access valid range */
-            EventDateRange myValid = (EventDateRange) myList;
-            myRange = myValid.getValidDateRange();
-        } else {
-            /* Use default range */
-            myRange = getDataSet().getDateRange();
-        }
+        /* Perform underlying checks */
+        super.validate();
 
-        /* The date must be non-null */
-        if (myDate == null) {
-            addError("Null date is not allowed", FIELD_DATE);
-
-            /* The date must be in-range */
-        } else if (myRange.compareTo(myDate) != 0) {
-            addError("Date must be within range", FIELD_DATE);
-        }
-
-        /* TransType must be non-null */
-        if (myTransType == null) {
-            addError("TransType must be non-null", FIELD_TRNTYP);
-            /* Must be enabled */
-        } else if (!myTransType.getEnabled()) {
-            addError("TransType must be enabled", FIELD_TRNTYP);
-            /* Must not be hidden */
-        } else if (myTransType.isHiddenType()) {
-            addError("Hidden transaction types are not allowed", FIELD_TRNTYP);
-        }
-
-        /* The description must be non-null */
-        if (myDesc == null) {
-            addError("Description must be non-null", FIELD_DESC);
-            /* and not too long */
-        } else if (myDesc.length() > DESCLEN) {
-            addError("Description is too long", FIELD_DESC);
-        }
-
-        /* Credit account must be non-null */
-        if (myCredit == null) {
-            addError("Credit account must be non-null", FIELD_CREDIT);
-            /* And valid for transaction type */
-        } else if ((myTransType != null)
-                   && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
-            addError("Invalid credit account for transaction", FIELD_CREDIT);
-        }
-
-        /* Debit account must be non-null */
-        if (myDebit == null) {
-            addError("Debit account must be non-null", FIELD_DEBIT);
-            /* And valid for transaction type */
-        } else if ((myTransType != null)
-                   && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
-            addError("Invalid debit account for transaction", FIELD_DEBIT);
-        }
-
-        /* Check valid Credit/Debit combination */
-        if ((myTransType != null)
-            && (myCredit != null)
-            && (myDebit != null)
-            && (!isValidEvent(myTransType, myDebit, myCredit))) {
-            addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
-            addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
-        }
-
-        /* Money must not be null/negative */
-        if (myAmount == null) {
-            addError("Amount must be non-null", FIELD_AMOUNT);
-        } else if (!myAmount.isPositive()) {
-            addError("Amount cannot be negative", FIELD_AMOUNT);
-        }
-
-        /* Money must be zero for stock split/demerger */
-        if ((myAmount != null)
-            && (myAmount.isNonZero())
-            && (myTransType != null)
-            && ((myTransType.isStockDemerger())
-                || (myTransType.isStockSplit()) || (myTransType.isStockTakeover()))) {
-            addError("Amount must be zero for Stock Split/Demerger/Takeover", FIELD_AMOUNT);
-        }
-
-        /* Ignore remaining checks for Patterns */
-        // if (!(this instanceof Pattern)) {
         /* Check for valid priced credit account */
         if ((myCredit != null)
             && (myCredit.isPriced())) {
@@ -666,54 +575,86 @@ public class EventNew
             }
         }
 
-        /* If we have units */
-        if (myUnits != null) {
-            /* If we have credit/debit accounts */
+        /* If we have Credit/Debit Units */
+        if ((myDebitUnits != null)
+            || (myCreditUnits != null)) {
+            /* If we have debit units */
             if ((myDebit != null)
-                && (myCredit != null)) {
-                /* Units are only allowed if credit or debit is priced */
-                if ((!myCredit.isPriced())
-                    && (!myDebit.isPriced())) {
+                && (myDebitUnits != null)) {
+                /* Debit Units are only allowed if debit is priced */
+                if (!myDebit.isPriced()) {
                     addError("Units are only allowed involving assets", FIELD_DEBTUNITS);
                 }
 
-                /* If both credit/debit are both priced */
-                if ((myCredit.isPriced())
-                    && (myDebit.isPriced())) {
-                    /* TranType must be stock split or dividend between same account */
-                    if ((myTransType == null)
-                        || ((!myTransType.isDividend())
-                            && (!myTransType.isStockSplit())
-                            && (!myTransType.isAdminCharge())
-                            && (!myTransType.isStockDemerger()) && (!myTransType.isStockTakeover()))) {
-                        addError("Units can only refer to a single priced asset unless "
-                                 + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_DEBTUNITS);
-                    }
+                /* TranType of dividend cannot debit units */
+                if ((myTrans != null)
+                    && (myTrans.isDividend())) {
+                    addError("Units cannot be debited for a dividend", FIELD_DEBTUNITS);
+                }
 
-                    /* Dividend between priced requires identical credit/debit */
-                    if ((myTransType != null)
-                        && (myTransType.isDividend())
-                        && (!Difference.isEqual(myCredit, myDebit))) {
-                        addError("Unit Dividends between assets must be between same asset", FIELD_DEBTUNITS);
-                    }
+                /* Units must be non-zero and positive */
+                if ((!myDebitUnits.isNonZero())
+                    || (!myDebitUnits.isPositive())) {
+                    addError("Units must be non-Zero and positive", FIELD_DEBTUNITS);
                 }
             }
 
-            /* Units must be non-zero */
-            if (!myUnits.isNonZero()) {
-                addError("Units must be non-Zero", FIELD_DEBTUNITS);
-            }
+            /* If we have Credit units */
+            if ((myCredit != null)
+                && (myCreditUnits != null)) {
+                /* Credit Units are only allowed if credit is priced */
+                if (!myCredit.isPriced()) {
+                    addError("Units are only allowed involving assets", FIELD_CREDUNITS);
+                }
 
-            /* Units must not be negative unless it is stock split */
-            if ((!myUnits.isPositive())
-                && ((myTransType == null) || ((!myTransType.isStockSplit()) && (!myTransType.isAdminCharge())))) {
-                addError("Units must be positive unless this is a StockSplit/AdminCharge", FIELD_DEBTUNITS);
+                /* TranType of admin charge cannot credit units */
+                if ((myTrans != null)
+                    && (myTrans.isAdminCharge())) {
+                    addError("Units cannot be credited for an AdminCharge", FIELD_CREDUNITS);
+                }
+
+                /* Units must be non-zero and positive */
+                if ((!myCreditUnits.isNonZero())
+                    || (!myCreditUnits.isPositive())) {
+                    addError("Units must be non-Zero and positive", FIELD_CREDUNITS);
+                }
+            }
+            /* If both credit/debit are both priced */
+            if ((myCredit != null)
+                && (myDebit != null)
+                && (myCredit.isPriced())
+                && (myDebit.isPriced())) {
+                /* TranType must be stock split or dividend between same account */
+                if ((myTrans == null)
+                    || ((!myTrans.isDividend())
+                        && (!myTrans.isStockSplit())
+                        && (!myTrans.isAdminCharge())
+                        && (!myTrans.isStockDemerger()) && (!myTrans.isStockTakeover()))) {
+                    addError("Units can only refer to a single priced asset unless "
+                             + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_CREDUNITS);
+                    addError("Units can only refer to a single priced asset unless "
+                             + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_DEBTUNITS);
+                }
+
+                /* Dividend between priced requires identical credit/debit */
+                if ((myTrans != null)
+                    && (myTrans.isDividend())
+                    && (Difference.isEqual(myCredit, myDebit))) {
+                    addError("Unit Dividends between assets must be between same asset", FIELD_CREDUNITS);
+                }
+
+                /* Cannot have Credit and Debit if accounts are identical */
+                if ((myCreditUnits != null)
+                    && (myDebitUnits != null)
+                    && (Difference.isEqual(myCredit, myDebit))) {
+                    addError("Cannot credit and debit same account", FIELD_CREDUNITS);
+                }
             }
 
             /* Else check for required units */
         } else {
             if (isStockSplit()) {
-                addError("Stock Split requires non-zero Units", FIELD_DEBTUNITS);
+                addError("Stock Split requires non-zero Units", FIELD_CREDUNITS);
             } else if (isAdminCharge()) {
                 addError("Admin Charge requires non-zero Units", FIELD_DEBTUNITS);
             }
@@ -722,8 +663,8 @@ public class EventNew
         /* If we have a dilution */
         if (myDilution != null) {
             /* If the dilution is not allowed */
-            if ((!needsDilution(myTransType))
-                && (!myTransType.isStockSplit())) {
+            if ((!needsDilution(myTrans))
+                && (!myTrans.isStockSplit())) {
                 addError("Dilution factor given where not allowed", FIELD_DILUTION);
             }
 
@@ -733,13 +674,13 @@ public class EventNew
             }
 
             /* else if we are missing a required dilution factor */
-        } else if (needsDilution(myTransType)) {
+        } else if (needsDilution(myTrans)) {
             addError("Dilution factor missing where required", FIELD_DILUTION);
         }
 
         /* If we are a taxable gain */
-        if ((myTransType != null)
-            && (myTransType.isTaxableGain())) {
+        if ((myTrans != null)
+            && (myTrans.isTaxableGain())) {
             /* Years must be positive */
             if ((myYears == null)
                 || (myYears <= 0)) {
@@ -753,8 +694,8 @@ public class EventNew
             }
 
             /* If we need a tax credit */
-        } else if ((myTransType != null)
-                   && (needsTaxCredit(myTransType, myDebit))) {
+        } else if ((myTrans != null)
+                   && (needsTaxCredit(myTrans, myDebit))) {
             /* Tax Credit must be non-null and positive */
             if ((myTaxCred == null)
                 || (!myTaxCred.isPositive())) {
@@ -767,7 +708,7 @@ public class EventNew
             }
 
             /* else we should not have a tax credit */
-        } else if (myTransType != null) {
+        } else if (myTrans != null) {
             /* Tax Credit must be null */
             if (myTaxCred != null) {
                 addError("TaxCredit must be null", FIELD_TAXCREDIT);
@@ -778,7 +719,6 @@ public class EventNew
                 addError("Years must be null", FIELD_YEARS);
             }
         }
-        // }
 
         /* Set validation flag */
         if (!hasErrors()) {
@@ -862,6 +802,51 @@ public class EventNew
     }
 
     /**
+     * Set a new xferDelay.
+     * @param pXferDelay the new xferDelay
+     * @throws JDataException on error
+     */
+    public void setXferDelay(final Integer pXferDelay) throws JDataException {
+        setInfoSetValue(EventInfoClass.QualifyYears, pXferDelay);
+    }
+
+    /**
+     * Set a new NatInsurance.
+     * @param pNatIns the new insurance
+     * @throws JDataException on error
+     */
+    public void setNatInsurance(final JMoney pNatIns) throws JDataException {
+        setInfoSetValue(EventInfoClass.NatInsurance, pNatIns);
+    }
+
+    /**
+     * Set a new Benefit.
+     * @param pBenefit the new benefit
+     * @throws JDataException on error
+     */
+    public void setBenefit(final JMoney pBenefit) throws JDataException {
+        setInfoSetValue(EventInfoClass.Benefit, pBenefit);
+    }
+
+    /**
+     * Set a new Pension.
+     * @param pPension the new pension
+     * @throws JDataException on error
+     */
+    public void setPension(final JMoney pPension) throws JDataException {
+        setInfoSetValue(EventInfoClass.Pension, pPension);
+    }
+
+    /**
+     * Set a new ThirdParty.
+     * @param pParty the new thirdParty
+     * @throws JDataException on error
+     */
+    public void setThirdParty(final Account pParty) throws JDataException {
+        setInfoSetValue(EventInfoClass.ThirdParty, pParty);
+    }
+
+    /**
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
@@ -889,6 +874,23 @@ public class EventNew
 
         /* Return the value */
         return (myValue != null) ? myValue : JDataFieldValue.SkipField;
+    }
+
+    @Override
+    protected void markActiveItems() {
+        /* mark underlying items */
+        super.markActiveItems();
+
+        /* Access values */
+        Account myParty = getThirdParty();
+
+        /* If we have a parent, mark the thirdParty */
+        if (myParty != null) {
+            myParty.touchItem(this);
+        }
+
+        /* Mark infoSet items */
+        theInfoSet.markActiveItems();
     }
 
     /**
@@ -1041,37 +1043,36 @@ public class EventNew
          * @return the edit list
          * @throws JDataException on error
          */
-        // public EventNewList deriveEditList(final TaxYear pTaxYear) throws JDataException {
-        // /* Build an empty List */
-        // EventNewList myList = getEmptyList();
-        // myList.setStyle(ListStyle.EDIT);
-        // myList.theRange = pTaxYear.getRange();
+        public EventNewList deriveEditList(final TaxYear pTaxYear) throws JDataException {
+            /* Build an empty List */
+            EventNewList myList = getEmptyList(ListStyle.EDIT);
+            myList.setRange(pTaxYear.getRange());
 
-        /* Access the underlying data */
-        // PatternList myPatterns = getDataSet().getPatterns();
-        // Iterator<Pattern> myIterator = myPatterns.iterator();
-        // Event myEvent;
+            /* Access the underlying data */
+            PatternNewList myPatterns = getDataSet().getNewPatterns();
+            Iterator<PatternNew> myIterator = myPatterns.iterator();
+            EventNew myEvent;
 
-        /* Loop through the Patterns */
-        // while (myIterator.hasNext()) {
-        // Pattern myCurr = (Pattern) myIterator.next();
+            /* Loop through the Patterns */
+            while (myIterator.hasNext()) {
+                PatternNew myCurr = myIterator.next();
 
-        /* Access a copy of the base date */
-        // JDateDay myDate = new JDateDay(myCurr.getDate());
+                /* Access a copy of the base date */
+                JDateDay myDate = new JDateDay(myCurr.getDate());
 
-        /* Loop while we have an event to add */
-        // while ((myEvent = myCurr.nextEvent(myList, pTaxYear, myDate)) != null) {
-        // /* Add it to the extract */
-        // myList.append(myEvent);
-        // }
-        // }
+                /* Loop while we have an event to add */
+                while ((myEvent = myCurr.nextEvent(myList, pTaxYear, myDate)) != null) {
+                    /* Add it to the extract */
+                    myList.append(myEvent);
+                }
+            }
 
-        /* Sort the list */
-        // myList.reSort();
+            /* Sort the list */
+            myList.reSort();
 
-        /* Return the List */
-        // return myList;
-        // }
+            /* Return the List */
+            return myList;
+        }
 
         /**
          * Validate an extract.

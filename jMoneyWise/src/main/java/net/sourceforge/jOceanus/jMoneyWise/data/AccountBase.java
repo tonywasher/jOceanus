@@ -149,6 +149,24 @@ public abstract class AccountBase
     }
 
     /**
+     * Obtain ActTypeId.
+     * @return the actTypeId
+     */
+    public Integer getActTypeId() {
+        AccountType myType = getActType();
+        return (myType == null) ? null : myType.getId();
+    }
+
+    /**
+     * Obtain ActTypeName.
+     * @return the actTypeName
+     */
+    public String getActTypeName() {
+        AccountType myType = getActType();
+        return (myType == null) ? null : myType.getName();
+    }
+
+    /**
      * Obtain Order.
      * @return the order
      */
@@ -696,7 +714,8 @@ public abstract class AccountBase
         }
 
         /* The description must not be too long */
-        if ((myDesc != null) && (myDesc.length() > DESCLEN)) {
+        if ((myDesc != null)
+            && (myDesc.length() > DESCLEN)) {
             addError("Description is too long", FIELD_DESC);
         }
     }

@@ -41,6 +41,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventNew.EventNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventValue.EventValueList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
+import net.sourceforge.jOceanus.jMoneyWise.data.PatternNew.PatternNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -145,6 +146,11 @@ public class FinanceData
     public static final JDataField FIELD_PATTERNS = FIELD_DEFS.declareLocalField("AccountPatterns");
 
     /**
+     * New Patterns Field Id.
+     */
+    public static final JDataField FIELD_NEWPATTERNS = FIELD_DEFS.declareLocalField("NewPatterns");
+
+    /**
      * Events Field Id.
      */
     public static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField("Events");
@@ -220,6 +226,9 @@ public class FinanceData
         }
         if (FIELD_PATTERNS.equals(pField)) {
             return (thePatterns.size() > 0) ? thePatterns : JDataFieldValue.SkipField;
+        }
+        if (FIELD_NEWPATTERNS.equals(pField)) {
+            return (theNewPatterns.size() > 0) ? theNewPatterns : JDataFieldValue.SkipField;
         }
         if (FIELD_EVENTS.equals(pField)) {
             return (theEvents.size() > 0) ? theEvents : JDataFieldValue.SkipField;
@@ -323,6 +332,11 @@ public class FinanceData
      * Patterns.
      */
     private PatternList thePatterns = null;
+
+    /**
+     * NewPatterns.
+     */
+    private PatternNewList theNewPatterns = null;
 
     /**
      * Events.
@@ -480,6 +494,14 @@ public class FinanceData
     }
 
     /**
+     * Obtain NewPatterns.
+     * @return the Patterns
+     */
+    public PatternNewList getNewPatterns() {
+        return theNewPatterns;
+    }
+
+    /**
      * Obtain Events.
      * @return the Events
      */
@@ -565,10 +587,11 @@ public class FinanceData
         theTaxYears = new TaxYearList(this);
         theTaxInfo = new TaxInfoList(this);
         theAccounts = new AccountList(this);
-        theAccountInfo = new AccountInfoList(this);
         theRates = new AccountRateList(this);
         thePrices = new AccountPriceList(this);
         thePatterns = new PatternList(this);
+        theNewPatterns = new PatternNewList(this);
+        theAccountInfo = new AccountInfoList(this);
         theEvents = new EventList(this);
         theNewEvents = new EventNewList(this);
         theEventInfo = new EventInfoList(this);
@@ -616,10 +639,11 @@ public class FinanceData
         myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.UPDATE);
         myExtract.theTaxInfo = theTaxInfo.deriveList(ListStyle.UPDATE);
         myExtract.theAccounts = theAccounts.deriveList(ListStyle.UPDATE);
-        myExtract.theAccountInfo = theAccountInfo.deriveList(ListStyle.UPDATE);
         myExtract.theRates = theRates.deriveList(ListStyle.UPDATE);
         myExtract.thePrices = thePrices.deriveList(ListStyle.UPDATE);
         myExtract.thePatterns = thePatterns.deriveList(ListStyle.UPDATE);
+        myExtract.theNewPatterns = theNewPatterns.deriveList(ListStyle.UPDATE);
+        myExtract.theAccountInfo = theAccountInfo.deriveList(ListStyle.UPDATE);
         myExtract.theEvents = theEvents.deriveList(ListStyle.UPDATE);
         myExtract.theNewEvents = theNewEvents.deriveList(ListStyle.UPDATE);
         myExtract.theEventInfo = theEventInfo.deriveList(ListStyle.UPDATE);
@@ -655,10 +679,11 @@ public class FinanceData
         myExtract.theTaxYears = theTaxYears.cloneList(this);
         myExtract.theTaxInfo = theTaxInfo.cloneList(this);
         myExtract.theAccounts = theAccounts.cloneList(this);
-        myExtract.theAccountInfo = theAccountInfo.cloneList(this);
         myExtract.theRates = theRates.cloneList(this);
         myExtract.thePrices = thePrices.cloneList(this);
         myExtract.thePatterns = thePatterns.cloneList(this);
+        myExtract.theNewPatterns = theNewPatterns.cloneList(this);
+        myExtract.theAccountInfo = theAccountInfo.cloneList(this);
         myExtract.theEvents = theEvents.cloneList(this);
         myExtract.theNewEvents = theNewEvents.cloneList(this);
         myExtract.theEventInfo = theEventInfo.cloneList(this);
@@ -702,10 +727,11 @@ public class FinanceData
         myDiffers.theTaxYears = theTaxYears.deriveDifferences(pOld.getTaxYears());
         myDiffers.theTaxInfo = theTaxInfo.deriveDifferences(pOld.getTaxInfo());
         myDiffers.theAccounts = theAccounts.deriveDifferences(pOld.getAccounts());
-        myDiffers.theAccountInfo = theAccountInfo.deriveDifferences(pOld.getAccountInfo());
         myDiffers.theRates = theRates.deriveDifferences(pOld.getRates());
         myDiffers.thePrices = thePrices.deriveDifferences(pOld.getPrices());
         myDiffers.thePatterns = thePatterns.deriveDifferences(pOld.getPatterns());
+        myDiffers.theNewPatterns = theNewPatterns.deriveDifferences(pOld.getNewPatterns());
+        myDiffers.theAccountInfo = theAccountInfo.deriveDifferences(pOld.getAccountInfo());
         myDiffers.theEvents = theEvents.deriveDifferences(pOld.getEvents());
         myDiffers.theNewEvents = theNewEvents.deriveDifferences(pOld.getNewEvents());
         myDiffers.theEventInfo = theEventInfo.deriveDifferences(pOld.getEventInfo());
@@ -743,10 +769,11 @@ public class FinanceData
         theTaxYears.reBase(pOld.getTaxYears());
         theTaxInfo.reBase(pOld.getTaxInfo());
         theAccounts.reBase(pOld.getAccounts());
-        theAccountInfo.reBase(pOld.getAccountInfo());
         theRates.reBase(pOld.getRates());
         thePrices.reBase(pOld.getPrices());
         thePatterns.reBase(pOld.getPatterns());
+        theNewPatterns.reBase(pOld.getNewPatterns());
+        theAccountInfo.reBase(pOld.getAccountInfo());
         theEvents.reBase(pOld.getEvents());
         theNewEvents.reBase(pOld.getNewEvents());
         theEventInfo.reBase(pOld.getEventInfo());

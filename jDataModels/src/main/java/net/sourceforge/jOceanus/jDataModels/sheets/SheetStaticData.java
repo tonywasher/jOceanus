@@ -31,7 +31,8 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetDataItem<T> {
+public abstract class SheetStaticData<T extends StaticData<T, ?>>
+        extends SheetDataItem<T> {
     /**
      * Enabled column.
      */
@@ -151,7 +152,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetD
     protected void insertSecureItem(final T pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeBoolean(COL_ENABLED, pItem.getEnabled());
         writeInteger(COL_ORDER, pItem.getOrder());
         writeBytes(COL_NAME, pItem.getNameBytes());

@@ -31,7 +31,8 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 /**
  * Database table class for DataKey.
  */
-public class TableDataKeys extends DatabaseTable<DataKey> {
+public class TableDataKeys
+        extends DatabaseTable<DataKey> {
     /**
      * The name of the Static table.
      */
@@ -80,9 +81,9 @@ public class TableDataKeys extends DatabaseTable<DataKey> {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (DataKey.FIELD_CONTROLKEY.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getControlKey().getId());
+            myTableDef.setIntegerValue(iField, pItem.getControlKeyId());
         } else if (DataKey.FIELD_KEYTYPE.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getKeyType().getId());
+            myTableDef.setIntegerValue(iField, pItem.getKeyTypeId());
         } else if (DataKey.FIELD_KEYDEF.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getSecuredKeyDef());
         } else {

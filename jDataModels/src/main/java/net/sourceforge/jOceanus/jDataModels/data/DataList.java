@@ -802,7 +802,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         CLONE,
 
         /**
-         * Shallow Copy list for comparison purposes.
+         * Shallow Copy list for comparison purposes. Only references to other items can be added to the list
          */
         COPY,
 

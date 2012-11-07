@@ -42,7 +42,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
  * TableEncrypted extension for AccountRate.
  * @author Tony Washer
  */
-public class TableAccountRate extends TableEncrypted<AccountRate> {
+public class TableAccountRate
+        extends TableEncrypted<AccountRate> {
     /**
      * The name of the Rates table.
      */
@@ -62,8 +63,7 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountRate.FIELD_ACCOUNT,
-                                                                  TableAccount.TABLE_NAME);
+        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountRate.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
         myTableDef.addEncryptedColumn(AccountRate.FIELD_RATE, EncryptedData.RATELEN);
         myTableDef.addNullEncryptedColumn(AccountRate.FIELD_BONUS, EncryptedData.RATELEN);
         ColumnDefinition myDateCol = myTableDef.addNullDateColumn(AccountRate.FIELD_ENDDATE);
@@ -100,7 +100,7 @@ public class TableAccountRate extends TableEncrypted<AccountRate> {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (AccountRate.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getAccount().getId());
+            myTableDef.setIntegerValue(iField, pItem.getAccountId());
         } else if (AccountRate.FIELD_RATE.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getRateBytes());
         } else if (AccountRate.FIELD_BONUS.equals(iField)) {

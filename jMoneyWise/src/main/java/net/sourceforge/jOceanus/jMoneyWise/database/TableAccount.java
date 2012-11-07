@@ -101,7 +101,7 @@ public class TableAccount
         if (AccountBase.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (AccountBase.FIELD_TYPE.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getActType().getId());
+            myTableDef.setIntegerValue(iField, pItem.getActTypeId());
         } else if (AccountBase.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else if (AccountBase.FIELD_CLOSE.equals(iField)) {

@@ -131,6 +131,24 @@ public class AccountPrice
     }
 
     /**
+     * Obtain AccountId.
+     * @return the accountId
+     */
+    public Integer getAccountId() {
+        Account myAccount = getAccount();
+        return (myAccount == null) ? null : myAccount.getId();
+    }
+
+    /**
+     * Obtain AccountName.
+     * @return the accountName
+     */
+    public String getAccountName() {
+        Account myAccount = getAccount();
+        return (myAccount == null) ? null : myAccount.getName();
+    }
+
+    /**
      * Obtain Account.
      * @param pValueSet the valueSet
      * @return the Account
