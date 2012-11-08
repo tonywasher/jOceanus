@@ -78,7 +78,7 @@ public class SheetAccount
     /**
      * EndDate column.
      */
-    private static final int COL_CLOSE = COL_DESC + 1;
+    private static final int COL_CLOSED = COL_DESC + 1;
 
     /**
      * Account data list.
@@ -120,14 +120,14 @@ public class SheetAccount
         Integer myActTypeId = loadInteger(COL_ACCOUNTTYPE);
 
         /* Access the dates */
-        Date myClose = loadDate(COL_CLOSE);
+        Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Access the binary values */
         byte[] myName = loadBytes(COL_NAME);
         byte[] myDesc = loadBytes(COL_DESC);
 
         /* Load the item */
-        theList.addSecureItem(myID, myControlId, myName, myActTypeId, myDesc, myClose);
+        theList.addSecureItem(myID, myControlId, myName, myActTypeId, myDesc, isClosed);
     }
 
     @Override
@@ -139,10 +139,10 @@ public class SheetAccount
         String myDesc = loadString(COL_DESC);
 
         /* Access the date */
-        Date myClose = loadDate(COL_CLOSE);
+        Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Load the item */
-        theList.addOpenItem(myID, myName, myActType, myDesc, myClose);
+        theList.addOpenItem(myID, myName, myActType, myDesc, isClosed);
     }
 
     @Override
@@ -151,7 +151,7 @@ public class SheetAccount
         writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_ACCOUNTTYPE, pItem.getActTypeId());
-        writeDate(COL_CLOSE, pItem.getClose());
+        writeBoolean(COL_CLOSED, pItem.isClosed());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
     }
@@ -169,7 +169,7 @@ public class SheetAccount
         // if (pItem.getAlias() != null) {
         // writeString(COL_ALIAS, pItem.getAlias().getName());
         // }
-        writeDate(COL_CLOSE, pItem.getClose());
+        writeBoolean(COL_CLOSED, pItem.isClosed());
         // writeDate(COL_MATURITY, pItem.getMaturity());
         // writeChars(COL_WEBSITE, pItem.getWebSite());
         // writeChars(COL_CUSTNO, pItem.getCustNo());
@@ -187,7 +187,7 @@ public class SheetAccount
         writeHeader(COL_DESC, AccountBase.FIELD_DESC.getName());
         // writeHeader(COL_PARENT, Account.FIELD_PARENT.getName());
         // writeHeader(COL_ALIAS, Account.FIELD_ALIAS.getName());
-        writeHeader(COL_CLOSE, AccountBase.FIELD_CLOSE.getName());
+        writeHeader(COL_CLOSED, AccountBase.FIELD_CLOSED.getName());
         // writeHeader(COL_MATURITY, Account.FIELD_MATURITY.getName());
         // writeHeader(COL_WEBSITE, Account.FIELD_WEBSITE.getName());
         // writeHeader(COL_CUSTNO, Account.FIELD_CUSTNO.getName());
@@ -203,15 +203,15 @@ public class SheetAccount
         // setColumnWidth(COL_PARENT, Account.NAMELEN);
         // setColumnWidth(COL_ALIAS, Account.NAMELEN);
 
-        /* Set Date columns */
-        setDateColumn(COL_CLOSE);
+        /* Set Boolean column */
+        setBooleanColumn(COL_CLOSED);
         // setDateColumn(COL_MATURITY);
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(COL_CLOSE);
+        nameRange(COL_CLOSED);
 
         /* If we are not creating a backup */
         if (!isBackup()) {
@@ -311,13 +311,13 @@ public class SheetAccount
                     /* Handle closed which may be missing */
                     myCell = myRow.getCell(myCol
                                            + iAdjust++);
-                    Date myClosed = null;
+                    Boolean isClosed = Boolean.FALSE;
                     if (myCell != null) {
-                        myClosed = myCell.getDateCellValue();
+                        isClosed = Boolean.TRUE;
                     }
 
                     /* Add the value into the finance tables */
-                    Account myAccount = myList.addOpenItem(0, myName, myAcType, null, myClosed);
+                    Account myAccount = myList.addOpenItem(0, myName, myAcType, null, isClosed);
 
                     /* Add information relating to the account */
                     myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);

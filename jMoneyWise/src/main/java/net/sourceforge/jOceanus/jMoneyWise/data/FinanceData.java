@@ -800,6 +800,7 @@ public class FinanceData
         addList(theRates);
         addList(thePrices);
         addList(thePatterns);
+        addList(theNewPatterns);
         addList(theAccountInfo);
         addList(theEvents);
         addList(theNewEvents);
@@ -841,21 +842,6 @@ public class FinanceData
 
         /* Note active items referenced by tax years */
         theTaxYears.markActiveItems();
-    }
-
-    /**
-     * Analyse the data.
-     * @throws JDataException on error
-     */
-    public void houseKeepAnalysis() throws JDataException {
-        /* Note active items referenced by rates */
-        theRates.markActiveItems();
-
-        /* Note active items referenced by prices */
-        thePrices.markActiveItems();
-
-        /* Mark active items referenced by patterns */
-        thePatterns.markActiveItems();
     }
 
     /**

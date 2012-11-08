@@ -63,13 +63,13 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
  * Top level panel for static data.
  * @author Tony Washer
  */
-public class MaintStatic extends JEventPanel {
+public class MaintStatic
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -192,16 +192,13 @@ public class MaintStatic extends JEventPanel {
      * Constructor.
      * @param pView the view
      */
-    public MaintStatic(final View pView) {
-        /* Store parameters */
-        View myView = pView;
-
+    public MaintStatic(final DataControl<?> pControl) {
         /* Build the Update set */
-        theUpdateSet = new UpdateSet(myView);
+        theUpdateSet = new UpdateSet(pControl);
 
         /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = myView.getDataMgr();
-        JDataEntry mySection = myView.getDataEntry(DataControl.DATA_MAINT);
+        JDataManager myDataMgr = pControl.getDataMgr();
+        JDataEntry mySection = pControl.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.new JDataEntry(StaticData.class.getSimpleName());
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
@@ -213,22 +210,16 @@ public class MaintStatic extends JEventPanel {
         theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Build the child windows */
-        theActTypes = new MaintStaticData<AccountTypeList, AccountType>(myView, theUpdateSet, theError,
-                AccountTypeList.class, AccountType.class);
-        theTranTypes = new MaintStaticData<TransTypeList, TransactionType>(myView, theUpdateSet, theError,
-                TransTypeList.class, TransactionType.class);
-        theTaxTypes = new MaintStaticData<TaxTypeList, TaxType>(myView, theUpdateSet, theError,
-                TaxTypeList.class, TaxType.class);
-        theTaxRegimes = new MaintStaticData<TaxRegimeList, TaxRegime>(myView, theUpdateSet, theError,
-                TaxRegimeList.class, TaxRegime.class);
-        theFrequencys = new MaintStaticData<FrequencyList, Frequency>(myView, theUpdateSet, theError,
-                FrequencyList.class, Frequency.class);
-        theTaxInfoTypes = new MaintStaticData<TaxYearInfoTypeList, TaxYearInfoType>(myView, theUpdateSet,
-                theError, TaxYearInfoTypeList.class, TaxYearInfoType.class);
-        theActInfoTypes = new MaintStaticData<AccountInfoTypeList, AccountInfoType>(myView, theUpdateSet,
-                theError, AccountInfoTypeList.class, AccountInfoType.class);
-        theEvtInfoTypes = new MaintStaticData<EventInfoTypeList, EventInfoType>(myView, theUpdateSet,
-                theError, EventInfoTypeList.class, EventInfoType.class);
+        theActTypes = new MaintStaticData<AccountTypeList, AccountType>(pControl, theUpdateSet, theError, AccountTypeList.class, AccountType.class);
+        theTranTypes = new MaintStaticData<TransTypeList, TransactionType>(pControl, theUpdateSet, theError, TransTypeList.class, TransactionType.class);
+        theTaxTypes = new MaintStaticData<TaxTypeList, TaxType>(pControl, theUpdateSet, theError, TaxTypeList.class, TaxType.class);
+        theTaxRegimes = new MaintStaticData<TaxRegimeList, TaxRegime>(pControl, theUpdateSet, theError, TaxRegimeList.class, TaxRegime.class);
+        theFrequencys = new MaintStaticData<FrequencyList, Frequency>(pControl, theUpdateSet, theError, FrequencyList.class, Frequency.class);
+        theTaxInfoTypes = new MaintStaticData<TaxYearInfoTypeList, TaxYearInfoType>(pControl, theUpdateSet, theError, TaxYearInfoTypeList.class,
+                TaxYearInfoType.class);
+        theActInfoTypes = new MaintStaticData<AccountInfoTypeList, AccountInfoType>(pControl, theUpdateSet, theError, AccountInfoTypeList.class,
+                AccountInfoType.class);
+        theEvtInfoTypes = new MaintStaticData<EventInfoTypeList, EventInfoType>(pControl, theUpdateSet, theError, EventInfoTypeList.class, EventInfoType.class);
 
         /* Build the Static box */
         theSelectBox = new JComboBox<String>();
@@ -391,7 +382,8 @@ public class MaintStatic extends JEventPanel {
     /**
      * Listener class.
      */
-    private final class StaticListener implements ItemListener, ChangeListener, ActionListener {
+    private final class StaticListener
+            implements ItemListener, ChangeListener, ActionListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
             /* Ignore if this is not a selection event */

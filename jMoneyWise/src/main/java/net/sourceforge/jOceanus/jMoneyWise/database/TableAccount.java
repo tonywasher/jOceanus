@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
-import java.util.Date;
-
 import javax.swing.SortOrder;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -66,7 +64,7 @@ public class TableAccount
         myTableDef.addEncryptedColumn(AccountBase.FIELD_NAME, AccountBase.NAMELEN);
         ColumnDefinition mySortCol = myTableDef.addReferenceColumn(AccountBase.FIELD_TYPE, TableAccountType.TABLE_NAME);
         myTableDef.addNullEncryptedColumn(AccountBase.FIELD_DESC, AccountBase.DESCLEN);
-        myTableDef.addNullDateColumn(AccountBase.FIELD_CLOSE);
+        myTableDef.addBooleanColumn(AccountBase.FIELD_CLOSED);
 
         /* Declare the sort order */
         mySortCol.setSortOrder(SortOrder.ASCENDING);
@@ -87,10 +85,10 @@ public class TableAccount
         byte[] myName = myTableDef.getBinaryValue(AccountBase.FIELD_NAME);
         Integer myActTypeId = myTableDef.getIntegerValue(AccountBase.FIELD_TYPE);
         byte[] myDesc = myTableDef.getBinaryValue(AccountBase.FIELD_DESC);
-        Date myClosed = myTableDef.getDateValue(AccountBase.FIELD_CLOSE);
+        Boolean isClosed = myTableDef.getBooleanValue(AccountBase.FIELD_CLOSED);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myActTypeId, myDesc, myClosed);
+        theList.addSecureItem(pId, pControlId, myName, myActTypeId, myDesc, isClosed);
     }
 
     @Override
@@ -104,8 +102,8 @@ public class TableAccount
             myTableDef.setIntegerValue(iField, pItem.getActTypeId());
         } else if (AccountBase.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
-        } else if (AccountBase.FIELD_CLOSE.equals(iField)) {
-            myTableDef.setDateValue(iField, pItem.getClose());
+        } else if (AccountBase.FIELD_CLOSED.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.isClosed());
         } else {
             super.setFieldValue(pItem, iField);
         }

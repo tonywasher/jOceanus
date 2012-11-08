@@ -86,7 +86,7 @@ public class SheetPatternNew
     /**
      * Frequency column.
      */
-    private static final int COL_FREQ = COL_TRAN + 1;
+    private static final int COL_FREQ = COL_AMOUNT + 1;
 
     /**
      * Patterns data list.

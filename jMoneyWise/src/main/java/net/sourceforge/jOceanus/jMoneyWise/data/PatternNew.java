@@ -85,7 +85,7 @@ public class PatternNew
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, Event.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EventBase.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -470,6 +470,17 @@ public class PatternNew
     }
 
     /**
+     * Mark active items.
+     */
+    protected void markActiveItems() {
+        /* Pass call on */
+        super.markActiveItems();
+
+        /* mark the frequency referred to */
+        getFrequency().touchItem(this);
+    }
+
+    /**
      * The list.
      */
     public static class PatternNewList
@@ -646,17 +657,8 @@ public class PatternNew
             while (myIterator.hasNext()) {
                 PatternNew myCurr = myIterator.next();
 
-                /* Touch the patterned account */
-                myCurr.getDebit().touchItem(myCurr);
-
-                /* Touch the patterned partner */
-                myCurr.getCredit().touchItem(myCurr);
-
-                /* Touch the patterned frequency */
-                myCurr.getFrequency().touchItem(myCurr);
-
-                /* Touch the patterned transaction type */
-                myCurr.getTransType().touchItem(myCurr);
+                /* Touch affected items */
+                myCurr.markActiveItems();
             }
         }
 

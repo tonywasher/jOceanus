@@ -40,7 +40,6 @@ import javax.swing.LayoutStyle;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -261,6 +260,11 @@ public class MaintAccount
      * Are we refreshing data?
      */
     private boolean refreshingData = false;
+
+    /**
+     * Are we editing a new account?
+     */
+    private boolean isNewAccount = false;
 
     /**
      * The data view.
@@ -775,22 +779,6 @@ public class MaintAccount
         refreshingData = false;
     }
 
-    // @Override
-    // public void notifySelection(final Object obj) {
-    /* If this is a change from the account selection */
-    // if (theSelect.equals(obj)) {
-    /* If we have changed the show closed option */
-    // if (theSelect.doShowClosed() != doShowClosed) {
-    // /* Record details and refresh parents */
-    // doShowClosed = theSelect.doShowClosed();
-    // refreshParents();
-    // }
-
-    /* Set the new account */
-    // setSelection(theSelect.getSelected());
-    // }
-    // }
-
     /**
      * Select an explicit account.
      * @param pAccount the account
@@ -827,6 +815,9 @@ public class MaintAccount
         theAccountEntry.setDataList(theActView);
         theInfoEntry.setDataList(myInfo);
 
+        /* Clear new account flag */
+        isNewAccount = false;
+
         /* notify changes */
         notifyChanges();
     }
@@ -845,61 +836,63 @@ public class MaintAccount
 
             /* Access details */
             boolean isClosed = theAccount.isClosed();
+            boolean bActive = !theAccount.isDeleted();
             myType = theAccount.getActType();
 
             /* Set the name */
             theName.setValue(theAccount.getName());
             theName.setEnabled(!isClosed
-                               && !theAccount.isDeleted());
+                               && bActive);
 
             /* Set the description */
             theDesc.setValue(theAccount.getDesc());
             theDesc.setEnabled(!isClosed
-                               && !theAccount.isDeleted());
+                               && bActive);
 
             /* Set the WebSite */
             theWebSite.setValue(theAccount.getWebSite());
             theWebSite.setEnabled(!isClosed
-                                  && !theAccount.isDeleted());
+                                  && bActive);
 
             /* Set the CustNo */
             theCustNo.setValue(theAccount.getCustNo());
             theCustNo.setEnabled(!isClosed
-                                 && !theAccount.isDeleted());
+                                 && bActive);
 
             /* Set the UserId */
             theUserId.setValue(theAccount.getUserId());
             theUserId.setEnabled(!isClosed
-                                 && !theAccount.isDeleted());
+                                 && bActive);
 
             /* Set the Password */
             thePassword.setValue(theAccount.getPassword());
             thePassword.setEnabled(!isClosed
-                                   && !theAccount.isDeleted());
+                                   && bActive);
 
             /* Set the WebSite */
             theActDetail.setValue(theAccount.getAccount());
             theActDetail.setEnabled(!isClosed
-                                    && !theAccount.isDeleted());
+                                    && bActive);
 
             /* Set the Notes */
             theNotes.setValue(theAccount.getNotes());
             theNotes.setEnabled(!isClosed
-                                && !theAccount.isDeleted());
+                                && bActive);
 
             /* Set the type */
             theTypesBox.setSelectedItem(myType.getName());
             theTypesBox.setVisible(theAccount.isDeletable()
-                                   && (theAccount.getState() == DataState.NEW));
+                                   && (isNewAccount));
             theTypLabel.setVisible(theAccount.isDeletable()
-                                   && (theAccount.getState() == DataState.NEW));
+                                   && (isNewAccount));
 
             /* Handle maturity */
             if (myType.isBond()) {
                 theMatLabel.setVisible(true);
                 theMatButton.setSelectedDateDay(theAccount.getMaturity());
                 theMatButton.setVisible(true);
-                theMatButton.setEnabled(!isClosed);
+                theMatButton.setEnabled(!isClosed
+                                        && bActive);
             } else {
                 theMatButton.setVisible(false);
                 theMatLabel.setVisible(false);
@@ -914,12 +907,12 @@ public class MaintAccount
                 }
                 theParentBox.setVisible(true);
                 theParLabel.setVisible(true);
+                theParentBox.setEnabled(!isClosed
+                                        && bActive);
             } else {
                 theParentBox.setVisible(false);
                 theParLabel.setVisible(false);
             }
-            theParentBox.setEnabled(!isClosed
-                                    && !theAccount.isDeleted());
 
             /* Handle alias */
             if (myType.canAlias()
@@ -972,12 +965,12 @@ public class MaintAccount
                 }
                 theAliasBox.setVisible(true);
                 theAlsLabel.setVisible(true);
+                theAliasBox.setEnabled(!isClosed
+                                       && bActive);
             } else {
                 theAliasBox.setVisible(false);
                 theAlsLabel.setVisible(false);
             }
-            theAliasBox.setEnabled(!isClosed
-                                   && !theAccount.isDeleted());
 
             /* Render all fields in the set */
             theFieldSet.renderSet(theAccount);
@@ -998,11 +991,11 @@ public class MaintAccount
             /* Make sure buttons are visible */
             theDelButton.setVisible(theAccount.isDeletable());
             theDelButton.setText("Delete");
-            theClsButton.setVisible(!theAccount.isDeleted());
+            theClsButton.setVisible(bActive);
 
             /* Enable buttons */
             theInsButton.setEnabled(!theAccount.hasChanges()
-                                    && (!theAccount.getActType().isReserved()));
+                                    && (!myType.isReserved()));
             theClsButton.setEnabled((isClosed)
                                     || (theAccount.isCloseable()));
 
@@ -1072,6 +1065,10 @@ public class MaintAccount
         /* Set List */
         theAccountEntry.setDataList(theActView);
         theInfoEntry.setDataList(myInfo);
+        theUpdateSet.incrementVersion();
+
+        /* Set new account flag */
+        isNewAccount = true;
 
         /* Notify changes */
         notifyChanges();
@@ -1163,6 +1160,20 @@ public class MaintAccount
 
             /* If this event relates to the save buttons */
             if (theSaveButs.equals(o)) {
+                /* If this is a new Account */
+                if (isNewAccount) {
+                    /* Access the command */
+                    String myCmd = evt.getActionCommand();
+
+                    /* If the command is reset/last undo */
+                    if ((myCmd.equals(SaveButtons.CMD_RESET))
+                        || ((myCmd.equals(SaveButtons.CMD_UNDO)) && (!theAccount.hasHistory()))) {
+                        /* Delete new account */
+                        delNewAccount();
+                        return;
+                    }
+                }
+
                 /* Perform the action */
                 theUpdateSet.processCommand(evt.getActionCommand(), theError);
 
@@ -1184,7 +1195,7 @@ public class MaintAccount
                 /* If this event relates to the delete button */
             } else if (theDelButton.equals(o)) {
                 /* else if this is a new account */
-                if (theAccount.getState() == DataState.NEW) {
+                if (isNewAccount) {
                     /* Delete the new account */
                     delNewAccount();
 

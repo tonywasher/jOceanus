@@ -34,7 +34,6 @@ import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.PatternNew;
@@ -117,7 +116,7 @@ public class TablePatternNew
         } else if (EventBase.FIELD_CREDIT.equals(iField)) {
             myTableDef.setIntegerValue(EventBase.FIELD_CREDIT, pItem.getCreditId());
         } else if (EventBase.FIELD_TRNTYP.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransTypeId());
+            myTableDef.setIntegerValue(EventBase.FIELD_TRNTYP, pItem.getTransTypeId());
         } else if (PatternNew.FIELD_FREQ.equals(iField)) {
             myTableDef.setIntegerValue(PatternNew.FIELD_FREQ, pItem.getFrequencyId());
         } else {

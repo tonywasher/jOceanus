@@ -41,7 +41,6 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedMoney;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventDateRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
@@ -428,6 +427,11 @@ public abstract class EventBase
     @Override
     public final FinanceData getDataSet() {
         return (FinanceData) super.getDataSet();
+    }
+
+    @Override
+    public final EventBaseList<?> getList() {
+        return (EventBaseList<?>) super.getList();
     }
 
     /**
@@ -1110,16 +1114,8 @@ public abstract class EventBase
         TransactionType myTransType = getTransType();
 
         /* Determine date range to check for */
-        DataList<?> myList = getList();
-        JDateDayRange myRange;
-        if (myList instanceof EventDateRange) {
-            /* Access valid range */
-            EventDateRange myValid = (EventDateRange) myList;
-            myRange = myValid.getValidDateRange();
-        } else {
-            /* Use default range */
-            myRange = getDataSet().getDateRange();
-        }
+        EventBaseList<?> myList = getList();
+        JDateDayRange myRange = myList.getValidDateRange();
 
         /* The date must be non-null */
         if (myDate == null) {

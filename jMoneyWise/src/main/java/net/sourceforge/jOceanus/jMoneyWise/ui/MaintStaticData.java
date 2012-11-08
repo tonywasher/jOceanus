@@ -35,6 +35,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
+import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticList;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
@@ -42,6 +43,7 @@ import net.sourceforge.jOceanus.jDataModels.ui.JDataTable;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTableModel;
+import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jFieldSet.Editor.BooleanEditor;
@@ -50,8 +52,6 @@ import net.sourceforge.jOceanus.jFieldSet.RenderManager;
 import net.sourceforge.jOceanus.jFieldSet.Renderer.BooleanRenderer;
 import net.sourceforge.jOceanus.jFieldSet.Renderer.IntegerRenderer;
 import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
  * Static Data Table.
@@ -59,7 +59,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * @param <L> the list type
  * @param <T> the data type
  */
-public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T, ?>> extends JDataTable<T> {
+public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T, ?>>
+        extends JDataTable<T> {
     /**
      * Serial Id.
      */
@@ -68,8 +69,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
-            .getBundle(MaintStaticData.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintStaticData.class.getName());
 
     /**
      * Class column title.
@@ -174,7 +174,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * The Data view.
      */
-    private final transient View theView;
+    private final transient DataControl<?> theControl;
 
     /**
      * The render manager.
@@ -247,7 +247,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
      * @param pListClass the list class
      * @param pItemClass the item class
      */
-    public MaintStaticData(final View pView,
+    public MaintStaticData(final DataControl<?> pControl,
                            final UpdateSet pUpdateSet,
                            final ErrorPanel pError,
                            final Class<L> pListClass,
@@ -255,8 +255,8 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         /* Record the passed details */
         theError = pError;
         theClass = pListClass;
-        theView = pView;
-        theRenderMgr = theView.getRenderMgr();
+        theControl = pControl;
+        theRenderMgr = theControl.getRenderMgr();
         setRenderMgr(theRenderMgr);
 
         /* Build the Update set and List */
@@ -316,7 +316,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
      */
     protected void refreshData() {
         /* Access data */
-        FinanceData myData = theView.getData();
+        DataSet<?> myData = theControl.getData();
 
         /* Access edit list */
         theStatic = myData.getDataList(theClass);
@@ -330,7 +330,8 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * The listener class.
      */
-    private final class StaticListener implements ActionListener {
+    private final class StaticListener
+            implements ActionListener {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
@@ -347,7 +348,8 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * Static table model.
      */
-    public final class StaticModel extends JDataTableModel<T> {
+    public final class StaticModel
+            extends JDataTableModel<T> {
         /**
          * Serial Id.
          */
@@ -511,7 +513,8 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * Column Model class.
      */
-    private final class StaticColumnModel extends JDataTableColumnModel {
+    private final class StaticColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -561,8 +564,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             addColumn(new JDataTableColumn(COLUMN_NAME, WIDTH_NAME, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_ORDER, WIDTH_ORDER, theIntegerRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_ENABLED, theBooleanRenderer,
-                    theBooleanEditor));
+            addColumn(new JDataTableColumn(COLUMN_ENABLED, WIDTH_ENABLED, theBooleanRenderer, theBooleanEditor));
             addColumn(new JDataTableColumn(COLUMN_ACTIVE, WIDTH_ACTIVE, theBooleanRenderer, null));
         }
     }

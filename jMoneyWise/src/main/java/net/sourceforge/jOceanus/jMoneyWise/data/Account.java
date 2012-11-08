@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
@@ -101,6 +100,11 @@ public class Account
     public JDataFields declareFields() {
         return FIELD_DEFS;
     }
+
+    /**
+     * CloseDate Field Id.
+     */
+    public static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField("CloseDate");
 
     /**
      * AccountInfoSet field Id.
@@ -230,6 +234,9 @@ public class Account
         if (FIELD_INITPRC.equals(pField)) {
             return (theInitPrice != null) ? theInitPrice : JDataFieldValue.SkipField;
         }
+        if (FIELD_CLOSEDATE.equals(pField)) {
+            return (theCloseDate != null) ? theCloseDate : JDataFieldValue.SkipField;
+        }
         if (FIELD_HASDEBTS.equals(pField)) {
             return hasDebts ? hasDebts : JDataFieldValue.SkipField;
         }
@@ -317,6 +324,11 @@ public class Account
     protected AccountInfoSet getInfoSet() {
         return theInfoSet;
     }
+
+    /**
+     * Close Date.
+     */
+    private JDateDay theCloseDate = null;
 
     /**
      * Earliest Event.
@@ -494,11 +506,11 @@ public class Account
     }
 
     /**
-     * Is the account closed?
-     * @return true/false
+     * Get the close Date of the account.
+     * @return the closeDate
      */
-    public boolean isClosed() {
-        return (getClose() != null);
+    public JDateDay getCloseDate() {
+        return theCloseDate;
     }
 
     /**
@@ -659,6 +671,7 @@ public class Account
     private void copyFlags(final Account pItem) {
         theEarliest = pItem.theEarliest;
         theLatest = pItem.theLatest;
+        theCloseDate = pItem.theCloseDate;
         theInitPrice = pItem.theInitPrice;
         isCloseable = pItem.isCloseable();
         isAliasedTo = pItem.isAliasedTo();
@@ -717,7 +730,7 @@ public class Account
      * @param pName the Encrypted Name of the account
      * @param uAcTypeId the Account type id
      * @param pDesc the Encrypted Description of the account
-     * @param pClose the Close date for the account
+     * @param isClosed is the account closed?
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
@@ -726,9 +739,9 @@ public class Account
                     final byte[] pName,
                     final Integer uAcTypeId,
                     final byte[] pDesc,
-                    final Date pClose) throws JDataException {
+                    final Boolean isClosed) throws JDataException {
         /* Initialise the item */
-        super(pList, uId, uControlId, pName, uAcTypeId, pDesc, pClose);
+        super(pList, uId, uControlId, pName, uAcTypeId, pDesc, isClosed);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -743,7 +756,7 @@ public class Account
      * @param sName the Name of the account
      * @param uAcTypeId the Account type id
      * @param pDesc the description
-     * @param pClose the Close date for the account
+     * @param isClosed is the account closed?
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
@@ -751,9 +764,9 @@ public class Account
                     final String sName,
                     final Integer uAcTypeId,
                     final String pDesc,
-                    final Date pClose) throws JDataException {
+                    final Boolean isClosed) throws JDataException {
         /* Initialise the item */
-        super(pList, uId, sName, uAcTypeId, pDesc, pClose);
+        super(pList, uId, sName, uAcTypeId, pDesc, isClosed);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -772,6 +785,7 @@ public class Account
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
         hasInfoSet = true;
         useInfoSet = true;
+        setClosed(Boolean.FALSE);
     }
 
     /**
@@ -783,21 +797,21 @@ public class Account
     }
 
     /**
-     * Adjust closed date.
+     * Adjust closed/maturity dates.
      * @throws JDataException on error
      */
-    public void adjustClosed() throws JDataException {
-        /* If we have a latest event that is later than the close */
-        if (getClose().compareTo(theLatest.getDate()) < 0) {
-            /* Record the more accurate date */
-            setClose(theLatest.getDate());
-        }
+    public void adjustDates() throws JDataException {
+        /* Access latest activity date */
+        JDateDay myCloseDate = (theLatest == null) ? null : theLatest.getDate();
+
+        /* Store the close date */
+        theCloseDate = myCloseDate;
 
         /* If the maturity is null for a bond set it to close date */
         if (isBond()
             && getMaturity() == null) {
             /* Record a date for maturity */
-            setMaturity(theLatest.getDate());
+            setMaturity(theCloseDate);
         }
     }
 
@@ -806,7 +820,7 @@ public class Account
      */
     public void closeAccount() {
         /* Close the account */
-        setClose(theLatest.getDate());
+        setClosed(Boolean.TRUE);
     }
 
     /**
@@ -814,7 +828,7 @@ public class Account
      */
     public void reOpenAccount() {
         /* Reopen the account */
-        setClose(null);
+        setClosed(Boolean.FALSE);
     }
 
     /**
@@ -1073,7 +1087,10 @@ public class Account
         AccountType myType = getActType();
         Account myParent = getParent();
         Account myAlias = getAlias();
-        FinanceData mySet = getDataSet();
+        LoadState myState = getDataSet().getLoadState();
+
+        /* Validate base components */
+        super.validate();
 
         /* If the account is priced */
         if (myType.isPriced()) {
@@ -1116,7 +1133,7 @@ public class Account
             /* else we should have a parent */
         } else {
             /* If data has been fully loaded we have no parent */
-            if ((mySet.getLoadState() != LoadState.INITIAL)
+            if ((myState != LoadState.INITIAL)
                 && (myParent == null)) {
                 addError("Child Account must have parent", FIELD_PARENT);
             }
@@ -1191,10 +1208,10 @@ public class Account
         }
 
         /* If data has been fully loaded and the account is closed it must be closeable */
-        if ((mySet.getLoadState() != LoadState.INITIAL)
+        if ((myState != LoadState.INITIAL)
             && (isClosed())
             && (!isCloseable())) {
-            addError("Non-closeable account is closed", FIELD_CLOSE);
+            addError("Non-closeable account is closed", FIELD_CLOSED);
         }
 
         /* The WebSite must not be too long */
@@ -1394,13 +1411,24 @@ public class Account
 
             /* Create info List */
             AccountInfoList myActInfo = getAccountInfo();
-            myList.theInfoList = myActInfo.getEmptyList(ListStyle.EDIT);
+            myActInfo = myActInfo.getEmptyList(ListStyle.EDIT);
+            myList.theInfoList = myActInfo;
             populateList(myList);
 
             /* Create a new account */
-            myList.theAccount = new Account(myList);
-            myList.theAccount.setActType(pType);
-            myList.add(myList.theAccount);
+            Account myNew = myList.theAccount = new Account(myList);
+            myNew.setActType(pType);
+            myNew.setNewVersion();
+
+            /* Set lists to show new version */
+            // Integer myVersion = myNew.getValueSetVersion();
+            // myList.setVersion(myVersion);
+            // myActInfo.setVersion(myVersion);
+
+            /* Add to the list and store as master account */
+            myList.add(myNew);
+            myList.theAccount = myNew;
+            myNew.validate();
 
             /* Return the List */
             return myList;
@@ -1459,11 +1487,27 @@ public class Account
                 /* mark active items */
                 myCurr.markActiveItems();
 
-                /* If we have a close date and a latest event */
-                if ((myCurr.getClose() != null)
-                    && (myCurr.getLatest() != null)) {
-                    /* Ensure that we use the correct latest event date */
-                    myCurr.adjustClosed();
+                /* If we are closed adjust dates */
+                if (myCurr.isClosed()) {
+                    /* Ensure that we have correct closed/maturity dates */
+                    myCurr.adjustDates();
+                }
+            }
+
+            /* If we are in final loading stage */
+            if (myData.getLoadState() == LoadState.FINAL) {
+                /* Access a new iterator */
+                myIterator = listIterator();
+
+                /* Loop through the accounts */
+                while (myIterator.hasNext()) {
+                    Account myCurr = myIterator.next();
+
+                    /* Validate the account */
+                    myCurr.validate();
+                    if (myCurr.hasErrors()) {
+                        throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
+                    }
                 }
             }
         }
@@ -1474,7 +1518,7 @@ public class Account
          * @param pName the Name of the account
          * @param pAcType the Name of the account type
          * @param pDesc the description of the account
-         * @param pClosed the Close Date for the account (or null)
+         * @param isClosed is the account closed?
          * @return the new account
          * @throws JDataException on error
          */
@@ -1482,7 +1526,7 @@ public class Account
                                    final String pName,
                                    final String pAcType,
                                    final String pDesc,
-                                   final Date pClosed) throws JDataException {
+                                   final Boolean isClosed) throws JDataException {
             /* Access the account types and accounts */
             FinanceData myData = getDataSet();
             AccountTypeList myActTypes = myData.getAccountTypes();
@@ -1497,7 +1541,7 @@ public class Account
                                                               + "]");
             }
             /* Create the new account */
-            Account myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, pClosed);
+            Account myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, isClosed);
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
@@ -1516,7 +1560,7 @@ public class Account
          * @param pName the Encrypted Name of the account
          * @param uAcTypeId the Id of the account type
          * @param pDesc the Encrypted Description of the account (or null)
-         * @param pClosed the Close Date for the account (or null)
+         * @param isClosed is the account closed?
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer uId,
@@ -1524,9 +1568,9 @@ public class Account
                                   final byte[] pName,
                                   final Integer uAcTypeId,
                                   final byte[] pDesc,
-                                  final Date pClosed) throws JDataException {
+                                  final Boolean isClosed) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, pClosed);
+            Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, isClosed);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(uId)) {

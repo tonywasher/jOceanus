@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -34,7 +33,6 @@ import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
@@ -78,9 +76,9 @@ public abstract class AccountBase
     public static final JDataField FIELD_TYPE = FIELD_DEFS.declareEqualityValueField("AccountType");
 
     /**
-     * Close Field Id.
+     * isClosed Field Id.
      */
-    public static final JDataField FIELD_CLOSE = FIELD_DEFS.declareEqualityValueField("CloseDate");
+    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField("isClosed");
 
     @Override
     public String formatObject() {
@@ -175,11 +173,11 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain Close.
-     * @return the date
+     * Is the account closed.
+     * @return true/false
      */
-    public JDateDay getClose() {
-        return getClose(getValueSet());
+    public Boolean isClosed() {
+        return isClosed(getValueSet());
     }
 
     /**
@@ -259,12 +257,12 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain Close date.
+     * Is the account closed.
      * @param pValueSet the valueSet
-     * @return the date
+     * @return true/false
      */
-    public static JDateDay getClose(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CLOSE, JDateDay.class);
+    public static Boolean isClosed(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CLOSED, Boolean.class);
     }
 
     /**
@@ -336,11 +334,11 @@ public abstract class AccountBase
     }
 
     /**
-     * Set close value.
+     * Set close indication.
      * @param pValue the value
      */
-    private void setValueClose(final JDateDay pValue) {
-        getValueSet().setValue(FIELD_CLOSE, pValue);
+    private void setValueClosed(final Boolean pValue) {
+        getValueSet().setValue(FIELD_CLOSED, (pValue != null) ? pValue : Boolean.FALSE);
     }
 
     @Override
@@ -535,7 +533,7 @@ public abstract class AccountBase
      * @param pName the Encrypted Name of the account
      * @param uAcTypeId the Account type id
      * @param pDesc the Encrypted Description of the account
-     * @param pClose the Close date for the account
+     * @param isClosed is the account closed?
      * @throws JDataException on error
      */
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
@@ -544,7 +542,7 @@ public abstract class AccountBase
                           final byte[] pName,
                           final Integer uAcTypeId,
                           final byte[] pDesc,
-                          final Date pClose) throws JDataException {
+                          final Boolean isClosed) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -565,10 +563,8 @@ public abstract class AccountBase
             }
             setValueType(myActType);
 
-            /* Parse the closed date if it exists */
-            if (pClose != null) {
-                setValueClose(new JDateDay(pClose));
-            }
+            /* Set the closed indication */
+            setValueClosed(isClosed);
 
             /* Record the encrypted values */
             setValueName(pName);
@@ -588,7 +584,7 @@ public abstract class AccountBase
      * @param sName the Name of the account
      * @param uAcTypeId the Account type id
      * @param pDesc the description
-     * @param pClose the Close date for the account
+     * @param isClosed is the account closed?
      * @throws JDataException on error
      */
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
@@ -596,7 +592,7 @@ public abstract class AccountBase
                           final String sName,
                           final Integer uAcTypeId,
                           final String pDesc,
-                          final Date pClose) throws JDataException {
+                          final Boolean isClosed) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -618,10 +614,8 @@ public abstract class AccountBase
             }
             setValueType(myActType);
 
-            /* Parse the closed date if it exists */
-            if (pClose != null) {
-                setValueClose(new JDateDay(pClose));
-            }
+            /* Set the closed indication */
+            setValueClosed(isClosed);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -747,11 +741,11 @@ public abstract class AccountBase
     }
 
     /**
-     * Set a new close date.
-     * @param pDate the new date
+     * Set a new closed indication.
+     * @param the new closed indication
      */
-    public void setClose(final JDateDay pDate) {
-        setValueClose(pDate);
+    public void setClosed(final Boolean isClosed) {
+        setValueClosed(isClosed);
     }
 
     /**
@@ -794,9 +788,9 @@ public abstract class AccountBase
             setValueType(myAccount.getActType());
         }
 
-        /* Update the close if required */
-        if (!Difference.isEqual(getClose(), myAccount.getClose())) {
-            setValueClose(myAccount.getClose());
+        /* Update the closed indication if required */
+        if (!Difference.isEqual(isClosed(), myAccount.isClosed())) {
+            setValueClosed(myAccount.isClosed());
         }
         /* Check for changes */
         return checkForHistory();

@@ -44,7 +44,8 @@ import net.sourceforge.jOceanus.jFieldSet.Renderer.RendererFieldValue;
  * ValueField provides a JTextField which is geared to a particular type of data.
  * @author Tony Washer
  */
-public class ValueField extends JTextField {
+public class ValueField
+        extends JTextField {
     /**
      * Serial Id.
      */
@@ -264,7 +265,8 @@ public class ValueField extends JTextField {
     /**
      * Handle loss of focus.
      */
-    private final class TextFocus extends FocusAdapter {
+    private final class TextFocus
+            extends FocusAdapter {
         @Override
         public void focusGained(final FocusEvent e) {
             startEdit();
@@ -279,7 +281,8 @@ public class ValueField extends JTextField {
     /**
      * Handle actions.
      */
-    private final class TextAction implements ActionListener {
+    private final class TextAction
+            implements ActionListener {
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* If this relates to the value */
@@ -349,9 +352,7 @@ public class ValueField extends JTextField {
          * @param pValue the value
          */
         protected void setDisplay(final String pValue) {
-            if (pValue.length() > 0) {
-                theDisplay = pValue;
-            }
+            theDisplay = pValue;
         }
 
         /**
@@ -391,7 +392,8 @@ public class ValueField extends JTextField {
     /**
      * The String Data Model class.
      */
-    private static class StringModel extends DataModel {
+    private static class StringModel
+            extends DataModel {
         @Override
         protected String getValue() {
             return (String) super.getValue();
@@ -441,7 +443,8 @@ public class ValueField extends JTextField {
     /**
      * The Integer Data Model class.
      */
-    private static class IntegerModel extends DataModel {
+    private static class IntegerModel
+            extends DataModel {
         /**
          * Cached string value.
          */
@@ -497,7 +500,8 @@ public class ValueField extends JTextField {
     /**
      * The Money Data Model class.
      */
-    private class MoneyModel extends DataModel {
+    private class MoneyModel
+            extends DataModel {
         /**
          * Cached display string value.
          */
@@ -561,7 +565,8 @@ public class ValueField extends JTextField {
     /**
      * The Rate Data Model class.
      */
-    private class RateModel extends DataModel {
+    private class RateModel
+            extends DataModel {
         /**
          * Cached display string value.
          */
@@ -625,7 +630,8 @@ public class ValueField extends JTextField {
     /**
      * The Units Data Model class.
      */
-    private class UnitsModel extends DataModel {
+    private class UnitsModel
+            extends DataModel {
         /**
          * Cached display string value.
          */
@@ -689,7 +695,8 @@ public class ValueField extends JTextField {
     /**
      * The Price Data Model class.
      */
-    private class PriceModel extends DataModel {
+    private class PriceModel
+            extends DataModel {
         /**
          * Cached display string value.
          */
@@ -753,7 +760,8 @@ public class ValueField extends JTextField {
     /**
      * The Dilution Data Model class.
      */
-    private class DilutionModel extends DataModel {
+    private class DilutionModel
+            extends DataModel {
         /**
          * Cached display string value.
          */
@@ -817,7 +825,8 @@ public class ValueField extends JTextField {
     /**
      * The Char Array Model class.
      */
-    private static class CharArrayModel extends DataModel {
+    private static class CharArrayModel
+            extends DataModel {
         /**
          * Cached display string value.
          */

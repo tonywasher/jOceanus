@@ -213,7 +213,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         T myInfo = getInfo(pInfoClass);
 
         /* Return change details */
-        return (myInfo != null) && myInfo.hasHistory() ? Difference.Different : Difference.Identical;
+        return (myInfo != null)
+               && myInfo.hasHistory() ? Difference.Different : Difference.Identical;
     }
 
     /**
@@ -269,7 +270,8 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
 
         /* Reject if duplicate */
         if (myValue != null) {
-            throw new IllegalArgumentException("Duplicate information type " + pInfo.getInfoClass());
+            throw new IllegalArgumentException("Duplicate information type "
+                                               + pInfo.getInfoClass());
         }
 
         /* Add to the map */
@@ -358,8 +360,15 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
 
         /* Loop through each existing value */
         for (T myValue : theMap.values()) {
-            /* Check for history */
-            bChanges |= myValue.checkForHistory();
+            /* If this is a newly created item */
+            if (!myValue.hasHistory()) {
+                bChanges = true;
+
+                /* else existing entry */
+            } else {
+                /* Check for history */
+                bChanges |= myValue.checkForHistory();
+            }
         }
 
         /* return result */

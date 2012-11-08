@@ -38,7 +38,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
  * Data Control for FinanceApp.
  * @author Tony Washer
  */
-public class View extends DataControl<FinanceData> {
+public class View
+        extends DataControl<FinanceData> {
     /**
      * The DataSet.
      */
@@ -140,14 +141,12 @@ public class View extends DataControl<FinanceData> {
         /* Create the analysis */
         EventAnalysis myAnalysis = new EventAnalysis(this, pData);
 
-        /* HouseKeep the analysis */
-        pData.houseKeepAnalysis();
-
         /* Access the most recent metaAnalysis */
         MetaAnalysis myMetaAnalysis = myAnalysis.getMetaAnalysis();
 
-        /* Note active accounts by asset */
+        /* If it exists */
         if (myMetaAnalysis != null) {
+            /* Mark active accounts according to the analysis */
             myMetaAnalysis.markActiveAccounts();
         }
 
