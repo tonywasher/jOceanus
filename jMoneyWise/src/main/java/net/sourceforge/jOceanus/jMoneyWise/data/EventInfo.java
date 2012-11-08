@@ -49,8 +49,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
  * @author Tony Washer
  */
 public class EventInfo
-        extends DataInfo<EventInfo, EventNew, EventInfoType, EventInfoClass>
-        implements Comparable<EventInfo> {
+        extends DataInfo<EventInfo, EventNew, EventInfoType, EventInfoClass> {
     /**
      * Object name.
      */

@@ -31,9 +31,12 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
+import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
+import net.sourceforge.jOceanus.jDataModels.preferences.DatabasePreferences;
 import net.sourceforge.jOceanus.jDataModels.ui.MaintStatic;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
+import net.sourceforge.jOceanus.jJira.data.JiraPreferences;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -53,6 +56,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jPreferenceSet.MaintPreferences;
+import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jOceanus.jSvnManager.data.SubVersionPreferences;
 
 /**
  * Maintenance Tab panel.
@@ -186,10 +191,16 @@ public class MaintenanceTab
         theTaxYearTab.addChangeListener(myListener);
 
         /* Create the Preferences Tab */
-        thePreferences = new MaintPreferences(theView.getPreferenceMgr(), theView.getRenderMgr(), theView.getDataMgr(),
-                theView.getDataEntry(DataControl.DATA_MAINT));
+        PreferenceManager myPrefs = theView.getPreferenceMgr();
+        thePreferences = new MaintPreferences(myPrefs, theView.getRenderMgr(), theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
         theTabs.addTab(TITLE_PREFERENCES, thePreferences);
         thePreferences.addChangeListener(myListener);
+
+        /* Add interesting preferences */
+        myPrefs.getPreferenceSet(DatabasePreferences.class);
+        myPrefs.getPreferenceSet(BackupPreferences.class);
+        myPrefs.getPreferenceSet(JiraPreferences.class);
+        myPrefs.getPreferenceSet(SubVersionPreferences.class);
 
         /* Create the PatternYear Tab */
         thePatternYear = new MaintNewYear(theView);

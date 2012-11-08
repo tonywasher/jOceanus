@@ -1416,14 +1416,9 @@ public class Account
             populateList(myList);
 
             /* Create a new account */
-            Account myNew = myList.theAccount = new Account(myList);
+            Account myNew = new Account(myList);
             myNew.setActType(pType);
             myNew.setNewVersion();
-
-            /* Set lists to show new version */
-            // Integer myVersion = myNew.getValueSetVersion();
-            // myList.setVersion(myVersion);
-            // myActInfo.setVersion(myVersion);
 
             /* Add to the list and store as master account */
             myList.add(myNew);

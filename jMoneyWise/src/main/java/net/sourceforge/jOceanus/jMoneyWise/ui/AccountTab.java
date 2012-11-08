@@ -57,7 +57,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * Account Tab panel.
  * @author Tony Washer
  */
-public class AccountTab extends JEventPanel {
+public class AccountTab
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -219,9 +220,8 @@ public class AccountTab extends JEventPanel {
 
     /**
      * Refresh views/controls after a load/update of underlying data.
-     * @param pCombo the combo list
      */
-    private void refreshData(final ComboSelect pCombo) {
+    private void refreshData() {
         /* Protect against exceptions */
         try {
             /* Refresh the account selection */
@@ -369,7 +369,8 @@ public class AccountTab extends JEventPanel {
         int iIndex = theTabs.indexOfTab(TITLE_RATES);
 
         /* If the account has rates */
-        if ((theAccount != null) && (theAccount.isMoney())) {
+        if ((theAccount != null)
+            && (theAccount.isMoney())) {
 
             /* Add the Rates if not present */
             if (iIndex == -1) {
@@ -379,7 +380,8 @@ public class AccountTab extends JEventPanel {
                 iIndex = theTabs.indexOfTab(TITLE_PATTERNS);
                 if (iIndex != -1) {
                     /* Remember if Patterns are selected since we need to restore this */
-                    if ((iIndex == theTabs.getSelectedIndex()) && (!isPricesSelected)) {
+                    if ((iIndex == theTabs.getSelectedIndex())
+                        && (!isPricesSelected)) {
                         isPatternsSelected = true;
                     }
 
@@ -403,7 +405,8 @@ public class AccountTab extends JEventPanel {
         iIndex = theTabs.indexOfTab(TITLE_PRICES);
 
         /* If the account has prices */
-        if ((theAccount != null) && (theAccount.isPriced())) {
+        if ((theAccount != null)
+            && (theAccount.isPriced())) {
 
             /* Add the Prices if not present */
             if (iIndex == -1) {
@@ -444,7 +447,8 @@ public class AccountTab extends JEventPanel {
         iIndex = theTabs.indexOfTab(TITLE_PATTERNS);
 
         /* If the account is not closed */
-        if ((theAccount != null) && (!theAccount.isClosed())) {
+        if ((theAccount != null)
+            && (!theAccount.isClosed())) {
 
             /* Add the Patterns if not present */
             if (iIndex == -1) {
@@ -562,7 +566,8 @@ public class AccountTab extends JEventPanel {
     /**
      * The listener class.
      */
-    private final class AccountListener implements ActionListener, ChangeListener {
+    private final class AccountListener
+            implements ActionListener, ChangeListener {
         @Override
         public void stateChanged(final ChangeEvent evt) {
             Object o = evt.getSource();
@@ -587,8 +592,8 @@ public class AccountTab extends JEventPanel {
 
                 /* If this is the data view */
             } else if (theView.equals(o)) {
-                /* Refresh Data TODO */
-                refreshData(null);
+                /* Refresh Data */
+                refreshData();
 
                 /* If this is the account selection */
             } else if (theSelect.equals(o)) {
@@ -601,8 +606,7 @@ public class AccountTab extends JEventPanel {
                     theSelect.createSavePoint();
                 } catch (JDataException e) {
                     /* Build the error */
-                    JDataException myError = new JDataException(ExceptionClass.DATA,
-                            "Failed to change selection", e);
+                    JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
                     /* Show the error */
                     theError.setError(myError);
@@ -611,8 +615,10 @@ public class AccountTab extends JEventPanel {
                     theSelect.restoreSavePoint();
                 }
 
-            } else if ((theRates.equals(o)) || (thePrices.equals(o)) || (thePatterns.equals(o))
-                    || (theStatement.equals(o))) {
+            } else if ((theRates.equals(o))
+                       || (thePrices.equals(o))
+                       || (thePatterns.equals(o))
+                       || (theStatement.equals(o))) {
                 notifyChanges();
             }
         }
@@ -632,13 +638,15 @@ public class AccountTab extends JEventPanel {
                 /* Notify listeners of changes */
                 notifyChanges();
 
-            } else if ((theStatement.equals(o)) && (evt instanceof ActionDetailEvent)) {
+            } else if ((theStatement.equals(o))
+                       && (evt instanceof ActionDetailEvent)) {
                 /* Access the request */
                 ActionDetailEvent action = (ActionDetailEvent) evt;
                 o = action.getDetails();
 
                 /* If this is an addPattern request */
-                if ((action.getSubId() == MainTab.ACTION_ADDPATTERN) && (o instanceof ActionRequest)) {
+                if ((action.getSubId() == MainTab.ACTION_ADDPATTERN)
+                    && (o instanceof ActionRequest)) {
                     /* Add the pattern */
                     ActionRequest myReq = (ActionRequest) o;
                     addPattern(myReq.getEvent());

@@ -742,7 +742,7 @@ public abstract class AccountBase
 
     /**
      * Set a new closed indication.
-     * @param the new closed indication
+     * @param isClosed the new closed indication
      */
     public void setClosed(final Boolean isClosed) {
         setValueClosed(isClosed);

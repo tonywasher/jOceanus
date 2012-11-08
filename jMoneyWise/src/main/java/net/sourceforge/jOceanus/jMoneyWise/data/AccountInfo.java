@@ -47,8 +47,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountI
  * @author Tony Washer
  */
 public class AccountInfo
-        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass>
-        implements Comparable<AccountInfo> {
+        extends DataInfo<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
     /**
      * Object name.
      */

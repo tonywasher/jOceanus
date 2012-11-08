@@ -143,7 +143,7 @@ public class MaintStatic
 
     /**
      * Constructor.
-     * @param pView the view
+     * @param pControl the data control
      */
     public MaintStatic(final DataControl<?> pControl) {
         /* Store control */
@@ -203,6 +203,8 @@ public class MaintStatic
      * @param pListName the name of the list
      * @param pListClass the class of the list
      * @param pItemClass the class of the items
+     * @param <L> the list type
+     * @param <T> the data type
      */
     public <L extends StaticList<T, ?>, T extends StaticData<T, ?>> void addStatic(final String pListName,
                                                                                    final Class<L> pListClass,

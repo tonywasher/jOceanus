@@ -237,7 +237,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
 
     /**
      * Constructor.
-     * @param pView the view
+     * @param pControl the data control
      * @param pUpdateSet the update set
      * @param pError the error panel
      * @param pListClass the list class

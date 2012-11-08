@@ -45,8 +45,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearI
  * @author Tony Washer
  */
 public class TaxYearInfo
-        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass>
-        implements Comparable<TaxYearInfo> {
+        extends DataInfo<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
     /**
      * Object name.
      */
