@@ -31,9 +31,26 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
+import net.sourceforge.jOceanus.jDataModels.ui.MaintStatic;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType.TaxTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jPreferenceSet.MaintPreferences;
 
@@ -41,7 +58,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.MaintPreferences;
  * Maintenance Tab panel.
  * @author Tony Washer
  */
-public class MaintenanceTab extends JEventPanel {
+public class MaintenanceTab
+        extends JEventPanel {
     /**
      * The serial Id.
      */
@@ -168,8 +186,8 @@ public class MaintenanceTab extends JEventPanel {
         theTaxYearTab.addChangeListener(myListener);
 
         /* Create the Preferences Tab */
-        thePreferences = new MaintPreferences(theView.getPreferenceMgr(), theView.getRenderMgr(),
-                theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
+        thePreferences = new MaintPreferences(theView.getPreferenceMgr(), theView.getRenderMgr(), theView.getDataMgr(),
+                theView.getDataEntry(DataControl.DATA_MAINT));
         theTabs.addTab(TITLE_PREFERENCES, thePreferences);
         thePreferences.addChangeListener(myListener);
 
@@ -182,6 +200,16 @@ public class MaintenanceTab extends JEventPanel {
         theTabs.addTab(TITLE_STATIC, theStatic);
         theStatic.addChangeListener(myListener);
         theView.addChangeListener(myListener);
+
+        /* Add the static elements */
+        theStatic.addStatic(AccountType.LIST_NAME, AccountTypeList.class, AccountType.class);
+        theStatic.addStatic(TransactionType.LIST_NAME, TransTypeList.class, TransactionType.class);
+        theStatic.addStatic(TaxType.LIST_NAME, TaxTypeList.class, TaxType.class);
+        theStatic.addStatic(TaxRegime.LIST_NAME, TaxRegimeList.class, TaxRegime.class);
+        theStatic.addStatic(Frequency.LIST_NAME, FrequencyList.class, Frequency.class);
+        theStatic.addStatic(TaxYearInfoType.LIST_NAME, TaxYearInfoTypeList.class, TaxYearInfoType.class);
+        theStatic.addStatic(AccountInfoType.LIST_NAME, AccountInfoTypeList.class, AccountInfoType.class);
+        theStatic.addStatic(EventInfoType.LIST_NAME, EventInfoTypeList.class, EventInfoType.class);
 
         /* Create the layout for the panel */
         FlowLayout myLayout = new FlowLayout();
@@ -263,7 +291,8 @@ public class MaintenanceTab extends JEventPanel {
 
         /* Enable/Disable the Accounts tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theAccountTab.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates
+                                         || theAccountTab.hasUpdates());
         }
 
         /* Access the TaxYear index */
@@ -271,7 +300,8 @@ public class MaintenanceTab extends JEventPanel {
 
         /* Enable/Disable the TaxYear tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theTaxYearTab.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates
+                                         || theTaxYearTab.hasUpdates());
         }
 
         /* Access the Properties panel */
@@ -279,7 +309,8 @@ public class MaintenanceTab extends JEventPanel {
 
         /* Enable/Disable the Properties tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || thePreferences.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates
+                                         || thePreferences.hasUpdates());
         }
 
         /* Access the PatternYear panel */
@@ -295,7 +326,8 @@ public class MaintenanceTab extends JEventPanel {
 
         /* Enable/Disable the static tab */
         if (iIndex != -1) {
-            theTabs.setEnabledAt(iIndex, !hasUpdates || theStatic.hasUpdates());
+            theTabs.setEnabledAt(iIndex, !hasUpdates
+                                         || theStatic.hasUpdates());
         }
 
         /* Update the top level tabs */
@@ -339,7 +371,8 @@ public class MaintenanceTab extends JEventPanel {
     /**
      * The listener class.
      */
-    private final class MaintenanceListener implements ChangeListener {
+    private final class MaintenanceListener
+            implements ChangeListener {
         @Override
         public void stateChanged(final ChangeEvent e) {
             Object o = e.getSource();

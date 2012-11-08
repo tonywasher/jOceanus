@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+ * jDataModels: Data models
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.ui;
+package net.sourceforge.jOceanus.jDataModels.ui;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
@@ -42,27 +42,10 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
-import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
-import net.sourceforge.jOceanus.jDataModels.ui.SaveButtons;
+import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticList;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType.TaxTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
 
 /**
  * Top level panel for static data.
@@ -96,6 +79,11 @@ public class MaintStatic
     private static final String NLS_SELECT = NLS_BUNDLE.getString("SelectionTitle");
 
     /**
+     * The data control.
+     */
+    private final DataControl<?> theControl;
+
+    /**
      * The card panel.
      */
     private final JPanel theCardPanel;
@@ -109,46 +97,6 @@ public class MaintStatic
      * The selection box.
      */
     private final JComboBox<String> theSelectBox;
-
-    /**
-     * The Account Types panel.
-     */
-    private final MaintStaticData<?, ?> theActTypes;
-
-    /**
-     * The Transaction Types panel.
-     */
-    private final MaintStaticData<?, ?> theTranTypes;
-
-    /**
-     * The Tax Types panel.
-     */
-    private final MaintStaticData<?, ?> theTaxTypes;
-
-    /**
-     * The Tax Regimes panel.
-     */
-    private final MaintStaticData<?, ?> theTaxRegimes;
-
-    /**
-     * The Frequencies panel.
-     */
-    private final MaintStaticData<?, ?> theFrequencys;
-
-    /**
-     * The TaxYear Info Types panel.
-     */
-    private final MaintStaticData<?, ?> theTaxInfoTypes;
-
-    /**
-     * The Account Info Types panel.
-     */
-    private final MaintStaticData<?, ?> theActInfoTypes;
-
-    /**
-     * The Event Info Types panel.
-     */
-    private final MaintStaticData<?, ?> theEvtInfoTypes;
 
     /**
      * The Panel map.
@@ -181,6 +129,11 @@ public class MaintStatic
     private final transient JDataEntry theDataEntry;
 
     /**
+     * The selection listener.
+     */
+    private final StaticListener theListener = new StaticListener();
+
+    /**
      * Obtain the updateList.
      * @return the viewSet
      */
@@ -193,12 +146,15 @@ public class MaintStatic
      * @param pView the view
      */
     public MaintStatic(final DataControl<?> pControl) {
+        /* Store control */
+        theControl = pControl;
+
         /* Build the Update set */
         theUpdateSet = new UpdateSet(pControl);
 
         /* Create the top level debug entry for this view */
-        JDataManager myDataMgr = pControl.getDataMgr();
-        JDataEntry mySection = pControl.getDataEntry(DataControl.DATA_MAINT);
+        JDataManager myDataMgr = theControl.getDataMgr();
+        JDataEntry mySection = theControl.getDataEntry(DataControl.DATA_MAINT);
         theDataEntry = myDataMgr.new JDataEntry(StaticData.class.getSimpleName());
         theDataEntry.addAsChildOf(mySection);
         theDataEntry.setObject(theUpdateSet);
@@ -209,45 +165,14 @@ public class MaintStatic
         /* Create the save buttons panel */
         theSaveButtons = new SaveButtons(theUpdateSet);
 
-        /* Build the child windows */
-        theActTypes = new MaintStaticData<AccountTypeList, AccountType>(pControl, theUpdateSet, theError, AccountTypeList.class, AccountType.class);
-        theTranTypes = new MaintStaticData<TransTypeList, TransactionType>(pControl, theUpdateSet, theError, TransTypeList.class, TransactionType.class);
-        theTaxTypes = new MaintStaticData<TaxTypeList, TaxType>(pControl, theUpdateSet, theError, TaxTypeList.class, TaxType.class);
-        theTaxRegimes = new MaintStaticData<TaxRegimeList, TaxRegime>(pControl, theUpdateSet, theError, TaxRegimeList.class, TaxRegime.class);
-        theFrequencys = new MaintStaticData<FrequencyList, Frequency>(pControl, theUpdateSet, theError, FrequencyList.class, Frequency.class);
-        theTaxInfoTypes = new MaintStaticData<TaxYearInfoTypeList, TaxYearInfoType>(pControl, theUpdateSet, theError, TaxYearInfoTypeList.class,
-                TaxYearInfoType.class);
-        theActInfoTypes = new MaintStaticData<AccountInfoTypeList, AccountInfoType>(pControl, theUpdateSet, theError, AccountInfoTypeList.class,
-                AccountInfoType.class);
-        theEvtInfoTypes = new MaintStaticData<EventInfoTypeList, EventInfoType>(pControl, theUpdateSet, theError, EventInfoTypeList.class, EventInfoType.class);
-
-        /* Build the Static box */
+        /* Create the selection box */
         theSelectBox = new JComboBox<String>();
-        theSelectBox.addItem(AccountType.LIST_NAME);
-        theSelectBox.addItem(TransactionType.LIST_NAME);
-        theSelectBox.addItem(TaxType.LIST_NAME);
-        theSelectBox.addItem(TaxRegime.LIST_NAME);
-        theSelectBox.addItem(Frequency.LIST_NAME);
-        theSelectBox.addItem(TaxYearInfoType.LIST_NAME);
-        theSelectBox.addItem(AccountInfoType.LIST_NAME);
-        theSelectBox.addItem(EventInfoType.LIST_NAME);
 
         /* Add the listener for item changes */
-        StaticListener myListener = new StaticListener();
-        theSelectBox.addItemListener(myListener);
+        theSelectBox.addItemListener(theListener);
         theSelectBox.setMaximumSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
-        theError.addChangeListener(myListener);
-        theSaveButtons.addActionListener(myListener);
-
-        /* Add listener for the static data panels */
-        theActTypes.addChangeListener(myListener);
-        theTranTypes.addChangeListener(myListener);
-        theTaxTypes.addChangeListener(myListener);
-        theTaxRegimes.addChangeListener(myListener);
-        theFrequencys.addChangeListener(myListener);
-        theTaxInfoTypes.addChangeListener(myListener);
-        theActInfoTypes.addChangeListener(myListener);
-        theEvtInfoTypes.addChangeListener(myListener);
+        theError.addChangeListener(theListener);
+        theSaveButtons.addActionListener(theListener);
 
         /* Create the selection panel */
         JPanel mySelect = new JPanel();
@@ -262,26 +187,8 @@ public class MaintStatic
         theLayout = new CardLayout();
         theCardPanel.setLayout(theLayout);
 
-        /* Add the data panels */
-        theCardPanel.add(theActTypes.getPanel(), AccountType.LIST_NAME);
-        theCardPanel.add(theTranTypes.getPanel(), TransactionType.LIST_NAME);
-        theCardPanel.add(theTaxTypes.getPanel(), TaxType.LIST_NAME);
-        theCardPanel.add(theTaxRegimes.getPanel(), TaxRegime.LIST_NAME);
-        theCardPanel.add(theFrequencys.getPanel(), Frequency.LIST_NAME);
-        theCardPanel.add(theTaxInfoTypes.getPanel(), TaxYearInfoType.LIST_NAME);
-        theCardPanel.add(theActInfoTypes.getPanel(), AccountInfoType.LIST_NAME);
-        theCardPanel.add(theEvtInfoTypes.getPanel(), EventInfoType.LIST_NAME);
-
-        /* Build the panel map */
+        /* Create the panel map */
         theMap = new HashMap<String, MaintStaticData<?, ?>>();
-        theMap.put(AccountType.LIST_NAME, theActTypes);
-        theMap.put(TransactionType.LIST_NAME, theTranTypes);
-        theMap.put(TaxType.LIST_NAME, theTaxTypes);
-        theMap.put(TaxRegime.LIST_NAME, theTaxRegimes);
-        theMap.put(Frequency.LIST_NAME, theFrequencys);
-        theMap.put(TaxYearInfoType.LIST_NAME, theTaxInfoTypes);
-        theMap.put(AccountInfoType.LIST_NAME, theActInfoTypes);
-        theMap.put(EventInfoType.LIST_NAME, theEvtInfoTypes);
 
         /* Now define the panel */
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -289,18 +196,42 @@ public class MaintStatic
         add(theError);
         add(theCardPanel);
         add(theSaveButtons);
+    }
 
-        /* Select initial box */
-        theActive = theActTypes;
-        theSelectBox.setSelectedItem(AccountType.LIST_NAME);
+    /**
+     * Add static panel.
+     * @param pListName the name of the list
+     * @param pListClass the class of the list
+     * @param pItemClass the class of the items
+     */
+    public <L extends StaticList<T, ?>, T extends StaticData<T, ?>> void addStatic(final String pListName,
+                                                                                   final Class<L> pListClass,
+                                                                                   final Class<T> pItemClass) {
+        /* Create the new panel */
+        MaintStaticData<L, T> myPanel = new MaintStaticData<L, T>(theControl, theUpdateSet, theError, pListClass, pItemClass);
+
+        /* Add the name to the selectionBox */
+        theSelectBox.addItem(pListName);
+        theSelectBox.setSelectedIndex(0);
+
+        /* Add the listener for the panel */
+        myPanel.addChangeListener(theListener);
+
+        /* Add to the card panels */
+        theCardPanel.add(myPanel.getPanel(), pListName);
+
+        /* Add to the Map */
+        theMap.put(pListName, myPanel);
     }
 
     /**
      * Determine Focus.
      */
-    protected void determineFocus() {
+    public void determineFocus() {
         /* Request the focus */
-        theActive.determineFocus(theDataEntry);
+        if (theActive != null) {
+            theActive.determineFocus(theDataEntry);
+        }
     }
 
     /**
@@ -336,15 +267,11 @@ public class MaintStatic
      * Refresh views/controls after a load/update of underlying data.
      */
     public void refreshData() {
-        /* Refresh the underlying children */
-        theActTypes.refreshData();
-        theTranTypes.refreshData();
-        theTaxTypes.refreshData();
-        theTaxRegimes.refreshData();
-        theFrequencys.refreshData();
-        theTaxInfoTypes.refreshData();
-        theActInfoTypes.refreshData();
-        theEvtInfoTypes.refreshData();
+        /* Loop through the map */
+        for (MaintStaticData<?, ?> myPanel : theMap.values()) {
+            /* Refresh the panel */
+            myPanel.refreshData();
+        }
 
         /* Touch the updateSet */
         theDataEntry.setObject(theUpdateSet);
@@ -354,15 +281,11 @@ public class MaintStatic
      * Cancel Editing of underlying tables.
      */
     private void cancelEditing() {
-        /* Refresh the underlying children */
-        theActTypes.cancelEditing();
-        theTranTypes.cancelEditing();
-        theTaxTypes.cancelEditing();
-        theTaxRegimes.cancelEditing();
-        theFrequencys.cancelEditing();
-        theTaxInfoTypes.cancelEditing();
-        theActInfoTypes.cancelEditing();
-        theEvtInfoTypes.cancelEditing();
+        /* Loop through the map */
+        for (MaintStaticData<?, ?> myPanel : theMap.values()) {
+            /* Refresh the underlying children */
+            myPanel.cancelEditing();
+        }
     }
 
     /**
