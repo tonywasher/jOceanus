@@ -430,7 +430,7 @@ public abstract class EventBase
     }
 
     @Override
-    public final EventBaseList<?> getList() {
+    public EventBaseList<?> getList() {
         return (EventBaseList<?>) super.getList();
     }
 

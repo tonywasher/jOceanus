@@ -114,47 +114,47 @@ public class Account
     /**
      * Maturity Field Id.
      */
-    public static final JDataField FIELD_MATURITY = FIELD_DEFS.declareEqualityField("Maturity");
+    public static final JDataField FIELD_MATURITY = FIELD_DEFS.declareLocalField("Maturity");
 
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityField("Parent");
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField("Parent");
 
     /**
      * Alias Field Id.
      */
-    public static final JDataField FIELD_ALIAS = FIELD_DEFS.declareEqualityField("Alias");
+    public static final JDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
 
     /**
      * WebSite Field Id.
      */
-    public static final JDataField FIELD_WEBSITE = FIELD_DEFS.declareEqualityField("WebSite");
+    public static final JDataField FIELD_WEBSITE = FIELD_DEFS.declareLocalField("WebSite");
 
     /**
      * CustNo Field Id.
      */
-    public static final JDataField FIELD_CUSTNO = FIELD_DEFS.declareEqualityField("CustomerNo");
+    public static final JDataField FIELD_CUSTNO = FIELD_DEFS.declareLocalField("CustomerNo");
 
     /**
      * UserId Field Id.
      */
-    public static final JDataField FIELD_USERID = FIELD_DEFS.declareEqualityField("UserId");
+    public static final JDataField FIELD_USERID = FIELD_DEFS.declareLocalField("UserId");
 
     /**
      * Password Field Id.
      */
-    public static final JDataField FIELD_PASSWORD = FIELD_DEFS.declareEqualityField("Password");
+    public static final JDataField FIELD_PASSWORD = FIELD_DEFS.declareLocalField("Password");
 
     /**
      * Account Details Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
     /**
      * Notes Field Id.
      */
-    public static final JDataField FIELD_NOTES = FIELD_DEFS.declareEqualityField("Notes");
+    public static final JDataField FIELD_NOTES = FIELD_DEFS.declareLocalField("Notes");
 
     /**
      * firstEvent Field Id.
@@ -190,11 +190,6 @@ public class Account
      * hasPatterns Field Id.
      */
     public static final JDataField FIELD_HASPATT = FIELD_DEFS.declareLocalField("hasPatterns");
-
-    /**
-     * isPatterned Field Id.
-     */
-    public static final JDataField FIELD_ISPATT = FIELD_DEFS.declareLocalField("isPatterned");
 
     /**
      * isParent Field Id.
@@ -248,9 +243,6 @@ public class Account
         }
         if (FIELD_HASPATT.equals(pField)) {
             return hasPatterns ? hasPatterns : JDataFieldValue.SkipField;
-        }
-        if (FIELD_ISPATT.equals(pField)) {
-            return isPatterned ? isPatterned : JDataFieldValue.SkipField;
         }
         if (FIELD_ISPARENT.equals(pField)) {
             return isParent ? isParent : JDataFieldValue.SkipField;
@@ -369,11 +361,6 @@ public class Account
      * Does this have patterns?
      */
     private boolean hasPatterns = false;
-
-    /**
-     * is this pattered?
-     */
-    private boolean isPatterned = false;
 
     /**
      * is this a Parent?.
@@ -540,8 +527,7 @@ public class Account
                 && (!hasRates)
                 && ((!hasPrices) || (getState() == DataState.NEW))
                 && (!hasPatterns)
-                && (!isAliasedTo)
-                && (!isPatterned) && (!getActType().isReserved()));
+                && (!isAliasedTo) && (!getActType().isReserved()));
     }
 
     @Override
@@ -676,7 +662,6 @@ public class Account
         isCloseable = pItem.isCloseable();
         isAliasedTo = pItem.isAliasedTo();
         isParent = pItem.isParent();
-        isPatterned = pItem.isPatterned;
         hasPatterns = pItem.hasPatterns;
         hasRates = pItem.hasRates;
         hasPrices = pItem.hasPrices;
@@ -847,7 +832,6 @@ public class Account
         hasRates = false;
         hasPrices = false;
         hasPatterns = false;
-        isPatterned = false;
         isParent = false;
         isAliasedTo = false;
     }
@@ -880,11 +864,11 @@ public class Account
             Pattern myPattern = (Pattern) pObject;
 
             /* Note flags */
-            if (Difference.isEqual(myPattern.getAccount(), this)) {
+            if (Difference.isEqual(myPattern.getCredit(), this)) {
                 hasPatterns = true;
             }
-            if (Difference.isEqual(myPattern.getPartner(), this)) {
-                isPatterned = true;
+            if (Difference.isEqual(myPattern.getDebit(), this)) {
+                hasPatterns = true;
             }
 
             /* If we are being touched by an event */
@@ -1069,9 +1053,8 @@ public class Account
             }
         }
 
-        /* If we have patterns or are touched by patterns, then we are not close-able */
-        if (hasPatterns
-            || isPatterned) {
+        /* If we have patterns, then we are not close-able */
+        if (hasPatterns) {
             setNonCloseable();
         }
 

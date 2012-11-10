@@ -97,7 +97,9 @@ public abstract class EncryptedItem
      */
     private void setValueControlKey(final ControlKey pKey) {
         getValueSet().setValue(FIELD_CONTROL, pKey);
-        theGenerator = pKey.getFieldGenerator();
+        if (pKey != null) {
+            theGenerator = pKey.getFieldGenerator();
+        }
     }
 
     /**

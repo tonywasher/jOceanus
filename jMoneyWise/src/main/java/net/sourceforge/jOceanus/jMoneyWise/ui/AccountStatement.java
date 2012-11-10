@@ -74,6 +74,8 @@ import net.sourceforge.jOceanus.jFieldSet.Renderer.IntegerRenderer;
 import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
@@ -90,7 +92,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * Account Statement Table.
  * @author Tony Washer
  */
-public class AccountStatement extends JDataTable<StatementLine> {
+public class AccountStatement
+        extends JDataTable<StatementLine> {
     /**
      * Serial Id.
      */
@@ -122,9 +125,14 @@ public class AccountStatement extends JDataTable<StatementLine> {
     private final transient UpdateSet theUpdateSet;
 
     /**
-     * Update Entry.
+     * Lines Update Entry.
      */
-    private final transient UpdateEntry<StatementLine> theUpdateEntry;
+    private final transient UpdateEntry<StatementLine> theLinesEntry;
+
+    /**
+     * EventInfo Update Entry.
+     */
+    private final transient UpdateEntry<EventInfo> theInfoEntry;
 
     /**
      * Statement.
@@ -202,8 +210,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountStatement.class
-            .getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountStatement.class.getName());
 
     /**
      * Date column header.
@@ -288,7 +295,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * Pop-up Set null units.
      */
-    private static final String POPUP_NULLUNITS = Extract.POPUP_NULLUNITS;
+    private static final String POPUP_NULLUNITS = Extract.POPUP_NULLDEBUNITS;
 
     /**
      * Pop-up Set null Tax Credit.
@@ -443,7 +450,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
         setRenderMgr(theRenderMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
-        theUpdateEntry = theUpdateSet.registerClass(StatementLine.class);
+        theLinesEntry = theUpdateSet.registerClass(StatementLine.class);
+        theInfoEntry = theUpdateSet.registerClass(EventInfo.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the model and declare it to our superclass */
@@ -493,7 +501,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
         requestFocusInWindow();
 
         /* Set the required focus */
-        pEntry.setFocus(theUpdateEntry.getName());
+        pEntry.setFocus(theLinesEntry.getName());
     }
 
     @Override
@@ -509,8 +517,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 /* Catch Exceptions */
             } catch (JDataException e) {
                 /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to calculate table",
-                        e);
+                JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to calculate table", e);
 
                 /* Show the error */
                 theError.setError(myError);
@@ -521,7 +528,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * The listener class.
      */
-    private final class StatementListener implements PropertyChangeListener, ChangeListener, ActionListener {
+    private final class StatementListener
+            implements PropertyChangeListener, ChangeListener, ActionListener {
 
         @Override
         public void stateChanged(final ChangeEvent evt) {
@@ -551,8 +559,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
                     /* Catch Exceptions */
                 } catch (JDataException e) {
                     /* Build the error */
-                    JDataException myError = new JDataException(ExceptionClass.DATA,
-                            "Failed to change selection", e);
+                    JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
                     /* Show the error */
                     theError.setError(myError);
@@ -596,6 +603,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
     public void setSelection(final Account pAccount) throws JDataException {
         theStatement = null;
         theLines = null;
+        EventInfoList myInfo = null;
         theRange = theSelect.getRange();
         theColumns.setDateEditorRange(theRange);
         theAccount = pAccount;
@@ -604,11 +612,13 @@ public class AccountStatement extends JDataTable<StatementLine> {
         if (theAccount != null) {
             theStatement = new Statement(theView, pAccount, theRange);
             theLines = theStatement.getLines();
+            myInfo = theLines.getEventInfo();
             theStatement.setFilter(theModel.getFilter());
         }
         theColumns.setColumns();
         super.setList(theLines);
-        theUpdateEntry.setDataList(theLines);
+        theLinesEntry.setDataList(theLines);
+        theInfoEntry.setDataList(myInfo);
         theSelect.setEnabled(!hasUpdates());
         theStateBox.setEnabled(!hasUpdates());
     }
@@ -642,9 +652,11 @@ public class AccountStatement extends JDataTable<StatementLine> {
     public void setSelection(final JDateDayRange pRange) throws JDataException {
         theStatement = null;
         theLines = null;
+        EventInfoList myInfo = null;
         if (theAccount != null) {
             theStatement = new Statement(theView, theAccount, pRange);
             theLines = theStatement.getLines();
+            myInfo = theLines.getEventInfo();
         }
         theRange = pRange;
         theColumns.setDateEditorRange(theRange);
@@ -652,7 +664,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
         theStateType = theStateBox.getStatementType();
         theColumns.setColumns();
         super.setList(theLines);
-        theUpdateEntry.setDataList(theLines);
+        theLinesEntry.setDataList(theLines);
+        theInfoEntry.setDataList(myInfo);
         theSelect.setEnabled(!hasUpdates());
         theStateBox.setEnabled(!hasUpdates());
     }
@@ -681,15 +694,11 @@ public class AccountStatement extends JDataTable<StatementLine> {
         /* Switch on column */
         switch (column) {
             case COLUMN_TRANTYP:
-                return (myLine.isCredit())
-                                          ? theComboList.getCreditTranTypes(theStatement.getAccount())
-                                          : theComboList.getDebitTranTypes(theStatement.getAccount());
+                return (myLine.isCredit()) ? theComboList.getCreditTranTypes(theStatement.getAccount()) : theComboList.getDebitTranTypes(theStatement
+                        .getAccount());
             case COLUMN_PARTNER:
-                return (myLine.isCredit())
-                                          ? theComboList.getDebitAccounts(myLine.getTransType(),
-                                                                          theStatement.getAccount())
-                                          : theComboList.getCreditAccounts(myLine.getTransType(),
-                                                                           theStatement.getAccount());
+                return (myLine.isCredit()) ? theComboList.getDebitAccounts(myLine.getTransType(), theStatement.getAccount()) : theComboList.getCreditAccounts(
+                        myLine.getTransType(), theStatement.getAccount());
             default:
                 return null;
         }
@@ -698,7 +707,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * Statement table model.
      */
-    public final class StatementModel extends JDataTableModel<StatementLine> {
+    public final class StatementModel
+            extends JDataTableModel<StatementLine> {
         /**
          * Serial Id.
          */
@@ -798,18 +808,16 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 case COLUMN_YEARS:
                     return Event.FIELD_YEARS;
                 case COLUMN_CREDIT:
-                    if ((pLine == null) || (pLine.isCredit())) {
-                        return ((theStateType == StatementType.Units)
-                                                                     ? Event.FIELD_UNITS
-                                                                     : Event.FIELD_AMOUNT);
+                    if ((pLine == null)
+                        || (pLine.isCredit())) {
+                        return ((theStateType == StatementType.Units) ? Event.FIELD_CREDUNITS : Event.FIELD_AMOUNT);
                     } else {
                         return null;
                     }
                 case COLUMN_DEBIT:
-                    if ((pLine == null) || (!pLine.isCredit())) {
-                        return ((theStateType == StatementType.Units)
-                                                                     ? Event.FIELD_UNITS
-                                                                     : Event.FIELD_AMOUNT);
+                    if ((pLine == null)
+                        || (!pLine.isCredit())) {
+                        return ((theStateType == StatementType.Units) ? Event.FIELD_DEBTUNITS : Event.FIELD_AMOUNT);
                     } else {
                         return null;
                     }
@@ -827,7 +835,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
             }
 
             /* Cannot edit if row is header, deleted or locked */
-            if (pLine.isHeader() || pLine.isDeleted() || pLine.isLocked()) {
+            if (pLine.isHeader()
+                || pLine.isDeleted()
+                || pLine.isLocked()) {
                 return false;
             }
 
@@ -842,8 +852,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 case COLUMN_DESC:
                     return ((pLine.getDate() != null) && (pLine.getTransType() != null));
                 default:
-                    if ((pLine.getDate() == null) || (pLine.getDesc() == null)
-                            || (pLine.getTransType() == null)) {
+                    if ((pLine.getDate() == null)
+                        || (pLine.getDesc() == null)
+                        || (pLine.getTransType() == null)) {
                         return false;
                     }
 
@@ -885,21 +896,22 @@ public class AccountStatement extends JDataTable<StatementLine> {
                     return pLine.getPartner();
                 case COLUMN_BALANCE:
                     StatementLine myNext = theTable.getNextItem(pLine);
-                    if ((myNext != null) && (!pLine.isHeader())
-                            && (Difference.isEqual(myNext.getDate(), pLine.getDate()))) {
+                    if ((myNext != null)
+                        && (!pLine.isHeader())
+                        && (Difference.isEqual(myNext.getDate(), pLine.getDate()))) {
                         return null;
                     } else {
                         return (isUnits) ? pLine.getBalanceUnits() : pLine.getBalance();
                     }
                 case COLUMN_CREDIT:
                     if (pLine.isCredit()) {
-                        return (isUnits) ? pLine.getUnits() : pLine.getAmount();
+                        return (isUnits) ? pLine.getCreditUnits() : pLine.getAmount();
                     }
                     return null;
                 case COLUMN_DEBIT:
                     if (!pLine.isCredit()) {
 
-                        return (isUnits) ? pLine.getUnits() : pLine.getAmount();
+                        return (isUnits) ? pLine.getDebitUnits() : pLine.getAmount();
                     }
                     return null;
                 case COLUMN_DESC:
@@ -920,9 +932,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
                                  final int pColIndex,
                                  final Object pValue) throws JDataException {
             /* Determine whether the line needs a tax credit */
-            boolean needsTaxCredit = Event.needsTaxCredit(pLine.getTransType(),
-                                                          pLine.isCredit() ? pLine.getPartner() : pLine
-                                                                  .getAccount());
+            boolean needsTaxCredit = Event.needsTaxCredit(pLine.getTransType(), pLine.isCredit() ? pLine.getPartner() : pLine.getAccount());
 
             /* Store the appropriate value */
             switch (pColIndex) {
@@ -936,9 +946,7 @@ public class AccountStatement extends JDataTable<StatementLine> {
                     pLine.setTransType((TransactionType) pValue);
 
                     /* If the need for a tax credit has changed */
-                    if (needsTaxCredit != Event.needsTaxCredit(pLine.getTransType(),
-                                                               pLine.isCredit() ? pLine.getPartner() : pLine
-                                                                       .getAccount())) {
+                    if (needsTaxCredit != Event.needsTaxCredit(pLine.getTransType(), pLine.isCredit() ? pLine.getPartner() : pLine.getAccount())) {
                         /* Determine new Tax Credit */
                         if (needsTaxCredit) {
                             pLine.setTaxCredit(null);
@@ -950,7 +958,11 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 case COLUMN_CREDIT:
                 case COLUMN_DEBIT:
                     if (theStateType == StatementType.Units) {
-                        pLine.setUnits((JUnits) pValue);
+                        if (pLine.isCredit()) {
+                            pLine.setCreditUnits((JUnits) pValue);
+                        } else {
+                            pLine.setDebitUnits((JUnits) pValue);
+                        }
                     } else {
                         pLine.setAmount((JMoney) pValue);
                         if (needsTaxCredit) {
@@ -979,7 +991,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * Statement mouse listener.
      */
-    private final class StatementMouse extends JDataTableMouse<StatementLine> {
+    private final class StatementMouse
+            extends JDataTableMouse<StatementLine> {
         /**
          * Constructor.
          */
@@ -1008,7 +1021,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1016,30 +1031,38 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 StatementLine myLine = (StatementLine) myRow;
 
                 /* Enable null Units if we have units and are showing units */
-                if ((theStateType == StatementType.Units) && (myLine.getUnits() != null)) {
+                if ((theStateType == StatementType.Units)
+                    && (myLine.getCreditUnits() != null)) {
                     enableNullUnits = true;
                 }
 
                 /* Enable null Tax if we have tax and are showing tax */
-                if ((theColumns.isColumnVisible(COLUMN_TAXCREDIT)) && (myLine.getTaxCredit() != null)) {
+                if ((theColumns.isColumnVisible(COLUMN_TAXCREDIT))
+                    && (myLine.getTaxCredit() != null)) {
                     enableNullTax = true;
                 }
 
                 /* Enable null Years if we have years and are showing years */
-                if ((theColumns.isColumnVisible(COLUMN_YEARS)) && (myLine.getYears() != null)) {
+                if ((theColumns.isColumnVisible(COLUMN_YEARS))
+                    && (myLine.getYears() != null)) {
                     enableNullYears = true;
                 }
 
                 /* Enable null Dilution if we have dilution and are showing dilution */
-                if ((theColumns.isColumnVisible(COLUMN_DILUTION)) && (myLine.getDilution() != null)) {
+                if ((theColumns.isColumnVisible(COLUMN_DILUTION))
+                    && (myLine.getDilution() != null)) {
                     enableNullDilution = true;
                 }
             }
 
             /* If there is something to add and there are already items in the menu */
-            boolean nullItem = enableNullUnits || enableNullTax;
-            nullItem = nullItem || enableNullYears || enableNullDilution;
-            if ((nullItem) && (pMenu.getComponentCount() > 0)) {
+            boolean nullItem = enableNullUnits
+                               || enableNullTax;
+            nullItem = nullItem
+                       || enableNullYears
+                       || enableNullDilution;
+            if ((nullItem)
+                && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1104,7 +1127,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1127,15 +1152,20 @@ public class AccountStatement extends JDataTable<StatementLine> {
 
                 /* If we have a calculable tax credit that is null/zero */
                 boolean isTaxable = ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend())));
-                if ((isTaxable) && ((myTax == null) || (!myTax.isNonZero()))) {
+                if ((isTaxable)
+                    && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
                 }
             }
 
             /* If there is something to add and there are already items in the menu */
-            boolean addSeparator = enableCalcTax || enablePattern;
-            addSeparator = addSeparator || enableCredit || enableDebit;
-            if ((addSeparator) && (pMenu.getComponentCount() > 0)) {
+            boolean addSeparator = enableCalcTax
+                                   || enablePattern;
+            addSeparator = addSeparator
+                           || enableCredit
+                           || enableDebit;
+            if ((addSeparator)
+                && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1199,13 +1229,15 @@ public class AccountStatement extends JDataTable<StatementLine> {
             myRow = getPopupRow();
 
             /* If it is valid */
-            if ((!isHeader()) && (myRow >= 0)) {
+            if ((!isHeader())
+                && (myRow >= 0)) {
                 /* Access the line and partner */
                 myLine = theModel.getItemAtIndex(myRow);
                 myAccount = myLine.getPartner();
 
                 /* If we have a different account then we can navigate */
-                if ((!Difference.isEqual(myAccount, theAccount)) && (myAccount != null)) {
+                if ((!Difference.isEqual(myAccount, theAccount))
+                    && (myAccount != null)) {
                     enablePartner = true;
                 }
             }
@@ -1234,13 +1266,17 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 myParent = theAccount.getParent();
 
                 /* Create the View account choice */
-                myItem = new JMenuItem(POPUP_PARENT + ": " + myParent.getName());
+                myItem = new JMenuItem(POPUP_PARENT
+                                       + ": "
+                                       + myParent.getName());
                 myItem.setActionCommand(POPUP_PARENT);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
 
                 /* Create the Maintain account choice */
-                myItem = new JMenuItem(POPUP_MAINT_PARENT + ": " + myParent.getName());
+                myItem = new JMenuItem(POPUP_MAINT_PARENT
+                                       + ": "
+                                       + myParent.getName());
                 myItem.setActionCommand(POPUP_MAINT_PARENT);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
@@ -1249,14 +1285,22 @@ public class AccountStatement extends JDataTable<StatementLine> {
             /* If we can navigate to partner */
             if (enablePartner) {
                 /* Create the View account choice */
-                myItem = new JMenuItem(POPUP_PARTNER + ": " + myAccount.getName());
-                myItem.setActionCommand(POPUP_PARTNER + ":" + myAccount.getName());
+                myItem = new JMenuItem(POPUP_PARTNER
+                                       + ": "
+                                       + myAccount.getName());
+                myItem.setActionCommand(POPUP_PARTNER
+                                        + ":"
+                                        + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
 
                 /* Create the Maintain account choice */
-                myItem = new JMenuItem(POPUP_MAINT_PARTNER + ": " + myAccount.getName());
-                myItem.setActionCommand(POPUP_MAINT_PARTNER + ":" + myAccount.getName());
+                myItem = new JMenuItem(POPUP_MAINT_PARTNER
+                                       + ": "
+                                       + myAccount.getName());
+                myItem.setActionCommand(POPUP_MAINT_PARTNER
+                                        + ":"
+                                        + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -1270,7 +1314,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1303,10 +1349,14 @@ public class AccountStatement extends JDataTable<StatementLine> {
             theTable.cancelEditing();
 
             /* Determine whether this is a navigate command */
-            boolean isNavigate = myCmd.equals(POPUP_EXTRACT) || myCmd.equals(POPUP_MAINT);
-            isNavigate = isNavigate || myCmd.equals(POPUP_PARENT) || myCmd.equals(POPUP_MAINT_PARENT);
-            isNavigate = isNavigate || myCmd.startsWith(POPUP_PARTNER)
-                    || myCmd.startsWith(POPUP_MAINT_PARTNER);
+            boolean isNavigate = myCmd.equals(POPUP_EXTRACT)
+                                 || myCmd.equals(POPUP_MAINT);
+            isNavigate = isNavigate
+                         || myCmd.equals(POPUP_PARENT)
+                         || myCmd.equals(POPUP_MAINT_PARENT);
+            isNavigate = isNavigate
+                         || myCmd.startsWith(POPUP_PARTNER)
+                         || myCmd.startsWith(POPUP_MAINT_PARTNER);
 
             /* If this is a set null units command */
             if (myCmd.equals(POPUP_NULLUNITS)) {
@@ -1372,7 +1422,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1388,12 +1440,14 @@ public class AccountStatement extends JDataTable<StatementLine> {
                 JMoney myTax = myLine.getTaxCredit();
 
                 /* Ignore rows with invalid transaction type */
-                if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
+                if ((myTrans == null)
+                    || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
                     continue;
                 }
 
                 /* Ignore rows with tax credit already set */
-                if ((myTax != null) && (myTax.isNonZero())) {
+                if ((myTax != null)
+                    && (myTax.isNonZero())) {
                     continue;
                 }
 
@@ -1415,7 +1469,9 @@ public class AccountStatement extends JDataTable<StatementLine> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1468,7 +1524,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
     /**
      * Column Model class.
      */
-    private final class StatementColumnModel extends JDataTableColumnModel {
+    private final class StatementColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -1591,17 +1648,12 @@ public class AccountStatement extends JDataTable<StatementLine> {
             addColumn(new JDataTableColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
-            theCreditCol = new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer,
-                    theMoneyEditor);
+            theCreditCol = new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer, theMoneyEditor);
             theDebitCol = new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theDecimalRenderer, theMoneyEditor);
-            theBalanceCol = new JDataTableColumn(COLUMN_BALANCE, WIDTH_BALANCE, theDecimalRenderer,
-                    theMoneyEditor);
-            theDiluteCol = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer,
-                    theDilutionEditor);
-            theTaxCredCol = new JDataTableColumn(COLUMN_TAXCREDIT, WIDTH_TAXCREDIT, theDecimalRenderer,
-                    theMoneyEditor);
-            theYearsCol = new JDataTableColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer,
-                    theIntegerEditor);
+            theBalanceCol = new JDataTableColumn(COLUMN_BALANCE, WIDTH_BALANCE, theDecimalRenderer, theMoneyEditor);
+            theDiluteCol = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, theDilutionEditor);
+            theTaxCredCol = new JDataTableColumn(COLUMN_TAXCREDIT, WIDTH_TAXCREDIT, theDecimalRenderer, theMoneyEditor);
+            theYearsCol = new JDataTableColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer, theIntegerEditor);
             addColumn(theCreditCol);
             addColumn(theDebitCol);
             addColumn(theBalanceCol);
@@ -1669,7 +1721,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
                     }
 
                     /* Show the TaxCredit column as required */
-                    if (myType.isMoney() && !myType.isTaxFree()) {
+                    if (myType.isMoney()
+                        && !myType.isTaxFree()) {
                         addColumn(theTaxCredCol);
                     }
 
@@ -1694,7 +1747,8 @@ public class AccountStatement extends JDataTable<StatementLine> {
                     addColumn(theBalanceCol);
 
                     /* Show the TaxCredit column as required */
-                    if (myType.isMoney() && !myType.isTaxFree()) {
+                    if (myType.isMoney()
+                        && !myType.isTaxFree()) {
                         addColumn(theTaxCredCol);
                     }
 

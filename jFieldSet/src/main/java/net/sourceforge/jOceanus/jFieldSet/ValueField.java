@@ -198,11 +198,6 @@ public class ValueField
         if (bNew) {
             firePropertyChange(PROPERTY_VALUE, myOld, pValue);
         }
-
-        /* Clear old character array values */
-        if (myOld instanceof char[]) {
-            Arrays.fill((char[]) myOld, (char) 0);
-        }
     }
 
     /**

@@ -56,7 +56,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
  * Data Analysis.
  * @author Tony Washer
  */
-public class Analysis implements JDataContents {
+public class Analysis
+        implements JDataContents {
     /**
      * Report fields.
      */
@@ -399,8 +400,8 @@ public class Analysis implements JDataContents {
     /**
      * AnalysisBucket Class.
      */
-    protected abstract static class AnalysisBucket implements OrderedIdItem<Integer>, JDataContents,
-            Comparable<AnalysisBucket> {
+    protected abstract static class AnalysisBucket
+            implements OrderedIdItem<Integer>, JDataContents, Comparable<AnalysisBucket> {
         /**
          * Report fields.
          */
@@ -487,7 +488,8 @@ public class Analysis implements JDataContents {
         public AnalysisBucket(final BucketType pType,
                               final int uId) {
             /* Store info */
-            theId = uId + pType.getIdShift();
+            theId = uId
+                    + pType.getIdShift();
             theBase = null;
             theBucketType = pType;
         }
@@ -536,12 +538,14 @@ public class Analysis implements JDataContents {
             AnalysisBucket myThat = (AnalysisBucket) pThat;
 
             /* Check equality */
-            return (getBucketType() == myThat.getBucketType()) && (theId.equals(myThat.theId));
+            return (getBucketType() == myThat.getBucketType())
+                   && (theId.equals(myThat.theId));
         }
 
         @Override
         public int hashCode() {
-            return getBucketType().hashCode() ^ theId;
+            return getBucketType().hashCode()
+                   ^ theId;
         }
 
         /**
@@ -560,7 +564,9 @@ public class Analysis implements JDataContents {
     /**
      * The Bucket List class.
      */
-    public static class BucketList extends OrderedIdList<Integer, AnalysisBucket> implements JDataContents {
+    public static class BucketList
+            extends OrderedIdList<Integer, AnalysisBucket>
+            implements JDataContents {
         /**
          * Local Report fields.
          */
@@ -573,7 +579,10 @@ public class Analysis implements JDataContents {
 
         @Override
         public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFields().getName()
+                   + "("
+                   + size()
+                   + ")";
         }
 
         /**
@@ -625,7 +634,8 @@ public class Analysis implements JDataContents {
         protected ActDetail getAccountDetail(final Account pAccount) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.MONEYDETAIL;
-            int uId = pAccount.getId() + myBucket.getIdShift();
+            int uId = pAccount.getId()
+                      + myBucket.getIdShift();
 
             /* Locate the bucket in the list */
             ActDetail myItem = (ActDetail) findItemById(uId);
@@ -668,7 +678,8 @@ public class Analysis implements JDataContents {
         protected AssetSummary getAssetSummary(final AccountType pActType) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.ASSETSUMMARY;
-            int uId = pActType.getId() + myBucket.getIdShift();
+            int uId = pActType.getId()
+                      + myBucket.getIdShift();
 
             /* Locate the bucket in the list */
             AssetSummary myItem = (AssetSummary) findItemById(uId);
@@ -705,7 +716,8 @@ public class Analysis implements JDataContents {
         protected TransDetail getTransDetail(final TransactionType pTransType) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.TRANSDETAIL;
-            int uId = pTransType.getId() + myBucket.getIdShift();
+            int uId = pTransType.getId()
+                      + myBucket.getIdShift();
 
             /* Locate the bucket in the list */
             TransDetail myItem = (TransDetail) findItemById(uId);
@@ -730,7 +742,8 @@ public class Analysis implements JDataContents {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.TRANSSUMMARY;
             TaxType myTaxType = theData.getTaxTypes().findItemByClass(pTaxClass);
-            int uId = myTaxType.getId() + myBucket.getIdShift();
+            int uId = myTaxType.getId()
+                      + myBucket.getIdShift();
 
             /* Locate the bucket in the list */
             TransSummary myItem = (TransSummary) findItemById(uId);
@@ -755,7 +768,8 @@ public class Analysis implements JDataContents {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.TAXDETAIL;
             TaxType myTaxType = theData.getTaxTypes().findItemByClass(pTaxClass);
-            int uId = myTaxType.getId() + myBucket.getIdShift();
+            int uId = myTaxType.getId()
+                      + myBucket.getIdShift();
 
             /* Locate the bucket in the list */
             TaxDetail myItem = (TaxDetail) findItemById(uId);
@@ -849,7 +863,8 @@ public class Analysis implements JDataContents {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.TRANSTOTAL;
             TaxType myTaxType = theData.getTaxTypes().findItemByClass(pTaxClass);
-            int uId = myTaxType.getId() + myBucket.getIdShift();
+            int uId = myTaxType.getId()
+                      + myBucket.getIdShift();
 
             /* Locate the bucket in the list */
             TransTotal myItem = (TransTotal) findItemById(uId);
@@ -895,12 +910,12 @@ public class Analysis implements JDataContents {
     /**
      * The Account Bucket class.
      */
-    protected abstract static class ActDetail extends AnalysisBucket {
+    protected abstract static class ActDetail
+            extends AnalysisBucket {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ActDetail.class.getSimpleName(),
-                AnalysisBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ActDetail.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
         /**
          * Account Field Id.
@@ -1032,12 +1047,12 @@ public class Analysis implements JDataContents {
     /**
      * The Account Type Bucket class.
      */
-    private abstract static class ActType extends AnalysisBucket {
+    private abstract static class ActType
+            extends AnalysisBucket {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ActType.class.getSimpleName(),
-                AnalysisBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ActType.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
         @Override
         public String formatObject() {
@@ -1117,12 +1132,12 @@ public class Analysis implements JDataContents {
     /**
      * The TransType Bucket class.
      */
-    private abstract static class TransType extends AnalysisBucket {
+    private abstract static class TransType
+            extends AnalysisBucket {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TransType.class.getSimpleName(),
-                AnalysisBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TransType.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
         /**
          * TransactionType Field Id.
@@ -1209,12 +1224,12 @@ public class Analysis implements JDataContents {
     /**
      * The Tax Bucket class.
      */
-    private abstract static class Tax extends AnalysisBucket {
+    private abstract static class Tax
+            extends AnalysisBucket {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(Tax.class.getSimpleName(),
-                AnalysisBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(Tax.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
         /**
          * Tax Type Field Id.
@@ -1289,12 +1304,12 @@ public class Analysis implements JDataContents {
     /**
      * The ValueAccount Bucket class.
      */
-    protected abstract static class ValueAccount extends ActDetail {
+    protected abstract static class ValueAccount
+            extends ActDetail {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ValueAccount.class.getSimpleName(),
-                ActDetail.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(ValueAccount.class.getSimpleName(), ActDetail.FIELD_DEFS);
 
         /**
          * Value Field Id.
@@ -1405,12 +1420,12 @@ public class Analysis implements JDataContents {
     /**
      * The MoneyAccount Bucket class.
      */
-    public static final class MoneyAccount extends ValueAccount {
+    public static final class MoneyAccount
+            extends ValueAccount {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(MoneyAccount.class.getSimpleName(),
-                ValueAccount.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(MoneyAccount.class.getSimpleName(), ValueAccount.FIELD_DEFS);
 
         /**
          * Rate field Id.
@@ -1430,10 +1445,10 @@ public class Analysis implements JDataContents {
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_RATE.equals(pField)) {
-                return theRate;
+                return (theRate != null) ? theRate : JDataFieldValue.SkipField;
             }
             if (FIELD_MATURITY.equals(pField)) {
-                return theMaturity;
+                return (theMaturity != null) ? theMaturity : JDataFieldValue.SkipField;
             }
             return super.getFieldValue(pField);
         }
@@ -1568,12 +1583,12 @@ public class Analysis implements JDataContents {
     /**
      * The DebtAccount Bucket class.
      */
-    public static final class DebtAccount extends ValueAccount {
+    public static final class DebtAccount
+            extends ValueAccount {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(DebtAccount.class.getSimpleName(),
-                ValueAccount.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(DebtAccount.class.getSimpleName(), ValueAccount.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -1642,6 +1657,19 @@ public class Analysis implements JDataContents {
         }
 
         /**
+         * Adjust account for debit.
+         * @param pEvent the event causing the debit
+         */
+        @Override
+        protected void adjustForDebit(final Event pEvent) {
+            /* Adjust value */
+            super.adjustForDebit(pEvent);
+
+            /* Adjust for spend */
+            theSpend.addAmount(pEvent.getAmount());
+        }
+
+        /**
          * Create a clone of the debt account.
          * @return the cloned DebtAccount.
          */
@@ -1683,12 +1711,12 @@ public class Analysis implements JDataContents {
     /**
      * The AssetAccount Bucket class.
      */
-    public static final class AssetAccount extends ValueAccount {
+    public static final class AssetAccount
+            extends ValueAccount {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AssetAccount.class.getSimpleName(),
-                ValueAccount.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(AssetAccount.class.getSimpleName(), ValueAccount.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -2045,8 +2073,8 @@ public class Analysis implements JDataContents {
         @Override
         protected void adjustForDebit(final Event pEvent) {
             /* Adjust for debit */
-            if (pEvent.getUnits() != null) {
-                theUnits.subtractUnits(pEvent.getUnits());
+            if (pEvent.getDebitUnits() != null) {
+                theUnits.subtractUnits(pEvent.getDebitUnits());
             }
         }
 
@@ -2057,8 +2085,8 @@ public class Analysis implements JDataContents {
         @Override
         protected void adjustForCredit(final Event pEvent) {
             /* Adjust for credit */
-            if (pEvent.getUnits() != null) {
-                theUnits.addUnits(pEvent.getUnits());
+            if (pEvent.getCreditUnits() != null) {
+                theUnits.addUnits(pEvent.getCreditUnits());
             }
         }
 
@@ -2107,12 +2135,12 @@ public class Analysis implements JDataContents {
     /**
      * The ExternalAccount Bucket class.
      */
-    public static final class ExternalAccount extends ActDetail {
+    public static final class ExternalAccount
+            extends ActDetail {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalAccount.class.getSimpleName(),
-                ActDetail.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalAccount.class.getSimpleName(), ActDetail.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -2331,12 +2359,12 @@ public class Analysis implements JDataContents {
     /**
      * The AssetSummary Bucket class.
      */
-    public static final class AssetSummary extends ActType {
+    public static final class AssetSummary
+            extends ActType {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AssetSummary.class.getSimpleName(),
-                ActType.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(AssetSummary.class.getSimpleName(), ActType.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -2438,12 +2466,12 @@ public class Analysis implements JDataContents {
     /**
      * The AssetTotal Bucket class.
      */
-    public static final class AssetTotal extends AnalysisBucket {
+    public static final class AssetTotal
+            extends AnalysisBucket {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AssetTotal.class.getSimpleName(),
-                AnalysisBucket.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(AssetTotal.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -2567,12 +2595,12 @@ public class Analysis implements JDataContents {
     /**
      * The ExternalTotal Bucket class.
      */
-    public static final class ExternalTotal extends AnalysisBucket {
+    public static final class ExternalTotal
+            extends AnalysisBucket {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(),
-                AnalysisBucket.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -2772,12 +2800,12 @@ public class Analysis implements JDataContents {
     /**
      * The MarketTotal Bucket class.
      */
-    public static final class MarketTotal extends AnalysisBucket {
+    public static final class MarketTotal
+            extends AnalysisBucket {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(),
-                AnalysisBucket.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(ExternalTotal.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -2917,12 +2945,12 @@ public class Analysis implements JDataContents {
     /**
      * The Transaction Detail Bucket class.
      */
-    public static final class TransDetail extends TransType {
+    public static final class TransDetail
+            extends TransType {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(TransDetail.class.getSimpleName(),
-                TransType.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(TransDetail.class.getSimpleName(), TransType.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -3078,12 +3106,12 @@ public class Analysis implements JDataContents {
     /**
      * The Transaction Summary Bucket class.
      */
-    public static final class TransSummary extends Tax {
+    public static final class TransSummary
+            extends Tax {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(TransSummary.class.getSimpleName(),
-                Tax.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(TransSummary.class.getSimpleName(), Tax.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -3195,7 +3223,8 @@ public class Analysis implements JDataContents {
             theAmount.subtractAmount(pBucket.getAmount());
 
             /* If there are previous totals and we have previous totals */
-            if ((myPrevious != null) && (getBase() != null)) {
+            if ((myPrevious != null)
+                && (getBase() != null)) {
                 /* Add previous values */
                 getBase().subtractValues(myPrevious);
             }
@@ -3205,12 +3234,12 @@ public class Analysis implements JDataContents {
     /**
      * The Transaction Total Bucket class.
      */
-    public static final class TransTotal extends Tax {
+    public static final class TransTotal
+            extends Tax {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(TransTotal.class.getSimpleName(),
-                Tax.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(TransTotal.class.getSimpleName(), Tax.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -3320,7 +3349,8 @@ public class Analysis implements JDataContents {
             theAmount.subtractAmount(pBucket.getAmount());
 
             /* If there are previous totals and we have previous totals */
-            if ((myPrevious != null) && (getBase() != null)) {
+            if ((myPrevious != null)
+                && (getBase() != null)) {
                 /* Add previous values */
                 getBase().subtractValues(myPrevious);
             }
@@ -3330,12 +3360,12 @@ public class Analysis implements JDataContents {
     /**
      * The Taxation Detail Bucket class.
      */
-    public static final class TaxDetail extends Tax {
+    public static final class TaxDetail
+            extends Tax {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(TaxDetail.class.getSimpleName(),
-                Tax.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(TaxDetail.class.getSimpleName(), Tax.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -3630,7 +3660,8 @@ public class Analysis implements JDataContents {
          */
         private static BucketType getActBucketType(final Account pAccount) {
             /* If this is a external/benefit */
-            if (pAccount.isExternal() || pAccount.isBenefit()) {
+            if (pAccount.isExternal()
+                || pAccount.isBenefit()) {
                 return EXTERNALDETAIL;
             } else if (pAccount.isMoney()) {
                 return MONEYDETAIL;

@@ -78,6 +78,8 @@ import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.ui.MainTab.ActionRequest;
@@ -88,7 +90,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * Event Extract Table.
  * @author Tony Washer
  */
-public class Extract extends JDataTable<Event> {
+public class Extract
+        extends JDataTable<Event> {
     /**
      * Serial Id.
      */
@@ -130,9 +133,14 @@ public class Extract extends JDataTable<Event> {
     protected static final String TITLE_CREDIT = NLS_BUNDLE.getString("TitleCredit");
 
     /**
-     * Units column title.
+     * DebitUnits column title.
      */
-    protected static final String TITLE_UNITS = NLS_BUNDLE.getString("TitleUnits");
+    protected static final String TITLE_DEBUNITS = NLS_BUNDLE.getString("TitleDebitUnits");
+
+    /**
+     * CreditUnits column title.
+     */
+    protected static final String TITLE_CREDUNITS = NLS_BUNDLE.getString("TitleCreditUnits");
 
     /**
      * Dilution column title.
@@ -160,9 +168,14 @@ public class Extract extends JDataTable<Event> {
     private static final String POPUP_MAINT = NLS_BUNDLE.getString("PopUpMaintAccount");
 
     /**
-     * PopUp nullUnits.
+     * PopUp nullDebitUnits.
      */
-    protected static final String POPUP_NULLUNITS = NLS_BUNDLE.getString("PopUpNullUnits");
+    protected static final String POPUP_NULLDEBUNITS = NLS_BUNDLE.getString("PopUpNullDebitUnits");
+
+    /**
+     * PopUp nullCreditUnits.
+     */
+    protected static final String POPUP_NULLCREDUNITS = NLS_BUNDLE.getString("PopUpNullCreditUnits");
 
     /**
      * PopUp nullTaxCredit.
@@ -200,9 +213,14 @@ public class Extract extends JDataTable<Event> {
     private final transient UpdateSet theUpdateSet;
 
     /**
-     * Update Entry.
+     * Event Update Entry.
      */
-    private final transient UpdateEntry<Event> theUpdateEntry;
+    private final transient UpdateEntry<Event> theEventEntry;
+
+    /**
+     * EventInfo Update Entry.
+     */
+    private final transient UpdateEntry<EventInfo> theInfoEntry;
 
     /**
      * Table Model.
@@ -303,24 +321,29 @@ public class Extract extends JDataTable<Event> {
     private static final int COLUMN_CREDIT = 5;
 
     /**
-     * Units column id.
+     * DebitUnits column id.
      */
-    private static final int COLUMN_UNITS = 6;
+    private static final int COLUMN_DEBUNITS = 6;
+
+    /**
+     * CreditUnits column id.
+     */
+    private static final int COLUMN_CREDUNITS = 7;
 
     /**
      * Dilution column id.
      */
-    private static final int COLUMN_DILUTE = 7;
+    private static final int COLUMN_DILUTE = 8;
 
     /**
      * Tax Credit column id.
      */
-    private static final int COLUMN_TAXCRED = 8;
+    private static final int COLUMN_TAXCRED = 9;
 
     /**
      * Years column id.
      */
-    private static final int COLUMN_YEARS = 9;
+    private static final int COLUMN_YEARS = 10;
 
     /**
      * Date column width.
@@ -375,7 +398,7 @@ public class Extract extends JDataTable<Event> {
     /**
      * Panel width.
      */
-    private static final int PANEL_WIDTH = 900;
+    private static final int PANEL_WIDTH = 980;
 
     /**
      * Panel height.
@@ -397,7 +420,8 @@ public class Extract extends JDataTable<Event> {
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
-        theUpdateEntry = theUpdateSet.registerClass(Event.class);
+        theEventEntry = theUpdateSet.registerClass(Event.class);
+        theInfoEntry = theUpdateSet.registerClass(EventInfo.class);
         setUpdateSet(theUpdateSet);
 
         /* Create the top level debug entry for this view */
@@ -514,16 +538,19 @@ public class Extract extends JDataTable<Event> {
     public void setSelection(final JDateDayRange pRange) throws JDataException {
         theRange = pRange;
         theEvents = null;
+        EventInfoList myInfo = null;
         if (theRange != null) {
             /* Get the Rates edit list */
             FinanceData myData = theView.getData();
             EventList myEvents = myData.getEvents();
             theEvents = myEvents.deriveEditList(pRange);
+            myInfo = theEvents.getEventInfo();
 
             theColumns.setDateEditorRange(theRange);
         }
         setList(theEvents);
-        theUpdateEntry.setDataList(theEvents);
+        theEventEntry.setDataList(theEvents);
+        theInfoEntry.setDataList(myInfo);
         theSaveButtons.setEnabled(true);
         theSelect.setEnabled(!hasUpdates());
         fireStateChanged();
@@ -586,7 +613,8 @@ public class Extract extends JDataTable<Event> {
     /**
      * Extract listener class.
      */
-    private final class ExtractListener implements ActionListener, PropertyChangeListener, ChangeListener {
+    private final class ExtractListener
+            implements ActionListener, PropertyChangeListener, ChangeListener {
 
         @Override
         public void stateChanged(final ChangeEvent e) {
@@ -628,8 +656,7 @@ public class Extract extends JDataTable<Event> {
                     /* Catch Exceptions */
                 } catch (JDataException e) {
                     /* Build the error */
-                    JDataException myError = new JDataException(ExceptionClass.DATA,
-                            "Failed to change selection", e);
+                    JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
                     /* Show the error */
                     setError(myError);
@@ -666,7 +693,8 @@ public class Extract extends JDataTable<Event> {
     /**
      * Extract table model.
      */
-    public final class ExtractModel extends JDataTableModel<Event> {
+    public final class ExtractModel
+            extends JDataTableModel<Event> {
         /**
          * Serial Id.
          */
@@ -713,8 +741,10 @@ public class Extract extends JDataTable<Event> {
                     return TITLE_CREDIT;
                 case COLUMN_DEBIT:
                     return TITLE_DEBIT;
-                case COLUMN_UNITS:
-                    return TITLE_UNITS;
+                case COLUMN_DEBUNITS:
+                    return TITLE_DEBUNITS;
+                case COLUMN_CREDUNITS:
+                    return TITLE_CREDUNITS;
                 case COLUMN_DILUTE:
                     return TITLE_DILUTE;
                 case COLUMN_TAXCRED:
@@ -765,8 +795,10 @@ public class Extract extends JDataTable<Event> {
                     return Event.FIELD_CREDIT;
                 case COLUMN_DEBIT:
                     return Event.FIELD_DEBIT;
-                case COLUMN_UNITS:
-                    return Event.FIELD_UNITS;
+                case COLUMN_DEBUNITS:
+                    return Event.FIELD_DEBTUNITS;
+                case COLUMN_CREDUNITS:
+                    return Event.FIELD_CREDUNITS;
                 case COLUMN_DILUTE:
                     return Event.FIELD_DILUTION;
                 case COLUMN_TAXCRED:
@@ -782,7 +814,8 @@ public class Extract extends JDataTable<Event> {
         public boolean isCellEditable(final Event pEvent,
                                       final int pColIndex) {
             /* Cannot edit if row is deleted or locked */
-            if (pEvent.isDeleted() || pEvent.isLocked()) {
+            if (pEvent.isDeleted()
+                || pEvent.isLocked()) {
                 return false;
             }
 
@@ -795,14 +828,16 @@ public class Extract extends JDataTable<Event> {
                 case COLUMN_DESC:
                     return ((pEvent.getDate() != null) && (pEvent.getTransType() != null));
                 default:
-                    if ((pEvent.getDate() == null) || (pEvent.getDesc() == null)
-                            || (pEvent.getTransType() == null)) {
+                    if ((pEvent.getDate() == null)
+                        || (pEvent.getDesc() == null)
+                        || (pEvent.getTransType() == null)) {
                         return false;
                     }
                     switch (pColIndex) {
-                        case COLUMN_UNITS:
-                            return ((pEvent.getDebit() != null) && (pEvent.getCredit() != null) && (pEvent
-                                    .getCredit().isPriced() != pEvent.getDebit().isPriced()));
+                        case COLUMN_DEBUNITS:
+                            return ((pEvent.getDebit() != null) && (pEvent.getDebit().isPriced()));
+                        case COLUMN_CREDUNITS:
+                            return ((pEvent.getCredit() != null) && (pEvent.getCredit().isPriced()));
                         case COLUMN_YEARS:
                             return ((pEvent.getTransType() != null) && (pEvent.getTransType().isTaxableGain()));
                         case COLUMN_TAXCRED:
@@ -834,8 +869,10 @@ public class Extract extends JDataTable<Event> {
                     return pEvent.getDilution();
                 case COLUMN_TAXCRED:
                     return pEvent.getTaxCredit();
-                case COLUMN_UNITS:
-                    return pEvent.getUnits();
+                case COLUMN_DEBUNITS:
+                    return pEvent.getDebitUnits();
+                case COLUMN_CREDUNITS:
+                    return pEvent.getCreditUnits();
                 case COLUMN_YEARS:
                     return pEvent.getYears();
                 case COLUMN_DESC:
@@ -888,8 +925,11 @@ public class Extract extends JDataTable<Event> {
                 case COLUMN_YEARS:
                     pEvent.setYears((Integer) pValue);
                     break;
-                case COLUMN_UNITS:
-                    pEvent.setUnits((JUnits) pValue);
+                case COLUMN_DEBUNITS:
+                    pEvent.setDebitUnits((JUnits) pValue);
+                    break;
+                case COLUMN_CREDUNITS:
+                    pEvent.setCreditUnits((JUnits) pValue);
                     break;
                 case COLUMN_CREDIT:
                     pEvent.setCredit((Account) pValue);
@@ -906,7 +946,8 @@ public class Extract extends JDataTable<Event> {
     /**
      * Extract mouse listener.
      */
-    private final class ExtractMouse extends JDataTableMouse<Event> {
+    private final class ExtractMouse
+            extends JDataTableMouse<Event> {
         /**
          * Constructor.
          */
@@ -922,7 +963,8 @@ public class Extract extends JDataTable<Event> {
         @Override
         protected void addNullCommands(final JPopupMenu pMenu) {
             JMenuItem myItem;
-            boolean enableNullUnits = false;
+            boolean enableNullDebUnits = false;
+            boolean enableNullCredUnits = false;
             boolean enableNullTax = false;
             boolean enableNullYears = false;
             boolean enableNullDilution = false;
@@ -935,7 +977,9 @@ public class Extract extends JDataTable<Event> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -943,8 +987,13 @@ public class Extract extends JDataTable<Event> {
                 Event myEvent = (Event) myRow;
 
                 /* Enable null Units if we have units */
-                if (myEvent.getUnits() != null) {
-                    enableNullUnits = true;
+                if (myEvent.getDebitUnits() != null) {
+                    enableNullDebUnits = true;
+                }
+
+                /* Enable null CreditUnits if we have units */
+                if (myEvent.getCreditUnits() != null) {
+                    enableNullCredUnits = true;
                 }
 
                 /* Enable null Tax if we have tax */
@@ -964,25 +1013,39 @@ public class Extract extends JDataTable<Event> {
             }
 
             /* If there is something to add and there are already items in the menu */
-            boolean nullItem = enableNullUnits || enableNullTax;
-            nullItem = nullItem || enableNullYears || enableNullDilution;
-            if ((nullItem) && (pMenu.getComponentCount() > 0)) {
+            boolean nullItem = enableNullDebUnits
+                               || enableNullCredUnits
+                               || enableNullTax;
+            nullItem = nullItem
+                       || enableNullYears
+                       || enableNullDilution;
+            if ((nullItem)
+                && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
 
-            /* If we can set null units */
-            if (enableNullUnits) {
-                /* Add the undo change choice */
-                myItem = new JMenuItem(POPUP_NULLUNITS);
-                myItem.setActionCommand(POPUP_NULLUNITS);
+            /* If we can set null debit units */
+            if (enableNullDebUnits) {
+                /* Add the null choice */
+                myItem = new JMenuItem(POPUP_NULLDEBUNITS);
+                myItem.setActionCommand(POPUP_NULLDEBUNITS);
+                myItem.addActionListener(this);
+                pMenu.add(myItem);
+            }
+
+            /* If we can set null credit units */
+            if (enableNullCredUnits) {
+                /* Add the null choice */
+                myItem = new JMenuItem(POPUP_NULLCREDUNITS);
+                myItem.setActionCommand(POPUP_NULLCREDUNITS);
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
 
             /* If we can set null tax */
             if (enableNullTax) {
-                /* Add the undo change choice */
+                /* Add the null choice */
                 myItem = new JMenuItem(POPUP_NULLTAX);
                 myItem.setActionCommand(POPUP_NULLTAX);
                 myItem.addActionListener(this);
@@ -991,7 +1054,7 @@ public class Extract extends JDataTable<Event> {
 
             /* If we can set null years */
             if (enableNullYears) {
-                /* Add the undo change choice */
+                /* Add the null choice */
                 myItem = new JMenuItem(POPUP_NULLYEARS);
                 myItem.setActionCommand(POPUP_NULLYEARS);
                 myItem.addActionListener(this);
@@ -1000,7 +1063,7 @@ public class Extract extends JDataTable<Event> {
 
             /* If we can set null dilution */
             if (enableNullDilution) {
-                /* Add the undo change choice */
+                /* Add the null choice */
                 myItem = new JMenuItem(POPUP_NULLDILUTE);
                 myItem.setActionCommand(POPUP_NULLDILUTE);
                 myItem.addActionListener(this);
@@ -1024,7 +1087,9 @@ public class Extract extends JDataTable<Event> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1035,13 +1100,15 @@ public class Extract extends JDataTable<Event> {
 
                 /* If we have a calculable tax credit that is null/zero */
                 boolean isTaxable = ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend())));
-                if ((isTaxable) && ((myTax == null) || (!myTax.isNonZero()))) {
+                if ((isTaxable)
+                    && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
                 }
             }
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableCalcTax) && (pMenu.getComponentCount() > 0)) {
+            if ((enableCalcTax)
+                && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1091,7 +1158,8 @@ public class Extract extends JDataTable<Event> {
             boolean enableNavigate = (myAccount != null);
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableNavigate) && (pMenu.getComponentCount() > 0)) {
+            if ((enableNavigate)
+                && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -1099,18 +1167,26 @@ public class Extract extends JDataTable<Event> {
             /* If we can navigate */
             if (enableNavigate) {
                 /* Create the View account choice */
-                JMenuItem myItem = new JMenuItem(POPUP_VIEW + ": " + myAccount.getName());
+                JMenuItem myItem = new JMenuItem(POPUP_VIEW
+                                                 + ": "
+                                                 + myAccount.getName());
 
                 /* Set the command and add to menu */
-                myItem.setActionCommand(POPUP_VIEW + ":" + myAccount.getName());
+                myItem.setActionCommand(POPUP_VIEW
+                                        + ":"
+                                        + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
 
                 /* Create the Maintain account choice */
-                myItem = new JMenuItem(POPUP_MAINT + ": " + myAccount.getName());
+                myItem = new JMenuItem(POPUP_MAINT
+                                       + ": "
+                                       + myAccount.getName());
 
                 /* Set the command and add to menu */
-                myItem.setActionCommand(POPUP_MAINT + ":" + myAccount.getName());
+                myItem.setActionCommand(POPUP_MAINT
+                                        + ":"
+                                        + myAccount.getName());
                 myItem.addActionListener(this);
                 pMenu.add(myItem);
             }
@@ -1127,10 +1203,15 @@ public class Extract extends JDataTable<Event> {
             /* Cancel any editing */
             theTable.cancelEditing();
 
-            /* If this is a set null units command */
-            if (myCmd.equals(POPUP_NULLUNITS)) {
+            /* If this is a set null debit units command */
+            if (myCmd.equals(POPUP_NULLDEBUNITS)) {
                 /* Set Units column to null */
-                setColumnToNull(COLUMN_UNITS);
+                setColumnToNull(COLUMN_DEBUNITS);
+
+                /* If this is a set null credit units command */
+            } else if (myCmd.equals(POPUP_NULLCREDUNITS)) {
+                /* Set Credit Units column to null */
+                setColumnToNull(COLUMN_CREDUNITS);
 
                 /* else if this is a set null tax command */
             } else if (myCmd.equals(POPUP_NULLTAX)) {
@@ -1153,7 +1234,8 @@ public class Extract extends JDataTable<Event> {
                 calculateTaxCredits();
 
                 /* If this is a navigate command */
-            } else if ((myCmd.startsWith(POPUP_VIEW)) || (myCmd.startsWith(POPUP_MAINT))) {
+            } else if ((myCmd.startsWith(POPUP_VIEW))
+                       || (myCmd.startsWith(POPUP_MAINT))) {
                 /* perform the navigation */
                 performNavigation(myCmd);
 
@@ -1176,7 +1258,9 @@ public class Extract extends JDataTable<Event> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -1192,12 +1276,14 @@ public class Extract extends JDataTable<Event> {
                 JMoney myTax = myEvent.getTaxCredit();
 
                 /* Ignore rows with invalid transaction type */
-                if ((myTrans == null) || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
+                if ((myTrans == null)
+                    || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
                     continue;
                 }
 
                 /* Ignore rows with tax credit already set */
-                if ((myTax != null) && (myTax.isNonZero())) {
+                if ((myTax != null)
+                    && (myTax.isNonZero())) {
                     continue;
                 }
 
@@ -1244,7 +1330,8 @@ public class Extract extends JDataTable<Event> {
     /**
      * Column Model class.
      */
-    private final class ExtractColumnModel extends JDataTableColumnModel {
+    private final class ExtractColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -1339,7 +1426,8 @@ public class Extract extends JDataTable<Event> {
             addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, theMoneyEditor));
             addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, theComboEditor));
             addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, theComboEditor));
-            addColumn(new JDataTableColumn(COLUMN_UNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
+            addColumn(new JDataTableColumn(COLUMN_DEBUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
+            addColumn(new JDataTableColumn(COLUMN_CREDUNITS, WIDTH_UNITS, theDecimalRenderer, theUnitsEditor));
             addColumn(new JDataTableColumn(COLUMN_DILUTE, WIDTH_DILUTE, theDecimalRenderer, theDiluteEditor));
             addColumn(new JDataTableColumn(COLUMN_TAXCRED, WIDTH_TAXCRED, theDecimalRenderer, theMoneyEditor));
             addColumn(new JDataTableColumn(COLUMN_YEARS, WIDTH_YEARS, theIntegerRenderer, theIntegerEditor));

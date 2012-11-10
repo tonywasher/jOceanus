@@ -23,9 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -47,11 +45,6 @@ public class SheetAccountInfo
     private final AccountInfoList theList;
 
     /**
-     * Accounts data list.
-     */
-    private final AccountList theAccounts;
-
-    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -62,7 +55,6 @@ public class SheetAccountInfo
         /* Access the InfoType list */
         FinanceData myData = pReader.getData();
         theList = myData.getAccountInfo();
-        theAccounts = myData.getAccounts();
         setDataList(theList);
     }
 
@@ -77,7 +69,6 @@ public class SheetAccountInfo
         /* Access the InfoType list */
         FinanceData myData = pWriter.getData();
         theList = myData.getAccountInfo();
-        theAccounts = myData.getAccounts();
         setDataList(theList);
     }
 
@@ -89,17 +80,5 @@ public class SheetAccountInfo
                                      final byte[] pValue) throws JDataException {
         /* Create the item */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JDataException {
-        /* Mark active items */
-        theAccounts.markActiveItems();
-
-        /* Validate the accounts */
-        theAccounts.validate();
-        if (theAccounts.hasErrors()) {
-            throw new JDataException(ExceptionClass.VALIDATE, theAccounts, "Validation error");
-        }
     }
 }

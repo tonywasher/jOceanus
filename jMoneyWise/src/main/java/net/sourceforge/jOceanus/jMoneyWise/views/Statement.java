@@ -33,12 +33,14 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
-import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.Event.BaseEventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.ActDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetAccount;
@@ -359,7 +361,7 @@ public class Statement
      * The Statement Lines.
      */
     public static class StatementLines
-            extends EncryptedList<StatementLine> {
+            extends BaseEventList<StatementLine> {
         /**
          * Local Report fields.
          */
@@ -402,10 +404,18 @@ public class Statement
          */
         public StatementLines(final Statement pStatement) {
             /* Declare the data and set the style */
-            super(StatementLine.class, pStatement.theView.getData());
+            super(pStatement.theView.getData(), StatementLine.class);
             setStyle(ListStyle.EDIT);
             theStatement = pStatement;
-            setBase(theStatement.theView.getData().getEvents());
+            FinanceData myData = getDataSet();
+            setBase(myData.getEvents());
+
+            /* Store InfoType list */
+            setEventInfoTypes(myData.getEventInfoTypes());
+
+            /* Create info List */
+            EventInfoList myEventInfo = myData.getEventInfo();
+            setEventInfos(myEventInfo.getEmptyList(ListStyle.EDIT));
         }
 
         @Override

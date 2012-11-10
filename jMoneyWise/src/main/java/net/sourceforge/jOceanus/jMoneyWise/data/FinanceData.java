@@ -36,12 +36,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventData.EventDataList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventNew.EventNewList;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventValue.EventValueList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
-import net.sourceforge.jOceanus.jMoneyWise.data.PatternNew.PatternNewList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -146,34 +142,14 @@ public class FinanceData
     public static final JDataField FIELD_PATTERNS = FIELD_DEFS.declareLocalField("AccountPatterns");
 
     /**
-     * New Patterns Field Id.
-     */
-    public static final JDataField FIELD_NEWPATTERNS = FIELD_DEFS.declareLocalField("NewPatterns");
-
-    /**
      * Events Field Id.
      */
     public static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField("Events");
 
     /**
-     * NewEvents Field Id.
-     */
-    public static final JDataField FIELD_NEWEVENTS = FIELD_DEFS.declareLocalField("NewEvents");
-
-    /**
      * EventInfo Field Id.
      */
     public static final JDataField FIELD_EVENTINFO = FIELD_DEFS.declareLocalField("EventInfo");
-
-    /**
-     * EventValues Field Id.
-     */
-    public static final JDataField FIELD_EVENTVALUES = FIELD_DEFS.declareLocalField("EventValues");
-
-    /**
-     * EventData Field Id.
-     */
-    public static final JDataField FIELD_EVENTDATA = FIELD_DEFS.declareLocalField("EventData");
 
     @Override
     public JDataFields getDataFields() {
@@ -227,23 +203,11 @@ public class FinanceData
         if (FIELD_PATTERNS.equals(pField)) {
             return (thePatterns.size() > 0) ? thePatterns : JDataFieldValue.SkipField;
         }
-        if (FIELD_NEWPATTERNS.equals(pField)) {
-            return (theNewPatterns.size() > 0) ? theNewPatterns : JDataFieldValue.SkipField;
-        }
         if (FIELD_EVENTS.equals(pField)) {
             return (theEvents.size() > 0) ? theEvents : JDataFieldValue.SkipField;
         }
-        if (FIELD_NEWEVENTS.equals(pField)) {
-            return (theNewEvents.size() > 0) ? theNewEvents : JDataFieldValue.SkipField;
-        }
         if (FIELD_EVENTINFO.equals(pField)) {
             return (theEventInfo.size() > 0) ? theEventInfo : JDataFieldValue.SkipField;
-        }
-        if (FIELD_EVENTVALUES.equals(pField)) {
-            return (theEventValues.size() > 0) ? theEventValues : JDataFieldValue.SkipField;
-        }
-        if (FIELD_EVENTDATA.equals(pField)) {
-            return (theEventData.size() > 0) ? theEventData : JDataFieldValue.SkipField;
         }
         return super.getFieldValue(pField);
     }
@@ -334,29 +298,9 @@ public class FinanceData
     private PatternList thePatterns = null;
 
     /**
-     * NewPatterns.
-     */
-    private PatternNewList theNewPatterns = null;
-
-    /**
      * Events.
      */
     private EventList theEvents = null;
-
-    /**
-     * NewEvents.
-     */
-    private EventNewList theNewEvents = null;
-
-    /**
-     * EventValues.
-     */
-    private EventValueList theEventValues = null;
-
-    /**
-     * EventData.
-     */
-    private EventDataList theEventData = null;
 
     /**
      * DataSet range.
@@ -494,14 +438,6 @@ public class FinanceData
     }
 
     /**
-     * Obtain NewPatterns.
-     * @return the Patterns
-     */
-    public PatternNewList getNewPatterns() {
-        return theNewPatterns;
-    }
-
-    /**
      * Obtain Events.
      * @return the Events
      */
@@ -510,35 +446,11 @@ public class FinanceData
     }
 
     /**
-     * Obtain New Events.
-     * @return the Events
-     */
-    public EventNewList getNewEvents() {
-        return theNewEvents;
-    }
-
-    /**
      * Obtain EventInfo.
      * @return the Event Info
      */
     public EventInfoList getEventInfo() {
         return theEventInfo;
-    }
-
-    /**
-     * Obtain EventValues.
-     * @return the Event Values
-     */
-    public EventValueList getEventValues() {
-        return theEventValues;
-    }
-
-    /**
-     * Obtain EventData.
-     * @return the Event Data
-     */
-    public EventDataList getEventData() {
-        return theEventData;
     }
 
     /**
@@ -590,13 +502,9 @@ public class FinanceData
         theRates = new AccountRateList(this);
         thePrices = new AccountPriceList(this);
         thePatterns = new PatternList(this);
-        theNewPatterns = new PatternNewList(this);
         theAccountInfo = new AccountInfoList(this);
         theEvents = new EventList(this);
-        theNewEvents = new EventNewList(this);
         theEventInfo = new EventInfoList(this);
-        theEventData = new EventDataList(this);
-        theEventValues = new EventValueList(this);
 
         /* Declare the lists */
         declareLists();
@@ -642,13 +550,9 @@ public class FinanceData
         myExtract.theRates = theRates.deriveList(ListStyle.UPDATE);
         myExtract.thePrices = thePrices.deriveList(ListStyle.UPDATE);
         myExtract.thePatterns = thePatterns.deriveList(ListStyle.UPDATE);
-        myExtract.theNewPatterns = theNewPatterns.deriveList(ListStyle.UPDATE);
         myExtract.theAccountInfo = theAccountInfo.deriveList(ListStyle.UPDATE);
         myExtract.theEvents = theEvents.deriveList(ListStyle.UPDATE);
-        myExtract.theNewEvents = theNewEvents.deriveList(ListStyle.UPDATE);
         myExtract.theEventInfo = theEventInfo.deriveList(ListStyle.UPDATE);
-        myExtract.theEventData = theEventData.deriveList(ListStyle.UPDATE);
-        myExtract.theEventValues = theEventValues.deriveList(ListStyle.UPDATE);
 
         /* Declare the lists */
         myExtract.declareLists();
@@ -682,13 +586,9 @@ public class FinanceData
         myExtract.theRates = theRates.cloneList(this);
         myExtract.thePrices = thePrices.cloneList(this);
         myExtract.thePatterns = thePatterns.cloneList(this);
-        myExtract.theNewPatterns = theNewPatterns.cloneList(this);
         myExtract.theAccountInfo = theAccountInfo.cloneList(this);
         myExtract.theEvents = theEvents.cloneList(this);
-        myExtract.theNewEvents = theNewEvents.cloneList(this);
         myExtract.theEventInfo = theEventInfo.cloneList(this);
-        myExtract.theEventData = theEventData.cloneList(this);
-        myExtract.theEventValues = theEventValues.cloneList(this);
 
         /* Declare the lists */
         myExtract.declareLists();
@@ -730,13 +630,9 @@ public class FinanceData
         myDiffers.theRates = theRates.deriveDifferences(pOld.getRates());
         myDiffers.thePrices = thePrices.deriveDifferences(pOld.getPrices());
         myDiffers.thePatterns = thePatterns.deriveDifferences(pOld.getPatterns());
-        myDiffers.theNewPatterns = theNewPatterns.deriveDifferences(pOld.getNewPatterns());
         myDiffers.theAccountInfo = theAccountInfo.deriveDifferences(pOld.getAccountInfo());
         myDiffers.theEvents = theEvents.deriveDifferences(pOld.getEvents());
-        myDiffers.theNewEvents = theNewEvents.deriveDifferences(pOld.getNewEvents());
         myDiffers.theEventInfo = theEventInfo.deriveDifferences(pOld.getEventInfo());
-        myDiffers.theEventData = theEventData.deriveDifferences(pOld.getEventData());
-        myDiffers.theEventValues = theEventValues.deriveDifferences(pOld.getEventValues());
 
         /* Declare the lists */
         myDiffers.declareLists();
@@ -772,13 +668,9 @@ public class FinanceData
         theRates.reBase(pOld.getRates());
         thePrices.reBase(pOld.getPrices());
         thePatterns.reBase(pOld.getPatterns());
-        theNewPatterns.reBase(pOld.getNewPatterns());
         theAccountInfo.reBase(pOld.getAccountInfo());
         theEvents.reBase(pOld.getEvents());
-        theNewEvents.reBase(pOld.getNewEvents());
         theEventInfo.reBase(pOld.getEventInfo());
-        theEventData.reBase(pOld.getEventData());
-        theEventValues.reBase(pOld.getEventValues());
     }
 
     /**
@@ -800,13 +692,9 @@ public class FinanceData
         addList(theRates);
         addList(thePrices);
         addList(thePatterns);
-        addList(theNewPatterns);
         addList(theAccountInfo);
         addList(theEvents);
-        addList(theNewEvents);
         addList(theEventInfo);
-        addList(theEventData);
-        addList(theEventValues);
     }
 
     /**

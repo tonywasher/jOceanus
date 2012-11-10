@@ -36,13 +36,15 @@ import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 
 /**
  * TableEncrypted extension for Event.
  * @author Tony Washer
  */
-public class TableEvent extends TableEncrypted<Event> {
+public class TableEvent
+        extends TableEncrypted<Event> {
     /**
      * The name of the Events table.
      */
@@ -62,16 +64,12 @@ public class TableEvent extends TableEncrypted<Event> {
         TableDefinition myTableDef = getTableDef();
 
         /* Define the columns */
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(Event.FIELD_DATE);
-        myTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.DESCLEN);
-        myTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, EncryptedData.MONEYLEN);
-        myTableDef.addReferenceColumn(Event.FIELD_DEBIT, TableAccount.TABLE_NAME);
-        myTableDef.addReferenceColumn(Event.FIELD_CREDIT, TableAccount.TABLE_NAME);
-        myTableDef.addNullEncryptedColumn(Event.FIELD_UNITS, EncryptedData.UNITSLEN);
-        myTableDef.addReferenceColumn(Event.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
-        myTableDef.addNullEncryptedColumn(Event.FIELD_TAXCREDIT, EncryptedData.MONEYLEN);
-        myTableDef.addNullEncryptedColumn(Event.FIELD_DILUTION, EncryptedData.DILUTELEN);
-        myTableDef.addNullIntegerColumn(Event.FIELD_YEARS);
+        ColumnDefinition myDateCol = myTableDef.addDateColumn(EventBase.FIELD_DATE);
+        myTableDef.addEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
+        myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
+        myTableDef.addReferenceColumn(EventBase.FIELD_DEBIT, TableAccount.TABLE_NAME);
+        myTableDef.addReferenceColumn(EventBase.FIELD_CREDIT, TableAccount.TABLE_NAME);
+        myTableDef.addReferenceColumn(EventBase.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
 
         /* Declare the sort order */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -90,20 +88,15 @@ public class TableEvent extends TableEncrypted<Event> {
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        Date myDate = myTableDef.getDateValue(Event.FIELD_DATE);
-        byte[] myDesc = myTableDef.getBinaryValue(Event.FIELD_DESC);
-        byte[] myAmount = myTableDef.getBinaryValue(Event.FIELD_AMOUNT);
-        Integer myDebitId = myTableDef.getIntegerValue(Event.FIELD_DEBIT);
-        Integer myCreditId = myTableDef.getIntegerValue(Event.FIELD_CREDIT);
-        byte[] myUnits = myTableDef.getBinaryValue(Event.FIELD_UNITS);
-        Integer myTranType = myTableDef.getIntegerValue(Event.FIELD_TRNTYP);
-        byte[] myTaxCred = myTableDef.getBinaryValue(Event.FIELD_TAXCREDIT);
-        byte[] myDilution = myTableDef.getBinaryValue(Event.FIELD_DILUTION);
-        Integer myYears = myTableDef.getIntegerValue(Event.FIELD_YEARS);
+        Date myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
+        byte[] myDesc = myTableDef.getBinaryValue(EventBase.FIELD_DESC);
+        byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
+        Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
+        Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
+        Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_TRNTYP);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myUnits,
-                              myTranType, myTaxCred, myDilution, myYears);
+        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myTranType);
     }
 
     @Override
@@ -111,26 +104,18 @@ public class TableEvent extends TableEncrypted<Event> {
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (Event.FIELD_DATE.equals(iField)) {
-            myTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
-        } else if (Event.FIELD_DESC.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
-        } else if (Event.FIELD_AMOUNT.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
-        } else if (Event.FIELD_DEBIT.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_DEBIT, pItem.getDebit().getId());
-        } else if (Event.FIELD_CREDIT.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_CREDIT, pItem.getCredit().getId());
-        } else if (Event.FIELD_UNITS.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_UNITS, pItem.getUnitsBytes());
-        } else if (Event.FIELD_TRNTYP.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
-        } else if (Event.FIELD_TAXCREDIT.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_TAXCREDIT, pItem.getTaxCreditBytes());
-        } else if (Event.FIELD_DILUTION.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_DILUTION, pItem.getDilutionBytes());
-        } else if (Event.FIELD_YEARS.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_YEARS, pItem.getYears());
+        if (EventBase.FIELD_DATE.equals(iField)) {
+            myTableDef.setDateValue(EventBase.FIELD_DATE, pItem.getDate());
+        } else if (EventBase.FIELD_DESC.equals(iField)) {
+            myTableDef.setBinaryValue(EventBase.FIELD_DESC, pItem.getDescBytes());
+        } else if (EventBase.FIELD_AMOUNT.equals(iField)) {
+            myTableDef.setBinaryValue(EventBase.FIELD_AMOUNT, pItem.getAmountBytes());
+        } else if (EventBase.FIELD_DEBIT.equals(iField)) {
+            myTableDef.setIntegerValue(EventBase.FIELD_DEBIT, pItem.getDebitId());
+        } else if (EventBase.FIELD_CREDIT.equals(iField)) {
+            myTableDef.setIntegerValue(EventBase.FIELD_CREDIT, pItem.getCreditId());
+        } else if (EventBase.FIELD_TRNTYP.equals(iField)) {
+            myTableDef.setIntegerValue(EventBase.FIELD_TRNTYP, pItem.getTransTypeId());
         } else {
             super.setFieldValue(pItem, iField);
         }

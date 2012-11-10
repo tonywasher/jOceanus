@@ -51,9 +51,13 @@ import net.sourceforge.jOceanus.jFieldSet.Renderer.DecimalRenderer;
 import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
 
@@ -61,7 +65,9 @@ import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
  * NewYear maintenance panel.
  * @author Tony Washer
  */
-public class MaintNewYear extends JDataTable<Event> implements ActionListener {
+public class MaintNewYear
+        extends JDataTable<Event>
+        implements ActionListener {
     /**
      * Serial Id.
      */
@@ -123,9 +129,19 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
     private final transient UpdateEntry<TaxYear> theYearEntry;
 
     /**
+     * Year Info View.
+     */
+    private final transient UpdateEntry<TaxYearInfo> theYearInfoEntry;
+
+    /**
      * Event View.
      */
     private final transient UpdateEntry<Event> theEventEntry;
+
+    /**
+     * EventInfor View.
+     */
+    private final transient UpdateEntry<EventInfo> theEventInfoEntry;
 
     /**
      * Obtain the panel.
@@ -252,7 +268,9 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet(theView);
         theYearEntry = theUpdateSet.registerClass(TaxYear.class);
+        theYearInfoEntry = theUpdateSet.registerClass(TaxYearInfo.class);
         theEventEntry = theUpdateSet.registerClass(Event.class);
+        theEventInfoEntry = theUpdateSet.registerClass(EventInfo.class);
 
         /* Set the table model */
         theModel = new PatternYearModel();
@@ -344,18 +362,24 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
      */
     public void setSelection(final TaxYear pTaxYear) throws JDataException {
         TaxYearList myTaxYears = null;
+        TaxInfoList myTaxInfo = null;
+        EventInfoList myEventInfo = null;
         theEvents = null;
         thePattern.setVisible(false);
         if (pTaxYear != null) {
             FinanceData myData = theView.getData();
             myTaxYears = myData.getTaxYears().deriveNewEditList();
+            myTaxInfo = myTaxYears.getTaxInfo();
             theEvents = myData.getEvents().deriveEditList(myTaxYears.getNewYear());
+            myEventInfo = theEvents.getEventInfo();
             thePattern.setVisible(true);
             thePattern.setEnabled(!theEvents.isEmpty());
         }
         setList(theEvents);
         theYearEntry.setDataList(myTaxYears);
+        theYearInfoEntry.setDataList(myTaxInfo);
         theEventEntry.setDataList(theEvents);
+        theEventInfoEntry.setDataList(myEventInfo);
         fireStateChanged();
     }
 
@@ -382,7 +406,8 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
     /**
      * PatternYear table model.
      */
-    public final class PatternYearModel extends JDataTableModel<Event> {
+    public final class PatternYearModel
+            extends JDataTableModel<Event> {
         /**
          * Serial Id.
          */
@@ -509,7 +534,8 @@ public class MaintNewYear extends JDataTable<Event> implements ActionListener {
     /**
      * Column Model class.
      */
-    private final class YearColumnModel extends JDataTableColumnModel {
+    private final class YearColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */

@@ -39,7 +39,8 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
  * Print Utilities class.
  * @author Tony Washer
  */
-public class PrintUtilities implements Printable {
+public class PrintUtilities
+        implements Printable {
     /**
      * Component to be printed.
      */

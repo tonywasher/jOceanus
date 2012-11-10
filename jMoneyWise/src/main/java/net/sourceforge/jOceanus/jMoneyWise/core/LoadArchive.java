@@ -36,7 +36,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
  * LoaderThread extension to load an archive spreadsheet.
  * @author Tony
  */
-public class LoadArchive extends LoaderThread<FinanceData> {
+public class LoadArchive
+        extends LoaderThread<FinanceData> {
     /**
      * Task description.
      */
@@ -78,6 +79,12 @@ public class LoadArchive extends LoaderThread<FinanceData> {
         FinanceData myData = FinanceSheet.loadArchive(theStatus, myMgr.getPreferenceSet(BackupPreferences.class));
 
         /* Initialise the status window */
+        theStatus.initTask("Analysing Data");
+
+        /* Analyse the Data to ensure that close dates are updated */
+        theControl.analyseData(myData);
+
+        /* Initialise the status window */
         theStatus.initTask("Accessing DataStore");
 
         /* Create interface */
@@ -96,12 +103,6 @@ public class LoadArchive extends LoaderThread<FinanceData> {
 
             /* Initialise the security, either from database or with a new security control */
             myData.initialiseSecurity(theStatus, myStore);
-
-            /* Initialise the status window */
-            theStatus.initTask("Analysing Data");
-
-            /* Analyse the Data to ensure that close dates are updated */
-            theControl.analyseData(myData);
 
             /* Re-base the loaded spreadsheet onto the database image */
             myData.reBase(myStore);

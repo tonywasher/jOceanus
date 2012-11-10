@@ -86,102 +86,102 @@ public class TaxYear
     /**
      * Allowance field Id.
      */
-    public static final JDataField FIELD_ALLOW = FIELD_DEFS.declareEqualityField("Allowance");
+    public static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField("Allowance");
 
     /**
      * Rental field Id.
      */
-    public static final JDataField FIELD_RENTAL = FIELD_DEFS.declareEqualityField("RentalAllowance");
+    public static final JDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField("RentalAllowance");
 
     /**
      * LoAgeAllowance field Id.
      */
-    public static final JDataField FIELD_LOAGAL = FIELD_DEFS.declareEqualityField("LoAgeAllowance");
+    public static final JDataField FIELD_LOAGAL = FIELD_DEFS.declareLocalField("LoAgeAllowance");
 
     /**
      * HiAgeAllowance field Id.
      */
-    public static final JDataField FIELD_HIAGAL = FIELD_DEFS.declareEqualityField("HiAgeAllowance");
+    public static final JDataField FIELD_HIAGAL = FIELD_DEFS.declareLocalField("HiAgeAllowance");
 
     /**
      * LoTaxBand field Id.
      */
-    public static final JDataField FIELD_LOBAND = FIELD_DEFS.declareEqualityField("LoTaxBand");
+    public static final JDataField FIELD_LOBAND = FIELD_DEFS.declareLocalField("LoTaxBand");
 
     /**
      * BaseTaxBand field Id.
      */
-    public static final JDataField FIELD_BSBAND = FIELD_DEFS.declareEqualityField("BasicTaxBand");
+    public static final JDataField FIELD_BSBAND = FIELD_DEFS.declareLocalField("BasicTaxBand");
 
     /**
      * CapitalAllowance field Id.
      */
-    public static final JDataField FIELD_CAPALW = FIELD_DEFS.declareEqualityField("CapitalAllowance");
+    public static final JDataField FIELD_CAPALW = FIELD_DEFS.declareLocalField("CapitalAllowance");
 
     /**
      * AgeAllowanceLimit field Id.
      */
-    public static final JDataField FIELD_AGELMT = FIELD_DEFS.declareEqualityField("AgeAllowanceLimit");
+    public static final JDataField FIELD_AGELMT = FIELD_DEFS.declareLocalField("AgeAllowanceLimit");
 
     /**
      * Additional Allowance Limit field Id.
      */
-    public static final JDataField FIELD_ADDLMT = FIELD_DEFS.declareEqualityField("AdditionalAllowanceLimit");
+    public static final JDataField FIELD_ADDLMT = FIELD_DEFS.declareLocalField("AdditionalAllowanceLimit");
 
     /**
      * Additional Income Boundary field Id.
      */
-    public static final JDataField FIELD_ADDBDY = FIELD_DEFS.declareEqualityField("AdditionalIncomeBoundary");
+    public static final JDataField FIELD_ADDBDY = FIELD_DEFS.declareLocalField("AdditionalIncomeBoundary");
 
     /**
      * LoTaxRate field Id.
      */
-    public static final JDataField FIELD_LOTAX = FIELD_DEFS.declareEqualityField("LoTaxRate");
+    public static final JDataField FIELD_LOTAX = FIELD_DEFS.declareLocalField("LoTaxRate");
 
     /**
      * BasicTaxRate field Id.
      */
-    public static final JDataField FIELD_BASTAX = FIELD_DEFS.declareEqualityField("BasicTaxRate");
+    public static final JDataField FIELD_BASTAX = FIELD_DEFS.declareLocalField("BasicTaxRate");
 
     /**
      * HiTaxRate field Id.
      */
-    public static final JDataField FIELD_HITAX = FIELD_DEFS.declareEqualityField("HiTaxRate");
+    public static final JDataField FIELD_HITAX = FIELD_DEFS.declareLocalField("HiTaxRate");
 
     /**
      * InterestTaxRate field Id.
      */
-    public static final JDataField FIELD_INTTAX = FIELD_DEFS.declareEqualityField("InterestTaxRate");
+    public static final JDataField FIELD_INTTAX = FIELD_DEFS.declareLocalField("InterestTaxRate");
 
     /**
      * DividendTaxRate field Id.
      */
-    public static final JDataField FIELD_DIVTAX = FIELD_DEFS.declareEqualityField("DividendTaxRate");
+    public static final JDataField FIELD_DIVTAX = FIELD_DEFS.declareLocalField("DividendTaxRate");
 
     /**
      * HiDividendTaxRate field Id.
      */
-    public static final JDataField FIELD_HDVTAX = FIELD_DEFS.declareEqualityField("HiDividendTaxRate");
+    public static final JDataField FIELD_HDVTAX = FIELD_DEFS.declareLocalField("HiDividendTaxRate");
 
     /**
      * AdditionalTaxRate field Id.
      */
-    public static final JDataField FIELD_ADDTAX = FIELD_DEFS.declareEqualityField("AdditionalTaxRate");
+    public static final JDataField FIELD_ADDTAX = FIELD_DEFS.declareLocalField("AdditionalTaxRate");
 
     /**
      * AddDividendTaxRate field Id.
      */
-    public static final JDataField FIELD_ADVTAX = FIELD_DEFS.declareEqualityField("AdditionalDivTaxRate");
+    public static final JDataField FIELD_ADVTAX = FIELD_DEFS.declareLocalField("AdditionalDivTaxRate");
 
     /**
      * CapitalTaxRate field Id.
      */
-    public static final JDataField FIELD_CAPTAX = FIELD_DEFS.declareEqualityField("CapitalTaxRate");
+    public static final JDataField FIELD_CAPTAX = FIELD_DEFS.declareLocalField("CapitalTaxRate");
 
     /**
      * HiCapitalTaxRate field Id.
      */
-    public static final JDataField FIELD_HCPTAX = FIELD_DEFS.declareEqualityField("HiCapitalTaxRate");
+    public static final JDataField FIELD_HCPTAX = FIELD_DEFS.declareLocalField("HiCapitalTaxRate");
 
     @Override
     public Object getFieldValue(final JDataField pField) {

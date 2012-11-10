@@ -69,7 +69,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
  * Class to analyse events.
  * @author Tony Washer
  */
-public class EventAnalysis implements JDataContents {
+public class EventAnalysis
+        implements JDataContents {
     /**
      * Report fields.
      */
@@ -262,7 +263,7 @@ public class EventAnalysis implements JDataContents {
 
             /* Check the range and exit loop if necessary */
             int myResult = theDate.compareTo(myCurr.getDate());
-            if (myResult == -1) {
+            if (myResult < 0) {
                 break;
             }
 
@@ -392,8 +393,9 @@ public class EventAnalysis implements JDataContents {
             }
 
             /* Ignore if it is not a valid event */
-            if ((myCurr.getPartner() == null) || (myCurr.getTransType() == null)
-                    || (myCurr.getAmount() == null)) {
+            if ((myCurr.getPartner() == null)
+                || (myCurr.getTransType() == null)
+                || (myCurr.getAmount() == null)) {
                 continue;
             }
 
@@ -514,8 +516,8 @@ public class EventAnalysis implements JDataContents {
     /**
      * An analysis of a taxYear.
      */
-    public static final class AnalysisYear implements OrderedIdItem<Integer>, JDataContents,
-            Comparable<AnalysisYear> {
+    public static final class AnalysisYear
+            implements OrderedIdItem<Integer>, JDataContents, Comparable<AnalysisYear> {
         /**
          * Report fields.
          */
@@ -557,7 +559,8 @@ public class EventAnalysis implements JDataContents {
 
         @Override
         public String formatObject() {
-            return theYear.toString() + " Analysis";
+            return theYear.toString()
+                   + " Analysis";
         }
 
         /**
@@ -730,8 +733,9 @@ public class EventAnalysis implements JDataContents {
     /**
      * The AnalysisYear list class.
      */
-    public static class AnalysisYearList extends OrderedIdList<Integer, AnalysisYear> implements
-            JDataContents {
+    public static class AnalysisYearList
+            extends OrderedIdList<Integer, AnalysisYear>
+            implements JDataContents {
         /**
          * List name.
          */
@@ -754,7 +758,10 @@ public class EventAnalysis implements JDataContents {
 
         @Override
         public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFields().getName()
+                   + "("
+                   + size()
+                   + ")";
         }
 
         @Override
@@ -837,7 +844,8 @@ public class EventAnalysis implements JDataContents {
         Account myCredit = pEvent.getCredit();
 
         /* If the event relates to a priced item split out the workings */
-        if ((myDebit.isPriced()) || (myCredit.isPriced())) {
+        if ((myDebit.isPriced())
+            || (myCredit.isPriced())) {
             /* Process as a Capital event */
             processCapitalEvent(pEvent);
 
@@ -938,7 +946,7 @@ public class EventAnalysis implements JDataContents {
             /* Throw an Exception */
             default:
                 throw new JDataException(ExceptionClass.LOGIC, "Unexpected transaction type: "
-                        + myTrans.getTranClass());
+                                                               + myTrans.getTranClass());
         }
     }
 
@@ -949,7 +957,11 @@ public class EventAnalysis implements JDataContents {
     private void processStockSplit(final Event pEvent) {
         /* Stock split has identical credit/debit and always has Units */
         Account myAccount = pEvent.getCredit();
-        JUnits myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getCreditUnits();
+        if (myUnits == null) {
+            myUnits = new JUnits(pEvent.getDebitUnits());
+            myUnits.negate();
+        }
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
@@ -966,15 +978,14 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * Process an event that is a transfer into capital (also StockRightTaken and Dividend Re-investment).
-     * This capital event relates only to the Credit Account
+     * Process an event that is a transfer into capital (also StockRightTaken and Dividend Re-investment). This capital event relates only to the Credit Account
      * @param pEvent the event
      */
     private void processTransferIn(final Event pEvent) {
         /* Transfer in is to the credit account and may or may not have units */
         Account myAccount = pEvent.getCredit();
         Account myDebit = pEvent.getDebit();
-        JUnits myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getCreditUnits();
         JMoney myAmount = pEvent.getAmount();
         TransactionType myTrans = pEvent.getTransType();
 
@@ -1038,7 +1049,7 @@ public class EventAnalysis implements JDataContents {
         TransTypeList myTranList = theData.getTransTypes();
         JMoney myAmount = pEvent.getAmount();
         JMoney myTaxCredit = pEvent.getTaxCredit();
-        JUnits myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getCreditUnits();
         Account myDebit;
 
         /* If the account is tax free */
@@ -1150,7 +1161,7 @@ public class EventAnalysis implements JDataContents {
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
-        JUnits myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getDebitUnits();
         TransactionType myTrans = pEvent.getTransType();
         JMoney myReduction;
         JMoney myDeltaCost;
@@ -1177,7 +1188,8 @@ public class EventAnalysis implements JDataContents {
         myCost = myAsset.getCost();
 
         /* If we are reducing units in the account */
-        if ((myUnits != null) && (myUnits.isNonZero())) {
+        if ((myUnits != null)
+            && (myUnits.isNonZero())) {
             /* The reduction is the relevant fraction of the cost */
             myReduction = myCost.valueAtWeight(myUnits, myAsset.getUnits());
         }
@@ -1251,7 +1263,7 @@ public class EventAnalysis implements JDataContents {
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
-        JUnits myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getDebitUnits();
         TransactionType myTrans = pEvent.getTransType();
         JMoney myReduction;
         JMoney myDeltaCost;
@@ -1279,7 +1291,8 @@ public class EventAnalysis implements JDataContents {
         myCost = myAsset.getCost();
 
         /* If we are reducing units in the account */
-        if ((myUnits != null) && (myUnits.isNonZero())) {
+        if ((myUnits != null)
+            && (myUnits.isNonZero())) {
             /* The reduction is the relevant fraction of the cost */
             myReduction = myCost.valueAtWeight(myUnits, myAsset.getUnits());
         }
@@ -1410,7 +1423,8 @@ public class EventAnalysis implements JDataContents {
         myPortion = myValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large stock waiver (> both valueLimit and rateLimit of value) */
-        if ((myAmount.compareTo(LIMIT_VALUE) > 0) && (myAmount.compareTo(myPortion) > 0)) {
+        if ((myAmount.compareTo(LIMIT_VALUE) > 0)
+            && (myAmount.compareTo(myPortion) > 0)) {
             /* Determine the total value of rights plus share value */
             JMoney myTotalValue = new JMoney(myAmount);
             myTotalValue.addAmount(myValue);
@@ -1464,15 +1478,14 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * Process an event that is Stock DeMerger. This capital event relates to both the Credit and Debit
-     * accounts
+     * Process an event that is Stock DeMerger. This capital event relates to both the Credit and Debit accounts
      * @param pEvent the event
      */
     private void processStockDeMerger(final Event pEvent) {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         JDilution myDilution = pEvent.getDilution();
-        JUnits myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getCreditUnits();
         JMoney myCost;
         JMoney myDeltaCost;
         JMoney myNewCost;
@@ -1544,8 +1557,7 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * Process an event that is the Cash portion of a StockTakeOver. This capital event relates only to the
-     * Debit Account
+     * Process an event that is the Cash portion of a StockTakeOver. This capital event relates only to the Debit Account
      * @param pEvent the event
      */
     private void processCashTakeover(final Event pEvent) {
@@ -1595,7 +1607,8 @@ public class EventAnalysis implements JDataContents {
         myPortion = myValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large cash takeover portion (> both valueLimit and rateLimit of value) */
-        if ((myAmount.compareTo(LIMIT_VALUE) > 0) && (myAmount.compareTo(myPortion) > 0)) {
+        if ((myAmount.compareTo(LIMIT_VALUE) > 0)
+            && (myAmount.compareTo(myPortion) > 0)) {
             /* We have to defer the allocation of cost until we know of the Stock TakeOver part */
             myEvent.addAttribute(CapitalEvent.CAPITAL_TAKEOVERCASH, myAmount);
 
@@ -1653,15 +1666,15 @@ public class EventAnalysis implements JDataContents {
     }
 
     /**
-     * Process an event that is StockTakeover. This capital event relates to both the Credit and Debit
-     * accounts In particular it makes reference to the CashTakeOver aspect of the debit account
+     * Process an event that is StockTakeover. This capital event relates to both the Credit and Debit accounts In particular it makes reference to the
+     * CashTakeOver aspect of the debit account
      * @param pEvent the event
      */
     private void processStockTakeover(final Event pEvent) {
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
-        JUnits myUnits = pEvent.getUnits();
+        JUnits myUnits = pEvent.getCreditUnits();
         TransactionType myTrans = pEvent.getTransType();
         AccountPrice myActPrice;
         JPrice myPrice;

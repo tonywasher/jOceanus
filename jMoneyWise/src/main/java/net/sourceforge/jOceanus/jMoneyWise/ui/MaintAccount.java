@@ -989,9 +989,11 @@ public class MaintAccount
             theClsButton.setText((isClosed) ? "ReOpen" : "Close");
 
             /* Make sure buttons are visible */
-            theDelButton.setVisible(theAccount.isDeletable());
+            boolean isDeletable = theAccount.isDeletable();
+            theDelButton.setVisible(isDeletable);
             theDelButton.setText("Delete");
-            theClsButton.setVisible(bActive);
+            theClsButton.setVisible(bActive
+                                    && !isDeletable);
 
             /* Enable buttons */
             theInsButton.setEnabled(!theAccount.hasChanges()

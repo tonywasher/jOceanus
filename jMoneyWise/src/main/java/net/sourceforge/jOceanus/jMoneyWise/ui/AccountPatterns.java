@@ -74,7 +74,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * Account Patterns Table.
  * @author Tony Washer
  */
-public class AccountPatterns extends JDataTable<Pattern> {
+public class AccountPatterns
+        extends JDataTable<Pattern> {
     /**
      * Serial Id.
      */
@@ -161,8 +162,7 @@ public class AccountPatterns extends JDataTable<Pattern> {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
-            .getBundle(AccountPatterns.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountPatterns.class.getName());
 
     /**
      * Date column title.
@@ -426,12 +426,10 @@ public class AccountPatterns extends JDataTable<Pattern> {
             case COLUMN_FREQ:
                 return theFreqBox;
             case COLUMN_TRANTYP:
-                return (myPattern.isCredit()) ? theComboList.getCreditTranTypes(theAccount) : theComboList
-                        .getDebitTranTypes(theAccount);
+                return (myPattern.isCredit()) ? theComboList.getCreditTranTypes(theAccount) : theComboList.getDebitTranTypes(theAccount);
             case COLUMN_PARTNER:
-                return (myPattern.isCredit()) ? theComboList.getDebitAccounts(myPattern.getTransType(),
-                                                                              theAccount) : theComboList
-                        .getCreditAccounts(myPattern.getTransType(), theAccount);
+                return (myPattern.isCredit()) ? theComboList.getDebitAccounts(myPattern.getTransType(), theAccount) : theComboList.getCreditAccounts(
+                        myPattern.getTransType(), theAccount);
             default:
                 return null;
         }
@@ -460,7 +458,8 @@ public class AccountPatterns extends JDataTable<Pattern> {
     /**
      * The listener class.
      */
-    private final class PatternsListener implements ActionListener {
+    private final class PatternsListener
+            implements ActionListener {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
@@ -477,7 +476,8 @@ public class AccountPatterns extends JDataTable<Pattern> {
     /**
      * Patterns table model.
      */
-    public final class PatternsModel extends JDataTableModel<Pattern> {
+    public final class PatternsModel
+            extends JDataTableModel<Pattern> {
         /**
          * Serial Id.
          */
@@ -581,7 +581,7 @@ public class AccountPatterns extends JDataTable<Pattern> {
                 case COLUMN_DEBIT:
                     return Event.FIELD_AMOUNT;
                 case COLUMN_PARTNER:
-                    return Pattern.FIELD_PARTNER;
+                    return pPattern.isCredit() ? Event.FIELD_CREDIT : Event.FIELD_DEBIT;
                 case COLUMN_FREQ:
                     return Pattern.FIELD_FREQ;
                 default:
@@ -598,7 +598,8 @@ public class AccountPatterns extends JDataTable<Pattern> {
             }
 
             /* Cannot edit if row is deleted or locked */
-            if (pPattern.isDeleted() || pPattern.isLocked()) {
+            if (pPattern.isDeleted()
+                || pPattern.isLocked()) {
                 return false;
             }
 
@@ -669,7 +670,8 @@ public class AccountPatterns extends JDataTable<Pattern> {
     /**
      * Pattern mouse listener.
      */
-    private final class PatternMouse extends JDataTableMouse<Pattern> {
+    private final class PatternMouse
+            extends JDataTableMouse<Pattern> {
         /**
          * Constructor.
          */
@@ -696,7 +698,9 @@ public class AccountPatterns extends JDataTable<Pattern> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -714,7 +718,8 @@ public class AccountPatterns extends JDataTable<Pattern> {
             }
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableCredit || enableDebit) && (pMenu.getComponentCount() > 0)) {
+            if ((enableCredit || enableDebit)
+                && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -746,7 +751,9 @@ public class AccountPatterns extends JDataTable<Pattern> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -760,7 +767,7 @@ public class AccountPatterns extends JDataTable<Pattern> {
 
                 /* set the credit value */
                 myPattern.pushHistory();
-                myPattern.setIsCredit(isCredit);
+                // myPattern.setIsCredit(isCredit);
             }
 
             /* Increment version */
@@ -804,7 +811,8 @@ public class AccountPatterns extends JDataTable<Pattern> {
     /**
      * Column Model class.
      */
-    private final class PatternColumnModel extends JDataTableColumnModel {
+    private final class PatternColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */

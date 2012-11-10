@@ -37,7 +37,6 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetWriter;
 import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
 
@@ -304,22 +303,6 @@ public class FinanceSheet
             }
             if (bContinue) {
                 bContinue = SheetPattern.loadArchive(pTask, myHelper, myData);
-            }
-            if (bContinue) {
-                bContinue = SheetPatternNew.loadArchive(pTask, myHelper, myData);
-            }
-            if (bContinue) {
-                /* Access the accounts */
-                AccountList myList = myData.getAccounts();
-
-                /* Mark active items */
-                myList.markActiveItems();
-
-                /* Validate the tax years */
-                myList.validate();
-                if (myList.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
-                }
             }
 
             if (bContinue) {

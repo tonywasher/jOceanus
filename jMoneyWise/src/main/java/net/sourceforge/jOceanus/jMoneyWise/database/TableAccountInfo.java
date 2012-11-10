@@ -23,11 +23,9 @@
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -42,11 +40,6 @@ public class TableAccountInfo
      * The name of the table.
      */
     protected static final String TABLE_NAME = AccountInfo.LIST_NAME;
-
-    /**
-     * Account data list.
-     */
-    private AccountList theAccounts = null;
 
     /**
      * The AccountInfo list.
@@ -64,7 +57,6 @@ public class TableAccountInfo
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theAccounts = myData.getAccounts();
         theList = myData.getAccountInfo();
         setList(theList);
     }
@@ -77,17 +69,5 @@ public class TableAccountInfo
                                final byte[] pValue) throws JDataException {
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
-    }
-
-    @Override
-    protected void postProcessOnLoad() throws JDataException {
-        /* Mark active items */
-        theAccounts.markActiveItems();
-
-        /* Validate the accounts */
-        theAccounts.validate();
-        if (theAccounts.hasErrors()) {
-            throw new JDataException(ExceptionClass.VALIDATE, theAccounts, "Validation error");
-        }
     }
 }

@@ -176,7 +176,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @return the Value
      */
     public static EncryptedField<?> getField(final EncryptedValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
+        return pValueSet.isDeletion() ? null : pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
     }
 
     /**

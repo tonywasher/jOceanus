@@ -39,7 +39,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventNew.EventNewList;
+import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
@@ -49,7 +49,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
  * @author Tony Washer
  */
 public class EventInfo
-        extends DataInfo<EventInfo, EventNew, EventInfoType, EventInfoClass> {
+        extends DataInfo<EventInfo, Event, EventInfoType, EventInfoClass> {
     /**
      * Object name.
      */
@@ -103,8 +103,8 @@ public class EventInfo
      * Obtain Event.
      * @return the Event
      */
-    public EventNew getEvent() {
-        return getOwner(getValueSet(), EventNew.class);
+    public Event getEvent() {
+        return getOwner(getValueSet(), Event.class);
     }
 
     /**
@@ -129,8 +129,8 @@ public class EventInfo
      * @param pValueSet the valueSet
      * @return the Event
      */
-    public static EventNew getEvent(final ValueSet pValueSet) {
-        return getOwner(pValueSet, EventNew.class);
+    public static Event getEvent(final ValueSet pValueSet) {
+        return getOwner(pValueSet, Event.class);
     }
 
     /**
@@ -139,7 +139,7 @@ public class EventInfo
      * @return the Account
      */
     public static Account getAccount(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
+        return pValueSet.isDeletion() ? null : pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
     /**
@@ -179,7 +179,7 @@ public class EventInfo
      * @param pType the type
      */
     private EventInfo(final EventInfoList pList,
-                      final EventNew pEvent,
+                      final Event pEvent,
                       final EventInfoType pType) {
         /* Initialise the item */
         super(pList);
@@ -221,8 +221,8 @@ public class EventInfo
             setValueInfoType(myType);
 
             /* Look up the Event */
-            EventNewList myEvents = myData.getNewEvents();
-            EventNew myOwner = myEvents.findItemById(uEventId);
+            EventList myEvents = myData.getEvents();
+            Event myOwner = myEvents.findItemById(uEventId);
             if (myOwner == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
             }
@@ -255,7 +255,7 @@ public class EventInfo
             }
 
             /* Access the EventInfoSet and register this data */
-            EventNewInfoSet mySet = myOwner.getInfoSet();
+            EventInfoSet mySet = myOwner.getInfoSet();
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
@@ -275,7 +275,7 @@ public class EventInfo
     private EventInfo(final EventInfoList pList,
                       final Integer uId,
                       final EventInfoType pInfoType,
-                      final EventNew pEvent,
+                      final Event pEvent,
                       final Object pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId, pInfoType, pEvent);
@@ -286,7 +286,7 @@ public class EventInfo
             setValue(pValue);
 
             /* Access the EventInfoSet and register this data */
-            EventNewInfoSet mySet = pEvent.getInfoSet();
+            EventInfoSet mySet = pEvent.getInfoSet();
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
@@ -297,7 +297,7 @@ public class EventInfo
     @Override
     public void deRegister() {
         /* Access the EventInfoSet and register this value */
-        EventNewInfoSet mySet = getEvent().getInfoSet();
+        EventInfoSet mySet = getEvent().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -339,7 +339,7 @@ public class EventInfo
 
         /* Access Events and InfoTypes */
         FinanceData myData = getDataSet();
-        EventNewList myEvents = myData.getNewEvents();
+        EventList myEvents = myData.getEvents();
         EventInfoTypeList myTypes = myData.getEventInfoTypes();
 
         /* Update to use the local copy of the Types */
@@ -357,12 +357,12 @@ public class EventInfo
         }
 
         /* Update to use the local copy of the Events */
-        EventNew myEvent = getEvent();
-        EventNew myOwner = myEvents.findItemById(myEvent.getId());
+        Event myEvent = getEvent();
+        Event myOwner = myEvents.findItemById(myEvent.getId());
         setValueOwner(myOwner);
 
         /* Access the TaxInfoSet and register this data */
-        EventNewInfoSet mySet = myOwner.getInfoSet();
+        EventInfoSet mySet = myOwner.getInfoSet();
         mySet.registerInfo(this);
     }
 
@@ -490,7 +490,7 @@ public class EventInfo
      * EventInfoList.
      */
     public static class EventInfoList
-            extends DataInfoList<EventInfo, EventNew, EventInfoType, EventInfoClass> {
+            extends DataInfoList<EventInfo, Event, EventInfoType, EventInfoClass> {
         /**
          * Local Report fields.
          */
@@ -538,7 +538,7 @@ public class EventInfo
         }
 
         @Override
-        protected EventInfoList getEmptyList(final ListStyle pStyle) {
+        public EventInfoList getEmptyList(final ListStyle pStyle) {
             EventInfoList myList = new EventInfoList(this);
             myList.setStyle(pStyle);
             return myList;
@@ -577,7 +577,7 @@ public class EventInfo
         }
 
         @Override
-        protected EventInfo addNewItem(final EventNew pOwner,
+        protected EventInfo addNewItem(final Event pOwner,
                                        final EventInfoType pInfoType) {
             /* Allocate the new entry and add to list */
             EventInfo myInfo = new EventInfo(this, pOwner, pInfoType);
@@ -630,9 +630,14 @@ public class EventInfo
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer uId,
-                                final EventNew pEvent,
+                                final Event pEvent,
                                 final EventInfoClass pInfoClass,
                                 final Object pValue) throws JDataException {
+            /* Ignore item if it is null */
+            if (pValue == null) {
+                return;
+            }
+
             /* Access the data set */
             FinanceData myData = getDataSet();
 

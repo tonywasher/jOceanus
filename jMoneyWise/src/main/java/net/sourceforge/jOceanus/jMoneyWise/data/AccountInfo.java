@@ -128,7 +128,7 @@ public class AccountInfo
      * @return the Account
      */
     public static Account getAccount(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ACCOUNT, Account.class);
+        return pValueSet.isDeletion() ? null : pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
     /**

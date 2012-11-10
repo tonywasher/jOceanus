@@ -35,15 +35,14 @@ import net.sourceforge.jOceanus.jPreferenceSet.FileSelector;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 
 /**
- * Thread to load data from a spreadsheet. Once the backup is loaded, the current database is loaded and the
- * backup is re-based onto the database so that a correct list of additions, changes and deletions is built.
- * Where data matches data in the database, security is cloned from the database data. Where this is not
- * possible, the items are re-encrypted. These changes remain in memory and should be committed to the
- * database later.
+ * Thread to load data from a spreadsheet. Once the backup is loaded, the current database is loaded and the backup is re-based onto the database so that a
+ * correct list of additions, changes and deletions is built. Where data matches data in the database, security is cloned from the database data. Where this is
+ * not possible, the items are re-encrypted. These changes remain in memory and should be committed to the database later.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
+public class LoadExtract<T extends DataSet<T>>
+        extends LoaderThread<T> {
     /**
      * Task description.
      */
@@ -89,8 +88,7 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
         String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Extract to load",
-                myBackupDir, myPrefix, ".xls");
+        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Extract to load", myBackupDir, myPrefix, ".xls");
         myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 
@@ -103,6 +101,12 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
         /* Load workbook */
         SpreadSheet<T> mySheet = theControl.getSpreadSheet();
         T myData = mySheet.loadExtract(theStatus, myFile);
+
+        /* Initialise the status window */
+        // theStatus.initTask("Analysing Data");
+
+        /* Analyse the Data to ensure that close dates are updated */
+        // myData.analyseData(theControl);
 
         /* Initialise the status window */
         theStatus.initTask("Accessing DataStore");
@@ -118,12 +122,6 @@ public class LoadExtract<T extends DataSet<T>> extends LoaderThread<T> {
 
         /* Initialise the security, either from database or with a new security control */
         myData.initialiseSecurity(theStatus, myStore);
-
-        /* Initialise the status window */
-        theStatus.initTask("Analysing Data");
-
-        /* Analyse the Data to ensure that close dates are updated */
-        // myData.analyseData(theControl);
 
         /* Re-base the loaded backup onto the database image */
         myData.reBase(myStore);

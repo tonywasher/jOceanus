@@ -32,6 +32,7 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
@@ -50,17 +51,12 @@ public class SheetPattern
     /**
      * NamedArea for Patterns.
      */
-    protected static final String AREA_PATTERNS = Pattern.LIST_NAME;
-
-    /**
-     * Account column.
-     */
-    private static final int COL_ACCOUNT = COL_CONTROLID + 1;
+    private static final String AREA_PATTERNS = Pattern.LIST_NAME;
 
     /**
      * Date column.
      */
-    private static final int COL_DATE = COL_ACCOUNT + 1;
+    private static final int COL_DATE = COL_CONTROLID + 1;
 
     /**
      * Description column.
@@ -68,29 +64,29 @@ public class SheetPattern
     private static final int COL_DESC = COL_DATE + 1;
 
     /**
-     * isCredit column.
+     * Debit column.
      */
-    private static final int COL_CREDIT = COL_DESC + 1;
+    private static final int COL_DEBIT = COL_DESC + 1;
 
     /**
-     * Amount column.
+     * Credit column.
      */
-    private static final int COL_AMOUNT = COL_CREDIT + 1;
-
-    /**
-     * Partner column.
-     */
-    private static final int COL_PARTNER = COL_AMOUNT + 1;
+    private static final int COL_CREDIT = COL_DEBIT + 1;
 
     /**
      * TransType column.
      */
-    private static final int COL_TRAN = COL_PARTNER + 1;
+    private static final int COL_TRAN = COL_CREDIT + 1;
+
+    /**
+     * Amount column.
+     */
+    private static final int COL_AMOUNT = COL_TRAN + 1;
 
     /**
      * Frequency column.
      */
-    private static final int COL_FREQ = COL_TRAN + 1;
+    private static final int COL_FREQ = COL_AMOUNT + 1;
 
     /**
      * Patterns data list.
@@ -128,55 +124,52 @@ public class SheetPattern
         /* Access the IDs */
         Integer myID = loadInteger(COL_ID);
         Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myActId = loadInteger(COL_ACCOUNT);
-        Integer myPartId = loadInteger(COL_PARTNER);
+        Integer myDebitId = loadInteger(COL_DEBIT);
+        Integer myCreditId = loadInteger(COL_CREDIT);
         Integer myTranId = loadInteger(COL_TRAN);
         Integer myFreqId = loadInteger(COL_FREQ);
 
-        /* Access the date and credit flag */
+        /* Access the date */
         Date myDate = loadDate(COL_DATE);
-        boolean isCredit = loadBoolean(COL_CREDIT);
 
         /* Access the binary values */
         byte[] myDesc = loadBytes(COL_DESC);
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myActId, myPartId, myTranId, myFreqId, isCredit);
+        theList.addSecureItem(myID, myControlId, myDate, myDesc, myDebitId, myCreditId, myTranId, myAmount, myFreqId);
     }
 
     @Override
     protected void loadOpenItem() throws JDataException {
         /* Access the Account */
         Integer myID = loadInteger(COL_ID);
-        String myAccount = loadString(COL_ACCOUNT);
-        String myPartner = loadString(COL_PARTNER);
+        String myCredit = loadString(COL_DEBIT);
+        String myDebit = loadString(COL_CREDIT);
         String myTransType = loadString(COL_TRAN);
         String myFrequency = loadString(COL_FREQ);
 
-        /* Access the date and credit flag */
+        /* Access the date */
         Date myDate = loadDate(COL_DATE);
-        Boolean isCredit = loadBoolean(COL_CREDIT);
 
         /* Access the string values */
         String myDesc = loadString(COL_DESC);
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        theList.addOpenItem(myID, myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency, isCredit);
+        theList.addOpenItem(myID, myDate, myDesc, myDebit, myCredit, myTransType, myAmount, myFrequency);
     }
 
     @Override
     protected void insertSecureItem(final Pattern pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeInteger(COL_CONTROLID, pItem.getControlKey().getId());
-        writeInteger(COL_ACCOUNT, pItem.getAccount().getId());
-        writeInteger(COL_PARTNER, pItem.getPartner().getId());
-        writeInteger(COL_TRAN, pItem.getTransType().getId());
-        writeInteger(COL_FREQ, pItem.getFrequency().getId());
+        writeInteger(COL_CONTROLID, pItem.getControlKeyId());
+        writeInteger(COL_DEBIT, pItem.getDebitId());
+        writeInteger(COL_CREDIT, pItem.getCreditId());
+        writeInteger(COL_TRAN, pItem.getTransTypeId());
+        writeInteger(COL_FREQ, pItem.getFrequencyId());
         writeDate(COL_DATE, pItem.getDate());
-        writeBoolean(COL_CREDIT, pItem.isCredit());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
     }
@@ -185,12 +178,11 @@ public class SheetPattern
     protected void insertOpenItem(final Pattern pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
-        writeString(COL_ACCOUNT, pItem.getAccount().getName());
-        writeString(COL_PARTNER, pItem.getPartner().getName());
-        writeString(COL_TRAN, pItem.getTransType().getName());
-        writeString(COL_FREQ, pItem.getFrequency().getName());
+        writeString(COL_DEBIT, pItem.getDebitName());
+        writeString(COL_CREDIT, pItem.getCreditName());
+        writeString(COL_TRAN, pItem.getTransTypeName());
+        writeString(COL_FREQ, pItem.getFrequencyName());
         writeDate(COL_DATE, pItem.getDate());
-        writeBoolean(COL_CREDIT, pItem.isCredit());
         writeString(COL_DESC, pItem.getDesc());
         writeNumber(COL_AMOUNT, pItem.getAmount());
     }
@@ -198,25 +190,23 @@ public class SheetPattern
     @Override
     protected void formatSheetHeader() throws JDataException {
         /* Write titles */
-        writeHeader(COL_ACCOUNT, Pattern.FIELD_ACCOUNT.getName());
-        writeHeader(COL_DATE, Event.FIELD_DATE.getName());
-        writeHeader(COL_DESC, Event.FIELD_DESC.getName());
-        writeHeader(COL_CREDIT, Pattern.FIELD_ISCREDIT.getName());
-        writeHeader(COL_AMOUNT, Event.FIELD_AMOUNT.getName());
-        writeHeader(COL_PARTNER, Pattern.FIELD_PARTNER.getName());
-        writeHeader(COL_TRAN, Event.FIELD_TRNTYP.getName());
+        writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
+        writeHeader(COL_DESC, EventBase.FIELD_DESC.getName());
+        writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
+        writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
+        writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
+        writeHeader(COL_TRAN, EventBase.FIELD_TRNTYP.getName());
         writeHeader(COL_FREQ, Pattern.FIELD_FREQ.getName());
 
         /* Set the Account column width */
-        setColumnWidth(COL_ACCOUNT, Account.NAMELEN);
         setColumnWidth(COL_DESC, Event.DESCLEN);
-        setColumnWidth(COL_PARTNER, Account.NAMELEN);
+        setColumnWidth(COL_DEBIT, Account.NAMELEN);
+        setColumnWidth(COL_CREDIT, Account.NAMELEN);
         setColumnWidth(COL_TRAN, StaticData.NAMELEN);
         setColumnWidth(COL_FREQ, StaticData.NAMELEN);
 
         /* Set Number columns */
         setDateColumn(COL_DATE);
-        setBooleanColumn(COL_CREDIT);
         setMoneyColumn(COL_AMOUNT);
     }
 
@@ -228,8 +218,8 @@ public class SheetPattern
         /* If we are not creating a backup */
         if (!isBackup()) {
             /* Apply Validation */
-            applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
-            applyDataValidation(COL_PARTNER, SheetAccount.AREA_ACCOUNTNAMES);
+            applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
+            applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
             applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
             applyDataValidation(COL_FREQ, SheetFrequency.AREA_FREQUENCYNAMES);
         }
@@ -249,7 +239,7 @@ public class SheetPattern
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_PATTERNS);
+            AreaReference myRange = pHelper.resolveAreaReference(SheetPattern.AREA_PATTERNS);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -306,7 +296,8 @@ public class SheetPattern
                                                        + iAdjust++).getStringCellValue();
 
                     /* Add the value into the finance tables */
-                    myList.addOpenItem(0, myDate, myDesc, myAmount, myAccount, myPartner, myTransType, myFrequency, isCredit);
+                    myList.addOpenItem(0, myDate, myDesc, isCredit ? myPartner : myAccount, isCredit ? myAccount : myPartner, myTransType, myAmount,
+                            myFrequency);
 
                     /* Report the progress */
                     myCount++;

@@ -34,7 +34,7 @@ import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
@@ -64,18 +64,16 @@ public class TablePattern
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(Pattern.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(Event.FIELD_DATE);
-        myTableDef.addEncryptedColumn(Event.FIELD_DESC, Event.DESCLEN);
-        myTableDef.addEncryptedColumn(Event.FIELD_AMOUNT, EncryptedData.MONEYLEN);
-        myTableDef.addReferenceColumn(Pattern.FIELD_PARTNER, TableAccount.TABLE_NAME);
-        myTableDef.addReferenceColumn(Event.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
-        myTableDef.addBooleanColumn(Pattern.FIELD_ISCREDIT);
+        ColumnDefinition myDateCol = myTableDef.addDateColumn(EventBase.FIELD_DATE);
+        myTableDef.addEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
+        myTableDef.addReferenceColumn(EventBase.FIELD_DEBIT, TableAccount.TABLE_NAME);
+        myTableDef.addReferenceColumn(EventBase.FIELD_CREDIT, TableAccount.TABLE_NAME);
+        myTableDef.addReferenceColumn(EventBase.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
+        myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(Pattern.FIELD_FREQ, TableFrequency.TABLE_NAME);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
-        myActCol.setSortOrder(SortOrder.ASCENDING);
     }
 
     @Override
@@ -90,17 +88,16 @@ public class TablePattern
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        Integer myAccountId = myTableDef.getIntegerValue(Pattern.FIELD_ACCOUNT);
-        Date myDate = myTableDef.getDateValue(Event.FIELD_DATE);
-        byte[] myDesc = myTableDef.getBinaryValue(Event.FIELD_DESC);
-        byte[] myAmount = myTableDef.getBinaryValue(Event.FIELD_AMOUNT);
-        Integer myPartnerId = myTableDef.getIntegerValue(Pattern.FIELD_PARTNER);
-        Integer myTranType = myTableDef.getIntegerValue(Event.FIELD_TRNTYP);
-        boolean isCredit = myTableDef.getBooleanValue(Pattern.FIELD_ISCREDIT);
+        Date myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
+        byte[] myDesc = myTableDef.getBinaryValue(EventBase.FIELD_DESC);
+        Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
+        Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
+        Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_TRNTYP);
+        byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
         Integer myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myAccountId, myPartnerId, myTranType, myFreq, isCredit);
+        theList.addSecureItem(pId, pControlId, myDate, myDesc, myDebitId, myCreditId, myTranType, myAmount, myFreq);
     }
 
     @Override
@@ -108,22 +105,20 @@ public class TablePattern
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (Pattern.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setIntegerValue(Pattern.FIELD_ACCOUNT, pItem.getAccount().getId());
-        } else if (Event.FIELD_DATE.equals(iField)) {
-            myTableDef.setDateValue(Event.FIELD_DATE, pItem.getDate());
-        } else if (Event.FIELD_DESC.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_DESC, pItem.getDescBytes());
-        } else if (Event.FIELD_AMOUNT.equals(iField)) {
-            myTableDef.setBinaryValue(Event.FIELD_AMOUNT, pItem.getAmountBytes());
-        } else if (Pattern.FIELD_PARTNER.equals(iField)) {
-            myTableDef.setIntegerValue(Pattern.FIELD_PARTNER, pItem.getPartner().getId());
-        } else if (Event.FIELD_TRNTYP.equals(iField)) {
-            myTableDef.setIntegerValue(Event.FIELD_TRNTYP, pItem.getTransType().getId());
-        } else if (Pattern.FIELD_ISCREDIT.equals(iField)) {
-            myTableDef.setBooleanValue(Pattern.FIELD_ISCREDIT, pItem.isCredit());
+        if (EventBase.FIELD_DATE.equals(iField)) {
+            myTableDef.setDateValue(EventBase.FIELD_DATE, pItem.getDate());
+        } else if (EventBase.FIELD_DESC.equals(iField)) {
+            myTableDef.setBinaryValue(EventBase.FIELD_DESC, pItem.getDescBytes());
+        } else if (EventBase.FIELD_AMOUNT.equals(iField)) {
+            myTableDef.setBinaryValue(EventBase.FIELD_AMOUNT, pItem.getAmountBytes());
+        } else if (EventBase.FIELD_DEBIT.equals(iField)) {
+            myTableDef.setIntegerValue(EventBase.FIELD_DEBIT, pItem.getDebitId());
+        } else if (EventBase.FIELD_CREDIT.equals(iField)) {
+            myTableDef.setIntegerValue(EventBase.FIELD_CREDIT, pItem.getCreditId());
+        } else if (EventBase.FIELD_TRNTYP.equals(iField)) {
+            myTableDef.setIntegerValue(EventBase.FIELD_TRNTYP, pItem.getTransTypeId());
         } else if (Pattern.FIELD_FREQ.equals(iField)) {
-            myTableDef.setIntegerValue(Pattern.FIELD_FREQ, pItem.getFrequency().getId());
+            myTableDef.setIntegerValue(Pattern.FIELD_FREQ, pItem.getFrequencyId());
         } else {
             super.setFieldValue(pItem, iField);
         }

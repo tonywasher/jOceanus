@@ -40,8 +40,8 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.FreqClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
@@ -53,7 +53,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTyp
  * @author Tony Washer
  */
 public class Pattern
-        extends Event {
+        extends EventBase {
     /**
      * The name of the object.
      */
@@ -84,7 +84,7 @@ public class Pattern
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, Event.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EventBase.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -92,37 +92,9 @@ public class Pattern
     }
 
     /**
-     * Credit Field Id.
-     */
-    public static final JDataField FIELD_ISCREDIT = FIELD_DEFS.declareEqualityValueField("IsCredit");
-
-    /**
      * Frequency Field Id.
      */
     public static final JDataField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField("Frequency");
-
-    /**
-     * Account Field Id.
-     */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
-
-    /**
-     * Partner Field Id.
-     */
-    public static final JDataField FIELD_PARTNER = FIELD_DEFS.declareLocalField("Partner");
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* If the field is not an attribute handle normally */
-        if (FIELD_ACCOUNT.equals(pField)) {
-            return JDataFieldValue.SkipField;
-        }
-        if (FIELD_PARTNER.equals(pField)) {
-            return JDataFieldValue.SkipField;
-        }
-        /* Pass onwards */
-        return super.getFieldValue(pField);
-    }
 
     /**
      * Obtain Frequency.
@@ -133,45 +105,21 @@ public class Pattern
     }
 
     /**
-     * Is this a credit to the account.
-     * @return true/false
+     * Obtain FrequencyId.
+     * @return the frequencyId
      */
-    public boolean isCredit() {
-        return isCredit(getValueSet());
+    public Integer getFrequencyId() {
+        Frequency myFreq = getFrequency();
+        return (myFreq == null) ? null : myFreq.getId();
     }
 
     /**
-     * Obtain Account.
-     * @return the account
+     * Obtain frequencyName.
+     * @return the frequencyName
      */
-    public Account getAccount() {
-        return isCredit() ? getCredit() : getDebit();
-    }
-
-    /**
-     * Obtain Account Type.
-     * @return the type
-     */
-    public AccountType getActType() {
-        Account myAccount = getAccount();
-        return (myAccount == null) ? null : myAccount.getActType();
-    }
-
-    /**
-     * Obtain Partner.
-     * @return the partner
-     */
-    public Account getPartner() {
-        return isCredit() ? getDebit() : getCredit();
-    }
-
-    /**
-     * Is this a credit to account.
-     * @param pValueSet the valueSet
-     * @return true/false
-     */
-    public static Boolean isCredit(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_ISCREDIT, Boolean.class);
+    public String getFrequencyName() {
+        Frequency myFreq = getFrequency();
+        return (myFreq == null) ? null : myFreq.getName();
     }
 
     /**
@@ -181,14 +129,6 @@ public class Pattern
      */
     public static Frequency getFrequency(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_FREQ, Frequency.class);
-    }
-
-    /**
-     * Set isCredit flag.
-     * @param isCredit true/false
-     */
-    private void setValueIsCredit(final Boolean isCredit) {
-        getValueSet().setValue(FIELD_ISCREDIT, isCredit);
     }
 
     /**
@@ -207,14 +147,31 @@ public class Pattern
         getValueSet().setValue(FIELD_FREQ, pId);
     }
 
-    @Override
-    public Pattern getBase() {
-        return (Pattern) super.getBase();
+    /**
+     * Obtain partner.
+     * @return the partner
+     */
+    public boolean isCredit() {
+        Account myAccount = getList().getAccount();
+        return !Difference.isEqual(myAccount, getDebit());
+    }
+
+    /**
+     * Obtain partner.
+     * @return the partner
+     */
+    public Account getPartner() {
+        return isCredit() ? getDebit() : getCredit();
     }
 
     @Override
-    protected boolean requiredInfoSet() {
-        return false;
+    public PatternList getList() {
+        return (PatternList) super.getList();
+    }
+
+    @Override
+    public Pattern getBase() {
+        return (Pattern) super.getBase();
     }
 
     /**
@@ -225,12 +182,7 @@ public class Pattern
     protected Pattern(final PatternList pList,
                       final Pattern pPattern) {
         /* Simply initialise as Event */
-        super(pList, (Event) pPattern);
-    }
-
-    @Override
-    public boolean isLocked() {
-        return getAccount().isLocked();
+        super(pList, pPattern);
     }
 
     /**
@@ -265,9 +217,6 @@ public class Pattern
         }
         setDate(myDate);
 
-        /* Default to debit */
-        setValueIsCredit(Boolean.FALSE);
-
         /* Default to monthly frequency */
         FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
@@ -279,30 +228,27 @@ public class Pattern
      * @param pList the list
      * @param uId the id
      * @param uControlId the control Id
-     * @param uAccountId the account Id
      * @param pDate the date
      * @param pDesc the description
-     * @param pAmount the amount
-     * @param uPartnerId the partner id
+     * @param uDebitId the debit Id
+     * @param uCreditId the credit id
      * @param uTransId the transaction id
+     * @param pAmount the amount
      * @param uFreqId the frequency id
-     * @param isCredit true/false
      * @throws JDataException on error
      */
     private Pattern(final PatternList pList,
                     final Integer uId,
                     final Integer uControlId,
-                    final Integer uAccountId,
                     final Date pDate,
                     final byte[] pDesc,
-                    final byte[] pAmount,
-                    final Integer uPartnerId,
+                    final Integer uDebitId,
+                    final Integer uCreditId,
                     final Integer uTransId,
-                    final Integer uFreqId,
-                    final boolean isCredit) throws JDataException {
+                    final byte[] pAmount,
+                    final Integer uFreqId) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, uControlId, pDate, pDesc, (isCredit) ? uPartnerId : uAccountId, (isCredit) ? uAccountId : uPartnerId, uTransId, pAmount, null, null,
-                null, null);
+        super(pList, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId, pAmount);
 
         /* Record the IDs */
         setValueFrequency(uFreqId);
@@ -315,41 +261,35 @@ public class Pattern
             throw new JDataException(ExceptionClass.DATA, this, "Invalid Frequency Id");
         }
         setValueFrequency(myFreq);
-
-        /* Record the isCredit Flag */
-        setValueIsCredit(isCredit);
     }
 
     /**
      * Open constructor.
      * @param pList the list
      * @param uId the id
-     * @param pAccount the account
      * @param pDate the date
      * @param pDesc the description
-     * @param pAmount the amount
-     * @param pPartner the partner
+     * @param pDebit the debit account
+     * @param pCredit the credit account
      * @param pTransType the transaction type
+     * @param pAmount the amount
      * @param pFrequency the frequency
-     * @param isCredit true/false
      * @throws JDataException on error
      */
-    private Pattern(final EncryptedList<Pattern> pList,
+    private Pattern(final PatternList pList,
                     final Integer uId,
-                    final Account pAccount,
                     final Date pDate,
                     final String pDesc,
-                    final String pAmount,
-                    final Account pPartner,
+                    final Account pDebit,
+                    final Account pCredit,
                     final TransactionType pTransType,
-                    final Frequency pFrequency,
-                    final boolean isCredit) throws JDataException {
+                    final String pAmount,
+                    final Frequency pFrequency) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, pDate, pDesc, (isCredit) ? pPartner : pAccount, (isCredit) ? pAccount : pPartner, pTransType, pAmount, null, null, null, null);
+        super(pList, uId, pDate, pDesc, pDebit, pCredit, pTransType, pAmount);
 
         /* Record the values */
         setValueFrequency(pFrequency);
-        setValueIsCredit(isCredit);
     }
 
     @Override
@@ -408,7 +348,7 @@ public class Pattern
             /* If the frequency is maturity */
             if (myFreq == FreqClass.MATURITY) {
                 /* Access the maturity date */
-                myDate = getAccount().getMaturity();
+                myDate = getDebit().getMaturity();
 
                 /* Obtain the relevant tax year */
                 TaxYear myBase = myList.findTaxYearForDate(getDate());
@@ -497,18 +437,6 @@ public class Pattern
     }
 
     /**
-     * Set a new partner.
-     * @param pPartner the account
-     */
-    public void setPartner(final Account pPartner) {
-        if (isCredit()) {
-            setDebit(pPartner);
-        } else {
-            setCredit(pPartner);
-        }
-    }
-
-    /**
      * Set a new frequency.
      * @param pFrequency the frequency
      */
@@ -517,18 +445,15 @@ public class Pattern
     }
 
     /**
-     * Set a new isCredit indication.
-     * @param isCredit true/false
+     * Set a new partner.
+     * @param pPartner the partner
      */
-    public void setIsCredit(final boolean isCredit) {
-        /* If we are changing values */
-        if (isCredit != isCredit()) {
-            /* Swap credit/debit values */
-            Account myTemp = getCredit();
-            setCredit(getDebit());
-            setDebit(myTemp);
+    public void setPartner(final Account pPartner) {
+        if (isCredit()) {
+            setDebit(pPartner);
+        } else {
+            setCredit(pPartner);
         }
-        setValueIsCredit(isCredit);
     }
 
     /**
@@ -547,16 +472,6 @@ public class Pattern
 
         /* Store the current detail into history */
         pushHistory();
-
-        /* Update the isCredit if required */
-        if (isCredit() != myPattern.isCredit()) {
-            setValueIsCredit(myPattern.isCredit());
-        }
-
-        /* Update the partner if required */
-        if (!Difference.isEqual(getPartner(), myPattern.getPartner())) {
-            setPartner(myPattern.getPartner());
-        }
 
         /* Update the transtype if required */
         if (!Difference.isEqual(getTransType(), myPattern.getTransType())) {
@@ -588,31 +503,21 @@ public class Pattern
     }
 
     /**
-     * Add an error for this item.
-     * @param pError the error text
-     * @param iField the associated field
+     * Mark active items.
      */
-    @Override
-    protected void addError(final String pError,
-                            final JDataField iField) {
-        JDataField myField = iField;
-        /* Re-Map Credit/Debit field errors */
-        if (iField == FIELD_CREDIT) {
-            myField = isCredit() ? FIELD_ACCOUNT : FIELD_PARTNER;
-        } else if (iField == FIELD_DEBIT) {
-            myField = isCredit() ? FIELD_PARTNER : FIELD_ACCOUNT;
-        }
+    protected void markActiveItems() {
+        /* Pass call on */
+        super.markActiveItems();
 
-        /* Call super class */
-        super.addError(pError, myField);
+        /* mark the frequency referred to */
+        getFrequency().touchItem(this);
     }
 
     /**
      * The list.
      */
     public static class PatternList
-            extends EncryptedList<Pattern>
-            implements EventDateRange {
+            extends EventBaseList<Pattern> {
         /**
          * Local Report fields.
          */
@@ -669,7 +574,7 @@ public class Pattern
          * @param pData the DataSet for the list
          */
         protected PatternList(final FinanceData pData) {
-            super(Pattern.class, pData);
+            super(pData, Pattern.class);
         }
 
         /**
@@ -720,7 +625,7 @@ public class Pattern
                 Pattern myCurr = myIterator.next();
 
                 /* Skip differing accounts */
-                if (!pAccount.equals(myCurr.getAccount())) {
+                if (!myCurr.relatesTo(pAccount)) {
                     continue;
                 }
 
@@ -780,21 +685,12 @@ public class Pattern
             /* Access the list iterator */
             Iterator<Pattern> myIterator = listIterator();
 
-            /* Loop through the Prices */
+            /* Loop through the Patterns */
             while (myIterator.hasNext()) {
                 Pattern myCurr = myIterator.next();
 
-                /* Touch the patterned account */
-                myCurr.getAccount().touchItem(myCurr);
-
-                /* Touch the patterned partner */
-                myCurr.getPartner().touchItem(myCurr);
-
-                /* Touch the patterned frequency */
-                myCurr.getFrequency().touchItem(myCurr);
-
-                /* Touch the patterned transaction type */
-                myCurr.getTransType().touchItem(myCurr);
+                /* Touch affected items */
+                myCurr.markActiveItems();
             }
         }
 
@@ -803,23 +699,21 @@ public class Pattern
          * @param uId the id
          * @param pDate the date
          * @param pDesc the description
-         * @param pAmount the amount
-         * @param pAccount the account
-         * @param pPartner the partner
+         * @param pDebit the debit account
+         * @param pCredit the credit account
          * @param pTransType the transaction type
+         * @param pAmount the amount
          * @param pFrequency the frequency
-         * @param isCredit true/false
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer uId,
                                 final Date pDate,
                                 final String pDesc,
-                                final String pAmount,
-                                final String pAccount,
-                                final String pPartner,
+                                final String pDebit,
+                                final String pCredit,
                                 final String pTransType,
-                                final String pFrequency,
-                                final boolean isCredit) throws JDataException {
+                                final String pAmount,
+                                final String pFrequency) throws JDataException {
             /* Access the Lists */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
@@ -827,23 +721,23 @@ public class Pattern
             TransTypeList myTranTypes = myData.getTransTypes();
             FrequencyList myFrequencies = myData.getFrequencys();
 
-            /* Look up the Account */
-            Account myAccount = myAccounts.findItemByName(pAccount);
-            if (myAccount == null) {
+            /* Look up the Debit */
+            Account myDebit = myAccounts.findItemByName(pDebit);
+            if (myDebit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
                                                               + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Account ["
-                                                              + pAccount
+                                                              + "] has invalid Debit ["
+                                                              + pDebit
                                                               + "]");
             }
 
-            /* Look up the Partner */
-            Account myPartner = myAccounts.findItemByName(pPartner);
-            if (myPartner == null) {
+            /* Look up the Credit */
+            Account myCredit = myAccounts.findItemByName(pCredit);
+            if (myCredit == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
                                                               + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Partner ["
-                                                              + pPartner
+                                                              + "] has invalid Credit ["
+                                                              + pCredit
                                                               + "]");
             }
 
@@ -868,7 +762,7 @@ public class Pattern
             }
 
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, uId, myAccount, pDate, pDesc, pAmount, myPartner, myTransType, myFrequency, isCredit);
+            Pattern myPattern = new Pattern(this, uId, pDate, pDesc, myDebit, myCredit, myTransType, pAmount, myFrequency);
 
             /* Validate the pattern */
             myPattern.validate();
@@ -888,26 +782,24 @@ public class Pattern
          * @param uControlId the control id
          * @param pDate the date
          * @param pDesc the description
-         * @param pAmount the amount
-         * @param uAccountId the account id
-         * @param uPartnerId the partner id
+         * @param uDebitId the account id
+         * @param uCreditId the partner id
          * @param uTransId the transaction type id
          * @param uFreqId the frequency id
-         * @param isCredit true/false
+         * @param pAmount the amount
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer uId,
                                   final Integer uControlId,
                                   final Date pDate,
                                   final byte[] pDesc,
-                                  final byte[] pAmount,
-                                  final Integer uAccountId,
-                                  final Integer uPartnerId,
+                                  final Integer uDebitId,
+                                  final Integer uCreditId,
                                   final Integer uTransId,
-                                  final Integer uFreqId,
-                                  final boolean isCredit) throws JDataException {
+                                  final byte[] pAmount,
+                                  final Integer uFreqId) throws JDataException {
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, uId, uControlId, uAccountId, pDate, pDesc, pAmount, uPartnerId, uTransId, uFreqId, isCredit);
+            Pattern myPattern = new Pattern(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId, pAmount, uFreqId);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(uId)) {

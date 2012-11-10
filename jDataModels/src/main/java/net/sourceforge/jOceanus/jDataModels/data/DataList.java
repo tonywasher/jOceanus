@@ -361,7 +361,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
     /**
      * Obtain an empty list based on this list.
-     * @param the style of the empty list
+     * @param pStyle the style of the empty list
      * @return the list
      */
     protected abstract DataList<T> getEmptyList(final ListStyle pStyle);
@@ -462,11 +462,11 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             DataItem myCurr = myIterator.next();
             DataItem myItem = myOld.get(myCurr.getId());
 
-            /* If the item does not exist */
+            /* If the item does not exist in the old list */
             if (myItem == null) {
                 /* Insert a new item */
                 myItem = myList.addCopyItem(myCurr);
-                myItem.getValueSet().setVersion(1);
+                myItem.setNewVersion();
 
                 /* else the item exists in the old list */
             } else {
@@ -494,7 +494,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             DataItem myCurr = myIterator.next();
             DataItem myItem = myList.addCopyItem(myCurr);
             myItem.setBase(null);
-            myItem.getValueSet().setDeletion(true);
+            myItem.setDeleted(true);
         }
 
         /* Return the difference list */
