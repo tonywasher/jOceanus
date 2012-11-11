@@ -62,8 +62,8 @@
     <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}/${svnComponent}</url>
   </scm>
   <properties>
-    <backupDir>../../backup/</backupDir>
-    <backuplibDir>lib/</backuplibDir>
+    <appDir>../../backup/</appDir>
+    <appLibDir>lib/</appLibDir>
     <svnComponent>jMoneyWise</svnComponent>
     <packageName>${project.groupId}.${svnComponent}</packageName>
     <packageMain>${packageName}.core.Control</packageMain>
@@ -73,68 +73,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.5.1</version>
-        <executions>
-          <execution>
-            <id>copy-installed</id>
-            <phase>install</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.version}</version>
-                  <type>${project.packaging}</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${backupDir}</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>install</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${backupDir}${backuplibDir}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-        <version>1.7.1</version>
-        <configuration>
-          <finalName>${project.artifactId}-${project.version}-uber</finalName>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <archive>
-            <manifest>
-	      <mainClass>${packageMain}</mainClass>
-              <packageName>${packageName}</packageName>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>${backuplibDir}</classpathPrefix>                                                                      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-          </archive>   
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

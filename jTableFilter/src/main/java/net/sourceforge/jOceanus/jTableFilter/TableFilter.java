@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JTableFilter: JTable RowFilter/Sorter
+ * jTableFilter: JTable RowFilter/Sorter
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,12 +36,14 @@ import net.sourceforge.jOceanus.jTableFilter.TableFilter.TableFilterModel;
  * RowSorter to provide filtering capabilities with natural sorting.
  * @param <T> row data type
  */
-public class TableFilter<T extends Comparable<? super T>> extends RowSorter<TableFilterModel<T>> {
+public class TableFilter<T extends Comparable<? super T>>
+        extends RowSorter<TableFilterModel<T>> {
     /**
      * Interface for Model.
      * @param <T> the row type
      */
-    public interface TableFilterModel<T extends Comparable<? super T>> extends TableModel {
+    public interface TableFilterModel<T extends Comparable<? super T>>
+            extends TableModel {
         /**
          * Obtain the item at the model index.
          * @param pRowIndex the index
@@ -124,7 +126,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
          * @return negative,0,positive as per the order
          */
         public int compareReference(final RowEntry<X> pThat) {
-            return theReference - pThat.theReference;
+            return theReference
+                   - pThat.theReference;
         }
     }
 
@@ -292,7 +295,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     @Override
     public int convertRowIndexToModel(final int pIndex) {
         /* Handle out of range */
-        if ((pIndex < 0) || (pIndex >= getViewRowCount())) {
+        if ((pIndex < 0)
+            || (pIndex >= getViewRowCount())) {
             throw new IndexOutOfBoundsException("Invalid Index");
         }
 
@@ -303,7 +307,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     @Override
     public int convertRowIndexToView(final int pIndex) {
         /* Handle out of range */
-        if ((pIndex < 0) || (pIndex >= getModelRowCount())) {
+        if ((pIndex < 0)
+            || (pIndex >= getModelRowCount())) {
             throw new IndexOutOfBoundsException("Invalid Index");
         }
 
@@ -345,7 +350,9 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
         int iIndex;
 
         /* If the range is invalid */
-        if ((pFirstRow < 0) || (pEndRow >= iNumRows) || (pFirstRow > pEndRow)) {
+        if ((pFirstRow < 0)
+            || (pEndRow >= iNumRows)
+            || (pFirstRow > pEndRow)) {
             throw new IndexOutOfBoundsException("Invalid Range");
         }
 
@@ -367,8 +374,11 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
         }
 
         /* Compress the ModelToView array */
-        int iNumTrailing = iNumRows - pEndRow - 1;
-        int iNewLen = pFirstRow + iNumTrailing;
+        int iNumTrailing = iNumRows
+                           - pEndRow
+                           - 1;
+        int iNewLen = pFirstRow
+                      + iNumTrailing;
         if (iNumTrailing > 0) {
             /* Shift entries in the map down */
             System.arraycopy(theModelToView, pEndRow + 1, theModelToView, pFirstRow, iNumTrailing);
@@ -405,19 +415,24 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
         int iNumRows = getModelRowCount();
 
         /* If the range is invalid */
-        if ((pFirstRow < 0) || (pFirstRow > iNumRows) || (pFirstRow > pEndRow)) {
+        if ((pFirstRow < 0)
+            || (pFirstRow > iNumRows)
+            || (pFirstRow > pEndRow)) {
             throw new IndexOutOfBoundsException("Invalid Range");
         }
 
         /* Determine the number of rows that we are inserting plus trailing entries */
         int iXtraLen = (pEndRow - pFirstRow) + 1;
-        int iNumTrailing = iNumRows - pFirstRow;
-        int iNewLen = iNumRows + iXtraLen;
+        int iNumTrailing = iNumRows
+                           - pFirstRow;
+        int iNewLen = iNumRows
+                      + iXtraLen;
         int iIndex;
 
         /* Adjust arrays to have space for new entries */
         theModelToView = Arrays.copyOf(theModelToView, iNewLen);
-        RowEntry<T>[] newViewToModel = cloneArray(theViewToModel, theViewToModel.length + iXtraLen);
+        RowEntry<T>[] newViewToModel = cloneArray(theViewToModel, theViewToModel.length
+                                                                  + iXtraLen);
 
         /* If we have trailing entries */
         if (iNumTrailing > 0) {
@@ -458,7 +473,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
         }
 
         /* If we have hidden rows */
-        if (iView < theViewToModel.length + iXtraLen) {
+        if (iView < theViewToModel.length
+                    + iXtraLen) {
             /* Truncate the new mapping */
             newViewToModel = Arrays.copyOf(newViewToModel, iView);
         }
@@ -478,7 +494,9 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
         int iNumRows = theModelToView.length;
 
         /* If the range is invalid */
-        if ((pFirstRow < 0) || (pEndRow >= iNumRows) || (pFirstRow > pEndRow)) {
+        if ((pFirstRow < 0)
+            || (pEndRow >= iNumRows)
+            || (pFirstRow > pEndRow)) {
             throw new IndexOutOfBoundsException("Invalid Range");
         }
 
@@ -538,7 +556,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
         }
 
         /* Sort the array */
-        viewChanged = sortViewToModel(newViewToModel) || viewChanged;
+        viewChanged = sortViewToModel(newViewToModel)
+                      || viewChanged;
 
         /* If we have changed */
         if (viewChanged) {
@@ -551,12 +570,10 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     /**
      * Update sort mapping if required.
      * <p>
-     * This should really be done within the rowsUpdated() method, but unfortunately fireXXX methods are
-     * ignored from within these method (undocumented), and hence additional calls must be made to honour the
-     * interface.
+     * This should really be done within the rowsUpdated() method, but unfortunately fireXXX methods are ignored from within these method (undocumented), and
+     * hence additional calls must be made to honour the interface.
      * <p>
-     * Note also that the parameter to the fireMethod is ViewToModel as per the documented name of the
-     * parameter and not the description.
+     * Note also that the parameter to the fireMethod is ViewToModel as per the documented name of the parameter and not the description.
      */
     public void reportMappingChanged() {
         /* If we have a saved mapping change */
@@ -574,7 +591,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
                             final int pEndRow,
                             final int pColumn) {
         /* Check valid column */
-        if ((pColumn < 0) || (pColumn >= theModel.getColumnCount())) {
+        if ((pColumn < 0)
+            || (pColumn >= theModel.getColumnCount())) {
             throw new IndexOutOfBoundsException("Invalid Column");
         }
 
@@ -627,8 +645,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     /**
      * Sort the viewToModel map.
      * <p>
-     * Uses insertion sort since the list will generally be almost sorted. We could used Arrays.sort() but
-     * this does not return an indication of whether the array was changed by the sort.
+     * Uses insertion sort since the list will generally be almost sorted. We could used Arrays.sort() but this does not return an indication of whether the
+     * array was changed by the sort.
      * @param pArray the array to sort
      * @return was sort order changed? true/false
      */
@@ -687,8 +705,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     }
 
     /**
-     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot of the
-     * table mapping. It will not be affected or invalidated by subsequent changes.
+     * Obtain an iterator over Model rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated
+     * by subsequent changes.
      * @return the iterator
      */
     public Iterator<T> modelIterator() {
@@ -697,8 +715,8 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     }
 
     /**
-     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot of the
-     * table mapping. It will not be affected or invalidated by subsequent changes.
+     * Obtain an iterator over View rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated
+     * by subsequent changes.
      * @return the iterator
      */
     public Iterator<T> viewIterator() {
@@ -707,10 +725,11 @@ public class TableFilter<T extends Comparable<? super T>> extends RowSorter<Tabl
     }
 
     /**
-     * Iterator for rows. Note that this iterator is for a self-contained snapshot of the table mapping. It
-     * will not be affected or invalidated by subsequent changes.
+     * Iterator for rows. Note that this iterator is for a self-contained snapshot of the table mapping. It will not be affected or invalidated by subsequent
+     * changes.
      */
-    private final class TableIterator implements Iterator<T> {
+    private final class TableIterator
+            implements Iterator<T> {
         /**
          * List to iterate over.
          */

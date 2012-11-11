@@ -1,8 +1,11 @@
 jTableFilter Project
 
-  jTableFilter is a subComponent of the jOceanus project
+  jTableFilter is a subComponent of the jOceanus project.
 
   It provides an extension of the TableRowSorter class that utilises the natural ordering of rows rather
-than requiring the user to specify a sort order.
+than requiring the user to specify a sort order. It also provides simple filtering.
+
+  A simple demo program is included to illustrate both the capabilities and usage. It can be seen on the 
+{{{./demo/demo.html}Demo page}} of this webSite.
   
 

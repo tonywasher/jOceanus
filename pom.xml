@@ -68,6 +68,8 @@
     <svnBranch>v1.0.0</svnBranch>
     <svnTag>SNAPSHOT</svnTag>
     <svnBase>${svnParent}/trunk</svnBase>
+    <packageMain/>
+    <appLibDir/>
   </properties>
   <build>
     <resources>
@@ -106,8 +108,78 @@
             <doUpdate>false</doUpdate>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>2.5.1</version>
+          <executions>
+            <execution>
+              <id>copy-installed</id>
+              <phase>install</phase>
+              <goals>
+                <goal>copy</goal>
+              </goals>
+              <configuration>
+                <artifactItems>
+                  <artifactItem>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>${project.artifactId}</artifactId>
+                    <version>${project.version}</version>
+                    <type>${project.packaging}</type>
+                  </artifactItem>
+                </artifactItems>
+                <outputDirectory>${appDir}</outputDirectory>
+              </configuration>
+            </execution>
+            <execution>
+              <id>copy-dependencies</id>
+              <phase>install</phase>
+              <goals>
+                <goal>copy-dependencies</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${appDir}${appLibDir}</outputDirectory>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>1.7.1</version>
+          <configuration>
+            <finalName>${project.artifactId}-${project.version}-uber</finalName>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>shade</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>2.4</version>
+          <configuration>
+            <archive>
+              <manifest>
+   	        <mainClass>${packageMain}</mainClass>
+                <packageName>${packageName}</packageName>
+                <addClasspath>true</addClasspath>
+                <classpathPrefix>${appLibDir}</classpathPrefix>                                                                      
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+              </manifest>
+              <manifestEntries>
+                <Revision>${svnRepository}-r${buildNumber}</Revision>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
       </plugins>
-    </pluginManagement>
+     </pluginManagement>
   </build>
   <reporting>
     <plugins>

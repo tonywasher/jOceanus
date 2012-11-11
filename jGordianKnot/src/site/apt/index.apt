@@ -5,7 +5,7 @@ JGordianKnot Project
   jGordianKnot is a security suite for Java based on the BouncyCastle cryptography library. To utilise it you must
 additionally download this library from the {{{http://www.bouncycastle.org/java.html}BouncyCastle webSite}}
   
-  Encryption is performed using a set of keys called a <<CipherSet>> (one for each supported algorithm). A subset of
+  Encryption is performed using a set of keys called a <<CipherSet>> (one key for each supported algorithm). A subset of
 the keys is selected at random from the CipherSet and the plaintext is encrypted by each key in turn. The types of
 the keys used are encoded into output ciphertext along with the randomly chosen initialisation vector.
 

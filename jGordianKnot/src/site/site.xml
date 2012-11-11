@@ -18,11 +18,10 @@
 
     <menu name="jGordianKnot">
       <item name="Introduction" href="index.html"/>
-      <!--<item name="Download" href="http://sourceforge.net/projects/jdatebutton/files/"/>-->
-      <item name="Release Notes" href="releaseNotes.html" />
       <item name="JavaDoc" href="apidocs/index.html" />
     </menu>
 
+    <menu ref="parent"/>
     <menu ref="reports"/>
   </body>
 </project>

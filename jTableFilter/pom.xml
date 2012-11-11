@@ -18,59 +18,18 @@
     <svnComponent>jTableFilter</svnComponent>
     <packageName>${project.groupId}.${svnComponent}</packageName>
     <packageMain>${packageName}.Demo.DemoFilter</packageMain>
-    <demoJar>${project.artifactId}-${project.version}</demoJar>
-    <demoLoc>${project.build.directory}/site/demo</demoLoc>
+    <appJar>${project.artifactId}-${project.version}</appJar>
+    <appDir>${project.build.directory}/site/demo</appDir>
    </properties>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-dependency-plugin</artifactId>
-        <version>2.5.1</version>
-        <executions>
-          <execution>
-            <id>copy-installed</id>
-            <phase>install</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.version}</version>
-                  <type>${project.packaging}</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${demoLoc}</outputDirectory>
-            </configuration>
-          </execution>
-          <execution>
-            <id>copy-dependencies</id>
-            <phase>install</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${demoLoc}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <packageName>${packageName}</packageName>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-              <MainClass>${packageMain}</MainClass>
-            </manifest>
-          </archive>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

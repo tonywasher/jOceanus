@@ -2,6 +2,11 @@ jFieldSet Project
 
   jFieldSet is a subComponent of the jOceanus project.
 
-  jFieldSet provides a generic manager for a set of java swing components. 
+  jFieldSet provides a generic manager for a set of java swing components that are used to display an item that
+conforms to the jDataManager standards. At present support is limited to automatically rendering such objects such that
+changed fields are automatically highlighted. 
+
+  Underlying classes are provided to simplify display and editing of various dataTypes used in jOceanus.
+
   
 

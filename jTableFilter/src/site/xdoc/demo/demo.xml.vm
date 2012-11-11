@@ -6,11 +6,22 @@
   <body>
     <section name="Overview">
       <p>Demo of ${svnComponent} capabilities.</p>
+      <p>Each row is the table comprises a name and a visibility indication. Clicking on the visibility indication of 
+a row will cause the row to be hidden from view.</p>
+      <p>Right-clicking within the table rows (or on the table header) will bring up a popup menu allowing the user
+to control the table.</p>
+      <ul>
+        <li><b>Insert at end.</b> adds a row to the end of the table. The user can fill in a new name.</li>
+        <li><b>Insert Here.</b> adds a row at the click point.</li>
+        <li><b>Delete Item.</b> removes the row from the list.</li>
+        <li><b>Show All items</b> turns filtering on/off</li>
+        <li><b>Sort items</b> turns sorting on/off</li>
+      </ul>
     </section>
 
     <section name="Demo">
       <applet code = '${packageMain}' 
-        archive = '${demoJar}.jar'
+        archive = '${appJar}.jar'
         width = "450" 
         height = "300"></applet>      
     </section>

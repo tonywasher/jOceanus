@@ -2,6 +2,8 @@ jSvnManager Project
 
   jSvnManager is a subComponent of the jOceanus project.
 
-  jSvnManager is a Manager application for SubVersion development. It provides some of the functionality to TortoiseSvn, 
-but is tailored specifically to simplify development tasks such as tagging and branching. It also directly links to the
-Issue Management system Jira.
+  jSvnManager is a Manager application for SubVersion development. It provides some of the same functionality as
+TortoiseSvn, but is tailored specifically to simplify development tasks such as tagging and branching. It also directly
+links to the Issue Management system Jira via the <<jJira>> component.
+
+  This is currently under construction.

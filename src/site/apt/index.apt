@@ -2,6 +2,9 @@ jOceanus Project
 
   jOceanus is an overarching project that was derived from the embedded jMoneyWise project.
 
-  In developing <<jMoneyWise>> a number of supporting generic components were built. Together with jMoneyWise, these have
+  In developing <<jMoneyWise>>, a number of supporting generic components were built. Together with jMoneyWise, these have
 been aggregated as the <<jOceanus>> project.
+
+  The project is still under development.
+
 

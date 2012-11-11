@@ -2,7 +2,7 @@ jPreferenceSet Project
 
   jPreferenceSet is a subComponent of the jOceanus project.
 
-  jPreferencesSet provides a generic manager for a set of java preferences. It provides a set manager
+  jPreferenceSet provides a generic manager for a set of java preferences. It provides a set manager
 which will load and store the set and retain a single copy. It also provides an editing panel.
   
 

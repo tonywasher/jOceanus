@@ -10,7 +10,7 @@
 
     <section name="Demo">
       <applet code = '${packageMain}' 
-        archive = '${demoJar}.jar'
+        archive = '${appJar}.jar'
         width = "510" 
         height = "300"></applet>      
     </section>

@@ -19,11 +19,10 @@
     <menu name="jTableFilter">
       <item name="Introduction" href="index.html"/>
       <item name="Demo" href="demo/demo.html"/>
-      <!--<item name="Download" href="http://sourceforge.net/projects/jdateday/files/"/>-->
-      <item name="Release Notes" href="releaseNotes.html" />
       <item name="JavaDoc" href="apidocs/index.html" />
     </menu>
 
+    <menu ref="parent"/>
     <menu ref="reports"/>
   </body>
 </project>

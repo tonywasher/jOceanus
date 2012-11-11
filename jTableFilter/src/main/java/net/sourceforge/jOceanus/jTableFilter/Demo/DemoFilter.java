@@ -1,5 +1,5 @@
 /*******************************************************************************
- * JTableFilter: JTable RowFilter/Sorter
+ * jTableFilter: JTable RowFilter/Sorter
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +53,8 @@ import net.sourceforge.jOceanus.jTableFilter.TableFilter.TableFilterModel;
  * Demo application for JTableFilter.
  * @author Tony Washer
  */
-public class DemoFilter extends JApplet {
+public class DemoFilter
+        extends JApplet {
     /**
      * The Serial Id.
      */
@@ -130,7 +131,8 @@ public class DemoFilter extends JApplet {
     /**
      * Table class.
      */
-    public static class TestTable extends JTable {
+    public static class TestTable
+            extends JTable {
         /**
          * The Serial Id.
          */
@@ -202,7 +204,8 @@ public class DemoFilter extends JApplet {
     /**
      * Row class.
      */
-    public static class RowData implements Comparable<RowData> {
+    public static class RowData
+            implements Comparable<RowData> {
         /**
          * Name of item.
          */
@@ -262,7 +265,8 @@ public class DemoFilter extends JApplet {
         @Override
         public boolean equals(final Object pThat) {
             /* Compare names */
-            return (pThat instanceof RowData) && theName.equals(((RowData) pThat).getName());
+            return (pThat instanceof RowData)
+                   && theName.equals(((RowData) pThat).getName());
         }
 
         @Override
@@ -274,7 +278,9 @@ public class DemoFilter extends JApplet {
     /**
      * DataModel.
      */
-    protected static class TestTableModel extends AbstractTableModel implements TableFilterModel<RowData> {
+    protected static class TestTableModel
+            extends AbstractTableModel
+            implements TableFilterModel<RowData> {
         /**
          * The Serial Id.
          */
@@ -324,7 +330,7 @@ public class DemoFilter extends JApplet {
         }
 
         /**
-         * Get showAll value.
+         * Get sortItems value.
          * @return true/false
          */
         public boolean sortItems() {
@@ -425,7 +431,8 @@ public class DemoFilter extends JApplet {
         @Override
         public boolean includeRow(final RowData pRow) {
             /* Return visibility */
-            return showAll || pRow.isVisible();
+            return showAll
+                   || pRow.isVisible();
         }
 
         @Override
@@ -519,7 +526,9 @@ public class DemoFilter extends JApplet {
     /**
      * Mouse adapter.
      */
-    public static class TestMouse extends MouseAdapter implements ActionListener {
+    public static class TestMouse
+            extends MouseAdapter
+            implements ActionListener {
         /**
          * Insert new name.
          */
@@ -533,7 +542,8 @@ public class DemoFilter extends JApplet {
         /**
          * Insert menu command.
          */
-        private static final String CMD_INSERT = POPUP_INSERTHERE + ":";
+        private static final String CMD_INSERT = POPUP_INSERTHERE
+                                                 + ":";
 
         /**
          * Delete menu item.
@@ -543,7 +553,8 @@ public class DemoFilter extends JApplet {
         /**
          * Delete menu command.
          */
-        private static final String CMD_DELETE = POPUP_DELETE + ":";
+        private static final String CMD_DELETE = POPUP_DELETE
+                                                 + ":";
 
         /**
          * ShowDeleted menu item.
@@ -614,16 +625,19 @@ public class DemoFilter extends JApplet {
                 myMenu.add(myItem);
 
                 /* If the row is in bounds */
-                if ((myRow >= 0) && (myRow < theModel.getRowCount())) {
+                if ((myRow >= 0)
+                    && (myRow < theModel.getRowCount())) {
                     /* Add the delete item choice */
                     myItem = new JMenuItem(POPUP_INSERTHERE);
-                    myItem.setActionCommand(CMD_INSERT + myRow);
+                    myItem.setActionCommand(CMD_INSERT
+                                            + myRow);
                     myItem.addActionListener(this);
                     myMenu.add(myItem);
 
                     /* Add the delete item choice */
                     myItem = new JMenuItem(POPUP_DELETE);
-                    myItem.setActionCommand(CMD_DELETE + myRow);
+                    myItem.setActionCommand(CMD_DELETE
+                                            + myRow);
                     myItem.addActionListener(this);
                     myMenu.add(myItem);
                 }
