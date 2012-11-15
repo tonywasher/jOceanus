@@ -26,9 +26,13 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jJira.data.Server;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 
+/**
+ * Jira test suite.
+ */
 public class TestJira {
     /**
-     * @param args
+     * Main entry point.
+     * @param args the parameters
      */
     public static void main(String[] args) {
         try {

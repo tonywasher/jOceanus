@@ -44,9 +44,13 @@ import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipFileEntry;
 import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipReadFile;
 import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipWriteFile;
 
+/**
+ * Security Test suite.
+ */
 public class SecurityTest {
     /**
-     * @param args
+     * Main entry point.
+     * @param args the parameters
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -57,6 +61,9 @@ public class SecurityTest {
         });
     }
 
+    /**
+     * Create and show the GUI.
+     */
     public static void createAndShowGUI() {
         try {
             /* Test zip file creation */
@@ -321,14 +328,16 @@ public class SecurityTest {
      */
     private static void printSet(String setName,
                                  Set<String> algorithms) {
-        System.out.println(setName + ":");
+        System.out.println(setName
+                           + ":");
         if (algorithms.isEmpty()) {
             System.out.println("            None available.");
         } else {
             Iterator<String> it = algorithms.iterator();
             while (it.hasNext()) {
                 String name = it.next();
-                System.out.println("            " + name);
+                System.out.println("            "
+                                   + name);
             }
         }
     }

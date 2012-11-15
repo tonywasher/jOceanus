@@ -177,7 +177,7 @@ public final class JDataHTML {
         myBuilder.setLength(0);
 
         /* Define table headers */
-        myBuilder.append("th { background-color: #bbbbbb; font-weight:bold; color: white;}");
+        myBuilder.append("th { background-color: #bbbbbb; font-weight:bold; color: white; border: 1px solid white; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
@@ -328,7 +328,8 @@ public final class JDataHTML {
             JDataField myField = myIterator.next();
 
             /* Access the value */
-            if ((myField.isValueSetField()) && (myValues != null)) {
+            if ((myField.isValueSetField())
+                && (myValues != null)) {
                 myValue = myValues.getValue(myField);
             } else {
                 myValue = myDetail.getFieldValue(myField);
@@ -385,16 +386,19 @@ public final class JDataHTML {
         String myFormat = theFormatter.formatObject(pValue);
 
         /* Perform special formatting for a long byte[] */
-        if (needsWrapping(pValue) && (myFormat.length() > WRAP_HEXSTRING)) {
+        if (needsWrapping(pValue)
+            && (myFormat.length() > WRAP_HEXSTRING)) {
             StringBuilder myBuffer = new StringBuilder(BUFFER_LEN);
 
             /* Format the buffer */
             myBuffer.append(myFormat);
 
             /* Insert new lines */
-            int iCount = myFormat.length() / WRAP_HEXSTRING;
+            int iCount = myFormat.length()
+                         / WRAP_HEXSTRING;
             while (iCount > 0) {
-                myBuffer.insert(WRAP_HEXSTRING * iCount--, '\n');
+                myBuffer.insert(WRAP_HEXSTRING
+                                * iCount--, '\n');
             }
 
             /* Obtain new format */

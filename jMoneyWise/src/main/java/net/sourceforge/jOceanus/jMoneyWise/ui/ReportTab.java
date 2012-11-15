@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.net.URL;
 
@@ -45,7 +46,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
-import net.sourceforge.jOceanus.jDataModels.ui.PrintUtilities;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
@@ -55,13 +55,15 @@ import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect.ReportType;
 import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisReport;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
+import net.sourceforge.jOceanus.jMoneyWise.views.Report;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
  * Report Panel.
  * @author Tony Washer
  */
-public class ReportTab extends JEventPanel {
+public class ReportTab
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -78,9 +80,14 @@ public class ReportTab extends JEventPanel {
     private final JScrollPane theScroll;
 
     /**
-     * The Editor.
+     * The display version of the report.
      */
     private final JEditorPane theEditor;
+
+    /**
+     * The print version of the report.
+     */
+    private final JEditorPane thePrint;
 
     /**
      * The Report selection Panel.
@@ -132,22 +139,36 @@ public class ReportTab extends JEventPanel {
         theEditor.setEditable(false);
         theEditor.addHyperlinkListener(myListener);
 
-        /* Add an editor kit to the editor */
-        HTMLEditorKit myKit = new HTMLEditorKit();
-        theEditor.setEditorKit(myKit);
+        /* Create the print pane for the window */
+        thePrint = new JEditorPane();
+        thePrint.setEditable(false);
 
         /* Create a scroll-pane for the editor */
         theScroll = new JScrollPane(theEditor);
 
-        /* Create the style-sheet for the window */
-        StyleSheet myStyle = myKit.getStyleSheet();
-        myStyle.addRule("body { color:#000; font-family:times; margins; 4px; }");
-        myStyle.addRule("h1 { color: black; }");
-        myStyle.addRule("h2 { color: black; }");
+        /* Create display editorKit and styleSheet */
+        HTMLEditorKit myDisplayKit = new HTMLEditorKit();
+        StyleSheet myDisplayStyle = new StyleSheet();
+        myDisplayStyle.addStyleSheet(myDisplayKit.getStyleSheet());
+        Report.buildDisplayStyleSheet(myDisplayStyle);
 
-        /* Create the document for the window */
-        Document myDoc = myKit.createDefaultDocument();
+        /* Create print editorKit and styleSheet */
+        HTMLEditorKit myPrintKit = new HTMLEditorKit();
+        StyleSheet myPrintStyle = new StyleSheet();
+        myPrintStyle.addStyleSheet(myPrintKit.getStyleSheet());
+        Report.buildPrintStyleSheet(myPrintStyle);
+
+        /* Apply styleSheet to display window */
+        myDisplayKit.setStyleSheet(myDisplayStyle);
+        theEditor.setEditorKit(myDisplayKit);
+        Document myDoc = myDisplayKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
+
+        /* Apply styleSheet to print window */
+        myPrintKit.setStyleSheet(myPrintStyle);
+        thePrint.setEditorKit(myPrintKit);
+        myDoc = myPrintKit.createDefaultDocument();
+        thePrint.setDocument(myDoc);
 
         /* Create the Report Selection panel */
         theSelect = new ReportSelect(theView);
@@ -199,9 +220,8 @@ public class ReportTab extends JEventPanel {
     private void printIt() {
         /* Print the current report */
         try {
-            PrintUtilities myPrinter = new PrintUtilities(theEditor);
-            myPrinter.print();
-        } catch (JDataException e) {
+            thePrint.print();
+        } catch (PrinterException e) {
             e = null;
         }
     }
@@ -284,12 +304,14 @@ public class ReportTab extends JEventPanel {
         theEditor.setText(myText);
         theEditor.setCaretPosition(0);
         theEditor.requestFocusInWindow();
+        thePrint.setText(myText);
     }
 
     /**
      * Listener class.
      */
-    private class ReportListener implements ChangeListener, ActionListener, HyperlinkListener {
+    private class ReportListener
+            implements ChangeListener, ActionListener, HyperlinkListener {
         @Override
         public void hyperlinkUpdate(final HyperlinkEvent e) {
             /* If this is an activated event */
@@ -302,7 +324,8 @@ public class ReportTab extends JEventPanel {
                     try {
                         URL url = e.getURL();
                         String desc = e.getDescription();
-                        if ((url == null) && (desc.startsWith("#"))) {
+                        if ((url == null)
+                            && (desc.startsWith("#"))) {
                             theEditor.scrollToReference(desc.substring(1));
                         } else {
                             theEditor.setPage(e.getURL());
@@ -347,8 +370,7 @@ public class ReportTab extends JEventPanel {
                     /* Catch Exceptions */
                 } catch (JDataException e) {
                     /* Build the error */
-                    JDataException myError = new JDataException(ExceptionClass.DATA,
-                            "Failed to change selection", e);
+                    JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
                     /* Show the error */
                     theError.setError(myError);

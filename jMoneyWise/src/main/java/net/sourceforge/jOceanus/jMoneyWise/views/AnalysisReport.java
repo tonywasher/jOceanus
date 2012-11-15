@@ -70,6 +70,16 @@ public class AnalysisReport {
     private static final int BUFFER_LEN = 10000;
 
     /**
+     * The Total text.
+     */
+    private static final String TOTAL_TEXT = "Total";
+
+    /**
+     * The Profit text.
+     */
+    private static final String PROFIT_TEXT = "Profit";
+
+    /**
      * The analysis.
      */
     private final Analysis theAnalysis;
@@ -144,21 +154,20 @@ public class AnalysisReport {
         StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
-        myOutput.append("<html><body><a name=\"Top\">");
-        myOutput.append("<h1 align=\"center\">Asset Report for ");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</h1></a>");
-        myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
-        myOutput.append("<thead><th rowspan=\"2\">Class</th><th colspan=\"2\">Value</th></thead>");
-        myOutput.append("<thead><th>");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</th><th>");
-        myOutput.append(theDate.getYear() - 1);
-        myOutput.append("</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.startReport(myOutput);
+        theReport.makeLinkHeading(myOutput, "Asset Report for "
+                                            + myOutput.append(theDate.getYear()));
+        theReport.startTable(myOutput);
+        theReport.makeTableRowSpan(myOutput, "Class", 2);
+        theReport.makeTableColumnSpan(myOutput, "Value", 2);
+        theReport.makeTableNewRow(myOutput);
+        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear()));
+        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear() - 1));
+        theReport.startTableBody(myOutput);
 
         /* Access the iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Summary Buckets */
         while (myIterator.hasNext()) {
@@ -173,15 +182,13 @@ public class AnalysisReport {
             AssetSummary mySummary = (AssetSummary) myBucket;
 
             /* Format the Summary */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append("<a href=\"#Detail");
-            myOutput.append(mySummary.getName());
-            myOutput.append("\">");
-            myOutput.append(mySummary.getName());
-            myOutput.append("</a></th>");
-            myOutput.append(theReport.makeMoneyItem(mySummary.getValue()));
-            myOutput.append(theReport.makeMoneyItem(mySummary.getPrevValue()));
-            myOutput.append("</tr>");
+            theReport.startLinkRow(myOutput, isOdd, mySummary.getName());
+            theReport.makeValueCell(myOutput, mySummary.getValue());
+            theReport.makeValueCell(myOutput, mySummary.getPrevValue());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
 
             /* Format the detail */
             myDetail.append(makeStandardReport(mySummary));
@@ -191,21 +198,23 @@ public class AnalysisReport {
         AssetTotal myTotal = myList.getAssetTotal();
 
         /* Format the totals */
-        myOutput.append("<tr><th>Totals</th>");
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getValue()));
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getPrevValue()));
-        myOutput.append("</tr>");
+        theReport.startTotalRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, myTotal.getValue());
+        theReport.makeTotalCell(myOutput, myTotal.getPrevValue());
+        theReport.endRow(myOutput);
 
         /* Format the profit */
-        myOutput.append("<tr><th>Profit</th>");
-        myOutput.append(theReport.makeMoneyProfit(myTotal.getProfit()));
-        myOutput.append("</tr></tbody></table>");
+        theReport.startTotalRow(myOutput, PROFIT_TEXT);
+        theReport.makeTotalCell(myOutput, myTotal.getProfit());
+        theReport.makeTotalCell(myOutput);
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Add the detail */
         myOutput.append(myDetail);
 
         /* Terminate the html */
-        myOutput.append("</body></html>");
+        theReport.endReport(myOutput);
 
         /* Return the output */
         return myOutput.toString();
@@ -222,16 +231,17 @@ public class AnalysisReport {
         StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
-        myOutput.append("<html><body><a name=\"Top\">");
-        myOutput.append("<h1 align=\"center\">Instant Asset Report for ");
-        myOutput.append(theFormatter.formatObject(theDate));
-        myOutput.append("</h1></a>");
-        myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
-        myOutput.append("<thead><th>Class</th><th>Value</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.startReport(myOutput);
+        theReport.makeLinkHeading(myOutput, "Instant Asset Report for "
+                                            + theFormatter.formatObject(theDate));
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Class");
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.startTableBody(myOutput);
 
         /* Access the iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Summary Buckets */
         while (myIterator.hasNext()) {
@@ -246,14 +256,9 @@ public class AnalysisReport {
             AssetSummary mySummary = (AssetSummary) myBucket;
 
             /* Format the Summary */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append("<a href=\"#Detail");
-            myOutput.append(mySummary.getName());
-            myOutput.append("\">");
-            myOutput.append(mySummary.getName());
-            myOutput.append("</a></th>");
-            myOutput.append(theReport.makeMoneyItem(mySummary.getValue()));
-            myOutput.append("</tr>");
+            theReport.startLinkRow(myOutput, isOdd, mySummary.getName());
+            theReport.makeValueCell(myOutput, mySummary.getValue());
+            theReport.endRow(myOutput);
 
             /* Access the type */
             AccountType myType = mySummary.getAccountType();
@@ -266,21 +271,25 @@ public class AnalysisReport {
             } else {
                 myDetail.append(makeDebtReport(mySummary));
             }
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Access the totals */
         AssetTotal myTotal = myList.getAssetTotal();
 
         /* Format the totals */
-        myOutput.append("<tr><th>Totals</th>");
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getValue()));
-        myOutput.append("</tr></tbody></table>");
+        theReport.startTotalRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, myTotal.getValue());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Add the detail */
         myOutput.append(myDetail);
 
         /* Terminate the html */
-        myOutput.append("</body></html>");
+        theReport.endReport(myOutput);
 
         /* Return the output */
         return myOutput.toString();
@@ -297,18 +306,20 @@ public class AnalysisReport {
         StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
-        myOutput.append("<html><body><a name=\"Top\">");
-        myOutput.append("<h1 align=\"center\">Market Report for ");
-        myOutput.append(theFormatter.formatObject(theDate));
-        myOutput.append("</h1></a>");
-        myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
-        myOutput.append("<thead><th>Name</th><th>Cost</th>");
-        myOutput.append("<th>Value</th><th>Gains</th>");
-        myOutput.append("<th>Profit</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.startReport(myOutput);
+        theReport.makeLinkHeading(myOutput, "Market Report for "
+                                            + theFormatter.formatObject(theDate));
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Cost");
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.makeTableColumn(myOutput, "Gains");
+        theReport.makeTableColumn(myOutput, "Profit");
+        theReport.startTableBody(myOutput);
 
         /* Access the iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Detail Buckets */
         while (myIterator.hasNext()) {
@@ -331,41 +342,40 @@ public class AnalysisReport {
             }
 
             /* Format the Asset */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append("<a href=\"#Detail");
-            myOutput.append(myAsset.getName());
-            myOutput.append("\">");
-            myOutput.append(myAsset.getName());
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeMoneyItem(myAsset.getCost()));
-            myOutput.append(theReport.makeMoneyItem(myAsset.getValue()));
-            myOutput.append(theReport.makeMoneyItem(myAsset.getGained()));
-            myOutput.append(theReport.makeMoneyItem(myAsset.getProfit()));
-            myOutput.append("</tr>");
+            theReport.startLinkRow(myOutput, isOdd, myAsset.getName());
+            theReport.makeValueCell(myOutput, myAsset.getCost());
+            theReport.makeValueCell(myOutput, myAsset.getValue());
+            theReport.makeValueCell(myOutput, myAsset.getGained());
+            theReport.makeValueCell(myOutput, myAsset.getProfit());
+            theReport.endRow(myOutput);
 
             /* If this is not an Endowment */
             if (!myType.isEndowment()) {
                 /* Format the detail */
                 myDetail.append(makeCapitalEventReport(myAsset));
             }
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Access the totals */
         MarketTotal myTotal = myList.getMarketTotal();
 
         /* Format the totals */
-        myOutput.append("<tr><th>Totals</th>");
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getCost()));
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getValue()));
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getGained()));
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getProfit()));
-        myOutput.append("</tr></tbody></table>");
+        theReport.startTotalRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, myTotal.getCost());
+        theReport.makeTotalCell(myOutput, myTotal.getValue());
+        theReport.makeTotalCell(myOutput, myTotal.getGained());
+        theReport.makeTotalCell(myOutput, myTotal.getProfit());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Add the detail */
         myOutput.append(myDetail);
 
         /* Terminate the html */
-        myOutput.append("</body></html>");
+        theReport.endReport(myOutput);
 
         /* Return the output */
         return myOutput.toString();
@@ -381,24 +391,23 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
-        myOutput.append("<html><body><a name=\"Top\">");
-        myOutput.append("<h1 align=\"center\">Income/Expense Report for ");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</h1></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th rowspan=\"2\">Name</th>");
-        myOutput.append("<th colspan=\"2\">");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</th>");
-        myOutput.append("<th colspan=\"2\">");
-        myOutput.append(theDate.getYear() - 1);
-        myOutput.append("</th></thead>");
-        myOutput.append("<thead><th>Income</th><th>Expense</th>");
-        myOutput.append("<th>Income</th><th>Expense</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.startReport(myOutput);
+        theReport.makeLinkHeading(myOutput, "Income/Expense Report for "
+                                            + theDate.getYear());
+        theReport.startTable(myOutput);
+        theReport.makeTableRowSpan(myOutput, "Name", 2);
+        theReport.makeTableColumnSpan(myOutput, Integer.toString(theDate.getYear()), 2);
+        theReport.makeTableColumnSpan(myOutput, Integer.toString(theDate.getYear() - 1), 2);
+        theReport.makeTableNewRow(myOutput);
+        theReport.makeTableColumn(myOutput, "Income");
+        theReport.makeTableColumn(myOutput, "Expense");
+        theReport.makeTableColumn(myOutput, "Income");
+        theReport.makeTableColumn(myOutput, "Expense");
+        theReport.startTableBody(myOutput);
 
         /* Create the bucket iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Detail Buckets */
         while (myIterator.hasNext()) {
@@ -413,32 +422,37 @@ public class AnalysisReport {
             ExternalAccount myExternal = (ExternalAccount) myBucket;
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(myExternal.getName());
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeMoneyItem(myExternal.getIncome()));
-            myOutput.append(theReport.makeMoneyItem(myExternal.getExpense()));
-            myOutput.append(theReport.makeMoneyItem(myExternal.getPrevIncome()));
-            myOutput.append(theReport.makeMoneyItem(myExternal.getPrevExpense()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, myExternal.getName());
+            theReport.makeValueCell(myOutput, myExternal.getIncome());
+            theReport.makeValueCell(myOutput, myExternal.getExpense());
+            theReport.makeValueCell(myOutput, myExternal.getPrevIncome());
+            theReport.makeValueCell(myOutput, myExternal.getPrevExpense());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Access the totals */
         ExternalTotal myTotal = myList.getExternalTotal();
 
         /* Format the totals */
-        myOutput.append("<tr><th>Totals</th>");
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getIncome()));
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getExpense()));
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getPrevIncome()));
-        myOutput.append(theReport.makeMoneyTotal(myTotal.getPrevExpense()));
-        myOutput.append("</tr>");
+        theReport.startTotalRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, myTotal.getIncome());
+        theReport.makeTotalCell(myOutput, myTotal.getExpense());
+        theReport.makeTotalCell(myOutput, myTotal.getPrevIncome());
+        theReport.makeTotalCell(myOutput, myTotal.getPrevExpense());
+        theReport.endRow(myOutput);
 
         /* Format the profit */
-        myOutput.append("<tr><th>Profit</th>");
-        myOutput.append(theReport.makeMoneyProfit(myTotal.getProfit()));
-        myOutput.append(theReport.makeMoneyProfit(myTotal.getPrevProfit()));
-        myOutput.append("</tr></tbody></table></body></html>");
+        theReport.startTotalRow(myOutput, PROFIT_TEXT);
+        theReport.makeTotalCell(myOutput, myTotal.getProfit());
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput, myTotal.getPrevProfit());
+        theReport.makeTotalCell(myOutput);
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
+        theReport.endReport(myOutput);
 
         /* Return the output */
         return myOutput.toString();
@@ -458,23 +472,18 @@ public class AnalysisReport {
         AccountType myType = pSummary.getAccountType();
 
         /* Format the detail */
-        myOutput.append("<a name=\"Detail");
-        myOutput.append(pSummary.getName());
-        myOutput.append("\">");
-        myOutput.append("<h2 align=\"center\">");
-        myOutput.append(pSummary.getName());
-        myOutput.append("</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
-        myOutput.append("<thead><th rowspan=\"2\">Name</th><th colspan=\"2\">Value</th></thead>");
-        myOutput.append("<thead><th>");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</th><th>");
-        myOutput.append(theDate.getYear() - 1);
-        myOutput.append("</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.makeLinkSubHeading(myOutput, pSummary.getName());
+        theReport.startTable(myOutput);
+        theReport.makeTableRowSpan(myOutput, "Name", 2);
+        theReport.makeTableColumnSpan(myOutput, "Value", 2);
+        theReport.makeTableNewRow(myOutput);
+        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear()));
+        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear() - 1));
+        theReport.startTableBody(myOutput);
 
         /* Access the iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Detail Buckets */
         while (myIterator.hasNext()) {
@@ -494,18 +503,21 @@ public class AnalysisReport {
             }
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(myValue.getName());
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeMoneyItem(myValue.getValue()));
-            myOutput.append(theReport.makeMoneyItem(myValue.getPrevValue()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, myValue.getName());
+            theReport.makeValueCell(myOutput, myValue.getValue());
+            theReport.makeValueCell(myOutput, myValue.getPrevValue());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
-        myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append(theReport.makeMoneyTotal(pSummary.getValue()));
-        myOutput.append(theReport.makeMoneyTotal(pSummary.getPrevValue()));
-        myOutput.append("</tr></tbody></table>");
+        /* Build totals */
+        theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, pSummary.getValue());
+        theReport.makeTotalCell(myOutput, pSummary.getPrevValue());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Return the output */
         return myOutput;
@@ -525,19 +537,17 @@ public class AnalysisReport {
         AccountType myType = pSummary.getAccountType();
 
         /* Format the detail */
-        myOutput.append("<a name=\"Detail");
-        myOutput.append(pSummary.getName());
-        myOutput.append("\">");
-        myOutput.append("<h2 align=\"center\">");
-        myOutput.append(pSummary.getName());
-        myOutput.append("</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
-        myOutput.append("<thead><th>Name</th><th>Value</th>");
-        myOutput.append("<th>Rate</th><th>Maturity</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.makeLinkSubHeading(myOutput, pSummary.getName());
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.makeTableColumn(myOutput, "Rate");
+        theReport.makeTableColumn(myOutput, "Maturity");
+        theReport.startTableBody(myOutput);
 
         /* Access the iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Detail Buckets */
         while (myIterator.hasNext()) {
@@ -557,19 +567,23 @@ public class AnalysisReport {
             }
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(myMoney.getName());
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeMoneyItem(myMoney.getValue()));
-            myOutput.append(theReport.makeRateItem(myMoney.getRate()));
-            myOutput.append(theReport.makeDateItem(myMoney.getMaturity()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, myMoney.getName());
+            theReport.makeValueCell(myOutput, myMoney.getValue());
+            theReport.makeValueCell(myOutput, myMoney.getRate());
+            theReport.makeValueCell(myOutput, myMoney.getMaturity());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
-        myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append(theReport.makeMoneyTotal(pSummary.getValue()));
-        myOutput.append("<td/><td/>");
-        myOutput.append("</tr></tbody></table>");
+        /* Build totals */
+        theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, pSummary.getValue());
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput);
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Return the output */
         return myOutput;
@@ -589,18 +603,15 @@ public class AnalysisReport {
         AccountType myType = pSummary.getAccountType();
 
         /* Format the detail */
-        myOutput.append("<a name=\"Detail");
-        myOutput.append(pSummary.getName());
-        myOutput.append("\">");
-        myOutput.append("<h2 align=\"center\">");
-        myOutput.append(pSummary.getName());
-        myOutput.append("</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
-        myOutput.append("<thead><th>Name</th><th>Value</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.makeLinkSubHeading(myOutput, pSummary.getName());
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.startTableBody(myOutput);
 
         /* Access the iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Detail Buckets */
         while (myIterator.hasNext()) {
@@ -620,16 +631,19 @@ public class AnalysisReport {
             }
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(myDebt.getName());
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeMoneyItem(myDebt.getValue()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, myDebt.getName());
+            theReport.makeValueCell(myOutput, myDebt.getValue());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
-        myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append(theReport.makeMoneyTotal(pSummary.getValue()));
-        myOutput.append("</tr></tbody></table>");
+        /* Build totals */
+        theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, pSummary.getValue());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Return the output */
         return myOutput;
@@ -649,19 +663,17 @@ public class AnalysisReport {
         AccountType myType = pSummary.getAccountType();
 
         /* Format the detail */
-        myOutput.append("<a name=\"Detail");
-        myOutput.append(pSummary.getName());
-        myOutput.append("\">");
-        myOutput.append("<h2 align=\"center\">");
-        myOutput.append(pSummary.getName());
-        myOutput.append("</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
-        myOutput.append("<thead><th>Name</th><th>Units</th>");
-        myOutput.append("<th>Price</th><th>Value</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.makeLinkSubHeading(myOutput, pSummary.getName());
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Units");
+        theReport.makeTableColumn(myOutput, "Price");
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.startTableBody(myOutput);
 
         /* Access the iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Detail Buckets */
         while (myIterator.hasNext()) {
@@ -686,19 +698,23 @@ public class AnalysisReport {
             }
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(myAsset.getName());
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeUnitsItem(myAsset.getUnits()));
-            myOutput.append(theReport.makePriceItem(myAsset.getPrice()));
-            myOutput.append(theReport.makeMoneyItem(myAsset.getValue()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, myAsset.getName());
+            theReport.makeValueCell(myOutput, myAsset.getUnits());
+            theReport.makeValueCell(myOutput, myAsset.getPrice());
+            theReport.makeValueCell(myOutput, myAsset.getValue());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
-        myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append("<td/><td/>");
-        myOutput.append(theReport.makeMoneyTotal(pSummary.getValue()));
-        myOutput.append("</tr></tbody></table>");
+        /* Build totals */
+        theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput, pSummary.getValue());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Return the output */
         return myOutput;
@@ -715,19 +731,18 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the detail */
-        myOutput.append("<a name=\"Detail");
-        myOutput.append(pAsset.getName());
-        myOutput.append("\">");
-        myOutput.append("<h2 align=\"center\">");
-        myOutput.append(pAsset.getName());
-        myOutput.append("</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"95%\" align=\"center\">");
-        myOutput.append("<thead><th>Date</th><th>DeltaUnits</th>");
-        myOutput.append("<th>DeltaCost</th><th>DeltaGains</th><th>Dividend</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.makeLinkSubHeading(myOutput, pAsset.getName());
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Date");
+        theReport.makeTableColumn(myOutput, "DeltaUnits");
+        theReport.makeTableColumn(myOutput, "DeltaCost");
+        theReport.makeTableColumn(myOutput, "DeltaGains");
+        theReport.makeTableColumn(myOutput, "Dividend");
+        theReport.startTableBody(myOutput);
 
         /* Access the iterator */
         Iterator<CapitalEvent> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Events */
         while (myIterator.hasNext()) {
@@ -739,25 +754,25 @@ public class AnalysisReport {
             }
 
             /* Format the detail */
-            myOutput.append("<tr><th>");
-            myOutput.append(theFormatter.formatObject(myEvent.getDate()));
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeUnitsItem(myEvent.findAttribute(CapitalEvent.CAPITAL_DELTAUNITS,
-                                                                          JUnits.class)));
-            myOutput.append(theReport.makeMoneyItem(myEvent.findAttribute(CapitalEvent.CAPITAL_DELTACOST,
-                                                                          JMoney.class)));
-            myOutput.append(theReport.makeMoneyItem(myEvent.findAttribute(CapitalEvent.CAPITAL_DELTAGAINS,
-                                                                          JMoney.class)));
-            myOutput.append(theReport.makeMoneyItem(myEvent.findAttribute(CapitalEvent.CAPITAL_DELTADIVIDEND,
-                                                                          JMoney.class)));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, theFormatter.formatObject(myEvent.getDate()));
+            theReport.makeValueCell(myOutput, myEvent.findAttribute(CapitalEvent.CAPITAL_DELTAUNITS, JUnits.class));
+            theReport.makeValueCell(myOutput, myEvent.findAttribute(CapitalEvent.CAPITAL_DELTACOST, JMoney.class));
+            theReport.makeValueCell(myOutput, myEvent.findAttribute(CapitalEvent.CAPITAL_DELTAGAINS, JMoney.class));
+            theReport.makeValueCell(myOutput, myEvent.findAttribute(CapitalEvent.CAPITAL_DELTADIVIDEND, JMoney.class));
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
-        myOutput.append("<tr><th><a href=\"#Top\">Totals</a></th>");
-        myOutput.append(theReport.makeUnitsItem(pAsset.getUnits()));
-        myOutput.append(theReport.makeMoneyItem(pAsset.getCost()));
-        myOutput.append(theReport.makeMoneyItem(pAsset.getGained()));
-        myOutput.append("<td/></tr></tbody></table>");
+        /* Build Totals */
+        theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, pAsset.getUnits());
+        theReport.makeTotalCell(myOutput, pAsset.getCost());
+        theReport.makeTotalCell(myOutput, pAsset.getGained());
+        theReport.makeTotalCell(myOutput);
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Return the output */
         return myOutput;
@@ -773,22 +788,21 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
-        myOutput.append("<html><body><a name=\"Top\">");
-        myOutput.append("<h1 align=\"center\">Transaction Report for ");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</h1></a>");
-        myOutput.append("<a name=\"TransactionTotals\"><h2 align=\"center\">Transaction Totals</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th rowspan=\"2\">Class</th><th colspan=\"2\">Value</th></thead>");
-        myOutput.append("<thead><th>");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</th><th>");
-        myOutput.append(theDate.getYear() - 1);
-        myOutput.append("</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.startReport(myOutput);
+        theReport.makeLinkHeading(myOutput, "Transaction Report for "
+                                            + theDate.getYear());
+        theReport.makeSubHeading(myOutput, "Transaction Totals");
+        theReport.startTable(myOutput);
+        theReport.makeTableRowSpan(myOutput, "Class", 2);
+        theReport.makeTableColumnSpan(myOutput, "Value", 2);
+        theReport.makeTableNewRow(myOutput);
+        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear()));
+        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear() - 1));
+        theReport.startTableBody(myOutput);
 
         /* Access the bucket iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Transaction Summary Buckets */
         while (myIterator.hasNext()) {
@@ -801,41 +815,46 @@ public class AnalysisReport {
                     TransSummary mySummary = (TransSummary) myBucket;
 
                     /* Format the detail */
-                    myOutput.append("<tr><th align=\"center\">" + mySummary.getName() + "</th>");
-                    myOutput.append(theReport.makeMoneyItem(mySummary.getAmount()));
-                    myOutput.append(theReport.makeMoneyItem(mySummary.getPrevAmount()));
-                    myOutput.append("</tr>");
+                    theReport.startDataRow(myOutput, isOdd, mySummary.getName());
+                    theReport.makeValueCell(myOutput, mySummary.getAmount());
+                    theReport.makeValueCell(myOutput, mySummary.getPrevAmount());
+                    theReport.endRow(myOutput);
                     break;
                 /* Total */
                 case TRANSTOTAL:
                     TransTotal myTotal = (TransTotal) myBucket;
 
                     /* Format the detail */
-                    myOutput.append("<tr><th align=\"center\">" + myTotal.getName() + "</th>");
-                    myOutput.append(theReport.makeMoneyItem(myTotal.getAmount()));
-                    myOutput.append(theReport.makeMoneyItem(myTotal.getPrevAmount()));
-                    myOutput.append("</tr>");
+                    theReport.startDataRow(myOutput, isOdd, myTotal.getName());
+                    theReport.makeValueCell(myOutput, myTotal.getAmount());
+                    theReport.makeValueCell(myOutput, myTotal.getPrevAmount());
+                    theReport.endRow(myOutput);
                     break;
                 default:
-                    break;
+                    continue;
             }
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Format the next table */
-        myOutput.append("</tbody></table>");
-        myOutput.append("<a name=\"Trans\"><h2 align=\"center\">Transaction Breakdown</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th rowspan=\"2\">Class</th>");
-        myOutput.append("<th colspan=\"2\">");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</th><th  colspan=\"2\">");
-        myOutput.append(theDate.getYear() - 1);
-        myOutput.append("</th></thead>");
-        myOutput.append("<thead><th>Value</th><th>TaxCredit</th><th>Value</th><th>TaxCredit</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.endTable(myOutput);
+        theReport.makeSubHeading(myOutput, "Transaction Breakdown");
+        theReport.startTable(myOutput);
+        theReport.makeTableRowSpan(myOutput, "Class", 2);
+        theReport.makeTableColumnSpan(myOutput, Integer.toString(theDate.getYear()), 2);
+        theReport.makeTableColumnSpan(myOutput, Integer.toString(theDate.getYear() - 1), 2);
+        theReport.makeTableNewRow(myOutput);
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.makeTableColumn(myOutput, "TaxCredit");
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.makeTableColumn(myOutput, "TaxCredit");
+        theReport.startTableBody(myOutput);
 
         /* Access a new bucket iterator */
         myIterator = myList.iterator();
+        isOdd = true;
 
         /* Loop through the Transaction Summary Buckets */
         while (myIterator.hasNext()) {
@@ -850,18 +869,20 @@ public class AnalysisReport {
             TransDetail myDetail = (TransDetail) myBucket;
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(myDetail.getName());
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeMoneyItem(myDetail.getAmount()));
-            myOutput.append(theReport.makeMoneyItem(myDetail.getTaxCredit()));
-            myOutput.append(theReport.makeMoneyItem(myDetail.getPrevAmount()));
-            myOutput.append(theReport.makeMoneyItem(myDetail.getPrevTax()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, myDetail.getName());
+            theReport.makeValueCell(myOutput, myDetail.getAmount());
+            theReport.makeValueCell(myOutput, myDetail.getTaxCredit());
+            theReport.makeValueCell(myOutput, myDetail.getPrevAmount());
+            theReport.makeValueCell(myOutput, myDetail.getPrevTax());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Close the table */
-        myOutput.append("</tbody></table></body></html>");
+        theReport.endTable(myOutput);
+        theReport.endReport(myOutput);
 
         /* Return the output */
         return myOutput.toString();
@@ -882,20 +903,22 @@ public class AnalysisReport {
         TaxDetail myTax;
 
         /* Initialise the detail */
-        myDetail.append("<h1 align=\"center\">Taxation Breakdown</h1>");
+        theReport.makeHeading(myOutput, "Taxation Breakdown");
 
         /* Format the header */
-        myOutput.append("<html><body><a name=\"Top\">");
-        myOutput.append("<h1 align=\"center\">Taxation Report for ");
-        myOutput.append(theDate.getYear());
-        myOutput.append("</h1></a>");
-        myOutput.append("<a name=\"TaxSummary\"><h2 align=\"center\">Taxation Summary</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th>Class</th><th>Total Income</th><th>Taxation Due</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.startReport(myOutput);
+        theReport.makeLinkHeading(myOutput, "Taxation Report for "
+                                            + theDate.getYear());
+        theReport.makeSubHeading(myOutput, "Taxation Summary");
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Class");
+        theReport.makeTableColumn(myOutput, "Total Income");
+        theReport.makeTableColumn(myOutput, "Taxation Due");
+        theReport.startTableBody(myOutput);
 
         /* Access the tax bucket iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Tax Summary Buckets */
         while (myIterator.hasNext()) {
@@ -910,186 +933,183 @@ public class AnalysisReport {
             myTax = (TaxDetail) myBucket;
 
             /* Format the line */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append("<a href=\"#Detail");
-            myOutput.append(myTax.getName());
-            myOutput.append("\">");
-            myOutput.append(myTax.getName());
-            myOutput.append("</a></th>");
-            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
-            myOutput.append(theReport.makeMoneyItem(myTax.getTaxation()));
-            myOutput.append("</tr>");
+            theReport.startLinkRow(myOutput, isOdd, myTax.getName());
+            theReport.makeValueCell(myOutput, myTax.getAmount());
+            theReport.makeValueCell(myOutput, myTax.getTaxation());
+            theReport.endRow(myOutput);
 
             /* Format the detail */
             myDetail.append(makeTaxReport(myTax));
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Access the Total taxation bucket */
         myTax = myList.getTaxDetail(TaxClass.TOTALTAXATION);
-        myOutput.append("<tr><th align=\"center\">");
-        myOutput.append(myTax.getName());
-        myOutput.append("</th>");
-        myOutput.append(theReport.makeMoneyTotal(myTax.getAmount()));
-        myOutput.append(theReport.makeMoneyTotal(myTax.getTaxation()));
-        myOutput.append("</tr>");
+        theReport.startTotalRow(myOutput, myTax.getName());
+        theReport.makeTotalCell(myOutput, myTax.getAmount());
+        theReport.makeTotalCell(myOutput, myTax.getTaxation());
+        theReport.endRow(myOutput);
 
         /* Access the Tax Paid bucket */
         TransSummary myTrans = myList.getTransSummary(TaxClass.TAXPAID);
-        myOutput.append("<tr><th align=\"center\">");
-        myOutput.append(myTrans.getName());
-        myOutput.append("</th>");
-        myOutput.append(theReport.makeMoneyTotal(new JMoney()));
-        myOutput.append(theReport.makeMoneyTotal(myTrans.getAmount()));
-        myOutput.append("</tr>");
+        theReport.startTotalRow(myOutput, myTrans.getName());
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput, myTrans.getAmount());
+        theReport.endRow(myOutput);
 
         /* Access the Tax Profit bucket */
         myTax = myList.getTaxDetail(TaxClass.TAXPROFITLOSS);
-        myOutput.append("<tr><th align=\"center\">");
-        myOutput.append(myTax.getName());
-        myOutput.append("</th>");
-        myOutput.append(theReport.makeMoneyTotal(myTax.getAmount()));
-        myOutput.append(theReport.makeMoneyTotal(myTax.getTaxation()));
-        myOutput.append("</tr>");
+        theReport.startTotalRow(myOutput, myTax.getName());
+        theReport.makeTotalCell(myOutput, myTax.getAmount());
+        theReport.makeTotalCell(myOutput, myTax.getTaxation());
+        theReport.endRow(myOutput);
 
         /* Finish the table */
-        myOutput.append("</tbody></table>");
+        theReport.endTable(myOutput);
 
         /* Format the tax parameters */
-        myOutput.append("<a name=\"TaxParms\"><h1 align=\"center\">Taxation Parameters</h1></a>");
+        theReport.makeHeading(myOutput, "Taxation Parameters");
 
         /* Format the allowances */
-        myOutput.append("<a name=\"Allowances\"><h2 align=\"center\">Allowances</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th>Name</th><th>Value</th></thead>");
-        myOutput.append("<tbody>");
-        myOutput.append("<tr><th>PersonalAllowance</th>");
-        myOutput.append(theReport.makeMoneyItem(theYear.getAllowance()));
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>Age 65-74 PersonalAllowance</th>");
-        myOutput.append(theReport.makeMoneyItem(theYear.getLoAgeAllow()));
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>Age 75+ PersonalAllowance</th>");
-        myOutput.append(theReport.makeMoneyItem(theYear.getHiAgeAllow()));
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>RentalAllowance</th>");
-        myOutput.append(theReport.makeMoneyItem(theYear.getRentalAllowance()));
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>CapitalAllowance</th>");
-        myOutput.append(theReport.makeMoneyItem(theYear.getCapitalAllow()));
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>Income Limit for AgeAllowance</th>");
-        myOutput.append(theReport.makeMoneyItem(theYear.getAgeAllowLimit()));
-        myOutput.append("</tr>");
+        theReport.makeSubHeading(myOutput, "Allowances");
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.startTableBody(myOutput);
+        theReport.startDataRow(myOutput, true, "PersonalAllowance");
+        theReport.makeValueCell(myOutput, theYear.getAllowance());
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, false, "Age 65-74 PersonalAllowance");
+        theReport.makeValueCell(myOutput, theYear.getLoAgeAllow());
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, true, "Age 75+ PersonalAllowance");
+        theReport.makeValueCell(myOutput, theYear.getHiAgeAllow());
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, false, "RentalAllowance");
+        theReport.makeValueCell(myOutput, theYear.getRentalAllowance());
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, true, "CapitalAllowance");
+        theReport.makeValueCell(myOutput, theYear.getCapitalAllow());
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, false, "Income Limit for AgeAllowance");
+        theReport.makeValueCell(myOutput, theYear.getAgeAllowLimit());
+        theReport.endRow(myOutput);
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append("<tr><th>Income Limit for PersonalAllowance</th>");
-            myOutput.append(theReport.makeMoneyItem(theYear.getAddAllowLimit()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, true, "Income Limit for PersonalAllowance");
+            theReport.makeValueCell(myOutput, theYear.getAddAllowLimit());
+            theReport.endRow(myOutput);
         }
-        myOutput.append("</tbody></table>");
+        theReport.endTable(myOutput);
 
         /* Format the Rates */
-        myOutput.append("<a name=\"Allowances\"><h2 align=\"center\">TaxRates</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th>IncomeType</th><th>LoRate</th>");
-        myOutput.append("<th>BasicRate</th><th>HiRate</th>");
+        theReport.makeSubHeading(myOutput, "TaxRates");
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "IncomeType");
+        theReport.makeTableColumn(myOutput, "LoRate");
+        theReport.makeTableColumn(myOutput, "BasicRate");
+        theReport.makeTableColumn(myOutput, "HiRate");
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append("<th>AdditionalRate</th>");
+            theReport.makeTableColumn(myOutput, "AdditionalRate");
         }
-        myOutput.append("</thead><tbody>");
-        myOutput.append("<tr><th>Salary/Rental</th>");
-        myOutput.append(theReport.makeRateItem(theYear.hasLoSalaryBand() ? theYear.getLoTaxRate() : null));
-        myOutput.append(theReport.makeRateItem(theYear.getBasicTaxRate()));
-        myOutput.append(theReport.makeRateItem(theYear.getHiTaxRate()));
+        theReport.startTableBody(myOutput);
+        theReport.startDataRow(myOutput, true, "Salary/Rental");
+        theReport.makeValueCell(myOutput, theYear.hasLoSalaryBand() ? theYear.getLoTaxRate() : null);
+        theReport.makeValueCell(myOutput, theYear.getBasicTaxRate());
+        theReport.makeValueCell(myOutput, theYear.getHiTaxRate());
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(theReport.makeRateItem(theYear.getAddTaxRate()));
+            theReport.makeValueCell(myOutput, theYear.getAddTaxRate());
         }
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>Interest</th>");
-        myOutput.append(theReport.makeRateItem(theYear.getLoTaxRate()));
-        myOutput.append(theReport.makeRateItem(theYear.getIntTaxRate()));
-        myOutput.append(theReport.makeRateItem(theYear.getHiTaxRate()));
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, false, "Interest");
+        theReport.makeValueCell(myOutput, theYear.getLoTaxRate());
+        theReport.makeValueCell(myOutput, theYear.getIntTaxRate());
+        theReport.makeValueCell(myOutput, theYear.getHiTaxRate());
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(theReport.makeRateItem(theYear.getAddTaxRate()));
+            theReport.makeValueCell(myOutput, theYear.getAddTaxRate());
         }
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>Dividends</th>");
-        myOutput.append(theReport.makeRateItem(null));
-        myOutput.append(theReport.makeRateItem(theYear.getDivTaxRate()));
-        myOutput.append(theReport.makeRateItem(theYear.getHiDivTaxRate()));
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, true, "Dividends");
+        theReport.makeValueCell(myOutput);
+        theReport.makeValueCell(myOutput, theYear.getDivTaxRate());
+        theReport.makeValueCell(myOutput, theYear.getHiDivTaxRate());
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(theReport.makeRateItem(theYear.getAddDivTaxRate()));
+            theReport.makeValueCell(myOutput, theYear.getAddDivTaxRate());
         }
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>TaxableGains</th>");
-        myOutput.append(theReport.makeRateItem(null));
-        myOutput.append(theReport.makeRateItem(theYear.getBasicTaxRate()));
-        myOutput.append(theReport.makeRateItem(theYear.getHiTaxRate()));
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, false, "TaxableGains");
+        theReport.makeValueCell(myOutput);
+        theReport.makeValueCell(myOutput, theYear.getBasicTaxRate());
+        theReport.makeValueCell(myOutput, theYear.getHiTaxRate());
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(theReport.makeRateItem(theYear.getAddTaxRate()));
+            theReport.makeValueCell(myOutput, theYear.getAddTaxRate());
         }
-        myOutput.append("</tr>");
-        myOutput.append("<tr><th>CapitalGains</th>");
-        myOutput.append(theReport.makeRateItem(null));
-        myOutput.append(theReport.makeRateItem(theYear.getCapTaxRate()));
-        myOutput.append(theReport.makeRateItem(theYear.getHiCapTaxRate()));
+        theReport.endRow(myOutput);
+        theReport.startDataRow(myOutput, true, "CapitalGains");
+        theReport.makeValueCell(myOutput);
+        theReport.makeValueCell(myOutput, theYear.getCapTaxRate());
+        theReport.makeValueCell(myOutput, theYear.getHiCapTaxRate());
         if (theYear.hasAdditionalTaxBand()) {
-            myOutput.append(theReport.makeRateItem(null));
+            theReport.makeValueCell(myOutput);
         }
-        myOutput.append("</tr>");
-        myOutput.append("</tbody></table>");
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Format the tax bands */
-        myOutput.append("<a name=\"Allowances\"><h2 align=\"center\">TaxBands</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th>Name</th><th>Value</th></thead>");
-        myOutput.append("<tbody>");
-        myOutput.append("<tr><th>Age for Tax Year</th>");
-        myOutput.append("<td align=\"right\" color=\"blue\">");
-        myOutput.append(theAnalysis.getAge());
-        myOutput.append("</td></tr>");
+        theReport.makeSubHeading(myOutput, "TaxBands");
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Value");
+        theReport.startTableBody(myOutput);
+        theReport.startDataRow(myOutput, true, "Age for Tax Year");
+        theReport.makeValueCell(myOutput, theAnalysis.getAge());
+        theReport.endRow(myOutput);
 
         /* Access the original allowance */
         myTax = myList.getTaxDetail(TaxClass.ORIGALLOW);
-        myOutput.append("<tr><th>Personal Allowance</th>");
-        myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
-        myOutput.append("</tr>");
+        theReport.startDataRow(myOutput, false, "Personal Allowance");
+        theReport.makeValueCell(myOutput, myTax.getAmount());
+        theReport.endRow(myOutput);
 
         /* if we have adjusted the allowance */
         if (theAnalysis.hasReducedAllow()) {
             /* Access the gross income */
             myTax = myList.getTaxDetail(TaxClass.GROSSINCOME);
-            myOutput.append("<tr><th>Gross Taxable Income</th>");
-            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, true, "Gross Taxable Income");
+            theReport.makeValueCell(myOutput, myTax.getAmount());
+            theReport.endRow(myOutput);
 
             /* Access the gross income */
             myTax = myList.getTaxDetail(TaxClass.ADJALLOW);
-            myOutput.append("<tr><th>Adjusted Allowance</th>");
-            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, false, "Adjusted Allowance");
+            theReport.makeValueCell(myOutput, myTax.getAmount());
+            theReport.endRow(myOutput);
         }
 
         /* Access the Low Tax Band */
+        isOdd = true;
         if (theYear.getLoBand() != null) {
-            myOutput.append("<tr><th>Low Tax Band</th>");
-            myOutput.append(theReport.makeMoneyItem(theYear.getLoBand()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, "Low Tax Band");
+            theReport.makeValueCell(myOutput, theYear.getLoBand());
+            theReport.endRow(myOutput);
+            isOdd = false;
         }
 
         /* Access the Basic Tax Band */
-        myOutput.append("<tr><th>Basic Tax Band</th>");
-        myOutput.append(theReport.makeMoneyItem(theYear.getBasicBand()));
-        myOutput.append("</tr>");
+        theReport.startDataRow(myOutput, isOdd, "Basic Tax Band");
+        theReport.makeValueCell(myOutput, theYear.getBasicBand());
+        theReport.endRow(myOutput);
 
         /* If we have a high tax band */
         if (theYear.hasAdditionalTaxBand()) {
             /* Access the gross income */
             myTax = myList.getTaxDetail(TaxClass.HITAXBAND);
-            myOutput.append("<tr><th>High Tax Band</th>");
-            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, !isOdd, "High Tax Band");
+            theReport.makeValueCell(myOutput, myTax.getAmount());
+            theReport.endRow(myOutput);
         }
-        myOutput.append("</tbody></table>");
+        theReport.endTable(myOutput);
 
         /* Add the detail */
         myOutput.append(myDetail);
@@ -1100,7 +1120,7 @@ public class AnalysisReport {
         }
 
         /* Close the document */
-        myOutput.append("</body></html>");
+        theReport.endReport(myOutput);
 
         /* Return the output */
         return myOutput.toString();
@@ -1117,19 +1137,17 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the detail */
-        myOutput.append("<a name=\"Detail");
-        myOutput.append(pSummary.getName());
-        myOutput.append("\">");
-        myOutput.append("<h2 align=\"center\">");
-        myOutput.append(pSummary.getName());
-        myOutput.append("</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th>Class</th><th>Income</th>");
-        myOutput.append("<th>Rate</th><th>Taxation Due</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.makeLinkSubHeading(myOutput, pSummary.getName());
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Class");
+        theReport.makeTableColumn(myOutput, "Income");
+        theReport.makeTableColumn(myOutput, "Rate");
+        theReport.makeTableColumn(myOutput, "Taxation Due");
+        theReport.startTableBody(myOutput);
 
         /* Access the tax bucket iterator */
         Iterator<AnalysisBucket> myIterator = myList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Transaction Detail Buckets */
         while (myIterator.hasNext()) {
@@ -1149,20 +1167,23 @@ public class AnalysisReport {
             }
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(myTax.getName());
-            myOutput.append("</th>");
-            myOutput.append(theReport.makeMoneyItem(myTax.getAmount()));
-            myOutput.append(theReport.makeRateItem(myTax.getRate()));
-            myOutput.append(theReport.makeMoneyItem(myTax.getTaxation()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, myTax.getName());
+            theReport.makeValueCell(myOutput, myTax.getAmount());
+            theReport.makeValueCell(myOutput, myTax.getRate());
+            theReport.makeValueCell(myOutput, myTax.getTaxation());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
-        myOutput.append("<tr><th><a href=\"#Top\">Total</a></th>");
-        myOutput.append(theReport.makeMoneyTotal(pSummary.getAmount()));
-        myOutput.append(theReport.makeRateItem(null));
-        myOutput.append(theReport.makeMoneyTotal(pSummary.getTaxation()));
-        myOutput.append("</tr></tbody></table>");
+        /* Build totals */
+        theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput, pSummary.getAmount());
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput, pSummary.getTaxation());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Return the output */
         return myOutput;
@@ -1179,44 +1200,49 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the detail */
-        myOutput.append("<a name=\"DetailChargeableEvents>");
-        myOutput.append("<h2 align=\"center\">Chargeable Events</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th>Date</th><th>Description</th>");
-        myOutput.append("<th>Amount</th><th>TaxCredit</th><th>Years</th>");
-        myOutput.append("<th>Slice</th><th>Taxation</th></thead>");
-        myOutput.append("<tbody>");
+        theReport.makeSubHeading(myOutput, "Chargeable Events");
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Date");
+        theReport.makeTableColumn(myOutput, "Description");
+        theReport.makeTableColumn(myOutput, "Amount");
+        theReport.makeTableColumn(myOutput, "TaxCredit");
+        theReport.makeTableColumn(myOutput, "Years");
+        theReport.makeTableColumn(myOutput, "Slice");
+        theReport.makeTableColumn(myOutput, "Taxation");
+        theReport.startTableBody(myOutput);
 
         /* Create the list iterator */
         Iterator<ChargeableEvent> myIterator = theAnalysis.getCharges().iterator();
+        boolean isOdd = true;
 
         /* Loop through the Charges */
         while (myIterator.hasNext()) {
             ChargeableEvent myCharge = myIterator.next();
 
             /* Format the detail */
-            myOutput.append("<tr><td>");
-            myOutput.append(theFormatter.formatObject(myCharge.getDate()));
-            myOutput.append("</td><td>");
-            myOutput.append(myCharge.getDesc());
-            myOutput.append("</td>");
-            myOutput.append(theReport.makeMoneyItem(myCharge.getAmount()));
-            myOutput.append(theReport.makeMoneyItem(myCharge.getTaxCredit()));
-            myOutput.append("<td>");
-            myOutput.append(myCharge.getYears());
-            myOutput.append("</td>");
-            myOutput.append(theReport.makeMoneyItem(myCharge.getSlice()));
-            myOutput.append(theReport.makeMoneyItem(myCharge.getTaxation()));
-            myOutput.append("</tr>");
+            theReport.startDataRow(myOutput, isOdd, theFormatter.formatObject(myCharge.getDate()));
+            theReport.makeValueCell(myOutput, myCharge.getDesc());
+            theReport.makeValueCell(myOutput, myCharge.getAmount());
+            theReport.makeValueCell(myOutput, myCharge.getTaxCredit());
+            theReport.makeValueCell(myOutput, myCharge.getYears());
+            theReport.makeValueCell(myOutput, myCharge.getSlice());
+            theReport.makeValueCell(myOutput, myCharge.getTaxation());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Format the totals */
-        myOutput.append("<tr><th>Totals</th><td/><td/>");
-        myOutput.append(theReport.makeMoneyTotal(myCharges.getGainsTotal()));
-        myOutput.append("<td/>");
-        myOutput.append(theReport.makeMoneyTotal(myCharges.getSliceTotal()));
-        myOutput.append(theReport.makeMoneyTotal(myCharges.getTaxTotal()));
-        myOutput.append("</tr></tbody></table>");
+        theReport.startTotalRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput, myCharges.getGainsTotal());
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput, myCharges.getSliceTotal());
+        theReport.makeTotalCell(myOutput, myCharges.getTaxTotal());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Access the Summary Tax Due Slice */
         TaxDetail myTax = myList.getTaxDetail(TaxClass.TAXDUESLICE);
@@ -1234,19 +1260,24 @@ public class AnalysisReport {
      */
     public String getBreakdownReport() {
         /* Access the Income Breakdown */
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         IncomeBreakdown myBreakdown = theAnalysisYear.getBreakdown();
 
+        /* Create the heading */
+        theReport.makeLinkHeading(myOutput, "Income Breakdown Report for "
+                                            + theDate.getYear());
+
         /* Build the report */
-        StringBuilder myBuilder = makeAccountListReport(myBreakdown.getSalary(), null);
-        myBuilder.append(makeAccountListReport(myBreakdown.getRental(), null));
-        myBuilder.append(makeAccountListReport(myBreakdown.getTaxableInterest(), null));
-        myBuilder.append(makeAccountListReport(myBreakdown.getTaxableDividend(), null));
-        myBuilder.append(makeAccountListReport(myBreakdown.getUnitTrustDividend(), null));
-        myBuilder.append(makeAccountListReport(myBreakdown.getTaxFreeInterest(), null));
-        myBuilder.append(makeAccountListReport(myBreakdown.getTaxFreeDividend(), null));
+        myOutput.append(makeAccountListReport(myBreakdown.getSalary(), null));
+        myOutput.append(makeAccountListReport(myBreakdown.getRental(), null));
+        myOutput.append(makeAccountListReport(myBreakdown.getTaxableInterest(), null));
+        myOutput.append(makeAccountListReport(myBreakdown.getTaxableDividend(), null));
+        myOutput.append(makeAccountListReport(myBreakdown.getUnitTrustDividend(), null));
+        myOutput.append(makeAccountListReport(myBreakdown.getTaxFreeInterest(), null));
+        myOutput.append(makeAccountListReport(myBreakdown.getTaxFreeDividend(), null));
 
         /* Return the report */
-        return myBuilder.toString();
+        return myOutput.toString();
     }
 
     /**
@@ -1265,19 +1296,19 @@ public class AnalysisReport {
         }
 
         /* Format the detail */
-        myOutput.append("<a name=\"Income");
-        myOutput.append(pList.getName());
-        myOutput.append("\">");
-        myOutput.append("<h2 align=\"center\">");
-        myOutput.append(pList.getName());
-        myOutput.append("</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th>Account</th>");
-        myOutput.append("<th>Gross</th><th>Net<th>TaxCredit</h></thead>");
-        myOutput.append("<tbody>");
+        String myLinkName = pList.getName();
+        Account myOwner = pList.getOwner();
+        theReport.makeLinkSubHeading(myOutput, myLinkName, (myOwner == null) ? myLinkName : myOwner.getName());
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Account");
+        theReport.makeTableColumn(myOutput, "Gross");
+        theReport.makeTableColumn(myOutput, "Net");
+        theReport.makeTableColumn(myOutput, "TaxCredit");
+        theReport.startTableBody(myOutput);
 
         /* Access the account iterator */
         Iterator<AccountRecord> myIterator = pList.iterator();
+        boolean isOdd = true;
 
         /* Loop through the Accounts associated with this List */
         while (myIterator.hasNext()) {
@@ -1285,48 +1316,45 @@ public class AnalysisReport {
 
             /* Access the name of the sublist */
             String myListName = myAccount.getChildren().getName();
+            String myName = myAccount.getAccount().getName();
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\"><a href=\"#Income");
-            myOutput.append(myListName);
-            myOutput.append("\">");
-            myOutput.append(myAccount.getAccount().getName());
-            myOutput.append("</a></th>");
+            theReport.startLinkRow(myOutput, isOdd, myListName, myName);
 
             /* Format the totals */
             IncomeTotals myTotals = myAccount.getTotals();
-            myOutput.append(theReport.makeMoneyItem(myTotals.getGrossIncome()));
-            myOutput.append(theReport.makeMoneyItem(myTotals.getNetIncome()));
-            myOutput.append(theReport.makeMoneyItem(myTotals.getTaxCredit()));
-            myOutput.append("</tr>");
+            theReport.makeValueCell(myOutput, myTotals.getGrossIncome());
+            theReport.makeValueCell(myOutput, myTotals.getNetIncome());
+            theReport.makeValueCell(myOutput, myTotals.getTaxCredit());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
 
             /* If we have events */
             if (myAccount.getEvents().size() > 0) {
                 /* Add the child report */
-                myDetail.append(makeAccountEventReport(myAccount, pList.getName()));
+                myDetail.append(makeAccountEventReport(myAccount, myLinkName));
 
                 /* If we have children */
             } else if (myAccount.getChildren().size() > 0) {
                 /* Add the child report */
-                myDetail.append(makeAccountListReport(myAccount.getChildren(), pList.getName()));
+                myDetail.append(makeAccountListReport(myAccount.getChildren(), myLinkName));
             }
         }
 
         /* Build the list totals */
         IncomeTotals myTotals = pList.getTotals();
-        myOutput.append("<tr><th>");
         if (pReturn != null) {
-            myOutput.append("<a href=\"#Income");
-            myOutput.append(pReturn);
-            myOutput.append("\">Total</a>");
+            theReport.startTotalDataLinkRow(myOutput, pReturn, TOTAL_TEXT);
         } else {
-            myOutput.append("Total");
+            theReport.startTotalRow(myOutput, TOTAL_TEXT);
         }
-        myOutput.append("</th>");
-        myOutput.append(theReport.makeMoneyTotal(myTotals.getGrossIncome()));
-        myOutput.append(theReport.makeMoneyTotal(myTotals.getNetIncome()));
-        myOutput.append(theReport.makeMoneyTotal(myTotals.getTaxCredit()));
-        myOutput.append("</tr></tbody></table>");
+        theReport.makeTotalCell(myOutput, myTotals.getGrossIncome());
+        theReport.makeTotalCell(myOutput, myTotals.getNetIncome());
+        theReport.makeTotalCell(myOutput, myTotals.getTaxCredit());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Append the detail */
         myOutput.append(myDetail);
@@ -1346,30 +1374,27 @@ public class AnalysisReport {
         /* Format the detail */
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
         Account myAccount = pAccount.getAccount();
-        myOutput.append("<a name=\"Income");
-        myOutput.append(pAccount.getChildren().getName());
-        myOutput.append("\">");
-        myOutput.append("<h2 align=\"center\">");
-        myOutput.append(myAccount.getName());
-        myOutput.append("</h2></a>");
-        myOutput.append("<table border=\"1\" width=\"90%\" align=\"center\">");
-        myOutput.append("<thead><th>Date</th><th>Description</th>");
-        myOutput.append("<th>Gross</th><th>Net<th>TaxCredit</h></thead>");
-        myOutput.append("<tbody>");
+        String myName = pAccount.getChildren().getName();
+        theReport.makeLinkSubHeading(myOutput, myName, myAccount.getName());
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Date");
+        theReport.makeTableColumn(myOutput, "Description");
+        theReport.makeTableColumn(myOutput, "Gross");
+        theReport.makeTableColumn(myOutput, "Net");
+        theReport.makeTableColumn(myOutput, "TaxCredit");
+        theReport.startTableBody(myOutput);
 
         /* Access the event iterator */
         Iterator<Event> myIterator = pAccount.getEvents().iterator();
+        boolean isOdd = true;
 
         /* Loop through the Events associated with this Account */
         while (myIterator.hasNext()) {
             Event myEvent = myIterator.next();
 
             /* Format the detail */
-            myOutput.append("<tr><th align=\"center\">");
-            myOutput.append(theFormatter.formatObject(myEvent.getDate()));
-            myOutput.append("</th><td>");
-            myOutput.append(myEvent.getDesc());
-            myOutput.append("</td>");
+            theReport.startDataRow(myOutput, isOdd, theFormatter.formatObject(myEvent.getDate()));
+            theReport.makeValueCell(myOutput, myEvent.getDesc());
 
             /* Calculate Gross */
             TransactionType myTrans = myEvent.getTransType();
@@ -1378,7 +1403,7 @@ public class AnalysisReport {
 
             /* If we are NatInsurance/Benefit */
             if ((myTrans.getTranClass() == TransClass.NATINSURANCE)
-                    || (myTrans.getTranClass() == TransClass.BENEFIT)) {
+                || (myTrans.getTranClass() == TransClass.BENEFIT)) {
                 /* Just add to gross */
                 myNet = new JMoney();
             } else if (myEvent.getTaxCredit() != null) {
@@ -1386,21 +1411,24 @@ public class AnalysisReport {
             }
 
             /* Report the values */
-            myOutput.append(theReport.makeMoneyItem(myGross));
-            myOutput.append(theReport.makeMoneyItem(myNet));
-            myOutput.append(theReport.makeMoneyItem(myEvent.getTaxCredit()));
-            myOutput.append("</tr>");
+            theReport.makeValueCell(myOutput, myGross);
+            theReport.makeValueCell(myOutput, myNet);
+            theReport.makeValueCell(myOutput, myEvent.getTaxCredit());
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Format the totals */
         IncomeTotals myTotals = pAccount.getTotals();
-        myOutput.append("<tr><th><a href=\"#");
-        myOutput.append(pReturn);
-        myOutput.append("\">Total</a></th><td/>");
-        myOutput.append(theReport.makeMoneyTotal(myTotals.getGrossIncome()));
-        myOutput.append(theReport.makeMoneyTotal(myTotals.getNetIncome()));
-        myOutput.append(theReport.makeMoneyTotal(myTotals.getTaxCredit()));
-        myOutput.append("</tr></tbody></table>");
+        theReport.startTotalDataLinkRow(myOutput, pReturn, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput, myTotals.getGrossIncome());
+        theReport.makeTotalCell(myOutput, myTotals.getNetIncome());
+        theReport.makeTotalCell(myOutput, myTotals.getTaxCredit());
+        theReport.endRow(myOutput);
+        theReport.endTable(myOutput);
 
         /* Return the output */
         return myOutput;

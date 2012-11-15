@@ -524,6 +524,7 @@ public class IncomeBreakdown
 
             /* Create the list of children */
             theChildren = new RecordList(myData, myName);
+            theChildren.theOwner = pAccount;
 
             /* Create the event list */
             theEvents = myData.getEvents().getViewList();
@@ -673,6 +674,11 @@ public class IncomeBreakdown
         private final String theName;
 
         /**
+         * The Account this list belongs to.
+         */
+        private Account theOwner = null;
+
+        /**
          * Access the DataSet for a RecordList.
          * @return the DataSet.
          */
@@ -694,6 +700,14 @@ public class IncomeBreakdown
          */
         public String getName() {
             return theName;
+        }
+
+        /**
+         * Access the owner.
+         * @return the Owner
+         */
+        public Account getOwner() {
+            return theOwner;
         }
 
         /**

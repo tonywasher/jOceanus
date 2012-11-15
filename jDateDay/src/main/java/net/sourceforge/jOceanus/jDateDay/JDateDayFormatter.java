@@ -35,7 +35,9 @@ import net.sourceforge.jOceanus.jEventManager.JEventObject;
  * Formatter for Date objects.
  * @author Tony Washer
  */
-public class JDateDayFormatter extends JEventObject implements JDateFormatter {
+public class JDateDayFormatter
+        extends JEventObject
+        implements JDateFormatter {
     /**
      * The default format.
      */
@@ -79,7 +81,7 @@ public class JDateDayFormatter extends JEventObject implements JDateFormatter {
      * @param pFormat the format string
      */
     public final void setFormat(final String pFormat) {
-        /* If the locale is the same */
+        /* If the format is the same */
         if (pFormat.equals(theFormat)) {
             /* Ignore */
             return;
@@ -106,7 +108,9 @@ public class JDateDayFormatter extends JEventObject implements JDateFormatter {
 
         /* Store the locale */
         theLocale = pLocale;
-        setFormat(theFormat);
+        String pFormat = theFormat;
+        theFormat = null;
+        setFormat(pFormat);
     }
 
     @Override

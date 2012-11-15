@@ -37,7 +37,8 @@ import javax.swing.SwingUtilities;
  */
 public class ListTest {
     /**
-     * @param args
+     * Main entry point.
+     * @param args the parameters
      */
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -48,11 +49,13 @@ public class ListTest {
         });
     }
 
+    /**
+     * Create and show the GUI.
+     */
     public static void createAndShowGUI() {
         try {
             /*
-             * for (int i = 90; i < 100; i++) { int iIndex = binaryChop(i); if (iIndex != (i / 10))
-             * System.out.println(iIndex); }
+             * for (int i = 90; i < 100; i++) { int iIndex = binaryChop(i); if (iIndex != (i / 10)) System.out.println(iIndex); }
              */
             // long One = testHashMap(false);
             // long Two = testHashMap(true);
@@ -83,7 +86,10 @@ public class ListTest {
             myList.add(j);
             myCache.add(j);
         }
-        System.out.println("InsertOK " + myList.size() + ":" + (System.nanoTime() - myStart));
+        System.out.println("InsertOK "
+                           + myList.size()
+                           + ":"
+                           + (System.nanoTime() - myStart));
 
         /* Loop through the list elements */
         Integer myLast = null;
@@ -92,9 +98,11 @@ public class ListTest {
         while (myIterator.hasNext()) {
             /* Access the element */
             Integer myElement = myIterator.next();
-            if ((myLast != null) && (myElement < myLast)) {
+            if ((myLast != null)
+                && (myElement < myLast)) {
                 /* Print it */
-                System.out.println("Out of sequence " + myElement);
+                System.out.println("Out of sequence "
+                                   + myElement);
                 ok = false;
             }
             myLast = myElement;
@@ -108,9 +116,13 @@ public class ListTest {
 
                 /* Remove it from the list */
                 if (!myList.remove(myElement))
-                    System.out.println("Failed to remove " + myElement);
+                    System.out.println("Failed to remove "
+                                       + myElement);
             }
-            System.out.println("RemoveOK " + myList.size() + ":" + (System.nanoTime() - myStart));
+            System.out.println("RemoveOK "
+                               + myList.size()
+                               + ":"
+                               + (System.nanoTime() - myStart));
         }
     }
 
@@ -138,7 +150,12 @@ public class ListTest {
             for (Integer i = 0; i < iNumElements; i++) {
                 Integer myValue = myMap.get(i.toString());
                 if (!i.equals(myValue)) {
-                    System.out.println("Help " + useNested + " " + myValue + " " + i);
+                    System.out.println("Help "
+                                       + useNested
+                                       + " "
+                                       + myValue
+                                       + " "
+                                       + i);
                 }
             }
         }
@@ -148,10 +165,14 @@ public class ListTest {
             myMap.remove(i.toString());
         }
         if (myMap.size() != 0) {
-            System.out.println("HelpRemove " + useNested + " " + myMap.size());
+            System.out.println("HelpRemove "
+                               + useNested
+                               + " "
+                               + myMap.size());
         }
 
-        return System.nanoTime() - myStart;
+        return System.nanoTime()
+               - myStart;
     }
 
     protected static void testHashMapIterator() {
@@ -178,11 +199,13 @@ public class ListTest {
         myMap.put("nullValue", null);
         myBaseMap.put("nullValue", null);
 
-        if ((!myMap.containsKey(null)) || (!myMap.containsValue(null))) {
+        if ((!myMap.containsKey(null))
+            || (!myMap.containsValue(null))) {
             System.out.println("failed to check null keyy/value");
         }
 
-        if ((myMap.containsKey("BadKey")) || (myMap.containsValue(-14))) {
+        if ((myMap.containsKey("BadKey"))
+            || (myMap.containsValue(-14))) {
             System.out.println("failed to check missing key/value with nulls");
         }
 
@@ -190,13 +213,16 @@ public class ListTest {
         Iterator<String> myIterator = myMap.keySet().iterator();
         while (myIterator.hasNext()) {
             String myKey = myIterator.next();
-            if ((myBaseMap.remove(myKey) == null) && (!myKey.equals("nullValue"))) {
-                System.out.println("failed to remove " + myKey);
+            if ((myBaseMap.remove(myKey) == null)
+                && (!myKey.equals("nullValue"))) {
+                System.out.println("failed to remove "
+                                   + myKey);
             }
         }
 
         if (myBaseMap.size() != 0) {
-            System.out.println("failed to remove all keys" + myBaseMap.size());
+            System.out.println("failed to remove all keys"
+                               + myBaseMap.size());
         }
     }
 }

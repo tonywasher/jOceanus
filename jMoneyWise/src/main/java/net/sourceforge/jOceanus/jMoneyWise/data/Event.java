@@ -895,6 +895,7 @@ public class Event
 
     /**
      * The BaseEvent List class.
+     * @param <T> the Event type
      */
     public abstract static class BaseEventList<T extends Event>
             extends EventBaseList<T> {
