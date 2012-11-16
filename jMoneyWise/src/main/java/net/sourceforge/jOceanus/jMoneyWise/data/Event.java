@@ -208,7 +208,7 @@ public class Event
      * Obtain InfoSet.
      * @return the infoSet
      */
-    protected EventInfoSet getInfoSet() {
+    public EventInfoSet getInfoSet() {
         return theInfoSet;
     }
 

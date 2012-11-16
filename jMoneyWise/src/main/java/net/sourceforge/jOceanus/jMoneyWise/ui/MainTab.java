@@ -42,20 +42,20 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
 import net.sourceforge.jOceanus.jHelpManager.HelpException;
 import net.sourceforge.jOceanus.jHelpManager.HelpModule;
-import net.sourceforge.jOceanus.jMoneyWise.core.LoadArchive;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.help.FinanceHelp;
+import net.sourceforge.jOceanus.jMoneyWise.threads.LoadArchive;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jSvnManager.threads.SubversionBackup;
-
 /**
  * Main Window for jMoneyWise.
  * @author Tony Washer
  */
-public class MainTab extends MainWindow<FinanceData> {
+public class MainTab
+        extends MainWindow<FinanceData> {
     /**
      * Add pattern action event.
      */
@@ -281,8 +281,10 @@ public class MainTab extends MainWindow<FinanceData> {
     @Override
     public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
-        return theExtract.hasUpdates() || theAccountCtl.hasUpdates() || theSpotView.hasUpdates()
-                || theMaint.hasUpdates();
+        return theExtract.hasUpdates()
+               || theAccountCtl.hasUpdates()
+               || theSpotView.hasUpdates()
+               || theMaint.hasUpdates();
     }
 
     @Override
@@ -326,8 +328,7 @@ public class MainTab extends MainWindow<FinanceData> {
         ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
 
         /* Create the worker thread */
-        SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus,
-                theView.getPreferenceMgr());
+        SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus, theView.getPreferenceMgr());
         myStatus.registerThread(myThread);
         startThread(myThread);
     }
@@ -486,7 +487,8 @@ public class MainTab extends MainWindow<FinanceData> {
     /**
      * The listener class.
      */
-    private final class MainListener implements ActionListener, ChangeListener {
+    private final class MainListener
+            implements ActionListener, ChangeListener {
         @Override
         public void stateChanged(final ChangeEvent e) {
             Object o = e.getSource();
@@ -504,8 +506,10 @@ public class MainTab extends MainWindow<FinanceData> {
                 theComboList.refreshData();
 
                 /* else if it is one of the sub-panels */
-            } else if (theExtract.equals(o) || theAccountCtl.equals(o) || theMaint.equals(o)
-                    || theSpotView.equals(o)) {
+            } else if (theExtract.equals(o)
+                       || theAccountCtl.equals(o)
+                       || theMaint.equals(o)
+                       || theSpotView.equals(o)) {
                 /* Set the visibility */
                 setVisibility();
             }

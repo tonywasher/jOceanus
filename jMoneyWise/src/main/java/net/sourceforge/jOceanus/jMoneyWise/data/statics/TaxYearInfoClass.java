@@ -25,12 +25,12 @@ package net.sourceforge.jOceanus.jMoneyWise.data.statics;
 import net.sourceforge.jOceanus.jDataManager.DataType;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticInterface;
+import net.sourceforge.jOceanus.jDataModels.data.DataInfoClass;
 
 /**
  * Enumeration of Tax Year Info Classes.
  */
-public enum TaxYearInfoClass implements StaticInterface {
+public enum TaxYearInfoClass implements DataInfoClass {
     /**
      * Personal Allowance.
      */
@@ -146,30 +146,24 @@ public enum TaxYearInfoClass implements StaticInterface {
      */
     private final DataType theDataType;
 
-    /**
-     * Obtain Class Id.
-     * @return the class id
-     */
     @Override
     public int getClassId() {
         return theId;
     }
 
-    /**
-     * Obtain Class Order.
-     * @return the class order
-     */
     @Override
     public int getOrder() {
         return theOrder;
     }
 
-    /**
-     * Obtain Data Type.
-     * @return the date type
-     */
+    @Override
     public DataType getDataType() {
         return theDataType;
+    }
+
+    @Override
+    public boolean isLink() {
+        return false;
     }
 
     /**
@@ -198,6 +192,7 @@ public enum TaxYearInfoClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid TaxYear Info Class Id: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid TaxYear Info Class Id: "
+                                                      + id);
     }
 }

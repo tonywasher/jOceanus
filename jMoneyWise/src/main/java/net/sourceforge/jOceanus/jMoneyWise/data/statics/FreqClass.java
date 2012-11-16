@@ -24,7 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.data.statics;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticInterface;
+import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
 
 /**
  * Enumeration of Frequency Classes.
@@ -90,19 +90,11 @@ public enum FreqClass implements StaticInterface {
      */
     private final int theAdjust;
 
-    /**
-     * Obtain Class Id.
-     * @return the class id
-     */
     @Override
     public int getClassId() {
         return theId;
     }
 
-    /**
-     * Obtain Class Order.
-     * @return the class order
-     */
     @Override
     public int getOrder() {
         return theOrder;
@@ -142,6 +134,7 @@ public enum FreqClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid Frequency Class Id: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid Frequency Class Id: "
+                                                      + id);
     }
 }

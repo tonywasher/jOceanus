@@ -148,7 +148,7 @@ public class SheetAccountPrice
         writeInteger(COL_ID, pItem.getId());
         writeString(COL_ACCOUNT, pItem.getAccountName());
         writeDate(COL_DATE, pItem.getDate());
-        writeNumber(COL_PRICE, pItem.getPrice());
+        writeDecimal(COL_PRICE, pItem.getPrice());
     }
 
     @Override

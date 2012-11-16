@@ -28,14 +28,17 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
+import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -86,6 +89,16 @@ public class SheetAccount
     private final AccountList theList;
 
     /**
+     * Account info list.
+     */
+    private final AccountInfoList theInfoList;
+
+    /**
+     * DataInfoSet Helper.
+     */
+    private final SheetAccountInfoSet theInfoSheet = new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CLOSED);
+
+    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the input spreadsheet
      */
@@ -96,6 +109,7 @@ public class SheetAccount
         /* Access the Lists */
         FinanceData myData = pReader.getData();
         theList = myData.getAccounts();
+        theInfoList = myData.getAccountInfo();
         setDataList(theList);
     }
 
@@ -108,7 +122,9 @@ public class SheetAccount
         super(pWriter, AREA_ACCOUNTS);
 
         /* Access the Accounts list */
-        theList = pWriter.getData().getAccounts();
+        FinanceData myData = pWriter.getData();
+        theList = myData.getAccounts();
+        theInfoList = myData.getAccountInfo();
         setDataList(theList);
     }
 
@@ -142,7 +158,10 @@ public class SheetAccount
         Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Load the item */
-        theList.addOpenItem(myID, myName, myActType, myDesc, isClosed);
+        Account myAccount = theList.addOpenItem(myID, myName, myActType, myDesc, isClosed);
+
+        /* Load infoSet items */
+        theInfoSheet.loadDataInfoSet(theInfoList, myAccount);
     }
 
     @Override
@@ -163,20 +182,10 @@ public class SheetAccount
         writeString(COL_NAME, pItem.getName());
         writeString(COL_ACCOUNTTYPE, pItem.getActTypeName());
         writeString(COL_DESC, pItem.getDesc());
-        // if (pItem.getParent() != null) {
-        // writeString(COL_PARENT, pItem.getParent().getName());
-        // }
-        // if (pItem.getAlias() != null) {
-        // writeString(COL_ALIAS, pItem.getAlias().getName());
-        // }
         writeBoolean(COL_CLOSED, pItem.isClosed());
-        // writeDate(COL_MATURITY, pItem.getMaturity());
-        // writeChars(COL_WEBSITE, pItem.getWebSite());
-        // writeChars(COL_CUSTNO, pItem.getCustNo());
-        // writeChars(COL_USERID, pItem.getUserId());
-        // writeChars(COL_PASSWD, pItem.getPassword());
-        // writeChars(COL_ACCOUNT, pItem.getAccount());
-        // writeChars(COL_NOTES, pItem.getNotes());
+
+        /* Write infoSet fields */
+        theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
     }
 
     @Override
@@ -185,27 +194,20 @@ public class SheetAccount
         writeHeader(COL_NAME, AccountBase.FIELD_NAME.getName());
         writeHeader(COL_ACCOUNTTYPE, AccountBase.FIELD_TYPE.getName());
         writeHeader(COL_DESC, AccountBase.FIELD_DESC.getName());
-        // writeHeader(COL_PARENT, Account.FIELD_PARENT.getName());
-        // writeHeader(COL_ALIAS, Account.FIELD_ALIAS.getName());
         writeHeader(COL_CLOSED, AccountBase.FIELD_CLOSED.getName());
-        // writeHeader(COL_MATURITY, Account.FIELD_MATURITY.getName());
-        // writeHeader(COL_WEBSITE, Account.FIELD_WEBSITE.getName());
-        // writeHeader(COL_CUSTNO, Account.FIELD_CUSTNO.getName());
-        // writeHeader(COL_USERID, Account.FIELD_USERID.getName());
-        // writeHeader(COL_PASSWD, Account.FIELD_PASSWORD.getName());
-        // writeHeader(COL_ACCOUNT, Account.FIELD_ACCOUNT.getName());
-        // writeHeader(COL_NOTES, Account.FIELD_NOTES.getName());
+
+        /* write infoSet titles */
+        theInfoSheet.writeTitles();
 
         /* Set the Account column width */
         setColumnWidth(COL_NAME, AccountBase.NAMELEN);
         setColumnWidth(COL_ACCOUNTTYPE, StaticData.NAMELEN);
         setColumnWidth(COL_DESC, AccountBase.DESCLEN);
-        // setColumnWidth(COL_PARENT, Account.NAMELEN);
-        // setColumnWidth(COL_ALIAS, Account.NAMELEN);
+        theInfoSheet.setColumnWidth(AccountInfoClass.Parent, AccountBase.NAMELEN);
+        theInfoSheet.setColumnWidth(AccountInfoClass.Alias, AccountBase.NAMELEN);
 
         /* Set Boolean column */
         setBooleanColumn(COL_CLOSED);
-        // setDateColumn(COL_MATURITY);
     }
 
     @Override
@@ -220,8 +222,8 @@ public class SheetAccount
 
             /* Set the Validations */
             applyDataValidation(COL_ACCOUNTTYPE, SheetAccountType.AREA_ACCOUNTTYPENAMES);
-            // applyDataValidation(COL_PARENT, AREA_ACCOUNTNAMES);
-            // applyDataValidation(COL_ALIAS, AREA_ACCOUNTNAMES);
+            theInfoSheet.applyDataValidation(AccountInfoClass.Parent, AREA_ACCOUNTNAMES);
+            theInfoSheet.applyDataValidation(AccountInfoClass.Alias, AREA_ACCOUNTNAMES);
         }
     }
 
@@ -295,17 +297,17 @@ public class SheetAccount
                     /* Handle parent which may be missing */
                     myCell = myRow.getCell(myCol
                                            + iAdjust++);
-                    Account myParent = null;
+                    String myParent = null;
                     if (myCell != null) {
-                        myParent = myList.findItemByName(myCell.getStringCellValue());
+                        myParent = myCell.getStringCellValue();
                     }
 
                     /* Handle alias which may be missing */
                     myCell = myRow.getCell(myCol
                                            + iAdjust++);
-                    Account myAlias = null;
+                    String myAlias = null;
                     if (myCell != null) {
-                        myAlias = myList.findItemByName(myCell.getStringCellValue());
+                        myAlias = myCell.getStringCellValue();
                     }
 
                     /* Handle closed which may be missing */
@@ -344,5 +346,24 @@ public class SheetAccount
 
         /* Return to caller */
         return true;
+    }
+
+    /**
+     * AccountInfoSet sheet.
+     */
+    private static class SheetAccountInfoSet
+            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
+
+        /**
+         * Constructor.
+         * @param pClass the info type class
+         * @param pOwner the Owner
+         * @param pBaseCol the base column
+         */
+        public SheetAccountInfoSet(final Class<AccountInfoClass> pClass,
+                                   final SheetDataItem<Account> pOwner,
+                                   final int pBaseCol) {
+            super(pClass, pOwner, pBaseCol);
+        }
     }
 }

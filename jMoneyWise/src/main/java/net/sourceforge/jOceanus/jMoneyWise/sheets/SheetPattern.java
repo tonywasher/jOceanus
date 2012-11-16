@@ -184,7 +184,7 @@ public class SheetPattern
         writeString(COL_FREQ, pItem.getFrequencyName());
         writeDate(COL_DATE, pItem.getDate());
         writeString(COL_DESC, pItem.getDesc());
-        writeNumber(COL_AMOUNT, pItem.getAmount());
+        writeDecimal(COL_AMOUNT, pItem.getAmount());
     }
 
     @Override

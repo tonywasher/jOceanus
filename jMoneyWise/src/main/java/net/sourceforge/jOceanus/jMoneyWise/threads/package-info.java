@@ -23,5 +23,5 @@
 /**
  * Core program control for jMoneyWise.
  */
-package net.sourceforge.jOceanus.jMoneyWise.core;
+package net.sourceforge.jOceanus.jMoneyWise.threads;
 

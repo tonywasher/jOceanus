@@ -215,7 +215,7 @@ public class TaxYearInfo
                         final Integer uId,
                         final TaxYearInfoType pInfoType,
                         final TaxYear pTaxYear,
-                        final String pValue) throws JDataException {
+                        final Object pValue) throws JDataException {
         /* Initialise the item */
         super(pList, uId, pInfoType, pTaxYear);
 
@@ -520,18 +520,11 @@ public class TaxYearInfo
             append(myInfo);
         }
 
-        /**
-         * Add a TaxYearInfo to the list.
-         * @param uId the Id of the tax info
-         * @param pTaxYear the tax Year
-         * @param pInfoClass the Class of the account info type
-         * @param pValue the value of the tax info
-         * @throws JDataException on error
-         */
+        @Override
         public void addOpenItem(final Integer uId,
                                 final TaxYear pTaxYear,
                                 final TaxYearInfoClass pInfoClass,
-                                final String pValue) throws JDataException {
+                                final Object pValue) throws JDataException {
             /* Ignore item if it is null */
             if (pValue == null) {
                 return;

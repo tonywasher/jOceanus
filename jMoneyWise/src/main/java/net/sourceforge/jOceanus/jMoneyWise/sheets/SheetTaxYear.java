@@ -29,14 +29,17 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
+import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearBase;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.YearRange;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -66,114 +69,19 @@ public class SheetTaxYear
     private static final int COL_REGIME = COL_TAXYEAR + 1;
 
     /**
-     * Allowance column.
-     */
-    private static final int COL_ALLOW = 3;
-
-    /**
-     * LoAgeAllow column.
-     */
-    private static final int COL_LOAGEALLOW = 4;
-
-    /**
-     * HiAgeAllow column.
-     */
-    private static final int COL_HIAGEALLOW = 5;
-
-    /**
-     * CapitalAllow column.
-     */
-    private static final int COL_CAPALLOW = 6;
-
-    /**
-     * RentalAllow column.
-     */
-    private static final int COL_RENTALLOW = 7;
-
-    /**
-     * AgeAllowLimit column.
-     */
-    private static final int COL_AGEALLOWLMT = 8;
-
-    /**
-     * LoTaxBand column.
-     */
-    private static final int COL_LOBAND = 9;
-
-    /**
-     * BasicTaxBand column.
-     */
-    private static final int COL_BASICBAND = 10;
-
-    /**
-     * LoTaxRate column.
-     */
-    private static final int COL_LOTAX = 11;
-
-    /**
-     * BasicTaxRate column.
-     */
-    private static final int COL_BASICTAX = 12;
-
-    /**
-     * HiTaxRate column.
-     */
-    private static final int COL_HITAX = 13;
-
-    /**
-     * AddTaxRate column.
-     */
-    private static final int COL_ADDTAX = 14;
-
-    /**
-     * IntTaxRate column.
-     */
-    private static final int COL_INTTAX = 15;
-
-    /**
-     * DivTaxRate column.
-     */
-    private static final int COL_DIVTAX = 16;
-
-    /**
-     * HiDivTaxRate column.
-     */
-    private static final int COL_HIDIVTAX = 17;
-
-    /**
-     * AddDivTaxRate column.
-     */
-    private static final int COL_ADDDIVTAX = 18;
-
-    /**
-     * CapTaxRate column.
-     */
-    private static final int COL_CAPTAX = 19;
-
-    /**
-     * HiCapTaxRate column.
-     */
-    private static final int COL_HICAPTAX = 20;
-
-    /**
-     * AddIncomeLimit column.
-     */
-    private static final int COL_ADDINCLMT = 21;
-
-    /**
-     * AddIncomeBoundary column.
-     */
-    private static final int COL_ADDINCBND = 22;
-
-    /**
      * TaxYear data list.
      */
     private final TaxYearList theList;
 
     /**
-     * DataSet.
+     * TaxYear info list.
      */
-    private final FinanceData theData;
+    private final TaxInfoList theInfoList;
+
+    /**
+     * DataInfoSet Helper.
+     */
+    private final SheetTaxInfoSet theInfoSheet = new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
 
     /**
      * Constructor for loading a spreadsheet.
@@ -184,8 +92,9 @@ public class SheetTaxYear
         super(pReader, AREA_TAXYEARS);
 
         /* Access the Lists */
-        theData = pReader.getData();
-        theList = theData.getTaxYears();
+        FinanceData myData = pReader.getData();
+        theList = myData.getTaxYears();
+        theInfoList = myData.getTaxInfo();
         setDataList(theList);
     }
 
@@ -198,8 +107,9 @@ public class SheetTaxYear
         super(pWriter, AREA_TAXYEARS);
 
         /* Access the TaxYears list */
-        theData = pWriter.getData();
-        theList = theData.getTaxYears();
+        FinanceData myData = pWriter.getData();
+        theList = myData.getTaxYears();
+        theInfoList = myData.getTaxInfo();
         setDataList(theList);
     }
 
@@ -227,30 +137,11 @@ public class SheetTaxYear
         /* Access the year */
         Date myYear = loadDate(COL_TAXYEAR);
 
-        /* Access the binary values */
-        // String myAllowance = loadString(COL_ALLOW);
-        // String myLoAgeAllw = loadString(COL_LOAGEALLOW);
-        // String myHiAgeAllw = loadString(COL_HIAGEALLOW);
-        // String myCapAllow = loadString(COL_CAPALLOW);
-        // String myRental = loadString(COL_RENTALLOW);
-        // String myAgeLimit = loadString(COL_AGEALLOWLMT);
-        // String myLoBand = loadString(COL_LOBAND);
-        // String myBasicBand = loadString(COL_BASICBAND);
-        // String myLoTax = loadString(COL_LOTAX);
-        // String myBasicTax = loadString(COL_BASICTAX);
-        // String myHiTax = loadString(COL_HITAX);
-        // String myAddTax = loadString(COL_ADDTAX);
-        // String myIntTax = loadString(COL_INTTAX);
-        // String myDivTax = loadString(COL_DIVTAX);
-        // String myHiDivTax = loadString(COL_HIDIVTAX);
-        // String myAddDivTax = loadString(COL_ADDDIVTAX);
-        // String myCapTax = loadString(COL_CAPTAX);
-        // String myHiCapTax = loadString(COL_HICAPTAX);
-        // String myAddLimit = loadString(COL_ADDINCLMT);
-        // String myAddBound = loadString(COL_ADDINCBND);
-
         /* Add the Tax Year */
-        theList.addOpenItem(myID, myTaxRegime, myYear);
+        TaxYear myTaxYear = theList.addOpenItem(myID, myTaxRegime, myYear);
+
+        /* Load infoSet items */
+        theInfoSheet.loadDataInfoSet(theInfoList, myTaxYear);
     }
 
     @Override
@@ -267,26 +158,9 @@ public class SheetTaxYear
         writeInteger(COL_ID, pItem.getId());
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
         writeString(COL_REGIME, pItem.getTaxRegimeName());
-        writeNumber(COL_ALLOW, pItem.getAllowance());
-        writeNumber(COL_LOAGEALLOW, pItem.getLoAgeAllow());
-        writeNumber(COL_HIAGEALLOW, pItem.getHiAgeAllow());
-        writeNumber(COL_CAPALLOW, pItem.getCapitalAllow());
-        writeNumber(COL_RENTALLOW, pItem.getRentalAllowance());
-        writeNumber(COL_AGEALLOWLMT, pItem.getAgeAllowLimit());
-        writeNumber(COL_LOBAND, pItem.getLoBand());
-        writeNumber(COL_BASICBAND, pItem.getBasicBand());
-        writeNumber(COL_LOTAX, pItem.getLoTaxRate());
-        writeNumber(COL_BASICTAX, pItem.getBasicTaxRate());
-        writeNumber(COL_HITAX, pItem.getHiTaxRate());
-        writeNumber(COL_ADDTAX, pItem.getAddTaxRate());
-        writeNumber(COL_INTTAX, pItem.getIntTaxRate());
-        writeNumber(COL_DIVTAX, pItem.getDivTaxRate());
-        writeNumber(COL_HIDIVTAX, pItem.getHiDivTaxRate());
-        writeNumber(COL_ADDDIVTAX, pItem.getAddDivTaxRate());
-        writeNumber(COL_CAPTAX, pItem.getCapTaxRate());
-        writeNumber(COL_HICAPTAX, pItem.getHiCapTaxRate());
-        writeNumber(COL_ADDINCLMT, pItem.getAddAllowLimit());
-        writeNumber(COL_ADDINCBND, pItem.getAddIncBound());
+
+        /* Write infoSet fields */
+        theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
     }
 
     @Override
@@ -294,60 +168,23 @@ public class SheetTaxYear
         /* Write titles */
         writeHeader(COL_TAXYEAR, TaxYearBase.FIELD_TAXYEAR.getName());
         writeHeader(COL_REGIME, TaxYearBase.FIELD_REGIME.getName());
-        writeHeader(COL_ALLOW, TaxYear.FIELD_ALLOW.getName());
-        writeHeader(COL_LOAGEALLOW, TaxYear.FIELD_LOAGAL.getName());
-        writeHeader(COL_HIAGEALLOW, TaxYear.FIELD_HIAGAL.getName());
-        writeHeader(COL_CAPALLOW, TaxYear.FIELD_CAPALW.getName());
-        writeHeader(COL_RENTALLOW, TaxYear.FIELD_RENTAL.getName());
-        writeHeader(COL_AGEALLOWLMT, TaxYear.FIELD_AGELMT.getName());
-        writeHeader(COL_LOBAND, TaxYear.FIELD_LOBAND.getName());
-        writeHeader(COL_BASICBAND, TaxYear.FIELD_BSBAND.getName());
-        writeHeader(COL_LOTAX, TaxYear.FIELD_LOTAX.getName());
-        writeHeader(COL_BASICTAX, TaxYear.FIELD_BASTAX.getName());
-        writeHeader(COL_HITAX, TaxYear.FIELD_HITAX.getName());
-        writeHeader(COL_ADDTAX, TaxYear.FIELD_ADDTAX.getName());
-        writeHeader(COL_INTTAX, TaxYear.FIELD_INTTAX.getName());
-        writeHeader(COL_DIVTAX, TaxYear.FIELD_DIVTAX.getName());
-        writeHeader(COL_HIDIVTAX, TaxYear.FIELD_HDVTAX.getName());
-        writeHeader(COL_ADDDIVTAX, TaxYear.FIELD_ADVTAX.getName());
-        writeHeader(COL_CAPTAX, TaxYear.FIELD_CAPTAX.getName());
-        writeHeader(COL_HICAPTAX, TaxYear.FIELD_HCPTAX.getName());
-        writeHeader(COL_ADDINCLMT, TaxYear.FIELD_ADDLMT.getName());
-        writeHeader(COL_ADDINCBND, TaxYear.FIELD_ADDBDY.getName());
+
+        /* write infoSet titles */
+        theInfoSheet.writeTitles();
 
         /* Set the String column width */
         setColumnWidth(COL_REGIME, StaticData.NAMELEN);
 
-        /* Set Number columns */
+        /* Set Date columns */
         setDateColumn(COL_TAXYEAR);
-        setMoneyColumn(COL_ALLOW);
-        setMoneyColumn(COL_LOAGEALLOW);
-        setMoneyColumn(COL_HIAGEALLOW);
-        setMoneyColumn(COL_CAPALLOW);
-        setMoneyColumn(COL_RENTALLOW);
-        setMoneyColumn(COL_AGEALLOWLMT);
-        setMoneyColumn(COL_LOBAND);
-        setMoneyColumn(COL_BASICBAND);
-        setMoneyColumn(COL_ADDINCLMT);
-        setMoneyColumn(COL_ADDINCBND);
-        setRateColumn(COL_LOTAX);
-        setRateColumn(COL_BASICTAX);
-        setRateColumn(COL_HITAX);
-        setRateColumn(COL_ADDTAX);
-        setRateColumn(COL_INTTAX);
-        setRateColumn(COL_DIVTAX);
-        setRateColumn(COL_HIDIVTAX);
-        setRateColumn(COL_ADDDIVTAX);
-        setRateColumn(COL_CAPTAX);
-        setRateColumn(COL_HICAPTAX);
     }
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(COL_ADDINCBND);
+        nameRange(COL_REGIME);
 
-        /* If we are creating a backup */
+        /* If we are not creating a backup */
         if (!isBackup()) {
             /* Apply validation */
             applyDataValidation(COL_REGIME, SheetTaxRegime.AREA_TAXREGIMENAMES);
@@ -550,5 +387,25 @@ public class SheetTaxYear
 
         /* Return to caller */
         return true;
+    }
+
+    /**
+     * TaxYearInfoSet sheet.
+     */
+    private static class SheetTaxInfoSet
+            extends SheetDataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
+
+        /**
+         * Constructor.
+         * @param pClass the info type class
+         * @param pOwner the Owner
+         * @param pBaseCol the base column
+         */
+        public SheetTaxInfoSet(final Class<TaxYearInfoClass> pClass,
+                               final SheetDataItem<TaxYear> pOwner,
+                               final int pBaseCol) {
+            super(pClass, pOwner, pBaseCol);
+        }
+
     }
 }

@@ -381,11 +381,25 @@ public class AccountInfo
         boolean bValueOK = false;
         switch (myType.getDataType()) {
             case INTEGER:
-                if (pValue instanceof Account) {
-                    Account myAccount = (Account) pValue;
-                    setValueValue(myAccount.getId());
-                    setValueAccount(myAccount);
-                    bValueOK = true;
+                if (myType.isLink()) {
+                    if (pValue instanceof String) {
+                        AccountList myList = getDataSet().getAccounts();
+                        Account myAccount = myList.findItemByName((String) pValue);
+                        if (myAccount == null) {
+                            throw new JDataException(ExceptionClass.DATA, this, "Invalid AccountName ["
+                                                                                + pValue
+                                                                                + "]");
+                        }
+                        setValueValue(myAccount.getId());
+                        setValueAccount(myAccount);
+                        bValueOK = true;
+                    }
+                    if (pValue instanceof Account) {
+                        Account myAccount = (Account) pValue;
+                        setValueValue(myAccount.getId());
+                        setValueAccount(myAccount);
+                        bValueOK = true;
+                    }
                 }
                 break;
             case DATEDAY:
@@ -578,14 +592,7 @@ public class AccountInfo
             append(myInfo);
         }
 
-        /**
-         * Add an AccountInfo to the list.
-         * @param uId the Id of the info
-         * @param pAccount the account
-         * @param pInfoClass the Class of the account info type
-         * @param pValue the value of the account info
-         * @throws JDataException on error
-         */
+        @Override
         public void addOpenItem(final Integer uId,
                                 final Account pAccount,
                                 final AccountInfoClass pInfoClass,

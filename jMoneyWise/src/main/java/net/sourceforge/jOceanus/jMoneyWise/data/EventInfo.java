@@ -406,16 +406,26 @@ public class EventInfo
         boolean bValueOK = false;
         switch (myType.getDataType()) {
             case INTEGER:
-                if ((pValue instanceof Integer)
-                    && (!myType.isLink())) {
+                if (myType.isLink()) {
+                    if (pValue instanceof Account) {
+                        Account myAccount = (Account) pValue;
+                        setValueValue(myAccount.getId());
+                        setValueAccount(myAccount);
+                        bValueOK = true;
+                    } else if (pValue instanceof String) {
+                        AccountList myList = myDataSet.getAccounts();
+                        Account myAccount = myList.findItemByName((String) pValue);
+                        if (myAccount == null) {
+                            throw new JDataException(ExceptionClass.DATA, this, "Invalid AccountName ["
+                                                                                + pValue
+                                                                                + "]");
+                        }
+                        setValueValue(myAccount.getId());
+                        setValueAccount(myAccount);
+                        bValueOK = true;
+                    }
+                } else if (pValue instanceof Integer) {
                     setValueValue(pValue);
-                    bValueOK = true;
-                }
-                if ((pValue instanceof Account)
-                    && (myType.isLink())) {
-                    Account myAccount = (Account) pValue;
-                    setValueValue(myAccount.getId());
-                    setValueAccount(myAccount);
                     bValueOK = true;
                 }
                 break;
@@ -621,14 +631,7 @@ public class EventInfo
             append(myInfo);
         }
 
-        /**
-         * Add an EventInfo to the list.
-         * @param uId the Id of the info
-         * @param pEvent the event
-         * @param pInfoClass the Class of the event info type
-         * @param pValue the value of the event info
-         * @throws JDataException on error
-         */
+        @Override
         public void addOpenItem(final Integer uId,
                                 final Event pEvent,
                                 final EventInfoClass pInfoClass,

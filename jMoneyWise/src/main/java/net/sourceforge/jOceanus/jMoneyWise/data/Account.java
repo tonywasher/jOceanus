@@ -313,7 +313,7 @@ public class Account
      * Obtain InfoSet.
      * @return the infoSet
      */
-    protected AccountInfoSet getInfoSet() {
+    public AccountInfoSet getInfoSet() {
         return theInfoSet;
     }
 

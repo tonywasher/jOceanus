@@ -29,6 +29,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
+import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
@@ -37,9 +38,11 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.YearRange;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -95,6 +98,16 @@ public class SheetEvent
     private final EventList theList;
 
     /**
+     * Event info list.
+     */
+    private final EventInfoList theInfoList;
+
+    /**
+     * DataInfoSet Helper.
+     */
+    private final SheetEventInfoSet theInfoSheet = new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
+
+    /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
@@ -105,6 +118,7 @@ public class SheetEvent
         /* Access the Lists */
         FinanceData myData = pReader.getData();
         theList = myData.getEvents();
+        theInfoList = myData.getEventInfo();
         setDataList(theList);
     }
 
@@ -117,7 +131,9 @@ public class SheetEvent
         super(pWriter, AREA_EVENTS);
 
         /* Access the Events list */
-        theList = pWriter.getData().getEvents();
+        FinanceData myData = pWriter.getData();
+        theList = myData.getEvents();
+        theInfoList = myData.getEventInfo();
         setDataList(theList);
     }
 
@@ -157,7 +173,10 @@ public class SheetEvent
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        theList.addOpenItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myTransType);
+        Event myEvent = theList.addOpenItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myTransType);
+
+        /* Load infoSet items */
+        theInfoSheet.loadDataInfoSet(theInfoList, myEvent);
     }
 
     @Override
@@ -179,10 +198,13 @@ public class SheetEvent
         writeInteger(COL_ID, pItem.getId());
         writeDate(COL_DATE, pItem.getDate());
         writeString(COL_DESC, pItem.getDesc());
-        writeNumber(COL_AMOUNT, pItem.getAmount());
+        writeDecimal(COL_AMOUNT, pItem.getAmount());
         writeString(COL_DEBIT, pItem.getDebitName());
         writeString(COL_CREDIT, pItem.getCreditName());
         writeString(COL_TRAN, pItem.getTransTypeName());
+
+        /* Write infoSet fields */
+        theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
     }
 
     @Override
@@ -195,6 +217,9 @@ public class SheetEvent
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
         writeHeader(COL_TRAN, EventBase.FIELD_TRNTYP.getName());
 
+        /* write infoSet titles */
+        theInfoSheet.writeTitles();
+
         /* Set the Account column width */
         setColumnWidth(COL_DESC, EventBase.DESCLEN);
         setColumnWidth(COL_DEBIT, AccountBase.NAMELEN);
@@ -204,6 +229,9 @@ public class SheetEvent
         /* Set Number columns */
         setDateColumn(COL_DATE);
         setMoneyColumn(COL_AMOUNT);
+
+        /* Set column width for ThirdParty */
+        theInfoSheet.setColumnWidth(EventInfoClass.ThirdParty, AccountBase.NAMELEN);
     }
 
     @Override
@@ -217,6 +245,9 @@ public class SheetEvent
             applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
             applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
             applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
+
+            /* Set validation for ThirdParty */
+            theInfoSheet.applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);
         }
     }
 
@@ -378,5 +409,24 @@ public class SheetEvent
 
         /* Return to caller */
         return true;
+    }
+
+    /**
+     * EventInfoSet sheet.
+     */
+    private static class SheetEventInfoSet
+            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass> {
+
+        /**
+         * Constructor.
+         * @param pClass the info type class
+         * @param pOwner the Owner
+         * @param pBaseCol the base column
+         */
+        public SheetEventInfoSet(final Class<EventInfoClass> pClass,
+                                 final SheetDataItem<Event> pOwner,
+                                 final int pBaseCol) {
+            super(pClass, pOwner, pBaseCol);
+        }
     }
 }

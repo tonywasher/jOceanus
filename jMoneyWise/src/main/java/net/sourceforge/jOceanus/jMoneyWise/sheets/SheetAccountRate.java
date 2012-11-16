@@ -154,8 +154,8 @@ public class SheetAccountRate
         /* Set the fields */
         writeInteger(COL_ID, pItem.getId());
         writeString(COL_ACCOUNT, pItem.getAccountName());
-        writeNumber(COL_RATE, pItem.getRate());
-        writeNumber(COL_BONUS, pItem.getBonus());
+        writeDecimal(COL_RATE, pItem.getRate());
+        writeDecimal(COL_BONUS, pItem.getBonus());
         writeDate(COL_ENDDATE, pItem.getEndDate());
     }
 

@@ -24,7 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.data.statics;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticInterface;
+import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
 
 /**
  * Enumeration of Tax Type Classes.
@@ -325,10 +325,6 @@ public enum TaxClass implements StaticInterface {
      */
     private TaxBucket theBucket = null;
 
-    /**
-     * Obtain Class Id.
-     * @return the class id
-     */
     @Override
     public int getClassId() {
         return theId;
@@ -342,10 +338,6 @@ public enum TaxClass implements StaticInterface {
         return theBucket;
     }
 
-    /**
-     * Obtain Class Order.
-     * @return the class order
-     */
     @Override
     public int getOrder() {
         return theOrder;
@@ -362,7 +354,8 @@ public enum TaxClass implements StaticInterface {
                      final TaxBucket pBucket) {
         /* Set values */
         theId = uId;
-        theOrder = pBucket.getBase() + uOrder;
+        theOrder = pBucket.getBase()
+                   + uOrder;
         theBucket = pBucket;
     }
 
@@ -378,6 +371,7 @@ public enum TaxClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid Tax Class Id: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid Tax Class Id: "
+                                                      + id);
     }
 }

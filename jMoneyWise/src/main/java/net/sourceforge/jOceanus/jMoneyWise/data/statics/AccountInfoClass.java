@@ -25,12 +25,12 @@ package net.sourceforge.jOceanus.jMoneyWise.data.statics;
 import net.sourceforge.jOceanus.jDataManager.DataType;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticInterface;
+import net.sourceforge.jOceanus.jDataModels.data.DataInfoClass;
 
 /**
  * Enumeration of Account Info Classes.
  */
-public enum AccountInfoClass implements StaticInterface {
+public enum AccountInfoClass implements DataInfoClass {
     /**
      * Maturity Date.
      */
@@ -96,36 +96,22 @@ public enum AccountInfoClass implements StaticInterface {
      */
     private final boolean isLink;
 
-    /**
-     * Obtain Class Id.
-     * @return the class id
-     */
     @Override
     public int getClassId() {
         return theId;
     }
 
-    /**
-     * Obtain Class Order.
-     * @return the class order
-     */
     @Override
     public int getOrder() {
         return theOrder;
     }
 
-    /**
-     * Obtain Data Type.
-     * @return the date type
-     */
+    @Override
     public DataType getDataType() {
         return theDataType;
     }
 
-    /**
-     * is this a Link?
-     * @return true/false
-     */
+    @Override
     public boolean isLink() {
         return isLink;
     }
@@ -170,6 +156,7 @@ public enum AccountInfoClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid Account Info Class Id: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid Account Info Class Id: "
+                                                      + id);
     }
 }

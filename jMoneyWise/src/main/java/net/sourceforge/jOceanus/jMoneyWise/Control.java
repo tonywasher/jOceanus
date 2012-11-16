@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.core;
+package net.sourceforge.jOceanus.jMoneyWise;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -288,7 +288,7 @@ public class TaxYear
      * Obtain InfoSet.
      * @return the infoSet
      */
-    protected TaxInfoSet getInfoSet() {
+    public TaxInfoSet getInfoSet() {
         return theInfoSet;
     }
 
