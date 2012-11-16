@@ -231,7 +231,7 @@ public final class Report {
     }
 
     /**
-     * Make a standard empty cell
+     * Make a standard empty cell.
      * @param pBuilder the data builder
      */
     protected void makeValueCell(final StringBuilder pBuilder) {
@@ -239,17 +239,15 @@ public final class Report {
     }
 
     /**
-     * Make a total empty cell
+     * Make a total empty cell.
      * @param pBuilder the data builder
-     * @param bTotal is this a total value
-     * @param pValue the value for the cell
      */
     protected void makeTotalCell(final StringBuilder pBuilder) {
         pBuilder.append("<th/>");
     }
 
     /**
-     * Make a standard cell
+     * Make a standard cell.
      * @param pBuilder the data builder
      * @param pValue the value for the cell
      */
@@ -259,9 +257,8 @@ public final class Report {
     }
 
     /**
-     * Make a total cell
+     * Make a total cell.
      * @param pBuilder the data builder
-     * @param bTotal is this a total value
      * @param pValue the value for the cell
      */
     protected void makeTotalCell(final StringBuilder pBuilder,
@@ -270,7 +267,7 @@ public final class Report {
     }
 
     /**
-     * Make a cell
+     * Make a cell.
      * @param pBuilder the data builder
      * @param bTotal is this a total value
      * @param pValue the value for the cell
@@ -312,7 +309,7 @@ public final class Report {
     }
 
     /**
-     * Start a table data row
+     * Start a table data row.
      * @param pBuilder the data builder
      * @param isOdd is the row odd or even
      */
@@ -326,9 +323,10 @@ public final class Report {
     }
 
     /**
-     * Start a table data row
+     * Start a table data row.
      * @param pBuilder the data builder
      * @param isOdd is the row odd or even
+     * @param pTitle the title of the row
      */
     protected void startDataRow(final StringBuilder pBuilder,
                                 final boolean isOdd,
@@ -339,7 +337,7 @@ public final class Report {
     }
 
     /**
-     * Start a link data row
+     * Start a link data row.
      * @param pBuilder the data builder
      * @param isOdd is the row odd or even
      * @param pLink the link name
@@ -351,7 +349,7 @@ public final class Report {
     }
 
     /**
-     * Start a link data row
+     * Start a link data row.
      * @param pBuilder the data builder
      * @param isOdd is the row odd or even
      * @param pLink the link name
@@ -371,7 +369,7 @@ public final class Report {
     }
 
     /**
-     * Start a dataLink row
+     * Start a dataLink row.
      * @param pBuilder the data builder
      * @param pLink the link name
      * @param pTitle the link title
@@ -389,7 +387,7 @@ public final class Report {
     }
 
     /**
-     * Start a total data row
+     * Start a total data row.
      * @param pBuilder the data builder
      * @param pTitle the link title
      */
@@ -401,7 +399,7 @@ public final class Report {
     }
 
     /**
-     * Start a total data row
+     * Start a total data row.
      * @param pBuilder the data builder
      * @param pTitle the link title
      */
@@ -416,7 +414,7 @@ public final class Report {
     }
 
     /**
-     * Make subHeading
+     * Make subHeading.
      * @param pBuilder the data builder
      * @param pLink the link name
      */
@@ -426,7 +424,7 @@ public final class Report {
     }
 
     /**
-     * Make subHeading
+     * Make subHeading.
      * @param pBuilder the data builder
      * @param pLink the link name
      * @param pTitle the link title
@@ -443,7 +441,7 @@ public final class Report {
     }
 
     /**
-     * Make subHeading
+     * Make subHeading.
      * @param pBuilder the data builder
      * @param pTitle the link title
      */
@@ -455,9 +453,8 @@ public final class Report {
     }
 
     /**
-     * Make Heading
+     * Make Heading.
      * @param pBuilder the data builder
-     * @param pLink the link name
      * @param pTitle the link title
      */
     protected void makeLinkHeading(final StringBuilder pBuilder,
@@ -470,7 +467,7 @@ public final class Report {
     }
 
     /**
-     * Make subHeading
+     * Make subHeading.
      * @param pBuilder the data builder
      * @param pTitle the link title
      */
@@ -482,7 +479,7 @@ public final class Report {
     }
 
     /**
-     * End Report
+     * Start Report.
      * @param pBuilder the data builder
      */
     protected void startReport(final StringBuilder pBuilder) {
@@ -490,7 +487,7 @@ public final class Report {
     }
 
     /**
-     * End Row
+     * End Row.
      * @param pBuilder the data builder
      */
     protected void endRow(final StringBuilder pBuilder) {
@@ -498,7 +495,7 @@ public final class Report {
     }
 
     /**
-     * End Table
+     * End Table.
      * @param pBuilder the data builder
      */
     protected void endTable(final StringBuilder pBuilder) {
@@ -506,7 +503,7 @@ public final class Report {
     }
 
     /**
-     * End Report
+     * End Report.
      * @param pBuilder the data builder
      */
     protected void endReport(final StringBuilder pBuilder) {
@@ -514,7 +511,7 @@ public final class Report {
     }
 
     /**
-     * Start Table
+     * Start Table.
      * @param pBuilder the data builder
      */
     protected void startTable(final StringBuilder pBuilder) {
@@ -522,7 +519,7 @@ public final class Report {
     }
 
     /**
-     * Make Table column
+     * Make Table column.
      * @param pBuilder the data builder
      * @param pName the name of the column
      */
@@ -534,7 +531,7 @@ public final class Report {
     }
 
     /**
-     * Make Table column spanning rows
+     * Make Table column spanning rows.
      * @param pBuilder the data builder
      * @param pName the name of the column
      * @param numRows the number of rows to span
@@ -550,7 +547,7 @@ public final class Report {
     }
 
     /**
-     * Make Table column spanning columns
+     * Make Table column spanning columns.
      * @param pBuilder the data builder
      * @param pName the name of the column
      * @param numCols the number of columns to span
@@ -566,16 +563,15 @@ public final class Report {
     }
 
     /**
-     * Make Table New Header row
+     * Make Table New Header row.
      * @param pBuilder the data builder
-     * @param pName the name of the column
      */
     protected void makeTableNewRow(final StringBuilder pBuilder) {
         pBuilder.append("</tr><tr>");
     }
 
     /**
-     * Start Table Body
+     * Start Table Body.
      * @param pBuilder the data builder
      */
     protected void startTableBody(final StringBuilder pBuilder) {

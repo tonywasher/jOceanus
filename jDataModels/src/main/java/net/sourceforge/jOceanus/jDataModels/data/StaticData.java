@@ -30,7 +30,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticInterface;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 
@@ -82,23 +81,6 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * The Enum Class for this Static Data.
      */
     private Class<E> theEnumClass = null;
-
-    /**
-     * Interface for Static Classes.
-     */
-    public interface StaticInterface {
-        /**
-         * Obtain the class Id.
-         * @return the class id
-         */
-        int getClassId();
-
-        /**
-         * Obtain the order.
-         * @return the order
-         */
-        int getOrder();
-    }
 
     @Override
     public String formatObject() {
@@ -377,7 +359,8 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         }
 
         /* Compare on order */
-        int iDiff = getOrder() - pThat.getOrder();
+        int iDiff = getOrder()
+                    - pThat.getOrder();
         if (iDiff != 0) {
             return iDiff;
         }
@@ -564,7 +547,10 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid value for " + myClass.getSimpleName() + ": " + pValue);
+            throw new JDataException(ExceptionClass.DATA, "Invalid value for "
+                                                          + myClass.getSimpleName()
+                                                          + ": "
+                                                          + pValue);
         }
     }
 
@@ -589,7 +575,10 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid id for " + myClass.getSimpleName() + ": " + pId);
+            throw new JDataException(ExceptionClass.DATA, "Invalid id for "
+                                                          + myClass.getSimpleName()
+                                                          + ": "
+                                                          + pId);
         }
     }
 

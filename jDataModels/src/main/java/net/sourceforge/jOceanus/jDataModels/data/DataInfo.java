@@ -26,7 +26,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticInterface;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 
@@ -38,7 +37,7 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
  * @param <I> the Info Type that applies to this item
  * @param <E> the Info Class that applies to this item
  */
-public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
+public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & DataInfoClass>
         extends EncryptedItem
         implements Comparable<T> {
     /**
@@ -97,6 +96,14 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      */
     public Integer getOwnerId() {
         return getOwner(getValueSet(), DataItem.class).getId();
+    }
+
+    /**
+     * Obtain link name.
+     * @return the Link Name
+     */
+    public String getLinkName() {
+        return null;
     }
 
     /**
@@ -329,7 +336,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param <I> the DataInfo Type
      * @param <E> the Info Class that applies to this item
      */
-    public abstract static class DataInfoList<T extends DataInfo<T, O, I, E> & Comparable<T>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
+    public abstract static class DataInfoList<T extends DataInfo<T, O, I, E> & Comparable<T>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & DataInfoClass>
             extends EncryptedList<T> {
         /**
          * Local Report fields.
@@ -372,5 +379,18 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
          */
         protected abstract T addNewItem(final O pOwner,
                                         final I pInfoType);
+
+        /**
+         * Add a DataInfo to the list.
+         * @param uId the Id of the info
+         * @param pOwner the owner of the info
+         * @param pInfoClass the Class of the data info type
+         * @param pValue the value of the data info
+         * @throws JDataException on error
+         */
+        public abstract void addOpenItem(final Integer uId,
+                                         final O pOwner,
+                                         final E pInfoClass,
+                                         final Object pValue) throws JDataException;
     }
 }

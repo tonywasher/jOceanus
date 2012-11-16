@@ -37,7 +37,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfo.DataInfoList;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticInterface;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticList;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
 
@@ -49,8 +48,8 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
  * @param <I> the Info Type that applies to this item
  * @param <E> the Info type class
  */
-public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & StaticInterface>
-        implements JDataContents {
+public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & DataInfoClass>
+        implements JDataContents, Iterable<T> {
     /**
      * Report fields.
      */
@@ -334,7 +333,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      */
     public void popHistory() {
         /* Iterate through table values */
-        Iterator<T> myIterator = theMap.values().iterator();
+        Iterator<T> myIterator = iterator();
         while (myIterator.hasNext()) {
             T myValue = myIterator.next();
 
@@ -461,5 +460,13 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
 
         /* return result */
         return myState;
+    }
+
+    /**
+     * Obtain iterator.
+     * @return the iterator over the values.
+     */
+    public Iterator<T> iterator() {
+        return theMap.values().iterator();
     }
 }

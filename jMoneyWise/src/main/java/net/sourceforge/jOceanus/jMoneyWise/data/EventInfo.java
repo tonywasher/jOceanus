@@ -151,6 +151,12 @@ public class EventInfo
     }
 
     @Override
+    public String getLinkName() {
+        Account myAccount = getAccount();
+        return (myAccount == null) ? null : myAccount.getName();
+    }
+
+    @Override
     public FinanceData getDataSet() {
         return (FinanceData) super.getDataSet();
     }

@@ -131,6 +131,12 @@ public class AccountInfo
         return pValueSet.isDeletion() ? null : pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
+    @Override
+    public String getLinkName() {
+        Account myAccount = getAccount();
+        return (myAccount == null) ? null : myAccount.getName();
+    }
+
     /**
      * Set Account.
      * @param pAccount the account
