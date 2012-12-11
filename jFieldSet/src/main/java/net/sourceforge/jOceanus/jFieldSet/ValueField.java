@@ -62,7 +62,7 @@ public class ValueField
     private transient DataModel theModel = null;
 
     /**
-     * The Data Model.
+     * The Data Formatter.
      */
     private final transient JDataFormatter theFormatter;
 

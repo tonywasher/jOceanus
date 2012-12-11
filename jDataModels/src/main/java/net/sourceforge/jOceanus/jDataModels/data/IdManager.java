@@ -29,7 +29,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdIndex;
  * @author Tony Washer
  * @param <T> the dataType
  */
-public class IdManager<T extends DataItem & Comparable<? super T>> extends OrderedIdIndex<Integer, T> {
+public class IdManager<T extends DataItem & Comparable<? super T>>
+        extends OrderedIdIndex<Integer, T> {
     /**
      * The maximum id.
      */
@@ -68,7 +69,9 @@ public class IdManager<T extends DataItem & Comparable<? super T>> extends Order
      */
     protected boolean isIdUnique(final Integer uId) {
         /* Its unique if its unassigned or greater than the max id */
-        if ((uId == null) || (uId == 0) || (uId > theMaxId)) {
+        if ((uId == null)
+            || (uId == 0)
+            || (uId > theMaxId)) {
             return true;
         }
 
@@ -84,7 +87,8 @@ public class IdManager<T extends DataItem & Comparable<? super T>> extends Order
         Integer myId = pItem.getId();
 
         /* If we need to generate a new id */
-        if ((myId == null) || (myId == 0)) {
+        if ((myId == null)
+            || (myId == 0)) {
             /* Increment and use the max Id */
             theMaxId++;
             pItem.setId(theMaxId);

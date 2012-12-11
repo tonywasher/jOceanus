@@ -25,9 +25,12 @@ package net.sourceforge.jOceanus.jFieldSet;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
 import javax.swing.table.JTableHeader;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
 import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
@@ -43,6 +46,11 @@ import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
  * @author Tony Washer
  */
 public class RenderManager {
+    /**
+     * Money accounting format width.
+     */
+    private static final int ACCOUNTING_WIDTH = 10;
+
     /**
      * The standard font.
      */
@@ -69,9 +77,27 @@ public class RenderManager {
     private final JDataManager theDataManager;
 
     /**
+     * General formatter.
+     */
+    private final JDataFormatter theFormatter;
+
+    /**
      * The Configuration.
      */
     private RenderConfig theConfig;
+
+    /**
+     * The Error Border.
+     */
+    private Border theErrorBorder;
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    public JDataFormatter getDataFormatter() {
+        return theFormatter;
+    }
 
     /**
      * Populate RenderData interface.
@@ -94,6 +120,10 @@ public class RenderManager {
         /* Store the parameters */
         theDataManager = pManager;
         theConfig = pConfig;
+
+        /* Create data formatter */
+        theFormatter = new JDataFormatter();
+        theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
 
         /* Process the configuration */
         processConfiguration();
@@ -122,6 +152,9 @@ public class RenderManager {
 
         /* Declare preferences to data manager */
         theDataManager.setFormatter(myStdColor, myChgColor, myLinkColor, myChgLinkColor);
+
+        /* Allocate the Error border */
+        theErrorBorder = BorderFactory.createLineBorder(theConfig.getErrorColor());
     }
 
     /**
@@ -132,6 +165,25 @@ public class RenderManager {
     protected RenderData allocateRenderData(final boolean isFixed) {
         /* Return a new RenderData object */
         return new RenderData(isFixed);
+    }
+
+    /**
+     * Determine render data for FieldSetElement.
+     * @param <X> the item type
+     * @param pElement the fieldSet element
+     * @param pItem the data item
+     * @return the render data
+     */
+    protected <X extends JFieldItem> RenderData determineRenderData(final JFieldElement<X> pElement,
+                                                                    final X pItem) {
+        /* Allocate the render data */
+        RenderData myData = new RenderData(pElement.isFixedWidth());
+
+        /* Determine the render data */
+        myData.determineData(pElement, pItem);
+
+        /* Return the data */
+        return myData;
     }
 
     /**
@@ -235,6 +287,11 @@ public class RenderManager {
         private final boolean isFixed;
 
         /**
+         * RenderState.
+         */
+        private RenderState theState;
+
+        /**
          * Get the foreground.
          * @return the foreground
          */
@@ -264,6 +321,22 @@ public class RenderManager {
          */
         public String getToolTip() {
             return theToolTipText;
+        }
+
+        /**
+         * Get the state.
+         * @return the state
+         */
+        public RenderState getState() {
+            return theState;
+        }
+
+        /**
+         * Get the error Border.
+         * @return the state
+         */
+        public Border getErrorBorder() {
+            return theErrorBorder;
         }
 
         /**
@@ -339,14 +412,14 @@ public class RenderManager {
         public void processTableRow(final JFieldSetItem pRow,
                                     final JDataField pField) {
             /* Obtain the render state */
-            RenderState myState = pRow.getRenderState(pField);
+            theState = pRow.getRenderState(pField);
 
             /* Obtain the foreground and background for the state */
-            Color myFore = getForeground(myState);
+            Color myFore = getForeground(theState);
             Color myBack = getStandardBackground();
 
             /* Determine toolTip */
-            String myTip = myState.isError() ? pRow.getFieldErrors(pField) : null;
+            String myTip = theState.isError() ? pRow.getFieldErrors(pField) : null;
 
             /* For selected items flip the foreground/background */
             if (isSelected()) {
@@ -358,9 +431,9 @@ public class RenderManager {
             /* Select the font */
             Font myFont;
             if (isFixed) {
-                myFont = myState.isChanged() ? FONT_NUMCHANGED : FONT_NUMERIC;
+                myFont = theState.isChanged() ? FONT_NUMCHANGED : FONT_NUMERIC;
             } else {
-                myFont = myState.isChanged() ? FONT_CHANGED : FONT_STANDARD;
+                myFont = theState.isChanged() ? FONT_CHANGED : FONT_STANDARD;
             }
 
             /* Set the data */
@@ -391,14 +464,14 @@ public class RenderManager {
             theToolTipText = null;
 
             /* Obtain the state */
-            RenderState myState = pRow.getRenderState();
+            theState = pRow.getRenderState();
 
             /* Determine the colour */
-            Color myFore = getForeground(myState);
+            Color myFore = getForeground(theState);
             Color myBack = getStandardBackground();
 
             /* If the item is an error */
-            if (myState.isError()) {
+            if (theState.isError()) {
                 /* Flip foreground and background */
                 Color myTemp = myFore;
                 myFore = myBack;
@@ -411,6 +484,30 @@ public class RenderManager {
             /* Record foreground and background */
             theForeGround = myFore;
             theBackGround = myBack;
+        }
+
+        /**
+         * Determine data for FieldSetElement.
+         * @param <X> the item type
+         * @param pElement the fieldSet element
+         * @param pItem the data item
+         */
+        protected <X extends JFieldItem> void determineData(final JFieldElement<X> pElement,
+                                                            final X pItem) {
+            /* Determine whether we have a null item */
+            boolean isNull = (pItem == null);
+
+            /* Obtain the state */
+            JDataField myField = pElement.getField();
+            theState = (isNull) ? RenderState.NORMAL : pItem.getRenderState(myField);
+
+            /* Determine the standard colours */
+            theForeGround = getForeground(theState);
+            theBackGround = getStandardBackground();
+
+            /* Determine the Font and ToolTip */
+            theFont = determineFont(theState, isFixed);
+            theToolTipText = (isNull) ? null : determineToolTip(theState, pItem, myField);
         }
     }
 
@@ -451,11 +548,11 @@ public class RenderManager {
      * @param isFixed is the item fixed width
      * @return the standard Font for the item
      */
-    public Font getFont(final JFieldSetItem pItem,
-                        final JDataField pField,
-                        final boolean isFixed) {
+    public Font determineFont(final JFieldSetItem pItem,
+                              final JDataField pField,
+                              final boolean isFixed) {
         /* Return the toolTip */
-        return getFont(pItem.getRenderState(pField), isFixed);
+        return determineFont(pItem.getRenderState(pField), isFixed);
     }
 
     /**
@@ -464,8 +561,8 @@ public class RenderManager {
      * @param isFixed is the item fixed width
      * @return the standard Font for the item
      */
-    protected Font getFont(final RenderState pState,
-                           final boolean isFixed) {
+    protected Font determineFont(final RenderState pState,
+                                 final boolean isFixed) {
         /* Switch on the state */
         switch (pState) {
             case CHANGED:
@@ -497,6 +594,39 @@ public class RenderManager {
     protected String getToolTip(final RenderState pState,
                                 final JFieldSetItem pItem,
                                 final JDataField pField) {
+        /* Switch on the state */
+        switch (pState) {
+            case ERROR:
+                return pItem.getFieldErrors(pField);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Determine Standard ToolTip.
+     * @param <X> the item type
+     * @param pItem the Item
+     * @param pField the Field
+     * @return the standard ToolTip for the item
+     */
+    public <X extends JFieldItem> String determineToolTip(final X pItem,
+                                                          final JDataField pField) {
+        /* return the toolTip */
+        return determineToolTip(pItem.getRenderState(pField), pItem, pField);
+    }
+
+    /**
+     * Determine Standard ToolTip.
+     * @param <X> the item type
+     * @param pState render state
+     * @param pItem the Item
+     * @param pField the Field
+     * @return the standard ToolTip for the item
+     */
+    protected <X extends JFieldItem> String determineToolTip(final RenderState pState,
+                                                             final X pItem,
+                                                             final JDataField pField) {
         /* Switch on the state */
         switch (pState) {
             case ERROR:

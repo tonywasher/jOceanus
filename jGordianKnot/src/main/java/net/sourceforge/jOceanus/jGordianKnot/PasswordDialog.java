@@ -50,7 +50,9 @@ import net.sourceforge.jOceanus.jDataManager.SpringUtilities;
  * Dialog to request a password. Will also ask for password confirmation if required.
  * @author Tony Washer
  */
-public class PasswordDialog extends JDialog implements ActionListener {
+public class PasswordDialog
+        extends JDialog
+        implements ActionListener {
     /**
      * Serial version ID.
      */
@@ -281,7 +283,9 @@ public class PasswordDialog extends JDialog implements ActionListener {
         Object o = evt.getSource();
 
         /* If this event relates to the OK box or the password field */
-        if ((theOKButton.equals(o)) || (thePassField.equals(o)) || (theConfirmField.equals(o))) {
+        if ((theOKButton.equals(o))
+            || (thePassField.equals(o))
+            || (theConfirmField.equals(o))) {
             /* Access the password */
             thePassword = thePassField.getPassword();
 
@@ -293,7 +297,11 @@ public class PasswordDialog extends JDialog implements ActionListener {
                 /* If the password is less than the minimum length */
                 if (thePassword.length < MIN_PASSWORD_LEN) {
                     /* Set error and return */
-                    setError(NLS_LENGTHERR1 + " " + MIN_PASSWORD_LEN + " " + NLS_LENGTHERR2);
+                    setError(NLS_LENGTHERR1
+                             + " "
+                             + MIN_PASSWORD_LEN
+                             + " "
+                             + NLS_LENGTHERR2);
                     return;
                 }
 
@@ -380,7 +388,8 @@ public class PasswordDialog extends JDialog implements ActionListener {
     /**
      * Focus traversal policy, used so that you tab straight to confirm from password.
      */
-    private class TraversalPolicy extends FocusTraversalPolicy {
+    private class TraversalPolicy
+            extends FocusTraversalPolicy {
         @Override
         public Component getComponentAfter(final Container pRoot,
                                            final Component pCurrent) {

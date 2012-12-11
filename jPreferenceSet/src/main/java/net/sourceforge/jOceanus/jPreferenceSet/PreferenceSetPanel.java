@@ -70,7 +70,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.StringPreference;
  * Preference Set panel.
  * @author Tony Washer
  */
-public class PreferenceSetPanel extends JEventPanel {
+public class PreferenceSetPanel
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -94,8 +95,7 @@ public class PreferenceSetPanel extends JEventPanel {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PreferenceSetPanel.class
-            .getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PreferenceSetPanel.class.getName());
 
     /**
      * Text for Preferences Title.
@@ -383,7 +383,8 @@ public class PreferenceSetPanel extends JEventPanel {
                     break;
                 default:
                     /* Create the label */
-                    theLabel = new JLabel(thePreference.getDisplay() + ":");
+                    theLabel = new JLabel(thePreference.getDisplay()
+                                          + ":");
                     theLabel.setHorizontalAlignment(SwingConstants.RIGHT);
                     break;
             }
@@ -470,7 +471,8 @@ public class PreferenceSetPanel extends JEventPanel {
         /**
          * StringField class.
          */
-        private final class StringField extends PreferenceField {
+        private final class StringField
+                extends PreferenceField {
             /**
              * The underlying value field.
              */
@@ -522,7 +524,7 @@ public class PreferenceSetPanel extends JEventPanel {
 
                 /* Set font and foreground */
                 theField.setForeground(theRenderMgr.getForeground(thePreferences, theString.getDataField()));
-                theField.setFont(theRenderMgr.getFont(thePreferences, theString.getDataField(), false));
+                theField.setFont(theRenderMgr.determineFont(thePreferences, theString.getDataField(), false));
             }
 
             @Override
@@ -533,7 +535,8 @@ public class PreferenceSetPanel extends JEventPanel {
             /**
              * PreferenceListener class.
              */
-            private class PreferenceListener implements PropertyChangeListener, ActionListener {
+            private class PreferenceListener
+                    implements PropertyChangeListener, ActionListener {
 
                 @Override
                 public void propertyChange(final PropertyChangeEvent evt) {
@@ -561,7 +564,7 @@ public class PreferenceSetPanel extends JEventPanel {
                             case Directory:
                                 /* Create and show the dialog */
                                 FileSelector myDialog = new FileSelector(theSelf, "Select "
-                                        + theString.getDisplay(), new File(theString.getValue()));
+                                                                                  + theString.getDisplay(), new File(theString.getValue()));
                                 myDialog.showDialog();
 
                                 /* Handle selection */
@@ -579,7 +582,7 @@ public class PreferenceSetPanel extends JEventPanel {
                             case File:
                                 /* Create and show the dialog */
                                 FileSelector myFileDialog = new FileSelector(theSelf, "Select "
-                                        + theString.getDisplay(), new File(theString.getValue()), null, null);
+                                                                                      + theString.getDisplay(), new File(theString.getValue()), null, null);
                                 myFileDialog.showDialog();
 
                                 /* Handle selection */
@@ -603,7 +606,8 @@ public class PreferenceSetPanel extends JEventPanel {
         /**
          * IntegerField class.
          */
-        private final class IntegerField extends PreferenceField {
+        private final class IntegerField
+                extends PreferenceField {
             /**
              * The underlying value field.
              */
@@ -635,7 +639,7 @@ public class PreferenceSetPanel extends JEventPanel {
 
                 /* Set font and foreground */
                 theField.setForeground(theRenderMgr.getForeground(thePreferences, theInteger.getDataField()));
-                theField.setFont(theRenderMgr.getFont(thePreferences, theInteger.getDataField(), true));
+                theField.setFont(theRenderMgr.determineFont(thePreferences, theInteger.getDataField(), true));
             }
 
             @Override
@@ -646,7 +650,8 @@ public class PreferenceSetPanel extends JEventPanel {
             /**
              * PreferenceListener class.
              */
-            private class PreferenceListener implements PropertyChangeListener {
+            private class PreferenceListener
+                    implements PropertyChangeListener {
 
                 @Override
                 public void propertyChange(final PropertyChangeEvent evt) {
@@ -667,7 +672,8 @@ public class PreferenceSetPanel extends JEventPanel {
         /**
          * BooleanField class.
          */
-        private final class BooleanField extends PreferenceField {
+        private final class BooleanField
+                extends PreferenceField {
             /**
              * The underlying button field.
              */
@@ -698,7 +704,7 @@ public class PreferenceSetPanel extends JEventPanel {
 
                 /* Set font and foreground */
                 theField.setForeground(theRenderMgr.getForeground(thePreferences, theBoolean.getDataField()));
-                theField.setFont(theRenderMgr.getFont(thePreferences, theBoolean.getDataField(), false));
+                theField.setFont(theRenderMgr.determineFont(thePreferences, theBoolean.getDataField(), false));
             }
 
             @Override
@@ -709,7 +715,8 @@ public class PreferenceSetPanel extends JEventPanel {
             /**
              * PreferenceListener class.
              */
-            private class PreferenceListener implements ItemListener {
+            private class PreferenceListener
+                    implements ItemListener {
 
                 @Override
                 public void itemStateChanged(final ItemEvent evt) {
@@ -730,7 +737,8 @@ public class PreferenceSetPanel extends JEventPanel {
         /**
          * DateField class.
          */
-        private final class DateField extends PreferenceField {
+        private final class DateField
+                extends PreferenceField {
             /**
              * The underlying button field.
              */
@@ -761,7 +769,7 @@ public class PreferenceSetPanel extends JEventPanel {
 
                 /* Set font and foreground */
                 theField.setForeground(theRenderMgr.getForeground(thePreferences, theDate.getDataField()));
-                theField.setFont(theRenderMgr.getFont(thePreferences, theDate.getDataField(), false));
+                theField.setFont(theRenderMgr.determineFont(thePreferences, theDate.getDataField(), false));
             }
 
             @Override
@@ -772,7 +780,8 @@ public class PreferenceSetPanel extends JEventPanel {
             /**
              * PreferenceListener class.
              */
-            private final class PreferenceListener implements PropertyChangeListener {
+            private final class PreferenceListener
+                    implements PropertyChangeListener {
 
                 @Override
                 public void propertyChange(final PropertyChangeEvent evt) {
@@ -794,7 +803,8 @@ public class PreferenceSetPanel extends JEventPanel {
         /**
          * ColorField class.
          */
-        private final class ColorField extends PreferenceField {
+        private final class ColorField
+                extends PreferenceField {
             /**
              * The underlying button field.
              */
@@ -829,8 +839,7 @@ public class PreferenceSetPanel extends JEventPanel {
 
                 /* Create chooser and dialog */
                 theChooser = new JColorChooser();
-                theDialog = JColorChooser.createDialog(theField, NLS_COLORTITLE, true, theChooser,
-                                                       myListener, null);
+                theDialog = JColorChooser.createDialog(theField, NLS_COLORTITLE, true, theChooser, myListener, null);
 
                 /* Add action listener */
                 theField.addActionListener(myListener);
@@ -843,7 +852,7 @@ public class PreferenceSetPanel extends JEventPanel {
 
                 /* Set font and foreground */
                 theField.setForeground(theColor.getValue());
-                theField.setFont(theRenderMgr.getFont(thePreferences, theColor.getDataField(), false));
+                theField.setFont(theRenderMgr.determineFont(thePreferences, theColor.getDataField(), false));
             }
 
             @Override
@@ -854,7 +863,8 @@ public class PreferenceSetPanel extends JEventPanel {
             /**
              * PreferenceListener class.
              */
-            private final class PreferenceListener implements ActionListener {
+            private final class PreferenceListener
+                    implements ActionListener {
 
                 @Override
                 public void actionPerformed(final ActionEvent e) {
@@ -865,7 +875,8 @@ public class PreferenceSetPanel extends JEventPanel {
                         /* Position the dialog just right of the button */
                         Point myPanelLoc = getLocationOnScreen();
                         Point myButtonLoc = theField.getLocationOnScreen();
-                        theDialog.setLocation(myButtonLoc.x + theField.getWidth(), myPanelLoc.y);
+                        theDialog.setLocation(myButtonLoc.x
+                                              + theField.getWidth(), myPanelLoc.y);
                         theChooser.setColor(theColor.getValue());
 
                         /* Show the dialog */
@@ -887,7 +898,8 @@ public class PreferenceSetPanel extends JEventPanel {
         /**
          * EnumField class.
          */
-        private final class EnumField extends PreferenceField {
+        private final class EnumField
+                extends PreferenceField {
             /**
              * The underlying combo box field.
              */
@@ -924,7 +936,7 @@ public class PreferenceSetPanel extends JEventPanel {
 
                 /* Set font and foreground */
                 theField.setForeground(theRenderMgr.getForeground(thePreferences, theEnum.getDataField()));
-                theField.setFont(theRenderMgr.getFont(thePreferences, theEnum.getDataField(), false));
+                theField.setFont(theRenderMgr.determineFont(thePreferences, theEnum.getDataField(), false));
             }
 
             @Override
@@ -935,13 +947,15 @@ public class PreferenceSetPanel extends JEventPanel {
             /**
              * PropertyListener class.
              */
-            private final class PreferenceListener implements ItemListener {
+            private final class PreferenceListener
+                    implements ItemListener {
 
                 @Override
                 public void itemStateChanged(final ItemEvent evt) {
                     Object o = evt.getSource();
                     /* If this is our preference */
-                    if ((theField.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                    if ((theField.equals(o))
+                        && (evt.getStateChange() == ItemEvent.SELECTED)) {
                         /* Set the new value of the preference */
                         String myName = (String) evt.getItem();
                         theEnum.setValue(myName);

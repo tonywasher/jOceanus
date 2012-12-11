@@ -70,7 +70,9 @@ public class Editor {
     /**
      * String Cell Editor.
      */
-    public static class StringEditor extends AbstractCellEditor implements TableCellEditor {
+    public static class StringEditor
+            extends AbstractCellEditor
+            implements TableCellEditor {
         /**
          * Serial Id.
          */
@@ -95,9 +97,7 @@ public class Editor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setText(((pValue == null) || (RendererFieldValue.Error.equals(pValue)))
-                                                                                            ? ""
-                                                                                            : (String) pValue);
+            theField.setText(((pValue == null) || (RendererFieldValue.Error.equals(pValue))) ? "" : (String) pValue);
             return theField;
         }
 
@@ -123,7 +123,8 @@ public class Editor {
         /**
          * Focus Listener.
          */
-        private final class StringListener implements FocusListener {
+        private final class StringListener
+                implements FocusListener {
 
             @Override
             public void focusGained(final FocusEvent e) {
@@ -140,7 +141,8 @@ public class Editor {
     /**
      * Integer Cell Editor.
      */
-    public static class IntegerEditor extends StringEditor {
+    public static class IntegerEditor
+            extends StringEditor {
         /**
          * Serial Id.
          */
@@ -168,7 +170,8 @@ public class Editor {
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
-            if ((o instanceof String) && (!o.equals(""))) {
+            if ((o instanceof String)
+                && (!o.equals(""))) {
                 try {
                     return Integer.valueOf((String) o);
                 } catch (IllegalArgumentException e) {
@@ -182,7 +185,9 @@ public class Editor {
     /**
      * Boolean Cell Editor.
      */
-    public static class BooleanEditor extends AbstractCellEditor implements TableCellEditor {
+    public static class BooleanEditor
+            extends AbstractCellEditor
+            implements TableCellEditor {
         /**
          * Serial Id.
          */
@@ -212,9 +217,7 @@ public class Editor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setSelected(((pValue == null) || (RendererFieldValue.Error.equals(pValue)))
-                                                                                                ? Boolean.FALSE
-                                                                                                : (Boolean) pValue);
+            theField.setSelected(((pValue == null) || (RendererFieldValue.Error.equals(pValue))) ? Boolean.FALSE : (Boolean) pValue);
             theField.addItemListener(theListener);
             return theField;
         }
@@ -244,7 +247,8 @@ public class Editor {
         /**
          * Boolean Action class.
          */
-        private class BooleanListener implements ItemListener {
+        private class BooleanListener
+                implements ItemListener {
             @Override
             public void itemStateChanged(final ItemEvent arg0) {
                 stopCellEditing();
@@ -255,7 +259,9 @@ public class Editor {
     /**
      * ComboBox Cell Editor.
      */
-    public static class ComboBoxEditor extends AbstractCellEditor implements TableCellEditor {
+    public static class ComboBoxEditor
+            extends AbstractCellEditor
+            implements TableCellEditor {
         /**
          * Serial Id.
          */
@@ -286,8 +292,7 @@ public class Editor {
                 return null;
             }
             ComboBoxSelector myTable = (ComboBoxSelector) pTable;
-            theCombo = myTable.getComboBox(pTable.convertRowIndexToModel(pRowIndex),
-                                           pTable.convertColumnIndexToModel(pColIndex));
+            theCombo = myTable.getComboBox(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex));
             if (pValue != null) {
                 theCombo.setSelectedItem(pValue);
             } else {
@@ -301,7 +306,8 @@ public class Editor {
         /**
          * Combo Action class.
          */
-        private class ComboAction implements ActionListener {
+        private class ComboAction
+                implements ActionListener {
             @Override
             public void actionPerformed(final ActionEvent e) {
                 stopCellEditing();
@@ -311,7 +317,8 @@ public class Editor {
         /**
          * Combo Popup class.
          */
-        private class ComboPopup implements PopupMenuListener {
+        private class ComboPopup
+                implements PopupMenuListener {
             @Override
             public void popupMenuWillBecomeVisible(final PopupMenuEvent e) {
             }
@@ -354,7 +361,8 @@ public class Editor {
     /**
      * Calendar Cell Editor.
      */
-    public static class CalendarEditor extends JDateDayCellEditor {
+    public static class CalendarEditor
+            extends JDateDayCellEditor {
         /**
          * Serial Id.
          */
@@ -394,7 +402,8 @@ public class Editor {
             JDateDay myCurr;
 
             /* If the value is null */
-            if ((pValue == null) || (RendererFieldValue.Error.equals(pValue))) {
+            if ((pValue == null)
+                || (RendererFieldValue.Error.equals(pValue))) {
                 myCurr = new JDateDay();
             } else {
                 myCurr = (JDateDay) pValue;
@@ -427,7 +436,8 @@ public class Editor {
     /**
      * Decimal Cell Editor.
      */
-    private abstract static class DecimalEditor extends StringEditor {
+    private abstract static class DecimalEditor
+            extends StringEditor {
         /**
          * Serial Id.
          */
@@ -456,7 +466,8 @@ public class Editor {
     /**
      * Rate Cell Editor.
      */
-    public static class RateEditor extends DecimalEditor {
+    public static class RateEditor
+            extends DecimalEditor {
         /**
          * Serial Id.
          */
@@ -485,7 +496,8 @@ public class Editor {
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
-            if ((o instanceof String) && (!o.equals(""))) {
+            if ((o instanceof String)
+                && (!o.equals(""))) {
                 try {
                     return theParser.parseRateValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -499,7 +511,8 @@ public class Editor {
     /**
      * Money Cell Editor.
      */
-    public static class MoneyEditor extends DecimalEditor {
+    public static class MoneyEditor
+            extends DecimalEditor {
         /**
          * Serial Id.
          */
@@ -528,7 +541,8 @@ public class Editor {
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
-            if ((o instanceof String) && (!o.equals(""))) {
+            if ((o instanceof String)
+                && (!o.equals(""))) {
                 try {
                     return theParser.parseMoneyValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -542,7 +556,8 @@ public class Editor {
     /**
      * Units Cell Editor.
      */
-    public static class UnitsEditor extends DecimalEditor {
+    public static class UnitsEditor
+            extends DecimalEditor {
         /**
          * Serial Id.
          */
@@ -571,7 +586,8 @@ public class Editor {
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
-            if ((o instanceof String) && (!o.equals(""))) {
+            if ((o instanceof String)
+                && (!o.equals(""))) {
                 try {
                     return theParser.parseUnitsValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -585,7 +601,8 @@ public class Editor {
     /**
      * Dilutions Cell Editor.
      */
-    public static class DilutionEditor extends DecimalEditor {
+    public static class DilutionEditor
+            extends DecimalEditor {
         /**
          * Serial Id.
          */
@@ -614,7 +631,8 @@ public class Editor {
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
-            if ((o instanceof String) && (!o.equals(""))) {
+            if ((o instanceof String)
+                && (!o.equals(""))) {
                 try {
                     return theParser.parseDilutionValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -628,7 +646,8 @@ public class Editor {
     /**
      * Price Cell Editor.
      */
-    public static class PriceEditor extends DecimalEditor {
+    public static class PriceEditor
+            extends DecimalEditor {
         /**
          * Serial Id.
          */
@@ -657,7 +676,8 @@ public class Editor {
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
-            if ((o instanceof String) && (!o.equals(""))) {
+            if ((o instanceof String)
+                && (!o.equals(""))) {
                 try {
                     return theParser.parsePriceValue((String) o);
                 } catch (IllegalArgumentException e) {
@@ -671,7 +691,8 @@ public class Editor {
     /**
      * DilutedPrice Cell Editor.
      */
-    public static class DilutedPriceEditor extends DecimalEditor {
+    public static class DilutedPriceEditor
+            extends DecimalEditor {
         /**
          * Serial Id.
          */
@@ -700,7 +721,8 @@ public class Editor {
         @Override
         public Object getCellEditorValue() {
             Object o = super.getCellEditorValue();
-            if ((o instanceof String) && (!o.equals(""))) {
+            if ((o instanceof String)
+                && (!o.equals(""))) {
                 try {
                     return theParser.parseDilutedPriceValue((String) o);
                 } catch (IllegalArgumentException e) {

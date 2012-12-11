@@ -138,6 +138,14 @@ public class RenderConfig {
     }
 
     /**
+     * Get error colour.
+     * @return the colour
+     */
+    public Color getErrorColor() {
+        return theErrorColor;
+    }
+
+    /**
      * Set error colour.
      * @param pColor the colour
      */

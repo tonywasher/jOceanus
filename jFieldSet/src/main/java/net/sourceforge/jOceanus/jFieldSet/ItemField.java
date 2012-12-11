@@ -39,7 +39,8 @@ import net.sourceforge.jOceanus.jFieldSet.Renderer.RendererFieldValue;
  * Extension of ValueField to handle a DataItem field.
  * @author Tony Washer
  */
-public class ItemField extends ValueField {
+public class ItemField
+        extends ValueField {
     /**
      * Serial Id.
      */
@@ -159,7 +160,7 @@ public class ItemField extends ValueField {
         Color myBack = pRenderMgr.getStandardBackground();
 
         /* Determine the Font and ToolTip */
-        Font myFont = pRenderMgr.getFont(myState, isFixed);
+        Font myFont = pRenderMgr.determineFont(myState, isFixed);
         String myTip = pRenderMgr.getToolTip(myState, pItem, theField);
 
         theComponent.setForeground(myFore);
