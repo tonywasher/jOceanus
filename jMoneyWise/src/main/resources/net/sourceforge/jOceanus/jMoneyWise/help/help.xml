@@ -1,9 +1,9 @@
-<HelpContents title="Personal Finance Help" initial="First">
-	<HelpElement title="Chapter One" name="FirstHelpChapter">
-		<HelpElement name="First" file="FirstHelp.txt"
-			title="FirstHelpModule">
+<HelpContents title="jMoneyWise Help" initial="First">
+	<HelpElement title="Chapter One" name="StaticData">
+		<HelpElement name="AccountTypes" file="AccountTypes.html"
+			title="AccountTypes">
 		</HelpElement>
 	</HelpElement>
-	<HelpElement name="SecondHelpChapter" title="Chapter Two">
-		<HelpElement name="Second" title="SecondHelpModule" file="SecondHelp.txt">
+	<HelpElement name="SecondHelpChapter" title="Accounts">
+		<HelpElement name="TransactionTypes" title="TransactionTypes" file="TransactionTypes.html">
 		</HelpElement></HelpElement></HelpContents>
