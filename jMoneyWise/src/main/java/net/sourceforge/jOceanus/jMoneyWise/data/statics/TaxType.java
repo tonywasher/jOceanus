@@ -142,11 +142,11 @@ public class TaxType
      */
     public boolean hasTaxCredits() {
         switch (getTaxClass()) {
-            case GROSSSALARY:
-            case GROSSINTEREST:
-            case GROSSDIVIDEND:
-            case GROSSUTDIVS:
-            case GROSSTAXGAINS:
+            case GrossSalary:
+            case GrossInterest:
+            case GrossDividend:
+            case GrossUTDividend:
+            case GrossTaxableGains:
                 return true;
             default:
                 return false;
@@ -159,7 +159,7 @@ public class TaxType
      */
     public boolean isTaxPaid() {
         switch (getTaxClass()) {
-            case TAXPAID:
+            case TaxPaid:
                 return true;
             default:
                 return false;

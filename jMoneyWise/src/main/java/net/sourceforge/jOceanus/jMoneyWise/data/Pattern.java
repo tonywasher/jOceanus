@@ -220,7 +220,7 @@ public class Pattern
         /* Default to monthly frequency */
         FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
-        setValueFrequency(myFrequencies.findItemByClass(FreqClass.MONTHLY));
+        setValueFrequency(myFrequencies.findItemByClass(FreqClass.Monthly));
     }
 
     /**
@@ -346,7 +346,7 @@ public class Pattern
         /* If this is the first request for an event */
         if (pDate.compareTo(getDate()) == 0) {
             /* If the frequency is maturity */
-            if (myFreq == FreqClass.MATURITY) {
+            if (myFreq == FreqClass.Maturity) {
                 /* Access the maturity date */
                 myDate = getDebit().getMaturity();
 
@@ -374,26 +374,26 @@ public class Pattern
             /* switch on frequency type */
             switch (myFreq) {
             /* Weekly etc add relevant days */
-                case WEEKLY:
-                case FORTNIGHTLY:
+                case Weekly:
+                case Fortnightly:
                     pDate.adjustDay(myFreq.getAdjustment());
                     break;
 
                 /* Monthly etc add relevant months */
-                case MONTHLY:
-                case TENMONTHS:
-                case QUARTERLY:
-                case HALFYEARLY:
+                case Monthly:
+                case TenMonths:
+                case Quarterly:
+                case HalfYearly:
                     pDate.adjustMonth(myFreq.getAdjustment());
                     break;
 
                 /* EndMonthly shift to end of next month */
-                case ENDOFMONTH:
+                case EndOfMonth:
                     pDate.endNextMonth();
                     break;
                 /* Annual and maturity patterns only generate single event */
-                case ANNUALLY:
-                case MATURITY:
+                case Annually:
+                case Maturity:
                 default:
                     return null;
             }
@@ -404,7 +404,7 @@ public class Pattern
             }
 
             /* If this is a ten month repeat */
-            if (myFreq == FreqClass.TENMONTHS) {
+            if (myFreq == FreqClass.TenMonths) {
                 myDate = new JDateDay(getDate());
 
                 /* Calculate the difference in years */

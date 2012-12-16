@@ -241,7 +241,7 @@ public class IncomeBreakdown
 
         /* Switch on Transaction Type */
         switch (myTrans.getTranClass()) {
-            case INTEREST:
+            case Interest:
                 if (myDebit.isTaxFree()) {
                     myRecord = theTaxFreeInterest.findAccountRecord(myDebit.getParent());
                 } else {
@@ -249,7 +249,7 @@ public class IncomeBreakdown
                 }
                 myRecord.processEvent(pEvent);
                 break;
-            case DIVIDEND:
+            case Dividend:
                 if (myDebit.isTaxFree()) {
                     myRecord = theTaxFreeDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
                 } else if (myDebit.isUnitTrust()) {
@@ -259,13 +259,13 @@ public class IncomeBreakdown
                 }
                 myRecord.processEvent(pEvent);
                 break;
-            case TAXEDINCOME:
-            case BENEFIT:
-            case NATINSURANCE:
+            case TaxedIncome:
+            case Benefit:
+            case NatInsurance:
                 myRecord = theSalary.findAccountRecord(myDebit);
                 myRecord.processEvent(pEvent);
                 break;
-            case RENTALINCOME:
+            case RentalIncome:
                 myRecord = theRental.findAccountRecord(myDebit);
                 myRecord.processEvent(pEvent);
                 break;
@@ -542,8 +542,8 @@ public class IncomeBreakdown
             TransactionType myTrans = pEvent.getTransType();
 
             /* If we are NatInsurance/Benefit */
-            if ((myTrans.getTranClass() == TransClass.NATINSURANCE)
-                || (myTrans.getTranClass() == TransClass.BENEFIT)) {
+            if ((myTrans.getTranClass() == TransClass.NatInsurance)
+                || (myTrans.getTranClass() == TransClass.Benefit)) {
                 /* Just add to gross */
                 theTotals.theGrossIncome.addAmount(myAmount);
                 theListTotals.theGrossIncome.addAmount(myAmount);

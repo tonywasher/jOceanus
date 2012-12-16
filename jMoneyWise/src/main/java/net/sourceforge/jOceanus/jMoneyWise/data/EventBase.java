@@ -687,24 +687,24 @@ public abstract class EventBase
 
         /* Switch on the TransType */
         switch (pTrans.getTranClass()) {
-            case TAXFREEINCOME:
+            case TaxFreeIncome:
                 if (!isCredit) {
                     myResult = (pType.isExternal() && !pType.isCash());
                 } else {
                     myResult = !pType.isExternal();
                 }
                 break;
-            case TAXABLEGAIN:
+            case TaxableGain:
                 if (!isCredit) {
                     myResult = pType.isLifeBond();
                 } else {
                     myResult = pType.isMoney();
                 }
                 break;
-            case ADMINCHARGE:
+            case AdminCharge:
                 myResult = pType.isLifeBond();
                 break;
-            case DIVIDEND:
+            case Dividend:
                 if (!isCredit) {
                     myResult = pType.isDividend();
                 } else {
@@ -712,127 +712,127 @@ public abstract class EventBase
                                 || pType.isCapital() || pType.isDeferred());
                 }
                 break;
-            case STOCKDEMERGER:
-            case STOCKSPLIT:
-            case STOCKTAKEOVER:
+            case StockDeMerger:
+            case StockSplit:
+            case StockTakeOver:
                 myResult = pType.isShares();
                 break;
-            case STOCKRIGHTWAIVED:
-            case CASHTAKEOVER:
+            case StockRightsWaived:
+            case CashTakeOver:
                 isCredit = !isCredit;
-            case STOCKRIGHTTAKEN:
+            case StockRightsTaken:
                 if (!isCredit) {
                     myResult = (pType.isMoney() || pType.isDeferred());
                 } else {
                     myResult = pType.isShares();
                 }
                 break;
-            case INTEREST:
+            case Interest:
                 if (!isCredit) {
                     myResult = pType.isMoney();
                 } else {
                     myResult = pType.isMoney();
                 }
                 break;
-            case TAXEDINCOME:
+            case TaxedIncome:
                 if (!isCredit) {
                     myResult = pType.isEmployer();
                 } else {
                     myResult = ((pType.isMoney()) || (pType.isDeferred()));
                 }
                 break;
-            case NATINSURANCE:
+            case NatInsurance:
                 if (!isCredit) {
                     myResult = pType.isEmployer();
                 } else {
                     myResult = pType.isTaxMan();
                 }
                 break;
-            case TRANSFER:
+            case Transfer:
                 myResult = !pType.isExternal();
                 if (isCredit) {
                     myResult &= !pType.isEndowment();
                 }
                 break;
-            case ENDOWMENT:
+            case Endowment:
                 if (!isCredit) {
                     myResult = (pType.isMoney() || pType.isDebt());
                 } else {
                     myResult = pType.isEndowment();
                 }
                 break;
-            case CASHPAYMENT:
+            case CashPayment:
                 isCredit = !isCredit;
-            case CASHRECOVERY:
+            case CashRecovery:
                 if (!isCredit) {
                     myResult = ((pType.isExternal()) && (!pType.isCash()));
                 } else {
                     myResult = pType.isCash();
                 }
                 break;
-            case INHERITED:
+            case Inherited:
                 if (!isCredit) {
                     myResult = pType.isInheritance();
                 } else {
                     myResult = !pType.isExternal();
                 }
                 break;
-            case BENEFIT:
+            case Benefit:
                 if (!isCredit) {
                     myResult = pType.isEmployer();
                 } else {
                     myResult = pType.isBenefit();
                 }
                 break;
-            case RECOVERED:
+            case Recovered:
                 isCredit = !isCredit;
-            case EXPENSE:
+            case Expense:
                 if (!isCredit) {
                     myResult = !pType.isExternal();
                 } else {
                     myResult = pType.isExternal();
                 }
                 break;
-            case EXTRATAX:
-            case INSURANCE:
+            case ExtraTax:
+            case Insurance:
                 if (!isCredit) {
                     myResult = (pType.isMoney() || pType.isDebt());
                 } else {
                     myResult = (pType.isExternal() && !pType.isCash());
                 }
                 break;
-            case MORTGAGE:
+            case Mortgage:
                 if (!isCredit) {
                     myResult = pType.isDebt();
                 } else {
                     myResult = (pType.isExternal() && !pType.isCash());
                 }
                 break;
-            case TAXREFUND:
+            case TaxRefund:
                 isCredit = !isCredit;
-            case TAXOWED:
+            case TaxOwed:
                 if (!isCredit) {
                     myResult = (pType.isMoney() || pType.isDeferred());
                 } else {
                     myResult = pType.isTaxMan();
                 }
                 break;
-            case TAXRELIEF:
+            case TaxRelief:
                 if (!isCredit) {
                     myResult = pType.isTaxMan();
                 } else {
                     myResult = pType.isDebt();
                 }
                 break;
-            case DEBTINTEREST:
-            case RENTALINCOME:
+            case DebtInterest:
+            case RentalIncome:
                 if (!isCredit) {
                     myResult = (pType.isExternal() && !pType.isCash());
                 } else {
                     myResult = pType.isDebt();
                 }
                 break;
-            case WRITEOFF:
+            case WriteOff:
                 if (!isCredit) {
                     myResult = pType.isDebt();
                 } else {
@@ -863,7 +863,7 @@ public abstract class EventBase
         /* Switch on the TransType */
         switch (pTrans.getTranClass()) {
         /* Dividend */
-            case DIVIDEND:
+            case Dividend:
                 /* If the credit account is capital */
                 if (pCredit.isCapital()) {
                     /* Debit and credit accounts must be identical */
@@ -871,22 +871,22 @@ public abstract class EventBase
                 }
                 break;
             /* AdminCharge/StockSplit */
-            case ADMINCHARGE:
-            case STOCKSPLIT:
+            case AdminCharge:
+            case StockSplit:
                 /* Debit and credit accounts must be identical */
                 myResult = !myResult;
                 break;
             /* Interest can be recursive */
-            case INTEREST:
+            case Interest:
                 myResult = true;
                 break;
             /* Debt Interest and Rental Income must come from the owner of the debt */
-            case RENTALINCOME:
-            case DEBTINTEREST:
+            case RentalIncome:
+            case DebtInterest:
                 myResult = Difference.isEqual(pDebit, pCredit.getParent());
                 break;
             /* Mortgage payment must be to the owner of the mortgage */
-            case MORTGAGE:
+            case Mortgage:
                 myResult = Difference.isEqual(pCredit, pDebit.getParent());
                 break;
             default:
@@ -1003,12 +1003,12 @@ public abstract class EventBase
         /* Switch on transaction type */
         switch (pTrans.getTranClass()) {
         /* If this is a Taxable Gain/TaxedIncome we need a tax credit */
-            case TAXABLEGAIN:
-            case TAXEDINCOME:
+            case TaxableGain:
+            case TaxedIncome:
                 return true;
                 /* Check for dividend/interest */
-            case DIVIDEND:
-            case INTEREST:
+            case Dividend:
+            case Interest:
                 return (pDebit != null)
                        && !pDebit.isTaxFree();
             default:
@@ -1030,9 +1030,9 @@ public abstract class EventBase
         /* Switch on transaction type */
         switch (pTrans.getTranClass()) {
         /* If this is a Stock Operation we need a dilution factor */
-            case STOCKDEMERGER:
-            case STOCKRIGHTTAKEN:
-            case STOCKRIGHTWAIVED:
+            case StockDeMerger:
+            case StockRightsTaken:
+            case StockRightsWaived:
                 return true;
             default:
                 return false;

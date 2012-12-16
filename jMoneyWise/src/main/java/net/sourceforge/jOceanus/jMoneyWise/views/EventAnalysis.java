@@ -251,7 +251,7 @@ public class EventAnalysis
         Account myTaxMan = theData.getAccounts().getTaxMan();
         BucketList myBuckets = theAnalysis.getList();
         theTaxMan = (ExternalAccount) myBuckets.getAccountDetail(myTaxMan);
-        theTaxPaid = myBuckets.getTransDetail(TransClass.TAXCREDIT);
+        theTaxPaid = myBuckets.getTransDetail(TransClass.TaxCredit);
 
         /* Access the events and the iterator */
         EventList myEvents = pData.getEvents();
@@ -302,7 +302,7 @@ public class EventAnalysis
         Account myTaxMan = theData.getAccounts().getTaxMan();
         BucketList myBuckets = theAnalysis.getList();
         theTaxMan = (ExternalAccount) myBuckets.getAccountDetail(myTaxMan);
-        theTaxPaid = myBuckets.getTransDetail(TransClass.TAXCREDIT);
+        theTaxPaid = myBuckets.getTransDetail(TransClass.TaxCredit);
         theAccount = myBuckets.getAccountDetail(myAccount);
 
         /* Access the events and the iterator */
@@ -475,7 +475,7 @@ public class EventAnalysis
                 /* Access the TaxMan account bucket and Tax Credit transaction */
                 BucketList myBuckets = theAnalysis.getList();
                 theTaxMan = (ExternalAccount) myBuckets.getAccountDetail(myTaxMan);
-                theTaxPaid = myBuckets.getTransDetail(TransClass.TAXCREDIT);
+                theTaxPaid = myBuckets.getTransDetail(TransClass.TaxCredit);
             }
 
             /* Touch credit account */
@@ -860,7 +860,7 @@ public class EventAnalysis
                 /* If the account is tax free */
                 if (myDebit.isTaxFree()) {
                     /* The true transaction type is TaxFreeInterest */
-                    myTrans = myTranList.findItemByClass(TransClass.TAXFREEINTEREST);
+                    myTrans = myTranList.findItemByClass(TransClass.TaxFreeInterest);
                 }
 
                 /* True debit account is the parent */
@@ -899,44 +899,44 @@ public class EventAnalysis
         /* Switch on the transaction */
         switch (myTrans.getTranClass()) {
         /* Process a stock split */
-            case STOCKSPLIT:
-            case ADMINCHARGE:
+            case StockSplit:
+            case AdminCharge:
                 processStockSplit(pEvent);
                 break;
             /* Process a stock right taken */
-            case STOCKRIGHTTAKEN:
+            case StockRightsTaken:
                 processTransferIn(pEvent);
                 break;
             /* Process a stock right taken */
-            case STOCKRIGHTWAIVED:
+            case StockRightsWaived:
                 processStockRightWaived(pEvent);
                 break;
             /* Process a stock DeMerger */
-            case STOCKDEMERGER:
+            case StockDeMerger:
                 processStockDeMerger(pEvent);
                 break;
             /* Process a Cash TakeOver */
-            case CASHTAKEOVER:
+            case CashTakeOver:
                 processCashTakeover(pEvent);
                 break;
             /* Process a Cash TakeOver */
-            case STOCKTAKEOVER:
+            case StockTakeOver:
                 processStockTakeover(pEvent);
                 break;
             /* Process a Taxable Gain */
-            case TAXABLEGAIN:
+            case TaxableGain:
                 processTaxableGain(pEvent);
                 break;
             /* Process a dividend */
-            case DIVIDEND:
+            case Dividend:
                 processDividend(pEvent);
                 break;
             /* Process standard transfer in/out */
-            case TRANSFER:
-            case ENDOWMENT:
-            case EXPENSE:
-            case INHERITED:
-            case TAXFREEINCOME:
+            case Transfer:
+            case Endowment:
+            case Expense:
+            case Inherited:
+            case TaxFreeIncome:
                 if (pEvent.getCredit().isPriced()) {
                     processTransferIn(pEvent);
                 } else {
@@ -1055,12 +1055,12 @@ public class EventAnalysis
         /* If the account is tax free */
         if (myAccount.isTaxFree()) {
             /* The true transaction type is TaxFreeDividend */
-            myTrans = myTranList.findItemByClass(TransClass.TAXFREEDIVIDEND);
+            myTrans = myTranList.findItemByClass(TransClass.TaxFreeDividend);
 
             /* else if the account is a unit trust */
         } else if (myAccount.isUnitTrust()) {
             /* The true transaction type is UnitTrustDividend */
-            myTrans = myTranList.findItemByClass(TransClass.UNITTRUSTDIVIDEND);
+            myTrans = myTranList.findItemByClass(TransClass.UnitTrustDividend);
         }
 
         /* True debit account is the parent */

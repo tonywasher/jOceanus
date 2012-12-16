@@ -136,14 +136,7 @@ public class TaxRegime
      * @return <code>true/false</code>
      */
     public boolean hasLoSalaryBand() {
-        switch (getStaticClass()) {
-            case ARCHIVE:
-                return true;
-            case STANDARD:
-                return true;
-            default:
-                return false;
-        }
+        return getStaticClass().hasLoSalaryBand();
     }
 
     /**
@@ -151,12 +144,7 @@ public class TaxRegime
      * @return <code>true/false</code>
      */
     public boolean hasCapitalGainsAsIncome() {
-        switch (getStaticClass()) {
-            case STANDARD:
-                return true;
-            default:
-                return false;
-        }
+        return getStaticClass().hasCapitalGainsAsIncome();
     }
 
     /**
@@ -164,12 +152,7 @@ public class TaxRegime
      * @return <code>true/false</code>
      */
     public boolean hasAdditionalTaxBand() {
-        switch (getStaticClass()) {
-            case ADDITIONALBAND:
-                return true;
-            default:
-                return false;
-        }
+        return getStaticClass().hasAdditionalTaxBand();
     }
 
     /**

@@ -33,47 +33,47 @@ public enum FreqClass implements StaticInterface {
     /**
      * Weekly Frequency.
      */
-    WEEKLY(1, 0, 7),
+    Weekly(1, 0, 7),
+
+    /**
+     * Fortnightly Frequency.
+     */
+    Fortnightly(2, 1, 14),
 
     /**
      * Monthly Frequency.
      */
-    FORTNIGHTLY(2, 1, 14),
-
-    /**
-     * Monthly Frequency.
-     */
-    MONTHLY(3, 2, 1),
+    Monthly(3, 2, 1),
 
     /**
      * Monthly Frequency (at end of month).
      */
-    ENDOFMONTH(4, 3, 1),
+    EndOfMonth(4, 3, 1),
 
     /**
      * Quarterly Frequency.
      */
-    QUARTERLY(5, 4, 3),
+    Quarterly(5, 4, 3),
 
     /**
      * Half Yearly Frequency.
      */
-    HALFYEARLY(6, 5, 6),
+    HalfYearly(6, 5, 6),
 
     /**
      * Annual Frequency.
      */
-    ANNUALLY(7, 6, 0),
+    Annually(7, 6, 0),
 
     /**
      * Only on Maturity.
      */
-    MATURITY(8, 7, 0),
+    Maturity(8, 7, 0),
 
     /**
      * Monthly for up to ten-months.
      */
-    TENMONTHS(9, 8, 1);
+    TenMonths(9, 8, 1);
 
     /**
      * Class Id.

@@ -136,19 +136,7 @@ public class AccountType
      * @return <code>true</code> if the account is external, <code>false</code> otherwise.
      */
     public boolean isExternal() {
-        switch (getAccountClass()) {
-            case EXTERNAL:
-            case OWNER:
-            case EMPLOYER:
-            case INHERITANCE:
-            case CASH:
-            case WRITEOFF:
-            case TAXMAN:
-            case MARKET:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isExternal();
     }
 
     /**
@@ -156,16 +144,7 @@ public class AccountType
      * @return <code>true</code> if the account is special external, <code>false</code> otherwise.
      */
     public boolean isSpecial() {
-        switch (getAccountClass()) {
-            case INHERITANCE:
-            case CASH:
-            case WRITEOFF:
-            case TAXMAN:
-            case MARKET:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isSpecial();
     }
 
     /**
@@ -173,18 +152,7 @@ public class AccountType
      * @return <code>true</code> if the account is priced, <code>false</code> otherwise.
      */
     public boolean isPriced() {
-        switch (getAccountClass()) {
-            case HOUSE:
-            case CAR:
-            case SHARES:
-            case LIFEBOND:
-            case UNITTRUST:
-            case UNITISA:
-            case ENDOWMENT:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isPriced();
     }
 
     /**
@@ -192,15 +160,7 @@ public class AccountType
      * @return <code>true</code> if the account is a dividend provider, <code>false</code> otherwise.
      */
     public boolean isDividend() {
-        switch (getAccountClass()) {
-            case SHARES:
-            case EMPLOYER:
-            case UNITTRUST:
-            case UNITISA:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isDividend();
     }
 
     /**
@@ -208,12 +168,7 @@ public class AccountType
      * @return <code>true</code> if the account is a unit dividend provider, <code>false</code> otherwise.
      */
     public boolean isUnitTrust() {
-        switch (getAccountClass()) {
-            case UNITTRUST:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isUnitTrust();
     }
 
     /**
@@ -221,15 +176,7 @@ public class AccountType
      * @return <code>true</code> if the account is a tax free dividend provider, <code>false</code> otherwise.
      */
     public boolean isTaxFree() {
-        switch (getAccountClass()) {
-            case UNITISA:
-            case CASHISA:
-            case ISABOND:
-            case TAXFREEBOND:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isTaxFree();
     }
 
     /**
@@ -237,19 +184,7 @@ public class AccountType
      * @return <code>true</code> if the account is savings, <code>false</code> otherwise.
      */
     public boolean isMoney() {
-        switch (getAccountClass()) {
-            case CURRENT:
-            case INSTANT:
-            case NOTICE:
-            case BOND:
-            case CASHISA:
-            case ISABOND:
-            case TAXFREEBOND:
-            case EQUITYBOND:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isMoney();
     }
 
     /**
@@ -257,15 +192,7 @@ public class AccountType
      * @return <code>true</code> if the account is a bond, <code>false</code> otherwise.
      */
     public boolean isBond() {
-        switch (getAccountClass()) {
-            case BOND:
-            case ISABOND:
-            case TAXFREEBOND:
-            case EQUITYBOND:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isBond();
     }
 
     /**
@@ -273,14 +200,7 @@ public class AccountType
      * @return <code>true</code> if the account is debt, <code>false</code> otherwise.
      */
     public boolean isDebt() {
-        switch (getAccountClass()) {
-            case DEBTS:
-            case CREDITCARD:
-            case DEFERRED:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isDebt();
     }
 
     /**
@@ -288,26 +208,7 @@ public class AccountType
      * @return <code>true</code> if the account is child, <code>false</code> otherwise.
      */
     public boolean isChild() {
-        switch (getAccountClass()) {
-            case CURRENT:
-            case INSTANT:
-            case NOTICE:
-            case CASHISA:
-            case BOND:
-            case ISABOND:
-            case TAXFREEBOND:
-            case EQUITYBOND:
-            case SHARES:
-            case UNITTRUST:
-            case LIFEBOND:
-            case UNITISA:
-            case CREDITCARD:
-            case ENDOWMENT:
-            case DEBTS:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isChild();
     }
 
     /**
@@ -315,16 +216,7 @@ public class AccountType
      * @return <code>true</code> if the account is reserved, <code>false</code> otherwise.
      */
     public boolean isReserved() {
-        switch (getAccountClass()) {
-            case DEFERRED:
-            case TAXMAN:
-            case CASH:
-            case WRITEOFF:
-            case MARKET:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isReserved();
     }
 
     /**
@@ -332,13 +224,7 @@ public class AccountType
      * @return <code>true</code> if the account can alias, <code>false</code> otherwise.
      */
     public boolean canAlias() {
-        switch (getAccountClass()) {
-            case UNITISA:
-            case UNITTRUST:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().canAlias();
     }
 
     /**
@@ -346,13 +232,7 @@ public class AccountType
      * @return <code>true</code> if the account is subject to Capital Gains, <code>false</code> otherwise.
      */
     public boolean isCapitalGains() {
-        switch (getAccountClass()) {
-            case SHARES:
-            case UNITTRUST:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isCapitalGains();
     }
 
     /**
@@ -360,15 +240,7 @@ public class AccountType
      * @return <code>true</code> if the account is Capital, <code>false</code> otherwise.
      */
     public boolean isCapital() {
-        switch (getAccountClass()) {
-            case SHARES:
-            case LIFEBOND:
-            case UNITTRUST:
-            case UNITISA:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isCapital();
     }
 
     /**
@@ -376,13 +248,7 @@ public class AccountType
      * @return <code>true</code> if the account is Owner, <code>false</code> otherwise.
      */
     public boolean isOwner() {
-        switch (getAccountClass()) {
-            case INHERITANCE:
-            case OWNER:
-                return true;
-            default:
-                return false;
-        }
+        return getAccountClass().isOwner();
     }
 
     /**
@@ -390,7 +256,7 @@ public class AccountType
      * @return <code>true</code> if the account is cash, <code>false</code> otherwise.
      */
     public boolean isCash() {
-        return (getAccountClass() == AccountClass.CASH);
+        return getAccountClass().isCash();
     }
 
     /**
@@ -398,7 +264,7 @@ public class AccountType
      * @return <code>true</code> if the account is inheritance, <code>false</code> otherwise.
      */
     public boolean isInheritance() {
-        return (getAccountClass() == AccountClass.INHERITANCE);
+        return getAccountClass().isInheritance();
     }
 
     /**
@@ -406,7 +272,7 @@ public class AccountType
      * @return <code>true</code> if the account is WriteOff, <code>false</code> otherwise.
      */
     public boolean isWriteOff() {
-        return (getAccountClass() == AccountClass.WRITEOFF);
+        return getAccountClass().isWriteOff();
     }
 
     /**
@@ -414,7 +280,7 @@ public class AccountType
      * @return <code>true</code> if the account is market, <code>false</code> otherwise.
      */
     public boolean isMarket() {
-        return (getAccountClass() == AccountClass.MARKET);
+        return getAccountClass().isMarket();
     }
 
     /**
@@ -422,7 +288,7 @@ public class AccountType
      * @return <code>true</code> if the account is TaxMan, <code>false</code> otherwise.
      */
     public boolean isTaxMan() {
-        return (getAccountClass() == AccountClass.TAXMAN);
+        return getAccountClass().isTaxMan();
     }
 
     /**
@@ -430,7 +296,7 @@ public class AccountType
      * @return <code>true</code> if the account is employer, <code>false</code> otherwise.
      */
     public boolean isEmployer() {
-        return (getAccountClass() == AccountClass.EMPLOYER);
+        return getAccountClass().isEmployer();
     }
 
     /**
@@ -438,7 +304,7 @@ public class AccountType
      * @return <code>true</code> if the account is endowment, <code>false</code> otherwise.
      */
     public boolean isEndowment() {
-        return (getAccountClass() == AccountClass.ENDOWMENT);
+        return getAccountClass().isEndowment();
     }
 
     /**
@@ -446,7 +312,7 @@ public class AccountType
      * @return <code>true</code> if the account is deferred, <code>false</code> otherwise.
      */
     public boolean isDeferred() {
-        return (getAccountClass() == AccountClass.DEFERRED);
+        return getAccountClass().isDeferred();
     }
 
     /**
@@ -454,7 +320,7 @@ public class AccountType
      * @return <code>true</code> if the account is benefit, <code>false</code> otherwise.
      */
     public boolean isBenefit() {
-        return (getAccountClass() == AccountClass.BENEFIT);
+        return getAccountClass().isBenefit();
     }
 
     /**
@@ -462,7 +328,7 @@ public class AccountType
      * @return <code>true</code> if the account is Share, <code>false</code> otherwise.
      */
     public boolean isShares() {
-        return (getAccountClass() == AccountClass.SHARES);
+        return getAccountClass().isShares();
     }
 
     /**
@@ -470,7 +336,7 @@ public class AccountType
      * @return <code>true</code> if the account is LifeBond, <code>false</code> otherwise.
      */
     public boolean isLifeBond() {
-        return (getAccountClass() == AccountClass.LIFEBOND);
+        return getAccountClass().isLifeBond();
     }
 
     /**

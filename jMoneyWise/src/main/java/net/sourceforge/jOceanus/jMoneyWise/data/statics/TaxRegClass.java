@@ -33,22 +33,22 @@ public enum TaxRegClass implements StaticInterface {
     /**
      * Archive tax regime.
      */
-    ARCHIVE(1, 0),
+    Archive(1, 0),
 
     /**
      * Standard tax regime.
      */
-    STANDARD(2, 1),
+    Standard(2, 1),
 
     /**
      * Low Interest Tax Band.
      */
-    LOINTEREST(3, 2),
+    LoInterest(3, 2),
 
     /**
      * Additional tax band.
      */
-    ADDITIONALBAND(4, 3);
+    AdditionalBand(4, 3);
 
     /**
      * Class Id.
@@ -95,5 +95,46 @@ public enum TaxRegClass implements StaticInterface {
         }
         throw new JDataException(ExceptionClass.DATA, "Invalid Tax Regime Class Id: "
                                                       + id);
+    }
+
+    /**
+     * Determine whether this tax regime supports a Low Salary Band.
+     * @return <code>true/false</code>
+     */
+    public boolean hasLoSalaryBand() {
+        switch (this) {
+            case Archive:
+                return true;
+            case Standard:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether this tax regime treats capital gains as standard income.
+     * @return <code>true/false</code>
+     */
+    public boolean hasCapitalGainsAsIncome() {
+        switch (this) {
+            case Standard:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether this tax regime supports an additional taxation band.
+     * @return <code>true/false</code>
+     */
+    public boolean hasAdditionalTaxBand() {
+        switch (this) {
+            case AdditionalBand:
+                return true;
+            default:
+                return false;
+        }
     }
 }

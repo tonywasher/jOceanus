@@ -48,7 +48,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
  * Capital Events relating to asset movements.
  * @author Tony Washer
  */
-public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents, Comparable<CapitalEvent> {
+public final class CapitalEvent
+        implements OrderedIdItem<Integer>, JDataContents, Comparable<CapitalEvent> {
     /**
      * Report fields.
      */
@@ -361,7 +362,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
 
         /* Check equality */
         return Difference.isEqual(getDate(), myThat.getDate())
-                && Difference.isEqual(getEvent(), myThat.getEvent());
+               && Difference.isEqual(getEvent(), myThat.getEvent());
     }
 
     @Override
@@ -438,8 +439,9 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
     /**
      * The List of capital events.
      */
-    public static class CapitalEventList extends OrderedIdList<Integer, CapitalEvent> implements
-            JDataContents {
+    public static class CapitalEventList
+            extends OrderedIdList<Integer, CapitalEvent>
+            implements JDataContents {
         /**
          * Report fields.
          */
@@ -452,7 +454,10 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
 
         @Override
         public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFields().getName()
+                   + "("
+                   + size()
+                   + ")";
         }
 
         /**
@@ -563,8 +568,9 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
             CapitalEvent myEvent = myIterator.peekLast();
 
             /* If the element is a cash takeover */
-            if ((myEvent != null) && (myEvent.getEvent() != null)
-                    && (myEvent.getEvent().getTransType().getTranClass() == TransClass.CASHTAKEOVER)) {
+            if ((myEvent != null)
+                && (myEvent.getEvent() != null)
+                && (myEvent.getEvent().getTransType().getTranClass() == TransClass.CashTakeOver)) {
                 return myEvent;
             }
 
@@ -637,8 +643,7 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
         /**
          * Compare this Attribute to another to establish sort order.
          * @param pThat The Attribute to compare to
-         * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in
-         *         the sort order
+         * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
          */
         public int compareTo(final Object pThat) {
             /* Handle the trivial cases */
@@ -692,7 +697,8 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
     /**
      * MoneyAttribute class.
      */
-    public final class MoneyAttribute extends Attribute<JMoney> {
+    public final class MoneyAttribute
+            extends Attribute<JMoney> {
         /**
          * Constructor.
          * @param pName the name
@@ -708,7 +714,8 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
     /**
      * UnitsAttribute class.
      */
-    public final class UnitsAttribute extends Attribute<JUnits> {
+    public final class UnitsAttribute
+            extends Attribute<JUnits> {
         /**
          * Constructor.
          * @param pName the name
@@ -724,7 +731,8 @@ public final class CapitalEvent implements OrderedIdItem<Integer>, JDataContents
     /**
      * PriceAttribute class.
      */
-    public final class PriceAttribute extends Attribute<JPrice> {
+    public final class PriceAttribute
+            extends Attribute<JPrice> {
         /**
          * Constructor.
          * @param pName the name

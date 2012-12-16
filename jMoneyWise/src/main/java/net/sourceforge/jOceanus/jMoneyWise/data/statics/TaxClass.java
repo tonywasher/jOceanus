@@ -33,282 +33,282 @@ public enum TaxClass implements StaticInterface {
     /**
      * Gross Salary Income.
      */
-    GROSSSALARY(1, 0, TaxBucket.TRANSSUMM),
+    GrossSalary(1, 0, TaxBucket.TRANSSUMM),
 
     /**
      * Gross Interest Income.
      */
-    GROSSINTEREST(2, 1, TaxBucket.TRANSSUMM),
+    GrossInterest(2, 1, TaxBucket.TRANSSUMM),
 
     /**
      * Gross Dividend Income.
      */
-    GROSSDIVIDEND(3, 2, TaxBucket.TRANSSUMM),
+    GrossDividend(3, 2, TaxBucket.TRANSSUMM),
 
     /**
      * Gross Unit Trust Dividend Income.
      */
-    GROSSUTDIVS(4, 3, TaxBucket.TRANSSUMM),
+    GrossUTDividend(4, 3, TaxBucket.TRANSSUMM),
 
     /**
      * Gross Rental Income.
      */
-    GROSSRENTAL(5, 4, TaxBucket.TRANSSUMM),
+    GrossRental(5, 4, TaxBucket.TRANSSUMM),
 
     /**
      * Gross Taxable gains.
      */
-    GROSSTAXGAINS(6, 5, TaxBucket.TRANSSUMM),
+    GrossTaxableGains(6, 5, TaxBucket.TRANSSUMM),
 
     /**
      * Gross Capital gains.
      */
-    GROSSCAPGAINS(7, 6, TaxBucket.TRANSSUMM),
+    GrossCapitalGains(7, 6, TaxBucket.TRANSSUMM),
 
     /**
      * Total Tax Paid.
      */
-    TAXPAID(8, 7, TaxBucket.TRANSSUMM),
+    TaxPaid(8, 7, TaxBucket.TRANSSUMM),
 
     /**
      * Market Growth/Shrinkage.
      */
-    MARKET(9, 8, TaxBucket.TRANSSUMM),
+    Market(9, 8, TaxBucket.TRANSSUMM),
 
     /**
      * Tax Free Income.
      */
-    TAXFREE(10, 9, TaxBucket.TRANSSUMM),
+    TaxFree(10, 9, TaxBucket.TRANSSUMM),
 
     /**
      * Gross Expense.
      */
-    EXPENSE(11, 10, TaxBucket.TRANSSUMM),
+    Expense(11, 10, TaxBucket.TRANSSUMM),
 
     /**
      * Virtual Income.
      */
-    VIRTUAL(12, 11, TaxBucket.TRANSSUMM),
+    Virtual(12, 11, TaxBucket.TRANSSUMM),
 
     /**
      * Non-Core Income.
      */
-    NONCORE(13, 12, TaxBucket.TRANSSUMM),
+    NonCore(13, 12, TaxBucket.TRANSSUMM),
 
     /**
      * Profit on Year.
      */
-    PROFITLOSS(14, 0, TaxBucket.TRANSTOTAL),
+    ProfitLoss(14, 0, TaxBucket.TRANSTOTAL),
 
     /**
      * Core Income after tax ignoring market movements and inheritance.
      */
-    COREINCOME(15, 1, TaxBucket.TRANSTOTAL),
+    CoreIncome(15, 1, TaxBucket.TRANSTOTAL),
 
     /**
      * Profit on year after ignoring market movements and inheritance.
      */
-    COREPROFITLOSS(16, 2, TaxBucket.TRANSTOTAL),
+    CoreProfitLoss(16, 2, TaxBucket.TRANSTOTAL),
 
     /**
      * Gross Income.
      */
-    GROSSINCOME(17, 0, TaxBucket.TAXDETAIL),
+    GrossIncome(17, 0, TaxBucket.TAXDETAIL),
 
     /**
      * Original Allowance.
      */
-    ORIGALLOW(18, 1, TaxBucket.TAXDETAIL),
+    OriginalAllowance(18, 1, TaxBucket.TAXDETAIL),
 
     /**
      * Adjusted Allowance.
      */
-    ADJALLOW(19, 2, TaxBucket.TAXDETAIL),
+    AdjustedAllowance(19, 2, TaxBucket.TAXDETAIL),
 
     /**
      * High Tax Band.
      */
-    HITAXBAND(20, 3, TaxBucket.TAXDETAIL),
+    HiTaxBand(20, 3, TaxBucket.TAXDETAIL),
 
     /**
      * Salary at nil-rate.
      */
-    SALARYFREE(21, 4, TaxBucket.TAXDETAIL),
+    SalaryNilRate(21, 4, TaxBucket.TAXDETAIL),
 
     /**
      * Salary at low-rate.
      */
-    SALARYLO(22, 5, TaxBucket.TAXDETAIL),
+    SalaryLoRate(22, 5, TaxBucket.TAXDETAIL),
 
     /**
      * Salary at basic-rate.
      */
-    SALARYBASIC(23, 6, TaxBucket.TAXDETAIL),
+    SalaryBasicRate(23, 6, TaxBucket.TAXDETAIL),
 
     /**
      * Salary at high-rate.
      */
-    SALARYHI(24, 7, TaxBucket.TAXDETAIL),
+    SalaryHiRate(24, 7, TaxBucket.TAXDETAIL),
 
     /**
      * Salary at additional-rate.
      */
-    SALARYADD(25, 8, TaxBucket.TAXDETAIL),
+    SalaryAdditionalRate(25, 8, TaxBucket.TAXDETAIL),
 
     /**
      * Rental at nil-rate.
      */
-    RENTALFREE(26, 9, TaxBucket.TAXDETAIL),
+    RentalNilRate(26, 9, TaxBucket.TAXDETAIL),
 
     /**
      * Rental at low-rate.
      */
-    RENTALLO(27, 10, TaxBucket.TAXDETAIL),
+    RentalLoRate(27, 10, TaxBucket.TAXDETAIL),
 
     /**
      * Rental at basic-rate.
      */
-    RENTALBASIC(28, 11, TaxBucket.TAXDETAIL),
+    RentalBasicRate(28, 11, TaxBucket.TAXDETAIL),
 
     /**
      * Rental at high-rate.
      */
-    RENTALHI(29, 12, TaxBucket.TAXDETAIL),
+    RentalHiRate(29, 12, TaxBucket.TAXDETAIL),
 
     /**
      * Rental at additional-rate.
      */
-    RENTALADD(30, 13, TaxBucket.TAXDETAIL),
+    RentalAdditionalRate(30, 13, TaxBucket.TAXDETAIL),
 
     /**
      * Interest at nil-rate.
      */
-    INTERESTFREE(31, 14, TaxBucket.TAXDETAIL),
+    InterestNilRate(31, 14, TaxBucket.TAXDETAIL),
 
     /**
      * Interest at low-rate.
      */
-    INTERESTLO(32, 15, TaxBucket.TAXDETAIL),
+    InterestLoRate(32, 15, TaxBucket.TAXDETAIL),
 
     /**
      * Interest at basic-rate.
      */
-    INTERESTBASIC(33, 16, TaxBucket.TAXDETAIL),
+    InterestBasicRate(33, 16, TaxBucket.TAXDETAIL),
 
     /**
      * Interest at high-rate.
      */
-    INTERESTHI(34, 17, TaxBucket.TAXDETAIL),
+    InterestHiRate(34, 17, TaxBucket.TAXDETAIL),
 
     /**
      * Interest at additional-rate.
      */
-    INTERESTADD(35, 18, TaxBucket.TAXDETAIL),
+    InterestAdditionalRate(35, 18, TaxBucket.TAXDETAIL),
 
     /**
      * Dividends at basic-rate.
      */
-    DIVIDENDBASIC(36, 19, TaxBucket.TAXDETAIL),
+    DividendBasicRate(36, 19, TaxBucket.TAXDETAIL),
 
     /**
      * Dividends at high-rate.
      */
-    DIVIDENDHI(37, 20, TaxBucket.TAXDETAIL),
+    DividendHiRate(37, 20, TaxBucket.TAXDETAIL),
 
     /**
      * Dividends at additional-rate.
      */
-    DIVIDENDADD(38, 21, TaxBucket.TAXDETAIL),
+    DividendAdditionalRate(38, 21, TaxBucket.TAXDETAIL),
 
     /**
      * Slice at basic-rate.
      */
-    SLICEBASIC(39, 22, TaxBucket.TAXDETAIL),
+    SliceBasicRate(39, 22, TaxBucket.TAXDETAIL),
 
     /**
      * Slice at high-rate.
      */
-    SLICEHI(40, 23, TaxBucket.TAXDETAIL),
+    SliceHiRate(40, 23, TaxBucket.TAXDETAIL),
 
     /**
      * Slice at additional-rate.
      */
-    SLICEADD(41, 24, TaxBucket.TAXDETAIL),
+    SliceAdditionalRate(41, 24, TaxBucket.TAXDETAIL),
 
     /**
      * Gains at basic-rate.
      */
-    GAINSBASIC(42, 25, TaxBucket.TAXDETAIL),
+    GainsBasicRate(42, 25, TaxBucket.TAXDETAIL),
 
     /**
      * Gains at high-rate.
      */
-    GAINSHI(43, 26, TaxBucket.TAXDETAIL),
+    GainsHiRate(43, 26, TaxBucket.TAXDETAIL),
 
     /**
      * Gains at additional-rate.
      */
-    GAINSADD(44, 27, TaxBucket.TAXDETAIL),
+    GainsAdditionalRate(44, 27, TaxBucket.TAXDETAIL),
 
     /**
      * Capital at nil-rate.
      */
-    CAPITALFREE(45, 28, TaxBucket.TAXDETAIL),
+    CapitalNilRate(45, 28, TaxBucket.TAXDETAIL),
 
     /**
      * Capital at basic-rate.
      */
-    CAPITALBASIC(46, 29, TaxBucket.TAXDETAIL),
+    CapitalBasicRate(46, 29, TaxBucket.TAXDETAIL),
 
     /**
      * Capital at high-rate.
      */
-    CAPITALHI(47, 30, TaxBucket.TAXDETAIL),
+    CapitalHiRate(47, 30, TaxBucket.TAXDETAIL),
 
     /**
      * Total Taxation Due on Salary.
      */
-    TAXDUESALARY(48, 0, TaxBucket.TAXSUMM),
+    TaxDueSalary(48, 0, TaxBucket.TAXSUMM),
 
     /**
      * Total Taxation Due on Rental.
      */
-    TAXDUERENTAL(49, 1, TaxBucket.TAXSUMM),
+    TaxDueRental(49, 1, TaxBucket.TAXSUMM),
 
     /**
      * Total Taxation Due on Interest.
      */
-    TAXDUEINTEREST(50, 2, TaxBucket.TAXSUMM),
+    TaxDueInterest(50, 2, TaxBucket.TAXSUMM),
 
     /**
      * Total Taxation Due on Dividends.
      */
-    TAXDUEDIVIDEND(51, 3, TaxBucket.TAXSUMM),
+    TaxDueDividend(51, 3, TaxBucket.TAXSUMM),
 
     /**
      * Total Taxation Due on Taxable Gains.
      */
-    TAXDUETAXGAINS(52, 4, TaxBucket.TAXSUMM),
+    TaxDueTaxableGains(52, 4, TaxBucket.TAXSUMM),
 
     /**
      * Total Taxation Due on Slice.
      */
-    TAXDUESLICE(53, 5, TaxBucket.TAXSUMM),
+    TaxDueSlice(53, 5, TaxBucket.TAXSUMM),
 
     /**
      * Total Taxation Due on Capital Gains.
      */
-    TAXDUECAPGAINS(54, 6, TaxBucket.TAXSUMM),
+    TaxDueCapitalGains(54, 6, TaxBucket.TAXSUMM),
 
     /**
      * Total Taxation Due.
      */
-    TOTALTAXATION(55, 0, TaxBucket.TAXTOTAL),
+    TotalTaxationDue(55, 0, TaxBucket.TAXTOTAL),
 
     /**
      * Taxation Profit (TaxDue-TaxPaid).
      */
-    TAXPROFITLOSS(56, 1, TaxBucket.TAXTOTAL);
+    TaxProfitLoss(56, 1, TaxBucket.TAXTOTAL);
 
     /**
      * Class Id.

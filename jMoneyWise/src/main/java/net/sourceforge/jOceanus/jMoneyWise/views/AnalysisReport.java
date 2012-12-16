@@ -946,21 +946,21 @@ public class AnalysisReport {
         }
 
         /* Access the Total taxation bucket */
-        myTax = myList.getTaxDetail(TaxClass.TOTALTAXATION);
+        myTax = myList.getTaxDetail(TaxClass.TotalTaxationDue);
         theReport.startTotalRow(myOutput, myTax.getName());
         theReport.makeTotalCell(myOutput, myTax.getAmount());
         theReport.makeTotalCell(myOutput, myTax.getTaxation());
         theReport.endRow(myOutput);
 
         /* Access the Tax Paid bucket */
-        TransSummary myTrans = myList.getTransSummary(TaxClass.TAXPAID);
+        TransSummary myTrans = myList.getTransSummary(TaxClass.TaxPaid);
         theReport.startTotalRow(myOutput, myTrans.getName());
         theReport.makeTotalCell(myOutput);
         theReport.makeTotalCell(myOutput, myTrans.getAmount());
         theReport.endRow(myOutput);
 
         /* Access the Tax Profit bucket */
-        myTax = myList.getTaxDetail(TaxClass.TAXPROFITLOSS);
+        myTax = myList.getTaxDetail(TaxClass.TaxProfitLoss);
         theReport.startTotalRow(myOutput, myTax.getName());
         theReport.makeTotalCell(myOutput, myTax.getAmount());
         theReport.makeTotalCell(myOutput, myTax.getTaxation());
@@ -1067,7 +1067,7 @@ public class AnalysisReport {
         theReport.endRow(myOutput);
 
         /* Access the original allowance */
-        myTax = myList.getTaxDetail(TaxClass.ORIGALLOW);
+        myTax = myList.getTaxDetail(TaxClass.OriginalAllowance);
         theReport.startDataRow(myOutput, false, "Personal Allowance");
         theReport.makeValueCell(myOutput, myTax.getAmount());
         theReport.endRow(myOutput);
@@ -1075,13 +1075,13 @@ public class AnalysisReport {
         /* if we have adjusted the allowance */
         if (theAnalysis.hasReducedAllow()) {
             /* Access the gross income */
-            myTax = myList.getTaxDetail(TaxClass.GROSSINCOME);
+            myTax = myList.getTaxDetail(TaxClass.GrossIncome);
             theReport.startDataRow(myOutput, true, "Gross Taxable Income");
             theReport.makeValueCell(myOutput, myTax.getAmount());
             theReport.endRow(myOutput);
 
             /* Access the gross income */
-            myTax = myList.getTaxDetail(TaxClass.ADJALLOW);
+            myTax = myList.getTaxDetail(TaxClass.AdjustedAllowance);
             theReport.startDataRow(myOutput, false, "Adjusted Allowance");
             theReport.makeValueCell(myOutput, myTax.getAmount());
             theReport.endRow(myOutput);
@@ -1104,7 +1104,7 @@ public class AnalysisReport {
         /* If we have a high tax band */
         if (theYear.hasAdditionalTaxBand()) {
             /* Access the gross income */
-            myTax = myList.getTaxDetail(TaxClass.HITAXBAND);
+            myTax = myList.getTaxDetail(TaxClass.HiTaxBand);
             theReport.startDataRow(myOutput, !isOdd, "High Tax Band");
             theReport.makeValueCell(myOutput, myTax.getAmount());
             theReport.endRow(myOutput);
@@ -1245,7 +1245,7 @@ public class AnalysisReport {
         theReport.endTable(myOutput);
 
         /* Access the Summary Tax Due Slice */
-        TaxDetail myTax = myList.getTaxDetail(TaxClass.TAXDUESLICE);
+        TaxDetail myTax = myList.getTaxDetail(TaxClass.TaxDueSlice);
 
         /* Add the Slice taxation details */
         myOutput.append(makeTaxReport(myTax));
@@ -1402,8 +1402,8 @@ public class AnalysisReport {
             JMoney myNet = myEvent.getAmount();
 
             /* If we are NatInsurance/Benefit */
-            if ((myTrans.getTranClass() == TransClass.NATINSURANCE)
-                || (myTrans.getTranClass() == TransClass.BENEFIT)) {
+            if ((myTrans.getTranClass() == TransClass.NatInsurance)
+                || (myTrans.getTranClass() == TransClass.Benefit)) {
                 /* Just add to gross */
                 myNet = new JMoney();
             } else if (myEvent.getTaxCredit() != null) {

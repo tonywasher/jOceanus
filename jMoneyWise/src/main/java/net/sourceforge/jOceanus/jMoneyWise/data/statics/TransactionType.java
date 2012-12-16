@@ -142,7 +142,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is transfer, <code>false</code> otherwise.
      */
     public boolean isTransfer() {
-        return (getTranClass() == TransClass.TRANSFER);
+        return getTranClass().isTransfer();
     }
 
     /**
@@ -150,7 +150,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is dividend, <code>false</code> otherwise.
      */
     public boolean isDividend() {
-        return (getTranClass() == TransClass.DIVIDEND);
+        return getTranClass().isDividend();
     }
 
     /**
@@ -158,7 +158,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is interest, <code>false</code> otherwise.
      */
     public boolean isInterest() {
-        return (getTranClass() == TransClass.INTEREST);
+        return getTranClass().isInterest();
     }
 
     /**
@@ -166,7 +166,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is cash payment, <code>false</code> otherwise.
      */
     public boolean isCashPayment() {
-        return (getTranClass() == TransClass.CASHPAYMENT);
+        return getTranClass().isCashPayment();
     }
 
     /**
@@ -174,7 +174,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is cash recovery, <code>false</code> otherwise.
      */
     public boolean isCashRecovery() {
-        return (getTranClass() == TransClass.CASHRECOVERY);
+        return getTranClass().isCashRecovery();
     }
 
     /**
@@ -182,7 +182,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is write off, <code>false</code> otherwise.
      */
     protected boolean isWriteOff() {
-        return (getTranClass() == TransClass.WRITEOFF);
+        return getTranClass().isWriteOff();
     }
 
     /**
@@ -190,7 +190,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is inheritance, <code>false</code> otherwise.
      */
     protected boolean isInherited() {
-        return (getTranClass() == TransClass.INHERITED);
+        return getTranClass().isInherited();
     }
 
     /**
@@ -198,7 +198,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is tax owed, <code>false</code> otherwise.
      */
     protected boolean isTaxOwed() {
-        return (getTranClass() == TransClass.TAXOWED);
+        return getTranClass().isTaxOwed();
     }
 
     /**
@@ -206,7 +206,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is tax refund, <code>false</code> otherwise.
      */
     protected boolean isTaxRefund() {
-        return (getTranClass() == TransClass.TAXREFUND);
+        return getTranClass().isTaxRefund();
     }
 
     /**
@@ -214,7 +214,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is tax relief, <code>false</code> otherwise.
      */
     protected boolean isTaxRelief() {
-        return (getTranClass() == TransClass.TAXRELIEF);
+        return getTranClass().isTaxRelief();
     }
 
     /**
@@ -222,7 +222,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is debt interest, <code>false</code> otherwise.
      */
     protected boolean isDebtInterest() {
-        return (getTranClass() == TransClass.DEBTINTEREST);
+        return getTranClass().isDebtInterest();
     }
 
     /**
@@ -230,7 +230,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is rental income, <code>false</code> otherwise.
      */
     protected boolean isRentalIncome() {
-        return (getTranClass() == TransClass.RENTALINCOME);
+        return getTranClass().isRentalIncome();
     }
 
     /**
@@ -238,7 +238,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is benefit, <code>false</code> otherwise.
      */
     protected boolean isBenefit() {
-        return (getTranClass() == TransClass.BENEFIT);
+        return getTranClass().isBenefit();
     }
 
     /**
@@ -246,7 +246,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is taxable gain, <code>false</code> otherwise.
      */
     public boolean isTaxableGain() {
-        return (getTranClass() == TransClass.TAXABLEGAIN);
+        return getTranClass().isTaxableGain();
     }
 
     /**
@@ -254,7 +254,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is capital gain, <code>false</code> otherwise.
      */
     public boolean isCapitalGain() {
-        return (getTranClass() == TransClass.CAPITALGAIN);
+        return getTranClass().isCapitalGain();
     }
 
     /**
@@ -262,7 +262,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is capital loss, <code>false</code> otherwise.
      */
     public boolean isCapitalLoss() {
-        return (getTranClass() == TransClass.CAPITALLOSS);
+        return getTranClass().isCapitalLoss();
     }
 
     /**
@@ -270,7 +270,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock split, <code>false</code> otherwise.
      */
     public boolean isStockSplit() {
-        return (getTranClass() == TransClass.STOCKSPLIT);
+        return getTranClass().isStockSplit();
     }
 
     /**
@@ -278,7 +278,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is admin charge, <code>false</code> otherwise.
      */
     public boolean isAdminCharge() {
-        return (getTranClass() == TransClass.ADMINCHARGE);
+        return getTranClass().isAdminCharge();
     }
 
     /**
@@ -286,7 +286,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock demerger, <code>false</code> otherwise.
      */
     public boolean isStockDemerger() {
-        return (getTranClass() == TransClass.STOCKDEMERGER);
+        return getTranClass().isStockDemerger();
     }
 
     /**
@@ -294,7 +294,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock right taken, <code>false</code> otherwise.
      */
     public boolean isStockRightTaken() {
-        return (getTranClass() == TransClass.STOCKRIGHTTAKEN);
+        return getTranClass().isStockRightTaken();
     }
 
     /**
@@ -302,7 +302,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock right waived, <code>false</code> otherwise.
      */
     public boolean isStockRightWaived() {
-        return (getTranClass() == TransClass.STOCKRIGHTWAIVED);
+        return getTranClass().isStockRightWaived();
     }
 
     /**
@@ -310,7 +310,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is cash takeover, <code>false</code> otherwise.
      */
     public boolean isCashTakeover() {
-        return (getTranClass() == TransClass.CASHTAKEOVER);
+        return getTranClass().isCashTakeover();
     }
 
     /**
@@ -318,7 +318,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock takeover, <code>false</code> otherwise.
      */
     public boolean isStockTakeover() {
-        return (getTranClass() == TransClass.STOCKTAKEOVER);
+        return getTranClass().isStockTakeover();
     }
 
     /**
@@ -326,14 +326,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is recovery, <code>false</code> otherwise.
      */
     public boolean isRecovered() {
-        switch (getTranClass()) {
-            case RECOVERED:
-            case CASHPAYMENT:
-            case CASHRECOVERY:
-                return true;
-            default:
-                return false;
-        }
+        return getTranClass().isRecovered();
     }
 
     /**
@@ -341,19 +334,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is hidden, <code>false</code> otherwise.
      */
     public boolean isHiddenType() {
-        switch (getTranClass()) {
-            case UNITTRUSTDIVIDEND:
-            case TAXFREEDIVIDEND:
-            case TAXFREEINTEREST:
-            case MARKETSHRINK:
-            case MARKETGROWTH:
-            case TAXCREDIT:
-            case CAPITALGAIN:
-            case CAPITALLOSS:
-                return true;
-            default:
-                return false;
-        }
+        return getTranClass().isHiddenType();
     }
 
     /**
@@ -361,16 +342,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction should have a tax credit, <code>false</code> otherwise.
      */
     public boolean needsTaxCredit() {
-        switch (getTranClass()) {
-            case TAXEDINCOME:
-            case INTEREST:
-            case DIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case TAXABLEGAIN:
-                return true;
-            default:
-                return false;
-        }
+        return getTranClass().needsTaxCredit();
     }
 
     /**
@@ -378,17 +350,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is income, <code>false</code> otherwise.
      */
     protected boolean isIncome() {
-        switch (getTranClass()) {
-            case TAXEDINCOME:
-            case TAXFREEINCOME:
-            case INTEREST:
-            case DIVIDEND:
-            case UNITTRUSTDIVIDEND:
-            case RECOVERED:
-                return true;
-            default:
-                return false;
-        }
+        return getTranClass().isIncome();
     }
 
     /**
@@ -396,16 +358,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is expense, <code>false</code> otherwise.
      */
     protected boolean isExpense() {
-        switch (getTranClass()) {
-            case MORTGAGE:
-            case ENDOWMENT:
-            case EXTRATAX:
-            case INSURANCE:
-            case EXPENSE:
-                return true;
-            default:
-                return false;
-        }
+        return getTranClass().isExpense();
     }
 
     /**
@@ -413,15 +366,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is dilutable, <code>false</code> otherwise.
      */
     public boolean isDilutable() {
-        switch (getTranClass()) {
-            case STOCKSPLIT:
-            case STOCKDEMERGER:
-            case STOCKRIGHTWAIVED:
-            case STOCKRIGHTTAKEN:
-                return true;
-            default:
-                return false;
-        }
+        return getTranClass().isDilutable();
     }
 
     /**

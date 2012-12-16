@@ -50,7 +50,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
  * Dilution Events relating to stock dilution.
  * @author Tony Washer
  */
-public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContents, Comparable<DilutionEvent> {
+public final class DilutionEvent
+        implements OrderedIdItem<Integer>, JDataContents, Comparable<DilutionEvent> {
     /**
      * Report fields.
      */
@@ -215,8 +216,8 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
         /* Check equality */
         return Difference.isEqual(getDate(), myThat.getDate())
-                && Difference.isEqual(getAccount(), myThat.getAccount())
-                && Difference.isEqual(getEvent(), myThat.getEvent());
+               && Difference.isEqual(getAccount(), myThat.getAccount())
+               && Difference.isEqual(getEvent(), myThat.getEvent());
     }
 
     @Override
@@ -244,12 +245,12 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
         /* Switch on the transaction type */
         switch (myType.getTranClass()) {
-            case STOCKRIGHTTAKEN:
+            case StockRightsTaken:
                 myAccount = pEvent.getCredit();
                 break;
-            case STOCKSPLIT:
-            case STOCKRIGHTWAIVED:
-            case STOCKDEMERGER:
+            case StockSplit:
+            case StockRightsWaived:
+            case StockDeMerger:
             default:
                 myAccount = pEvent.getDebit();
                 break;
@@ -284,8 +285,9 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
     /**
      * List of DilutionEvents.
      */
-    public static class DilutionEventList extends OrderedIdList<Integer, DilutionEvent> implements
-            JDataContents {
+    public static class DilutionEventList
+            extends OrderedIdList<Integer, DilutionEvent>
+            implements JDataContents {
         /**
          * Report fields.
          */
@@ -298,7 +300,10 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
 
         @Override
         public String formatObject() {
-            return getDataFields().getName() + "(" + size() + ")";
+            return getDataFields().getName()
+                   + "("
+                   + size()
+                   + ")";
         }
 
         /**
@@ -369,7 +374,9 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             /* Search for the account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid Dilution account [" + pAccount + "]");
+                throw new JDataException(ExceptionClass.DATA, "Invalid Dilution account ["
+                                                              + pAccount
+                                                              + "]");
             }
 
             /* Create the date */
@@ -378,7 +385,8 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             /* Record the dilution */
             JDilution myDilution = theParser.parseDilutionValue(pDilution);
             if (myDilution == null) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid Dilution: " + pDilution);
+                throw new JDataException(ExceptionClass.DATA, "Invalid Dilution: "
+                                                              + pDilution);
             }
 
             /* Create the dilution event */
@@ -434,7 +442,7 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
                 DilutionEvent myEvent = myIterator.next();
                 /* If the event is for this account, and if the dilution date is later */
                 if ((Difference.isEqual(pAccount, myEvent.getAccount()))
-                        && (pDate.compareTo(myEvent.getDate()) < 0)) {
+                    && (pDate.compareTo(myEvent.getDate()) < 0)) {
                     /* add in the dilution factor */
                     myDilution = myDilution.getFurtherDilution(myEvent.getDilution());
                 }
@@ -466,7 +474,9 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
             /* Search for the account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid Price account [" + pAccount + "]");
+                throw new JDataException(ExceptionClass.DATA, "Invalid Price account ["
+                                                              + pAccount
+                                                              + "]");
             }
 
             /* Create the date */
@@ -491,7 +501,8 @@ public final class DilutionEvent implements OrderedIdItem<Integer>, JDataContent
                 }
                 /* Catch exceptions */
             } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid Price: " + pPrice, e);
+                throw new JDataException(ExceptionClass.DATA, "Invalid Price: "
+                                                              + pPrice, e);
             }
 
             /* Add the item to the list */
