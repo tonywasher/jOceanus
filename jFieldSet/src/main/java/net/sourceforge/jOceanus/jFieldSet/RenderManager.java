@@ -174,8 +174,8 @@ public class RenderManager {
      * @param pItem the data item
      * @return the render data
      */
-    protected <X extends JFieldItem> RenderData determineRenderData(final JFieldElement<X> pElement,
-                                                                    final X pItem) {
+    protected <X extends JFieldSetItem> RenderData determineRenderData(final JFieldElement<X> pElement,
+                                                                       final X pItem) {
         /* Allocate the render data */
         RenderData myData = new RenderData(pElement.isFixedWidth());
 
@@ -492,8 +492,8 @@ public class RenderManager {
          * @param pElement the fieldSet element
          * @param pItem the data item
          */
-        protected <X extends JFieldItem> void determineData(final JFieldElement<X> pElement,
-                                                            final X pItem) {
+        protected <X extends JFieldSetItem> void determineData(final JFieldElement<X> pElement,
+                                                               final X pItem) {
             /* Determine whether we have a null item */
             boolean isNull = (pItem == null);
 
@@ -610,8 +610,8 @@ public class RenderManager {
      * @param pField the Field
      * @return the standard ToolTip for the item
      */
-    public <X extends JFieldItem> String determineToolTip(final X pItem,
-                                                          final JDataField pField) {
+    public <X extends JFieldSetItem> String determineToolTip(final X pItem,
+                                                             final JDataField pField) {
         /* return the toolTip */
         return determineToolTip(pItem.getRenderState(pField), pItem, pField);
     }
@@ -624,9 +624,9 @@ public class RenderManager {
      * @param pField the Field
      * @return the standard ToolTip for the item
      */
-    protected <X extends JFieldItem> String determineToolTip(final RenderState pState,
-                                                             final X pItem,
-                                                             final JDataField pField) {
+    protected <X extends JFieldSetItem> String determineToolTip(final RenderState pState,
+                                                                final X pItem,
+                                                                final JDataField pField) {
         /* Switch on the state */
         switch (pState) {
             case ERROR:

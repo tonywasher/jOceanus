@@ -26,10 +26,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -45,9 +41,11 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.jOceanus.jDataManager.DataType;
 import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataManager.SpringUtilities;
@@ -56,18 +54,14 @@ import net.sourceforge.jOceanus.jDataModels.ui.SaveButtons;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jFieldSet.ItemField;
-import net.sourceforge.jOceanus.jFieldSet.ItemField.FieldSet;
+import net.sourceforge.jOceanus.jFieldSet.JFieldSet;
+import net.sourceforge.jOceanus.jFieldSet.JFieldSet.FieldUpdate;
 import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.ValueField;
-import net.sourceforge.jOceanus.jFieldSet.ValueField.ValueClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
@@ -167,109 +161,9 @@ public class MaintTaxYear
     private final JTextField theYear;
 
     /**
-     * The Field Set.
+     * The New Field Set.
      */
-    private final transient FieldSet theFieldSet;
-
-    /**
-     * The Allowance field.
-     */
-    private final ItemField theAllowance;
-
-    /**
-     * The LoAge Allowance field.
-     */
-    private final ItemField theLoAgeAllow;
-
-    /**
-     * The HiAge Allowance field.
-     */
-    private final ItemField theHiAgeAllow;
-
-    /**
-     * The Capital Allowance field.
-     */
-    private final ItemField theCapitalAllow;
-
-    /**
-     * The Age Allowance Limit field.
-     */
-    private final ItemField theAgeAllowLimit;
-
-    /**
-     * The Add Allowance Limit field.
-     */
-    private final ItemField theAddAllowLimit;
-
-    /**
-     * The Add Income Boundary field.
-     */
-    private final ItemField theAddIncomeBndry;
-
-    /**
-     * The Rental Allowance field.
-     */
-    private final ItemField theRental;
-
-    /**
-     * The Low Tax band field.
-     */
-    private final ItemField theLoTaxBand;
-
-    /**
-     * The Basic Tax band field.
-     */
-    private final ItemField theBasicTaxBand;
-
-    /**
-     * The Low Tax rate field.
-     */
-    private final ItemField theLoTaxRate;
-
-    /**
-     * The Basic Tax rate field.
-     */
-    private final ItemField theBasicTaxRate;
-
-    /**
-     * The High Tax rate field.
-     */
-    private final ItemField theHiTaxRate;
-
-    /**
-     * The Interest Tax rate field.
-     */
-    private final ItemField theIntTaxRate;
-
-    /**
-     * The Dividend Tax rate field.
-     */
-    private final ItemField theDivTaxRate;
-
-    /**
-     * The HiDiv Tax rate field.
-     */
-    private final ItemField theHiDivTaxRate;
-
-    /**
-     * The Add Tax rate field.
-     */
-    private final ItemField theAddTaxRate;
-
-    /**
-     * The AddDiv Tax rate field.
-     */
-    private final ItemField theAddDivTaxRate;
-
-    /**
-     * The Cap Tax rate field.
-     */
-    private final ItemField theCapTaxRate;
-
-    /**
-     * The HiCap Tax rate field.
-     */
-    private final ItemField theHiCapTaxRate;
+    private final transient JFieldSet<TaxYear> theFieldSet;
 
     /**
      * The delete button.
@@ -300,11 +194,6 @@ public class MaintTaxYear
      * The Error panel.
      */
     private final ErrorPanel theError;
-
-    /**
-     * Are we refreshing data?
-     */
-    private boolean refreshingData = false;
 
     /**
      * Do we show deleted years.
@@ -358,116 +247,28 @@ public class MaintTaxYear
         theYearsEntry = theUpdateSet.registerClass(TaxYear.class);
         theInfoEntry = theUpdateSet.registerClass(TaxYearInfo.class);
 
-        /* Create the labels */
-        JLabel myYear = new JLabel("Year:");
-        JLabel myRegime = new JLabel("Tax Regime:");
-        JLabel myAllow = new JLabel("Personal Allowance:", SwingConstants.TRAILING);
-        JLabel myLoAgeAllow = new JLabel("Age 65-74 Allowance:", SwingConstants.TRAILING);
-        JLabel myHiAgeAllow = new JLabel("Age 75+ Allowance:", SwingConstants.TRAILING);
-        JLabel myCapitalAllow = new JLabel("Capital Allowance:", SwingConstants.TRAILING);
-        JLabel myAgeAllowLimit = new JLabel("Age Allowance Limit:", SwingConstants.TRAILING);
-        JLabel myAddAllowLimit = new JLabel("Additnl Allow Limit:", SwingConstants.TRAILING);
-        JLabel myAddIncBndry = new JLabel("Additnl Tax Boundary:", SwingConstants.TRAILING);
-        JLabel myRental = new JLabel("Rental Allowance:", SwingConstants.TRAILING);
-        JLabel myLoBand = new JLabel("Low Tax Band:", SwingConstants.TRAILING);
-        JLabel myBasicBand = new JLabel("Basic Tax Band:", SwingConstants.TRAILING);
-        JLabel myLoTaxRate = new JLabel("Low Rate:", SwingConstants.TRAILING);
-        JLabel myBasicTaxRate = new JLabel("Basic Rate:", SwingConstants.TRAILING);
-        JLabel myHiTaxRate = new JLabel("High Rate:", SwingConstants.TRAILING);
-        JLabel myIntTaxRate = new JLabel("Interest Rate:", SwingConstants.TRAILING);
-        JLabel myDivTaxRate = new JLabel("Dividend Rate:", SwingConstants.TRAILING);
-        JLabel myHiDivTaxRate = new JLabel("High Dividend Rate:", SwingConstants.TRAILING);
-        JLabel myAddTaxRate = new JLabel("Additnl Rate:", SwingConstants.TRAILING);
-        JLabel myAddDivTaxRate = new JLabel("Additnl Dividend Rate:", SwingConstants.TRAILING);
-        JLabel myCapTaxRate = new JLabel("Capital Rate:", SwingConstants.TRAILING);
-        JLabel myHiCapTaxRate = new JLabel("High Capital Rate:", SwingConstants.TRAILING);
+        /* Create the New FieldSet */
+        theFieldSet = new JFieldSet<TaxYear>(theRenderMgr);
 
-        /* Build the field set */
-        theFieldSet = new FieldSet(theRenderMgr);
+        /* Create the Year fields and add to field set */
+        JLabel myYearLabel = new JLabel("Year:");
+        theYear = new JTextField();
+        theYear.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        theYear.setEditable(false);
 
         /* Create the combo box and add to the field set */
+        JLabel myRegime = new JLabel("Tax Regime:");
         theRegimesBox = new JComboBox<TaxRegime>();
-        theFieldSet.addItemField(theRegimesBox, TaxYearBase.FIELD_REGIME);
-
-        /* Create the text fields */
-        theYear = new JTextField();
-        theAllowance = new ItemField(ValueClass.Money, TaxYear.FIELD_ALLOW, theFieldSet);
-        theLoAgeAllow = new ItemField(ValueClass.Money, TaxYear.FIELD_LOAGAL, theFieldSet);
-        theHiAgeAllow = new ItemField(ValueClass.Money, TaxYear.FIELD_HIAGAL, theFieldSet);
-        theCapitalAllow = new ItemField(ValueClass.Money, TaxYear.FIELD_CAPALW, theFieldSet);
-        theAgeAllowLimit = new ItemField(ValueClass.Money, TaxYear.FIELD_AGELMT, theFieldSet);
-        theAddAllowLimit = new ItemField(ValueClass.Money, TaxYear.FIELD_ADDLMT, theFieldSet);
-        theAddIncomeBndry = new ItemField(ValueClass.Money, TaxYear.FIELD_ADDBDY, theFieldSet);
-        theLoTaxBand = new ItemField(ValueClass.Money, TaxYear.FIELD_LOBAND, theFieldSet);
-        theBasicTaxBand = new ItemField(ValueClass.Money, TaxYear.FIELD_BSBAND, theFieldSet);
-        theRental = new ItemField(ValueClass.Money, TaxYear.FIELD_RENTAL, theFieldSet);
-        theLoTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_LOTAX, theFieldSet);
-        theBasicTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_BASTAX, theFieldSet);
-        theHiTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_HITAX, theFieldSet);
-        theIntTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_INTTAX, theFieldSet);
-        theDivTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_DIVTAX, theFieldSet);
-        theHiDivTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_HDVTAX, theFieldSet);
-        theAddTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_ADDTAX, theFieldSet);
-        theAddDivTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_ADVTAX, theFieldSet);
-        theCapTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_CAPTAX, theFieldSet);
-        theHiCapTaxRate = new ItemField(ValueClass.Rate, TaxYear.FIELD_HCPTAX, theFieldSet);
-
-        /* Limit sizes */
-        theYear.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
         theRegimesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theAllowance.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theLoAgeAllow.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theHiAgeAllow.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theRental.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theCapitalAllow.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theAddIncomeBndry.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theAgeAllowLimit.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theAddAllowLimit.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theLoTaxBand.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theBasicTaxBand.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theLoTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theBasicTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theHiTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theAddTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theIntTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theDivTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theHiDivTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theAddDivTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theCapTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-        theHiCapTaxRate.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
-
-        /* The Year field is not edit-able */
-        theYear.setEditable(false);
+        theFieldSet.addFieldElement(TaxYear.FIELD_REGIME, TaxRegime.class, myRegime, theRegimesBox);
 
         /* Create the buttons */
         theDelButton = new JButton();
 
         /* Create listener */
         TaxYearListener myListener = new TaxYearListener();
-
-        /* Add listeners */
-        theRegimesBox.addItemListener(myListener);
-        theAllowance.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theLoAgeAllow.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theHiAgeAllow.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theCapitalAllow.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theAgeAllowLimit.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theAddAllowLimit.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theAddIncomeBndry.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theRental.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theLoTaxBand.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theBasicTaxBand.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theLoTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theBasicTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theHiTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theIntTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theDivTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theHiDivTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theAddTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theAddDivTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theCapTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theHiCapTaxRate.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
         theDelButton.addActionListener(myListener);
+        theFieldSet.addActionListener(myListener);
 
         /* Create the TaxYearSelect panel */
         theSelect = new TaxYearSelect(theView);
@@ -495,7 +296,7 @@ public class MaintTaxYear
         /* Create the layout for the panel */
         theRegime.setLayout(new BoxLayout(theRegime, BoxLayout.X_AXIS));
         theRegime.add(Box.createHorizontalGlue());
-        theRegime.add(myYear);
+        theRegime.add(myYearLabel);
         theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
         theRegime.add(theYear);
         theRegime.add(Box.createHorizontalGlue());
@@ -506,99 +307,13 @@ public class MaintTaxYear
         theRegime.add(theDelButton);
         theRegime.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
 
-        /* Create the allowances panel */
-        theAllows = new JPanel();
-        theAllows.setBorder(BorderFactory.createTitledBorder("Allowances"));
-
-        /* Layout the allowances panel */
-        SpringLayout mySpring = new SpringLayout();
-        theAllows.setLayout(mySpring);
-        theAllows.add(myAllow);
-        theAllows.add(theAllowance);
-        theAllows.add(myLoAgeAllow);
-        theAllows.add(theLoAgeAllow);
-        theAllows.add(myHiAgeAllow);
-        theAllows.add(theHiAgeAllow);
-        theAllows.add(myRental);
-        theAllows.add(theRental);
-        theAllows.add(myCapitalAllow);
-        theAllows.add(theCapitalAllow);
-        SpringUtilities.makeCompactGrid(theAllows, mySpring, theAllows.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Create the limits panel */
-        theLimits = new JPanel();
-        theLimits.setBorder(BorderFactory.createTitledBorder("Limits"));
-
-        /* Layout the limits panel */
-        mySpring = new SpringLayout();
-        theLimits.setLayout(mySpring);
-        theLimits.add(myAgeAllowLimit);
-        theLimits.add(theAgeAllowLimit);
-        theLimits.add(myAddAllowLimit);
-        theLimits.add(theAddAllowLimit);
-        SpringUtilities.makeCompactGrid(theLimits, mySpring, theLimits.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Create the bands panel */
-        theBands = new JPanel();
-        theBands.setBorder(BorderFactory.createTitledBorder("Tax Bands"));
-
-        /* Layout the bands panel */
-        mySpring = new SpringLayout();
-        theBands.setLayout(mySpring);
-        theBands.add(myLoBand);
-        theBands.add(theLoTaxBand);
-        theBands.add(myBasicBand);
-        theBands.add(theBasicTaxBand);
-        theBands.add(myAddIncBndry);
-        theBands.add(theAddIncomeBndry);
-        SpringUtilities.makeCompactGrid(theBands, mySpring, theBands.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Create the standard rates panel */
-        theStdRates = new JPanel();
-        theStdRates.setBorder(BorderFactory.createTitledBorder("Standard Rates"));
-
-        /* Layout the stdRates panel */
-        mySpring = new SpringLayout();
-        theStdRates.setLayout(mySpring);
-        theStdRates.add(myLoTaxRate);
-        theStdRates.add(theLoTaxRate);
-        theStdRates.add(myBasicTaxRate);
-        theStdRates.add(theBasicTaxRate);
-        theStdRates.add(myHiTaxRate);
-        theStdRates.add(theHiTaxRate);
-        theStdRates.add(myAddTaxRate);
-        theStdRates.add(theAddTaxRate);
-        SpringUtilities.makeCompactGrid(theStdRates, mySpring, theStdRates.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Create the extra rates panel */
-        theXtraRates = new JPanel();
-        theXtraRates.setBorder(BorderFactory.createTitledBorder("Interest/Dividend Rates"));
-
-        /* Layout the xtraRates panel */
-        mySpring = new SpringLayout();
-        theXtraRates.setLayout(mySpring);
-        theXtraRates.add(myIntTaxRate);
-        theXtraRates.add(theIntTaxRate);
-        theXtraRates.add(myDivTaxRate);
-        theXtraRates.add(theDivTaxRate);
-        theXtraRates.add(myHiDivTaxRate);
-        theXtraRates.add(theHiDivTaxRate);
-        theXtraRates.add(myAddDivTaxRate);
-        theXtraRates.add(theAddDivTaxRate);
-        SpringUtilities.makeCompactGrid(theXtraRates, mySpring, theXtraRates.getComponentCount() >> 1, 2, PADDING_SIZE);
-
-        /* Create the capital rates panel */
-        theCapRates = new JPanel();
-        theCapRates.setBorder(BorderFactory.createTitledBorder("Capital Rates"));
-
-        /* Layout the capRates panel */
-        mySpring = new SpringLayout();
-        theCapRates.setLayout(mySpring);
-        theCapRates.add(myCapTaxRate);
-        theCapRates.add(theCapTaxRate);
-        theCapRates.add(myHiCapTaxRate);
-        theCapRates.add(theHiCapTaxRate);
-        SpringUtilities.makeCompactGrid(theCapRates, mySpring, theCapRates.getComponentCount() >> 1, 2, PADDING_SIZE);
+        /* Create the subPanels */
+        theAllows = buildAllowPanel();
+        theLimits = buildAllowLimitPanel();
+        theBands = buildTaxBandsPanel();
+        theStdRates = buildRatesPanel();
+        theXtraRates = buildXtraRatesPanel();
+        theCapRates = buildCapRatesPanel();
 
         /* Create a grid panel for the details */
         JPanel myGridPanel = new JPanel(new GridLayout(GRID_ROWS, GRID_COLS, PADDING_SIZE, PADDING_SIZE));
@@ -626,6 +341,300 @@ public class MaintTaxYear
 
         /* Add listener to updateSet */
         theUpdateSet.addActionListener(myListener);
+    }
+
+    /**
+     * Build Allowances subPanel.
+     * @return the panel
+     */
+    private JPanel buildAllowPanel() {
+        /* Allocate labels */
+        JLabel myAllowLabel = new JLabel("Personal Allowance:", SwingConstants.TRAILING);
+        JLabel myLoAgeLabel = new JLabel("Age 65-74 Allowance:", SwingConstants.TRAILING);
+        JLabel myHiAgeLabel = new JLabel("Age 75+ Allowance:", SwingConstants.TRAILING);
+        JLabel myCapLabel = new JLabel("Capital Allowance:", SwingConstants.TRAILING);
+        JLabel myRentalLabel = new JLabel("Rental Allowance:", SwingConstants.TRAILING);
+
+        /* Allocate text fields */
+        JTextField myAllowance = new JTextField();
+        JTextField myLoAgeAllow = new JTextField();
+        JTextField myHiAgeAllow = new JTextField();
+        JTextField myCapitalAllow = new JTextField();
+        JTextField myRentalAllow = new JTextField();
+
+        /* Allocate Dimension */
+        Dimension myDims = new Dimension(FIELD_WIDTH, FIELD_HEIGHT);
+
+        /* Adjust maximum sizes */
+        myAllowance.setMaximumSize(myDims);
+        myLoAgeAllow.setMaximumSize(myDims);
+        myHiAgeAllow.setMaximumSize(myDims);
+        myCapitalAllow.setMaximumSize(myDims);
+        myRentalAllow.setMaximumSize(myDims);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(TaxYear.FIELD_ALLOW, DataType.MONEY, myAllowLabel, myAllowance);
+        theFieldSet.addFieldElement(TaxYear.FIELD_LOAGAL, DataType.MONEY, myLoAgeLabel, myLoAgeAllow);
+        theFieldSet.addFieldElement(TaxYear.FIELD_HIAGAL, DataType.MONEY, myHiAgeLabel, myHiAgeAllow);
+        theFieldSet.addFieldElement(TaxYear.FIELD_CAPALW, DataType.MONEY, myCapLabel, myCapitalAllow);
+        theFieldSet.addFieldElement(TaxYear.FIELD_RENTAL, DataType.MONEY, myRentalLabel, myRentalAllow);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Allowances"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myAllowLabel);
+        myPanel.add(myAllowance);
+        myPanel.add(myLoAgeLabel);
+        myPanel.add(myLoAgeAllow);
+        myPanel.add(myHiAgeLabel);
+        myPanel.add(myHiAgeAllow);
+        myPanel.add(myCapLabel);
+        myPanel.add(myCapitalAllow);
+        myPanel.add(myRentalLabel);
+        myPanel.add(myRentalAllow);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build Allowance Limits subPanel.
+     * @return the panel
+     */
+    private JPanel buildAllowLimitPanel() {
+        /* Allocate labels */
+        JLabel myAgeLabel = new JLabel("Age Allowance Limit:", SwingConstants.TRAILING);
+        JLabel myAddLabel = new JLabel("Additnl Allow Limit:", SwingConstants.TRAILING);
+
+        /* Allocate text fields */
+        JTextField myAgeLimit = new JTextField();
+        JTextField myAddLimit = new JTextField();
+
+        /* Allocate Dimension */
+        Dimension myDims = new Dimension(FIELD_WIDTH, FIELD_HEIGHT);
+
+        /* Adjust maximum sizes */
+        myAgeLimit.setMaximumSize(myDims);
+        myAddLimit.setMaximumSize(myDims);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(TaxYear.FIELD_AGELMT, DataType.MONEY, myAgeLabel, myAgeLimit);
+        theFieldSet.addFieldElement(TaxYear.FIELD_ADDLMT, DataType.MONEY, myAddLabel, myAddLimit);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Allowance Limits"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myAgeLabel);
+        myPanel.add(myAgeLimit);
+        myPanel.add(myAddLabel);
+        myPanel.add(myAddLimit);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build TaxBands subPanel.
+     * @return the panel
+     */
+    private JPanel buildTaxBandsPanel() {
+        /* Allocate labels */
+        JLabel myLoBandLabel = new JLabel("Low Tax Band:", SwingConstants.TRAILING);
+        JLabel myBasicBandLabel = new JLabel("Basic Tax Band:", SwingConstants.TRAILING);
+        JLabel myAddIncLabel = new JLabel("Additnl Tax Boundary:", SwingConstants.TRAILING);
+
+        /* Allocate text fields */
+        JTextField myLoBand = new JTextField();
+        JTextField myBasicBand = new JTextField();
+        JTextField myAddIncBdy = new JTextField();
+
+        /* Allocate Dimension */
+        Dimension myDims = new Dimension(FIELD_WIDTH, FIELD_HEIGHT);
+
+        /* Adjust maximum sizes */
+        myLoBand.setMaximumSize(myDims);
+        myBasicBand.setMaximumSize(myDims);
+        myAddIncBdy.setMaximumSize(myDims);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(TaxYear.FIELD_LOBAND, DataType.MONEY, myLoBandLabel, myLoBand);
+        theFieldSet.addFieldElement(TaxYear.FIELD_BSBAND, DataType.MONEY, myBasicBandLabel, myBasicBand);
+        theFieldSet.addFieldElement(TaxYear.FIELD_ADDBDY, DataType.MONEY, myAddIncLabel, myAddIncBdy);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Tax Bands"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myLoBandLabel);
+        myPanel.add(myLoBand);
+        myPanel.add(myBasicBandLabel);
+        myPanel.add(myBasicBand);
+        myPanel.add(myAddIncLabel);
+        myPanel.add(myAddIncBdy);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build Rates subPanel.
+     * @return the panel
+     */
+    private JPanel buildRatesPanel() {
+        /* Allocate labels */
+        JLabel myLoTaxLabel = new JLabel("Low Rate:", SwingConstants.TRAILING);
+        JLabel myBasicTaxLabel = new JLabel("Basic Rate:", SwingConstants.TRAILING);
+        JLabel myHiTaxLabel = new JLabel("High Rate:", SwingConstants.TRAILING);
+        JLabel myAddTaxLabel = new JLabel("Additnl Rate:", SwingConstants.TRAILING);
+
+        /* Allocate text fields */
+        JTextField myLoTaxRate = new JTextField();
+        JTextField myBasicTaxRate = new JTextField();
+        JTextField myHiTaxRate = new JTextField();
+        JTextField myAddTaxRate = new JTextField();
+
+        /* Allocate Dimension */
+        Dimension myDims = new Dimension(FIELD_WIDTH, FIELD_HEIGHT);
+
+        /* Adjust maximum sizes */
+        myLoTaxRate.setMaximumSize(myDims);
+        myBasicTaxRate.setMaximumSize(myDims);
+        myHiTaxRate.setMaximumSize(myDims);
+        myAddTaxRate.setMaximumSize(myDims);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(TaxYear.FIELD_LOTAX, DataType.RATE, myLoTaxLabel, myLoTaxRate);
+        theFieldSet.addFieldElement(TaxYear.FIELD_BASTAX, DataType.RATE, myBasicTaxLabel, myBasicTaxRate);
+        theFieldSet.addFieldElement(TaxYear.FIELD_HITAX, DataType.RATE, myHiTaxLabel, myHiTaxRate);
+        theFieldSet.addFieldElement(TaxYear.FIELD_ADDTAX, DataType.RATE, myAddTaxLabel, myAddTaxRate);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Standard Rates"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myLoTaxLabel);
+        myPanel.add(myLoTaxRate);
+        myPanel.add(myBasicTaxLabel);
+        myPanel.add(myBasicTaxRate);
+        myPanel.add(myHiTaxLabel);
+        myPanel.add(myHiTaxRate);
+        myPanel.add(myAddTaxLabel);
+        myPanel.add(myAddTaxRate);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build extra Rates subPanel.
+     * @return the panel
+     */
+    private JPanel buildXtraRatesPanel() {
+        /* Allocate labels */
+        JLabel myIntTaxLabel = new JLabel("Interest Rate:", SwingConstants.TRAILING);
+        JLabel myDivTaxLabel = new JLabel("Dividend Rate:", SwingConstants.TRAILING);
+        JLabel myHiDivTaxLabel = new JLabel("High Dividend Rate:", SwingConstants.TRAILING);
+        JLabel myAddDivTaxLabel = new JLabel("Additnl Dividend Rate:", SwingConstants.TRAILING);
+
+        /* Allocate text fields */
+        JTextField myIntTaxRate = new JTextField();
+        JTextField myDivTaxRate = new JTextField();
+        JTextField myHiDivTaxRate = new JTextField();
+        JTextField myAddDivTaxRate = new JTextField();
+
+        /* Allocate Dimension */
+        Dimension myDims = new Dimension(FIELD_WIDTH, FIELD_HEIGHT);
+
+        /* Adjust maximum sizes */
+        myIntTaxRate.setMaximumSize(myDims);
+        myDivTaxRate.setMaximumSize(myDims);
+        myHiDivTaxRate.setMaximumSize(myDims);
+        myAddDivTaxRate.setMaximumSize(myDims);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(TaxYear.FIELD_INTTAX, DataType.RATE, myIntTaxLabel, myIntTaxRate);
+        theFieldSet.addFieldElement(TaxYear.FIELD_DIVTAX, DataType.RATE, myDivTaxLabel, myDivTaxRate);
+        theFieldSet.addFieldElement(TaxYear.FIELD_HDVTAX, DataType.RATE, myHiDivTaxLabel, myHiDivTaxRate);
+        theFieldSet.addFieldElement(TaxYear.FIELD_ADVTAX, DataType.RATE, myAddDivTaxLabel, myAddDivTaxRate);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Interest/Dividend Rates"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myIntTaxLabel);
+        myPanel.add(myIntTaxRate);
+        myPanel.add(myDivTaxLabel);
+        myPanel.add(myDivTaxRate);
+        myPanel.add(myHiDivTaxLabel);
+        myPanel.add(myHiDivTaxRate);
+        myPanel.add(myAddDivTaxLabel);
+        myPanel.add(myAddDivTaxRate);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build capital Rates subPanel.
+     * @return the panel
+     */
+    private JPanel buildCapRatesPanel() {
+        /* Allocate labels */
+        JLabel myCapTaxLabel = new JLabel("Capital Rate:", SwingConstants.TRAILING);
+        JLabel myHiCapTaxLabel = new JLabel("High Capital Rate:", SwingConstants.TRAILING);
+
+        /* Allocate text fields */
+        JTextField myCapTaxRate = new JTextField();
+        JTextField myHiCapTaxRate = new JTextField();
+
+        /* Allocate Dimension */
+        Dimension myDims = new Dimension(FIELD_WIDTH, FIELD_HEIGHT);
+
+        /* Adjust maximum sizes */
+        myCapTaxRate.setMaximumSize(myDims);
+        myHiCapTaxRate.setMaximumSize(myDims);
+
+        /* Adjust FieldSet */
+        theFieldSet.addFieldElement(TaxYear.FIELD_CAPTAX, DataType.RATE, myCapTaxLabel, myCapTaxRate);
+        theFieldSet.addFieldElement(TaxYear.FIELD_HCPTAX, DataType.RATE, myHiCapTaxLabel, myHiCapTaxRate);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Capital Rates"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myCapTaxLabel);
+        myPanel.add(myCapTaxRate);
+        myPanel.add(myHiCapTaxLabel);
+        myPanel.add(myHiCapTaxRate);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
     }
 
     /**
@@ -690,7 +699,7 @@ public class MaintTaxYear
         TaxRegimeList myRegimes = myData.getTaxRegimes();
 
         /* Note that we are refreshing data */
-        refreshingData = true;
+        theFieldSet.setRefreshingData(true);
 
         /* Refresh the year selection */
         theSelect.refreshData();
@@ -718,7 +727,7 @@ public class MaintTaxYear
         }
 
         /* Note that we have finished refreshing data */
-        refreshingData = false;
+        theFieldSet.setRefreshingData(false);
 
         /* Show the account */
         setSelection(theSelect.getTaxYear());
@@ -775,97 +784,15 @@ public class MaintTaxYear
             theYear.setText(Integer.toString(theTaxYear.getTaxYear().getYear()));
             theYear.setEnabled(bActive);
 
-            /* Set the Regime */
-            theRegimesBox.setSelectedItem(myRegime);
-            theRegimesBox.setEnabled(bActive);
+            /* Set field visibility */
+            theFieldSet.setVisibility(TaxYear.FIELD_ADDBDY, hasAdditionalTaxBand);
+            theFieldSet.setVisibility(TaxYear.FIELD_ADDLMT, hasAdditionalTaxBand);
+            theFieldSet.setVisibility(TaxYear.FIELD_ADDTAX, hasAdditionalTaxBand);
+            theFieldSet.setVisibility(TaxYear.FIELD_ADVTAX, hasAdditionalTaxBand);
+            theFieldSet.setVisibility(TaxYear.FIELD_CAPTAX, !hasCapitalGainsAsIncome);
+            theFieldSet.setVisibility(TaxYear.FIELD_HCPTAX, !hasCapitalGainsAsIncome);
 
-            /* Set the Allowance */
-            theAllowance.setValue(theTaxYear.getAllowance());
-            theAllowance.setEnabled(bActive);
-
-            /* Set the LoAge Allowance */
-            theLoAgeAllow.setValue(theTaxYear.getLoAgeAllow());
-            theLoAgeAllow.setEnabled(bActive);
-
-            /* Set the HiAge Allowance */
-            theHiAgeAllow.setValue(theTaxYear.getHiAgeAllow());
-            theHiAgeAllow.setEnabled(bActive);
-
-            /* Set the Capital Allowance */
-            theCapitalAllow.setValue(theTaxYear.getCapitalAllow());
-            theCapitalAllow.setEnabled(bActive);
-
-            /* Set the Rental Allowance */
-            theRental.setValue(theTaxYear.getRentalAllowance());
-            theRental.setEnabled(bActive);
-
-            /* Set the Age Allowance Limit */
-            theAgeAllowLimit.setValue(theTaxYear.getAgeAllowLimit());
-            theAgeAllowLimit.setEnabled(bActive);
-
-            /* Set the Additional Allowance Limit */
-            theAddAllowLimit.setValue(theTaxYear.getAddAllowLimit());
-            theAddAllowLimit.setEnabled(bActive
-                                        && hasAdditionalTaxBand);
-
-            /* Set the Additional Income Boundary */
-            theAddIncomeBndry.setValue(theTaxYear.getAddIncBound());
-            theAddIncomeBndry.setEnabled(bActive
-                                         && hasAdditionalTaxBand);
-
-            /* Set the Low Tax Band */
-            theLoTaxBand.setValue(theTaxYear.getLoBand());
-            theLoTaxBand.setEnabled(bActive);
-
-            /* Set the Basic Tax Band */
-            theBasicTaxBand.setValue(theTaxYear.getBasicBand());
-            theBasicTaxBand.setEnabled(bActive);
-
-            /* Set the Low Tax Rate */
-            theLoTaxRate.setValue(theTaxYear.getLoTaxRate());
-            theLoTaxRate.setEnabled(bActive);
-
-            /* Set the Basic Tax Rate */
-            theBasicTaxRate.setValue(theTaxYear.getBasicTaxRate());
-            theBasicTaxRate.setEnabled(bActive);
-
-            /* Set the High Tax Rate */
-            theHiTaxRate.setValue(theTaxYear.getHiTaxRate());
-            theHiTaxRate.setEnabled(bActive);
-
-            /* Set the Interest Tax Rate */
-            theIntTaxRate.setValue(theTaxYear.getIntTaxRate());
-            theIntTaxRate.setEnabled(bActive);
-
-            /* Set the Dividend Tax Rate */
-            theDivTaxRate.setValue(theTaxYear.getDivTaxRate());
-            theDivTaxRate.setEnabled(bActive);
-
-            /* Set the High Dividend Tax Rate */
-            theHiDivTaxRate.setValue(theTaxYear.getHiDivTaxRate());
-            theHiDivTaxRate.setEnabled(bActive);
-
-            /* Set the Additional Tax Rate */
-            theAddTaxRate.setValue(theTaxYear.getAddTaxRate());
-            theAddTaxRate.setEnabled(bActive
-                                     && hasAdditionalTaxBand);
-
-            /* Set the Additional Dividend Tax Rate */
-            theAddDivTaxRate.setValue(theTaxYear.getAddDivTaxRate());
-            theAddDivTaxRate.setEnabled(bActive
-                                        && hasAdditionalTaxBand);
-
-            /* Set the Capital Tax Rate */
-            theCapTaxRate.setValue(theTaxYear.getCapTaxRate());
-            theCapTaxRate.setEnabled(bActive
-                                     && !hasCapitalGainsAsIncome);
-
-            /* Set the High Capital Tax Rate */
-            theHiCapTaxRate.setValue(theTaxYear.getHiCapTaxRate());
-            theHiCapTaxRate.setEnabled(bActive
-                                       && !hasCapitalGainsAsIncome);
-
-            /* Render all fields in the set */
+            /* Render the FieldSet */
             theFieldSet.renderSet(theTaxYear);
 
             /* Make sure delete buttons are visible */
@@ -878,52 +805,15 @@ public class MaintTaxYear
         } else {
             /* Set blank text */
             theYear.setText("");
-            theAllowance.setValue(null);
-            theLoAgeAllow.setValue(null);
-            theHiAgeAllow.setValue(null);
-            theRental.setValue(null);
-            theCapitalAllow.setValue(null);
-            theAgeAllowLimit.setValue(null);
-            theAddAllowLimit.setValue(null);
-            theAddIncomeBndry.setValue(null);
-            theLoTaxBand.setValue(null);
-            theBasicTaxBand.setValue(null);
-            theLoTaxRate.setValue(null);
-            theBasicTaxRate.setValue(null);
-            theHiTaxRate.setValue(null);
-            theIntTaxRate.setValue(null);
-            theDivTaxRate.setValue(null);
-            theHiDivTaxRate.setValue(null);
-            theCapTaxRate.setValue(null);
-            theHiCapTaxRate.setValue(null);
-            theAddTaxRate.setValue(null);
-            theAddDivTaxRate.setValue(null);
 
             /* Disable data entry */
             theYear.setEnabled(false);
-            theAllowance.setEnabled(false);
-            theLoAgeAllow.setEnabled(false);
-            theHiAgeAllow.setEnabled(false);
-            theRental.setEnabled(false);
-            theCapitalAllow.setEnabled(false);
-            theAgeAllowLimit.setEnabled(false);
-            theAddAllowLimit.setEnabled(false);
-            theAddIncomeBndry.setEnabled(false);
-            theLoTaxBand.setEnabled(false);
-            theBasicTaxBand.setEnabled(false);
-            theLoTaxRate.setEnabled(false);
-            theBasicTaxRate.setEnabled(false);
-            theHiTaxRate.setEnabled(false);
-            theIntTaxRate.setEnabled(false);
-            theDivTaxRate.setEnabled(false);
-            theHiDivTaxRate.setEnabled(false);
-            theCapTaxRate.setEnabled(false);
-            theHiCapTaxRate.setEnabled(false);
-            theAddTaxRate.setEnabled(false);
-            theAddDivTaxRate.setEnabled(false);
 
             /* Hide the delete button */
             theDelButton.setVisible(false);
+
+            /* Render the Null Field Set */
+            theFieldSet.renderNullSet();
         }
     }
 
@@ -931,69 +821,26 @@ public class MaintTaxYear
      * TaxYearListener class.
      */
     private final class TaxYearListener
-            implements ActionListener, ItemListener, ChangeListener, PropertyChangeListener {
+            implements ActionListener, ChangeListener {
         @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            /* Ignore selection if refreshing data/not selected */
-            if ((refreshingData)
-                || (evt.getStateChange() == ItemEvent.DESELECTED)) {
-                return;
-            }
+        public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
 
-            /* If this event relates to the regimes box */
-            if (theRegimesBox.equals(evt.getSource())) {
-                /* Push history */
-                theTaxYear.pushHistory();
-
-                /* Select the new regime */
-                TaxRegime myRegime = (TaxRegime) evt.getItem();
-                theTaxYear.setTaxRegime(myRegime);
-
-                /* Protect against exceptions */
-                try {
-                    /* Clear Capital tax rates if required */
-                    if (theTaxYear.hasCapitalGainsAsIncome()) {
-                        theTaxYear.setCapTaxRate(null);
-                        theTaxYear.setHiCapTaxRate(null);
-                    }
-
-                    /* Clear Additional values if required */
-                    if (!theTaxYear.hasAdditionalTaxBand()) {
-                        theTaxYear.setAddAllowLimit(null);
-                        theTaxYear.setAddIncBound(null);
-                        theTaxYear.setAddTaxRate(null);
-                        theTaxYear.setAddDivTaxRate(null);
-                    }
-
-                    /* Catch exceptions */
-                } catch (JDataException e) {
-                    /* Reset values */
-                    theTaxYear.popHistory();
-
-                    /* Show the error and return */
-                    theError.setError(e);
-                    return;
+            /* If the event relates to the Field Set */
+            if ((theFieldSet.equals(o))
+                && (e instanceof ActionDetailEvent)) {
+                /* Access event and obtain details */
+                ActionDetailEvent evt = (ActionDetailEvent) e;
+                Object dtl = evt.getDetails();
+                if (dtl instanceof FieldUpdate) {
+                    /* Update the field */
+                    updateField((FieldUpdate) dtl);
                 }
 
-                /* Check for changes */
-                if (theTaxYear.checkForHistory()) {
-                    /* Increment the update version */
-                    theUpdateSet.incrementVersion();
-
-                    /* Note that changes have occurred */
-                    notifyChanges();
-                }
-            }
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this event relates to the save buttons */
-            if (theSaveButs.equals(o)) {
+                /* If this event relates to the save buttons */
+            } else if (theSaveButs.equals(o)) {
                 /* Perform the action */
-                theUpdateSet.processCommand(evt.getActionCommand(), theError);
+                theUpdateSet.processCommand(e.getActionCommand(), theError);
 
                 /* Notify of any changes */
                 notifyChanges();
@@ -1016,134 +863,103 @@ public class MaintTaxYear
             }
         }
 
-        @Override
-        public void propertyChange(final PropertyChangeEvent evt) {
-            Object o = evt.getSource();
+        /**
+         * Update field.
+         * @param pUpdate the update
+         */
+        private void updateField(final FieldUpdate pUpdate) {
+            JDataField myField = pUpdate.getField();
 
             /* Push history */
             theTaxYear.pushHistory();
 
             /* Protect against exceptions */
             try {
-                /* If this is our the Allowance */
-                if (theAllowance.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theAllowance.getValue();
-                    theTaxYear.setAllowance(myValue);
-
-                    /* If this is our LoAge Allowance */
-                } else if (theLoAgeAllow.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theLoAgeAllow.getValue();
-                    theTaxYear.setLoAgeAllow(myValue);
-
-                    /* If this is our HiAge Allowance */
-                } else if (theHiAgeAllow.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theHiAgeAllow.getValue();
-                    theTaxYear.setHiAgeAllow(myValue);
-
-                    /* If this is our Rental */
-                } else if (theRental.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theRental.getValue();
-                    theTaxYear.setRentalAllowance(myValue);
-
-                    /* If this is our Capital Allowance */
-                } else if (theCapitalAllow.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theCapitalAllow.getValue();
-                    theTaxYear.setCapitalAllow(myValue);
-
+                /* If this is our TaxRegime */
+                if (myField.equals(TaxYear.FIELD_REGIME)) {
+                    /* Update the Value */
+                    theTaxYear.setTaxRegime(pUpdate.getValue(TaxRegime.class));
+                    theTaxYear.adjustForTaxRegime();
+                    /* If this is our Allowance Limit */
+                } else if (myField.equals(TaxYear.FIELD_ALLOW)) {
+                    /* Update the Value */
+                    theTaxYear.setAllowance(pUpdate.getMoney());
+                    /* If this is our Low Age Allowance */
+                } else if (myField.equals(TaxYear.FIELD_LOAGAL)) {
+                    /* Update the Value */
+                    theTaxYear.setLoAgeAllow(pUpdate.getMoney());
+                    /* If this is our High Age Allowance */
+                } else if (myField.equals(TaxYear.FIELD_HIAGAL)) {
+                    /* Update the Value */
+                    theTaxYear.setHiAgeAllow(pUpdate.getMoney());
+                    /* If this is our Capital Gains Allowance */
+                } else if (myField.equals(TaxYear.FIELD_CAPALW)) {
+                    /* Update the Value */
+                    theTaxYear.setCapitalAllow(pUpdate.getMoney());
+                    /* If this is our Rental Allowance */
+                } else if (myField.equals(TaxYear.FIELD_RENTAL)) {
+                    /* Update the Value */
+                    theTaxYear.setRentalAllowance(pUpdate.getMoney());
                     /* If this is our Age Allowance Limit */
-                } else if (theAgeAllowLimit.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theAgeAllowLimit.getValue();
-                    theTaxYear.setAgeAllowLimit(myValue);
-
+                } else if (myField.equals(TaxYear.FIELD_AGELMT)) {
+                    /* Update the Value */
+                    theTaxYear.setAgeAllowLimit(pUpdate.getMoney());
                     /* If this is our Additional Allowance Limit */
-                } else if (theAddAllowLimit.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theAddAllowLimit.getValue();
-                    theTaxYear.setAddAllowLimit(myValue);
-
-                    /* If this is our Additional Income Boundary */
-                } else if (theAddIncomeBndry.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theAddIncomeBndry.getValue();
-                    theTaxYear.setAddIncBound(myValue);
-
-                    /* If this is our LoTaxBand */
-                } else if (theLoTaxBand.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theLoTaxBand.getValue();
-                    theTaxYear.setLoBand(myValue);
-
+                } else if (myField.equals(TaxYear.FIELD_ADDLMT)) {
+                    /* Update the Value */
+                    theTaxYear.setAddAllowLimit(pUpdate.getMoney());
+                    /* If this is our Low Tax Band */
+                } else if (myField.equals(TaxYear.FIELD_LOBAND)) {
+                    /* Update the Value */
+                    theTaxYear.setLoBand(pUpdate.getMoney());
                     /* If this is our Basic Tax Band */
-                } else if (theBasicTaxBand.equals(o)) {
-                    /* Update the Tax Year */
-                    JMoney myValue = (JMoney) theBasicTaxBand.getValue();
-                    theTaxYear.setBasicBand(myValue);
-
-                    /* If this is our Low Tax Rate */
-                } else if (theLoTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theLoTaxRate.getValue();
-                    theTaxYear.setLoTaxRate(myValue);
-
-                    /* If this is our Basic Tax Rate */
-                } else if (theBasicTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theBasicTaxRate.getValue();
-                    theTaxYear.setBasicTaxRate(myValue);
-
-                    /* If this is our High Tax Rate */
-                } else if (theHiTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theHiTaxRate.getValue();
-                    theTaxYear.setHiTaxRate(myValue);
-
-                    /* If this is our Additional Tax Rate */
-                } else if (theAddTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theAddTaxRate.getValue();
-                    theTaxYear.setAddTaxRate(myValue);
-
-                    /* If this is our Interest Tax Rate */
-                } else if (theIntTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theIntTaxRate.getValue();
-                    theTaxYear.setIntTaxRate(myValue);
-
-                    /* If this is our Dividend Tax Rate */
-                } else if (theDivTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theDivTaxRate.getValue();
-                    theTaxYear.setDivTaxRate(myValue);
-
-                    /* If this is our High Dividend Tax Rate */
-                } else if (theHiDivTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theHiDivTaxRate.getValue();
-                    theTaxYear.setHiDivTaxRate(myValue);
-
-                    /* If this is our Additional Tax Rate */
-                } else if (theAddDivTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theAddDivTaxRate.getValue();
-                    theTaxYear.setAddDivTaxRate(myValue);
-
-                    /* If this is our Capital Tax Rate */
-                } else if (theCapTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theCapTaxRate.getValue();
-                    theTaxYear.setCapTaxRate(myValue);
-
-                    /* If this is our High Capital Tax Rate */
-                } else if (theHiCapTaxRate.equals(o)) {
-                    /* Update the Tax Year */
-                    JRate myValue = (JRate) theHiCapTaxRate.getValue();
-                    theTaxYear.setHiCapTaxRate(myValue);
+                } else if (myField.equals(TaxYear.FIELD_BSBAND)) {
+                    /* Update the Value */
+                    theTaxYear.setBasicBand(pUpdate.getMoney());
+                    /* If this is our Additional Income Boundary */
+                } else if (myField.equals(TaxYear.FIELD_ADDBDY)) {
+                    /* Update the Value */
+                    theTaxYear.setAddIncBound(pUpdate.getMoney());
+                    /* If this is the Low TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_LOTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setLoTaxRate(pUpdate.getRate());
+                    /* If this is the Basic TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_BASTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setBasicTaxRate(pUpdate.getRate());
+                    /* If this is the High TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_HITAX)) {
+                    /* Update the Value */
+                    theTaxYear.setHiTaxRate(pUpdate.getRate());
+                    /* If this is the Additional TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_ADDTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setAddTaxRate(pUpdate.getRate());
+                    /* If this is the Interest TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_INTTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setIntTaxRate(pUpdate.getRate());
+                    /* If this is the Dividend TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_DIVTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setDivTaxRate(pUpdate.getRate());
+                    /* If this is the High Dividend TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_HDVTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setHiDivTaxRate(pUpdate.getRate());
+                    /* If this is the Additional Dividend TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_ADVTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setAddDivTaxRate(pUpdate.getRate());
+                    /* If this is the Capital Gains TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_CAPTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setCapTaxRate(pUpdate.getRate());
+                    /* If this is the High Capital Gains TaxRate */
+                } else if (myField.equals(TaxYear.FIELD_HCPTAX)) {
+                    /* Update the Value */
+                    theTaxYear.setHiCapTaxRate(pUpdate.getRate());
                 }
 
                 /* Handle Exceptions */

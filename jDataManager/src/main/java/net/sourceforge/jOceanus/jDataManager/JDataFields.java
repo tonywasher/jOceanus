@@ -198,7 +198,8 @@ public class JDataFields {
     /**
      * Iterator class.
      */
-    private static final class FieldIterator implements Iterator<JDataField> {
+    private static final class FieldIterator
+            implements Iterator<JDataField> {
         /**
          * Preceding iterator.
          */
@@ -225,7 +226,8 @@ public class JDataFields {
         @Override
         public boolean hasNext() {
             /* Check for preceding entry */
-            if ((thePreceding != null) && (thePreceding.hasNext())) {
+            if ((thePreceding != null)
+                && (thePreceding.hasNext())) {
                 return true;
             }
 
@@ -236,7 +238,8 @@ public class JDataFields {
         @Override
         public JDataField next() {
             /* Check for preceding entry */
-            if ((thePreceding != null) && (thePreceding.hasNext())) {
+            if ((thePreceding != null)
+                && (thePreceding.hasNext())) {
                 return thePreceding.next();
             }
 
@@ -364,18 +367,20 @@ public class JDataFields {
             /* Access as JDataField */
             JDataField myThat = (JDataField) pThat;
 
+            /* Check the name and index is the same */
+            if ((theIndex != myThat.theIndex)
+                || (!theName.equals(myThat.theName))) {
+                return false;
+            }
+
             /* Must belong to the same anchor */
             if (theSelf != myThat.getAnchor()) {
                 return false;
             }
 
-            /* Check the name and index is the same */
-            if ((!theName.equals(myThat.theName)) || (theIndex != myThat.theIndex)) {
-                return false;
-            }
-
             /* Check the flags are the same */
-            if ((isEqualityField != myThat.isEqualityField) || (isValueSetField != myThat.isValueSetField)) {
+            if ((isEqualityField != myThat.isEqualityField)
+                || (isValueSetField != myThat.isValueSetField)) {
                 return false;
             }
 

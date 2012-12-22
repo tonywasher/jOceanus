@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * jFieldSet: Java Swing Field Set
+ * Copyright 2012 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package net.sourceforge.jOceanus.jFieldSet;
 
 import java.awt.Color;
@@ -24,8 +46,6 @@ import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
 import net.sourceforge.jOceanus.jDataManager.DataType;
-import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
@@ -39,7 +59,7 @@ import net.sourceforge.jOceanus.jFieldSet.RenderManager.RenderData;
  * Component classes for jFieldSet.
  * @param <T> the Data Item type
  */
-public abstract class JFieldComponent<T extends JFieldItem> {
+public abstract class JFieldComponent<T extends JFieldSetItem> {
     /**
      * The Scroll Component.
      */
@@ -91,11 +111,15 @@ public abstract class JFieldComponent<T extends JFieldItem> {
      * @param pComponent the component
      * @param pClass the data type
      * @return the field component
-     * @throws JDataException on error
      */
-    protected static <X extends JFieldItem> JFieldComponent<X> deriveComponent(final JFieldElement<X> pElement,
-                                                                               final JComponent pComponent,
-                                                                               final DataType pClass) throws JDataException {
+    protected static <X extends JFieldSetItem> JFieldComponent<X> deriveComponent(final JFieldElement<X> pElement,
+                                                                                  final JComponent pComponent,
+                                                                                  final DataType pClass) {
+        /* Handle invalid child */
+        if (pComponent == null) {
+            throw new IllegalArgumentException("Null Component");
+        }
+
         /* If the component is a scroll Pane */
         if (pComponent instanceof JScrollPane) {
             /* Split into scrollPane and child */
@@ -104,8 +128,12 @@ public abstract class JFieldComponent<T extends JFieldItem> {
             Component myComp = myViewPort.getView();
 
             /* Handle invalid child */
+            if (myComp == null) {
+                throw new IllegalArgumentException("Null ScrollPane view");
+            }
             if (!(myComp instanceof JComponent)) {
-                throw new JDataException(ExceptionClass.LOGIC, myComp, "Invalid ScrollPane view class");
+                throw new IllegalArgumentException("Invalid ScrollPane view class: "
+                                                   + myComp.getClass());
             }
 
             /* Derive component based on child and record scroll pane */
@@ -139,7 +167,8 @@ public abstract class JFieldComponent<T extends JFieldItem> {
         }
 
         /* Handle invalid component */
-        throw new JDataException(ExceptionClass.LOGIC, pComponent, "Invalid component class");
+        throw new IllegalArgumentException("Invalid component class: "
+                                           + pComponent.getClass());
     }
 
     /**
@@ -150,11 +179,10 @@ public abstract class JFieldComponent<T extends JFieldItem> {
      * @param pComboBox the comboBox
      * @param pClass the class of the comboBox elements.
      * @return the field component
-     * @throws JDataException on error
      */
-    protected static <I, X extends JFieldItem> JFieldComponent<X> deriveComponent(final JFieldElement<X> pElement,
-                                                                                  final JComboBox<I> pComboBox,
-                                                                                  final Class<I> pClass) throws JDataException {
+    protected static <I, X extends JFieldSetItem> JFieldComponent<X> deriveComponent(final JFieldElement<X> pElement,
+                                                                                     final JComboBox<I> pComboBox,
+                                                                                     final Class<I> pClass) {
         /* Obtain FieldSet and Field */
         JFieldSet<X> mySet = pElement.getFieldSet();
         JDataField myField = pElement.getField();
@@ -168,30 +196,11 @@ public abstract class JFieldComponent<T extends JFieldItem> {
      * Constructor.
      * @param pComponent the component
      * @param pModel the data model.
-     * @throws JDataException on error
      */
     private JFieldComponent(final JComponent pComponent,
-                            final JFieldModel<T> pModel) throws JDataException {
-        /* If the component is a scroll Pane */
-        if (pComponent instanceof JScrollPane) {
-            /* Record as scrollPane and child */
-            theScroll = (JScrollPane) pComponent;
-            JViewport myViewPort = theScroll.getViewport();
-            Component myComp = myViewPort.getView();
-            if (myComp instanceof JComponent) {
-                theComponent = (JComponent) myComp;
-            } else {
-                throw new JDataException(ExceptionClass.LOGIC, myComp, "Invalid ScrollPane view class");
-            }
-
-            /* else its a standard component */
-        } else {
-            /* Store the parameters */
-            theComponent = pComponent;
-            theScroll = null;
-        }
-
-        /* Store the model */
+                            final JFieldModel<T> pModel) {
+        /* Store the parameters */
+        theComponent = pComponent;
         theModel = pModel;
 
         /* Store the standard border */
@@ -276,7 +285,7 @@ public abstract class JFieldComponent<T extends JFieldItem> {
      * The JTextField implementation.
      * @param <T> the Data Item type
      */
-    protected static class JFieldText<T extends JFieldItem>
+    protected static class JFieldText<T extends JFieldSetItem>
             extends JFieldComponent<T> {
         /**
          * The Component.
@@ -292,10 +301,9 @@ public abstract class JFieldComponent<T extends JFieldItem> {
          * Constructor.
          * @param pComponent the component.
          * @param pModel the data model.
-         * @throws JDataException on error
          */
-        protected JFieldText(final JTextField pComponent,
-                             final JModelString<T> pModel) throws JDataException {
+        private JFieldText(final JTextField pComponent,
+                           final JModelString<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -328,6 +336,11 @@ public abstract class JFieldComponent<T extends JFieldItem> {
         private final class StringListener
                 extends FocusAdapter
                 implements ActionListener {
+            /**
+             * Cached color.
+             */
+            private Color theCacheColor;
+
             @Override
             public void focusGained(final FocusEvent e) {
                 startEdit();
@@ -362,17 +375,32 @@ public abstract class JFieldComponent<T extends JFieldItem> {
                 /* Clear any toolTip text */
                 theComponent.setToolTipText(null);
 
-                /* Set the new value */
-                theModel.processValue(theComponent.getText());
+                /* If we have a cached colour */
+                if (theCacheColor != null) {
+                    /* Restore colour and reset cache */
+                    theComponent.setForeground(theCacheColor);
+                    theCacheColor = null;
+                }
+
+                /* Process the new value */
+                boolean bChange = theModel.processValue(theComponent.getText());
 
                 /* If we have an invalid value */
                 if (theModel.isError()) {
+                    /* Cache the existing colour */
+                    theCacheColor = theComponent.getForeground();
+
                     /* If the object is invalid */
                     theComponent.setToolTipText("Invalid Value");
                     theComponent.setForeground(Color.red);
 
                     /* Re-acquire the focus */
                     theComponent.requestFocusInWindow();
+
+                    /* else if the value has not changed */
+                } else if (!bChange) {
+                    /* Redisplay the field */
+                    displayField();
                 }
             }
         }
@@ -382,7 +410,7 @@ public abstract class JFieldComponent<T extends JFieldItem> {
      * The JTextArea implementation.
      * @param <T> the Data Item type
      */
-    protected static class JFieldArea<T extends JFieldItem>
+    protected static class JFieldArea<T extends JFieldSetItem>
             extends JFieldComponent<T> {
 
         @Override
@@ -399,10 +427,9 @@ public abstract class JFieldComponent<T extends JFieldItem> {
          * Constructor.
          * @param pComponent the component.
          * @param pModel the data model.
-         * @throws JDataException on error
          */
-        protected JFieldArea(final JTextArea pComponent,
-                             final JModelString<T> pModel) throws JDataException {
+        private JFieldArea(final JTextArea pComponent,
+                           final JModelString<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
         }
@@ -421,7 +448,7 @@ public abstract class JFieldComponent<T extends JFieldItem> {
      * The JComboBox implementation.
      * @param <I> ComboBox element type
      */
-    protected static class JFieldCombo<I, T extends JFieldItem>
+    protected static class JFieldCombo<I, T extends JFieldSetItem>
             extends JFieldComponent<T> {
         /**
          * The Component.
@@ -437,10 +464,9 @@ public abstract class JFieldComponent<T extends JFieldItem> {
          * Constructor.
          * @param pComponent the component.
          * @param pModel the data model.
-         * @throws JDataException on error
          */
-        protected JFieldCombo(final JComboBox<I> pComponent,
-                              final JModelObject<I, T> pModel) throws JDataException {
+        private JFieldCombo(final JComboBox<I> pComponent,
+                            final JModelObject<I, T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -489,7 +515,7 @@ public abstract class JFieldComponent<T extends JFieldItem> {
      * The JDateDayButton implementation.
      * @param <T> the Data Item type
      */
-    protected static class JFieldDate<T extends JFieldItem>
+    private static class JFieldDate<T extends JFieldSetItem>
             extends JFieldComponent<T> {
         /**
          * The Component.
@@ -505,10 +531,9 @@ public abstract class JFieldComponent<T extends JFieldItem> {
          * Constructor.
          * @param pComponent the component.
          * @param pModel the data model.
-         * @throws JDataException on error
          */
         protected JFieldDate(final JDateDayButton pComponent,
-                             final JModelDateDay<T> pModel) throws JDataException {
+                             final JModelDateDay<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 
@@ -547,7 +572,7 @@ public abstract class JFieldComponent<T extends JFieldItem> {
      * The JCheckBox implementation.
      * @param <T> the Data Item type
      */
-    protected static class JFieldCheck<T extends JFieldItem>
+    private static class JFieldCheck<T extends JFieldSetItem>
             extends JFieldComponent<T> {
         /**
          * The Component.
@@ -563,10 +588,9 @@ public abstract class JFieldComponent<T extends JFieldItem> {
          * Constructor.
          * @param pComponent the component.
          * @param pModel the data model.
-         * @throws JDataException on error
          */
         protected JFieldCheck(final JCheckBox pComponent,
-                              final JModelBoolean<T> pModel) throws JDataException {
+                              final JModelBoolean<T> pModel) {
             /* Call super-constructor */
             super(pComponent, pModel);
 

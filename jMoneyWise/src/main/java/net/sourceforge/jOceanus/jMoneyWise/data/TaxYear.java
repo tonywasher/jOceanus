@@ -453,6 +453,32 @@ public class TaxYear
     }
 
     /**
+     * adjust values after taxRegime change
+     * @throws JDataException on error
+     */
+    public void adjustForTaxRegime() throws JDataException {
+        /* Access tax regime */
+        TaxRegime myRegime = getTaxRegime();
+
+        /* If we are setting a non-null regime */
+        if (myRegime != null) {
+            /* Clear Capital tax rates if required */
+            if (myRegime.hasCapitalGainsAsIncome()) {
+                setCapTaxRate(null);
+                setHiCapTaxRate(null);
+            }
+
+            /* Clear Additional values if required */
+            if (!myRegime.hasAdditionalTaxBand()) {
+                setAddAllowLimit(null);
+                setAddIncBound(null);
+                setAddTaxRate(null);
+                setAddDivTaxRate(null);
+            }
+        }
+    }
+
+    /**
      * Set a new allowance.
      * @param pAllowance the allowance
      * @throws JDataException on error

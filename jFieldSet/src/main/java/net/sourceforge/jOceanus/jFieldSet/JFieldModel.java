@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * jFieldSet: Java Swing Field Set
+ * Copyright 2012 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package net.sourceforge.jOceanus.jFieldSet;
 
 import net.sourceforge.jOceanus.jDataManager.DataType;
@@ -18,7 +40,7 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
  * JFieldSet data model abstraction.
  * @param <T> the Data Item type
  */
-public abstract class JFieldModel<T extends JFieldItem> {
+public abstract class JFieldModel<T extends JFieldSetItem> {
     /**
      * The standard mask.
      */
@@ -141,7 +163,7 @@ public abstract class JFieldModel<T extends JFieldItem> {
     /**
      * String model.
      */
-    protected static class JModelString<T extends JFieldItem>
+    protected static class JModelString<T extends JFieldSetItem>
             extends JFieldModel<T> {
         /**
          * The Decimal Parser.
@@ -167,6 +189,11 @@ public abstract class JFieldModel<T extends JFieldItem> {
          * The Edit Text.
          */
         private String theEdit = null;
+
+        /**
+         * The Error Text.
+         */
+        private String theError = null;
 
         /**
          * Constructor.
@@ -220,7 +247,7 @@ public abstract class JFieldModel<T extends JFieldItem> {
          * @return the edit string
          */
         protected String getEditString() {
-            return theEdit;
+            return (isError) ? theError : theEdit;
         }
 
         /**
@@ -265,7 +292,7 @@ public abstract class JFieldModel<T extends JFieldItem> {
             theDisplay = "";
 
             /* If this is a string */
-            if (myValue instanceof char[]) {
+            if (myValue instanceof String) {
                 /* Set edit/display values */
                 theEdit = (String) myValue;
                 theDisplay = theEdit;
@@ -328,22 +355,24 @@ public abstract class JFieldModel<T extends JFieldItem> {
         /**
          * Process value.
          * @param pValue the value
+         * @return has the value changed?
          */
-        protected void processValue(final String pValue) {
+        protected boolean processValue(final String pValue) {
             /* Obtain the text value and trim it */
             String myText = pValue.trim();
             Object myValue = null;
 
-            /* If there is no change */
-            if (Difference.isEqual(theEdit, myValue)) {
-                /* Just return */
-                return;
+            /* If there is no change in the valid value */
+            if ((!isError)
+                && (Difference.isEqual(theEdit, myText))) {
+                return false;
             }
 
             /* Clear error indication */
             isError = false;
+            theError = null;
 
-            /* If we have a non empty string */
+            /* If we have a non-empty string */
             if (myText.length() != 0) {
                 /* Catch format exceptions */
                 try {
@@ -404,14 +433,18 @@ public abstract class JFieldModel<T extends JFieldItem> {
 
             /* If the value is invalid */
             if (isError) {
-                /* Store input as edit text */
-                theEdit = myText;
+                /* Store input as error text */
+                theError = myText;
 
                 /* If this is a new value */
             } else if (!Difference.isEqual(myValue, getValue())) {
                 /* Record new value */
                 setValue(myValue);
+                return true;
             }
+
+            /* return no change */
+            return false;
         }
     }
 
@@ -419,7 +452,7 @@ public abstract class JFieldModel<T extends JFieldItem> {
      * Object model.
      * @param <I> ComboBox element type
      */
-    protected static class JModelObject<I, T extends JFieldItem>
+    protected static class JModelObject<I, T extends JFieldSetItem>
             extends JFieldModel<T> {
         /**
          * Class of object.
@@ -466,7 +499,7 @@ public abstract class JFieldModel<T extends JFieldItem> {
     /**
      * Boolean model.
      */
-    protected static class JModelBoolean<T extends JFieldItem>
+    protected static class JModelBoolean<T extends JFieldSetItem>
             extends JFieldModel<T> {
 
         /**
@@ -518,7 +551,7 @@ public abstract class JFieldModel<T extends JFieldItem> {
     /**
      * DateDay model.
      */
-    protected static class JModelDateDay<T extends JFieldItem>
+    protected static class JModelDateDay<T extends JFieldSetItem>
             extends JFieldModel<T> {
 
         /**
