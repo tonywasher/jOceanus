@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>net.sourceforge.jOceanus</groupId>
+    <artifactId>jOceanus</artifactId>
+    <version>v1.1.0-SNAPSHOT</version>   
+  </parent>
+  <artifactId>jLayoutManager</artifactId>
+  <name>Java Swing Layout Manager Utilities</name>
+  <description>Java Swing Layout Manager Utilities</description>
+  <scm>
+    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</connection>
+    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</developerConnection>
+    <tag>HEAD</tag>
+    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}/${svnComponent}</url>
+  </scm>
+  <properties>
+    <svnComponent>jLayoutManager</svnComponent>
+    <packageName>${project.groupId}.${svnComponent}</packageName>
+  </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>buildnumber-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

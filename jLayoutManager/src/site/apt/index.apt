@@ -1,0 +1,7 @@
+jLayoutManager Project
+
+  jLayoutManager is a subComponent of the jOceanus project
+
+  jLayoutManager contains utilities to aid in build panels for some of the more complicated Swing Layout managers.
+It contains a cut-down version of the Oracle SprintUtilities example for help in building spring Layout panels. It 
+also contains utilities for help in creating GridBag Layout panels.

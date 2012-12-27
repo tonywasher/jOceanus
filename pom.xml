@@ -16,6 +16,7 @@
     <module>jGordianKnot</module>
     <module>jDataManager</module>
     <module>jSortedList</module>
+    <module>jLayoutManager</module>
     <module>jDecimal</module>
     <module>jDateDay</module>
     <module>jTableFilter</module>
