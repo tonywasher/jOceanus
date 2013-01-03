@@ -372,6 +372,12 @@ public class Account
      */
     private boolean isAliasedTo = false;
 
+    @Override
+    public boolean isEditable() {
+        return super.isEditable()
+               && !isClosed();
+    }
+
     /**
      * Obtain Maturity.
      * @return the maturity date

@@ -29,7 +29,14 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
  * Basic Field interface.
  * @author Tony Washer
  */
-public interface JFieldSetItem extends JDataContents {
+public interface JFieldSetItem
+        extends JDataContents {
+    /**
+     * Is the item editable?
+     * @return true/false
+     */
+    boolean isEditable();
+
     /**
      * Get the render state for the item.
      * @return the render state

@@ -99,11 +99,8 @@ public class SheetControl
         Integer myID = loadInteger(COL_ID);
         Integer myVersion = loadInteger(COL_VERSION);
 
-        /* Access the Control Key */
-        Integer myControl = loadInteger(COL_CONTROLID);
-
         /* Add the Control */
-        theList.addSecureItem(myID, myVersion, myControl);
+        theList.addOpenItem(myID, myVersion);
     }
 
     @Override

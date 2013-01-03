@@ -47,7 +47,9 @@ import net.sourceforge.jOceanus.jFieldSet.RenderState;
  * Wrapper class for java preferences.
  * @author Tony Washer
  */
-public abstract class PreferenceSet extends JEventObject implements JFieldSetItem {
+public abstract class PreferenceSet
+        extends JEventObject
+        implements JFieldSetItem {
     /**
      * Unknown preference string.
      */
@@ -133,6 +135,11 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
      * @return the display name
      */
     protected abstract String getDisplayName(final String pName);
+
+    @Override
+    public boolean isEditable() {
+        return true;
+    }
 
     /**
      * Define new String preference.
@@ -319,12 +326,14 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
 
         /* Reject if not found */
         if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+            throw new IllegalArgumentException(ERROR_UNKNOWN
+                                               + pName);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof IntegerPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID + pName);
+            throw new IllegalArgumentException(ERROR_INVALID
+                                               + pName);
         }
 
         /* Access preference */
@@ -345,12 +354,14 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
 
         /* Reject if not found */
         if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+            throw new IllegalArgumentException(ERROR_UNKNOWN
+                                               + pName);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof BooleanPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID + pName);
+            throw new IllegalArgumentException(ERROR_INVALID
+                                               + pName);
         }
 
         /* Access preference */
@@ -371,12 +382,14 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
 
         /* Reject if not found */
         if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+            throw new IllegalArgumentException(ERROR_UNKNOWN
+                                               + pName);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof StringPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID + pName);
+            throw new IllegalArgumentException(ERROR_INVALID
+                                               + pName);
         }
 
         /* Access preference */
@@ -397,12 +410,14 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
 
         /* Reject if not found */
         if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+            throw new IllegalArgumentException(ERROR_UNKNOWN
+                                               + pName);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof DatePreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID + pName);
+            throw new IllegalArgumentException(ERROR_INVALID
+                                               + pName);
         }
 
         /* Access preference */
@@ -423,12 +438,14 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
 
         /* Reject if not found */
         if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+            throw new IllegalArgumentException(ERROR_UNKNOWN
+                                               + pName);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof ColorPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID + pName);
+            throw new IllegalArgumentException(ERROR_INVALID
+                                               + pName);
         }
 
         /* Access preference */
@@ -449,12 +466,14 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
 
         /* Reject if not found */
         if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+            throw new IllegalArgumentException(ERROR_UNKNOWN
+                                               + pName);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof FontPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID + pName);
+            throw new IllegalArgumentException(ERROR_INVALID
+                                               + pName);
         }
 
         /* Access preference */
@@ -478,19 +497,22 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
 
         /* Reject if not found */
         if (myPref == null) {
-            throw new IllegalArgumentException(ERROR_UNKNOWN + pName);
+            throw new IllegalArgumentException(ERROR_UNKNOWN
+                                               + pName);
         }
 
         /* Reject if wrong type */
         if (!(myPref instanceof EnumPreference)) {
-            throw new IllegalArgumentException(ERROR_INVALID + pName);
+            throw new IllegalArgumentException(ERROR_INVALID
+                                               + pName);
         }
 
         /* Access as Enum preference */
         @SuppressWarnings("unchecked")
         EnumPreference<E> myEnumPref = (EnumPreference<E>) myPref;
         if (myEnumPref.theClass != pClass) {
-            throw new IllegalArgumentException(ERROR_INVALID + pName);
+            throw new IllegalArgumentException(ERROR_INVALID
+                                               + pName);
         }
 
         /* Return the value */
@@ -507,7 +529,9 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
 
         /* Reject if the name is already present */
         if (theMap.get(myName) != null) {
-            throw new IllegalArgumentException("preference " + myName + " is already defined");
+            throw new IllegalArgumentException("preference "
+                                               + myName
+                                               + " is already defined");
         }
 
         /* Add the preference to the map */
@@ -751,7 +775,8 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
     /**
      * Integer preference.
      */
-    public class IntegerPreference extends PreferenceItem {
+    public class IntegerPreference
+            extends PreferenceItem {
         /**
          * Obtain the value of the preference.
          * @return the value of the preference
@@ -807,7 +832,8 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
     /**
      * Boolean preference.
      */
-    public class BooleanPreference extends PreferenceItem {
+    public class BooleanPreference
+            extends PreferenceItem {
         /**
          * Obtain the value of the preference.
          * @return the value of the preference
@@ -870,7 +896,8 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
     /**
      * String preference.
      */
-    public class StringPreference extends PreferenceItem {
+    public class StringPreference
+            extends PreferenceItem {
         /**
          * Obtain the value of the preference.
          * @return the value of the preference
@@ -940,7 +967,8 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
     /**
      * Date preference.
      */
-    public class DatePreference extends PreferenceItem {
+    public class DatePreference
+            extends PreferenceItem {
         /**
          * Obtain the value of the preference.
          * @return the value of the preference
@@ -1010,7 +1038,8 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
     /**
      * Colour preference.
      */
-    public class ColorPreference extends PreferenceItem {
+    public class ColorPreference
+            extends PreferenceItem {
         /**
          * Obtain the value of the preference.
          * @return the value of the preference
@@ -1073,7 +1102,8 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
     /**
      * Font preference.
      */
-    public class FontPreference extends PreferenceItem {
+    public class FontPreference
+            extends PreferenceItem {
         /**
          * Obtain the value of the preference.
          * @return the value of the preference
@@ -1141,7 +1171,9 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
         protected void storeThePreference(final Object pNewValue) {
             /* Store the value */
             Font myFont = (Font) pNewValue;
-            theHandle.put(getName(), myFont.getFontName() + FONT_SEPARATOR + myFont.getSize());
+            theHandle.put(getName(), myFont.getFontName()
+                                     + FONT_SEPARATOR
+                                     + myFont.getSize());
         }
     }
 
@@ -1149,7 +1181,8 @@ public abstract class PreferenceSet extends JEventObject implements JFieldSetIte
      * Enum preference.
      * @param <E> the Enum type
      */
-    public class EnumPreference<E extends Enum<E>> extends PreferenceItem {
+    public class EnumPreference<E extends Enum<E>>
+            extends PreferenceItem {
         /**
          * The enum class.
          */

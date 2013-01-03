@@ -26,6 +26,7 @@ import net.sourceforge.jOceanus.jDataManager.DataType;
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
@@ -140,6 +141,12 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
     protected void loadValue(final T pItem) {
         /* Access the value */
         Object myValue = pItem.getFieldValue(theField);
+
+        /* If we are skipping the field */
+        if (myValue == JDataFieldValue.SkipField) {
+            /* Set to null */
+            myValue = null;
+        }
 
         /* Handle encrypted values */
         if (myValue instanceof EncryptedField) {

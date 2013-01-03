@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jDataManager: Java Data Manager
+ * jLayoutManager: Java Swing Layout Manager
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDataManager;
+package net.sourceforge.jOceanus.jLayoutManager;
 
 import java.awt.Component;
 
@@ -41,9 +41,8 @@ public final class SpringUtilities {
     }
 
     /**
-     * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid.
-     * Each component in a column is as wide as the maximum preferred width of the components in that column;
-     * height is similarly determined for each row. The parent is made just big enough to fit them all.
+     * Aligns the first <code>rows</code> * <code>cols</code> components of <code>parent</code> in a grid. Each component in a column is as wide as the maximum
+     * preferred width of the components in that column; height is similarly determined for each row. The parent is made just big enough to fit them all.
      * @param pParent the parent panel
      * @param pLayout the layout of the panel
      * @param pRows number of rows
@@ -91,7 +90,8 @@ public final class SpringUtilities {
             /* Calculate the maximum height for each row */
             for (int c = 0; c < pCols; c++) {
                 /* Adjust total width as required */
-                Component myComponent = pParent.getComponent(i + c);
+                Component myComponent = pParent.getComponent(i
+                                                             + c);
                 Constraints myConstraints = pLayout.getConstraints(myComponent);
                 myHeight = Spring.max(myHeight, myConstraints.getHeight());
             }
@@ -99,7 +99,8 @@ public final class SpringUtilities {
             /* Apply y-position and height for row */
             for (int c = 0; c < pCols; c++) {
                 /* Set y-position and height for each cell */
-                Component myComponent = pParent.getComponent(i + c);
+                Component myComponent = pParent.getComponent(i
+                                                             + c);
                 Constraints myConstraints = pLayout.getConstraints(myComponent);
                 myConstraints.setY(myY);
                 myConstraints.setHeight(myHeight);

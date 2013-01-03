@@ -175,7 +175,7 @@ public class JFieldElement<T extends JFieldSetItem> {
         theModel.loadValue(pItem);
 
         /* Render the component */
-        theComponent.renderData(pRender);
+        theComponent.renderData(pRender, pItem);
 
         /* If the label is a button */
         if (theLabel instanceof JButton) {

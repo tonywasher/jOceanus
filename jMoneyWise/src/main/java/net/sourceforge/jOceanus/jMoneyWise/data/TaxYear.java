@@ -453,7 +453,7 @@ public class TaxYear
     }
 
     /**
-     * adjust values after taxRegime change
+     * adjust values after taxRegime change.
      * @throws JDataException on error
      */
     public void adjustForTaxRegime() throws JDataException {

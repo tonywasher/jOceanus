@@ -30,6 +30,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import net.sourceforge.jOceanus.jDataManager.DataType;
+import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
@@ -198,7 +200,7 @@ public class JFieldSet<T extends JFieldSetItem>
     }
 
     /**
-     * Notify that a field update has occurred
+     * Notify that a field update has occurred.
      * @param pField the source field
      * @param pNewValue the new Value
      */
@@ -241,104 +243,121 @@ public class JFieldSet<T extends JFieldSetItem>
          * @param <I> the value class
          * @param pClass the required class
          * @return the value
+         * @throws JDataException on error
          */
-        public <I> I getValue(final Class<I> pClass) {
-            return pClass.cast(theValue);
+        public <I> I getValue(final Class<I> pClass) throws JDataException {
+            try {
+                return pClass.cast(theValue);
+            } catch (ClassCastException e) {
+                throw new JDataException(ExceptionClass.DATA, "Invalid dataType", e);
+            }
         }
 
         /**
          * Obtain the value as String.
          * @return the value
+         * @throws JDataException on error
          */
-        public String getString() {
+        public String getString() throws JDataException {
             return getValue(String.class);
         }
 
         /**
          * Obtain the value as Character Array.
          * @return the value
+         * @throws JDataException on error
          */
-        public char[] getCharArray() {
+        public char[] getCharArray() throws JDataException {
             return getValue(char[].class);
         }
 
         /**
          * Obtain the value as Short.
          * @return the value
+         * @throws JDataException on error
          */
-        public Short getShort() {
+        public Short getShort() throws JDataException {
             return getValue(Short.class);
         }
 
         /**
          * Obtain the value as Integer.
          * @return the value
+         * @throws JDataException on error
          */
-        public Integer getInteger() {
+        public Integer getInteger() throws JDataException {
             return getValue(Integer.class);
         }
 
         /**
          * Obtain the value as Long.
          * @return the value
+         * @throws JDataException on error
          */
-        public Long getLong() {
+        public Long getLong() throws JDataException {
             return getValue(Long.class);
         }
 
         /**
          * Obtain the value as Boolean.
          * @return the value
+         * @throws JDataException on error
          */
-        public Boolean getBoolean() {
+        public Boolean getBoolean() throws JDataException {
             return getValue(Boolean.class);
         }
 
         /**
          * Obtain the value as DateDay.
          * @return the value
+         * @throws JDataException on error
          */
-        public JDateDay getDateDay() {
+        public JDateDay getDateDay() throws JDataException {
             return getValue(JDateDay.class);
         }
 
         /**
          * Obtain the value as Money.
          * @return the value
+         * @throws JDataException on error
          */
-        public JMoney getMoney() {
+        public JMoney getMoney() throws JDataException {
             return getValue(JMoney.class);
         }
 
         /**
          * Obtain the value as Rate.
          * @return the value
+         * @throws JDataException on error
          */
-        public JRate getRate() {
+        public JRate getRate() throws JDataException {
             return getValue(JRate.class);
         }
 
         /**
          * Obtain the value as Price.
          * @return the value
+         * @throws JDataException on error
          */
-        public JPrice getPrice() {
+        public JPrice getPrice() throws JDataException {
             return getValue(JPrice.class);
         }
 
         /**
          * Obtain the value as Units.
          * @return the value
+         * @throws JDataException on error
          */
-        public JUnits getUnits() {
+        public JUnits getUnits() throws JDataException {
             return getValue(JUnits.class);
         }
 
         /**
          * Obtain the value as Dilution.
          * @return the value
+         * @throws JDataException on error
          */
-        public JDilution getDilution() {
+        public JDilution getDilution() throws JDataException {
             return getValue(JDilution.class);
         }
 

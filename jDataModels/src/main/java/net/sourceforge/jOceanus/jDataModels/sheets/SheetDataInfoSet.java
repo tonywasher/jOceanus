@@ -69,7 +69,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
         /* Store parameters */
         theClass = pClass;
         theOwner = pOwner;
-        theBaseCol = pBaseCol;
+        theBaseCol = pBaseCol + 1;
     }
 
     /**

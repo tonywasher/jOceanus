@@ -22,27 +22,29 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.ui;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
-import javax.swing.GroupLayout;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.LayoutStyle;
+import javax.swing.JTextField;
+import javax.swing.SpringLayout;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.jOceanus.jDataManager.DataType;
 import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
@@ -53,15 +55,14 @@ import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
+import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jFieldSet.ItemField;
-import net.sourceforge.jOceanus.jFieldSet.ItemField.FieldSet;
+import net.sourceforge.jOceanus.jFieldSet.JFieldSet;
+import net.sourceforge.jOceanus.jFieldSet.JFieldSet.FieldUpdate;
 import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.ValueField;
-import net.sourceforge.jOceanus.jFieldSet.ValueField.ValueClass;
+import net.sourceforge.jOceanus.jLayoutManager.SpringUtilities;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -82,14 +83,29 @@ public class MaintAccount
     private static final long serialVersionUID = -1979836058846481969L;
 
     /**
-     * Container gap 1.
+     * Padding size.
      */
-    private static final int GAP_TEN = 10;
+    private static final int PADDING_SIZE = 5;
 
     /**
-     * Container gap 2.
+     * Date width.
      */
-    private static final int GAP_THIRTY = 30;
+    private static final int DATE_WIDTH = 90;
+
+    /**
+     * Account width.
+     */
+    private static final int ACT_WIDTH = 150;
+
+    /**
+     * Description width.
+     */
+    private static final int DESC_WIDTH = 300;
+
+    /**
+     * Column Height.
+     */
+    private static final int COL_HEIGHT = 20;
 
     /**
      * The detail panel.
@@ -117,59 +133,24 @@ public class MaintAccount
     private final SaveButtons theSaveButs;
 
     /**
-     * The fieldSet.
+     * The Field Set.
      */
-    private final transient FieldSet theFieldSet;
-
-    /**
-     * The name field.
-     */
-    private final ItemField theName;
-
-    /**
-     * The description field.
-     */
-    private final ItemField theDesc;
-
-    /**
-     * The WebSite field.
-     */
-    private final ItemField theWebSite;
-
-    /**
-     * The customerNo field.
-     */
-    private final ItemField theCustNo;
-
-    /**
-     * The userId field.
-     */
-    private final ItemField theUserId;
-
-    /**
-     * The password field.
-     */
-    private final ItemField thePassword;
-
-    /**
-     * The account field.
-     */
-    private final ItemField theActDetail;
-
-    /**
-     * The notes field.
-     */
-    private final ItemField theNotes;
+    private final transient JFieldSet<Account> theFieldSet;
 
     /**
      * The first event.
      */
-    private final JLabel theFirst;
+    private final JTextField theFirst;
 
     /**
      * The last event.
      */
-    private final JLabel theLast;
+    private final JTextField theLast;
+
+    /**
+     * The account status.
+     */
+    private final JTextField theStatus;
 
     /**
      * The types comboBox.
@@ -185,31 +166,6 @@ public class MaintAccount
      * The alias comboBox.
      */
     private final JComboBox<Account> theAliasBox;
-
-    /**
-     * The maturity button.
-     */
-    private final JDateDayButton theMatButton;
-
-    /**
-     * The Account type label.
-     */
-    private final JLabel theTypLabel;
-
-    /**
-     * The parent label.
-     */
-    private final JLabel theParLabel;
-
-    /**
-     * The Alias label.
-     */
-    private final JLabel theAlsLabel;
-
-    /**
-     * The Maturity label.
-     */
-    private final JLabel theMatLabel;
 
     /**
      * The insert button.
@@ -255,11 +211,6 @@ public class MaintAccount
      * Are we showing closed accounts?
      */
     private boolean doShowClosed = false;
-
-    /**
-     * Are we refreshing data?
-     */
-    private boolean refreshingData = false;
 
     /**
      * Are we editing a new account?
@@ -313,60 +264,18 @@ public class MaintAccount
         theAccountEntry = theUpdateSet.registerClass(Account.class);
         theInfoEntry = theUpdateSet.registerClass(AccountInfo.class);
 
-        /* Create the labels */
-        JLabel myName = new JLabel("Name:");
-        JLabel myDesc = new JLabel("Description:");
-        theTypLabel = new JLabel("AccountType:");
-        theMatLabel = new JLabel("Maturity:");
-        theParLabel = new JLabel("Parent:");
-        theAlsLabel = new JLabel("Alias:");
-        JLabel myFirst = new JLabel("FirstEvent:");
-        JLabel myLast = new JLabel("LastEvent:");
-        theFirst = new JLabel("01-Jan-2000");
-        theLast = new JLabel("01-Jan-2000");
-        JLabel myWebSite = new JLabel("WebSite:");
-        JLabel myCustNo = new JLabel("CustomerNo:");
-        JLabel myUserId = new JLabel("UserId:");
-        JLabel myPassword = new JLabel("Password:");
-        JLabel myAccount = new JLabel("Account:");
-        JLabel myNotes = new JLabel("Notes:");
+        /* Create the New FieldSet */
+        theFieldSet = new JFieldSet<Account>(theRenderMgr);
 
-        /* Build the field set */
-        theFieldSet = new FieldSet(theRenderMgr);
-
-        /* Create the text fields */
-        theName = new ItemField(ValueClass.String, AccountBase.FIELD_NAME, theFieldSet);
-        theDesc = new ItemField(ValueClass.String, AccountBase.FIELD_DESC, theFieldSet);
-        theName.setColumns(AccountBase.NAMELEN);
-        theDesc.setColumns(AccountBase.DESCLEN);
-
-        /* Create the security fields */
-        theWebSite = new ItemField(ValueClass.CharArray, Account.FIELD_WEBSITE, theFieldSet);
-        theCustNo = new ItemField(ValueClass.CharArray, Account.FIELD_CUSTNO, theFieldSet);
-        theUserId = new ItemField(ValueClass.CharArray, Account.FIELD_USERID, theFieldSet);
-        thePassword = new ItemField(ValueClass.CharArray, Account.FIELD_PASSWORD, theFieldSet);
-        theActDetail = new ItemField(ValueClass.CharArray, Account.FIELD_ACCOUNT, theFieldSet);
-        theNotes = new ItemField(ValueClass.CharArray, Account.FIELD_NOTES, theFieldSet);
-        theWebSite.setColumns(Account.WSITELEN);
-        theCustNo.setColumns(Account.CUSTLEN);
-        theUserId.setColumns(Account.UIDLEN);
-        thePassword.setColumns(Account.PWDLEN);
-        theActDetail.setColumns(Account.ACTLEN);
-        theNotes.setColumns(Account.WSITELEN);
+        /* Create the status fields */
+        theFirst = new JTextField();
+        theLast = new JTextField();
+        theStatus = new JTextField();
 
         /* Create the combo boxes */
         theTypesBox = new JComboBox<AccountType>();
         theParentBox = new JComboBox<Account>();
         theAliasBox = new JComboBox<Account>();
-
-        /* Add the ComboBoxes to the Field Set */
-        theFieldSet.addItemField(theTypesBox, AccountBase.FIELD_TYPE);
-        theFieldSet.addItemField(theParentBox, Account.FIELD_PARENT);
-        theFieldSet.addItemField(theAliasBox, Account.FIELD_ALIAS);
-
-        /* Create the Maturity Button */
-        theMatButton = new JDateDayButton();
-        theFieldSet.addItemField(theMatButton, Account.FIELD_MATURITY);
 
         /* Create the buttons */
         theInsButton = new JButton("New");
@@ -377,21 +286,10 @@ public class MaintAccount
         AccountListener myListener = new AccountListener();
 
         /* Add listeners */
-        theName.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theDesc.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theWebSite.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theCustNo.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theUserId.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        thePassword.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theActDetail.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theNotes.addPropertyChangeListener(ValueField.PROPERTY_VALUE, myListener);
-        theTypesBox.addItemListener(myListener);
-        theParentBox.addItemListener(myListener);
-        theAliasBox.addItemListener(myListener);
-        theMatButton.addPropertyChangeListener(JDateDayButton.PROPERTY_DATE, myListener);
         theInsButton.addActionListener(myListener);
         theDelButton.addActionListener(myListener);
         theClsButton.addActionListener(myListener);
+        theFieldSet.addActionListener(myListener);
 
         /* Create the Account Selection panel */
         theSelect = new AccountSelect(theView, true);
@@ -417,220 +315,216 @@ public class MaintAccount
         theButtons.setBorder(BorderFactory.createTitledBorder("Actions"));
 
         /* Create the layout for the panel */
-        GroupLayout myLayout = new GroupLayout(theButtons);
-        theButtons.setLayout(myLayout);
+        theButtons.setLayout(new BoxLayout(theButtons, BoxLayout.X_AXIS));
+        theButtons.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
+        theButtons.add(theInsButton);
+        theButtons.add(Box.createHorizontalGlue());
+        theButtons.add(theDelButton);
+        theButtons.add(Box.createHorizontalGlue());
+        theButtons.add(theClsButton);
+        theButtons.add(Box.createRigidArea(new Dimension(PADDING_SIZE, 0)));
 
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup().addContainerGap().addComponent(theInsButton)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(theDelButton)
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE).addComponent(theClsButton)
-                        .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(theInsButton).addComponent(theDelButton)
-                .addComponent(theClsButton));
-
-        /* Create the secure panel */
-        theSecure = new JPanel();
-        theSecure.setBorder(BorderFactory.createTitledBorder("Security Details"));
-
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(theSecure);
-        theSecure.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addGroup(
-                                                myLayout.createSequentialGroup()
-                                                        .addGroup(
-                                                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(myWebSite)
-                                                                        .addComponent(myCustNo).addComponent(myUserId).addComponent(myNotes))
-                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addGroup(
-                                                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                        .addComponent(theWebSite)
-                                                                        .addComponent(theNotes)
-                                                                        .addGroup(
-                                                                                myLayout.createSequentialGroup()
-                                                                                        .addGroup(
-                                                                                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                                                        .addComponent(theCustNo, GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE)
-                                                                                                        .addComponent(theUserId, GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE))
-                                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                        .addGroup(
-                                                                                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                                                                                        .addComponent(myAccount, GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE)
-                                                                                                        .addComponent(myPassword, GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE))
-                                                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                                        .addGroup(
-                                                                                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                                                        .addComponent(theActDetail, GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE)
-                                                                                                        .addComponent(thePassword, GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE,
-                                                                                                                GroupLayout.PREFERRED_SIZE))))
-                                                        .addContainerGap()))));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myWebSite)
-                                        .addComponent(theWebSite, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myCustNo)
-                                        .addComponent(theCustNo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(myAccount)
-                                        .addComponent(theActDetail, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myUserId)
-                                        .addComponent(theUserId, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(myPassword)
-                                        .addComponent(thePassword, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myNotes)
-                                        .addComponent(theNotes, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))));
+        /* Create the security panel */
+        theSecure = buildSecurityPanel();
 
         /* Create the detail panel */
-        theDetail = new JPanel();
-        theDetail.setBorder(BorderFactory.createTitledBorder("Account Details"));
-
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(theDetail);
-        theDetail.setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                                        myLayout.createSequentialGroup()
-                                                .addGroup(
-                                                        myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(theTypLabel)
-                                                                .addComponent(myName).addComponent(myDesc).addComponent(theParLabel))
-                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                .addGroup(
-                                                        myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                                                .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                .addGroup(
-                                                                        myLayout.createSequentialGroup()
-                                                                                .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE,
-                                                                                        GroupLayout.PREFERRED_SIZE)
-                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                .addComponent(theMatLabel)
-                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                                .addComponent(theMatButton, GroupLayout.PREFERRED_SIZE,
-                                                                                        GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                                                                .addGroup(
-                                                                        myLayout.createSequentialGroup()
-                                                                                .addComponent(theParentBox, GroupLayout.PREFERRED_SIZE,
-                                                                                        GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                                .addComponent(theAlsLabel)
-                                                                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                                                .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE,
-                                                                                        GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))))
-                        .addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(theTypLabel)
-                                        .addComponent(theTypesBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myName)
-                                        .addComponent(theName, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(theMatLabel)
-                                        .addComponent(theMatButton, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myDesc)
-                                        .addComponent(theDesc, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(theParLabel)
-                                        .addComponent(theParentBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(theAlsLabel)
-                                        .addComponent(theAliasBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap()));
+        theDetail = buildDetailsPanel();
 
         /* Create the status panel */
-        JPanel myStatus = new JPanel();
-        myStatus.setBorder(BorderFactory.createTitledBorder("Account Status"));
+        JPanel myStatus = buildStatusPanel();
 
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(myStatus);
-        myStatus.setLayout(myLayout);
+        /* Create the combined details/status */
+        JPanel myMain = new JPanel();
+        myMain.setLayout(new BoxLayout(myMain, BoxLayout.X_AXIS));
+        myMain.add(theDetail);
+        myMain.add(myStatus);
 
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addGroup(
-                                                myLayout.createSequentialGroup()
-                                                        .addGroup(
-                                                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(myFirst)
-                                                                        .addComponent(myLast))
-                                                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addGroup(
-                                                                myLayout.createParallelGroup(GroupLayout.Alignment.TRAILING).addComponent(theFirst)
-                                                                        .addComponent(theLast)))).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myFirst)
-                                        .addComponent(theFirst, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(myLast)
-                                        .addComponent(theLast, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap()));
-
-        /* Create the layout for the panel */
-        myLayout = new GroupLayout(this);
-        setLayout(myLayout);
-
-        /* Set the layout */
-        myLayout.setHorizontalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(
-                                myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(theError).addComponent(theSelect)
-                                        .addComponent(theSaveButs).addGroup(myLayout.createSequentialGroup().addComponent(theDetail).addComponent(myStatus))
-                                        .addComponent(theSecure).addComponent(theButtons)).addContainerGap()));
-        myLayout.setVerticalGroup(myLayout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(
-                myLayout.createSequentialGroup().addContainerGap().addComponent(theError).addComponent(theSelect).addContainerGap(GAP_TEN, GAP_THIRTY)
-                        .addGroup(myLayout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(theDetail).addComponent(myStatus))
-                        .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theSecure).addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theButtons)
-                        .addContainerGap(GAP_TEN, GAP_THIRTY).addComponent(theSaveButs).addContainerGap()));
+        /* Create layout */
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        add(theError);
+        add(Box.createVerticalGlue());
+        add(theSelect);
+        add(Box.createVerticalGlue());
+        add(myMain);
+        add(Box.createVerticalGlue());
+        add(theSecure);
+        add(Box.createVerticalGlue());
+        add(theButtons);
+        add(Box.createVerticalGlue());
+        add(theSaveButs);
 
         /* Set initial display */
         showAccount();
 
         /* Add listener to updateSet */
         theUpdateSet.addActionListener(myListener);
+    }
+
+    /**
+     * Build Account details panel.
+     * @return the panel
+     */
+    private JPanel buildDetailsPanel() {
+        /* Create the labels */
+        JLabel myNameLabel = new JLabel("Name:", SwingConstants.TRAILING);
+        JLabel myDescLabel = new JLabel("Description:", SwingConstants.TRAILING);
+        JLabel myTypeLabel = new JLabel("AccountType:", SwingConstants.TRAILING);
+        JLabel myMatLabel = new JLabel("Maturity:", SwingConstants.TRAILING);
+        JLabel myParLabel = new JLabel("Parent:", SwingConstants.TRAILING);
+        JLabel myAlsLabel = new JLabel("Alias:", SwingConstants.TRAILING);
+
+        /* Allocate the TextFields */
+        JTextField myName = new JTextField();
+        JTextField myDesc = new JTextField();
+        JDateDayButton myMaturity = new JDateDayButton();
+
+        /* Set sizes */
+        Dimension myActDims = new Dimension(ACT_WIDTH, COL_HEIGHT);
+        Dimension myDescDims = new Dimension(DESC_WIDTH, COL_HEIGHT);
+        myName.setMaximumSize(myActDims);
+        myDesc.setMaximumSize(myDescDims);
+        theParentBox.setMaximumSize(myActDims);
+        theAliasBox.setMaximumSize(myActDims);
+        theTypesBox.setMaximumSize(myActDims);
+
+        /*
+         * Dimension fields correctly /* Add the components to the field Set
+         */
+        theFieldSet.addFieldElement(Account.FIELD_NAME, DataType.STRING, myNameLabel, myName);
+        theFieldSet.addFieldElement(Account.FIELD_DESC, DataType.STRING, myDescLabel, myDesc);
+        theFieldSet.addFieldElement(Account.FIELD_TYPE, AccountType.class, myTypeLabel, theTypesBox);
+        theFieldSet.addFieldElement(Account.FIELD_PARENT, Account.class, myParLabel, theParentBox);
+        theFieldSet.addFieldElement(Account.FIELD_ALIAS, Account.class, myAlsLabel, theAliasBox);
+        theFieldSet.addFieldElement(Account.FIELD_MATURITY, DataType.DATEDAY, myMatLabel, myMaturity);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Account Details"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myNameLabel);
+        myPanel.add(myName);
+        myPanel.add(myDescLabel);
+        myPanel.add(myDesc);
+        myPanel.add(myTypeLabel);
+        myPanel.add(theTypesBox);
+        myPanel.add(myParLabel);
+        myPanel.add(theParentBox);
+        myPanel.add(myAlsLabel);
+        myPanel.add(theAliasBox);
+        myPanel.add(myMatLabel);
+        myPanel.add(myMaturity);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build Account status panel.
+     * @return the panel
+     */
+    private JPanel buildStatusPanel() {
+        /* Create the labels */
+        JLabel myStatus = new JLabel("Status:", SwingConstants.TRAILING);
+        JLabel myFirst = new JLabel("FirstEvent:", SwingConstants.TRAILING);
+        JLabel myLast = new JLabel("LastEvent:", SwingConstants.TRAILING);
+
+        /* Set sizes */
+        Dimension myDims = new Dimension(DATE_WIDTH, COL_HEIGHT);
+        theFirst.setMaximumSize(myDims);
+        theLast.setMaximumSize(myDims);
+        theStatus.setMaximumSize(myDims);
+
+        /* Hide edit field and border */
+        theFirst.setEditable(false);
+        theLast.setEditable(false);
+        theStatus.setEditable(false);
+        theFirst.setBorder(null);
+        theLast.setBorder(null);
+        theStatus.setBorder(null);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Account Status"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myStatus);
+        myPanel.add(theStatus);
+        myPanel.add(myFirst);
+        myPanel.add(theFirst);
+        myPanel.add(myLast);
+        myPanel.add(theLast);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
+    }
+
+    /**
+     * Build Security details panel.
+     * @return the panel
+     */
+    private JPanel buildSecurityPanel() {
+        /* Create the labels */
+        JLabel myWebSiteLabel = new JLabel("WebSite:", SwingConstants.TRAILING);
+        JLabel myCustNoLabel = new JLabel("CustomerNo:", SwingConstants.TRAILING);
+        JLabel myUserIdLabel = new JLabel("UserId:", SwingConstants.TRAILING);
+        JLabel myPasswordLabel = new JLabel("Password:", SwingConstants.TRAILING);
+        JLabel myAccountLabel = new JLabel("Account:", SwingConstants.TRAILING);
+        JLabel myNotesLabel = new JLabel("Notes:", SwingConstants.TRAILING);
+
+        /* Allocate the TextFields */
+        JTextField myWebSite = new JTextField();
+        JTextField myCustNo = new JTextField();
+        JTextField myUserId = new JTextField();
+        JTextField myPassword = new JTextField();
+        JTextField myAccount = new JTextField();
+        JTextField myNotes = new JTextField();
+
+        /* Set the column widths */
+        myWebSite.setColumns(Account.WSITELEN);
+        myCustNo.setColumns(Account.CUSTLEN);
+        myUserId.setColumns(Account.UIDLEN);
+        myPassword.setColumns(Account.PWDLEN);
+        myAccount.setColumns(Account.ACTLEN);
+        myNotes.setColumns(Account.WSITELEN);
+
+        /* Add the components to the field Set */
+        theFieldSet.addFieldElement(Account.FIELD_WEBSITE, DataType.CHARARRAY, myWebSiteLabel, myWebSite);
+        theFieldSet.addFieldElement(Account.FIELD_CUSTNO, DataType.CHARARRAY, myCustNoLabel, myCustNo);
+        theFieldSet.addFieldElement(Account.FIELD_USERID, DataType.CHARARRAY, myUserIdLabel, myUserId);
+        theFieldSet.addFieldElement(Account.FIELD_PASSWORD, DataType.CHARARRAY, myPasswordLabel, myPassword);
+        theFieldSet.addFieldElement(Account.FIELD_ACCOUNT, DataType.CHARARRAY, myAccountLabel, myAccount);
+        theFieldSet.addFieldElement(Account.FIELD_NOTES, DataType.CHARARRAY, myNotesLabel, myNotes);
+
+        /* Create the limits panel */
+        JPanel myPanel = new JPanel();
+        myPanel.setBorder(BorderFactory.createTitledBorder("Security"));
+
+        /* Layout the limits panel */
+        SpringLayout mySpring = new SpringLayout();
+        myPanel.setLayout(mySpring);
+        myPanel.add(myWebSiteLabel);
+        myPanel.add(myWebSite);
+        myPanel.add(myCustNoLabel);
+        myPanel.add(myCustNo);
+        myPanel.add(myUserIdLabel);
+        myPanel.add(myUserId);
+        myPanel.add(myPasswordLabel);
+        myPanel.add(myPassword);
+        myPanel.add(myAccountLabel);
+        myPanel.add(myAccount);
+        myPanel.add(myNotesLabel);
+        myPanel.add(myNotes);
+        SpringUtilities.makeCompactGrid(myPanel, mySpring, myPanel.getComponentCount() >> 1, 2, PADDING_SIZE);
+
+        /* Return the new panel */
+        return myPanel;
     }
 
     /**
@@ -695,7 +589,7 @@ public class MaintAccount
         theAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
-        refreshingData = true;
+        theFieldSet.setRefreshingData(true);
 
         /* Refresh the account selection */
         theSelect.refreshData();
@@ -723,7 +617,7 @@ public class MaintAccount
         }
 
         /* Note that we have finished refreshing data */
-        refreshingData = false;
+        theFieldSet.setRefreshingData(false);
 
         /* refresh the parents */
         refreshParents();
@@ -742,7 +636,7 @@ public class MaintAccount
      */
     private void refreshParents() {
         /* Note that we are refreshing data */
-        refreshingData = true;
+        theFieldSet.setRefreshingData(true);
 
         /* If we have parents already populated */
         if (theParentBox.getItemCount() > 0) {
@@ -776,7 +670,7 @@ public class MaintAccount
         }
 
         /* Note that we have finished refreshing data */
-        refreshingData = false;
+        theFieldSet.setRefreshingData(false);
     }
 
     /**
@@ -832,91 +726,26 @@ public class MaintAccount
         /* If we have an active account */
         if (theAccount != null) {
             /* Note that we are refreshing data */
-            refreshingData = true;
+            theFieldSet.setRefreshingData(true);
 
             /* Access details */
             boolean isClosed = theAccount.isClosed();
             boolean bActive = !theAccount.isDeleted();
             myType = theAccount.getActType();
 
-            /* Set the name */
-            theName.setValue(theAccount.getName());
-            theName.setEnabled(!isClosed
-                               && bActive);
-
-            /* Set the description */
-            theDesc.setValue(theAccount.getDesc());
-            theDesc.setEnabled(!isClosed
-                               && bActive);
-
-            /* Set the WebSite */
-            theWebSite.setValue(theAccount.getWebSite());
-            theWebSite.setEnabled(!isClosed
-                                  && bActive);
-
-            /* Set the CustNo */
-            theCustNo.setValue(theAccount.getCustNo());
-            theCustNo.setEnabled(!isClosed
-                                 && bActive);
-
-            /* Set the UserId */
-            theUserId.setValue(theAccount.getUserId());
-            theUserId.setEnabled(!isClosed
-                                 && bActive);
-
-            /* Set the Password */
-            thePassword.setValue(theAccount.getPassword());
-            thePassword.setEnabled(!isClosed
-                                   && bActive);
-
-            /* Set the WebSite */
-            theActDetail.setValue(theAccount.getAccount());
-            theActDetail.setEnabled(!isClosed
-                                    && bActive);
-
-            /* Set the Notes */
-            theNotes.setValue(theAccount.getNotes());
-            theNotes.setEnabled(!isClosed
-                                && bActive);
-
-            /* Set the type */
-            theTypesBox.setSelectedItem(myType.getName());
-            theTypesBox.setVisible(theAccount.isDeletable()
-                                   && (isNewAccount));
-            theTypLabel.setVisible(theAccount.isDeletable()
-                                   && (isNewAccount));
-
-            /* Handle maturity */
-            if (myType.isBond()) {
-                theMatLabel.setVisible(true);
-                theMatButton.setSelectedDateDay(theAccount.getMaturity());
-                theMatButton.setVisible(true);
-                theMatButton.setEnabled(!isClosed
-                                        && bActive);
-            } else {
-                theMatButton.setVisible(false);
-                theMatLabel.setVisible(false);
-            }
-
-            /* Handle parent */
-            if (myType.isChild()) {
-                if (theAccount.getParent() != null) {
-                    theParentBox.setSelectedItem(theAccount.getParent());
-                } else {
-                    theParentBox.setSelectedItem(null);
-                }
-                theParentBox.setVisible(true);
-                theParLabel.setVisible(true);
-                theParentBox.setEnabled(!isClosed
-                                        && bActive);
-            } else {
-                theParentBox.setVisible(false);
-                theParLabel.setVisible(false);
-            }
+            /* Set the visibility */
+            theFieldSet.setVisibility(Account.FIELD_TYPE, theAccount.isDeletable()
+                                                          && (isNewAccount));
+            theFieldSet.setVisibility(Account.FIELD_MATURITY, myType.isBond());
+            theFieldSet.setVisibility(Account.FIELD_PARENT, theAccount.isChild());
 
             /* Handle alias */
             if (myType.canAlias()
                 && (!theAccount.isAliasedTo())) {
+
+                /* Set visible */
+                theFieldSet.setVisibility(Account.FIELD_ALIAS, true);
+
                 /* If we have alias already populated */
                 if (theAliasBox.getItemCount() > 0) {
                     /* Remove the items */
@@ -956,23 +785,12 @@ public class MaintAccount
                     /* Add the item to the list */
                     theAliasBox.addItem(myAcct);
                 }
-
-                /* Set up the aliases */
-                if (theAccount.getAlias() != null) {
-                    theAliasBox.setSelectedItem(theAccount.getAlias());
-                } else {
-                    theAliasBox.setSelectedItem(null);
-                }
-                theAliasBox.setVisible(true);
-                theAlsLabel.setVisible(true);
-                theAliasBox.setEnabled(!isClosed
-                                       && bActive);
             } else {
-                theAliasBox.setVisible(false);
-                theAlsLabel.setVisible(false);
+                /* Set visible */
+                theFieldSet.setVisibility(Account.FIELD_ALIAS, false);
             }
 
-            /* Render all fields in the set */
+            /* Render the FieldSet */
             theFieldSet.renderSet(theAccount);
 
             /* Access the formatter */
@@ -984,6 +802,9 @@ public class MaintAccount
 
             /* Set the Last Event */
             theLast.setText((theAccount.getLatest() != null) ? myFormatter.formatObject(theAccount.getLatest().getDate()) : "N/A");
+
+            /* Set the Status */
+            theStatus.setText(determineStatus().toString());
 
             /* Set text for close button */
             theClsButton.setText((isClosed) ? "ReOpen" : "Close");
@@ -1002,46 +823,30 @@ public class MaintAccount
                                     || (theAccount.isCloseable()));
 
             /* Note that we are finished refreshing data */
-            refreshingData = false;
+            theFieldSet.setRefreshingData(false);
 
             /* else no account selected */
         } else {
             /* Clear details */
-            theName.setValue(null);
-            theDesc.setValue(null);
             theFirst.setText("");
             theLast.setText("");
-            theWebSite.setValue(null);
-            theCustNo.setValue(null);
-            theUserId.setValue(null);
-            thePassword.setValue(null);
-            theActDetail.setValue(null);
-            theNotes.setValue(null);
+            theStatus.setText("");
 
             /* Disable field entry */
-            theName.setEnabled(false);
-            theDesc.setEnabled(false);
-            theWebSite.setEnabled(false);
-            theCustNo.setEnabled(false);
-            theUserId.setEnabled(false);
-            thePassword.setEnabled(false);
-            theActDetail.setEnabled(false);
-            theNotes.setEnabled(false);
             theClsButton.setVisible(false);
 
             theInsButton.setEnabled(myType != null);
             theDelButton.setVisible(false);
             theDelButton.setText("Recover");
 
-            /* Hide parent and maturity */
-            theParLabel.setVisible(false);
-            theParentBox.setVisible(false);
-            theAlsLabel.setVisible(false);
-            theAliasBox.setVisible(false);
-            theMatButton.setVisible(false);
-            theMatLabel.setVisible(false);
-            theTypLabel.setVisible(false);
-            theTypesBox.setVisible(false);
+            /* Hide the optional fields */
+            theFieldSet.setVisibility(Account.FIELD_TYPE, false);
+            theFieldSet.setVisibility(Account.FIELD_MATURITY, false);
+            theFieldSet.setVisibility(Account.FIELD_PARENT, false);
+            theFieldSet.setVisibility(Account.FIELD_ALIAS, false);
+
+            /* Render the Null Field Set */
+            theFieldSet.renderNullSet();
         }
     }
 
@@ -1080,92 +885,28 @@ public class MaintAccount
      * AccountListener class.
      */
     private final class AccountListener
-            implements ActionListener, ItemListener, PropertyChangeListener, ChangeListener {
+            implements ActionListener, ChangeListener {
         @Override
-        public void itemStateChanged(final ItemEvent evt) {
-            Object o = evt.getSource();
+        public void actionPerformed(final ActionEvent e) {
+            Object o = e.getSource();
 
-            /* Ignore selection if refreshing data */
-            if ((refreshingData)
-                || (evt.getStateChange() != ItemEvent.SELECTED)) {
-                return;
-            }
-
-            /* Push history */
-            theAccount.pushHistory();
-
-            /* Protect against exceptions */
-            try {
-                /* If this event relates to the period box */
-                if (theTypesBox.equals(o)) {
-                    /* Store the appropriate value */
-                    AccountType myType = (AccountType) evt.getItem();
-                    theAccount.setActType(myType);
-
-                    /* If the account is now a bond */
-                    if (theAccount.isBond()) {
-                        /* If it doesn't have a maturity */
-                        if (theAccount.getMaturity() == null) {
-                            /* Create a default maturity */
-                            theAccount.setMaturity(new JDateDay());
-                            theAccount.getMaturity().adjustYear(1);
-                        }
-
-                        /* Else set maturity to null for non-bonds */
-                    } else {
-                        theAccount.setMaturity(null);
-                    }
-
-                    /* Set parent to null for non-child accounts */
-                    if (!theAccount.isChild()) {
-                        theAccount.setParent(null);
-                    }
-
-                    /* If this event relates to the parent box */
-                } else if (theParentBox.equals(o)) {
-                    /* Store the appropriate value */
-                    Account myParent = (Account) evt.getItem();
-                    theAccount.setParent(myParent);
-
-                    /* If this event relates to the alias box */
-                } else if (theAliasBox.equals(o)) {
-                    /* Store the appropriate value */
-                    Account myAlias = (Account) evt.getItem();
-                    theAccount.setAlias(myAlias);
+            /* If the event relates to the Field Set */
+            if ((theFieldSet.equals(o))
+                && (e instanceof ActionDetailEvent)) {
+                /* Access event and obtain details */
+                ActionDetailEvent evt = (ActionDetailEvent) e;
+                Object dtl = evt.getDetails();
+                if (dtl instanceof FieldUpdate) {
+                    /* Update the field */
+                    updateField((FieldUpdate) dtl);
                 }
 
-                /* Handle Exceptions */
-            } catch (JDataException e) {
-                /* Reset values */
-                theAccount.popHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field", e);
-
-                /* Show the error */
-                theError.setError(myError);
-            }
-
-            /* Check for changes */
-            if (theAccount.checkForHistory()) {
-                /* Increment the updateSet */
-                theUpdateSet.incrementVersion();
-
-                /* Note that changes have occurred */
-                notifyChanges();
-            }
-        }
-
-        @Override
-        public void actionPerformed(final ActionEvent evt) {
-            Object o = evt.getSource();
-
-            /* If this event relates to the save buttons */
-            if (theSaveButs.equals(o)) {
+                /* If this event relates to the save buttons */
+            } else if (theSaveButs.equals(o)) {
                 /* If this is a new Account */
                 if (isNewAccount) {
                     /* Access the command */
-                    String myCmd = evt.getActionCommand();
+                    String myCmd = e.getActionCommand();
 
                     /* If the command is reset/last undo */
                     if ((myCmd.equals(SaveButtons.CMD_RESET))
@@ -1177,7 +918,7 @@ public class MaintAccount
                 }
 
                 /* Perform the action */
-                theUpdateSet.processCommand(evt.getActionCommand(), theError);
+                theUpdateSet.processCommand(e.getActionCommand(), theError);
 
                 /* Notify of any changes */
                 notifyChanges();
@@ -1218,29 +959,14 @@ public class MaintAccount
             /* Push history */
             theAccount.pushHistory();
 
-            /* Protect against exceptions */
-            try {
-                /* If this event relates to the close button */
-                if (theClsButton.equals(o)) {
-                    /* Re-open or close the account as required */
-                    if (theAccount.isClosed()) {
-                        theAccount.reOpenAccount();
-                    } else {
-                        theAccount.closeAccount();
-                    }
+            /* If this event relates to the close button */
+            if (theClsButton.equals(o)) {
+                /* Re-open or close the account as required */
+                if (theAccount.isClosed()) {
+                    theAccount.reOpenAccount();
+                } else {
+                    theAccount.closeAccount();
                 }
-
-                /* Handle Exceptions */
-            } catch (ClassCastException e) {
-                /* Reset values */
-                theAccount.popHistory();
-                theAccount.pushHistory();
-
-                /* Build the error */
-                JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field", e);
-
-                /* Show the error */
-                theError.setError(myError);
             }
 
             /* Check for changes */
@@ -1253,86 +979,104 @@ public class MaintAccount
             }
         }
 
-        @Override
-        public void propertyChange(final PropertyChangeEvent evt) {
-            Object o = evt.getSource();
+        /**
+         * Update field.
+         * @param pUpdate the update
+         */
+        private void updateField(final FieldUpdate pUpdate) {
+            JDataField myField = pUpdate.getField();
 
             /* Push history */
             theAccount.pushHistory();
 
             /* Protect against exceptions */
             try {
-                /* If this is the name */
-                if (theName.equals(o)) {
-                    /* Update the Account */
-                    String myValue = (String) theName.getValue();
-                    theAccount.setAccountName(myValue);
+                /* If this is our Name */
+                if (myField.equals(Account.FIELD_NAME)) {
+                    /* Update the Value */
+                    theAccount.setAccountName(pUpdate.getString());
+                    /* If this is our Description */
+                } else if (myField.equals(Account.FIELD_DESC)) {
+                    /* Update the Value */
+                    theAccount.setDescription(pUpdate.getString());
+                    /* If this is our Account type */
+                } else if (myField.equals(Account.FIELD_TYPE)) {
+                    /* Update the Value */
+                    theAccount.setActType(pUpdate.getValue(AccountType.class));
 
-                    /* If this is the description */
-                } else if (theDesc.equals(o)) {
-                    /* Update the Account */
-                    String myValue = (String) theDesc.getValue();
-                    theAccount.setDescription(myValue);
+                    /* If the account is now a bond */
+                    if (theAccount.isBond()) {
+                        /* If it doesn't have a maturity */
+                        if (theAccount.getMaturity() == null) {
+                            /* Create a default maturity */
+                            theAccount.setMaturity(new JDateDay());
+                            theAccount.getMaturity().adjustYear(1);
+                        }
 
+                        /* Else set maturity to null for non-bonds */
+                    } else {
+                        theAccount.setMaturity(null);
+                    }
+
+                    /* Set parent to null for non-child accounts */
+                    if (!theAccount.isChild()) {
+                        theAccount.setParent(null);
+                    }
+
+                    /* If this is our Parent */
+                } else if (myField.equals(Account.FIELD_PARENT)) {
+                    /* Update the Value */
+                    theAccount.setParent(pUpdate.getValue(Account.class));
+                    /* If this is our Account type */
+                } else if (myField.equals(Account.FIELD_ALIAS)) {
+                    /* Update the Value */
+                    theAccount.setAlias(pUpdate.getValue(Account.class));
+                    /* If this is our Maturity */
+                } else if (myField.equals(Account.FIELD_MATURITY)) {
+                    /* Update the Value */
+                    theAccount.setMaturity(pUpdate.getDateDay());
                     /* If this is our WebSite */
-                } else if (theWebSite.equals(o)) {
-                    /* Update the Account */
-                    char[] myValue = (char[]) theWebSite.getValue();
-                    theAccount.setWebSite(myValue);
-
-                    /* If this is our CustNo */
-                } else if (theCustNo.equals(o)) {
-                    /* Update the Account */
-                    char[] myValue = (char[]) theCustNo.getValue();
-                    theAccount.setCustNo(myValue);
-
+                } else if (myField.equals(Account.FIELD_WEBSITE)) {
+                    /* Update the Value */
+                    theAccount.setWebSite(pUpdate.getCharArray());
+                    /* If this is our CustomerNo. */
+                } else if (myField.equals(Account.FIELD_CUSTNO)) {
+                    /* Update the Value */
+                    theAccount.setCustNo(pUpdate.getCharArray());
                     /* If this is our UserId */
-                } else if (theUserId.equals(o)) {
-                    /* Update the Account */
-                    char[] myValue = (char[]) theUserId.getValue();
-                    theAccount.setUserId(myValue);
-
+                } else if (myField.equals(Account.FIELD_USERID)) {
+                    /* Update the Value */
+                    theAccount.setUserId(pUpdate.getCharArray());
                     /* If this is our Password */
-                } else if (thePassword.equals(o)) {
-                    /* Update the Account */
-                    char[] myValue = (char[]) thePassword.getValue();
-                    theAccount.setPassword(myValue);
-
-                    /* If this is our Account Detail */
-                } else if (theActDetail.equals(o)) {
-                    /* Update the Account */
-                    char[] myValue = (char[]) theActDetail.getValue();
-                    theAccount.setAccount(myValue);
-
+                } else if (myField.equals(Account.FIELD_PASSWORD)) {
+                    /* Update the Value */
+                    theAccount.setPassword(pUpdate.getCharArray());
+                    /* If this is our Account */
+                } else if (myField.equals(Account.FIELD_ACCOUNT)) {
+                    /* Update the Value */
+                    theAccount.setAccount(pUpdate.getCharArray());
                     /* If this is our Notes */
-                } else if (theNotes.equals(o)) {
-                    /* Update the Account */
-                    char[] myValue = (char[]) theNotes.getValue();
-                    theAccount.setNotes(myValue);
-
-                    /* If this event relates to the maturity box */
-                } else if (theMatButton.equals(o)) {
-                    /* Access the value */
-                    JDateDay myDate = new JDateDay(theMatButton.getSelectedDate());
-                    theAccount.setMaturity(myDate);
+                } else if (myField.equals(Account.FIELD_NOTES)) {
+                    /* Update the Value */
+                    theAccount.setNotes(pUpdate.getCharArray());
                 }
 
                 /* Handle Exceptions */
             } catch (JDataException e) {
                 /* Reset values */
                 theAccount.popHistory();
-                theAccount.pushHistory();
 
                 /* Build the error */
                 JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field", e);
 
                 /* Show the error */
                 theError.setError(myError);
+                return;
             }
 
             /* Check for changes */
             if (theAccount.checkForHistory()) {
-                /* Increment the updateSet */
+                /* Increment the update version */
                 theUpdateSet.incrementVersion();
 
                 /* Note that changes have occurred */
@@ -1373,5 +1117,69 @@ public class MaintAccount
                 theSaveButs.setEnabled(!isError);
             }
         }
+    }
+
+    /**
+     * Determine status.
+     * @return the status
+     */
+    private AccountStatus determineStatus() {
+        /* Handle new account */
+        if (isNewAccount) {
+            return AccountStatus.New;
+        }
+
+        /* Handle unused account */
+        if (theAccount.isDeletable()) {
+            return AccountStatus.Unused;
+        }
+
+        /* Handle deleted account */
+        if (theAccount.isDeleted()) {
+            return AccountStatus.Deleted;
+        }
+
+        /* Handle closed account */
+        if (theAccount.isClosed()) {
+            return AccountStatus.Closed;
+        }
+
+        /* Handle standard account */
+        return (theAccount.isCloseable()) ? AccountStatus.Inactive : AccountStatus.Active;
+    }
+
+    /**
+     * Account Status.
+     */
+    private enum AccountStatus {
+        /**
+         * New account.
+         */
+        New,
+
+        /**
+         * Deleted account.
+         */
+        Deleted,
+
+        /**
+         * Closed account.
+         */
+        Closed,
+
+        /**
+         * Unused account (i.e. delete-able).
+         */
+        Unused,
+
+        /**
+         * Inactive account (i.e. close-able).
+         */
+        Inactive,
+
+        /**
+         * Active account.
+         */
+        Active;
     }
 }

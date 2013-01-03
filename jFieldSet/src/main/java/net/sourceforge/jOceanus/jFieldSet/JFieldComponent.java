@@ -210,8 +210,10 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
     /**
      * Render the data.
      * @param pRender the render data.
+     * @param pItem the item
      */
-    protected void renderData(final RenderData pRender) {
+    protected void renderData(final RenderData pRender,
+                              final T pItem) {
         /* Obtain details from render data */
         Color myFore = pRender.getForeGround();
         Color myBack = pRender.getBackGround();
@@ -235,7 +237,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
         displayField();
 
         /* Enable the component */
-        theComponent.setEnabled(true);
+        theComponent.setEnabled(pItem.isEditable());
     }
 
     /**
@@ -285,7 +287,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      * The JTextField implementation.
      * @param <T> the Data Item type
      */
-    protected static class JFieldText<T extends JFieldSetItem>
+    protected static final class JFieldText<T extends JFieldSetItem>
             extends JFieldComponent<T> {
         /**
          * The Component.
@@ -410,7 +412,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      * The JTextArea implementation.
      * @param <T> the Data Item type
      */
-    protected static class JFieldArea<T extends JFieldSetItem>
+    protected static final class JFieldArea<T extends JFieldSetItem>
             extends JFieldComponent<T> {
 
         @Override
@@ -448,7 +450,7 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      * The JComboBox implementation.
      * @param <I> ComboBox element type
      */
-    protected static class JFieldCombo<I, T extends JFieldSetItem>
+    protected static final class JFieldCombo<I, T extends JFieldSetItem>
             extends JFieldComponent<T> {
         /**
          * The Component.

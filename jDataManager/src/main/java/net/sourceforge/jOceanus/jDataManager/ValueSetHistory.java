@@ -30,11 +30,12 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 
 /**
- * Provides the implementation of a history buffer for a DataItem. Each element represents a changed set of
- * values and refers to a {@link ValueSet} object which is the set of changeable values for the object.
+ * Provides the implementation of a history buffer for a DataItem. Each element represents a changed set of values and refers to a {@link ValueSet} object which
+ * is the set of changeable values for the object.
  * @see ValueSet
  */
-public class ValueSetHistory implements JDataContents {
+public class ValueSetHistory
+        implements JDataContents {
     @Override
     public JDataFields getDataFields() {
         /* Allocate new local fields */
@@ -47,7 +48,10 @@ public class ValueSetHistory implements JDataContents {
             ValueSetDelta myDelta = myIterator.previous();
 
             /* Declare the field */
-            myFields.declareIndexField(ValueSet.FIELD_VERSION + "(" + myDelta.getVersion() + ")");
+            myFields.declareIndexField(ValueSet.FIELD_VERSION
+                                       + "("
+                                       + myDelta.getVersion()
+                                       + ")");
         }
 
         return myFields;
@@ -58,17 +62,23 @@ public class ValueSetHistory implements JDataContents {
         /* Access the index */
         int myIndex = pField.getIndex();
         int mySize = theDeltas.size();
-        if ((myIndex < 0) || (myIndex >= mySize)) {
+        if ((myIndex < 0)
+            || (myIndex >= mySize)) {
             return JDataFieldValue.UnknownField;
         }
 
         /* Access the delta */
-        return theDeltas.get(mySize - myIndex - 1);
+        return theDeltas.get(mySize
+                             - myIndex
+                             - 1);
     }
 
     @Override
     public String formatObject() {
-        return ValueSetHistory.class.getSimpleName() + "(" + theStack.size() + ")";
+        return ValueSetHistory.class.getSimpleName()
+               + "("
+               + theStack.size()
+               + ")";
     }
 
     /**

@@ -342,6 +342,11 @@ public abstract class DataItem
         theEdit = pState;
     }
 
+    @Override
+    public boolean isEditable() {
+        return !isDeleted();
+    }
+
     /**
      * Determine whether the item is visible to standard searches.
      * @return <code>true/false</code>
@@ -705,6 +710,10 @@ public abstract class DataItem
                         theValueSet.setVersion(1);
                         break;
 
+                    case DELETED:
+                        pushHistory();
+                        break;
+
                     /* Changed items need to have new values at version 1 and originals at version 0 */
                     case CHANGED:
                         setHistory(pBase);
@@ -742,14 +751,17 @@ public abstract class DataItem
                 }
                 break;
 
-            /* We are building a CORE item (from Edit) */
+            /* We are building a CORE item */
             case CORE:
                 /* set as a new item */
                 theValueSet.setVersion(pList.getVersion() + 1);
 
-                /* Reset the Id */
-                theId = 0;
-                pList.setNewId(this);
+                /* If we are adding from Edit */
+                if (myBaseStyle == ListStyle.EDIT) {
+                    /* Reset the Id */
+                    theId = 0;
+                    pList.setNewId(this);
+                }
                 break;
 
             /* Creation of copy element not allowed */

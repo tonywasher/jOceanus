@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jPreferenceSet: PreferenceSet Management
+[] * jPreferenceSet: PreferenceSet Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,6 +56,7 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jFieldSet.RenderManager;
 import net.sourceforge.jOceanus.jFieldSet.ValueField;
 import net.sourceforge.jOceanus.jFieldSet.ValueField.ValueClass;
+import net.sourceforge.jOceanus.jLayoutManager.GridBagUtilities;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.BooleanPreference;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.ColorPreference;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.DatePreference;
@@ -76,11 +76,6 @@ public class PreferenceSetPanel
      * Serial Id.
      */
     private static final long serialVersionUID = -713132970269487546L;
-
-    /**
-     * Inset depth.
-     */
-    private static final int INSET_DEPTH = 5;
 
     /**
      * String width.
@@ -148,50 +143,6 @@ public class PreferenceSetPanel
     }
 
     /**
-     * Set constraints for a label.
-     * @param pConstraints the constraints
-     * @param pRow the row number
-     * @param pFill the fill constraint
-     */
-    private static void setPanelLabel(final GridBagConstraints pConstraints,
-                                      final int pRow,
-                                      final int pFill) {
-        pConstraints.gridx = 0;
-        pConstraints.gridy = pRow;
-        pConstraints.gridwidth = 1;
-        pConstraints.fill = pFill;
-        pConstraints.weightx = 0.0;
-        pConstraints.anchor = GridBagConstraints.LINE_END;
-        pConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
-    }
-
-    /**
-     * Set panel field.
-     * @param pConstraints the constraints
-     * @param pRow the row number
-     * @param pCol the column number
-     * @param pWidth the width constraint
-     */
-    private static void setPanelField(final GridBagConstraints pConstraints,
-                                      final int pRow,
-                                      final int pCol,
-                                      final int pWidth) {
-        pConstraints.gridx = pCol;
-        pConstraints.gridy = pRow;
-        pConstraints.gridwidth = pWidth;
-        pConstraints.anchor = GridBagConstraints.LINE_START;
-        pConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
-        if (pWidth == GridBagConstraints.REMAINDER) {
-            pConstraints.fill = GridBagConstraints.HORIZONTAL;
-            pConstraints.weightx = 1.0;
-        } else {
-            pConstraints.gridwidth = 1;
-            pConstraints.fill = GridBagConstraints.NONE;
-            pConstraints.weightx = 0.0;
-        }
-    }
-
-    /**
      * Constructor.
      * @param pRenderMgr the render manager
      * @param pSet the preference set
@@ -243,34 +194,34 @@ public class PreferenceSetPanel
                     break;
                 case String:
                     /* Add the Label into the first slot */
-                    setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
+                    GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
                     add(myItem.getLabel(), myConstraints);
 
                     /* Add the Component into the second slot */
-                    setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
+                    GridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
                     add(myItem.getComponent(), myConstraints);
                     break;
                 case Directory:
                 case File:
                     /* Add the Label into the first slot */
-                    setPanelLabel(myConstraints, myRow, GridBagConstraints.HORIZONTAL);
+                    GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.HORIZONTAL);
                     add(myItem.getLabel(), myConstraints);
 
                     /* Add the Component into the second slot */
-                    setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
+                    GridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
                     add(myItem.getComponent(), myConstraints);
                     break;
                 default:
                     /* Add the Label into the first slot */
-                    setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
+                    GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.NONE);
                     add(myItem.getLabel(), myConstraints);
 
                     /* Add the Component into the second slot */
-                    setPanelField(myConstraints, myRow, 1, 1);
+                    GridBagUtilities.setPanelField(myConstraints, myRow, 1, 1);
                     add(myItem.getComponent(), myConstraints);
 
                     /* Add padding to the remainder */
-                    setPanelField(myConstraints, myRow++, 2, GridBagConstraints.REMAINDER);
+                    GridBagUtilities.setPanelField(myConstraints, myRow++, 2, GridBagConstraints.REMAINDER);
                     add(new JLabel(), myConstraints);
                     break;
             }
@@ -279,13 +230,7 @@ public class PreferenceSetPanel
         /* If we have an options panel */
         if (myOptions != null) {
             /* Add the Label into the first slot */
-            myConstraints.gridx = 0;
-            myConstraints.gridy = myRow++;
-            myConstraints.gridwidth = GridBagConstraints.REMAINDER;
-            myConstraints.fill = GridBagConstraints.HORIZONTAL;
-            myConstraints.weightx = 1.0;
-            myConstraints.anchor = GridBagConstraints.LINE_START;
-            myConstraints.insets = new Insets(INSET_DEPTH, INSET_DEPTH, INSET_DEPTH, INSET_DEPTH);
+            GridBagUtilities.setPanelRow(myConstraints, myRow);
             add(myOptions, myConstraints);
         }
     }

@@ -48,7 +48,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
-import net.sourceforge.jOceanus.jDataManager.SpringUtilities;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
 import net.sourceforge.jOceanus.jDataModels.ui.SaveButtons;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
@@ -59,6 +58,7 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSet;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSet.FieldUpdate;
 import net.sourceforge.jOceanus.jFieldSet.RenderManager;
+import net.sourceforge.jOceanus.jLayoutManager.SpringUtilities;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -161,7 +161,7 @@ public class MaintTaxYear
     private final JTextField theYear;
 
     /**
-     * The New Field Set.
+     * The Field Set.
      */
     private final transient JFieldSet<TaxYear> theFieldSet;
 

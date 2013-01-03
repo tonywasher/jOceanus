@@ -555,6 +555,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             T myCurr = myIterator.next();
             T myItem = addCopyItem(myCurr);
             myItem.setBase(null);
+            myItem.setHistory(myCurr);
             myItem.getValueSet().setDeletion(true);
         }
     }
