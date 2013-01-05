@@ -30,6 +30,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
@@ -308,11 +309,6 @@ public class FinanceData
     private JDateDayRange theDateRange = null;
 
     /**
-     * LoadState.
-     */
-    private LoadState theLoadState = LoadState.INITIAL;
-
-    /**
      * General formatter.
      */
     private final JDataFormatter theFormatter;
@@ -462,14 +458,6 @@ public class FinanceData
     }
 
     /**
-     * Obtain Load State.
-     * @return the Load State
-     */
-    public LoadState getLoadState() {
-        return theLoadState;
-    }
-
-    /**
      * Obtain the data formatter.
      * @return the formatter
      */
@@ -481,9 +469,11 @@ public class FinanceData
      * Standard constructor.
      * @param pSecurity the secure manager
      * @param pPreferenceMgr the preference manager
+     * @param pFieldMgr the field manager
      */
     public FinanceData(final SecureManager pSecurity,
-                       final PreferenceManager pPreferenceMgr) {
+                       final PreferenceManager pPreferenceMgr,
+                       final JFieldManager pFieldMgr) {
         /* Call Super-constructor */
         super(pSecurity, pPreferenceMgr);
 
@@ -510,7 +500,7 @@ public class FinanceData
         declareLists();
 
         /* Create data formatter */
-        theFormatter = new JDataFormatter();
+        theFormatter = pFieldMgr.getDataFormatter();
         theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
     }
 
@@ -710,11 +700,6 @@ public class FinanceData
      * @throws JDataException on error
      */
     public void initialiseAnalysis() throws JDataException {
-        /* Update INITIAL Load status */
-        if (theLoadState == LoadState.INITIAL) {
-            theLoadState = LoadState.FINAL;
-        }
-
         /* Reset the flags on static data (ignoring TaxTypes) */
         theActTypes.clearActive();
         theTransTypes.clearActive();
@@ -739,28 +724,5 @@ public class FinanceData
     public void completeAnalysis() throws JDataException {
         /* Note active accounts */
         theAccounts.markActiveItems();
-
-        /* Note that we are now fully loaded */
-        theLoadState = LoadState.LOADED;
-    }
-
-    /**
-     * Enumeration of load states of data.
-     */
-    public static enum LoadState {
-        /**
-         * Initial loading, with parental account links and close-ability not yet done.
-         */
-        INITIAL,
-
-        /**
-         * Final loading with parental links and close-ability done.
-         */
-        FINAL,
-
-        /**
-         * Fully loaded.
-         */
-        LOADED;
     }
 }

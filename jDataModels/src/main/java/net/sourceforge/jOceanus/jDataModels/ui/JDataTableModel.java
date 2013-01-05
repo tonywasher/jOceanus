@@ -32,9 +32,9 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumnModel;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager.PopulateRenderData;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager.RenderData;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.RendererFieldValue;
+import net.sourceforge.jOceanus.jFieldSet.JFieldData;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager.PopulateFieldData;
+import net.sourceforge.jOceanus.jFieldSet.JFieldSet.JFieldValue;
 import net.sourceforge.jOceanus.jTableFilter.TableFilter;
 import net.sourceforge.jOceanus.jTableFilter.TableFilter.TableFilterModel;
 
@@ -42,8 +42,9 @@ import net.sourceforge.jOceanus.jTableFilter.TableFilter.TableFilterModel;
  * Data Table model class.
  * @param <T> the data type
  */
-public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>> extends AbstractTableModel
-        implements PopulateRenderData, TableFilterModel<T> {
+public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>>
+        extends AbstractTableModel
+        implements PopulateFieldData, TableFilterModel<T> {
     /**
      * Serial Id.
      */
@@ -52,8 +53,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
-            .getBundle(JDataTableModel.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDataTableModel.class.getName());
 
     /**
      * Table header.
@@ -114,7 +114,8 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     @Override
     public boolean includeRow(final T pRow) {
         /* Return visibility of row */
-        return showAll || !pRow.isDeleted();
+        return showAll
+               || !pRow.isDeleted();
     }
 
     @Override
@@ -155,8 +156,9 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
         Object o = getItemValue(myItem, pColIndex);
 
         /* If we have a null value for an error field, set error description */
-        if ((o == null) && (myItem.hasErrors(getFieldForCell(myItem, pColIndex)))) {
-            o = RendererFieldValue.Error;
+        if ((o == null)
+            && (myItem.hasErrors(getFieldForCell(myItem, pColIndex)))) {
+            o = JFieldValue.Error;
         }
 
         /* Return to caller */
@@ -200,7 +202,10 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
 
             /* Build the error */
             JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field at ("
-                    + pRowIndex + "," + pColIndex + ")", e);
+                                                                             + pRowIndex
+                                                                             + ","
+                                                                             + pColIndex
+                                                                             + ")", e);
 
             /* Show the error */
             theTable.setError(myError);
@@ -314,7 +319,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     }
 
     @Override
-    public void populateRenderData(final RenderData pData) {
+    public void populateFieldData(final JFieldData pData) {
 
         /* If we have a header decrement the index */
         int iRow = pData.getRow();
@@ -337,7 +342,9 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
     /**
      * Row Table model class.
      */
-    protected static class RowTableModel extends AbstractTableModel implements PopulateRenderData {
+    protected static class RowTableModel
+            extends AbstractTableModel
+            implements PopulateFieldData {
         /**
          * Serial Id.
          */
@@ -384,7 +391,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
         }
 
         @Override
-        public void populateRenderData(final RenderData pData) {
+        public void populateFieldData(final JFieldData pData) {
             /* Convert our row # into that of the table */
             int iRow = pData.getRow();
             iRow = theTable.convertRowIndexToModel(iRow);

@@ -46,13 +46,13 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.RendererFieldValue;
+import net.sourceforge.jOceanus.jFieldSet.JFieldSet.JFieldValue;
 
 /**
  * Cell editors.
  * @author Tony Washer
  */
-public class Editor {
+public class JFieldCellEditor {
     /**
      * ComboBoxSelector interface.
      */
@@ -70,7 +70,7 @@ public class Editor {
     /**
      * String Cell Editor.
      */
-    public static class StringEditor
+    public static class StringCellEditor
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -86,7 +86,7 @@ public class Editor {
         /**
          * Constructor.
          */
-        public StringEditor() {
+        protected StringCellEditor() {
             theField = new JTextField();
             theField.addFocusListener(new StringListener());
         }
@@ -97,7 +97,7 @@ public class Editor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setText(((pValue == null) || (RendererFieldValue.Error.equals(pValue))) ? "" : (String) pValue);
+            theField.setText(((pValue == null) || (JFieldValue.Error.equals(pValue))) ? "" : (String) pValue);
             return theField;
         }
 
@@ -141,8 +141,8 @@ public class Editor {
     /**
      * Integer Cell Editor.
      */
-    public static class IntegerEditor
-            extends StringEditor {
+    public static class IntegerCellEditor
+            extends StringCellEditor {
         /**
          * Serial Id.
          */
@@ -185,7 +185,7 @@ public class Editor {
     /**
      * Boolean Cell Editor.
      */
-    public static class BooleanEditor
+    public static class BooleanCellEditor
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -206,7 +206,7 @@ public class Editor {
         /**
          * Constructor.
          */
-        public BooleanEditor() {
+        protected BooleanCellEditor() {
             theField = new JCheckBox();
             theField.setHorizontalAlignment(SwingConstants.CENTER);
         }
@@ -217,7 +217,7 @@ public class Editor {
                                                       final boolean isSelected,
                                                       final int pRowIndex,
                                                       final int pColIndex) {
-            theField.setSelected(((pValue == null) || (RendererFieldValue.Error.equals(pValue))) ? Boolean.FALSE : (Boolean) pValue);
+            theField.setSelected(((pValue == null) || (JFieldValue.Error.equals(pValue))) ? Boolean.FALSE : (Boolean) pValue);
             theField.addItemListener(theListener);
             return theField;
         }
@@ -259,7 +259,7 @@ public class Editor {
     /**
      * ComboBox Cell Editor.
      */
-    public static class ComboBoxEditor
+    public static class ComboBoxCellEditor
             extends AbstractCellEditor
             implements TableCellEditor {
         /**
@@ -281,6 +281,12 @@ public class Editor {
          * The popUp listener.
          */
         private final transient ComboPopup thePopupListener = new ComboPopup();
+
+        /**
+         * Constructor.
+         */
+        protected ComboBoxCellEditor() {
+        }
 
         @Override
         public JComponent getTableCellEditorComponent(final JTable pTable,
@@ -361,7 +367,7 @@ public class Editor {
     /**
      * Calendar Cell Editor.
      */
-    public static class CalendarEditor
+    public static class CalendarCellEditor
             extends JDateDayCellEditor {
         /**
          * Serial Id.
@@ -377,7 +383,7 @@ public class Editor {
          * Constructor.
          * @param pFormatter the formatter
          */
-        public CalendarEditor(final JDateDayFormatter pFormatter) {
+        protected CalendarCellEditor(final JDateDayFormatter pFormatter) {
             /* Create a new configuration */
             super(pFormatter);
         }
@@ -403,7 +409,7 @@ public class Editor {
 
             /* If the value is null */
             if ((pValue == null)
-                || (RendererFieldValue.Error.equals(pValue))) {
+                || (JFieldValue.Error.equals(pValue))) {
                 myCurr = new JDateDay();
             } else {
                 myCurr = (JDateDay) pValue;
@@ -436,8 +442,8 @@ public class Editor {
     /**
      * Decimal Cell Editor.
      */
-    private abstract static class DecimalEditor
-            extends StringEditor {
+    private abstract static class DecimalCellEditor
+            extends StringCellEditor {
         /**
          * Serial Id.
          */
@@ -466,8 +472,8 @@ public class Editor {
     /**
      * Rate Cell Editor.
      */
-    public static class RateEditor
-            extends DecimalEditor {
+    public static class RateCellEditor
+            extends DecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -480,16 +486,9 @@ public class Editor {
 
         /**
          * Constructor.
-         */
-        public RateEditor() {
-            this(new JDecimalParser());
-        }
-
-        /**
-         * Constructor.
          * @param pParser the parser
          */
-        public RateEditor(final JDecimalParser pParser) {
+        protected RateCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -511,8 +510,8 @@ public class Editor {
     /**
      * Money Cell Editor.
      */
-    public static class MoneyEditor
-            extends DecimalEditor {
+    public static class MoneyCellEditor
+            extends DecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -525,16 +524,9 @@ public class Editor {
 
         /**
          * Constructor.
-         */
-        public MoneyEditor() {
-            this(new JDecimalParser());
-        }
-
-        /**
-         * Constructor.
          * @param pParser the parser
          */
-        public MoneyEditor(final JDecimalParser pParser) {
+        protected MoneyCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -556,8 +548,8 @@ public class Editor {
     /**
      * Units Cell Editor.
      */
-    public static class UnitsEditor
-            extends DecimalEditor {
+    public static class UnitsCellEditor
+            extends DecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -570,16 +562,9 @@ public class Editor {
 
         /**
          * Constructor.
-         */
-        public UnitsEditor() {
-            this(new JDecimalParser());
-        }
-
-        /**
-         * Constructor.
          * @param pParser the parser
          */
-        public UnitsEditor(final JDecimalParser pParser) {
+        protected UnitsCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -601,8 +586,8 @@ public class Editor {
     /**
      * Dilutions Cell Editor.
      */
-    public static class DilutionEditor
-            extends DecimalEditor {
+    public static class DilutionCellEditor
+            extends DecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -615,16 +600,9 @@ public class Editor {
 
         /**
          * Constructor.
-         */
-        public DilutionEditor() {
-            this(new JDecimalParser());
-        }
-
-        /**
-         * Constructor.
          * @param pParser the parser
          */
-        public DilutionEditor(final JDecimalParser pParser) {
+        protected DilutionCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -646,8 +624,8 @@ public class Editor {
     /**
      * Price Cell Editor.
      */
-    public static class PriceEditor
-            extends DecimalEditor {
+    public static class PriceCellEditor
+            extends DecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -660,16 +638,9 @@ public class Editor {
 
         /**
          * Constructor.
-         */
-        public PriceEditor() {
-            this(new JDecimalParser());
-        }
-
-        /**
-         * Constructor.
          * @param pParser the parser
          */
-        public PriceEditor(final JDecimalParser pParser) {
+        protected PriceCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
         }
 
@@ -691,8 +662,8 @@ public class Editor {
     /**
      * DilutedPrice Cell Editor.
      */
-    public static class DilutedPriceEditor
-            extends DecimalEditor {
+    public static class DilutedPriceCellEditor
+            extends DecimalCellEditor {
         /**
          * Serial Id.
          */
@@ -705,16 +676,9 @@ public class Editor {
 
         /**
          * Constructor.
-         */
-        public DilutedPriceEditor() {
-            this(new JDecimalParser());
-        }
-
-        /**
-         * Constructor.
          * @param pParser the parser
          */
-        public DilutedPriceEditor(final JDecimalParser pParser) {
+        protected DilutedPriceCellEditor(final JDecimalParser pParser) {
             theParser = pParser;
         }
 

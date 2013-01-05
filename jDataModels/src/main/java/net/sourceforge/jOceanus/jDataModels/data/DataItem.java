@@ -37,7 +37,7 @@ import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataManager.ValueSetHistory;
 import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSetItem;
-import net.sourceforge.jOceanus.jFieldSet.RenderState;
+import net.sourceforge.jOceanus.jFieldSet.JFieldState;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 
@@ -902,56 +902,56 @@ public abstract class DataItem
     }
 
     @Override
-    public RenderState getRenderState(final JDataField pField) {
+    public JFieldState getFieldState(final JDataField pField) {
         /* Determine DELETED state */
         if (isDeleted()) {
-            return RenderState.DELETED;
+            return JFieldState.DELETED;
 
             /* Determine Error state */
         } else if ((hasErrors())
                    && (hasErrors(pField))) {
-            return RenderState.ERROR;
+            return JFieldState.ERROR;
 
             /* Determine Changed state */
         } else if (fieldChanged(pField).isDifferent()) {
-            return RenderState.CHANGED;
+            return JFieldState.CHANGED;
 
             /* Determine standard states */
         } else {
             switch (getState()) {
                 case NEW:
-                    return RenderState.NEW;
+                    return JFieldState.NEW;
                 case RECOVERED:
-                    return RenderState.RESTORED;
+                    return JFieldState.RESTORED;
                 default:
-                    return RenderState.NORMAL;
+                    return JFieldState.NORMAL;
             }
         }
     }
 
     @Override
-    public RenderState getRenderState() {
+    public JFieldState getItemState() {
         /* Determine DELETED state */
         if (isDeleted()) {
-            return RenderState.DELETED;
+            return JFieldState.DELETED;
 
             /* Determine Error state */
         } else if (hasErrors()) {
-            return RenderState.ERROR;
+            return JFieldState.ERROR;
 
             /* Determine Changed state */
         } else if (hasHistory()) {
-            return RenderState.CHANGED;
+            return JFieldState.CHANGED;
 
             /* Determine standard states */
         } else {
             switch (getState()) {
                 case NEW:
-                    return RenderState.NEW;
+                    return JFieldState.NEW;
                 case RECOVERED:
-                    return RenderState.RESTORED;
+                    return JFieldState.RESTORED;
                 default:
-                    return RenderState.NORMAL;
+                    return JFieldState.NORMAL;
             }
         }
     }

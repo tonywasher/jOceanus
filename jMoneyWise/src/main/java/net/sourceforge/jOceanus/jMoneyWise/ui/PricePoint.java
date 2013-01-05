@@ -36,7 +36,6 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
@@ -51,17 +50,13 @@ import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jFieldSet.Editor.PriceEditor;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.CalendarRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.DecimalRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.PriceCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.SpotSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.SpotPrices;
@@ -73,7 +68,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * SpotPrices panel.
  * @author Tony Washer
  */
-public class PricePoint extends JDataTable<SpotPrice> {
+public class PricePoint
+        extends JDataTable<SpotPrice> {
     /**
      * Serial Id.
      */
@@ -85,9 +81,9 @@ public class PricePoint extends JDataTable<SpotPrice> {
     private final transient View theView;
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * The updateSet.
@@ -239,8 +235,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
     public PricePoint(final View pView) {
         /* Record the passed details */
         theView = pView;
-        theRenderMgr = theView.getRenderMgr();
-        setRenderMgr(theRenderMgr);
+        theFieldMgr = theView.getFieldMgr();
+        setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entry */
         theUpdateSet = new UpdateSet(theView);
@@ -359,7 +355,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
         theAccountType = pType;
 
         /* If selection is valid */
-        if ((theDate != null) && (theAccountType != null)) {
+        if ((theDate != null)
+            && (theAccountType != null)) {
             /* Create the new list */
             theSnapshot = new SpotPrices(theView, pType, pDate);
             thePrices = theSnapshot.getPrices();
@@ -403,7 +400,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
         switch (pRow.getState()) {
             case CLEAN:
                 DataItem myBase = pRow.getBase();
-                if ((myBase != null) && (myBase.isDeleted())) {
+                if ((myBase != null)
+                    && (myBase.isDeleted())) {
                     return false;
                 }
             case NEW:
@@ -461,7 +459,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
     /**
      * Extract listener class.
      */
-    private final class SpotViewListener implements ActionListener, ChangeListener {
+    private final class SpotViewListener
+            implements ActionListener, ChangeListener {
 
         @Override
         public void stateChanged(final ChangeEvent evt) {
@@ -477,7 +476,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
                 JDateDay myDate = theSelect.getDate();
 
                 /* If the selection differs */
-                if (((!Difference.isEqual(theDate, myDate))) || (!Difference.isEqual(theAccountType, myType))) {
+                if (((!Difference.isEqual(theDate, myDate)))
+                    || (!Difference.isEqual(theAccountType, myType))) {
                     /* Protect against exceptions */
                     try {
                         /* Set selection */
@@ -489,8 +489,7 @@ public class PricePoint extends JDataTable<SpotPrice> {
                         /* Catch Exceptions */
                     } catch (JDataException e) {
                         /* Build the error */
-                        JDataException myError = new JDataException(ExceptionClass.DATA,
-                                "Failed to change selection", e);
+                        JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
                         /* Show the error */
                         setError(myError);
@@ -547,7 +546,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
     /**
      * SpotView table model.
      */
-    public final class SpotViewModel extends JDataTableModel<SpotPrice> {
+    public final class SpotViewModel
+            extends JDataTableModel<SpotPrice> {
         /**
          * Serial Id.
          */
@@ -570,7 +570,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
         @Override
         public boolean includeRow(final SpotPrice pRow) {
             /* Return visibility of row */
-            return showAll() || !pRow.getAccount().isClosed();
+            return showAll()
+                   || !pRow.getAccount().isClosed();
         }
 
         /**
@@ -686,7 +687,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
     /**
      * SpotView mouse listener.
      */
-    private static final class SpotViewMouse extends JDataTableMouse<SpotPrice> {
+    private static final class SpotViewMouse
+            extends JDataTableMouse<SpotPrice> {
         /**
          * Constructor.
          * @param pTable the table
@@ -700,7 +702,8 @@ public class PricePoint extends JDataTable<SpotPrice> {
     /**
      * Column Model class.
      */
-    private final class SpotViewColumnModel extends JDataTableColumnModel {
+    private final class SpotViewColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -709,22 +712,22 @@ public class PricePoint extends JDataTable<SpotPrice> {
         /**
          * Date Renderer.
          */
-        private final CalendarRenderer theDateRenderer;
+        private final CalendarCellRenderer theDateRenderer;
 
         /**
          * Decimal Renderer.
          */
-        private final DecimalRenderer theDecimalRenderer;
+        private final DecimalCellRenderer theDecimalRenderer;
 
         /**
          * Price Editor.
          */
-        private final PriceEditor thePriceEditor;
+        private final PriceCellEditor thePriceEditor;
 
         /**
          * String Renderer.
          */
-        private final StringRenderer theStringRenderer;
+        private final StringCellRenderer theStringRenderer;
 
         /**
          * Constructor.
@@ -733,18 +736,11 @@ public class PricePoint extends JDataTable<SpotPrice> {
             /* call constructor */
             super(theTable);
 
-            /* Access parser and formatter */
-            FinanceData myData = theView.getData();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
-            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
-            thePriceEditor = new PriceEditor(myParser);
-            theStringRenderer = theRenderMgr.allocateStringRenderer();
+            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            thePriceEditor = theFieldMgr.allocatePriceCellEditor();
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_ASSET, WIDTH_COLUMN, theStringRenderer, null));

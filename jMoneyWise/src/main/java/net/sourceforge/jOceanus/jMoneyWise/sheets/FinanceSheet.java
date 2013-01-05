@@ -304,6 +304,9 @@ public class FinanceSheet
             if (bContinue) {
                 bContinue = SheetPattern.loadArchive(pTask, myHelper, myData);
             }
+            if (bContinue) {
+                myData.getAccounts().markActiveItems();
+            }
 
             if (bContinue) {
                 bContinue = SheetEvent.loadArchive(pTask, myHelper, myData, myRange);

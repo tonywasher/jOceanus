@@ -35,7 +35,6 @@ import javax.swing.JPopupMenu;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
@@ -47,18 +46,15 @@ import net.sourceforge.jOceanus.jDataModels.ui.JDataTableMouse;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jFieldSet.Editor.CalendarEditor;
-import net.sourceforge.jOceanus.jFieldSet.Editor.ComboBoxEditor;
-import net.sourceforge.jOceanus.jFieldSet.Editor.MoneyEditor;
-import net.sourceforge.jOceanus.jFieldSet.Editor.StringEditor;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.CalendarRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.DecimalRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.MoneyCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -87,9 +83,9 @@ public class AccountPatterns
     private final transient View theView;
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * Table Model.
@@ -293,8 +289,8 @@ public class AccountPatterns
         /* Store details */
         theView = pView;
         theComboList = pCombo;
-        theRenderMgr = theView.getRenderMgr();
-        setRenderMgr(theRenderMgr);
+        theFieldMgr = theView.getFieldMgr();
+        setFieldMgr(theFieldMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(Pattern.class);
@@ -821,37 +817,37 @@ public class AccountPatterns
         /**
          * Date Renderer.
          */
-        private final CalendarRenderer theDateRenderer;
+        private final CalendarCellRenderer theDateRenderer;
 
         /**
          * Date Editor.
          */
-        private final CalendarEditor theDateEditor;
+        private final CalendarCellEditor theDateEditor;
 
         /**
          * Decimal Renderer.
          */
-        private final DecimalRenderer theDecimalRenderer;
+        private final DecimalCellRenderer theDecimalRenderer;
 
         /**
          * Money Editor.
          */
-        private final MoneyEditor theMoneyEditor;
+        private final MoneyCellEditor theMoneyEditor;
 
         /**
          * String Renderer.
          */
-        private final StringRenderer theStringRenderer;
+        private final StringCellRenderer theStringRenderer;
 
         /**
          * String Editor.
          */
-        private final StringEditor theStringEditor;
+        private final StringCellEditor theStringEditor;
 
         /**
          * Combo Editor.
          */
-        private final ComboBoxEditor theComboEditor;
+        private final ComboBoxCellEditor theComboEditor;
 
         /**
          * Constructor.
@@ -860,21 +856,14 @@ public class AccountPatterns
             /* call constructor */
             super(theTable);
 
-            /* Access parser and formatter */
-            FinanceData myData = theView.getData();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
-            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
-            theDateEditor = new CalendarEditor(myDateFormatter);
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
-            theMoneyEditor = new MoneyEditor(myParser);
-            theStringRenderer = theRenderMgr.allocateStringRenderer();
-            theStringEditor = new StringEditor();
-            theComboEditor = new ComboBoxEditor();
+            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            theMoneyEditor = theFieldMgr.allocateMoneyCellEditor();
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theComboEditor = theFieldMgr.allocateComboBoxCellEditor();
 
             /* Restrict the date editor to pattern range */
             theDateEditor.setRange(Pattern.RANGE_PATTERN);

@@ -33,7 +33,6 @@ import javax.swing.JPanel;
 import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTable;
@@ -43,12 +42,10 @@ import net.sourceforge.jOceanus.jDataModels.ui.JDataTableModel;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.CalendarRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.DecimalRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
@@ -84,9 +81,9 @@ public class MaintNewYear
     private final transient View theView;
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * The events.
@@ -262,8 +259,8 @@ public class MaintNewYear
     public MaintNewYear(final View pView) {
         /* Record the passed details */
         theView = pView;
-        theRenderMgr = theView.getRenderMgr();
-        setRenderMgr(theRenderMgr);
+        theFieldMgr = theView.getFieldMgr();
+        setFieldMgr(theFieldMgr);
 
         /* Build the Update set and entries */
         theUpdateSet = new UpdateSet(theView);
@@ -544,17 +541,17 @@ public class MaintNewYear
         /**
          * Date Renderer.
          */
-        private final CalendarRenderer theDateRenderer;
+        private final CalendarCellRenderer theDateRenderer;
 
         /**
          * Decimal Renderer.
          */
-        private final DecimalRenderer theDecimalRenderer;
+        private final DecimalCellRenderer theDecimalRenderer;
 
         /**
          * String Renderer.
          */
-        private final StringRenderer theStringRenderer;
+        private final StringCellRenderer theStringRenderer;
 
         /**
          * Constructor.
@@ -563,16 +560,10 @@ public class MaintNewYear
             /* call constructor */
             super(theTable);
 
-            /* Access parser and formatter */
-            FinanceData myData = theView.getData();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
-            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
-
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
-            theStringRenderer = theRenderMgr.allocateStringRenderer();
+            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, null));

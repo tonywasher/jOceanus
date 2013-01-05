@@ -23,9 +23,11 @@
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -34,11 +36,17 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
  * TableDataInfo extension for EventInfo.
  * @author Tony Washer
  */
-public class TableEventInfo extends TableDataInfo<EventInfo> {
+public class TableEventInfo
+        extends TableDataInfo<EventInfo> {
     /**
      * The name of the table.
      */
     protected static final String TABLE_NAME = EventInfo.LIST_NAME;
+
+    /**
+     * Events data list.
+     */
+    private EventList theEvents = null;
 
     /**
      * The EventInfo list.
@@ -56,6 +64,7 @@ public class TableEventInfo extends TableDataInfo<EventInfo> {
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
+        theEvents = myData.getEvents();
         theList = myData.getEventInfo();
         setList(theList);
     }
@@ -68,5 +77,14 @@ public class TableEventInfo extends TableDataInfo<EventInfo> {
                                final byte[] pValue) throws JDataException {
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Validate the events */
+        theEvents.validate();
+        if (theEvents.hasErrors()) {
+            throw new JDataException(ExceptionClass.VALIDATE, theEvents, "Validation error");
+        }
     }
 }

@@ -26,6 +26,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -40,6 +41,11 @@ public class TableAccountInfo
      * The name of the table.
      */
     protected static final String TABLE_NAME = AccountInfo.LIST_NAME;
+
+    /**
+     * Accounts data list.
+     */
+    private AccountList theAccounts = null;
 
     /**
      * The AccountInfo list.
@@ -57,6 +63,7 @@ public class TableAccountInfo
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
+        theAccounts = myData.getAccounts();
         theList = myData.getAccountInfo();
         setList(theList);
     }
@@ -69,5 +76,11 @@ public class TableAccountInfo
                                final byte[] pValue) throws JDataException {
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Validate the loaded accounts */
+        theAccounts.markActiveItems();
     }
 }

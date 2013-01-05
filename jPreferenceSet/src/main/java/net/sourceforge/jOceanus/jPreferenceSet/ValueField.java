@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jFieldSet: Java Swing Field Set
+ * jPreferenceSet: PreferenceSet Management
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jFieldSet;
+package net.sourceforge.jOceanus.jPreferenceSet;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -38,7 +38,7 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.RendererFieldValue;
+import net.sourceforge.jOceanus.jFieldSet.JFieldSet.JFieldValue;
 
 /**
  * ValueField provides a JTextField which is geared to a particular type of data.
@@ -151,7 +151,7 @@ public class ValueField
      * Set Special display string.
      * @param pValue the value
      */
-    public void setDisplay(final RendererFieldValue pValue) {
+    public void setDisplay(final JFieldValue pValue) {
         setDisplay(pValue.toString());
     }
 

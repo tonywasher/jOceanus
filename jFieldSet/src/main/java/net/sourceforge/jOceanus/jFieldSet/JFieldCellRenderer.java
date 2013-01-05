@@ -34,28 +34,17 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayCellRenderer;
 import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager.PopulateRenderData;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager.RenderData;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager.PopulateFieldData;
 
 /**
  * Cell renderers.
  * @author Tony Washer
  */
-public final class Renderer {
-    /**
-     * Special values for renderer.
-     */
-    public enum RendererFieldValue {
-        /**
-         * Error.
-         */
-        Error;
-    }
-
+public final class JFieldCellRenderer {
     /**
      * Private constructor to avoid instantiation.
      */
-    private Renderer() {
+    private JFieldCellRenderer() {
     }
 
     /**
@@ -66,20 +55,20 @@ public final class Renderer {
      */
     private static void renderComponent(final JTable pTable,
                                         final JComponent pComponent,
-                                        final RenderData pData) {
+                                        final JFieldData pData) {
         /* Ignore if the model is not applicable */
         TableModel myTableModel = pTable.getModel();
-        if (!(myTableModel instanceof PopulateRenderData)) {
+        if (!(myTableModel instanceof PopulateFieldData)) {
             return;
         }
 
         /* Access the table model. */
-        PopulateRenderData myModel = (PopulateRenderData) myTableModel;
+        PopulateFieldData myModel = (PopulateFieldData) myTableModel;
 
-        /* Determine the render data */
-        myModel.populateRenderData(pData);
+        /* Determine the field data */
+        myModel.populateFieldData(pData);
 
-        /* Apply the Render Data */
+        /* Apply the Field Data */
         pComponent.setForeground(pData.getForeGround());
         pComponent.setBackground(pData.getBackGround());
         pComponent.setFont(pData.getFont());
@@ -89,7 +78,8 @@ public final class Renderer {
     /**
      * String Cell Renderer.
      */
-    public static class StringRenderer extends DefaultTableCellRenderer {
+    public static class StringCellRenderer
+            extends DefaultTableCellRenderer {
         /**
          * Serial Id.
          */
@@ -98,13 +88,13 @@ public final class Renderer {
         /**
          * The Render Data.
          */
-        private final transient RenderData theData;
+        private final transient JFieldData theData;
 
         /**
          * Constructor.
          * @param pManager the renderer manager
          */
-        protected StringRenderer(final RenderManager pManager) {
+        protected StringCellRenderer(final JFieldManager pManager) {
             this(pManager.allocateRenderData(false), SwingConstants.LEFT);
         }
 
@@ -113,8 +103,8 @@ public final class Renderer {
          * @param pData the render data
          * @param pAlignment the alignment
          */
-        private StringRenderer(final RenderData pData,
-                               final int pAlignment) {
+        private StringCellRenderer(final JFieldData pData,
+                                   final int pAlignment) {
             theData = pData;
             setHorizontalAlignment(pAlignment);
         }
@@ -143,8 +133,7 @@ public final class Renderer {
             super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
 
             /* Declare the Cell position */
-            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex),
-                                pTable.convertColumnIndexToModel(pColIndex), isSelected);
+            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex), isSelected);
 
             /* Determine the render data */
             renderComponent(pTable, this, theData);
@@ -157,7 +146,8 @@ public final class Renderer {
     /**
      * Integer Cell Renderer.
      */
-    public static class IntegerRenderer extends StringRenderer {
+    public static class IntegerCellRenderer
+            extends StringCellRenderer {
         /**
          * Serial Id.
          */
@@ -167,7 +157,7 @@ public final class Renderer {
          * Constructor.
          * @param pManager the renderer manager
          */
-        protected IntegerRenderer(final RenderManager pManager) {
+        protected IntegerCellRenderer(final JFieldManager pManager) {
             super(pManager.allocateRenderData(true), SwingConstants.CENTER);
         }
 
@@ -190,7 +180,9 @@ public final class Renderer {
     /**
      * Boolean Cell Renderer.
      */
-    public static class BooleanRenderer extends JCheckBox implements TableCellRenderer {
+    public static class BooleanCellRenderer
+            extends JCheckBox
+            implements TableCellRenderer {
         /**
          * Serial Id.
          */
@@ -199,13 +191,13 @@ public final class Renderer {
         /**
          * The Render Data.
          */
-        private final transient RenderData theData;
+        private final transient JFieldData theData;
 
         /**
          * Constructor.
          * @param pManager the renderer manager
          */
-        protected BooleanRenderer(final RenderManager pManager) {
+        protected BooleanCellRenderer(final JFieldManager pManager) {
             this(pManager.allocateRenderData(true), SwingConstants.CENTER);
         }
 
@@ -214,8 +206,8 @@ public final class Renderer {
          * @param pData the render data
          * @param pAlignment the alignment
          */
-        private BooleanRenderer(final RenderData pData,
-                                final int pAlignment) {
+        protected BooleanCellRenderer(final JFieldData pData,
+                                      final int pAlignment) {
             theData = pData;
             setHorizontalAlignment(pAlignment);
         }
@@ -231,8 +223,7 @@ public final class Renderer {
             setSelected((pValue != null && ((Boolean) pValue).booleanValue()));
 
             /* Declare the Cell position */
-            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex),
-                                pTable.convertColumnIndexToModel(pColIndex), isSelected);
+            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex), isSelected);
 
             /* Determine the render data */
             renderComponent(pTable, this, theData);
@@ -245,7 +236,8 @@ public final class Renderer {
     /**
      * Calendar Cell Renderer.
      */
-    public static class CalendarRenderer extends JDateDayCellRenderer {
+    public static class CalendarCellRenderer
+            extends JDateDayCellRenderer {
         /**
          * Serial Id.
          */
@@ -254,15 +246,15 @@ public final class Renderer {
         /**
          * The Render Data.
          */
-        private final transient RenderData theData;
+        private final transient JFieldData theData;
 
         /**
          * Constructor.
          * @param pManager the renderer manager
          * @param pFormatter the formatter
          */
-        protected CalendarRenderer(final RenderManager pManager,
-                                   final JDateDayFormatter pFormatter) {
+        protected CalendarCellRenderer(final JFieldManager pManager,
+                                       final JDateDayFormatter pFormatter) {
             super(pFormatter);
             theData = pManager.allocateRenderData(true);
             setHorizontalAlignment(SwingConstants.LEFT);
@@ -279,8 +271,7 @@ public final class Renderer {
             super.getTableCellRendererComponent(pTable, pValue, isSelected, hasFocus, pRowIndex, pColIndex);
 
             /* Declare the Cell position in terms of the model */
-            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex),
-                                pTable.convertColumnIndexToModel(pColIndex), isSelected);
+            theData.setPosition(pTable.convertRowIndexToModel(pRowIndex), pTable.convertColumnIndexToModel(pColIndex), isSelected);
 
             /* Determine the render data */
             renderComponent(pTable, this, theData);
@@ -293,7 +284,8 @@ public final class Renderer {
     /**
      * Decimal Cell Renderer.
      */
-    public static class DecimalRenderer extends StringRenderer {
+    public static class DecimalCellRenderer
+            extends StringCellRenderer {
         /**
          * Serial Id.
          */
@@ -309,8 +301,8 @@ public final class Renderer {
          * @param pManager the renderer manager
          * @param pFormatter the formatter
          */
-        protected DecimalRenderer(final RenderManager pManager,
-                                  final JDecimalFormatter pFormatter) {
+        protected DecimalCellRenderer(final JFieldManager pManager,
+                                      final JDecimalFormatter pFormatter) {
             super(pManager.allocateRenderData(true), SwingConstants.RIGHT);
             theFormatter = pFormatter;
         }
@@ -333,7 +325,8 @@ public final class Renderer {
     /**
      * Row Cell Renderer.
      */
-    public static class RowCell extends StringRenderer {
+    public static class RowCellRenderer
+            extends StringCellRenderer {
         /**
          * SerialId.
          */
@@ -343,7 +336,7 @@ public final class Renderer {
          * Constructor.
          * @param pManager the renderer manager
          */
-        protected RowCell(final RenderManager pManager) {
+        protected RowCellRenderer(final JFieldManager pManager) {
             super(pManager.allocateRenderData(true), SwingConstants.CENTER);
         }
 

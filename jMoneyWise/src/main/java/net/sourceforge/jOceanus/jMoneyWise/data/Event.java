@@ -639,7 +639,7 @@ public class Event
                 /* Dividend between priced requires identical credit/debit */
                 if ((myTrans != null)
                     && (myTrans.isDividend())
-                    && (Difference.isEqual(myCredit, myDebit))) {
+                    && (!Difference.isEqual(myCredit, myDebit))) {
                     addError("Unit Dividends between assets must be between same asset", FIELD_CREDUNITS);
                 }
 

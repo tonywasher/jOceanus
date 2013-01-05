@@ -30,15 +30,16 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
-import net.sourceforge.jOceanus.jDataModels.preferences.RenderPreferences;
+import net.sourceforge.jOceanus.jDataModels.preferences.JFieldPreferences;
 import net.sourceforge.jOceanus.jDataModels.preferences.SecurityPreferences;
 import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
 import net.sourceforge.jOceanus.jEventManager.JEventObject;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 
@@ -46,7 +47,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
  * Provides top-level control of data.
  * @param <T> the DataSet type
  */
-public abstract class DataControl<T extends DataSet<T>> extends JEventObject {
+public abstract class DataControl<T extends DataSet<T>>
+        extends JEventObject {
     /**
      * Rewind action.
      */
@@ -118,14 +120,14 @@ public abstract class DataControl<T extends DataSet<T>> extends JEventObject {
     private JDataManager theDataMgr = null;
 
     /**
-     * The Render Manager.
+     * The Field Manager.
      */
-    private final RenderManager theRenderMgr;
+    private final JFieldManager theFieldMgr;
 
     /**
-     * The Render Preferences.
+     * The Field Preferences.
      */
-    private final RenderPreferences theRenderPreferences;
+    private final JFieldPreferences theFieldPreferences;
 
     /**
      * The Render Manager.
@@ -157,12 +159,12 @@ public abstract class DataControl<T extends DataSet<T>> extends JEventObject {
         /* Create the Secure Manager */
         theSecurity = mySecurity.getSecurity();
 
-        /* Access the Render Preferences */
-        theRenderPreferences = thePreferenceMgr.getPreferenceSet(RenderPreferences.class);
+        /* Access the Field Preferences */
+        theFieldPreferences = thePreferenceMgr.getPreferenceSet(JFieldPreferences.class);
 
-        /* Allocate the RenderManager */
-        theRenderMgr = new RenderManager(theDataMgr, theRenderPreferences.getConfiguration());
-        theRenderPreferences.addChangeListener(new PreferenceListener());
+        /* Allocate the FieldManager */
+        theFieldMgr = new JFieldManager(theDataMgr, theFieldPreferences.getConfiguration());
+        theFieldPreferences.addChangeListener(new PreferenceListener());
     }
 
     /**
@@ -271,11 +273,19 @@ public abstract class DataControl<T extends DataSet<T>> extends JEventObject {
     }
 
     /**
-     * Obtain the render manager.
-     * @return the render manager
+     * Obtain the field manager.
+     * @return the field manager
      */
-    public RenderManager getRenderMgr() {
-        return theRenderMgr;
+    public JFieldManager getFieldMgr() {
+        return theFieldMgr;
+    }
+
+    /**
+     * Obtain the Data Formatter.
+     * @return the data formatter
+     */
+    public JDataFormatter getDataFormatter() {
+        return theFieldMgr.getDataFormatter();
     }
 
     /**
@@ -377,12 +387,13 @@ public abstract class DataControl<T extends DataSet<T>> extends JEventObject {
     /**
      * Preference listener class.
      */
-    private final class PreferenceListener implements ChangeListener {
+    private final class PreferenceListener
+            implements ChangeListener {
 
         @Override
         public void stateChanged(final ChangeEvent evt) {
             /* Store new configuration */
-            theRenderMgr.setConfig(theRenderPreferences.getConfiguration());
+            theFieldMgr.setConfig(theFieldPreferences.getConfiguration());
         }
     }
 }

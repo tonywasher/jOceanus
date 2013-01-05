@@ -53,7 +53,6 @@ import net.sourceforge.jOceanus.jFieldSet.JFieldModel.JModelBoolean;
 import net.sourceforge.jOceanus.jFieldSet.JFieldModel.JModelDateDay;
 import net.sourceforge.jOceanus.jFieldSet.JFieldModel.JModelObject;
 import net.sourceforge.jOceanus.jFieldSet.JFieldModel.JModelString;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager.RenderData;
 
 /**
  * Component classes for jFieldSet.
@@ -212,14 +211,14 @@ public abstract class JFieldComponent<T extends JFieldSetItem> {
      * @param pRender the render data.
      * @param pItem the item
      */
-    protected void renderData(final RenderData pRender,
+    protected void renderData(final JFieldData pRender,
                               final T pItem) {
         /* Obtain details from render data */
         Color myFore = pRender.getForeGround();
         Color myBack = pRender.getBackGround();
         String myTip = pRender.getToolTip();
         Font myFont = pRender.getFont();
-        RenderState myState = pRender.getState();
+        JFieldState myState = pRender.getState();
 
         /* Set colours */
         theComponent.setForeground(myFore);

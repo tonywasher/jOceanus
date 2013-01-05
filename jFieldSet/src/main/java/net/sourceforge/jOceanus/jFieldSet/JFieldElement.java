@@ -28,7 +28,6 @@ import javax.swing.JComponent;
 
 import net.sourceforge.jOceanus.jDataManager.DataType;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager.RenderData;
 
 /**
  * Field Set. This handles a fields for an item, populating the field, rendering and parsing the data.
@@ -169,7 +168,7 @@ public class JFieldElement<T extends JFieldSetItem> {
      * @param pRender the render data.
      * @param pItem the item to render
      */
-    protected void renderData(final RenderData pRender,
+    protected void renderData(final JFieldData pRender,
                               final T pItem) {
         /* Load data from the item */
         theModel.loadValue(pItem);

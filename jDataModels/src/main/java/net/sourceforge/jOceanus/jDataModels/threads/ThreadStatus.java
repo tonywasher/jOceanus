@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jDataModels.threads;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.ui.StatusBar;
@@ -37,7 +38,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T> {
+public class ThreadStatus<T extends DataSet<T>>
+        implements TaskControl<T> {
     /**
      * Default Number of steps/stages.
      */
@@ -94,6 +96,11 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T> {
     @Override
     public boolean isCancelled() {
         return theThread.isCancelled();
+    }
+
+    @Override
+    public JDataFormatter getDataFormatter() {
+        return theControl.getDataFormatter();
     }
 
     /**
@@ -247,7 +254,8 @@ public class ThreadStatus<T extends DataSet<T>> implements TaskControl<T> {
     /**
      * ThreadStatus Preferences.
      */
-    public static final class ThreadStatusPreferences extends PreferenceSet {
+    public static final class ThreadStatusPreferences
+            extends PreferenceSet {
         /**
          * Registry name for Reporting Steps.
          */

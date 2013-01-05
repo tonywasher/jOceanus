@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDataModels.data;
 
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
 
 /**
@@ -82,6 +83,12 @@ public interface TaskControl<T extends DataSet<T>> {
      * @return the security manager
      */
     SecureManager getSecurity();
+
+    /**
+     * Access the data formatter.
+     * @return the data formatter
+     */
+    JDataFormatter getDataFormatter();
 
     /**
      * Is the task cancelled?

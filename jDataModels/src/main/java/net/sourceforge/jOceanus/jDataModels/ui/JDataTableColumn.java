@@ -29,12 +29,13 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.RowCell;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.RowCellRenderer;
 
 /**
  * TableColumn extension class.
  */
-public class JDataTableColumn extends TableColumn {
+public class JDataTableColumn
+        extends TableColumn {
     /**
      * Serial Id.
      */
@@ -98,7 +99,8 @@ public class JDataTableColumn extends TableColumn {
     /**
      * Column Model class.
      */
-    public static class JDataTableColumnModel extends DefaultTableColumnModel {
+    public static class JDataTableColumnModel
+            extends DefaultTableColumnModel {
         /**
          * Serial Id.
          */
@@ -165,7 +167,8 @@ public class JDataTableColumn extends TableColumn {
     /**
      * Row Column Model class.
      */
-    protected static final class RowColumnModel extends JDataTableColumnModel {
+    protected static final class RowColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -174,7 +177,7 @@ public class JDataTableColumn extends TableColumn {
         /**
          * Row renderer.
          */
-        private RowCell theRowRenderer = null;
+        private RowCellRenderer theRowRenderer = null;
 
         /**
          * Constructor.
@@ -185,7 +188,7 @@ public class JDataTableColumn extends TableColumn {
             super(pTable);
 
             /* Create the relevant formatters/editors */
-            theRowRenderer = pTable.getRenderMgr().allocateRowRenderer();
+            theRowRenderer = pTable.getFieldMgr().allocateRowRenderer();
 
             /* Create the columns */
             JDataTableColumn myCol = new JDataTableColumn(0, JDataTable.ROWHDR_WIDTH, theRowRenderer, null);

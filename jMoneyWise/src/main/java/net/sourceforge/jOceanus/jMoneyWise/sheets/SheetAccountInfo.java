@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -40,6 +41,11 @@ public class SheetAccountInfo
     private static final String AREA_ACCOUNTINFO = AccountInfo.LIST_NAME;
 
     /**
+     * Accounts data list.
+     */
+    private AccountList theAccounts = null;
+
+    /**
      * AccountInfo data list.
      */
     private final AccountInfoList theList;
@@ -54,6 +60,7 @@ public class SheetAccountInfo
 
         /* Access the InfoType list */
         FinanceData myData = pReader.getData();
+        theAccounts = myData.getAccounts();
         theList = myData.getAccountInfo();
         setDataList(theList);
     }
@@ -80,5 +87,11 @@ public class SheetAccountInfo
                                      final byte[] pValue) throws JDataException {
         /* Create the item */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Mark active items and validate */
+        theAccounts.markActiveItems();
     }
 }

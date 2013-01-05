@@ -275,7 +275,7 @@ public class SheetEvent
             EventInfoList myInfoList = pData.getEventInfo();
 
             /* Access the parser */
-            JDataFormatter myFormatter = pData.getDataFormatter();
+            JDataFormatter myFormatter = pTask.getDataFormatter();
             JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Loop through the columns of the table */
@@ -389,6 +389,12 @@ public class SheetEvent
                         myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);
                         myInfoList.addOpenItem(0, myEvent, EventInfoClass.Dilution, myDilution);
                         myInfoList.addOpenItem(0, myEvent, EventInfoClass.QualifyYears, myYears);
+
+                        /* Validate the event */
+                        myEvent.validate();
+                        if (myEvent.hasErrors()) {
+                            throw new JDataException(ExceptionClass.VALIDATE, myEvent, "Validation error");
+                        }
 
                         /* Report the progress */
                         myCount++;

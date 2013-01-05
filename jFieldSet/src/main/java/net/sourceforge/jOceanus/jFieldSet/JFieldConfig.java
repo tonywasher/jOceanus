@@ -28,7 +28,7 @@ import java.awt.Color;
  * Render configuration.
  * @author Tony Washer
  */
-public class RenderConfig {
+public class JFieldConfig {
     /**
      * The error colour.
      */
@@ -79,7 +79,7 @@ public class RenderConfig {
      * @param pState the render state
      * @return the colour
      */
-    public Color getColorForState(final RenderState pState) {
+    public Color getColorForState(final JFieldState pState) {
         switch (pState) {
             case ERROR:
                 return theErrorColor;

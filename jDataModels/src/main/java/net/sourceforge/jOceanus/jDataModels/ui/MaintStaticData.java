@@ -42,12 +42,12 @@ import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumn
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
-import net.sourceforge.jOceanus.jFieldSet.Editor.BooleanEditor;
-import net.sourceforge.jOceanus.jFieldSet.Editor.StringEditor;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.BooleanRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.IntegerRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.StringRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.BooleanCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.StringCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.BooleanCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.IntegerCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 
 /**
  * Static Data Table.
@@ -173,9 +173,9 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     private final transient DataControl<?> theControl;
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * The Panel.
@@ -252,8 +252,8 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         theError = pError;
         theClass = pListClass;
         theControl = pControl;
-        theRenderMgr = theControl.getRenderMgr();
-        setRenderMgr(theRenderMgr);
+        theFieldMgr = theControl.getFieldMgr();
+        setFieldMgr(theFieldMgr);
 
         /* Build the Update set and List */
         theUpdateSet = pUpdateSet;
@@ -519,27 +519,27 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         /**
          * Integer renderer.
          */
-        private final IntegerRenderer theIntegerRenderer;
+        private final IntegerCellRenderer theIntegerRenderer;
 
         /**
          * String renderer.
          */
-        private final StringRenderer theStringRenderer;
+        private final StringCellRenderer theStringRenderer;
 
         /**
          * Boolean renderer.
          */
-        private final BooleanRenderer theBooleanRenderer;
+        private final BooleanCellRenderer theBooleanRenderer;
 
         /**
          * String Editor.
          */
-        private final StringEditor theStringEditor;
+        private final StringCellEditor theStringEditor;
 
         /**
          * Boolean Editor.
          */
-        private final BooleanEditor theBooleanEditor;
+        private final BooleanCellEditor theBooleanEditor;
 
         /**
          * Constructor.
@@ -549,11 +549,11 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             super(theTable);
 
             /* Create the relevant formatters/editors */
-            theIntegerRenderer = theRenderMgr.allocateIntegerRenderer();
-            theStringRenderer = theRenderMgr.allocateStringRenderer();
-            theBooleanRenderer = theRenderMgr.allocateBooleanRenderer();
-            theStringEditor = new StringEditor();
-            theBooleanEditor = new BooleanEditor();
+            theIntegerRenderer = theFieldMgr.allocateIntegerCellRenderer();
+            theStringRenderer = theFieldMgr.allocateStringCellRenderer();
+            theBooleanRenderer = theFieldMgr.allocateBooleanCellRenderer();
+            theStringEditor = theFieldMgr.allocateStringCellEditor();
+            theBooleanEditor = theFieldMgr.allocateBooleanCellEditor();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_CLASS, WIDTH_CLASS, theStringRenderer, null));

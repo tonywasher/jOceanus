@@ -46,13 +46,14 @@ import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 
 /**
  * Preference maintenance panel.
  * @author Tony Washer
  */
-public class MaintPreferences extends JEventPanel {
+public class MaintPreferences
+        extends JEventPanel {
     /**
      * The serial Id.
      */
@@ -76,8 +77,7 @@ public class MaintPreferences extends JEventPanel {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintPreferences.class
-            .getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MaintPreferences.class.getName());
 
     /**
      * Text for OK.
@@ -105,9 +105,9 @@ public class MaintPreferences extends JEventPanel {
     private static final String NLS_SET = NLS_BUNDLE.getString("PreferenceSet");
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * The Data entry.
@@ -152,16 +152,16 @@ public class MaintPreferences extends JEventPanel {
     /**
      * Constructor.
      * @param pPreferenceMgr the preference manager
-     * @param pRenderMgr the render manager
+     * @param pFieldMgr the field manager
      * @param pDataMgr the data manager
      * @param pSection the data section
      */
     public MaintPreferences(final PreferenceManager pPreferenceMgr,
-                            final RenderManager pRenderMgr,
+                            final JFieldManager pFieldMgr,
                             final JDataManager pDataMgr,
                             final JDataEntry pSection) {
-        /* Access render manager */
-        theRenderMgr = pRenderMgr;
+        /* Access field manager */
+        theFieldMgr = pFieldMgr;
 
         /* Create the buttons */
         theOKButton = new JButton(NLS_OK);
@@ -255,7 +255,7 @@ public class MaintPreferences extends JEventPanel {
      */
     private void registerSet(final PreferenceSet pSet) {
         /* Create the underlying panel */
-        PreferenceSetPanel myPanel = new PreferenceSetPanel(theRenderMgr, pSet);
+        PreferenceSetPanel myPanel = new PreferenceSetPanel(theFieldMgr, pSet);
 
         /* Add the panel */
         theProperties.add(myPanel, myPanel.toString());
@@ -309,17 +309,21 @@ public class MaintPreferences extends JEventPanel {
      */
     protected final void setVisibility() {
         /* Enable selection */
-        theSelect.setEnabled((theActive != null) && !theActive.hasChanges());
+        theSelect.setEnabled((theActive != null)
+                             && !theActive.hasChanges());
 
         /* Enable the buttons */
-        theOKButton.setEnabled((theActive != null) && theActive.hasChanges());
-        theResetButton.setEnabled((theActive != null) && theActive.hasChanges());
+        theOKButton.setEnabled((theActive != null)
+                               && theActive.hasChanges());
+        theResetButton.setEnabled((theActive != null)
+                                  && theActive.hasChanges());
     }
 
     /**
      * PropertyListener class.
      */
-    private final class PropertyListener implements ActionListener, ItemListener, ChangeListener {
+    private final class PropertyListener
+            implements ActionListener, ItemListener, ChangeListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -361,7 +365,8 @@ public class MaintPreferences extends JEventPanel {
     /**
      * PropertySetListener class.
      */
-    private final class PropertySetListener implements ActionListener {
+    private final class PropertySetListener
+            implements ActionListener {
         @Override
         public void actionPerformed(final ActionEvent e) {
             /* If this is an ActionDetailEvent */

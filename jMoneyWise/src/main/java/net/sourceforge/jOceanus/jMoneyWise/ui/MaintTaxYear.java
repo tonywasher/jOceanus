@@ -55,9 +55,9 @@ import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSet;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSet.FieldUpdate;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
 import net.sourceforge.jOceanus.jLayoutManager.SpringUtilities;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
@@ -206,9 +206,9 @@ public class MaintTaxYear
     private final transient View theView;
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * The Update Set.
@@ -240,7 +240,7 @@ public class MaintTaxYear
     public MaintTaxYear(final View pView) {
         /* Record the view */
         theView = pView;
-        theRenderMgr = theView.getRenderMgr();
+        theFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
@@ -248,7 +248,7 @@ public class MaintTaxYear
         theInfoEntry = theUpdateSet.registerClass(TaxYearInfo.class);
 
         /* Create the New FieldSet */
-        theFieldSet = new JFieldSet<TaxYear>(theRenderMgr);
+        theFieldSet = new JFieldSet<TaxYear>(theFieldMgr);
 
         /* Create the Year fields and add to field set */
         JLabel myYearLabel = new JLabel("Year:");

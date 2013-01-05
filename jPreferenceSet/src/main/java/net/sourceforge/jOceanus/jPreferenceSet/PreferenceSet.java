@@ -41,7 +41,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jEventManager.JEventObject;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSetItem;
-import net.sourceforge.jOceanus.jFieldSet.RenderState;
+import net.sourceforge.jOceanus.jFieldSet.JFieldState;
 
 /**
  * Wrapper class for java preferences.
@@ -1357,23 +1357,23 @@ public abstract class PreferenceSet
     }
 
     @Override
-    public RenderState getRenderState() {
+    public JFieldState getItemState() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public RenderState getRenderState(final JDataField pField) {
+    public JFieldState getFieldState(final JDataField pField) {
         /* Access preference */
         PreferenceItem myPref = getPreference(pField.getName());
 
         /* If it is found */
         if (myPref != null) {
             /* Return the relevant state */
-            return myPref.isChanged() ? RenderState.CHANGED : RenderState.NORMAL;
+            return myPref.isChanged() ? JFieldState.CHANGED : JFieldState.NORMAL;
         }
 
         /* Not recognised */
-        return RenderState.NORMAL;
+        return JFieldState.NORMAL;
     }
 
     @Override

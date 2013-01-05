@@ -38,17 +38,17 @@ public interface JFieldSetItem
     boolean isEditable();
 
     /**
-     * Get the render state for the item.
+     * Get the state for the item.
      * @return the render state
      */
-    RenderState getRenderState();
+    JFieldState getItemState();
 
     /**
-     * Get the render state for the field.
+     * Get the state for the field.
      * @param pField the field
      * @return the render state
      */
-    RenderState getRenderState(final JDataField pField);
+    JFieldState getFieldState(final JDataField pField);
 
     /**
      * Get the Errors for the field.

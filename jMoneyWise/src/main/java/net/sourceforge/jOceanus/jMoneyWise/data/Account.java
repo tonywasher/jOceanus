@@ -38,7 +38,6 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData.LoadState;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
@@ -1076,7 +1075,6 @@ public class Account
         AccountType myType = getActType();
         Account myParent = getParent();
         Account myAlias = getAlias();
-        LoadState myState = getDataSet().getLoadState();
 
         /* Validate base components */
         super.validate();
@@ -1122,8 +1120,7 @@ public class Account
             /* else we should have a parent */
         } else {
             /* If data has been fully loaded we have no parent */
-            if ((myState != LoadState.INITIAL)
-                && (myParent == null)) {
+            if (myParent == null) {
                 addError("Child Account must have parent", FIELD_PARENT);
             }
 
@@ -1197,8 +1194,7 @@ public class Account
         }
 
         /* If data has been fully loaded and the account is closed it must be closeable */
-        if ((myState != LoadState.INITIAL)
-            && (isClosed())
+        if ((isClosed())
             && (!isCloseable())) {
             addError("Non-closeable account is closed", FIELD_CLOSED);
         }
@@ -1478,20 +1474,17 @@ public class Account
                 }
             }
 
-            /* If we are in final loading stage */
-            if (myData.getLoadState() == LoadState.FINAL) {
-                /* Access a new iterator */
-                myIterator = listIterator();
+            /* Access a new iterator */
+            myIterator = listIterator();
 
-                /* Loop through the accounts */
-                while (myIterator.hasNext()) {
-                    Account myCurr = myIterator.next();
+            /* Loop through the accounts */
+            while (myIterator.hasNext()) {
+                Account myCurr = myIterator.next();
 
-                    /* Validate the account */
-                    myCurr.validate();
-                    if (myCurr.hasErrors()) {
-                        throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
-                    }
+                /* Validate the account */
+                myCurr.validate();
+                if (myCurr.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
                 }
             }
         }

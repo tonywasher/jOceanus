@@ -57,9 +57,9 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSet;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSet.FieldUpdate;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
 import net.sourceforge.jOceanus.jLayoutManager.SpringUtilities;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
@@ -223,9 +223,9 @@ public class MaintAccount
     private final transient View theView;
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * The Update Set.
@@ -257,7 +257,7 @@ public class MaintAccount
     public MaintAccount(final View pView) {
         /* Access the view */
         theView = pView;
-        theRenderMgr = theView.getRenderMgr();
+        theFieldMgr = theView.getFieldMgr();
 
         /* Build the Update set and Entry */
         theUpdateSet = new UpdateSet(theView);
@@ -265,7 +265,7 @@ public class MaintAccount
         theInfoEntry = theUpdateSet.registerClass(AccountInfo.class);
 
         /* Create the New FieldSet */
-        theFieldSet = new JFieldSet<Account>(theRenderMgr);
+        theFieldSet = new JFieldSet<Account>(theFieldMgr);
 
         /* Create the status fields */
         theFirst = new JTextField();

@@ -53,9 +53,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.ValueField;
-import net.sourceforge.jOceanus.jFieldSet.ValueField.ValueClass;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jLayoutManager.GridBagUtilities;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.BooleanPreference;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.ColorPreference;
@@ -65,6 +63,7 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.IntegerPreference;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.PreferenceItem;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.PreferenceType;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet.StringPreference;
+import net.sourceforge.jOceanus.jPreferenceSet.ValueField.ValueClass;
 
 /**
  * Preference Set panel.
@@ -128,9 +127,9 @@ public class PreferenceSetPanel
     private transient List<PreferenceElement> theList = null;
 
     /**
-     * The RenderManager.
+     * The FieldManager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * The Set name.
@@ -144,10 +143,10 @@ public class PreferenceSetPanel
 
     /**
      * Constructor.
-     * @param pRenderMgr the render manager
+     * @param pFieldMgr the field manager
      * @param pSet the preference set
      */
-    public PreferenceSetPanel(final RenderManager pRenderMgr,
+    public PreferenceSetPanel(final JFieldManager pFieldMgr,
                               final PreferenceSet pSet) {
         /* Options SubPanel */
         JPanel myOptions = null;
@@ -155,7 +154,7 @@ public class PreferenceSetPanel
 
         /* Record the set and manager */
         thePreferences = pSet;
-        theRenderMgr = pRenderMgr;
+        theFieldMgr = pFieldMgr;
 
         /* Record the name of the set */
         theName = pSet.getClass().getSimpleName();
@@ -468,8 +467,8 @@ public class PreferenceSetPanel
                 theField.setValue(theString.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(thePreferences, theString.getDataField()));
-                theField.setFont(theRenderMgr.determineFont(thePreferences, theString.getDataField(), false));
+                theField.setForeground(theFieldMgr.getForeground(thePreferences, theString.getDataField()));
+                theField.setFont(theFieldMgr.determineFont(thePreferences, theString.getDataField(), false));
             }
 
             @Override
@@ -583,8 +582,8 @@ public class PreferenceSetPanel
                 theField.setValue(theInteger.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(thePreferences, theInteger.getDataField()));
-                theField.setFont(theRenderMgr.determineFont(thePreferences, theInteger.getDataField(), true));
+                theField.setForeground(theFieldMgr.getForeground(thePreferences, theInteger.getDataField()));
+                theField.setFont(theFieldMgr.determineFont(thePreferences, theInteger.getDataField(), true));
             }
 
             @Override
@@ -648,8 +647,8 @@ public class PreferenceSetPanel
                 theField.setSelected(theBoolean.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(thePreferences, theBoolean.getDataField()));
-                theField.setFont(theRenderMgr.determineFont(thePreferences, theBoolean.getDataField(), false));
+                theField.setForeground(theFieldMgr.getForeground(thePreferences, theBoolean.getDataField()));
+                theField.setFont(theFieldMgr.determineFont(thePreferences, theBoolean.getDataField(), false));
             }
 
             @Override
@@ -713,8 +712,8 @@ public class PreferenceSetPanel
                 theField.setSelectedDateDay(theDate.getValue());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(thePreferences, theDate.getDataField()));
-                theField.setFont(theRenderMgr.determineFont(thePreferences, theDate.getDataField(), false));
+                theField.setForeground(theFieldMgr.getForeground(thePreferences, theDate.getDataField()));
+                theField.setFont(theFieldMgr.determineFont(thePreferences, theDate.getDataField(), false));
             }
 
             @Override
@@ -797,7 +796,7 @@ public class PreferenceSetPanel
 
                 /* Set font and foreground */
                 theField.setForeground(theColor.getValue());
-                theField.setFont(theRenderMgr.determineFont(thePreferences, theColor.getDataField(), false));
+                theField.setFont(theFieldMgr.determineFont(thePreferences, theColor.getDataField(), false));
             }
 
             @Override
@@ -880,8 +879,8 @@ public class PreferenceSetPanel
                 theField.setSelectedItem(theEnum.getValue().name());
 
                 /* Set font and foreground */
-                theField.setForeground(theRenderMgr.getForeground(thePreferences, theEnum.getDataField()));
-                theField.setFont(theRenderMgr.determineFont(thePreferences, theEnum.getDataField(), false));
+                theField.setForeground(theFieldMgr.getForeground(thePreferences, theEnum.getDataField()));
+                theField.setFont(theFieldMgr.determineFont(thePreferences, theEnum.getDataField(), false));
             }
 
             @Override

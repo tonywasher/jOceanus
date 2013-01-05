@@ -41,7 +41,6 @@ import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jEventManager.JEventObject;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager.RenderData;
 
 /**
  * Field Set. This handles a set of fields for an item, populating the fields rendering and parsing the data.
@@ -50,6 +49,16 @@ import net.sourceforge.jOceanus.jFieldSet.RenderManager.RenderData;
 public class JFieldSet<T extends JFieldSetItem>
         extends JEventObject {
     /**
+     * Special values for renderer.
+     */
+    public enum JFieldValue {
+        /**
+         * Error.
+         */
+        Error;
+    }
+
+    /**
      * The map of fields.
      */
     private final Map<JDataField, JFieldElement<T>> theMap;
@@ -57,7 +66,7 @@ public class JFieldSet<T extends JFieldSetItem>
     /**
      * The Render Manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theRenderMgr;
 
     /**
      * The Data Formatter.
@@ -90,7 +99,7 @@ public class JFieldSet<T extends JFieldSetItem>
      * Constructor.
      * @param pRenderMgr the render manager
      */
-    public JFieldSet(final RenderManager pRenderMgr) {
+    public JFieldSet(final JFieldManager pRenderMgr) {
         /* Store the render manager */
         theRenderMgr = pRenderMgr;
         theFormatter = pRenderMgr.getDataFormatter();
@@ -181,7 +190,7 @@ public class JFieldSet<T extends JFieldSetItem>
         /* Loop through all the map entries */
         for (JFieldElement<T> myEl : theMap.values()) {
             /* Determine the renderData */
-            RenderData myRender = theRenderMgr.determineRenderData(myEl, pItem);
+            JFieldData myRender = theRenderMgr.determineRenderData(myEl, pItem);
 
             /* Render the element */
             myEl.renderData(myRender, pItem);

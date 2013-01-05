@@ -23,19 +23,28 @@
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
+import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 
 /**
  * SheetDataInfo extension for EventInfo.
  * @author Tony Washer
  */
-public class SheetEventInfo extends SheetDataInfo<EventInfo> {
+public class SheetEventInfo
+        extends SheetDataInfo<EventInfo> {
     /**
      * NamedArea for EventInfo.
      */
     private static final String AREA_EVENTINFO = EventInfo.LIST_NAME;
+
+    /**
+     * Event data list.
+     */
+    private final EventList theEvents;
 
     /**
      * EventInfo data list.
@@ -51,7 +60,9 @@ public class SheetEventInfo extends SheetDataInfo<EventInfo> {
         super(pReader, AREA_EVENTINFO);
 
         /* Access the InfoType list */
-        theList = pReader.getData().getEventInfo();
+        FinanceData myData = pReader.getData();
+        theEvents = myData.getEvents();
+        theList = myData.getEventInfo();
         setDataList(theList);
     }
 
@@ -64,6 +75,7 @@ public class SheetEventInfo extends SheetDataInfo<EventInfo> {
         super(pWriter, AREA_EVENTINFO);
 
         /* Access the InfoType list */
+        theEvents = null;
         theList = pWriter.getData().getEventInfo();
         setDataList(theList);
     }
@@ -76,5 +88,14 @@ public class SheetEventInfo extends SheetDataInfo<EventInfo> {
                                      final byte[] pValue) throws JDataException {
         /* Create the item */
         theList.addSecureItem(pId, pControlId, pInfoTypeId, pOwnerId, pValue);
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Validate the events */
+        theEvents.validate();
+        if (theEvents.hasErrors()) {
+            throw new JDataException(ExceptionClass.VALIDATE, theEvents, "Validation error");
+        }
     }
 }

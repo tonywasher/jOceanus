@@ -43,8 +43,8 @@ import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jEventManager.JEventTable;
-import net.sourceforge.jOceanus.jFieldSet.Editor.ComboBoxSelector;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxSelector;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jTableFilter.TableFilter;
 
 /**
@@ -52,8 +52,9 @@ import net.sourceforge.jOceanus.jTableFilter.TableFilter;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class JDataTable<T extends DataItem & Comparable<? super T>> extends JEventTable implements
-        ComboBoxSelector {
+public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
+        extends JEventTable
+        implements ComboBoxSelector {
     /**
      * Serial Id.
      */
@@ -75,9 +76,9 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
     private JTable theRowHdrTable = null;
 
     /**
-     * RenderManager.
+     * FieldManager.
      */
-    private RenderManager theRenderMgr = null;
+    private JFieldManager theFieldMgr = null;
 
     /**
      * Data Table Model.
@@ -123,11 +124,11 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
     }
 
     /**
-     * Obtain the render manager.
-     * @return the render manager
+     * Obtain the field manager.
+     * @return the field manager
      */
-    public RenderManager getRenderMgr() {
-        return theRenderMgr;
+    public JFieldManager getFieldMgr() {
+        return theFieldMgr;
     }
 
     /**
@@ -135,7 +136,8 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
      * @return true/false
      */
     public boolean hasUpdates() {
-        return (theUpdateSet != null) && theUpdateSet.hasUpdates();
+        return (theUpdateSet != null)
+               && theUpdateSet.hasUpdates();
     }
 
     /**
@@ -143,7 +145,8 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
      * @return true/false
      */
     public boolean hasErrors() {
-        return (theUpdateSet != null) && theUpdateSet.hasErrors();
+        return (theUpdateSet != null)
+               && theUpdateSet.hasErrors();
     }
 
     /**
@@ -295,11 +298,11 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
     }
 
     /**
-     * Set the render manager for the table.
-     * @param pRenderMgr the render manager
+     * Set the field manager for the table.
+     * @param pFieldMgr the field manager
      */
-    protected void setRenderMgr(final RenderManager pRenderMgr) {
-        theRenderMgr = pRenderMgr;
+    protected void setFieldMgr(final JFieldManager pFieldMgr) {
+        theFieldMgr = pFieldMgr;
     }
 
     /**
@@ -361,7 +364,9 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
         Rectangle rect = getCellRect(row, 0, true);
         JViewport viewport = (JViewport) getParent();
         Point pt = viewport.getViewPosition();
-        rect.setLocation(rect.x - pt.x, rect.y - pt.y);
+        rect.setLocation(rect.x
+                         - pt.x, rect.y
+                                 - pt.y);
         viewport.scrollRectToVisible(rect);
 
         /* clear existing selection and select the row */
@@ -441,7 +446,8 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
             /* Loop through the selected rows */
             for (T myRow : myRows) {
                 /* Ignore null/deleted entries */
-                if ((myRow == null) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -517,7 +523,8 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
             T myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
+            if ((myRow == null)
+                || (myRow.isLocked())) {
                 continue;
             }
 
@@ -564,7 +571,8 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
             T myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
+            if ((myRow == null)
+                || (myRow.isLocked())) {
                 continue;
             }
 
@@ -614,7 +622,8 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>> ext
             T myRow = myRows[i];
 
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
+            if ((myRow == null)
+                || (myRow.isLocked())) {
                 continue;
             }
 

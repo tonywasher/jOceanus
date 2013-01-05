@@ -31,7 +31,6 @@ import javax.swing.JPanel;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTable;
@@ -42,19 +41,15 @@ import net.sourceforge.jOceanus.jDataModels.ui.JDataTableMouse;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jFieldSet.Editor.CalendarEditor;
-import net.sourceforge.jOceanus.jFieldSet.Editor.PriceEditor;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.CalendarRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.DecimalRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.PriceCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
-import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jMoneyWise.views.ViewPrice;
 import net.sourceforge.jOceanus.jMoneyWise.views.ViewPrice.ViewPriceList;
@@ -63,7 +58,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.ViewPrice.ViewPriceList;
  * Account Prices Table.
  * @author Tony Washer
  */
-public class AccountPrices extends JDataTable<ViewPrice> {
+public class AccountPrices
+        extends JDataTable<ViewPrice> {
     /**
      * Serial Id.
      */
@@ -75,9 +71,9 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     private final transient View theView;
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * Price List.
@@ -218,8 +214,8 @@ public class AccountPrices extends JDataTable<ViewPrice> {
                          final ErrorPanel pError) {
         /* Store details */
         theView = pView;
-        theRenderMgr = theView.getRenderMgr();
-        setRenderMgr(theRenderMgr);
+        theFieldMgr = theView.getFieldMgr();
+        setFieldMgr(theFieldMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(ViewPrice.class);
@@ -330,7 +326,8 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     /**
      * The listener class.
      */
-    private final class PricesListener implements ActionListener {
+    private final class PricesListener
+            implements ActionListener {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
@@ -347,7 +344,8 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     /**
      * Prices table model.
      */
-    public final class PricesModel extends JDataTableModel<ViewPrice> {
+    public final class PricesModel
+            extends JDataTableModel<ViewPrice> {
         /**
          * Serial Id.
          */
@@ -476,7 +474,8 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     /**
      * Prices mouse listener.
      */
-    private static final class PricesMouse extends JDataTableMouse<ViewPrice> {
+    private static final class PricesMouse
+            extends JDataTableMouse<ViewPrice> {
         /**
          * Constructor.
          * @param pTable the table
@@ -490,7 +489,8 @@ public class AccountPrices extends JDataTable<ViewPrice> {
     /**
      * Column Model class.
      */
-    private final class PricesColumnModel extends JDataTableColumnModel {
+    private final class PricesColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -499,22 +499,22 @@ public class AccountPrices extends JDataTable<ViewPrice> {
         /**
          * Date Renderer.
          */
-        private final CalendarRenderer theDateRenderer;
+        private final CalendarCellRenderer theDateRenderer;
 
         /**
          * Date Editor.
          */
-        private final CalendarEditor theDateEditor;
+        private final CalendarCellEditor theDateEditor;
 
         /**
          * Decimal Renderer.
          */
-        private final DecimalRenderer theDecimalRenderer;
+        private final DecimalCellRenderer theDecimalRenderer;
 
         /**
          * Price Editor.
          */
-        private final PriceEditor thePriceEditor;
+        private final PriceCellEditor thePriceEditor;
 
         /**
          * Dilution column.
@@ -538,25 +538,17 @@ public class AccountPrices extends JDataTable<ViewPrice> {
             /* call constructor */
             super(theTable);
 
-            /* Access parser and formatter */
-            FinanceData myData = theView.getData();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
-            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
-            theDateEditor = new CalendarEditor(myDateFormatter);
-            theDecimalRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
-            thePriceEditor = new PriceEditor(myParser);
+            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theDecimalRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            thePriceEditor = theFieldMgr.allocatePriceCellEditor();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
             addColumn(new JDataTableColumn(COLUMN_PRICE, WIDTH_PRICE, theDecimalRenderer, thePriceEditor));
             theDiluteCol = new JDataTableColumn(COLUMN_DILUTION, WIDTH_DILUTION, theDecimalRenderer, null);
-            theDilPriceCol = new JDataTableColumn(COLUMN_DILUTEDPRICE, WIDTH_DILUTEDPRICE,
-                    theDecimalRenderer, null);
+            theDilPriceCol = new JDataTableColumn(COLUMN_DILUTEDPRICE, WIDTH_DILUTEDPRICE, theDecimalRenderer, null);
             addColumn(theDiluteCol);
             addColumn(theDilPriceCol);
         }
@@ -575,7 +567,8 @@ public class AccountPrices extends JDataTable<ViewPrice> {
          */
         private void setColumnSelection() {
             /* If we should show dilutions */
-            if ((thePrices != null) && (thePrices.hasDilutions())) {
+            if ((thePrices != null)
+                && (thePrices.hasDilutions())) {
                 /* If we are not showing dilutions */
                 if (!hasDilutions) {
                     /* Add the dilutions columns and record the fact */

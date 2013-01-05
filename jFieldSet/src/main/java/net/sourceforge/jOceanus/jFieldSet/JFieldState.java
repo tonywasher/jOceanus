@@ -23,10 +23,10 @@
 package net.sourceforge.jOceanus.jFieldSet;
 
 /**
- * Enumeration of render states.
+ * Enumeration of JFieldSet states.
  * @author Tony Washer
  */
-public enum RenderState {
+public enum JFieldState {
     /**
      * Normal state.
      */

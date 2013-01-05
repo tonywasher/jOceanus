@@ -25,13 +25,14 @@ package net.sourceforge.jOceanus.jDataModels.preferences;
 import java.awt.Color;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jFieldSet.RenderConfig;
+import net.sourceforge.jOceanus.jFieldSet.JFieldConfig;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
 
 /**
- * Preferences for rendering.
+ * Preferences for JFieldSet.
  */
-public class RenderPreferences extends PreferenceSet {
+public class JFieldPreferences
+        extends PreferenceSet {
     /**
      * Registry name for Standard foreground.
      */
@@ -126,7 +127,7 @@ public class RenderPreferences extends PreferenceSet {
      * Constructor.
      * @throws JDataException on error
      */
-    public RenderPreferences() throws JDataException {
+    public JFieldPreferences() throws JDataException {
         super();
     }
 
@@ -134,9 +135,9 @@ public class RenderPreferences extends PreferenceSet {
      * Obtain configuration.
      * @return the render configuration
      */
-    public RenderConfig getConfiguration() {
+    public JFieldConfig getConfiguration() {
         /* Allocate the configuration */
-        RenderConfig myConfig = new RenderConfig();
+        JFieldConfig myConfig = new JFieldConfig();
 
         /* Set the values */
         myConfig.setBackgroundColor(getColorValue(NAME_BACKGROUND));

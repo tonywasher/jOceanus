@@ -33,7 +33,6 @@ import javax.swing.JPopupMenu;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
@@ -45,16 +44,13 @@ import net.sourceforge.jOceanus.jDataModels.ui.JDataTableMouse;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jFieldSet.Editor.CalendarEditor;
-import net.sourceforge.jOceanus.jFieldSet.Editor.RateEditor;
-import net.sourceforge.jOceanus.jFieldSet.RenderManager;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.CalendarRenderer;
-import net.sourceforge.jOceanus.jFieldSet.Renderer.DecimalRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.RateCellEditor;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
+import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
@@ -65,7 +61,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * Account Rates Table.
  * @author Tony Washer
  */
-public class AccountRates extends JDataTable<AccountRate> {
+public class AccountRates
+        extends JDataTable<AccountRate> {
     /**
      * Serial Id.
      */
@@ -77,9 +74,9 @@ public class AccountRates extends JDataTable<AccountRate> {
     private final transient View theView;
 
     /**
-     * The render manager.
+     * The field manager.
      */
-    private final transient RenderManager theRenderMgr;
+    private final transient JFieldManager theFieldMgr;
 
     /**
      * The Table Model.
@@ -210,8 +207,8 @@ public class AccountRates extends JDataTable<AccountRate> {
                         final ErrorPanel pError) {
         /* Store details */
         theView = pView;
-        theRenderMgr = theView.getRenderMgr();
-        setRenderMgr(theRenderMgr);
+        theFieldMgr = theView.getFieldMgr();
+        setFieldMgr(theFieldMgr);
         theError = pError;
         theUpdateSet = pUpdateSet;
         theUpdateEntry = theUpdateSet.registerClass(AccountRate.class);
@@ -303,7 +300,8 @@ public class AccountRates extends JDataTable<AccountRate> {
     /**
      * The listener class.
      */
-    private final class RatesListener implements ActionListener {
+    private final class RatesListener
+            implements ActionListener {
 
         @Override
         public void actionPerformed(final ActionEvent e) {
@@ -320,7 +318,8 @@ public class AccountRates extends JDataTable<AccountRate> {
     /**
      * Rates table model.
      */
-    public final class RatesModel extends JDataTableModel<AccountRate> {
+    public final class RatesModel
+            extends JDataTableModel<AccountRate> {
         /**
          * Serial Id.
          */
@@ -435,7 +434,8 @@ public class AccountRates extends JDataTable<AccountRate> {
     /**
      * Rates mouse listener.
      */
-    private final class RatesMouse extends JDataTableMouse<AccountRate> {
+    private final class RatesMouse
+            extends JDataTableMouse<AccountRate> {
         /**
          * Constructor.
          */
@@ -463,7 +463,9 @@ public class AccountRates extends JDataTable<AccountRate> {
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked rows/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 
@@ -482,7 +484,8 @@ public class AccountRates extends JDataTable<AccountRate> {
             }
 
             /* If there is something to add and there are already items in the menu */
-            if ((enableNullDate || enableNullBonus) && (pMenu.getComponentCount() > 0)) {
+            if ((enableNullDate || enableNullBonus)
+                && (pMenu.getComponentCount() > 0)) {
                 /* Add a separator */
                 pMenu.addSeparator();
             }
@@ -543,7 +546,8 @@ public class AccountRates extends JDataTable<AccountRate> {
     /**
      * Column Model class.
      */
-    private final class RatesColumnModel extends JDataTableColumnModel {
+    private final class RatesColumnModel
+            extends JDataTableColumnModel {
         /**
          * Serial Id.
          */
@@ -552,22 +556,22 @@ public class AccountRates extends JDataTable<AccountRate> {
         /**
          * DateRenderer.
          */
-        private final CalendarRenderer theDateRenderer;
+        private final CalendarCellRenderer theDateRenderer;
 
         /**
          * DateEditor.
          */
-        private final CalendarEditor theDateEditor;
+        private final CalendarCellEditor theDateEditor;
 
         /**
          * RateRenderer.
          */
-        private final DecimalRenderer theRateRenderer;
+        private final DecimalCellRenderer theRateRenderer;
 
         /**
          * RateEditor.
          */
-        private final RateEditor theRateEditor;
+        private final RateCellEditor theRateEditor;
 
         /**
          * Constructor.
@@ -576,18 +580,11 @@ public class AccountRates extends JDataTable<AccountRate> {
             /* call constructor */
             super(theTable);
 
-            /* Access parser and formatter */
-            FinanceData myData = theView.getData();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-            JDateDayFormatter myDateFormatter = myFormatter.getDateFormatter();
-            JDecimalFormatter myDecFormatter = myFormatter.getDecimalFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
-
             /* Create the relevant formatters/editors */
-            theDateRenderer = theRenderMgr.allocateCalendarRenderer(myDateFormatter);
-            theDateEditor = new CalendarEditor(myDateFormatter);
-            theRateRenderer = theRenderMgr.allocateDecimalRenderer(myDecFormatter);
-            theRateEditor = new RateEditor(myParser);
+            theDateRenderer = theFieldMgr.allocateCalendarCellRenderer();
+            theDateEditor = theFieldMgr.allocateCalendarCellEditor();
+            theRateRenderer = theFieldMgr.allocateDecimalCellRenderer();
+            theRateEditor = theFieldMgr.allocateRateCellEditor();
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_RATE, WIDTH_RATE, theRateRenderer, theRateEditor));

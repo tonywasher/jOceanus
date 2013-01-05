@@ -192,7 +192,7 @@ public class MaintenanceTab
 
         /* Create the Preferences Tab */
         PreferenceManager myPrefs = theView.getPreferenceMgr();
-        thePreferences = new MaintPreferences(myPrefs, theView.getRenderMgr(), theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
+        thePreferences = new MaintPreferences(myPrefs, theView.getFieldMgr(), theView.getDataMgr(), theView.getDataEntry(DataControl.DATA_MAINT));
         theTabs.addTab(TITLE_PREFERENCES, thePreferences);
         thePreferences.addChangeListener(myListener);
 

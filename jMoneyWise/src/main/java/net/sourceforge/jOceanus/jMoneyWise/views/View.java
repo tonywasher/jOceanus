@@ -99,7 +99,7 @@ public class View
      */
     @Override
     public final FinanceData getNewData() {
-        return new FinanceData(getSecurity(), getPreferenceMgr());
+        return new FinanceData(getSecurity(), getPreferenceMgr(), getFieldMgr());
     }
 
     @Override
