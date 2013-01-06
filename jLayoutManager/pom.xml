@@ -3,7 +3,7 @@
   <parent>
     <groupId>net.sourceforge.jOceanus</groupId>
     <artifactId>jOceanus</artifactId>
-    <version>v1.1.0-SNAPSHOT</version>   
+    <version>v1.2.0-SNAPSHOT</version>   
   </parent>
   <artifactId>jLayoutManager</artifactId>
   <name>Java Swing Layout Manager Utilities</name>
