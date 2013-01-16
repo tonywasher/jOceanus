@@ -1,0 +1,7 @@
+jSpreadSheetManager Project
+
+  jSpreadSheetManager is a subComponent of the jOceanus project
+
+  jSpreadSheetManager is an isolation layer providing support for Microsoft Excel spreadsheets via POI and 
+OpenOffice Calc spreadsheets via jOpenDocument, such that the user is not aware as to differences between the underlying 
+packages.
