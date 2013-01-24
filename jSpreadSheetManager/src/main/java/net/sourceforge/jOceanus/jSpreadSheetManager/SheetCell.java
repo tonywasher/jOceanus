@@ -207,7 +207,7 @@ public class SheetCell {
     }
 
     /**
-     * Obtain integer value of the cell
+     * Obtain integer value of the cell.
      * @return the integer value
      */
     public Integer getIntegerValue() {
@@ -215,7 +215,7 @@ public class SheetCell {
     }
 
     /**
-     * Obtain string value of the cell
+     * Obtain string value of the cell.
      * @return the string value
      */
     public String getStringValue() {
@@ -238,7 +238,7 @@ public class SheetCell {
     }
 
     /**
-     * Obtain byte array value of the cell
+     * Obtain byte array value of the cell.
      * @return the byte array value
      * @throws JDataException on error
      */
@@ -248,7 +248,7 @@ public class SheetCell {
     }
 
     /**
-     * Obtain char array value of the cell
+     * Obtain char array value of the cell.
      * @return the char array value
      * @throws JDataException on error
      */
@@ -258,7 +258,7 @@ public class SheetCell {
     }
 
     /**
-     * Set null value for the cell
+     * Set null value for the cell.
      * @throws JDataException on error
      */
     public void setNullValue() throws JDataException {
@@ -272,11 +272,13 @@ public class SheetCell {
             case OASISODS:
                 theOasisCell.removeContent();
                 break;
+            default:
+                break;
         }
     }
 
     /**
-     * Set boolean value of the cell
+     * Set boolean value of the cell.
      * @param pValue the integer value
      * @throws JDataException on error
      */
@@ -295,6 +297,8 @@ public class SheetCell {
                 case OASISODS:
                     theOasisCell.setBooleanValue(pValue);
                     break;
+                default:
+                    break;
             }
 
             /* Set the style for the cell */
@@ -303,7 +307,7 @@ public class SheetCell {
     }
 
     /**
-     * Set date value of the cell
+     * Set date value of the cell.
      * @param pValue the date value
      * @throws JDataException on error
      */
@@ -324,6 +328,8 @@ public class SheetCell {
                     myCalendar.setTime(pValue);
                     theOasisCell.setDateValue(myCalendar);
                     break;
+                default:
+                    break;
             }
 
             /* Set the style for the cell */
@@ -332,7 +338,7 @@ public class SheetCell {
     }
 
     /**
-     * Set integer value of the cell
+     * Set integer value of the cell.
      * @param pValue the integer value
      * @throws JDataException on error
      */
@@ -353,6 +359,8 @@ public class SheetCell {
                 case OASISODS:
                     theOasisCell.setStringValue(myValue);
                     break;
+                default:
+                    break;
             }
 
             /* Set the style for the cell */
@@ -361,7 +369,7 @@ public class SheetCell {
     }
 
     /**
-     * Set string value of the cell
+     * Set string value of the cell.
      * @param pValue the string value
      * @throws JDataException on error
      */
@@ -380,6 +388,8 @@ public class SheetCell {
                 case OASISODS:
                     theOasisCell.setStringValue(pValue);
                     break;
+                default:
+                    break;
             }
 
             /* Set the style for the cell */
@@ -388,7 +398,7 @@ public class SheetCell {
     }
 
     /**
-     * Set decimal value of the cell
+     * Set decimal value of the cell.
      * @param pValue the decimal value
      * @throws JDataException on error
      */
@@ -407,6 +417,8 @@ public class SheetCell {
                 case OASISODS:
                     theOasisCell.setDoubleValue(pValue.doubleValue());
                     break;
+                default:
+                    break;
             }
 
             /* Set the style for the cell */
@@ -415,7 +427,7 @@ public class SheetCell {
     }
 
     /**
-     * Set header value of the cell
+     * Set header value of the cell.
      * @param pValue the string value
      * @throws JDataException on error
      */
@@ -433,7 +445,7 @@ public class SheetCell {
     }
 
     /**
-     * Set byte array value of the cell
+     * Set byte array value of the cell.
      * @param pValue the byte array value
      * @throws JDataException on error
      */
@@ -448,7 +460,7 @@ public class SheetCell {
     }
 
     /**
-     * Set char array value of the cell
+     * Set char array value of the cell.
      * @param pValue the byte array value
      * @throws JDataException on error
      */

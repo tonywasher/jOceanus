@@ -149,6 +149,7 @@ public class SheetRow {
      * Constructor.
      * @param pView the view for the row
      * @param pExcelRow the Excel Row
+     * @param pFormatter the data formatter
      */
     protected SheetRow(final SheetView pView,
                        final HSSFRow pExcelRow,
@@ -169,7 +170,6 @@ public class SheetRow {
      * Constructor.
      * @param pView the view for the row
      * @param pOasisRow the Excel Row
-     * @param pFormatter the data formatter
      */
     protected SheetRow(final SheetView pView,
                        final OdfTableRow pOasisRow) {
@@ -186,7 +186,7 @@ public class SheetRow {
     }
 
     /**
-     * Get the next row
+     * Get the next row.
      * @return the next row
      */
     public SheetRow getNextRow() {
@@ -202,7 +202,7 @@ public class SheetRow {
     }
 
     /**
-     * Get the previous row
+     * Get the previous row.
      * @return the previous row
      */
     public SheetRow getPreviousRow() {
@@ -240,7 +240,7 @@ public class SheetRow {
     }
 
     /**
-     * Get the cell at the required index
+     * Get the cell at the required index.
      * @param pIndex the column index.
      * @return the cell
      */

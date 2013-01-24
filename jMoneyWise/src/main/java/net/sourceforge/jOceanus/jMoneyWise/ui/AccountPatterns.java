@@ -464,7 +464,7 @@ public class AccountPatterns
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
-                theModel.fireTableDataChanged();
+                theModel.fireNewDataEvents();
             }
         }
     }
@@ -577,7 +577,7 @@ public class AccountPatterns
                 case COLUMN_DEBIT:
                     return Event.FIELD_AMOUNT;
                 case COLUMN_PARTNER:
-                    return pPattern.isCredit() ? Event.FIELD_CREDIT : Event.FIELD_DEBIT;
+                    return ((pPattern == null) || pPattern.isCredit()) ? Event.FIELD_CREDIT : Event.FIELD_DEBIT;
                 case COLUMN_FREQ:
                     return Pattern.FIELD_FREQ;
                 default:

@@ -135,7 +135,7 @@ public class SheetSheet {
     }
 
     /**
-     * Obtain the row at required index within the view
+     * Obtain the row at required index within the view.
      * @param pView the requested row index
      * @param pRowIndex the requested row index
      * @return the requested row.
@@ -187,6 +187,8 @@ public class SheetSheet {
                 /* Declare to workBook */
                 theOasisBook.declareRange(pName, myRange);
                 break;
+            default:
+                break;
         }
     }
 
@@ -217,6 +219,8 @@ public class SheetSheet {
 
                 /* Declare to workBook */
                 theOasisBook.applyDataValidation(theOasisSheet, myRange, pName);
+                break;
+            default:
                 break;
         }
     }
@@ -251,6 +255,8 @@ public class SheetSheet {
                 TableTableColumnElement myElement = myCol.getOdfElement();
                 myElement.setTableVisibilityAttribute(isHidden ? "collapse" : "visible");
                 break;
+            default:
+                break;
         }
     }
 
@@ -272,6 +278,8 @@ public class SheetSheet {
                 OdfTableColumn myCol = theOasisSheet.getColumnByIndex(pColIndex);
                 myCol.setWidth(2 * pWidth);
                 break;
+            default:
+                break;
         }
     }
 
@@ -292,6 +300,8 @@ public class SheetSheet {
                 OdfTableColumn myCol = theOasisSheet.getColumnByIndex(pColIndex);
                 myCol.setDefaultCellStyle(theOasisBook.getCellStyle(pStyle));
                 break;
+            default:
+                break;
         }
     }
 
@@ -309,6 +319,8 @@ public class SheetSheet {
                 break;
             case OASISODS:
                 pCell.setCellStyle(theOasisBook.getStyleName(pStyle));
+                break;
+            default:
                 break;
         }
     }

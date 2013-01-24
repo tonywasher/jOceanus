@@ -406,6 +406,7 @@ public class Statement
             /* Declare the data and set the style */
             super(pStatement.theView.getData(), StatementLine.class);
             setStyle(ListStyle.EDIT);
+            setRange(pStatement.getDateRange());
             theStatement = pStatement;
             FinanceData myData = getDataSet();
             setBase(myData.getEvents());
@@ -658,6 +659,7 @@ public class Statement
             super(pStatement.getLines());
             theStatement = pStatement;
             setHeader(true);
+            setId(0);
             setDate(theStatement.getDateRange().getStart());
             setDescription("Opening Balance");
             setValueIsCredit(false);

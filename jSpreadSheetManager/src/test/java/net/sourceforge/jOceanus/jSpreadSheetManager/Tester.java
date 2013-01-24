@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Date;
 
+import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
 import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.WorkBookType;
 
 public class Tester {
@@ -17,7 +18,9 @@ public class Tester {
         /**
          * Load an ODS Spreadsheet using jOpenDocument
          */
-        // loadRange(null);
+        OasisCellRange myRange = new OasisCellRange("'19''87'.A22:.A45");
+        OasisCellRange myTwo = new OasisCellRange("Test'1987", myRange.getFirstCell().getPosition(), myRange.getLastCell().getPosition());
+        loadRange(null);
         try {
             SheetWorkBook myBook = new SheetWorkBook(WorkBookType.OASISODS);
             SheetSheet mySheet = myBook.newSheet("TestData");
@@ -56,7 +59,7 @@ public class Tester {
             FileInputStream myInFile = new FileInputStream(myFile);
             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
             SheetWorkBook myBook = new SheetWorkBook(myInBuffer, WorkBookType.OASISODS);
-            SheetView myView = myBook.getRangeView("AccountInfo");
+            SheetView myView = myBook.getRangeView("Finance82");
             int iNumRows = myView.getRowCount();
             int iNumCols = myView.getColumnCount();
             for (SheetRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {

@@ -29,7 +29,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 
 /**
- * WorkBook class
+ * WorkBook class.
  * @author Tony Washer
  */
 public class SheetWorkBook {
@@ -180,6 +180,8 @@ public class SheetWorkBook {
             case OASISODS:
                 theOasisBook.saveToStream(pOutput);
                 break;
+            default:
+                break;
         }
     }
 
@@ -222,7 +224,7 @@ public class SheetWorkBook {
     }
 
     /**
-     * Obtain a view of the named range
+     * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range
      * @throws JDataException on error

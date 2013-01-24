@@ -310,7 +310,7 @@ public class AccountRates
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
-                theModel.fireTableDataChanged();
+                theModel.fireNewDataEvents();
             }
         }
     }

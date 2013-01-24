@@ -53,7 +53,7 @@ public class CellPosition {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pColumnIndex the column index
      * @param pRowIndex the row index
      */
@@ -65,7 +65,7 @@ public class CellPosition {
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pSource the source position
      */
     public CellPosition(final CellPosition pSource) {

@@ -88,6 +88,8 @@ public class SheetView {
     /**
      * Constructor.
      * @param pSheet the sheet containing the view
+     * @param pFirstCell the first cell of the view
+     * @param pLastCell the last cell of the view
      */
     protected SheetView(final SheetSheet pSheet,
                         final CellPosition pFirstCell,
@@ -100,7 +102,8 @@ public class SheetView {
 
     /**
      * Constructor.
-     * @param pSheet the sheet containing the view
+     * @param pFirstCell the first cell of the view
+     * @param pLastCell the last cell of the view
      */
     protected SheetView(final SheetCell pFirstCell,
                         final SheetCell pLastCell) {

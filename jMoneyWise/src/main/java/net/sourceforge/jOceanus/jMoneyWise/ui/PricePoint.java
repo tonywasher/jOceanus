@@ -538,7 +538,7 @@ public class PricePoint
                 /* If we are performing a rewind */
             } else if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
-                theModel.fireTableDataChanged();
+                theModel.fireNewDataEvents();
             }
         }
     }

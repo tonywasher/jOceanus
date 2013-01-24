@@ -52,8 +52,8 @@ import org.odftoolkit.odfdom.incubator.doc.number.OdfNumberPercentageStyle;
 import org.odftoolkit.odfdom.incubator.doc.number.OdfNumberStyle;
 import org.odftoolkit.odfdom.incubator.doc.office.OdfOfficeAutomaticStyles;
 import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
+import org.odftoolkit.odfdom.pkg.OdfElement;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * The Oasis WorkBook.
@@ -68,6 +68,11 @@ public class OasisWorkBook {
      * Contents.
      */
     private final OfficeSpreadsheetElement theContents;
+
+    /**
+     * Contents Dom.
+     */
+    private final OdfContentDom theContentDom;
 
     /**
      * Named Expressions List.
@@ -94,27 +99,14 @@ public class OasisWorkBook {
             /* Access book and contents */
             theBook = OdfSpreadsheetDocument.loadDocument(pInput);
             theContents = theBook.getContentRoot();
+            theContentDom = theBook.getContentDom();
             theMap = null;
 
             /* Access Named expressions list */
-            String myExprName = TableNamedExpressionsElement.ELEMENT_NAME.getQName();
-            NodeList myNodes = theContents.getElementsByTagName(myExprName);
-            if ((myNodes != null)
-                && (myNodes.getLength() > 0)) {
-                theExpressions = (TableNamedExpressionsElement) myNodes.item(0);
-            } else {
-                theExpressions = theContents.newTableNamedExpressionsElement();
-            }
+            theExpressions = OdfElement.findFirstChildNode(TableNamedExpressionsElement.class, theContents);
 
             /* Access Contents validations list */
-            myExprName = TableContentValidationsElement.ELEMENT_NAME.getQName();
-            myNodes = theContents.getElementsByTagName(myExprName);
-            if ((myNodes != null)
-                && (myNodes.getLength() > 0)) {
-                theValidations = (TableContentValidationsElement) myNodes.item(0);
-            } else {
-                theValidations = theContents.newTableContentValidationsElement();
-            }
+            theValidations = OdfElement.findFirstChildNode(TableContentValidationsElement.class, theContents);
         } catch (Exception e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load workbook", e);
         }
@@ -129,6 +121,7 @@ public class OasisWorkBook {
             /* Create an empty document */
             theBook = OdfSpreadsheetDocument.newSpreadsheetDocument();
             theContents = theBook.getContentRoot();
+            theContentDom = theBook.getContentDom();
 
             /* Clean out the document */
             cleanOutDocument();
@@ -184,7 +177,7 @@ public class OasisWorkBook {
     }
 
     /**
-     * Obtain a view of the named range
+     * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range
      * @throws JDataException on error
@@ -217,7 +210,7 @@ public class OasisWorkBook {
     }
 
     /**
-     * LookUp the named range
+     * LookUp the named range.
      * @param pName the name of the range
      * @return the resolved range (or null)
      */
@@ -238,7 +231,7 @@ public class OasisWorkBook {
     }
 
     /**
-     * Declare the named range
+     * Declare the named range.
      * @param pName the name of the range
      * @param pRange the range to declare
      * @throws JDataException on error
@@ -262,7 +255,7 @@ public class OasisWorkBook {
     }
 
     /**
-     * LookUp the named constraint
+     * LookUp the named constraint.
      * @param pName the name of the constraint
      * @return the resolved range (or null)
      */
@@ -341,6 +334,8 @@ public class OasisWorkBook {
 
     /**
      * Obtain style name.
+     * @param pType the style type
+     * @return the name of the style
      */
     protected String getStyleName(final CellStyleType pType) {
         return "style"
@@ -351,21 +346,12 @@ public class OasisWorkBook {
      * Create the standard CellStyles.
      */
     private void createCellStyles() {
-        OdfContentDom myContents = null;
-        try {
-            myContents = theBook.getContentDom();
-            theContents.getOwnerDocument();
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
         /* Access create styles holders */
-        OdfOfficeAutomaticStyles myStyles = myContents.getOrCreateAutomaticStyles();
+        OdfOfficeAutomaticStyles myStyles = theContentDom.getOrCreateAutomaticStyles();
         theBook.getOrCreateDocumentStyles();
 
         /* Create the Date Cell Style */
-        OdfNumberDateStyle myDateStyle = new OdfNumberDateStyle(myContents, "yyyy-MM-dd", getStyleName(CellStyleType.Date));
+        OdfNumberDateStyle myDateStyle = new OdfNumberDateStyle(theContentDom, "yyyy-MM-dd", getStyleName(CellStyleType.Date));
         myStyles.appendChild(myDateStyle);
         OdfStyle myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Date));
@@ -374,7 +360,7 @@ public class OasisWorkBook {
         theMap.put(CellStyleType.Date, myStyle);
 
         /* Create the Money Cell Style */
-        OdfNumberStyle myNumberStyle = new OdfNumberStyle(myContents, "£#,##0.00", getStyleName(CellStyleType.Money));
+        OdfNumberStyle myNumberStyle = new OdfNumberStyle(theContentDom, "£#,##0.00", getStyleName(CellStyleType.Money));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Money));
@@ -383,7 +369,7 @@ public class OasisWorkBook {
         theMap.put(CellStyleType.Money, myStyle);
 
         /* Create the Price Cell Style */
-        myNumberStyle = new OdfNumberStyle(myContents, "£#,##0.0000", getStyleName(CellStyleType.Price));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "£#,##0.0000", getStyleName(CellStyleType.Price));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Price));
@@ -392,7 +378,7 @@ public class OasisWorkBook {
         theMap.put(CellStyleType.Price, myStyle);
 
         /* Create the Units Cell Style */
-        myNumberStyle = new OdfNumberStyle(myContents, "#,##0.0000", getStyleName(CellStyleType.Units));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "#,##0.0000", getStyleName(CellStyleType.Units));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Units));
@@ -401,7 +387,7 @@ public class OasisWorkBook {
         theMap.put(CellStyleType.Units, myStyle);
 
         /* Create the Rate Cell Style */
-        OdfNumberPercentageStyle myPercentStyle = new OdfNumberPercentageStyle(myContents, "0.00%", getStyleName(CellStyleType.Rate));
+        OdfNumberPercentageStyle myPercentStyle = new OdfNumberPercentageStyle(theContentDom, "0.00%", getStyleName(CellStyleType.Rate));
         myStyles.appendChild(myPercentStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Rate));
@@ -410,7 +396,7 @@ public class OasisWorkBook {
         theMap.put(CellStyleType.Rate, myStyle);
 
         /* Create the Dilution Cell Style */
-        myNumberStyle = new OdfNumberStyle(myContents, "0.000000", getStyleName(CellStyleType.Dilution));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "0.000000", getStyleName(CellStyleType.Dilution));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Dilution));
@@ -419,7 +405,7 @@ public class OasisWorkBook {
         theMap.put(CellStyleType.Dilution, myStyle);
 
         /* Create the Integer Cell Style */
-        myNumberStyle = new OdfNumberStyle(myContents, "0", getStyleName(CellStyleType.Integer));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "0", getStyleName(CellStyleType.Integer));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Integer));

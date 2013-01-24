@@ -616,8 +616,8 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
             /* If the item is deleted */
             if (myCurr.isDeleted()) {
-                /* If this is a clean change then we are valid */
-                if (myCurr.getState() == DataState.CLEAN) {
+                /* If this is a deleted change then we are valid */
+                if (myCurr.getState() != DataState.CLEAN) {
                     isValid = true;
                 }
 
@@ -667,6 +667,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
             /* Skip deleted items */
             if (myCurr.isDeleted()) {
+                myCurr.setValidEdit();
                 continue;
             }
 

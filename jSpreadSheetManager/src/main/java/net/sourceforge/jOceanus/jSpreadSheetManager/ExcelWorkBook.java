@@ -146,7 +146,7 @@ public class ExcelWorkBook {
     }
 
     /**
-     * Obtain a view of the named range
+     * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range
      * @throws JDataException on error
@@ -182,7 +182,7 @@ public class ExcelWorkBook {
     }
 
     /**
-     * Declare the named range
+     * Declare the named range.
      * @param pName the name of the range
      * @param pRange the range to declare
      * @throws JDataException on error

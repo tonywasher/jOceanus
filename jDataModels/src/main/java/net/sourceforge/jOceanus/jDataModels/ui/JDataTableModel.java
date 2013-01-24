@@ -218,7 +218,7 @@ public abstract class JDataTableModel<T extends DataItem & Comparable<? super T>
             theTable.incrementVersion();
 
             /* Update components to reflect changes */
-            fireTableDataChanged();
+            fireNewDataEvents();
             theTable.notifyChanges();
         }
     }

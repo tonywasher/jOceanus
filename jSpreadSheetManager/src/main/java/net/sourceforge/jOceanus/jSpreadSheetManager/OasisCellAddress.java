@@ -28,26 +28,67 @@ package net.sourceforge.jOceanus.jSpreadSheetManager;
  */
 public class OasisCellAddress {
     /**
-     * Sheet name
+     * Apostrophe character.
      */
-    private final String theSheetName;
+    private static final char CHAR_APOS = '\'';
 
     /**
-     * Position
+     * Dollar character.
+     */
+    private static final char CHAR_DOLLAR = '$';
+
+    /**
+     * Colon character.
+     */
+    private static final char CHAR_COLON = ':';
+
+    /**
+     * Period character.
+     */
+    private static final char CHAR_PERIOD = '.';
+
+    /**
+     * Column base character.
+     */
+    private static final char CHAR_CBASE = 'A';
+
+    /**
+     * Row base character.
+     */
+    private static final char CHAR_RBASE = '0';
+
+    /**
+     * Apostrophe search string.
+     */
+    private static final String STR_APOS = ""
+                                           + CHAR_APOS;
+
+    /**
+     * Row radix.
+     */
+    private static final int RADIX_ROW = 10;
+
+    /**
+     * Column radix.
+     */
+    private static final int RADIX_COLUMN = 26;
+
+    /**
+     * Sheet name.
+     */
+    private final OasisSheetName theSheetName;
+
+    /**
+     * Position.
      */
     private final CellPosition thePosition;
-
-    /**
-     * Do we need to wrap name with apostrophe?
-     */
-    // private boolean useApostrophes;
 
     /**
      * Obtain the SheetName.
      * @return the name
      */
     public String getSheetName() {
-        return theSheetName;
+        return theSheetName.getName();
     }
 
     /**
@@ -80,9 +121,9 @@ public class OasisCellAddress {
      * @param pPosition the cell location
      */
     protected OasisCellAddress(final String pSheetName,
-                                  final CellPosition pPosition) {
+                               final CellPosition pPosition) {
         /* Store parameters */
-        theSheetName = pSheetName;
+        theSheetName = new OasisSheetName(pSheetName, false);
         thePosition = pPosition;
     }
 
@@ -92,16 +133,11 @@ public class OasisCellAddress {
      */
     protected OasisCellAddress(final String pAddress) {
         /* Store parameters */
-        int iPos = pAddress.indexOf('.');
+        int iPos = pAddress.indexOf(CHAR_PERIOD);
         thePosition = parsePosition(pAddress.substring(iPos + 1));
-        String myName = pAddress.substring((pAddress.charAt(0) == '$') ? 1 : 0, iPos);
+        String myName = pAddress.substring((pAddress.charAt(0) == CHAR_DOLLAR) ? 1 : 0, iPos);
         iPos = myName.length();
-        if ((myName.charAt(0) == '\'')
-            && (myName.charAt(iPos - 1) == '\'')) {
-            myName = myName.substring(1, iPos - 1);
-            // useApostrophes = true;
-        }
-        theSheetName = myName;
+        theSheetName = new OasisSheetName(myName, true);
     }
 
     /**
@@ -110,19 +146,19 @@ public class OasisCellAddress {
      * @param pAddress the cell address
      */
     protected OasisCellAddress(final String pSheetName,
-                                  final String pAddress) {
+                               final String pAddress) {
         /* Store parameters */
         thePosition = parsePosition(pAddress);
-        theSheetName = pSheetName;
+        theSheetName = new OasisSheetName(pSheetName, false);
     }
 
     @Override
     public String toString() {
         /* Build the name */
-        StringBuilder myBuilder = new StringBuilder(32);
-        myBuilder.append('$');
-        myBuilder.append(theSheetName);
-        myBuilder.append('.');
+        StringBuilder myBuilder = new StringBuilder();
+        myBuilder.append(CHAR_DOLLAR);
+        myBuilder.append(theSheetName.getEscapedName());
+        myBuilder.append(CHAR_PERIOD);
         formatPosition(myBuilder);
 
         /* Format the string */
@@ -136,22 +172,25 @@ public class OasisCellAddress {
     private void formatPosition(final StringBuilder pBuilder) {
         /* Calculate indexes */
         int col = thePosition.getColumnIndex();
-        int topCol = col / 26;
-        col = col % 26;
+        int topCol = col
+                     / RADIX_COLUMN;
+        col = col
+              % RADIX_COLUMN;
 
         /* Build the name */
-        pBuilder.append('$');
+        pBuilder.append(CHAR_DOLLAR);
         if (topCol > 0) {
-            pBuilder.append('A' + topCol);
+            pBuilder.append(CHAR_CBASE
+                            + topCol);
         }
-        pBuilder.append((char) ('A' + col));
-        pBuilder.append('$');
+        pBuilder.append((char) (CHAR_CBASE + col));
+        pBuilder.append(CHAR_DOLLAR);
         pBuilder.append(thePosition.getRowIndex() + 1);
     }
 
     /**
      * Parse position.
-     * @param the position to parse
+     * @param pAddress the position to parse
      * @return the parsed position
      */
     private CellPosition parsePosition(final String pAddress) {
@@ -162,26 +201,154 @@ public class OasisCellAddress {
         /* Loop through the characters */
         for (char myChar : pAddress.toCharArray()) {
             /* Ignore $ */
-            if (myChar == '$') {
+            if (myChar == CHAR_DOLLAR) {
                 continue;
             }
 
             /* If we have reached decimals */
             if (Character.isDigit(myChar)) {
                 /* Add into row */
-                iRow *= 10;
-                iRow += myChar - '0';
+                iRow *= RADIX_ROW;
+                iRow += myChar
+                        - CHAR_RBASE;
 
                 /* else character */
             } else {
                 /* Add into column */
-                iCol *= 26;
-                iCol += (myChar - 'A' + 1);
+                iCol *= RADIX_COLUMN;
+                iCol += (myChar
+                         - CHAR_CBASE + 1);
             }
         }
 
         /* return the calculated position */
         return new CellPosition(iCol - 1, iRow - 1);
+    }
+
+    /**
+     * Utility class to handle parsing and escaping of sheet names in ranges.
+     */
+    private static final class OasisSheetName {
+        /**
+         * The sheet name.
+         */
+        private final String theSheetName;
+
+        /**
+         * The escaped sheet name.
+         */
+        private final String theEscapedName;
+
+        /**
+         * Obtain the sheet name.
+         * @return the name
+         */
+        private String getName() {
+            return theSheetName;
+        }
+
+        /**
+         * Obtain the escaped sheet name.
+         * @return the name
+         */
+        private String getEscapedName() {
+            return theEscapedName;
+        }
+
+        /**
+         * Constructor.
+         * @param pName the name
+         * @param isEscaped is the name escaped or not
+         */
+        private OasisSheetName(final String pName,
+                               final boolean isEscaped) {
+            /* Access the length of the name */
+            int myLen = pName.length();
+
+            /* If the name is escaped */
+            if (isEscaped) {
+                /* Store the escaped name and prepare to edit the name */
+                theEscapedName = pName;
+
+                /* If the name is escaped */
+                if ((pName.charAt(0) == CHAR_APOS)
+                    && (pName.charAt(myLen - 1) == CHAR_APOS)) {
+                    /* Create editor for name */
+                    StringBuilder myBuilder = new StringBuilder(pName);
+
+                    /* Delete the wrapping apostrophes */
+                    myBuilder.deleteCharAt(myLen - 1);
+                    myBuilder.deleteCharAt(0);
+
+                    /* Unescape all instances of double apostrophe */
+                    int iLoc = myBuilder.indexOf(STR_APOS
+                                                 + STR_APOS);
+                    while (iLoc != -1) {
+                        /* Delete escaped apostrophe and search for further characters */
+                        myBuilder.deleteCharAt(iLoc);
+                        iLoc = myBuilder.indexOf(STR_APOS
+                                                 + STR_APOS, iLoc + 1);
+                    }
+
+                    theSheetName = myBuilder.toString();
+                } else {
+                    theSheetName = pName;
+                }
+
+                /* else if the name needs to be escaped */
+            } else if (needsEscaping(pName)) {
+                /* Store the escaped name and prepare to edit the name */
+                theSheetName = pName;
+                StringBuilder myBuilder = new StringBuilder(pName);
+
+                /* Escape all instances of apostrophe */
+                int iLoc = myBuilder.indexOf(STR_APOS);
+                while (iLoc != -1) {
+                    /* Insert additional apostrophe and search for further characters */
+                    myBuilder.insert(iLoc, CHAR_APOS);
+                    iLoc = myBuilder.indexOf(STR_APOS, iLoc + 2);
+                }
+
+                /* Add wrapping apostrophes and format */
+                myBuilder.insert(0, CHAR_APOS);
+                myBuilder.append(CHAR_APOS);
+                theEscapedName = myBuilder.toString();
+
+                /* else standard name */
+            } else {
+                /* store values */
+                theSheetName = pName;
+                theEscapedName = pName;
+            }
+        }
+
+        /**
+         * Does the name need escaping?
+         * @param pName the name to test
+         * @return true/false
+         */
+        private boolean needsEscaping(final String pName) {
+            /* Need to escape if there is a blank in the name */
+            if (pName.contains(" ")) {
+                return true;
+            }
+
+            /* Need to escape if there is an apostrophe in the name */
+            if (pName.contains(STR_APOS)) {
+                return true;
+            }
+
+            /* If the name contains characters */
+            int iLen = pName.length();
+            for (int i = 0; i < iLen; i++) {
+                if (!Character.isDigit(pName.charAt(i))) {
+                    return false;
+                }
+            }
+
+            /* Need to escape */
+            return true;
+        }
     }
 
     /**
@@ -247,8 +414,8 @@ public class OasisCellAddress {
          * @param pLastCell the last cell
          */
         protected OasisCellRange(final String pSheetName,
-                                    final CellPosition pFirstCell,
-                                    final CellPosition pLastCell) {
+                                 final CellPosition pFirstCell,
+                                 final CellPosition pLastCell) {
             /* Store parameters */
             theFirstCell = new OasisCellAddress(pSheetName, pFirstCell);
             theLastCell = new OasisCellAddress(pSheetName, pLastCell);
@@ -262,7 +429,7 @@ public class OasisCellAddress {
          * @param pSingleCell the single cell
          */
         protected OasisCellRange(final String pSheetName,
-                                    final CellPosition pSingleCell) {
+                                 final CellPosition pSingleCell) {
             /* Store parameters */
             theFirstCell = new OasisCellAddress(pSheetName, pSingleCell);
             theLastCell = theFirstCell;
@@ -273,10 +440,10 @@ public class OasisCellAddress {
         /**
          * Constructor.
          * @param pFirstCell the first cell
-         * @param pBottomRight the last cell
+         * @param pLastCell the last cell
          */
         protected OasisCellRange(final OasisCellAddress pFirstCell,
-                                    final OasisCellAddress pLastCell) {
+                                 final OasisCellAddress pLastCell) {
             /* Store parameters */
             theFirstCell = pFirstCell;
             theLastCell = pLastCell;
@@ -286,8 +453,7 @@ public class OasisCellAddress {
 
         /**
          * Constructor.
-         * @param pTopLeft the top left cell
-         * @param pBottomRight the bottom right cell
+         * @param pSingleCell the cell
          */
         protected OasisCellRange(final OasisCellAddress pSingleCell) {
             /* Store parameters */
@@ -303,7 +469,7 @@ public class OasisCellAddress {
          */
         protected OasisCellRange(final String pAddress) {
             /* Locate the split */
-            int iSplit = pAddress.indexOf(':');
+            int iSplit = pAddress.indexOf(CHAR_COLON);
             isSingleCell = (iSplit == -1);
             if (isSingleCell) {
                 theFirstCell = new OasisCellAddress(pAddress);
@@ -311,7 +477,7 @@ public class OasisCellAddress {
                 isSingleSheet = true;
             } else {
                 theFirstCell = new OasisCellAddress(pAddress.substring(0, iSplit));
-                if (pAddress.charAt(iSplit + 1) == '.') {
+                if (pAddress.charAt(iSplit + 1) == CHAR_PERIOD) {
                     theLastCell = new OasisCellAddress(theFirstCell.getSheetName(), pAddress.substring(iSplit + 2));
                     isSingleSheet = true;
                 } else {
@@ -324,17 +490,17 @@ public class OasisCellAddress {
         @Override
         public String toString() {
             /* Build the name */
-            StringBuilder myBuilder = new StringBuilder(32);
+            StringBuilder myBuilder = new StringBuilder();
             myBuilder.append(theFirstCell.toString());
 
             /* If we are not single cell */
             if (!isSingleCell) {
                 /* Format other corner */
-                myBuilder.append(':');
+                myBuilder.append(CHAR_COLON);
                 if (!isSingleSheet) {
                     myBuilder.append(theLastCell.toString());
                 } else {
-                    myBuilder.append('.');
+                    myBuilder.append(CHAR_PERIOD);
                     theLastCell.formatPosition(myBuilder);
                 }
             }

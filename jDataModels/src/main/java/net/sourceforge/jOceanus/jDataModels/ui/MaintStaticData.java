@@ -336,7 +336,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
             /* If we are performing a rewind */
             if (theUpdateSet.equals(o)) {
                 /* Refresh the model */
-                theModel.fireTableDataChanged();
+                theModel.fireNewDataEvents();
             }
         }
     }
