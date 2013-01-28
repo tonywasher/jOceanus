@@ -25,24 +25,22 @@ package net.sourceforge.jOceanus.jMoneyWise.sheets;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * SheetStaticData extension for TaxYearInfoType.
  * @author Tony Washer
  */
-public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
+public class SheetTaxYearInfoType
+        extends SheetStaticData<TaxYearInfoType> {
     /**
      * NamedArea for TaxYearInfoType.
      */
@@ -51,7 +49,8 @@ public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
     /**
      * NameList for TaxYearInfoType.
      */
-    protected static final String AREA_TAXINFOTYPENAMES = TaxYearInfoType.OBJECT_NAME + "Names";
+    protected static final String AREA_TAXINFOTYPENAMES = TaxYearInfoType.OBJECT_NAME
+                                                          + "Names";
 
     /**
      * TaxYearInfoTypes data list.
@@ -108,18 +107,18 @@ public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
     /**
      * Load the InfoTypes from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_TAXINFOTYPES);
+            DataView myView = pWorkBook.getRangeView(AREA_TAXINFOTYPES);
 
             /* Declare the new stage */
             if (!pTask.setNewStage(AREA_TAXINFOTYPES)) {
@@ -130,48 +129,44 @@ public class SheetTaxYearInfoType extends SheetStaticData<TaxYearInfoType> {
             int myCount = 0;
             int mySteps = pTask.getReportingSteps();
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                int myCol = myTop.getCol();
+            /* Count the number of InfoTypes */
+            int myTotal = myView.getRowCount();
 
-                /* Count the number of InfoTypes */
-                int myTotal = myBottom.getRow() - myTop.getRow() + 1;
+            /* Access the list of InfoTypes */
+            TaxYearInfoTypeList myList = pData.getTaxInfoTypes();
 
-                /* Access the list of InfoTypes */
-                TaxYearInfoTypeList myList = pData.getTaxInfoTypes();
+            /* Declare the number of steps */
+            if (!pTask.setNumSteps(myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
+            /* Loop through the rows of the single column range */
+            for (int i = 0; i < myTotal; i++) {
+                /* Access the cell by reference */
+                DataRow myRow = myView.getRowByIndex(i);
+                DataCell myCell = myRow.getCellByIndex(0);
+
+                /* Access value */
+                String myValue = myCell.getStringValue();
+
+                /* Ignore TaxRegime */
+                if (!TaxRegime.OBJECT_NAME.equals(myValue)) {
+                    /* Add the value into the finance tables */
+                    myList.addBasicItem(myValue);
+                }
+
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
-
-                /* Loop through the rows of the single column range */
-                for (int i = myTop.getRow(); i <= myBottom.getRow(); i++) {
-                    /* Access the cell by reference */
-                    Row myRow = mySheet.getRow(i);
-                    Cell myCell = myRow.getCell(myCol);
-                    String myValue = myCell.getStringCellValue();
-
-                    /* Ignore TaxRegime */
-                    if (!TaxRegime.OBJECT_NAME.equals(myValue)) {
-                        /* Add the value into the finance tables */
-                        myList.addBasicItem(myValue);
-                    }
-
-                    /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                        return false;
-                    }
-                }
-
-                /* Sort the list */
-                myList.reSort();
             }
+
+            /* Sort the list */
+            myList.reSort();
+
+            /* Handle Exceptions */
         } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load TaxYearInfoTypes", e);
         }

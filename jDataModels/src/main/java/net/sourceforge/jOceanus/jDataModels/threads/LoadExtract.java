@@ -33,6 +33,7 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jPreferenceSet.FileSelector;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 /**
  * Thread to load data from a spreadsheet. Once the backup is loaded, the current database is loaded and the backup is re-based onto the database so that a
@@ -86,9 +87,10 @@ public class LoadExtract<T extends DataSet<T>>
         /* Determine the archive name */
         File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
         String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
+        WorkBookType myType = myProperties.getEnumValue(BackupPreferences.NAME_BACKUP_TYPE, WorkBookType.class);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Extract to load", myBackupDir, myPrefix, ".xls");
+        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Extract to load", myBackupDir, myPrefix, myType.getExtension());
         myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 
@@ -101,12 +103,6 @@ public class LoadExtract<T extends DataSet<T>>
         /* Load workbook */
         SpreadSheet<T> mySheet = theControl.getSpreadSheet();
         T myData = mySheet.loadExtract(theStatus, myFile);
-
-        /* Initialise the status window */
-        // theStatus.initTask("Analysing Data");
-
-        /* Analyse the Data to ensure that close dates are updated */
-        // myData.analyseData(theControl);
 
         /* Initialise the status window */
         theStatus.initTask("Accessing DataStore");

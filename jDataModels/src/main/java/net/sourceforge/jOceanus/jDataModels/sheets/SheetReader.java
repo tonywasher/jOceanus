@@ -35,21 +35,13 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet.SheetType;
 import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
 import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
+import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipFileContents;
+import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipFileEntry;
 import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipReadFile;
-
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.AreaReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 /**
  * Load control for spreadsheets.
@@ -65,7 +57,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
     /**
      * Spreadsheet.
      */
-    private Workbook theWorkBook = null;
+    private DataWorkBook theWorkBook = null;
 
     /**
      * The DataSet.
@@ -78,9 +70,9 @@ public abstract class SheetReader<T extends DataSet<T>> {
     private List<SheetDataItem<?>> theSheets = null;
 
     /**
-     * Class of output sheet.
+     * Is this a backup sheet.
      */
-    private SheetType theType = null;
+    private boolean isBackup = false;
 
     /**
      * get task control.
@@ -94,8 +86,16 @@ public abstract class SheetReader<T extends DataSet<T>> {
      * get workbook.
      * @return the workbook
      */
-    protected Workbook getWorkBook() {
+    protected DataWorkBook getWorkBook() {
         return theWorkBook;
+    }
+
+    /**
+     * Is the sheet a backup or editable sheet.
+     * @return true/false
+     */
+    protected boolean isBackup() {
+        return isBackup;
     }
 
     /**
@@ -104,14 +104,6 @@ public abstract class SheetReader<T extends DataSet<T>> {
      */
     public T getData() {
         return theData;
-    }
-
-    /**
-     * get sheet type.
-     * @return the sheet type
-     */
-    public SheetType getType() {
-        return theType;
     }
 
     /**
@@ -142,7 +134,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
         /* Protect the workbook retrieval */
         try {
             /* Note the type of file */
-            theType = SheetType.BACKUP;
+            isBackup = true;
 
             /* Access the zip file */
             ZipReadFile myFile = new ZipReadFile(pFile);
@@ -159,11 +151,27 @@ public abstract class SheetReader<T extends DataSet<T>> {
             /* Associate this password hash with the ZipFile */
             myFile.setPasswordHash(myHash);
 
+            /* Access ZipFile contents */
+            ZipFileContents myContents = myFile.getContents();
+
+            /* Loop through the file entries */
+            Iterator<ZipFileEntry> myIterator = myContents.iterator();
+            ZipFileEntry myEntry = null;
+            while (myIterator.hasNext()) {
+                /* Access the entry */
+                myEntry = myIterator.next();
+
+                /* Break loop if we have the right entry */
+                if (myEntry.getFileName().startsWith(SpreadSheet.FILE_NAME)) {
+                    break;
+                }
+            }
+
             /* Access the input stream for the relevant file */
-            myStream = myFile.getInputStream(myFile.getContents().findFileEntry(SpreadSheet.FILE_NAME));
+            myStream = myFile.getInputStream(myEntry);
 
             /* Initialise the workbook */
-            boolean bContinue = initialiseWorkBook(myStream);
+            boolean bContinue = initialiseWorkBook(myStream, WorkBookType.determineType(myEntry.getFileName()));
 
             /* Load the workbook */
             if (bContinue) {
@@ -181,7 +189,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
         } catch (IOException e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Backup Workbook: "
-                    + pFile.getName(), e);
+                                                           + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -212,14 +220,17 @@ public abstract class SheetReader<T extends DataSet<T>> {
         /* Protect the workbook retrieval */
         try {
             /* Note the type of file */
-            theType = SheetType.EXTRACT;
+            isBackup = false;
 
             /* Create an input stream to the file */
             FileInputStream myInFile = new FileInputStream(pFile);
             myStream = new BufferedInputStream(myInFile);
 
+            /* Determine the type of the workbook */
+            WorkBookType myType = WorkBookType.determineType(pFile.getName());
+
             /* Initialise the workbook */
-            boolean bContinue = initialiseWorkBook(myStream);
+            boolean bContinue = initialiseWorkBook(myStream, myType);
 
             /* Load the workbook */
             if (bContinue) {
@@ -237,7 +248,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
         } catch (IOException e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Edit-able Workbook: "
-                    + pFile.getName(), e);
+                                                           + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -271,10 +282,12 @@ public abstract class SheetReader<T extends DataSet<T>> {
      * Create the list of sheets to load.
      * @param pStream the input stream
      * @return continue true/false
+     * @param pType the workBookType
      * @throws JDataException on error
      * @throws IOException on read error
      */
-    private boolean initialiseWorkBook(final InputStream pStream) throws JDataException, IOException {
+    private boolean initialiseWorkBook(final InputStream pStream,
+                                       final WorkBookType pType) throws JDataException, IOException {
         /* Create the new DataSet */
         theData = newDataSet();
 
@@ -282,7 +295,7 @@ public abstract class SheetReader<T extends DataSet<T>> {
         theSheets = new ArrayList<SheetDataItem<?>>();
 
         /* If this is a backup */
-        if (theType == SheetType.BACKUP) {
+        if (isBackup()) {
             /* Add security details */
             theSheets.add(new SheetControlKey(this));
             theSheets.add(new SheetDataKey(this));
@@ -304,11 +317,8 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
         /* Access the workbook from the stream */
         if (bContinue) {
-            theWorkBook = new HSSFWorkbook(pStream);
+            theWorkBook = new DataWorkBook(pStream, pType);
         }
-
-        /* Set the missing Cell Policy */
-        theWorkBook.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL);
 
         /* Return continue status */
         return bContinue;
@@ -329,7 +339,8 @@ public abstract class SheetReader<T extends DataSet<T>> {
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        while ((bContinue) && (myIterator.hasNext())) {
+        while ((bContinue)
+               && (myIterator.hasNext())) {
             /* Access the next sheet */
             mySheet = myIterator.next();
 
@@ -344,97 +355,5 @@ public abstract class SheetReader<T extends DataSet<T>> {
 
         /* Return continue status */
         return bContinue;
-    }
-
-    /**
-     * SheetHelper class.
-     */
-    public static class SheetHelper {
-        /**
-         * The Workbook.
-         */
-        private Workbook theWorkBook = null;
-
-        /**
-         * The FormulaEvaluator.
-         */
-        private FormulaEvaluator theEvaluator = null;
-
-        /**
-         * Constructor.
-         * @param pWorkbook the workbook
-         */
-        public SheetHelper(final HSSFWorkbook pWorkbook) {
-            /* Store the workbook */
-            theWorkBook = pWorkbook;
-
-            /* Create the evaluator */
-            theEvaluator = new HSSFFormulaEvaluator(pWorkbook);
-        }
-
-        /**
-         * Resolve reference.
-         * @param pName the name of the range
-         * @return the AreaReference (or null)
-         */
-        public AreaReference resolveAreaReference(final String pName) {
-            AreaReference myRef = null;
-            Name myName = theWorkBook.getName(pName);
-            if (myName != null) {
-                myRef = new AreaReference(myName.getRefersToFormula());
-            }
-            return myRef;
-        }
-
-        /**
-         * getSheetByName.
-         * @param pName the name of the sheet
-         * @return the Sheet
-         */
-        public Sheet getSheetByName(final String pName) {
-            return theWorkBook.getSheet(pName);
-        }
-
-        /**
-         * Format numeric cell into decimal format.
-         * @param pCell the cell to format
-         * @return the formatted string
-         */
-        public String formatNumericCell(final Cell pCell) {
-            double myDouble;
-            /* If this is a formula cell ensure that it is evaluated */
-            if (pCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-                CellValue myValue = theEvaluator.evaluate(pCell);
-                myDouble = myValue.getNumberValue();
-
-                /* else just extract the value directly */
-            } else {
-                myDouble = pCell.getNumericCellValue();
-            }
-
-            /* return the formatted string */
-            return Double.toString(myDouble);
-        }
-
-        /**
-         * Parse the cell to return an integer.
-         * @param pCell the cell to parse
-         * @return the parsed cell
-         */
-        public Integer parseIntegerCell(final Cell pCell) {
-            double myDouble;
-            /* If this is a formula cell ensure that it is evaluated */
-            if (pCell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-                CellValue myValue = theEvaluator.evaluate(pCell);
-                myDouble = myValue.getNumberValue();
-
-                /* else just extract the value directly */
-            } else {
-                myDouble = pCell.getNumericCellValue();
-            }
-
-            /* Return the value as an integer */
-            return (int) myDouble;
-        }
     }
 }

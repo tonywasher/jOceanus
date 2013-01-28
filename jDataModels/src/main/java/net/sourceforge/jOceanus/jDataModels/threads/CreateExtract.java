@@ -31,13 +31,15 @@ import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
 import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 /**
  * Thread to create a extract spreadsheet of a data set.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
+public class CreateExtract<T extends DataSet<T>>
+        extends WorkerThread<Void> {
     /**
      * Task description.
      */
@@ -87,9 +89,13 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
             /* Determine the archive name */
             File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
             String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
+            WorkBookType myType = myProperties.getEnumValue(BackupPreferences.NAME_BACKUP_TYPE, WorkBookType.class);
 
             /* Determine the name of the file to build */
-            myFile = new File(myBackupDir.getPath() + File.separator + myPrefix + ".xls");
+            myFile = new File(myBackupDir.getPath()
+                              + File.separator
+                              + myPrefix
+                              + myType.getExtension());
 
             /* Create extract */
             SpreadSheet<T> mySheet = theControl.getSpreadSheet();
@@ -100,9 +106,6 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
 
             /* Initialise the status window */
             theStatus.initTask("Reading Extract");
-
-            /* .xls will have been added to the file */
-            myFile = new File(myFile.getPath() + ".xls");
 
             /* Load workbook */
             myData = mySheet.loadExtract(theStatus, myFile);
@@ -116,9 +119,6 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
             /* Initialise the status window */
             theStatus.initTask("Verifying Extract");
 
-            /* Analyse the Data to ensure that close dates are updated */
-            // theControl.analyseData(myData);
-
             /* Create a difference set between the two data copies */
             DataSet<T> myDiff = myData.getDifferenceSet(theControl.getData());
 
@@ -131,7 +131,8 @@ public class CreateExtract<T extends DataSet<T>> extends WorkerThread<Void> {
             /* Catch any exceptions */
         } catch (JDataException e) {
             /* Delete the file */
-            if ((doDelete) && (!myFile.delete())) {
+            if ((doDelete)
+                && (!myFile.delete())) {
                 doDelete = false;
             }
 

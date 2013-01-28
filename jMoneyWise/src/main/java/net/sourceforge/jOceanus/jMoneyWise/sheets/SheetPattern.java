@@ -29,18 +29,15 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
-
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * SheetDataItem extension for Pattern.
@@ -228,18 +225,18 @@ public class SheetPattern
     /**
      * Load the Patterns from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(SheetPattern.AREA_PATTERNS);
+            DataView myView = pWorkBook.getRangeView(AREA_PATTERNS);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -250,66 +247,46 @@ public class SheetPattern
                 return false;
             }
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                int myCol = myTop.getCol();
+            /* Count the number of Patterns */
+            int myTotal = myView.getRowCount();
 
-                /* Count the number of patterns */
-                int myTotal = myBottom.getRow()
-                              - myTop.getRow()
-                              + 1;
+            /* Access the list of patterns */
+            PatternList myList = pData.getPatterns();
 
-                /* Access the list of patterns */
-                PatternList myList = pData.getPatterns();
+            /* Declare the number of steps */
+            if (!pTask.setNumSteps(myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
+            /* Loop through the rows of the table */
+            for (int i = 0; i < myTotal; i++) {
+                /* Access the cell by reference */
+                DataRow myRow = myView.getRowByIndex(i);
+                int iAdjust = 0;
+
+                /* Access strings */
+                String myAccount = myRow.getCellByIndex(iAdjust++).getStringValue();
+                Date myDate = myRow.getCellByIndex(iAdjust++).getDateValue();
+                String myDesc = myRow.getCellByIndex(iAdjust++).getStringValue();
+                String myAmount = myRow.getCellByIndex(iAdjust++).getStringValue();
+                String myPartner = myRow.getCellByIndex(iAdjust++).getStringValue();
+                String myTransType = myRow.getCellByIndex(iAdjust++).getStringValue();
+                boolean isCredit = myRow.getCellByIndex(iAdjust++).getBooleanValue();
+                String myFrequency = myRow.getCellByIndex(iAdjust++).getStringValue();
+
+                /* Add the value into the finance tables */
+                myList.addOpenItem(0, myDate, myDesc, isCredit ? myPartner : myAccount, isCredit ? myAccount : myPartner, myTransType, myAmount, myFrequency);
+
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
-
-                /* Loop through the rows of the table */
-                for (int i = myTop.getRow(); i <= myBottom.getRow(); i++) {
-                    /* Access the row */
-                    Row myRow = mySheet.getRow(i);
-                    int iAdjust = 0;
-
-                    /* Access strings */
-                    String myAccount = myRow.getCell(myCol
-                                                     + iAdjust++).getStringCellValue();
-                    Date myDate = myRow.getCell(myCol
-                                                + iAdjust++).getDateCellValue();
-                    String myDesc = myRow.getCell(myCol
-                                                  + iAdjust++).getStringCellValue();
-                    String myAmount = pHelper.formatNumericCell(myRow.getCell(myCol
-                                                                              + iAdjust++));
-                    String myPartner = myRow.getCell(myCol
-                                                     + iAdjust++).getStringCellValue();
-                    String myTransType = myRow.getCell(myCol
-                                                       + iAdjust++).getStringCellValue();
-                    boolean isCredit = myRow.getCell(myCol
-                                                     + iAdjust++).getBooleanCellValue();
-                    String myFrequency = myRow.getCell(myCol
-                                                       + iAdjust++).getStringCellValue();
-
-                    /* Add the value into the finance tables */
-                    myList.addOpenItem(0, myDate, myDesc, isCredit ? myPartner : myAccount, isCredit ? myAccount : myPartner, myTransType, myAmount,
-                            myFrequency);
-
-                    /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0)
-                        && (!pTask.setStepsDone(myCount))) {
-                        return false;
-                    }
-                }
-
-                /* Sort the list */
-                myList.reSort();
             }
+
+            /* Sort the list */
+            myList.reSort();
 
             /* Handle exceptions */
         } catch (JDataException e) {

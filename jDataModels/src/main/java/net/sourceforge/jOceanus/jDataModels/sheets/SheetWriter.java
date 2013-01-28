@@ -28,32 +28,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet.SheetType;
-import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JDilution;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
 import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
 import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipWriteFile;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Workbook;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 /**
  * Write control for spreadsheets.
@@ -62,11 +48,6 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public abstract class SheetWriter<T extends DataSet<T>> {
     /**
-     * Font Height.
-     */
-    private static final int FONT_HEIGHT = 10;
-
-    /**
      * Task control.
      */
     private final TaskControl<T> theTask;
@@ -74,7 +55,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     /**
      * Writable spreadsheet.
      */
-    private Workbook theWorkBook = null;
+    private DataWorkBook theWorkBook = null;
 
     /**
      * The DataSet.
@@ -87,14 +68,9 @@ public abstract class SheetWriter<T extends DataSet<T>> {
     private List<SheetDataItem<?>> theSheets = null;
 
     /**
-     * Class of output sheet.
+     * Is this a backup sheet.
      */
-    private SheetType theType = null;
-
-    /**
-     * Map of Allocated styles.
-     */
-    private Map<CellStyleType, CellStyle> theMap = null;
+    private boolean isBackup = false;
 
     /**
      * get thread status.
@@ -108,8 +84,16 @@ public abstract class SheetWriter<T extends DataSet<T>> {
      * get workbook.
      * @return the workbook
      */
-    protected Workbook getWorkBook() {
+    protected DataWorkBook getWorkBook() {
         return theWorkBook;
+    }
+
+    /**
+     * Is the sheet a backup or editable sheet.
+     * @return true/false
+     */
+    protected boolean isBackup() {
+        return isBackup;
     }
 
     /**
@@ -118,14 +102,6 @@ public abstract class SheetWriter<T extends DataSet<T>> {
      */
     public T getData() {
         return theData;
-    }
-
-    /**
-     * get sheet type.
-     * @return the sheet type
-     */
-    public SheetType getType() {
-        return theType;
     }
 
     /**
@@ -148,21 +124,20 @@ public abstract class SheetWriter<T extends DataSet<T>> {
      * Create a Backup Workbook.
      * @param pData Data to write out
      * @param pFile the backup file to write to
+     * @param pType the workBookType
      * @throws JDataException on error
      */
     public void createBackup(final T pData,
-                             final File pFile) throws JDataException {
+                             final File pFile,
+                             final WorkBookType pType) throws JDataException {
         OutputStream myStream = null;
         ZipWriteFile myZipFile = null;
         boolean bSuccess = false;
 
-        /* The Target file has ".zip" appended */
-        File myTgtFile = new File(pFile.getPath() + ".zip");
-
         /* Protect the workbook access */
         try {
             /* Note the type of file */
-            theType = SheetType.BACKUP;
+            isBackup = true;
 
             /* Record the DataSet */
             theData = pData;
@@ -173,11 +148,13 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             PasswordHash myHash = mySecure.clonePasswordHash(myBase);
 
             /* Create the new output Zip file */
-            myZipFile = new ZipWriteFile(myHash, myTgtFile);
-            myStream = myZipFile.getOutputStream(new File(SpreadSheet.FILE_NAME));
+            myZipFile = new ZipWriteFile(myHash, pFile);
+            String myName = SpreadSheet.FILE_NAME
+                            + pType.getExtension();
+            myStream = myZipFile.getOutputStream(new File(myName));
 
             /* Initialise the WorkBook */
-            initialiseWorkBook();
+            initialiseWorkBook(pType);
 
             /* Write the data to the work book */
             writeWorkBook(myStream);
@@ -194,7 +171,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         } catch (IOException e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to create Backup Workbook: "
-                    + pFile.getName(), e);
+                                                           + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -209,7 +186,8 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Delete the file on error */
-            if ((!bSuccess) && (!myTgtFile.delete())) {
+            if ((!bSuccess)
+                && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
                 myStream = null;
             }
@@ -224,27 +202,28 @@ public abstract class SheetWriter<T extends DataSet<T>> {
      */
     public void createExtract(final T pData,
                               final File pFile) throws JDataException {
+        /* Declare variables */
         OutputStream myStream = null;
         FileOutputStream myOutFile = null;
         boolean bSuccess = false;
 
-        /* The Target file has ".xls" appended */
-        File myTgtFile = new File(pFile.getPath() + ".xls");
-
         /* Protect the workbook access */
         try {
             /* Note the type of file */
-            theType = SheetType.EXTRACT;
+            isBackup = false;
 
             /* Record the DataSet */
             theData = pData;
 
             /* Create an output stream to the file */
-            myOutFile = new FileOutputStream(myTgtFile);
+            myOutFile = new FileOutputStream(pFile);
             myStream = new BufferedOutputStream(myOutFile);
 
+            /* Determine the type of the workbook */
+            WorkBookType myType = WorkBookType.determineType(pFile.getName());
+
             /* Initialise the WorkBook */
-            initialiseWorkBook();
+            initialiseWorkBook(myType);
 
             /* Write the data to the work book */
             writeWorkBook(myStream);
@@ -257,7 +236,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         } catch (IOException e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to create Editable Workbook: "
-                    + myTgtFile.getName(), e);
+                                                           + pFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -272,7 +251,8 @@ public abstract class SheetWriter<T extends DataSet<T>> {
             }
 
             /* Delete the file on error */
-            if ((!bSuccess) && (!myTgtFile.delete())) {
+            if ((!bSuccess)
+                && (!pFile.delete())) {
                 /* Nothing that we can do. At least we tried */
                 myStream = null;
             }
@@ -286,18 +266,18 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
     /**
      * Create the list of sheets to write.
+     * @param pType the workBookType
      * @throws JDataException on error
      */
-    private void initialiseWorkBook() throws JDataException {
+    private void initialiseWorkBook(final WorkBookType pType) throws JDataException {
         /* Create the workbook attached to the output stream */
-        theWorkBook = new HSSFWorkbook();
-        createCellStyles();
+        theWorkBook = new DataWorkBook(pType);
 
         /* Initialise the list */
         theSheets = new ArrayList<SheetDataItem<?>>();
 
         /* If this is a backup */
-        if (theType == SheetType.BACKUP) {
+        if (isBackup()) {
             /* Add security details */
             theSheets.add(new SheetControlKey(this));
             theSheets.add(new SheetDataKey(this));
@@ -308,138 +288,6 @@ public abstract class SheetWriter<T extends DataSet<T>> {
 
         /* register additional sheets */
         registerSheets();
-    }
-
-    /**
-     * Obtain the required CellStyle.
-     * @param pType the CellStyleType
-     * @return the required CellStyle
-     */
-    protected CellStyle getCellStyle(final CellStyleType pType) {
-        return theMap.get(pType);
-    }
-
-    /**
-     * Obtain the required CellStyle.
-     * @param pValue the value
-     * @return the required CellStyle
-     */
-    protected CellStyle getCellStyle(final JDecimal pValue) {
-        if (pValue instanceof JMoney) {
-            return getCellStyle(CellStyleType.Money);
-        }
-        if (pValue instanceof JUnits) {
-            return getCellStyle(CellStyleType.Units);
-        }
-        if (pValue instanceof JRate) {
-            return getCellStyle(CellStyleType.Rate);
-        }
-        if (pValue instanceof JPrice) {
-            return getCellStyle(CellStyleType.Price);
-        }
-        if (pValue instanceof JDilution) {
-            return getCellStyle(CellStyleType.Dilution);
-        }
-        return null;
-    }
-
-    /**
-     * Create the standard CellStyles.
-     */
-    private void createCellStyles() {
-        /* Create the map */
-        theMap = new EnumMap<CellStyleType, CellStyle>(CellStyleType.class);
-
-        /* Ensure that we can create data formats */
-        DataFormat myFormat = theWorkBook.createDataFormat();
-
-        /* Create the Standard fonts */
-        Font myValueFont = theWorkBook.createFont();
-        myValueFont.setFontName("Arial");
-        myValueFont.setFontHeightInPoints((short) FONT_HEIGHT);
-        Font myNumberFont = theWorkBook.createFont();
-        myNumberFont.setFontName("Courier");
-        myNumberFont.setFontHeightInPoints((short) FONT_HEIGHT);
-        Font myHeaderFont = theWorkBook.createFont();
-        myHeaderFont.setFontName("Arial");
-        myHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        myHeaderFont.setFontHeightInPoints((short) FONT_HEIGHT);
-
-        /* Create the Date Cell Style */
-        CellStyle myStyle = theWorkBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("dd-MMM-yy"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        theMap.put(CellStyleType.Date, myStyle);
-
-        /* Create the Money Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("£#,##0.00"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Money, myStyle);
-
-        /* Create the Price Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("£#,##0.0000"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Price, myStyle);
-
-        /* Create the Units Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("#,##0.0000"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Units, myStyle);
-
-        /* Create the Rate Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("0.00%"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Rate, myStyle);
-
-        /* Create the Dilution Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("0.000000"));
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        myStyle.setFont(myNumberFont);
-        theMap.put(CellStyleType.Dilution, myStyle);
-
-        /* Create the Integer Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("0"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Integer, myStyle);
-
-        /* Create the Boolean Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setFont(myValueFont);
-        myStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        theMap.put(CellStyleType.Boolean, myStyle);
-
-        /* Create the String Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setFont(myValueFont);
-        myStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        theMap.put(CellStyleType.String, myStyle);
-
-        /* Create the Header Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setFont(myHeaderFont);
-        myStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        myStyle.setLocked(true);
-        theMap.put(CellStyleType.Header, myStyle);
-
-        /* Create the Trailer Cell Style */
-        myStyle = theWorkBook.createCellStyle();
-        myStyle.setFillForegroundColor(IndexedColors.DARK_GREEN.getIndex());
-        myStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        myStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        myStyle.setLocked(true);
-        theMap.put(CellStyleType.Trailer, myStyle);
     }
 
     /**
@@ -458,7 +306,8 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         boolean bContinue = theTask.setNumStages(theSheets.size() + 1);
 
         /* Loop through the sheets */
-        while ((bContinue) && (myIterator.hasNext())) {
+        while ((bContinue)
+               && (myIterator.hasNext())) {
             /* Access the next sheet */
             mySheet = myIterator.next();
 
@@ -474,72 +323,12 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         /* If we have created the workbook OK */
         if (bContinue) {
             /* Write it out to disk and close the stream */
-            theWorkBook.write(pStream);
+            theWorkBook.saveToStream(pStream);
         }
 
         /* Check for cancellation */
         if (!bContinue) {
             throw new JDataException(ExceptionClass.EXCEL, "Operation Cancelled");
         }
-    }
-
-    /**
-     * Cell Styles.
-     */
-    protected enum CellStyleType {
-        /**
-         * Integer.
-         */
-        Integer,
-
-        /**
-         * Boolean.
-         */
-        Boolean,
-
-        /**
-         * Rate.
-         */
-        Rate,
-
-        /**
-         * Dilution.
-         */
-        Dilution,
-
-        /**
-         * Price.
-         */
-        Price,
-
-        /**
-         * Money.
-         */
-        Money,
-
-        /**
-         * Units.
-         */
-        Units,
-
-        /**
-         * Date.
-         */
-        Date,
-
-        /**
-         * String.
-         */
-        String,
-
-        /**
-         * Header.
-         */
-        Header,
-
-        /**
-         * Trailer.
-         */
-        Trailer;
     }
 }

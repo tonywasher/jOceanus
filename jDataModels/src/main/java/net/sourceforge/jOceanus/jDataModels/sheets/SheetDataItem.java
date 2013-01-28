@@ -25,30 +25,21 @@ package net.sourceforge.jOceanus.jDataModels.sheets;
 import java.util.Date;
 import java.util.Iterator;
 
-import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetWriter.CellStyleType;
-import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet.SheetType;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
-
-import org.apache.poi.hssf.usermodel.DVConstraint;
-import org.apache.poi.hssf.usermodel.HSSFDataValidation;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellRangeAddressList;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.CellPosition;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataSheet;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
@@ -65,11 +56,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * ControlId column.
      */
     protected static final int COL_CONTROLID = COL_ID + 1;
-
-    /**
-     * Character width.
-     */
-    protected static final int WIDTH_CHAR = 256;
 
     /**
      * Date width.
@@ -122,19 +108,19 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     private SheetReader<?> theReader = null;
 
     /**
-     * The output sheet.
-     */
-    private SheetWriter<?> theWriter = null;
-
-    /**
      * The workbook.
      */
-    private Workbook theWorkBook = null;
+    private DataWorkBook theWorkBook = null;
 
     /**
      * Is the spreadsheet a backup spreadsheet or an edit-able one?
      */
     private final boolean isBackup;
+
+    /**
+     * Do we need two passes to load the spreadSheet?
+     */
+    private boolean isDoubleLoad = false;
 
     /**
      * Do we adjust columns in the spreadsheet for an encrypted data item?
@@ -149,22 +135,17 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     /**
      * The name of the related range.
      */
-    private String theRangeName = null;
+    private final String theRangeName;
 
     /**
      * The WorkSheet of the range.
      */
-    private Sheet theWorkSheet = null;
-
-    /**
-     * DataFormatter.
-     */
-    private DataFormatter theFormatter = null;
+    private DataSheet theWorkSheet = null;
 
     /**
      * The Active row.
      */
-    private Row theActiveRow = null;
+    private DataRow theActiveRow = null;
 
     /**
      * The Row number of the current row.
@@ -175,11 +156,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * The Row number of the base row.
      */
     private int theBaseRow = 0;
-
-    /**
-     * The Column number of the base column.
-     */
-    private int theBaseCol = 0;
 
     /**
      * Is the sheet a backup or editable sheet.
@@ -200,10 +176,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         theTask = pReader.getTask();
         theReader = pReader;
         theRangeName = pRange;
-        theFormatter = new DataFormatter();
 
         /* Note whether this is a backup */
-        isBackup = (pReader.getType() == SheetType.BACKUP);
+        isBackup = pReader.isBackup();
     }
 
     /**
@@ -215,12 +190,11 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                             final String pRange) {
         /* Store parameters */
         theTask = pWriter.getTask();
-        theWriter = pWriter;
         theWorkBook = pWriter.getWorkBook();
         theRangeName = pRange;
 
         /* Note whether this is a backup */
-        isBackup = (pWriter.getType() == SheetType.BACKUP);
+        isBackup = pWriter.isBackup();
     }
 
     /**
@@ -235,6 +209,14 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     }
 
     /**
+     * Request double load.
+     */
+    protected void requestDoubleLoad() {
+        /* Store request */
+        isDoubleLoad = true;
+    }
+
+    /**
      * Load the DataItems from a spreadsheet.
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
@@ -245,12 +227,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             /* Access the workbook */
             theWorkBook = theReader.getWorkBook();
 
-            /* Find the range of cells */
-            AreaReference myRange = null;
-            Name myName = theWorkBook.getName(theRangeName);
-            if (myName != null) {
-                myRange = new AreaReference(myName.getRefersToFormula());
-            }
+            /* Access the view of the range */
+            DataView myView = theWorkBook.getRangeView(theRangeName);
 
             /* Declare the new stage */
             if (!theTask.setNewStage(theRangeName)) {
@@ -261,35 +239,43 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int mySteps = theTask.getReportingSteps();
             int myCount = 0;
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                theWorkSheet = theWorkBook.getSheet(myTop.getSheetName());
-                theBaseCol = myTop.getCol();
+            /* Determine count of rows */
+            int myTotal = myView.getRowCount();
 
-                /* Count the number of data items */
-                int myTotal = myBottom.getRow()
-                              - myTop.getRow()
-                              + 1;
+            /* Declare the number of steps */
+            if (!theTask.setNumSteps((isDoubleLoad) ? myTotal << 1 : myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!theTask.setNumSteps(myTotal)) {
-                    return false;
+            /* Loop through the rows of the range */
+            for (theCurrRow = 0; theCurrRow < myTotal; theCurrRow++) {
+                /* Access the row */
+                theActiveRow = myView.getRowByIndex(theCurrRow);
+
+                /* load the item */
+                if (isBackup) {
+                    loadSecureItem();
+                } else {
+                    loadOpenItem();
                 }
 
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0)
+                    && (!theTask.setStepsDone(myCount))) {
+                    return false;
+                }
+            }
+
+            /* If we need a second pass */
+            if (isDoubleLoad) {
                 /* Loop through the rows of the range */
-                for (theCurrRow = myTop.getRow(); theCurrRow <= myBottom.getRow(); theCurrRow++) {
+                for (theCurrRow = 0; theCurrRow < myTotal; theCurrRow++) {
                     /* Access the row */
-                    theActiveRow = theWorkSheet.getRow(theCurrRow);
+                    theActiveRow = myView.getRowByIndex(theCurrRow);
 
                     /* load the item */
-                    if (isBackup) {
-                        loadSecureItem();
-                    } else {
-                        loadOpenItem();
-                    }
+                    loadSecondPass();
 
                     /* Report the progress */
                     myCount++;
@@ -298,13 +284,13 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                         return false;
                     }
                 }
-
-                /* Sort the list */
-                theList.reSort();
-
-                /* Post process the load */
-                postProcessOnLoad();
             }
+
+            /* Sort the list */
+            theList.reSort();
+
+            /* Post process the load */
+            postProcessOnLoad();
 
             /* Handle exceptions */
         } catch (JDataException e) {
@@ -330,7 +316,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             }
 
             /* Create the sheet */
-            theWorkSheet = theWorkBook.createSheet(theRangeName);
+            theWorkSheet = theWorkBook.newSheet(theRangeName);
 
             /* Access the number of reporting steps */
             int mySteps = theTask.getReportingSteps();
@@ -345,7 +331,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Initialise counts */
             theBaseRow = 0;
-            theBaseCol = 0;
             theCurrRow = theBaseRow;
             int myCount = 0;
 
@@ -409,7 +394,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         /* Initialise the result */
         int myCol = pColumn;
 
-        /* If we are should adjust the column */
+        /* If we should adjust the column */
         if ((isAdjusted)
             && (myCol > COL_CONTROLID)) {
             /* Decrement column */
@@ -431,6 +416,13 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * @throws JDataException on error
      */
     protected void loadOpenItem() throws JDataException {
+    }
+
+    /**
+     * Load second pass.
+     * @throws JDataException on error
+     */
+    protected void loadSecondPass() throws JDataException {
     }
 
     /**
@@ -496,31 +488,22 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      */
     protected void newRow() {
         /* Create the new row */
-        theActiveRow = theWorkSheet.createRow(theCurrRow);
+        theActiveRow = theWorkSheet.createRowByIndex(theCurrRow);
     }
 
     /**
      * Name the basic range.
      * @param pLastCol the last column in the range
+     * @throws JDataException on error
      */
-    protected void nameRange(final int pLastCol) {
+    protected void nameRange(final int pLastCol) throws JDataException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pLastCol);
 
-        /* Build the basic name */
-        Name myName = theWorkBook.createName();
-        String mySheet = theWorkSheet.getSheetName();
-        myName.setNameName(theRangeName);
-
-        /* Build the area reference */
-        CellReference myFirst = new CellReference(mySheet, theBaseRow, theBaseCol, true, true);
-        CellReference myLast = new CellReference(mySheet, theCurrRow - 1, theBaseCol
-                                                                          + myCol, true, true);
-        AreaReference myArea = new AreaReference(myFirst, myLast);
-        String myRef = myArea.formatAsString();
-
-        /* Set into Name */
-        myName.setRefersToFormula(myRef);
+        /* Name the range */
+        CellPosition myFirst = new CellPosition(0, theBaseRow);
+        CellPosition myLast = new CellPosition(myCol, theCurrRow - 1);
+        theWorkSheet.declareRange(theRangeName, myFirst, myLast);
         // writeString(pNumCols-1, "EndOfData");
     }
 
@@ -528,51 +511,34 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Name the column range.
      * @param pOffset offset of column
      * @param pName name of range
+     * @throws JDataException on error
      */
     protected void nameColumnRange(final int pOffset,
-                                   final String pName) {
+                                   final String pName) throws JDataException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
-        /* Build the basic name */
-        Name myName = theWorkBook.createName();
-        String mySheet = theWorkSheet.getSheetName();
-        myName.setNameName(pName);
-
-        /* Build the area reference */
-        CellReference myFirst = new CellReference(mySheet, theBaseRow, theBaseCol
-                                                                       + myCol, true, true);
-        CellReference myLast = new CellReference(mySheet, theCurrRow - 1, theBaseCol
-                                                                          + myCol, true, true);
-        AreaReference myArea = new AreaReference(myFirst, myLast);
-        String myRef = myArea.formatAsString();
-
-        /* Set into Name */
-        myName.setRefersToFormula(myRef);
+        /* Name the range */
+        CellPosition myFirst = new CellPosition(myCol, theBaseRow);
+        CellPosition myLast = new CellPosition(myCol, theCurrRow - 1);
+        theWorkSheet.declareRange(pName, myFirst, myLast);
     }
 
     /**
      * Apply Data Validation.
      * @param pOffset offset of column
      * @param pList name of validation range
+     * @throws JDataException on error
      */
     public void applyDataValidation(final int pOffset,
-                                    final String pList) {
+                                    final String pList) throws JDataException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
-        /* Create the CellAddressList */
-        CellRangeAddressList myRange = new CellRangeAddressList(theBaseRow, theCurrRow - 1, myCol, myCol);
-
-        /* Create the constraint */
-        DVConstraint myConstraint = DVConstraint.createFormulaListConstraint(pList);
-
-        /* Link the two and use drip down arrow */
-        DataValidation myValidation = new HSSFDataValidation(myRange, myConstraint);
-        myValidation.setSuppressDropDownArrow(false);
-
-        /* Apply to the sheet */
-        theWorkSheet.addValidationData(myValidation);
+        /* Name the range */
+        CellPosition myFirst = new CellPosition(myCol, theBaseRow);
+        CellPosition myLast = new CellPosition(myCol, theCurrRow - 1);
+        theWorkSheet.applyDataValidation(myFirst, myLast, pList);
     }
 
     /**
@@ -580,7 +546,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      */
     protected void freezeTitles() {
         /* Freeze the top row */
-        theWorkSheet.createFreezePane(theBaseCol + 2, theBaseRow);
+        CellPosition myPoint = new CellPosition(2, theBaseRow);
+        theWorkSheet.createFreezePane(myPoint);
     }
 
     /**
@@ -592,8 +559,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply to the sheet */
-        theWorkSheet.setColumnHidden(theBaseCol
-                                     + myCol, true);
+        theWorkSheet.setColumnHidden(myCol, true);
     }
 
     /**
@@ -605,11 +571,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(theBaseCol
-                                           + myCol, theWriter.getCellStyle(CellStyleType.Date));
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, WIDTH_DATE
-                                             * WIDTH_CHAR);
+        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Date);
+        theWorkSheet.setColumnWidth(myCol, WIDTH_DATE);
     }
 
     /**
@@ -621,11 +584,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(theBaseCol
-                                           + myCol, theWriter.getCellStyle(CellStyleType.Money));
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, WIDTH_MONEY
-                                             * WIDTH_CHAR);
+        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Money);
+        theWorkSheet.setColumnWidth(myCol, WIDTH_MONEY);
     }
 
     /**
@@ -637,11 +597,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(theBaseCol
-                                           + myCol, theWriter.getCellStyle(CellStyleType.Price));
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, WIDTH_PRICE
-                                             * WIDTH_CHAR);
+        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Price);
+        theWorkSheet.setColumnWidth(myCol, WIDTH_PRICE);
     }
 
     /**
@@ -653,11 +610,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(theBaseCol
-                                           + myCol, theWriter.getCellStyle(CellStyleType.Units));
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, WIDTH_UNITS
-                                             * WIDTH_CHAR);
+        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Units);
+        theWorkSheet.setColumnWidth(myCol, WIDTH_UNITS);
     }
 
     /**
@@ -669,11 +623,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(theBaseCol
-                                           + myCol, theWriter.getCellStyle(CellStyleType.Rate));
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, WIDTH_RATE
-                                             * WIDTH_CHAR);
+        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Rate);
+        theWorkSheet.setColumnWidth(myCol, WIDTH_RATE);
     }
 
     /**
@@ -685,11 +636,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(theBaseCol
-                                           + myCol, theWriter.getCellStyle(CellStyleType.Dilution));
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, WIDTH_DILUTION
-                                             * WIDTH_CHAR);
+        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Dilution);
+        theWorkSheet.setColumnWidth(myCol, WIDTH_DILUTION);
     }
 
     /**
@@ -701,11 +649,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(theBaseCol
-                                           + myCol, theWriter.getCellStyle(CellStyleType.Boolean));
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, WIDTH_BOOL
-                                             * WIDTH_CHAR);
+        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Boolean);
+        theWorkSheet.setColumnWidth(myCol, WIDTH_BOOL);
     }
 
     /**
@@ -717,11 +662,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(theBaseCol
-                                           + myCol, theWriter.getCellStyle(CellStyleType.Integer));
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, WIDTH_INT
-                                             * WIDTH_CHAR);
+        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Integer);
+        theWorkSheet.setColumnWidth(myCol, WIDTH_INT);
     }
 
     /**
@@ -735,9 +677,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply to the sheet */
-        theWorkSheet.setColumnWidth(theBaseCol
-                                    + myCol, pNumChars
-                                             * WIDTH_CHAR);
+        theWorkSheet.setColumnWidth(myCol, pNumChars);
     }
 
     /**
@@ -750,15 +690,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        Cell myCell = theActiveRow.getCell(theBaseCol
-                                           + myCol);
-        Integer myInt = null;
-        if (myCell != null) {
-            myInt = Integer.parseInt(myCell.getStringCellValue());
-        }
+        DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return myInt;
+        return (myCell != null) ? myCell.getIntegerValue() : null;
     }
 
     /**
@@ -771,15 +706,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        Cell myCell = theActiveRow.getCell(theBaseCol
-                                           + myCol);
-        Boolean myValue = null;
-        if (myCell != null) {
-            myValue = myCell.getBooleanCellValue();
-        }
+        DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return myValue;
+        return (myCell != null) ? myCell.getBooleanValue() : null;
     }
 
     /**
@@ -792,15 +722,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        Cell myCell = theActiveRow.getCell(theBaseCol
-                                           + myCol);
-        Date myDate = null;
-        if (myCell != null) {
-            myDate = myCell.getDateCellValue();
-        }
+        DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return myDate;
+        return (myCell != null) ? myCell.getDateValue() : null;
     }
 
     /**
@@ -813,23 +738,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        Cell myCell = theActiveRow.getCell(theBaseCol
-                                           + myCol);
-        String myValue = null;
-        if (myCell != null) {
-            /* If we are trying for a string representation of a non-string field */
-            if (myCell.getCellType() != Cell.CELL_TYPE_STRING) {
-                /* Pick up the formatted value */
-                myValue = theFormatter.formatCellValue(myCell);
-
-                /* Else pick up the standard value */
-            } else {
-                myValue = myCell.getStringCellValue();
-            }
-        }
+        DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return myValue;
+        return (myCell != null) ? myCell.getStringValue() : null;
     }
 
     /**
@@ -843,15 +755,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        Cell myCell = theActiveRow.getCell(theBaseCol
-                                           + myCol);
-        byte[] myBytes = null;
-        if (myCell != null) {
-            myBytes = DataConverter.hexStringToBytes(myCell.getStringCellValue());
-        }
+        DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return myBytes;
+        return (myCell != null) ? myCell.getBytesValue() : null;
     }
 
     /**
@@ -861,34 +768,32 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * @throws JDataException on error
      */
     protected char[] loadChars(final int pOffset) throws JDataException {
-        /* Access the bytes */
-        byte[] myBytes = loadBytes(pOffset);
-        char[] myChars = null;
-        if (myBytes != null) {
-            myChars = DataConverter.bytesToCharArray(myBytes);
-        }
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Access the cells by reference */
+        DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return myChars;
+        return (myCell != null) ? myCell.getCharArrayValue() : null;
     }
 
     /**
      * Write an integer to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the integer
+     * @throws JDataException on error
      */
     protected void writeInteger(final int pOffset,
-                                final Integer pValue) {
+                                final Integer pValue) throws JDataException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            Cell myCell = theActiveRow.createCell(theBaseCol
-                                                  + myCol);
-            myCell.setCellValue(pValue.toString());
-            myCell.setCellStyle(theWriter.getCellStyle(CellStyleType.Integer));
+            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            myCell.setIntegerValue(pValue);
         }
     }
 
@@ -896,19 +801,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a boolean to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the boolean
+     * @throws JDataException on error
      */
     protected void writeBoolean(final int pOffset,
-                                final Boolean pValue) {
+                                final Boolean pValue) throws JDataException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            Cell myCell = theActiveRow.createCell(theBaseCol
-                                                  + myCol);
-            myCell.setCellValue(pValue.booleanValue());
-            myCell.setCellStyle(theWriter.getCellStyle(CellStyleType.Boolean));
+            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            myCell.setBooleanValue(pValue);
         }
     }
 
@@ -916,19 +820,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a date to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the date
+     * @throws JDataException on error
      */
     protected void writeDate(final int pOffset,
-                             final JDateDay pValue) {
+                             final JDateDay pValue) throws JDataException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            Cell myCell = theActiveRow.createCell(theBaseCol
-                                                  + myCol);
-            myCell.setCellValue(pValue.getDate());
-            myCell.setCellStyle(theWriter.getCellStyle(CellStyleType.Date));
+            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            myCell.setDateValue(pValue.getDate());
         }
     }
 
@@ -936,19 +839,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a decimal to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the number
+     * @throws JDataException on error
      */
     protected void writeDecimal(final int pOffset,
-                                final JDecimal pValue) {
+                                final JDecimal pValue) throws JDataException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            Cell myCell = theActiveRow.createCell(theBaseCol
-                                                  + myCol);
-            myCell.setCellValue(pValue.doubleValue());
-            myCell.setCellStyle(theWriter.getCellStyle(pValue));
+            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            myCell.setDecimalValue(pValue);
         }
     }
 
@@ -956,19 +858,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a Header to the WorkSheet.
      * @param pOffset the column offset
      * @param pHeader the header text
+     * @throws JDataException on error
      */
     protected void writeHeader(final int pOffset,
-                               final String pHeader) {
+                               final String pHeader) throws JDataException {
         /* If we have non-null value */
         if (pHeader != null) {
             /* Adjust column if necessary */
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            Cell myCell = theActiveRow.createCell(theBaseCol
-                                                  + myCol);
-            myCell.setCellValue(pHeader);
-            myCell.setCellStyle(theWriter.getCellStyle(CellStyleType.Header));
+            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            myCell.setHeaderValue(pHeader);
         }
     }
 
@@ -976,19 +877,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a string to the WorkSheet.
      * @param pOffset the column offset
      * @param pValue the string
+     * @throws JDataException on error
      */
     protected void writeString(final int pOffset,
-                               final String pValue) {
+                               final String pValue) throws JDataException {
         /* If we have non-null value */
         if (pValue != null) {
             /* Adjust column if necessary */
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            Cell myCell = theActiveRow.createCell(theBaseCol
-                                                  + myCol);
-            myCell.setCellValue(pValue);
-            myCell.setCellStyle(theWriter.getCellStyle(CellStyleType.String));
+            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            myCell.setStringValue(pValue);
         }
     }
 
@@ -996,19 +896,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Write a byte array to the WorkSheet.
      * @param pOffset the column offset
      * @param pBytes the byte array
+     * @throws JDataException on error
      */
     protected void writeBytes(final int pOffset,
-                              final byte[] pBytes) {
+                              final byte[] pBytes) throws JDataException {
         /* If we have non-null bytes */
         if (pBytes != null) {
             /* Adjust column if necessary */
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            Cell myCell = theActiveRow.createCell(theBaseCol
-                                                  + myCol);
-            myCell.setCellValue(DataConverter.bytesToHexString(pBytes));
-            myCell.setCellStyle(theWriter.getCellStyle(CellStyleType.String));
+            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            myCell.setBytesValue(pBytes);
         }
     }
 
@@ -1022,9 +921,12 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                               final char[] pChars) throws JDataException {
         /* If we have non-null chars */
         if (pChars != null) {
-            /* Create the cell and add to the sheet */
-            byte[] myBytes = DataConverter.charsToByteArray(pChars);
-            writeBytes(pOffset, myBytes);
+            /* Adjust column if necessary */
+            int myCol = adjustColumn(pOffset);
+
+            /* Create the cell and set its value */
+            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            myCell.setCharArrayValue(pChars);
         }
     }
 }

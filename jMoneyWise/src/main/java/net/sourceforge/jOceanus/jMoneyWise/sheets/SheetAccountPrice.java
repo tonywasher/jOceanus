@@ -28,18 +28,15 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * SheetDataItem extension for AccountPrice.
@@ -181,20 +178,20 @@ public class SheetAccountPrice
     /**
      * Load the Prices from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pDilution the dilution events to modify the prices with
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData,
                                          final DilutionEventList pDilution) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_SPOTPRICES);
+            DataView myView = pWorkBook.getRangeView(AREA_SPOTPRICES);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -205,72 +202,61 @@ public class SheetAccountPrice
                 return false;
             }
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                int myDateCol = myTop.getCol();
-                Row myActRow = mySheet.getRow(myTop.getRow());
+            /* Count the number of Prices */
+            int myRows = myView.getRowCount();
+            int myCols = myView.getColumnCount();
+            int myTotal = (myRows - 1)
+                          * (myCols - 2);
 
-                /* Count the number of tax classes */
-                int myTotal = (myBottom.getRow()
-                               - myTop.getRow() + 1);
-                myTotal *= (myBottom.getCol()
-                            - myTop.getCol() - 1);
+            /* Declare the number of steps */
+            if (!pTask.setNumSteps(myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
-                    return false;
-                }
+            /* Loop through the rows of the table */
+            DataRow myActRow = myView.getRowByIndex(0);
+            for (int i = 1; i < myRows; i++) {
+                /* Access the cell by reference */
+                DataRow myRow = myView.getRowByIndex(i);
 
-                /* Loop through the rows of the table */
-                for (int i = myTop.getRow() + 1; i <= myBottom.getRow(); i++) {
+                /* Access date */
+                DataCell myCell = myRow.getCellByIndex(0);
+                Date myDate = myCell.getDateValue();
 
-                    /* Access the row */
-                    Row myRow = mySheet.getRow(i);
+                /* Loop through the columns of the table */
+                for (int j = 2; j < myCols; j++) {
 
-                    /* Access date */
-                    Cell myCell = myRow.getCell(myDateCol);
-                    Date myDate = myCell.getDateCellValue();
+                    /* Access account */
+                    myCell = myActRow.getCellByIndex(j);
+                    if (myCell == null) {
+                        continue;
+                    }
+                    String myAccount = myCell.getStringValue();
 
-                    /* Loop through the columns of the table */
-                    for (int j = myTop.getCol() + 2; j <= myBottom.getCol(); j++) {
+                    /* Handle price which may be missing */
+                    myCell = myRow.getCellByIndex(j);
+                    if (myCell != null) {
+                        /* Access the formatted cell */
+                        String myPrice = myCell.getStringValue();
 
-                        /* Access account */
-                        myCell = myActRow.getCell(j);
-                        if (myCell == null) {
-                            continue;
-                        }
-                        String myAccount = myCell.getStringCellValue();
-
-                        /* Handle price which may be missing */
-                        myCell = myRow.getCell(j);
-                        String myPrice = null;
-                        if (myCell != null) {
-                            /* Access the formatted cell */
-                            myPrice = pHelper.formatNumericCell(myCell);
-
-                            /* If the price is non-zero */
-                            if (!myPrice.equals("0.0")) {
-                                /* Add the item to the data set */
-                                pDilution.addPrice(myAccount, myDate, myPrice);
-                            }
-                        }
-
-                        /* Report the progress */
-                        myCount++;
-                        if (((myCount % mySteps) == 0)
-                            && (!pTask.setStepsDone(myCount))) {
-                            return false;
+                        /* If the price is non-zero */
+                        if (!myPrice.equals("0.0")) {
+                            /* Add the item to the data set */
+                            pDilution.addPrice(myAccount, myDate, myPrice);
                         }
                     }
-                }
 
-                /* Sort the list */
-                pData.getPrices().reSort();
+                    /* Report the progress */
+                    myCount++;
+                    if (((myCount % mySteps) == 0)
+                        && (!pTask.setStepsDone(myCount))) {
+                        return false;
+                    }
+                }
             }
+
+            /* Sort the list */
+            pData.getPrices().reSort();
 
             /* Handle exceptions */
         } catch (JDataException e) {

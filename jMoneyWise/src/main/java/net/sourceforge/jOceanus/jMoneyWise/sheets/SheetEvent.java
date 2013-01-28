@@ -31,7 +31,6 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
@@ -44,12 +43,10 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.YearRange;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * SheetDataItem extension for Event.
@@ -105,7 +102,7 @@ public class SheetEvent
     /**
      * DataInfoSet Helper.
      */
-    private final SheetEventInfoSet theInfoSheet = new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
+    private final SheetEventInfoSet theInfoSheet;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -120,6 +117,9 @@ public class SheetEvent
         theList = myData.getEvents();
         theInfoList = myData.getEventInfo();
         setDataList(theList);
+
+        /* Set up info Sheet */
+        theInfoSheet = isBackup() ? null : new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
     }
 
     /**
@@ -135,6 +135,9 @@ public class SheetEvent
         theList = myData.getEvents();
         theInfoList = myData.getEventInfo();
         setDataList(theList);
+
+        /* Set up info Sheet */
+        theInfoSheet = isBackup() ? null : new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
     }
 
     @Override
@@ -236,11 +239,12 @@ public class SheetEvent
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange(COL_TRAN);
-
         /* If we are not creating a backup */
         if (!isBackup()) {
+            /* Name range plus infoSet */
+            nameRange(COL_TRAN
+                      + theInfoSheet.getXtraColumnCount());
+
             /* Apply validation */
             applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
             applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
@@ -248,20 +252,25 @@ public class SheetEvent
 
             /* Set validation for ThirdParty */
             theInfoSheet.applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);
+
+            /* else this is a backup */
+        } else {
+            /* Name basic range */
+            nameRange(COL_TRAN);
         }
     }
 
     /**
      * Load the Accounts from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pRange the range of tax years
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData,
                                          final YearRange pRange) throws JDataException {
         /* Protect against exceptions */
@@ -284,7 +293,7 @@ public class SheetEvent
                 String myRangeName = j.toString();
                 myRangeName = "Finance"
                               + myRangeName.substring(2);
-                AreaReference myRange = pHelper.resolveAreaReference(myRangeName);
+                DataView myView = pWorkBook.getRangeView(myRangeName);
 
                 /* Declare the new stage */
                 if (!pTask.setNewStage("Events from "
@@ -292,123 +301,105 @@ public class SheetEvent
                     return false;
                 }
 
-                /* If we found the range OK */
-                if (myRange != null) {
-                    /* Access the relevant sheet and Cell references */
-                    CellReference myTop = myRange.getFirstCell();
-                    CellReference myBottom = myRange.getLastCell();
-                    Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                    int myCol = myTop.getCol();
+                /* Count the number of Events */
+                int myTotal = myView.getRowCount() - 1;
 
-                    /* Count the number of Events */
-                    int myTotal = myBottom.getRow()
-                                  - myTop.getRow();
+                /* Declare the number of steps */
+                if (!pTask.setNumSteps(myTotal)) {
+                    return false;
+                }
 
-                    /* Declare the number of steps */
-                    if (!pTask.setNumSteps(myTotal)) {
+                /* Loop through the rows of the table */
+                for (int i = 1; i <= myTotal; i++) {
+                    /* Access the row */
+                    DataRow myRow = myView.getRowByIndex(i);
+                    int iAdjust = 0;
+
+                    /* Access date */
+                    Date myDate = myRow.getCellByIndex(iAdjust++).getDateValue();
+
+                    /* Access the values */
+                    String myDesc = myRow.getCellByIndex(iAdjust++).getStringValue();
+                    String myAmount = myRow.getCellByIndex(iAdjust++).getStringValue();
+                    String myDebit = myRow.getCellByIndex(iAdjust++).getStringValue();
+                    String myCredit = myRow.getCellByIndex(iAdjust++).getStringValue();
+
+                    /* Handle Dilution which may be missing */
+                    DataCell myCell = myRow.getCellByIndex(iAdjust++);
+                    String myDilution = null;
+                    if (myCell != null) {
+                        myDilution = myCell.getStringValue();
+                        if (!myDilution.startsWith("0.")) {
+                            myDilution = null;
+                        }
+                    }
+
+                    /* Handle Units which may be missing */
+                    myCell = myRow.getCellByIndex(iAdjust++);
+                    String myUnitsVal = null;
+                    if (myCell != null) {
+                        myUnitsVal = myCell.getStringValue();
+                    }
+
+                    /* Handle transaction type */
+                    String myTranType = myRow.getCellByIndex(iAdjust++).getStringValue();
+
+                    /* Handle Tax Credit which may be missing */
+                    myCell = myRow.getCellByIndex(iAdjust++);
+                    String myTaxCredit = null;
+                    if (myCell != null) {
+                        myTaxCredit = myCell.getStringValue();
+                    }
+
+                    /* Handle Years which may be missing */
+                    myCell = myRow.getCellByIndex(iAdjust++);
+                    Integer myYears = null;
+                    if (myCell != null) {
+                        myYears = myCell.getIntegerValue();
+                    }
+
+                    /* Add the event */
+                    Event myEvent = myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myTranType);
+
+                    /* If we have units */
+                    if (myUnitsVal != null) {
+                        JUnits myUnits = myParser.parseUnitsValue(myUnitsVal);
+                        JUnits myValue = myUnits;
+                        boolean isCredit = myEvent.getCredit().isPriced();
+                        if ((myEvent.isStockSplit() || myEvent.isAdminCharge())
+                            && (!myUnits.isPositive())) {
+                            myValue = new JUnits(myValue);
+                            myValue.negate();
+                            isCredit = false;
+                        }
+                        myInfoList.addOpenItem(0, myEvent, isCredit ? EventInfoClass.CreditUnits : EventInfoClass.DebitUnits, myValue);
+                    }
+
+                    /* Add information relating to the account */
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.Dilution, myDilution);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.QualifyYears, myYears);
+
+                    /* Validate the event */
+                    myEvent.validate();
+                    if (myEvent.hasErrors()) {
+                        throw new JDataException(ExceptionClass.VALIDATE, myEvent, "Validation error");
+                    }
+
+                    /* Report the progress */
+                    myCount++;
+                    if (((myCount % mySteps) == 0)
+                        && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
-
-                    /* Loop through the rows of the table */
-                    for (int i = myTop.getRow() + 1; i <= myBottom.getRow(); i++) {
-                        /* Access the row */
-                        Row myRow = mySheet.getRow(i);
-                        int iAdjust = 0;
-
-                        /* Access date */
-                        Date myDate = myRow.getCell(myCol
-                                                    + iAdjust++).getDateCellValue();
-
-                        /* Access the values */
-                        String myDesc = myRow.getCell(myCol
-                                                      + iAdjust++).getStringCellValue();
-                        String myAmount = pHelper.formatNumericCell(myRow.getCell(myCol
-                                                                                  + iAdjust++));
-                        String myDebit = myRow.getCell(myCol
-                                                       + iAdjust++).getStringCellValue();
-                        String myCredit = myRow.getCell(myCol
-                                                        + iAdjust++).getStringCellValue();
-
-                        /* Handle Dilution which may be missing */
-                        Cell myCell = myRow.getCell(myCol
-                                                    + iAdjust++);
-                        String myDilution = null;
-                        if (myCell != null) {
-                            myDilution = pHelper.formatNumericCell(myCell);
-                            if (!myDilution.startsWith("0.")) {
-                                myDilution = null;
-                            }
-                        }
-
-                        /* Handle Units which may be missing */
-                        myCell = myRow.getCell(myCol
-                                               + iAdjust++);
-                        String myUnitsVal = null;
-                        if (myCell != null) {
-                            myUnitsVal = pHelper.formatNumericCell(myCell);
-                        }
-
-                        /* Handle transaction type */
-                        String myTranType = myRow.getCell(myCol
-                                                          + iAdjust++).getStringCellValue();
-
-                        /* Handle Tax Credit which may be missing */
-                        myCell = myRow.getCell(myCol
-                                               + iAdjust++);
-                        String myTaxCredit = null;
-                        if (myCell != null) {
-                            myTaxCredit = pHelper.formatNumericCell(myCell);
-                        }
-
-                        /* Handle Years which may be missing */
-                        myCell = myRow.getCell(myCol
-                                               + iAdjust++);
-                        Integer myYears = null;
-                        if (myCell != null) {
-                            myYears = pHelper.parseIntegerCell(myCell);
-                        }
-
-                        /* Add the event */
-                        Event myEvent = myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myTranType);
-
-                        /* If we have units */
-                        if (myUnitsVal != null) {
-                            JUnits myUnits = myParser.parseUnitsValue(myUnitsVal);
-                            JUnits myValue = myUnits;
-                            boolean isCredit = myEvent.getCredit().isPriced();
-                            if ((myEvent.isStockSplit() || myEvent.isAdminCharge())
-                                && (!myUnits.isPositive())) {
-                                myValue = new JUnits(myValue);
-                                myValue.negate();
-                                isCredit = false;
-                            }
-                            myInfoList.addOpenItem(0, myEvent, isCredit ? EventInfoClass.CreditUnits : EventInfoClass.DebitUnits, myValue);
-                        }
-
-                        /* Add information relating to the account */
-                        myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);
-                        myInfoList.addOpenItem(0, myEvent, EventInfoClass.Dilution, myDilution);
-                        myInfoList.addOpenItem(0, myEvent, EventInfoClass.QualifyYears, myYears);
-
-                        /* Validate the event */
-                        myEvent.validate();
-                        if (myEvent.hasErrors()) {
-                            throw new JDataException(ExceptionClass.VALIDATE, myEvent, "Validation error");
-                        }
-
-                        /* Report the progress */
-                        myCount++;
-                        if (((myCount % mySteps) == 0)
-                            && (!pTask.setStepsDone(myCount))) {
-                            return false;
-                        }
-                    }
-
-                    /* Sort the list */
-                    myList.reSort();
-                    myInfoList.reSort();
                 }
+
+                /* Sort the list */
+                myList.reSort();
+                myInfoList.reSort();
             }
+
+            /* Handle Exceptions */
         } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load Events", e);
         }

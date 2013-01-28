@@ -35,13 +35,13 @@ import net.sourceforge.jOceanus.jPreferenceSet.FileSelector;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 
 /**
- * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database is loaded
- * and the backup is re-based onto the database so that a correct list of additions, changes and deletions is
- * built. These changes remain in memory and should be committed to the database later.
+ * Thread to load changes from an encrypted backup. Once the backup is loaded, the current database is loaded and the backup is re-based onto the database so
+ * that a correct list of additions, changes and deletions is built. These changes remain in memory and should be committed to the database later.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
+public class LoadBackup<T extends DataSet<T>>
+        extends LoaderThread<T> {
     /**
      * Task description.
      */
@@ -87,8 +87,7 @@ public class LoadBackup<T extends DataSet<T>> extends LoaderThread<T> {
         String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
 
         /* Determine the name of the file to load */
-        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir,
-                myPrefix, ".zip");
+        FileSelector myDialog = new FileSelector(theControl.getFrame(), "Select Backup to load", myBackupDir, myPrefix, SpreadSheet.ZIPFILE_EXT);
         myDialog.showDialog();
         File myFile = myDialog.getSelectedFile();
 

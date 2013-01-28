@@ -46,6 +46,8 @@ public class FinanceWriter
      */
     @Override
     protected void registerSheets() {
+        boolean isBackup = isBackup();
+
         /* Register the sheets */
         addSheet(new SheetAccountType(this));
         addSheet(new SheetTransactionType(this));
@@ -56,13 +58,19 @@ public class FinanceWriter
         addSheet(new SheetAccountInfoType(this));
         addSheet(new SheetEventInfoType(this));
         addSheet(new SheetTaxYear(this));
-        addSheet(new SheetTaxYearInfo(this));
+        if (isBackup) {
+            addSheet(new SheetTaxYearInfo(this));
+        }
         addSheet(new SheetAccount(this));
         addSheet(new SheetAccountRate(this));
         addSheet(new SheetAccountPrice(this));
         addSheet(new SheetPattern(this));
-        addSheet(new SheetAccountInfo(this));
+        if (isBackup()) {
+            addSheet(new SheetAccountInfo(this));
+        }
         addSheet(new SheetEvent(this));
-        addSheet(new SheetEventInfo(this));
+        if (isBackup()) {
+            addSheet(new SheetEventInfo(this));
+        }
     }
 }

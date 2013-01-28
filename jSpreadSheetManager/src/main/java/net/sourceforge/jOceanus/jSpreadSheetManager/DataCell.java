@@ -34,19 +34,19 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.CellStyleType;
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.WorkBookType;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 
 /**
  * Class representing a cell within a sheet or a view.
  */
-public class SheetCell {
+public class DataCell {
     /**
      * Sheet type.
      */
@@ -60,12 +60,12 @@ public class SheetCell {
     /**
      * The underlying row.
      */
-    private final SheetRow theRow;
+    private final DataRow theRow;
 
     /**
      * The underlying view.
      */
-    private final SheetView theView;
+    private final DataView theView;
 
     /**
      * The position of the cell.
@@ -78,11 +78,6 @@ public class SheetCell {
     private final HSSFCell theExcelCell;
 
     /**
-     * DataFormatter.
-     */
-    private final DataFormatter theFormatter;
-
-    /**
      * The Oasis Cell.
      */
     private final OdfTableCell theOasisCell;
@@ -91,7 +86,7 @@ public class SheetCell {
      * Obtain the underlying sheet.
      * @return the underlying sheet
      */
-    public SheetSheet getSheet() {
+    public DataSheet getSheet() {
         return theRow.getSheet();
     }
 
@@ -99,7 +94,7 @@ public class SheetCell {
      * Obtain the underlying row.
      * @return the underlying row
      */
-    public SheetRow getRow() {
+    public DataRow getRow() {
         return theRow;
     }
 
@@ -107,7 +102,7 @@ public class SheetCell {
      * Obtain the underlying view.
      * @return the underlying view
      */
-    public SheetView getView() {
+    public DataView getView() {
         return theView;
     }
 
@@ -123,16 +118,14 @@ public class SheetCell {
      * Constructor.
      * @param pRow the row for the cell
      * @param pExcelCell the Excel Cell
-     * @param pFormatter the data formatter
      */
-    protected SheetCell(final SheetRow pRow,
-                        final HSSFCell pExcelCell,
-                        final DataFormatter pFormatter) {
+    protected DataCell(final DataRow pRow,
+                       final HSSFCell pExcelCell) {
         /* Store parameters */
         theRow = pRow;
         theExcelCell = pExcelCell;
         theOasisCell = null;
-        theBookType = WorkBookType.EXCELXLS;
+        theBookType = WorkBookType.ExcelXLS;
         theView = pRow.getView();
         int myIndex = pExcelCell.getColumnIndex();
         if (theView != null) {
@@ -140,7 +133,6 @@ public class SheetCell {
         }
         thePosition = new CellPosition(pRow.getRowIndex(), myIndex);
         isReadOnly = pRow.isReadOnly();
-        theFormatter = pFormatter;
     }
 
     /**
@@ -148,13 +140,13 @@ public class SheetCell {
      * @param pRow the row for the cell
      * @param pOasisCell the Oasis Cell
      */
-    protected SheetCell(final SheetRow pRow,
-                        final OdfTableCell pOasisCell) {
+    protected DataCell(final DataRow pRow,
+                       final OdfTableCell pOasisCell) {
         /* Store parameters */
         theRow = pRow;
         theExcelCell = null;
         theOasisCell = pOasisCell;
-        theBookType = WorkBookType.OASISODS;
+        theBookType = WorkBookType.OasisODS;
         theView = pRow.getView();
         int myIndex = pOasisCell.getColumnIndex();
         if (theView != null) {
@@ -162,7 +154,6 @@ public class SheetCell {
         }
         thePosition = new CellPosition(pRow.getRowIndex(), myIndex);
         isReadOnly = pRow.isReadOnly();
-        theFormatter = null;
     }
 
     /**
@@ -181,9 +172,9 @@ public class SheetCell {
      */
     public Boolean getBooleanValue() {
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 return theExcelCell.getBooleanCellValue();
-            case OASISODS:
+            case OasisODS:
                 return theOasisCell.getBooleanValue();
             default:
                 return null;
@@ -196,9 +187,9 @@ public class SheetCell {
      */
     public Date getDateValue() {
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 return theExcelCell.getDateCellValue();
-            case OASISODS:
+            case OasisODS:
                 Calendar myCalendar = theOasisCell.getDateValue();
                 return (myCalendar == null) ? null : myCalendar.getTime();
             default:
@@ -211,7 +202,17 @@ public class SheetCell {
      * @return the integer value
      */
     public Integer getIntegerValue() {
-        return Integer.parseInt(getStringValue());
+        Double myValue;
+        switch (theBookType) {
+            case ExcelXLS:
+                myValue = theExcelCell.getNumericCellValue();
+                return (myValue == null) ? null : myValue.intValue();
+            case OasisODS:
+                myValue = theOasisCell.getDoubleValue();
+                return (myValue == null) ? null : myValue.intValue();
+            default:
+                return null;
+        }
     }
 
     /**
@@ -220,17 +221,27 @@ public class SheetCell {
      */
     public String getStringValue() {
         switch (theBookType) {
-            case EXCELXLS:
-                /* If we are trying for a string representation of a non-string field */
-                if (theExcelCell.getCellType() != Cell.CELL_TYPE_STRING) {
-                    /* Pick up the formatted value */
-                    return theFormatter.formatCellValue(theExcelCell);
+            case ExcelXLS:
+                /* Handle the various field types */
+                switch (theExcelCell.getCellType()) {
+                    case Cell.CELL_TYPE_STRING:
+                    default:
+                        return theExcelCell.getStringCellValue();
 
-                    /* else just get the standard value */
-                } else {
-                    return theExcelCell.getStringCellValue();
+                    case Cell.CELL_TYPE_NUMERIC:
+                        /* Pick up the formatted value */
+                        return Double.toString(theExcelCell.getNumericCellValue());
+
+                    case Cell.CELL_TYPE_BOOLEAN:
+                        /* Pick up the formatted value */
+                        return theRow.formatCellValue(theExcelCell);
+
+                    case Cell.CELL_TYPE_FORMULA:
+                        /* Pick up the formatted value */
+                        CellValue myValue = theRow.evaluateFormula(theExcelCell);
+                        return myValue.formatAsString();
                 }
-            case OASISODS:
+            case OasisODS:
                 return theOasisCell.getStringValue();
             default:
                 return null;
@@ -266,10 +277,10 @@ public class SheetCell {
         checkReadOnly();
 
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 theExcelCell.setCellValue((String) null);
                 break;
-            case OASISODS:
+            case OasisODS:
                 theOasisCell.removeContent();
                 break;
             default:
@@ -291,10 +302,10 @@ public class SheetCell {
             checkReadOnly();
 
             switch (theBookType) {
-                case EXCELXLS:
+                case ExcelXLS:
                     theExcelCell.setCellValue(pValue);
                     break;
-                case OASISODS:
+                case OasisODS:
                     theOasisCell.setBooleanValue(pValue);
                     break;
                 default:
@@ -320,10 +331,10 @@ public class SheetCell {
             checkReadOnly();
 
             switch (theBookType) {
-                case EXCELXLS:
+                case ExcelXLS:
                     theExcelCell.setCellValue(pValue);
                     break;
-                case OASISODS:
+                case OasisODS:
                     Calendar myCalendar = Calendar.getInstance();
                     myCalendar.setTime(pValue);
                     theOasisCell.setDateValue(myCalendar);
@@ -351,13 +362,13 @@ public class SheetCell {
             checkReadOnly();
 
             /* Convert to string */
-            String myValue = pValue.toString();
+            Double myValue = pValue.doubleValue();
             switch (theBookType) {
-                case EXCELXLS:
+                case ExcelXLS:
                     theExcelCell.setCellValue(myValue);
                     break;
-                case OASISODS:
-                    theOasisCell.setStringValue(myValue);
+                case OasisODS:
+                    theOasisCell.setDoubleValue(myValue);
                     break;
                 default:
                     break;
@@ -382,10 +393,10 @@ public class SheetCell {
             checkReadOnly();
 
             switch (theBookType) {
-                case EXCELXLS:
+                case ExcelXLS:
                     theExcelCell.setCellValue(pValue);
                     break;
-                case OASISODS:
+                case OasisODS:
                     theOasisCell.setStringValue(pValue);
                     break;
                 default:
@@ -411,10 +422,10 @@ public class SheetCell {
             checkReadOnly();
 
             switch (theBookType) {
-                case EXCELXLS:
+                case ExcelXLS:
                     theExcelCell.setCellValue(pValue.doubleValue());
                     break;
-                case OASISODS:
+                case OasisODS:
                     theOasisCell.setDoubleValue(pValue.doubleValue());
                     break;
                 default:

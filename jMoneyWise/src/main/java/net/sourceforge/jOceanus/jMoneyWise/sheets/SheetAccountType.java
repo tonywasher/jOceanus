@@ -25,23 +25,21 @@ package net.sourceforge.jOceanus.jMoneyWise.sheets;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * SheetStaticData extension for AccountType.
  * @author Tony Washer
  */
-public class SheetAccountType extends SheetStaticData<AccountType> {
+public class SheetAccountType
+        extends SheetStaticData<AccountType> {
     /**
      * NamedArea for AccountTypes.
      */
@@ -50,7 +48,8 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
     /**
      * NameList for AccountTypes.
      */
-    protected static final String AREA_ACCOUNTTYPENAMES = AccountType.OBJECT_NAME + "Names";
+    protected static final String AREA_ACCOUNTTYPENAMES = AccountType.OBJECT_NAME
+                                                          + "Names";
 
     /**
      * AccountTypes data list.
@@ -126,18 +125,18 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
     /**
      * Load the Account Types from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_ACCOUNTTYPES);
+            DataView myView = pWorkBook.getRangeView(AREA_ACCOUNTTYPES);
 
             /* Declare the new stage */
             if (!pTask.setNewStage(AREA_ACCOUNTTYPES)) {
@@ -148,44 +147,37 @@ public class SheetAccountType extends SheetStaticData<AccountType> {
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                int myCol = myTop.getCol();
+            /* Count the number of AccountTypes */
+            int myTotal = myView.getRowCount();
 
-                /* Count the number of account types */
-                int myTotal = myBottom.getRow() - myTop.getRow() + 1;
+            /* Access the list of account types */
+            AccountTypeList myList = pData.getAccountTypes();
 
-                /* Access the list of account types */
-                AccountTypeList myList = pData.getAccountTypes();
+            /* Declare the number of steps */
+            if (!pTask.setNumSteps(myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
+            /* Loop through the rows of the single column range */
+            for (int i = 0; i < myTotal; i++) {
+                /* Access the cell by reference */
+                DataRow myRow = myView.getRowByIndex(i);
+                DataCell myCell = myRow.getCellByIndex(0);
+
+                /* Add the value into the finance tables */
+                myList.addBasicItem(myCell.getStringValue());
+
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
-
-                /* Loop through the rows of the single column range */
-                for (int i = myTop.getRow(); i <= myBottom.getRow(); i++) {
-                    /* Access the cell by reference */
-                    Row myRow = mySheet.getRow(i);
-                    Cell myCell = myRow.getCell(myCol);
-
-                    /* Add the value into the finance tables */
-                    myList.addBasicItem(myCell.getStringCellValue());
-
-                    /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                        return false;
-                    }
-                }
-
-                /* Sort the list */
-                myList.reSort();
             }
+
+            /* Sort the list */
+            myList.reSort();
+
             /* Handle exceptions */
         } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Account Types", e);

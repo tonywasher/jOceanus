@@ -30,7 +30,6 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
@@ -39,12 +38,10 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * SheetDataItem extension for Account.
@@ -96,7 +93,7 @@ public class SheetAccount
     /**
      * DataInfoSet Helper.
      */
-    private final SheetAccountInfoSet theInfoSheet = new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CLOSED);
+    private final SheetAccountInfoSet theInfoSheet;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -111,6 +108,18 @@ public class SheetAccount
         theList = myData.getAccounts();
         theInfoList = myData.getAccountInfo();
         setDataList(theList);
+
+        /* If this is a backup load */
+        if (isBackup()) {
+            /* No need for info sheet */
+            theInfoSheet = null;
+
+            /* else extract load */
+        } else {
+            /* Set up info Sheet and ask for two-pass load */
+            theInfoSheet = new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CLOSED);
+            requestDoubleLoad();
+        }
     }
 
     /**
@@ -126,6 +135,9 @@ public class SheetAccount
         theList = myData.getAccounts();
         theInfoList = myData.getAccountInfo();
         setDataList(theList);
+
+        /* Set up info Sheet */
+        theInfoSheet = isBackup() ? null : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CLOSED);
     }
 
     @Override
@@ -158,7 +170,16 @@ public class SheetAccount
         Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Load the item */
-        Account myAccount = theList.addOpenItem(myID, myName, myActType, myDesc, isClosed);
+        theList.addOpenItem(myID, myName, myActType, myDesc, isClosed);
+    }
+
+    @Override
+    protected void loadSecondPass() throws JDataException {
+        /* Access the Account Id */
+        Integer myID = loadInteger(COL_ID);
+
+        /* Access the account */
+        Account myAccount = theList.findItemById(myID);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myAccount);
@@ -212,11 +233,12 @@ public class SheetAccount
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange(COL_CLOSED);
-
         /* If we are not creating a backup */
         if (!isBackup()) {
+            /* Name range plus infoSet */
+            nameRange(COL_CLOSED
+                      + theInfoSheet.getXtraColumnCount());
+
             /* Set the name column range */
             nameColumnRange(COL_NAME, AREA_ACCOUNTNAMES);
 
@@ -224,24 +246,29 @@ public class SheetAccount
             applyDataValidation(COL_ACCOUNTTYPE, SheetAccountType.AREA_ACCOUNTTYPENAMES);
             theInfoSheet.applyDataValidation(AccountInfoClass.Parent, AREA_ACCOUNTNAMES);
             theInfoSheet.applyDataValidation(AccountInfoClass.Alias, AREA_ACCOUNTNAMES);
+
+            /* else this is a backup */
+        } else {
+            /* Name basic range */
+            nameRange(COL_CLOSED);
         }
     }
 
     /**
      * Load the Accounts from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_ACCOUNTS);
+            DataView myView = pWorkBook.getRangeView("AccountsTable");
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -252,92 +279,75 @@ public class SheetAccount
                 return false;
             }
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                int myCol = myTop.getCol();
+            /* Count the number of accounts */
+            int myTotal = myView.getRowCount();
 
-                /* Count the number of accounts */
-                int myTotal = myBottom.getRow()
-                              - myTop.getRow()
-                              + 1;
+            /* Access the list of accounts */
+            AccountList myList = pData.getAccounts();
+            AccountInfoList myInfoList = pData.getAccountInfo();
 
-                /* Access the list of accounts */
-                AccountList myList = pData.getAccounts();
-                AccountInfoList myInfoList = pData.getAccountInfo();
+            /* Declare the number of steps */
+            if (!pTask.setNumSteps(myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
+            /* Loop through the rows of the table in reverse order */
+            for (int i = myTotal - 1; i >= 0; i--) {
+                /* Access the row by reference */
+                DataRow myRow = myView.getRowByIndex(i);
+                int iAdjust = 0;
+
+                /* Access account and account type */
+                String myName = myRow.getCellByIndex(iAdjust++).getStringValue();
+                String myAcType = myRow.getCellByIndex(iAdjust++).getStringValue();
+
+                /* Handle maturity which may be missing */
+                DataCell myCell = myRow.getCellByIndex(iAdjust++);
+                Date myMaturity = null;
+                if (myCell != null) {
+                    myMaturity = myCell.getDateValue();
+                }
+
+                /* Handle parent which may be missing */
+                myCell = myRow.getCellByIndex(iAdjust++);
+                String myParent = null;
+                if (myCell != null) {
+                    myParent = myCell.getStringValue();
+                }
+
+                /* Handle alias which may be missing */
+                myCell = myRow.getCellByIndex(iAdjust++);
+                String myAlias = null;
+                if (myCell != null) {
+                    myAlias = myCell.getStringValue();
+                }
+
+                /* Handle closed which may be missing */
+                myCell = myRow.getCellByIndex(iAdjust++);
+                Boolean isClosed = Boolean.FALSE;
+                if (myCell != null) {
+                    isClosed = Boolean.TRUE;
+                }
+
+                /* Add the value into the finance tables */
+                Account myAccount = myList.addOpenItem(0, myName, myAcType, null, isClosed);
+
+                /* Add information relating to the account */
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Parent, myParent);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Alias, myAlias);
+
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
-
-                /* Loop through the rows of the table in reverse order */
-                for (int i = myBottom.getRow(); i >= myTop.getRow(); i--) {
-                    /* Access the row */
-                    Row myRow = mySheet.getRow(i);
-                    int iAdjust = 0;
-
-                    /* Access account and account type */
-                    String myName = myRow.getCell(myCol
-                                                  + iAdjust++).getStringCellValue();
-                    String myAcType = myRow.getCell(myCol
-                                                    + iAdjust++).getStringCellValue();
-
-                    /* Handle maturity which may be missing */
-                    Cell myCell = myRow.getCell(myCol
-                                                + iAdjust++);
-                    Date myMaturity = null;
-                    if (myCell != null) {
-                        myMaturity = myCell.getDateCellValue();
-                    }
-
-                    /* Handle parent which may be missing */
-                    myCell = myRow.getCell(myCol
-                                           + iAdjust++);
-                    String myParent = null;
-                    if (myCell != null) {
-                        myParent = myCell.getStringCellValue();
-                    }
-
-                    /* Handle alias which may be missing */
-                    myCell = myRow.getCell(myCol
-                                           + iAdjust++);
-                    String myAlias = null;
-                    if (myCell != null) {
-                        myAlias = myCell.getStringCellValue();
-                    }
-
-                    /* Handle closed which may be missing */
-                    myCell = myRow.getCell(myCol
-                                           + iAdjust++);
-                    Boolean isClosed = Boolean.FALSE;
-                    if (myCell != null) {
-                        isClosed = Boolean.TRUE;
-                    }
-
-                    /* Add the value into the finance tables */
-                    Account myAccount = myList.addOpenItem(0, myName, myAcType, null, isClosed);
-
-                    /* Add information relating to the account */
-                    myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);
-                    myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Parent, myParent);
-                    myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Alias, myAlias);
-
-                    /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0)
-                        && (!pTask.setStepsDone(myCount))) {
-                        return false;
-                    }
-                }
-
-                /* Sort the lists */
-                myList.reSort();
-                myInfoList.reSort();
             }
+
+            /* Sort the lists */
+            myList.reSort();
+            myInfoList.reSort();
 
             /* Handle exceptions */
         } catch (JDataException e) {

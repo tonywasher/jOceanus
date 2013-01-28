@@ -32,7 +32,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
  * WorkBook class.
  * @author Tony Washer
  */
-public class SheetWorkBook {
+public class DataWorkBook {
     /**
      * Font Height.
      */
@@ -116,19 +116,19 @@ public class SheetWorkBook {
      * @param pType the workbook type
      * @throws JDataException on error
      */
-    public SheetWorkBook(final InputStream pInput,
-                         final WorkBookType pType) throws JDataException {
+    public DataWorkBook(final InputStream pInput,
+                        final WorkBookType pType) throws JDataException {
         /* This is a readOnly sheet */
         isReadOnly = true;
 
         /* Switch on workbook type */
         switch (pType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 theExcelBook = new ExcelWorkBook(pInput);
                 theOasisBook = null;
                 theBookType = pType;
                 break;
-            case OASISODS:
+            case OasisODS:
                 theOasisBook = new OasisWorkBook(pInput);
                 theExcelBook = null;
                 theBookType = pType;
@@ -144,18 +144,18 @@ public class SheetWorkBook {
      * @param pType the workbook type
      * @throws JDataException on error
      */
-    public SheetWorkBook(final WorkBookType pType) throws JDataException {
+    public DataWorkBook(final WorkBookType pType) throws JDataException {
         /* This is not a readOnly sheet */
         isReadOnly = false;
 
         /* Switch on workbook type */
         switch (pType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 theExcelBook = new ExcelWorkBook();
                 theOasisBook = null;
                 theBookType = pType;
                 break;
-            case OASISODS:
+            case OasisODS:
                 theOasisBook = new OasisWorkBook();
                 theExcelBook = null;
                 theBookType = pType;
@@ -174,10 +174,10 @@ public class SheetWorkBook {
     public void saveToStream(final OutputStream pOutput) throws JDataException {
         /* Switch on workbook type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 theExcelBook.saveToStream(pOutput);
                 break;
-            case OASISODS:
+            case OasisODS:
                 theOasisBook.saveToStream(pOutput);
                 break;
             default:
@@ -191,15 +191,15 @@ public class SheetWorkBook {
      * @return the new sheet
      * @throws JDataException on error
      */
-    public SheetSheet newSheet(final String pName) throws JDataException {
+    public DataSheet newSheet(final String pName) throws JDataException {
         /* Check for modification rights */
         checkReadOnly();
 
         /* Switch on workbook type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 return theExcelBook.newSheet(pName);
-            case OASISODS:
+            case OasisODS:
                 return theOasisBook.newSheet(pName);
             default:
                 return null;
@@ -211,12 +211,12 @@ public class SheetWorkBook {
      * @param pName the name of the sheet
      * @return the sheet
      */
-    public SheetSheet getSheet(final String pName) {
+    public DataSheet getSheet(final String pName) {
         /* Switch on workbook type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 return theExcelBook.getSheet(pName);
-            case OASISODS:
+            case OasisODS:
                 return theOasisBook.getSheet(pName);
             default:
                 return null;
@@ -229,12 +229,12 @@ public class SheetWorkBook {
      * @return the view of the range
      * @throws JDataException on error
      */
-    public SheetView getRangeView(final String pName) throws JDataException {
+    public DataView getRangeView(final String pName) throws JDataException {
         /* Switch on workbook type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 return theExcelBook.getRangeView(pName);
-            case OASISODS:
+            case OasisODS:
                 return theOasisBook.getRangeView(pName);
             default:
                 return null;
@@ -248,18 +248,61 @@ public class SheetWorkBook {
         /**
          * Excel xls.
          */
-        EXCELXLS,
+        ExcelXLS("xls"),
 
         /**
          * Oasis ods.
          */
-        OASISODS;
+        OasisODS("ods");
+
+        /**
+         * File extension.
+         */
+        private final String theExtension;
+
+        /**
+         * Obtain the extension.
+         * @return the extension
+         */
+        public String getExtension() {
+            return "."
+                   + theExtension;
+        }
+
+        /**
+         * Constructor
+         * @param pExtension the extension code
+         */
+        private WorkBookType(final String pExtension) {
+            theExtension = pExtension;
+        }
+
+        /**
+         * Determine workBookType of file
+         * @param pFileName the filename
+         * @return the workBookType
+         * @throws JDataException on error
+         */
+        public static WorkBookType determineType(final String pFileName) throws JDataException {
+            /* Loop through all values */
+            for (WorkBookType myType : WorkBookType.values()) {
+                /* If we have matched the type */
+                if (pFileName.endsWith(myType.getExtension())) {
+                    /* Return it */
+                    return myType;
+                }
+            }
+
+            /* Unrecognised type */
+            throw new JDataException(ExceptionClass.EXCEL, "Unrecognised file type "
+                                                           + pFileName);
+        }
     }
 
     /**
      * Cell Styles.
      */
-    protected enum CellStyleType {
+    public enum CellStyleType {
         /**
          * Integer.
          */

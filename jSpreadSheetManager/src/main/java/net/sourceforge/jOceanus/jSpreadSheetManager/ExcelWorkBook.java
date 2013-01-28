@@ -30,18 +30,22 @@ import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.CellStyleType;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 
 import org.apache.poi.hssf.usermodel.DVConstraint;
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -61,7 +65,12 @@ public class ExcelWorkBook {
     /**
      * DataFormatter.
      */
-    private final DataFormatter theFormatter = new DataFormatter();
+    private final DataFormatter theFormatter;
+
+    /**
+     * FormulaEvaluator.
+     */
+    private final FormulaEvaluator theEvaluator;
 
     /**
      * Map of Allocated styles.
@@ -69,11 +78,21 @@ public class ExcelWorkBook {
     private final Map<CellStyleType, HSSFCellStyle> theMap;
 
     /**
-     * get the data formatter.
-     * @return the formatter
+     * evaluate the formula for a cell.
+     * @param pCell the cell to evaluate
+     * @return the calculated value
      */
-    protected DataFormatter getDataFormatter() {
-        return theFormatter;
+    protected CellValue evaluateFormula(final HSSFCell pCell) {
+        return theEvaluator.evaluate(pCell);
+    }
+
+    /**
+     * Format the cell value.
+     * @param pCell the cell to evaluate
+     * @return the formatted value
+     */
+    protected String formatCellValue(final HSSFCell pCell) {
+        return theFormatter.formatCellValue(pCell);
     }
 
     /**
@@ -86,6 +105,10 @@ public class ExcelWorkBook {
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
             theMap = null;
+
+            /* Create evaluator and formatter */
+            theEvaluator = new HSSFFormulaEvaluator(theBook);
+            theFormatter = new DataFormatter();
 
             /* Set the missing Cell Policy */
             theBook.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL);
@@ -102,6 +125,10 @@ public class ExcelWorkBook {
         /* Create new book and map */
         theBook = new HSSFWorkbook();
         theMap = new EnumMap<CellStyleType, HSSFCellStyle>(CellStyleType.class);
+
+        /* Create evaluator and formatter */
+        theEvaluator = new HSSFFormulaEvaluator(theBook);
+        theFormatter = new DataFormatter();
 
         /* Set the missing Cell Policy */
         theBook.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
@@ -128,10 +155,10 @@ public class ExcelWorkBook {
      * @param pName the name of the sheet
      * @return the new sheet.
      */
-    protected SheetSheet newSheet(final String pName) {
+    protected DataSheet newSheet(final String pName) {
         /* Create the new Sheet */
         HSSFSheet mySheet = theBook.createSheet(pName);
-        return new SheetSheet(this, mySheet);
+        return new DataSheet(this, mySheet);
     }
 
     /**
@@ -139,10 +166,10 @@ public class ExcelWorkBook {
      * @param pName the name of the sheet
      * @return the sheet.
      */
-    protected SheetSheet getSheet(final String pName) {
+    protected DataSheet getSheet(final String pName) {
         /* Create the new Sheet */
         HSSFSheet mySheet = theBook.getSheet(pName);
-        return new SheetSheet(this, mySheet);
+        return new DataSheet(this, mySheet);
     }
 
     /**
@@ -151,7 +178,7 @@ public class ExcelWorkBook {
      * @return the view of the range
      * @throws JDataException on error
      */
-    protected SheetView getRangeView(final String pName) throws JDataException {
+    protected DataView getRangeView(final String pName) throws JDataException {
         /* Find the range of cells */
         Name myName = theBook.getName(pName);
         if (myName == null) {
@@ -170,7 +197,7 @@ public class ExcelWorkBook {
         CellPosition myFirstCell = new CellPosition(myRef.getCol(), myRef.getRow());
 
         /* Obtain the sheet and reject if missing */
-        SheetSheet mySheet = getSheet(myRef.getSheetName());
+        DataSheet mySheet = getSheet(myRef.getSheetName());
         if (mySheet == null) {
             throw new JDataException(ExceptionClass.EXCEL, "Sheet for "
                                                            + pName
@@ -178,7 +205,7 @@ public class ExcelWorkBook {
         }
 
         /* Return the view */
-        return new SheetView(mySheet, myFirstCell, myLastCell);
+        return new DataView(mySheet, myFirstCell, myLastCell);
     }
 
     /**
@@ -194,7 +221,7 @@ public class ExcelWorkBook {
         if (myName != null) {
             throw new JDataException(ExceptionClass.EXCEL, "Name "
                                                            + pName
-                                                           + "already exists in workbook");
+                                                           + " already exists in workbook");
         }
 
         /* Build the basic name */
@@ -236,15 +263,15 @@ public class ExcelWorkBook {
 
         /* Create the Standard fonts */
         Font myValueFont = theBook.createFont();
-        myValueFont.setFontName(SheetWorkBook.FONT_VALUE);
-        myValueFont.setFontHeightInPoints((short) SheetWorkBook.FONT_HEIGHT);
+        myValueFont.setFontName(DataWorkBook.FONT_VALUE);
+        myValueFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
         Font myNumberFont = theBook.createFont();
-        myNumberFont.setFontName(SheetWorkBook.FONT_NUMERIC);
-        myNumberFont.setFontHeightInPoints((short) SheetWorkBook.FONT_HEIGHT);
+        myNumberFont.setFontName(DataWorkBook.FONT_NUMERIC);
+        myNumberFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
         Font myHeaderFont = theBook.createFont();
-        myHeaderFont.setFontName(SheetWorkBook.FONT_VALUE);
+        myHeaderFont.setFontName(DataWorkBook.FONT_VALUE);
         myHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        myHeaderFont.setFontHeightInPoints((short) SheetWorkBook.FONT_HEIGHT);
+        myHeaderFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
 
         /* Create the Date Cell Style */
         HSSFCellStyle myStyle = theBook.createCellStyle();

@@ -27,15 +27,12 @@ import java.util.Date;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * Class to handle loading dilution details from archive.
@@ -56,20 +53,20 @@ public final class SheetDilution {
     /**
      * Load the Dilution Details from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to link to
      * @param pList the dilution list to load into
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData,
                                          final DilutionEventList pList) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_DILUTIONS);
+            DataView myView = pWorkBook.getRangeView(AREA_DILUTIONS);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -80,47 +77,40 @@ public final class SheetDilution {
                 return false;
             }
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                int myCol = myTop.getCol();
+            /* Count the number of dilutions */
+            int myTotal = myView.getRowCount();
 
-                /* Count the number of dilutions */
-                int myTotal = myBottom.getRow() - myTop.getRow() + 1;
+            /* Declare the number of steps */
+            if (!pTask.setNumSteps(myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
+            /* Loop through the rows of the table */
+            for (int i = 0; i < myTotal; i++) {
+                /* Access the row by reference */
+                DataRow myRow = myView.getRowByIndex(i);
+                int iAdjust = 0;
+
+                /* Access account */
+                DataCell myCell = myRow.getCellByIndex(iAdjust++);
+                String myAccount = myCell.getStringValue();
+
+                /* Access date */
+                myCell = myRow.getCellByIndex(iAdjust++);
+                Date myDate = myCell.getDateValue();
+
+                /* Access Factor */
+                myCell = myRow.getCellByIndex(2);
+                String myFactor = myCell.getStringValue();
+
+                /* Add any non-zero prices into the finance tables */
+                pList.addDilution(myAccount, myDate, myFactor);
+
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
-                }
-
-                /* Loop through the rows of the table */
-                for (int i = myTop.getRow(); i <= myBottom.getRow(); i++) {
-                    /* Access the row */
-                    Row myRow = mySheet.getRow(i);
-
-                    /* Access account */
-                    Cell myCell = myRow.getCell(myCol);
-                    String myAccount = myCell.getStringCellValue();
-
-                    /* Access date */
-                    myCell = myRow.getCell(myCol + 1);
-                    Date myDate = myCell.getDateCellValue();
-
-                    /* Access Factor */
-                    myCell = myRow.getCell(myCol + 2);
-                    String myFactor = pHelper.formatNumericCell(myCell);
-
-                    /* Add any non-zero prices into the finance tables */
-                    pList.addDilution(myAccount, myDate, myFactor);
-
-                    /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                        return false;
-                    }
                 }
             }
 

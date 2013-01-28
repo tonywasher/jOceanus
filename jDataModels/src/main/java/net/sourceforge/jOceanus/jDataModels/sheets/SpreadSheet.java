@@ -27,6 +27,7 @@ import java.io.File;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 /**
  * Spreadsheet control.
@@ -38,6 +39,11 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
      * The Data file name.
      */
     public static final String FILE_NAME = "zipData";
+
+    /**
+     * The ZipFile extension.
+     */
+    public static final String ZIPFILE_EXT = ".zip";
 
     /**
      * Obtain a sheet reader.
@@ -77,16 +83,18 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
      * @param pTask Task Control for task
      * @param pData Data to write out
      * @param pFile the backup file to write to
+     * @param pType the workBookType
      * @throws JDataException on error
      */
     public void createBackup(final TaskControl<T> pTask,
                              final T pData,
-                             final File pFile) throws JDataException {
+                             final File pFile,
+                             final WorkBookType pType) throws JDataException {
         /* Create a sheet writer object */
         SheetWriter<T> myWriter = getSheetWriter(pTask);
 
         /* Create the backup */
-        myWriter.createBackup(pData, pFile);
+        myWriter.createBackup(pData, pFile, pType);
     }
 
     /**
@@ -123,20 +131,5 @@ public abstract class SpreadSheet<T extends DataSet<T>> {
 
         /* Create the Extract file */
         myWriter.createExtract(pData, pFile);
-    }
-
-    /**
-     * Spreadsheet types.
-     */
-    public enum SheetType {
-        /**
-         * Backup.
-         */
-        BACKUP,
-
-        /**
-         * Extract.
-         */
-        EXTRACT;
     }
 }

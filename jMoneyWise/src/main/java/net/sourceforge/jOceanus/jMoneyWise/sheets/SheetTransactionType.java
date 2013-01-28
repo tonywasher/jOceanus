@@ -25,23 +25,21 @@ package net.sourceforge.jOceanus.jMoneyWise.sheets;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * SheetStaticData extension for TransactionType.
  * @author Tony Washer
  */
-public class SheetTransactionType extends SheetStaticData<TransactionType> {
+public class SheetTransactionType
+        extends SheetStaticData<TransactionType> {
 
     /**
      * NamedArea for Transaction Types.
@@ -51,7 +49,8 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
     /**
      * NameList for TranTypes.
      */
-    protected static final String AREA_TRANSTYPENAMES = TransactionType.OBJECT_NAME + "Names";
+    protected static final String AREA_TRANSTYPENAMES = TransactionType.OBJECT_NAME
+                                                        + "Names";
 
     /**
      * Alternative NamedArea for Transaction Types.
@@ -138,12 +137,12 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_TRANSTYPES1);
+            DataView myView = pWorkBook.getRangeView(AREA_TRANSTYPES1);
 
             /* Declare the new stage */
             if (!pTask.setNewStage(AREA_TRANSTYPES)) {
@@ -154,44 +153,36 @@ public class SheetTransactionType extends SheetStaticData<TransactionType> {
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                int myCol = myTop.getCol();
+            /* Count the number of TransactionTypes */
+            int myTotal = myView.getRowCount();
 
-                /* Count the number of transaction types */
-                int myTotal = myBottom.getRow() - myTop.getRow() + 1;
+            /* Access the list of transaction types */
+            TransTypeList myList = pData.getTransTypes();
 
-                /* Access the list of transaction types */
-                TransTypeList myList = pData.getTransTypes();
+            /* Declare the number of steps */
+            if (!pTask.setNumSteps(myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
+            /* Loop through the rows of the single column range */
+            for (int i = 0; i < myTotal; i++) {
+                /* Access the cell by reference */
+                DataRow myRow = myView.getRowByIndex(i);
+                DataCell myCell = myRow.getCellByIndex(0);
+
+                /* Add the value into the finance tables */
+                myList.addBasicItem(myCell.getStringValue());
+
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
-
-                /* Loop through the rows of the single column range */
-                for (int i = myTop.getRow(); i <= myBottom.getRow(); i++) {
-                    /* Access the cell by reference */
-                    Row myRow = mySheet.getRow(i);
-                    Cell myCell = myRow.getCell(myCol);
-
-                    /* Add the value into the finance tables */
-                    myList.addBasicItem(myCell.getStringCellValue());
-
-                    /* Report the progress */
-                    myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
-                        return false;
-                    }
-                }
-
-                /* Sort the list */
-                myList.reSort();
             }
+
+            /* Sort the list */
+            myList.reSort();
 
             /* Handle exceptions */
         } catch (JDataException e) {

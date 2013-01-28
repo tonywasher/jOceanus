@@ -22,19 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.CellStyleType;
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.WorkBookType;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 
 /**
  * Class representing a row within a sheet or a view.
  */
-public class SheetRow {
+public class DataRow {
     /**
      * Sheet type.
      */
@@ -48,12 +48,12 @@ public class SheetRow {
     /**
      * The underlying sheet.
      */
-    private final SheetSheet theSheet;
+    private final DataSheet theSheet;
 
     /**
      * The underlying view.
      */
-    private final SheetView theView;
+    private final DataView theView;
 
     /**
      * The index of this row.
@@ -64,11 +64,6 @@ public class SheetRow {
      * The Excel Row.
      */
     private final HSSFRow theExcelRow;
-
-    /**
-     * DataFormatter.
-     */
-    private final DataFormatter theFormatter;
 
     /**
      * The Oasis Row.
@@ -87,7 +82,7 @@ public class SheetRow {
      * Obtain the underlying sheet.
      * @return the underlying sheet
      */
-    public SheetSheet getSheet() {
+    public DataSheet getSheet() {
         return theSheet;
     }
 
@@ -95,7 +90,7 @@ public class SheetRow {
      * Obtain the underlying view.
      * @return the underlying view
      */
-    public SheetView getView() {
+    public DataView getView() {
         return theView;
     }
 
@@ -108,23 +103,38 @@ public class SheetRow {
     }
 
     /**
+     * evaluate the formula for a cell.
+     * @param pCell the cell to evaluate
+     * @return the calculated value
+     */
+    protected CellValue evaluateFormula(final HSSFCell pCell) {
+        return theSheet.evaluateFormula(pCell);
+    }
+
+    /**
+     * Format the cell value.
+     * @param pCell the cell to evaluate
+     * @return the formatted value
+     */
+    protected String formatCellValue(final HSSFCell pCell) {
+        return theSheet.formatCellValue(pCell);
+    }
+
+    /**
      * Constructor.
      * @param pSheet the sheet for the row
      * @param pExcelRow the Excel Row
-     * @param pFormatter the data formatter
      */
-    protected SheetRow(final SheetSheet pSheet,
-                       final HSSFRow pExcelRow,
-                       final DataFormatter pFormatter) {
+    protected DataRow(final DataSheet pSheet,
+                      final HSSFRow pExcelRow) {
         /* Store parameters */
         theSheet = pSheet;
         theExcelRow = pExcelRow;
         theOasisRow = null;
-        theBookType = WorkBookType.EXCELXLS;
+        theBookType = WorkBookType.ExcelXLS;
         theView = null;
         theRowIndex = pExcelRow.getRowNum();
         isReadOnly = false;
-        theFormatter = pFormatter;
     }
 
     /**
@@ -132,38 +142,34 @@ public class SheetRow {
      * @param pSheet the sheet for the row
      * @param pOasisRow the Oasis Row
      */
-    protected SheetRow(final SheetSheet pSheet,
-                       final OdfTableRow pOasisRow) {
+    protected DataRow(final DataSheet pSheet,
+                      final OdfTableRow pOasisRow) {
         /* Store parameters */
         theSheet = pSheet;
         theExcelRow = null;
         theOasisRow = pOasisRow;
-        theBookType = WorkBookType.OASISODS;
+        theBookType = WorkBookType.OasisODS;
         theView = null;
         theRowIndex = pOasisRow.getRowIndex();
         isReadOnly = false;
-        theFormatter = null;
     }
 
     /**
      * Constructor.
      * @param pView the view for the row
      * @param pExcelRow the Excel Row
-     * @param pFormatter the data formatter
      */
-    protected SheetRow(final SheetView pView,
-                       final HSSFRow pExcelRow,
-                       final DataFormatter pFormatter) {
+    protected DataRow(final DataView pView,
+                      final HSSFRow pExcelRow) {
         /* Store parameters */
         theSheet = pView.getSheet();
         theExcelRow = pExcelRow;
         theOasisRow = null;
-        theBookType = WorkBookType.EXCELXLS;
+        theBookType = WorkBookType.ExcelXLS;
         theView = pView;
         theRowIndex = pExcelRow.getRowNum()
                       - pView.getFirstCell().getRowIndex();
         isReadOnly = true;
-        theFormatter = pFormatter;
     }
 
     /**
@@ -171,25 +177,24 @@ public class SheetRow {
      * @param pView the view for the row
      * @param pOasisRow the Excel Row
      */
-    protected SheetRow(final SheetView pView,
-                       final OdfTableRow pOasisRow) {
+    protected DataRow(final DataView pView,
+                      final OdfTableRow pOasisRow) {
         /* Store parameters */
         theSheet = pView.getSheet();
         theExcelRow = null;
         theOasisRow = pOasisRow;
-        theBookType = WorkBookType.OASISODS;
+        theBookType = WorkBookType.OasisODS;
         theView = pView;
         theRowIndex = pOasisRow.getRowIndex()
                       - pView.getFirstCell().getRowIndex();
         isReadOnly = true;
-        theFormatter = null;
     }
 
     /**
      * Get the next row.
      * @return the next row
      */
-    public SheetRow getNextRow() {
+    public DataRow getNextRow() {
         /* Determine the required index */
         int myIndex = theRowIndex + 1;
 
@@ -205,7 +210,7 @@ public class SheetRow {
      * Get the previous row.
      * @return the previous row
      */
-    public SheetRow getPreviousRow() {
+    public DataRow getPreviousRow() {
         /* Determine the required index */
         int myIndex = theRowIndex - 1;
 
@@ -230,9 +235,9 @@ public class SheetRow {
 
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 return theExcelRow.getLastCellNum();
-            case OASISODS:
+            case OasisODS:
                 return theOasisRow.getCellCount();
             default:
                 return 0;
@@ -244,7 +249,7 @@ public class SheetRow {
      * @param pIndex the column index.
      * @return the cell
      */
-    public SheetCell getCellByIndex(final int pIndex) {
+    public DataCell getCellByIndex(final int pIndex) {
         /* Record the required index */
         int myIndex = pIndex;
 
@@ -262,21 +267,53 @@ public class SheetRow {
 
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 HSSFCell myExcelCell = theExcelRow.getCell(myIndex);
                 if (myExcelCell != null) {
-                    return new SheetCell(this, myExcelCell, theFormatter);
+                    return new DataCell(this, myExcelCell);
                 } else {
                     return null;
                 }
-            case OASISODS:
+            case OasisODS:
                 OdfTableCell myOasisCell = theOasisRow.getCellByIndex(myIndex);
                 if ((!isReadOnly)
                     || (myOasisCell.getValueType() != null)) {
-                    return new SheetCell(this, myOasisCell);
+                    return new DataCell(this, myOasisCell);
                 } else {
                     return null;
                 }
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Get the cell at the required index.
+     * @param pIndex the column index.
+     * @return the cell
+     */
+    public DataCell createCellByIndex(final int pIndex) {
+        /* Record the required index */
+        int myIndex = pIndex;
+
+        /* if this is a view row */
+        if (theView != null) {
+            /* Not allowed */
+            return null;
+        }
+
+        /* Switch on book type */
+        switch (theBookType) {
+            case ExcelXLS:
+                HSSFCell myExcelCell = theExcelRow.createCell(myIndex);
+                if (myExcelCell != null) {
+                    return new DataCell(this, myExcelCell);
+                } else {
+                    return null;
+                }
+            case OasisODS:
+                OdfTableCell myOasisCell = theOasisRow.getCellByIndex(myIndex);
+                return new DataCell(this, myOasisCell);
             default:
                 return null;
         }
@@ -287,7 +324,7 @@ public class SheetRow {
      * @param pCell the cell to style
      * @param pStyle the style type to use
      */
-    protected void setCellStyle(final SheetCell pCell,
+    protected void setCellStyle(final DataCell pCell,
                                 final CellStyleType pStyle) {
         /* Pass through to the sheet */
         theSheet.setCellStyle(pCell, pStyle);

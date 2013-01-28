@@ -31,7 +31,6 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader.SheetHelper;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -41,11 +40,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.YearRange;
-
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.util.AreaReference;
-import org.apache.poi.ss.util.CellReference;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
  * SheetDataItem extension for TaxYear.
@@ -81,7 +78,7 @@ public class SheetTaxYear
     /**
      * DataInfoSet Helper.
      */
-    private final SheetTaxInfoSet theInfoSheet = new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
+    private final SheetTaxInfoSet theInfoSheet;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -96,6 +93,9 @@ public class SheetTaxYear
         theList = myData.getTaxYears();
         theInfoList = myData.getTaxInfo();
         setDataList(theList);
+
+        /* Set up info Sheet */
+        theInfoSheet = isBackup() ? null : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
     }
 
     /**
@@ -111,6 +111,9 @@ public class SheetTaxYear
         theList = myData.getTaxYears();
         theInfoList = myData.getTaxInfo();
         setDataList(theList);
+
+        /* Set up info Sheet */
+        theInfoSheet = isBackup() ? null : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
     }
 
     @Override
@@ -181,33 +184,39 @@ public class SheetTaxYear
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange(COL_REGIME);
-
         /* If we are not creating a backup */
         if (!isBackup()) {
+            /* Name range plus infoSet */
+            nameRange(COL_REGIME
+                      + theInfoSheet.getXtraColumnCount());
+
             /* Apply validation */
             applyDataValidation(COL_REGIME, SheetTaxRegime.AREA_TAXREGIMENAMES);
+
+            /* else this is a backup */
+        } else {
+            /* Name basic range */
+            nameRange(COL_REGIME);
         }
     }
 
     /**
      * Load the TaxYears from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pRange the range of tax years
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
-                                         final SheetHelper pHelper,
+                                         final DataWorkBook pWorkBook,
                                          final FinanceData pData,
                                          final YearRange pRange) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            AreaReference myRange = pHelper.resolveAreaReference(AREA_TAXYEARS);
+            DataView myView = pWorkBook.getRangeView(AREA_TAXYEARS);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -218,166 +227,135 @@ public class SheetTaxYear
                 return false;
             }
 
-            /* If we found the range OK */
-            if (myRange != null) {
-                /* Access the relevant sheet and Cell references */
-                CellReference myTop = myRange.getFirstCell();
-                CellReference myBottom = myRange.getLastCell();
-                Sheet mySheet = pHelper.getSheetByName(myTop.getSheetName());
-                int myAllRow = myTop.getRow();
+            /* Count the number of TaxYears */
+            int myTotal = myView.getColumnCount();
 
-                /* Count the number of TaxYears */
-                int myTotal = myBottom.getRow()
-                              - myTop.getRow()
-                              + 1;
+            /* Access the lists */
+            TaxYearList myList = pData.getTaxYears();
+            TaxInfoList myInfoList = pData.getTaxInfo();
 
-                /* Access the lists */
-                TaxYearList myList = pData.getTaxYears();
-                TaxInfoList myInfoList = pData.getTaxInfo();
+            /* Declare the number of steps */
+            if (!pTask.setNumSteps(myTotal)) {
+                return false;
+            }
 
-                /* Declare the number of steps */
-                if (!pTask.setNumSteps(myTotal)) {
+            /* Create the calendar instance */
+            Calendar myYear = Calendar.getInstance();
+            myYear.set(pRange.getMaxYear(), Calendar.APRIL, TaxYear.END_OF_MONTH_DAY, 0, 0, 0);
+
+            /* Loop through the columns of the table */
+            for (int i = 0; i < myTotal; i++, myYear.add(Calendar.YEAR, -1)) {
+                /* Row Adjust value */
+                int iAdjust = 0;
+
+                /* Access the values */
+                String myAllowance = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myLoTaxBand = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myBasicTaxBand = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myRentalAllow = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myLoTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myBasicTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myIntTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myDivTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myHiTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myHiDivTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myTaxRegime = myView.getCellByPosition(i, iAdjust++).getStringValue();
+
+                /* Handle AddTaxRate which may be missing */
+                DataCell myCell = myView.getCellByPosition(i, iAdjust++);
+                String myAddTaxRate = null;
+                if (myCell != null) {
+                    myAddTaxRate = myCell.getStringValue();
+                }
+
+                /* Handle AddDivTaxRate which may be missing */
+                myCell = myView.getCellByPosition(i, iAdjust++);
+                String myAddDivTaxRate = null;
+                if (myCell != null) {
+                    myAddDivTaxRate = myCell.getStringValue();
+                }
+
+                /* Access the values */
+                String myLoAgeAllow = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myHiAgeAllow = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myAgeAllowLimit = myView.getCellByPosition(i, iAdjust++).getStringValue();
+
+                /* Handle AddAllowLimit which may be missing */
+                myCell = myView.getCellByPosition(i, iAdjust++);
+                String myAddAllowLimit = null;
+                if (myCell != null) {
+                    myAddAllowLimit = myCell.getStringValue();
+                }
+
+                /* Handle AddIncomeBoundary which may be missing */
+                myCell = myView.getCellByPosition(i, iAdjust++);
+                String myAddIncBound = null;
+                if (myCell != null) {
+                    myAddIncBound = myCell.getStringValue();
+                }
+
+                /* Access the values */
+                String myCapitalAllow = myView.getCellByPosition(i, iAdjust++).getStringValue();
+
+                /* Handle CapTaxRate which may be missing */
+                myCell = myView.getCellByPosition(i, iAdjust++);
+                String myCapTaxRate = null;
+                if (myCell != null) {
+                    myCapTaxRate = myCell.getStringValue();
+                }
+
+                /* Handle HiCapTaxRate which may be missing */
+                myCell = myView.getCellByPosition(i, iAdjust++);
+                String myHiCapTaxRate = null;
+                if (myCell != null) {
+                    myHiCapTaxRate = myCell.getStringValue();
+                }
+
+                /* Add the Tax Year */
+                TaxYear myTaxYear = myList.addOpenItem(0, myTaxRegime, myYear.getTime());
+
+                /* Add information relating to the tax year */
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.Allowance, myAllowance);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.RentalAllow, myRentalAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoTaxBand, myLoTaxBand);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BasicTaxBand, myBasicTaxBand);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapitalAllow, myCapitalAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoAgeAllow, myLoAgeAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiAgeAllow, myHiAgeAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AgeAllowLimit, myAgeAllowLimit);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddAllowLimit, myAddAllowLimit);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddIncomeThold, myAddIncBound);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoTaxRate, myLoTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BasicTaxRate, myBasicTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiTaxRate, myHiTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddTaxRate, myAddTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.IntTaxRate, myIntTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.DivTaxRate, myDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiDivTaxRate, myHiDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddDivTaxRate, myAddDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapTaxRate, myCapTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiCapTaxRate, myHiCapTaxRate);
+
+                /* Report the progress */
+                myCount++;
+
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
+            }
 
-                /* Create the calendar instance */
-                Calendar myYear = Calendar.getInstance();
-                myYear.set(pRange.getMaxYear(), Calendar.APRIL, TaxYear.END_OF_MONTH_DAY, 0, 0, 0);
+            /* Sort the list */
+            myList.reSort();
+            myInfoList.reSort();
 
-                /* Loop through the columns of the table */
-                for (int i = myTop.getCol(); i <= myBottom.getCol(); i++, myYear.add(Calendar.YEAR, -1)) {
-                    int iAdjust = 0;
+            /* Mark active items */
+            myList.markActiveItems();
 
-                    /* Access the values */
-                    String myAllowance = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                  + iAdjust++).getCell(i));
-                    String myLoTaxBand = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                  + iAdjust++).getCell(i));
-                    String myBasicTaxBand = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                     + iAdjust++).getCell(i));
-                    String myRentalAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                    + iAdjust++).getCell(i));
-                    String myLoTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                  + iAdjust++).getCell(i));
-                    String myBasicTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                     + iAdjust++).getCell(i));
-                    String myIntTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                   + iAdjust++).getCell(i));
-                    String myDivTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                   + iAdjust++).getCell(i));
-                    String myHiTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                  + iAdjust++).getCell(i));
-                    String myHiDivTaxRate = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                     + iAdjust++).getCell(i));
-                    String myTaxRegime = mySheet.getRow(myAllRow
-                                                        + iAdjust++).getCell(i).getStringCellValue();
-
-                    /* Handle AddTaxRate which may be missing */
-                    Cell myCell = mySheet.getRow(myAllRow
-                                                 + iAdjust++).getCell(i);
-                    String myAddTaxRate = null;
-                    if (myCell != null) {
-                        myAddTaxRate = pHelper.formatNumericCell(myCell);
-                    }
-
-                    /* Handle AddDivTaxRate which may be missing */
-                    myCell = mySheet.getRow(myAllRow
-                                            + iAdjust++).getCell(i);
-                    String myAddDivTaxRate = null;
-                    if (myCell != null) {
-                        myAddDivTaxRate = pHelper.formatNumericCell(myCell);
-                    }
-
-                    /* Access the values */
-                    String myLoAgeAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                   + iAdjust++).getCell(i));
-                    String myHiAgeAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                   + iAdjust++).getCell(i));
-                    String myAgeAllowLimit = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                      + iAdjust++).getCell(i));
-
-                    /* Handle AddAllowLimit which may be missing */
-                    myCell = mySheet.getRow(myAllRow
-                                            + iAdjust++).getCell(i);
-                    String myAddAllowLimit = null;
-                    if (myCell != null) {
-                        myAddAllowLimit = pHelper.formatNumericCell(myCell);
-                    }
-
-                    /* Handle AddIncomeBoundary which may be missing */
-                    myCell = mySheet.getRow(myAllRow
-                                            + iAdjust++).getCell(i);
-                    String myAddIncBound = null;
-                    if (myCell != null) {
-                        myAddIncBound = pHelper.formatNumericCell(myCell);
-                    }
-
-                    /* Access the values */
-                    String myCapitalAllow = pHelper.formatNumericCell(mySheet.getRow(myAllRow
-                                                                                     + iAdjust++).getCell(i));
-
-                    /* Handle CapTaxRate which may be missing */
-                    myCell = mySheet.getRow(myAllRow
-                                            + iAdjust++).getCell(i);
-                    String myCapTaxRate = null;
-                    if (myCell != null) {
-                        myCapTaxRate = pHelper.formatNumericCell(myCell);
-                    }
-
-                    /* Handle HiCapTaxRate which may be missing */
-                    myCell = mySheet.getRow(myAllRow
-                                            + iAdjust++).getCell(i);
-                    String myHiCapTaxRate = null;
-                    if (myCell != null) {
-                        myHiCapTaxRate = pHelper.formatNumericCell(myCell);
-                    }
-
-                    /* Add the Tax Year */
-                    TaxYear myTaxYear = myList.addOpenItem(0, myTaxRegime, myYear.getTime());
-
-                    /* Add information relating to the tax year */
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.Allowance, myAllowance);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.RentalAllow, myRentalAllow);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoTaxBand, myLoTaxBand);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BasicTaxBand, myBasicTaxBand);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapitalAllow, myCapitalAllow);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoAgeAllow, myLoAgeAllow);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiAgeAllow, myHiAgeAllow);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AgeAllowLimit, myAgeAllowLimit);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddAllowLimit, myAddAllowLimit);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddIncomeThold, myAddIncBound);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoTaxRate, myLoTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BasicTaxRate, myBasicTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiTaxRate, myHiTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddTaxRate, myAddTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.IntTaxRate, myIntTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.DivTaxRate, myDivTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiDivTaxRate, myHiDivTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddDivTaxRate, myAddDivTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapTaxRate, myCapTaxRate);
-                    myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiCapTaxRate, myHiCapTaxRate);
-
-                    /* Report the progress */
-                    myCount++;
-
-                    if (((myCount % mySteps) == 0)
-                        && (!pTask.setStepsDone(myCount))) {
-                        return false;
-                    }
-                }
-
-                /* Sort the list */
-                myList.reSort();
-                myInfoList.reSort();
-
-                /* Mark active items */
-                myList.markActiveItems();
-
-                /* Validate the tax years */
-                myList.validate();
-                if (myList.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
-                }
+            /* Validate the tax years */
+            myList.validate();
+            if (myList.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
             }
 
             /* Handle exceptions */
@@ -406,6 +384,5 @@ public class SheetTaxYear
                                final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }
-
     }
 }

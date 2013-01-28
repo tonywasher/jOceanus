@@ -32,13 +32,15 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 /**
  * Thread to create an encrypted backup of a data set.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
+public class CreateBackup<T extends DataSet<T>>
+        extends LoaderThread<T> {
     /**
      * Buffer length.
      */
@@ -95,25 +97,22 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
             BackupPreferences myProperties = myMgr.getPreferenceSet(BackupPreferences.class);
 
             /* Determine the archive name */
-            File myBackupDir = new File(myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR));
+            String myBackupDir = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_DIR);
             String myPrefix = myProperties.getStringValue(BackupPreferences.NAME_BACKUP_PFIX);
             Boolean doTimeStamp = myProperties.getBooleanValue(BackupPreferences.NAME_BACKUP_TIME);
+            WorkBookType myType = myProperties.getEnumValue(BackupPreferences.NAME_BACKUP_TYPE, WorkBookType.class);
 
-            /* If we are not doing time-stamps */
-            if (!doTimeStamp) {
-                /* Set the standard backup name */
-                myFile = new File(myBackupDir.getPath() + File.separator + myPrefix);
+            /* Create the name of the file */
+            StringBuilder myName = new StringBuilder(BUFFER_LEN);
+            myName.append(myBackupDir);
+            myName.append(File.separator);
+            myName.append(myPrefix);
 
-                /* else we need to generate a time-stamp (day only) */
-            } else {
+            /* If we are doing time-stamps */
+            if (doTimeStamp) {
                 /* Obtain the current date/time */
                 JDateDay myNow = new JDateDay();
 
-                /* Create the name of the file */
-                StringBuilder myName = new StringBuilder(BUFFER_LEN);
-                myName.append(myBackupDir.getPath());
-                myName.append(File.separator);
-                myName.append(myPrefix);
                 myName.append(myNow.getYear());
                 if (myNow.getMonth() < TEN) {
                     myName.append('0');
@@ -123,21 +122,21 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
                     myName.append('0');
                 }
                 myName.append(myNow.getDay());
-                myFile = new File(myName.toString());
             }
+
+            /* Set the standard backup name */
+            myFile = new File(myName.toString()
+                              + SpreadSheet.ZIPFILE_EXT);
 
             /* Create backup */
             SpreadSheet<T> mySheet = theControl.getSpreadSheet();
-            mySheet.createBackup(theStatus, theControl.getData(), myFile);
+            mySheet.createBackup(theStatus, theControl.getData(), myFile, myType);
 
             /* File created, so delete on error */
             doDelete = true;
 
             /* Initialise the status window */
             theStatus.initTask("Verifying Backup");
-
-            /* As we have encrypted then .zip was added to the file */
-            myFile = new File(myFile.getPath() + ".zip");
 
             /* Load workbook */
             myData = mySheet.loadBackup(theStatus, myFile);
@@ -154,7 +153,8 @@ public class CreateBackup<T extends DataSet<T>> extends LoaderThread<T> {
             /* Catch any exceptions */
         } catch (JDataException e) {
             /* Delete the file */
-            if ((doDelete) && (!myFile.delete())) {
+            if ((doDelete)
+                && (!myFile.delete())) {
                 doDelete = false;
             }
 

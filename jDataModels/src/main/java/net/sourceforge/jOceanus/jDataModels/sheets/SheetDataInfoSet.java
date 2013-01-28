@@ -74,8 +74,9 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
 
     /**
      * Fill in titles.
+     * @throws JDataException on error
      */
-    public void writeTitles() {
+    public void writeTitles() throws JDataException {
         /* Loop through the class values */
         for (E myClass : theClass.getEnumConstants()) {
             /* Obtain the id and data columns */
@@ -136,9 +137,10 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * Apply Data Validation.
      * @param pClass the class to set
      * @param pList name of validation range
+     * @throws JDataException on error
      */
     public void applyDataValidation(final E pClass,
-                                    final String pList) {
+                                    final String pList) throws JDataException {
         /* Obtain the data column */
         int iCol = 1 + getIdColumn(pClass);
 
@@ -251,5 +253,14 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
         /* Calculate the id column */
         return theBaseCol
                + (2 * (pClass.getClassId() - 1));
+    }
+
+    /**
+     * Obtain count of additional columns.
+     * @return the additional columns.
+     */
+    public int getXtraColumnCount() {
+        /* Calculate the id column */
+        return 2 * theClass.getEnumConstants().length;
     }
 }

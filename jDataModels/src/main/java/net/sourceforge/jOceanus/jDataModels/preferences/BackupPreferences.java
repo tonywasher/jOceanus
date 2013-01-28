@@ -24,12 +24,14 @@ package net.sourceforge.jOceanus.jDataModels.preferences;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
 /**
  * Backup preferences.
  * @author Tony Washer
  */
-public class BackupPreferences extends PreferenceSet {
+public class BackupPreferences
+        extends PreferenceSet {
     /**
      * Registry name for Backup Directory.
      */
@@ -39,6 +41,11 @@ public class BackupPreferences extends PreferenceSet {
      * Registry name for Backup Prefix.
      */
     public static final String NAME_BACKUP_PFIX = "BackupPrefix";
+
+    /**
+     * Backup type.
+     */
+    public static final String NAME_BACKUP_TYPE = "BackupType";
 
     /**
      * Registry name for Archive FileName.
@@ -61,6 +68,11 @@ public class BackupPreferences extends PreferenceSet {
     private static final String DISPLAY_BACKUP_PFIX = "Backup Prefix";
 
     /**
+     * Display name for BackupType.
+     */
+    private static final String DISPLAY_BACKUP_TYPE = "Backup Type";
+
+    /**
      * Display name for BackupDirectory.
      */
     private static final String DISPLAY_ARCHIVE_FILE = "Archive File";
@@ -79,6 +91,11 @@ public class BackupPreferences extends PreferenceSet {
      * Default value for BackupPrefix.
      */
     private static final String DEFAULT_BACKUP_PFIX = "FinanceBackup";
+
+    /**
+     * Default value for BackupType.
+     */
+    private static final WorkBookType DEFAULT_BACKUP_TYPE = WorkBookType.ExcelXLS;
 
     /**
      * Default value for Archive File.
@@ -103,6 +120,7 @@ public class BackupPreferences extends PreferenceSet {
         /* Define the preferences */
         defineDirectoryPreference(NAME_BACKUP_DIR, DEFAULT_BACKUPDIR);
         defineStringPreference(NAME_BACKUP_PFIX, DEFAULT_BACKUP_PFIX);
+        definePreference(NAME_BACKUP_TYPE, DEFAULT_BACKUP_TYPE, WorkBookType.class);
         defineFilePreference(NAME_ARCHIVE_FILE, DEFAULT_ARCHIVE_FILE);
         defineBooleanPreference(NAME_BACKUP_TIME, DEFAULT_BACKUP_TIME);
     }
@@ -115,6 +133,9 @@ public class BackupPreferences extends PreferenceSet {
         }
         if (pName.equals(NAME_BACKUP_PFIX)) {
             return DISPLAY_BACKUP_PFIX;
+        }
+        if (pName.equals(NAME_BACKUP_TYPE)) {
+            return DISPLAY_BACKUP_TYPE;
         }
         if (pName.equals(NAME_ARCHIVE_FILE)) {
             return DISPLAY_ARCHIVE_FILE;

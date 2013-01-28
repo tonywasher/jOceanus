@@ -29,8 +29,8 @@ import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.CellStyleType;
 
 import org.odftoolkit.odfdom.doc.OdfSpreadsheetDocument;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
@@ -158,7 +158,7 @@ public class OasisWorkBook {
      * @param pName the name of the sheet
      * @return the new sheet.
      */
-    protected SheetSheet newSheet(final String pName) {
+    protected DataSheet newSheet(final String pName) {
         /* Create the new Sheet */
         OdfTable mySheet = OdfTable.newTable(theBook);
         mySheet.setTableName(pName);
@@ -170,10 +170,10 @@ public class OasisWorkBook {
      * @param pName the name of the sheet
      * @return the sheet.
      */
-    protected SheetSheet getSheet(final String pName) {
+    protected DataSheet getSheet(final String pName) {
         /* Create the new Sheet */
         OdfTable mySheet = theBook.getTableByName(pName);
-        return new SheetSheet(this, mySheet);
+        return new DataSheet(this, mySheet);
     }
 
     /**
@@ -182,7 +182,7 @@ public class OasisWorkBook {
      * @return the view of the range
      * @throws JDataException on error
      */
-    protected SheetView getRangeView(final String pName) throws JDataException {
+    protected DataView getRangeView(final String pName) throws JDataException {
         /* Locate the named range in the list */
         TableNamedRangeElement myRange = lookUpRange(pName);
         if (myRange == null) {
@@ -198,7 +198,7 @@ public class OasisWorkBook {
         OasisCellAddress myLastCell = myCellRange.getLastCell();
 
         /* Obtain the sheet and reject if missing */
-        SheetSheet mySheet = getSheet(myFirstCell.getSheetName());
+        DataSheet mySheet = getSheet(myFirstCell.getSheetName());
         if (mySheet == null) {
             throw new JDataException(ExceptionClass.EXCEL, "Sheet for "
                                                            + pName
@@ -206,7 +206,7 @@ public class OasisWorkBook {
         }
 
         /* Return the view */
-        return new SheetView(mySheet, myFirstCell.getPosition(), myLastCell.getPosition());
+        return new DataView(mySheet, myFirstCell.getPosition(), myLastCell.getPosition());
     }
 
     /**
@@ -355,7 +355,7 @@ public class OasisWorkBook {
         myStyles.appendChild(myDateStyle);
         OdfStyle myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Date));
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "left");
         theMap.put(CellStyleType.Date, myStyle);
 
@@ -364,7 +364,7 @@ public class OasisWorkBook {
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Money));
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "right");
         theMap.put(CellStyleType.Money, myStyle);
 
@@ -373,7 +373,7 @@ public class OasisWorkBook {
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Price));
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "right");
         theMap.put(CellStyleType.Price, myStyle);
 
@@ -382,7 +382,7 @@ public class OasisWorkBook {
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Units));
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "right");
         theMap.put(CellStyleType.Units, myStyle);
 
@@ -391,7 +391,7 @@ public class OasisWorkBook {
         myStyles.appendChild(myPercentStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Rate));
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "right");
         theMap.put(CellStyleType.Rate, myStyle);
 
@@ -400,7 +400,7 @@ public class OasisWorkBook {
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Dilution));
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "right");
         theMap.put(CellStyleType.Dilution, myStyle);
 
@@ -409,25 +409,25 @@ public class OasisWorkBook {
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
         myStyle.setStyleDataStyleNameAttribute(getStyleName(CellStyleType.Integer));
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "right");
         theMap.put(CellStyleType.Integer, myStyle);
 
         /* Create the Boolean Cell Style */
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_VALUE);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_VALUE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "center");
         theMap.put(CellStyleType.Boolean, myStyle);
 
         /* Create the String Cell Style */
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_VALUE);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_VALUE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "left");
         theMap.put(CellStyleType.String, myStyle);
 
         /* Create the Header Cell Style */
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setProperty(OdfTextProperties.FontName, SheetWorkBook.FONT_VALUE);
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_VALUE);
         myStyle.setProperty(OdfTextProperties.FontWeight, "bold");
         myStyle.setProperty(OdfParagraphProperties.TextAlign, "center");
         theMap.put(CellStyleType.Header, myStyle);

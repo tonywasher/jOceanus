@@ -25,11 +25,11 @@ package net.sourceforge.jOceanus.jSpreadSheetManager;
 /**
  * Represents a view of a range of cells.
  */
-public class SheetView {
+public class DataView {
     /**
      * Underlying Sheet.
      */
-    private final SheetSheet theSheet;
+    private final DataSheet theSheet;
 
     /**
      * Top Left Cell Position.
@@ -45,7 +45,7 @@ public class SheetView {
      * Obtain the underlying sheet.
      * @return the underlying sheet
      */
-    public SheetSheet getSheet() {
+    public DataSheet getSheet() {
         return theSheet;
     }
 
@@ -91,9 +91,9 @@ public class SheetView {
      * @param pFirstCell the first cell of the view
      * @param pLastCell the last cell of the view
      */
-    protected SheetView(final SheetSheet pSheet,
-                        final CellPosition pFirstCell,
-                        final CellPosition pLastCell) {
+    protected DataView(final DataSheet pSheet,
+                       final CellPosition pFirstCell,
+                       final CellPosition pLastCell) {
         /* Store parameters */
         theSheet = pSheet;
         theFirstCell = pFirstCell;
@@ -105,8 +105,8 @@ public class SheetView {
      * @param pFirstCell the first cell of the view
      * @param pLastCell the last cell of the view
      */
-    protected SheetView(final SheetCell pFirstCell,
-                        final SheetCell pLastCell) {
+    protected DataView(final DataCell pFirstCell,
+                       final DataCell pLastCell) {
         /* Store parameters */
         theSheet = pFirstCell.getSheet();
         theFirstCell = pFirstCell.getPosition();
@@ -138,7 +138,7 @@ public class SheetView {
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    public SheetRow getRowByIndex(final int pRowIndex) {
+    public DataRow getRowByIndex(final int pRowIndex) {
         /* Handle invalid index */
         if (!validRowIndex(pRowIndex)) {
             return null;
@@ -154,8 +154,8 @@ public class SheetView {
      * @param pRowIndex the requested row index
      * @return the requested cell.
      */
-    public SheetCell getCellByPosition(final int pColumnIndex,
-                                       final int pRowIndex) {
+    public DataCell getCellByPosition(final int pColumnIndex,
+                                      final int pRowIndex) {
         /* Return the cell */
         CellPosition myPos = new CellPosition(pColumnIndex, pRowIndex);
         return getCellByPosition(myPos);
@@ -166,7 +166,7 @@ public class SheetView {
      * @param pPosition the requested position
      * @return the requested cell.
      */
-    public SheetCell getCellByPosition(final CellPosition pPosition) {
+    public DataCell getCellByPosition(final CellPosition pPosition) {
         /* Handle invalid indices */
         if ((!validRowIndex(pPosition.getRowIndex()))
             || (!validColumnIndex(pPosition.getColumnIndex()))) {
@@ -174,7 +174,7 @@ public class SheetView {
         }
 
         /* Return the cell */
-        SheetRow myRow = getRowByIndex(pPosition.getRowIndex());
+        DataRow myRow = getRowByIndex(pPosition.getRowIndex());
         return myRow.getCellByIndex(pPosition.getColumnIndex());
     }
 }

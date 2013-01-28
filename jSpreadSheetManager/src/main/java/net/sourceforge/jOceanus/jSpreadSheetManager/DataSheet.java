@@ -1,13 +1,14 @@
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.CellStyleType;
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.WorkBookType;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
@@ -20,7 +21,12 @@ import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
 /**
  * Class representing a sheet within a workBook.
  */
-public class SheetSheet {
+public class DataSheet {
+    /**
+     * Character width.
+     */
+    private static final int WIDTH_CHAR = 256;
+
     /**
      * Sheet type.
      */
@@ -30,11 +36,6 @@ public class SheetSheet {
      * The Excel WorkBook.
      */
     private final ExcelWorkBook theExcelBook;
-
-    /**
-     * DataFormatter.
-     */
-    private final DataFormatter theFormatter;
 
     /**
      * The Excel Sheet.
@@ -65,20 +66,37 @@ public class SheetSheet {
     }
 
     /**
+     * evaluate the formula for a cell.
+     * @param pCell the cell to evaluate
+     * @return the calculated value
+     */
+    protected CellValue evaluateFormula(final HSSFCell pCell) {
+        return theExcelBook.evaluateFormula(pCell);
+    }
+
+    /**
+     * Format the cell value.
+     * @param pCell the cell to evaluate
+     * @return the formatted value
+     */
+    protected String formatCellValue(final HSSFCell pCell) {
+        return theExcelBook.formatCellValue(pCell);
+    }
+
+    /**
      * Constructor for Excel Sheet.
      * @param pBook the WorkBook
      * @param pSheet the Excel sheet
      */
-    protected SheetSheet(final ExcelWorkBook pBook,
-                         final HSSFSheet pSheet) {
+    protected DataSheet(final ExcelWorkBook pBook,
+                        final HSSFSheet pSheet) {
         /* Store parameters */
         theExcelBook = pBook;
         theExcelSheet = pSheet;
         theOasisBook = null;
         theOasisSheet = null;
-        theBookType = WorkBookType.EXCELXLS;
+        theBookType = WorkBookType.ExcelXLS;
         theSheetName = pSheet.getSheetName();
-        theFormatter = pBook.getDataFormatter();
     }
 
     /**
@@ -86,16 +104,15 @@ public class SheetSheet {
      * @param pBook the WorkBook
      * @param pSheet the Oasis sheet
      */
-    protected SheetSheet(final OasisWorkBook pBook,
-                         final OdfTable pSheet) {
+    protected DataSheet(final OasisWorkBook pBook,
+                        final OdfTable pSheet) {
         /* Store parameters */
         theOasisBook = pBook;
         theOasisSheet = pSheet;
         theExcelBook = null;
         theExcelSheet = null;
-        theBookType = WorkBookType.OASISODS;
+        theBookType = WorkBookType.OasisODS;
         theSheetName = pSheet.getTableName();
-        theFormatter = null;
     }
 
     /**
@@ -105,10 +122,10 @@ public class SheetSheet {
     public int getRowCount() {
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 int iLastRowNum = theExcelSheet.getLastRowNum();
                 return (iLastRowNum == 0) ? theExcelSheet.getPhysicalNumberOfRows() : iLastRowNum + 1;
-            case OASISODS:
+            case OasisODS:
                 return theOasisSheet.getRowCount();
             default:
                 return 0;
@@ -120,15 +137,34 @@ public class SheetSheet {
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    public SheetRow getRowByIndex(final int pRowIndex) {
+    public DataRow getRowByIndex(final int pRowIndex) {
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
-                return new SheetRow(this, myExcelRow, theFormatter);
-            case OASISODS:
+                return new DataRow(this, myExcelRow);
+            case OasisODS:
                 OdfTableRow myOasisRow = theOasisSheet.getRowByIndex(pRowIndex);
-                return new SheetRow(this, myOasisRow);
+                return new DataRow(this, myOasisRow);
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Create the row at required index within the sheet.
+     * @param pRowIndex the requested row index
+     * @return the requested row.
+     */
+    public DataRow createRowByIndex(final int pRowIndex) {
+        /* Switch on book type */
+        switch (theBookType) {
+            case ExcelXLS:
+                HSSFRow myExcelRow = theExcelSheet.createRow(pRowIndex);
+                return new DataRow(this, myExcelRow);
+            case OasisODS:
+                OdfTableRow myOasisRow = theOasisSheet.getRowByIndex(pRowIndex);
+                return new DataRow(this, myOasisRow);
             default:
                 return null;
         }
@@ -140,20 +176,20 @@ public class SheetSheet {
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    protected SheetRow getViewRowByIndex(final SheetView pView,
-                                         final int pRowIndex) {
+    protected DataRow getViewRowByIndex(final DataView pView,
+                                        final int pRowIndex) {
         /* Determine the actual index of the row */
         int myIndex = pView.getFirstCell().getRowIndex()
                       + pRowIndex;
 
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 HSSFRow myExcelRow = theExcelSheet.getRow(myIndex);
-                return new SheetRow(pView, myExcelRow, theFormatter);
-            case OASISODS:
+                return new DataRow(pView, myExcelRow);
+            case OasisODS:
                 OdfTableRow myOasisRow = theOasisSheet.getRowByIndex(myIndex);
-                return new SheetRow(pView, myOasisRow);
+                return new DataRow(pView, myOasisRow);
             default:
                 return null;
         }
@@ -171,7 +207,7 @@ public class SheetSheet {
                              final CellPosition pLastCell) throws JDataException {
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 /* Build the area reference */
                 CellReference myFirst = new CellReference(theSheetName, pFirstCell.getRowIndex(), pFirstCell.getColumnIndex(), true, true);
                 CellReference myLast = new CellReference(theSheetName, pLastCell.getRowIndex(), pLastCell.getColumnIndex(), true, true);
@@ -180,7 +216,7 @@ public class SheetSheet {
                 /* Declare to workBook */
                 theExcelBook.declareRange(pName, myArea);
                 break;
-            case OASISODS:
+            case OasisODS:
                 /* Build the range */
                 OasisCellRange myRange = new OasisCellRange(theSheetName, pFirstCell, pLastCell);
 
@@ -204,7 +240,7 @@ public class SheetSheet {
                                     final String pName) throws JDataException {
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 /* Create the CellAddressList */
                 CellRangeAddressList myCells = new CellRangeAddressList(pFirstCell.getRowIndex(), pLastCell.getRowIndex(), pFirstCell.getColumnIndex(),
                         pLastCell.getColumnIndex());
@@ -212,7 +248,7 @@ public class SheetSheet {
                 /* Declare to workBook */
                 theExcelBook.applyDataValidation(theExcelSheet, myCells, pName);
                 break;
-            case OASISODS:
+            case OasisODS:
                 /* Create the CellAddressList */
                 OdfTableCellRange myRange = theOasisSheet.getCellRangeByPosition(pFirstCell.getColumnIndex(), pFirstCell.getRowIndex(),
                         pLastCell.getRowIndex(), pLastCell.getColumnIndex());
@@ -238,6 +274,22 @@ public class SheetSheet {
     }
 
     /**
+     * Create freeze panes.
+     * @param pFreezeCell the cell to freeze at
+     */
+    public void createFreezePane(final CellPosition pFreezeCell) {
+        /* Switch on book type */
+        switch (theBookType) {
+            case ExcelXLS:
+                theExcelSheet.createFreezePane(pFreezeCell.getColumnIndex(), pFreezeCell.getRowIndex());
+                break;
+            case OasisODS:
+            default:
+                break;
+        }
+    }
+
+    /**
      * Set Column hidden status.
      * @param pColIndex the column to show/hide
      * @param isHidden is the column hidden?
@@ -246,10 +298,10 @@ public class SheetSheet {
                                 final boolean isHidden) {
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 theExcelSheet.setColumnHidden(pColIndex, isHidden);
                 break;
-            case OASISODS:
+            case OasisODS:
                 /* Obtain the column definition */
                 OdfTableColumn myCol = theOasisSheet.getColumnByIndex(pColIndex);
                 TableTableColumnElement myElement = myCol.getOdfElement();
@@ -269,11 +321,12 @@ public class SheetSheet {
                                final int pWidth) {
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 /* Set the column width */
-                theExcelSheet.setColumnWidth(pColIndex, 256 * pWidth);
+                theExcelSheet.setColumnWidth(pColIndex, WIDTH_CHAR
+                                                        * pWidth);
                 break;
-            case OASISODS:
+            case OasisODS:
                 /* Obtain the column definition */
                 OdfTableColumn myCol = theOasisSheet.getColumnByIndex(pColIndex);
                 myCol.setWidth(2 * pWidth);
@@ -292,10 +345,10 @@ public class SheetSheet {
                                       final CellStyleType pStyle) {
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 theExcelSheet.setDefaultColumnStyle(pColIndex, theExcelBook.getCellStyle(pStyle));
                 break;
-            case OASISODS:
+            case OasisODS:
                 /* Obtain the column definition */
                 OdfTableColumn myCol = theOasisSheet.getColumnByIndex(pColIndex);
                 myCol.setDefaultCellStyle(theOasisBook.getCellStyle(pStyle));
@@ -310,14 +363,14 @@ public class SheetSheet {
      * @param pCell the cell to style
      * @param pStyle the style type to use
      */
-    protected void setCellStyle(final SheetCell pCell,
+    protected void setCellStyle(final DataCell pCell,
                                 final CellStyleType pStyle) {
         /* Switch on book type */
         switch (theBookType) {
-            case EXCELXLS:
+            case ExcelXLS:
                 pCell.setCellStyle(theExcelBook.getCellStyle(pStyle));
                 break;
-            case OASISODS:
+            case OasisODS:
                 pCell.setCellStyle(theOasisBook.getStyleName(pStyle));
                 break;
             default:

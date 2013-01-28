@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.Date;
 
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
-import net.sourceforge.jOceanus.jSpreadSheetManager.SheetWorkBook.WorkBookType;
 
 public class Tester {
     /**
@@ -22,15 +22,15 @@ public class Tester {
         OasisCellRange myTwo = new OasisCellRange("Test'1987", myRange.getFirstCell().getPosition(), myRange.getLastCell().getPosition());
         loadRange(null);
         try {
-            SheetWorkBook myBook = new SheetWorkBook(WorkBookType.OASISODS);
-            SheetSheet mySheet = myBook.newSheet("TestData");
+            DataWorkBook myBook = new DataWorkBook(WorkBookType.OasisODS);
+            DataSheet mySheet = myBook.newSheet("TestData");
             int i = mySheet.getRowCount();
-            SheetRow myRow = mySheet.getRowByIndex(2);
+            DataRow myRow = mySheet.getRowByIndex(2);
             i = mySheet.getRowCount();
             // mySheet.setColumnHidden(1, false);
             // SheetCell myCell = myRow.getCellByIndex(0);
             // myCell.setStringValue("Banking:Current");
-            SheetCell myCell = myRow.getCellByIndex(1);
+            DataCell myCell = myRow.getCellByIndex(1);
             myCell.setStringValue("Barclays");
             myCell = myRow.getCellByIndex(2);
             myCell.setDateValue(new Date());
@@ -58,12 +58,12 @@ public class Tester {
             File myFile = new File("C:\\Users\\Tony\\Documents\\NewFinance.ods");
             FileInputStream myInFile = new FileInputStream(myFile);
             BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
-            SheetWorkBook myBook = new SheetWorkBook(myInBuffer, WorkBookType.OASISODS);
-            SheetView myView = myBook.getRangeView("Finance82");
+            DataWorkBook myBook = new DataWorkBook(myInBuffer, WorkBookType.OasisODS);
+            DataView myView = myBook.getRangeView("Finance82");
             int iNumRows = myView.getRowCount();
             int iNumCols = myView.getColumnCount();
-            for (SheetRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
-                SheetCell myCell = myRow.getCellByIndex(0);
+            for (DataRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
+                DataCell myCell = myRow.getCellByIndex(0);
                 String myType = myCell.getStringValue();
                 myCell = myRow.getCellByIndex(1);
                 String myParent = (myCell == null) ? null : myCell.getStringValue();
