@@ -239,12 +239,11 @@ public class SheetEvent
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
+        /* Set range */
+        nameRange();
+
         /* If we are not creating a backup */
         if (!isBackup()) {
-            /* Name range plus infoSet */
-            nameRange(COL_TRAN
-                      + theInfoSheet.getXtraColumnCount());
-
             /* Apply validation */
             applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
             applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
@@ -252,12 +251,22 @@ public class SheetEvent
 
             /* Set validation for ThirdParty */
             theInfoSheet.applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);
-
-            /* else this is a backup */
-        } else {
-            /* Name basic range */
-            nameRange(COL_TRAN);
         }
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Set default */
+        int myLastCol = COL_TRAN;
+
+        /* If we are not creating a backup */
+        if (!isBackup()) {
+            /* Name range plus infoSet */
+            myLastCol += theInfoSheet.getXtraColumnCount();
+        }
+
+        /* Return the last column */
+        return myLastCol;
     }
 
     /**

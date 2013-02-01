@@ -31,7 +31,8 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
  * SheetDataItem extension for ControlKey.
  * @author Tony Washer
  */
-public class SheetControlKey extends SheetDataItem<ControlKey> {
+public class SheetControlKey
+        extends SheetDataItem<ControlKey> {
     /**
      * SheetName for Keys.
      */
@@ -96,6 +97,12 @@ public class SheetControlKey extends SheetDataItem<ControlKey> {
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(COL_KEYDATA);
+        nameRange();
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return COL_KEYDATA;
     }
 }

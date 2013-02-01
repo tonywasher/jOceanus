@@ -66,6 +66,11 @@ public class SheetTaxYear
     private static final int COL_REGIME = COL_TAXYEAR + 1;
 
     /**
+     * The DataSet.
+     */
+    private FinanceData theData = null;
+
+    /**
      * TaxYear data list.
      */
     private final TaxYearList theList;
@@ -89,9 +94,9 @@ public class SheetTaxYear
         super(pReader, AREA_TAXYEARS);
 
         /* Access the Lists */
-        FinanceData myData = pReader.getData();
-        theList = myData.getTaxYears();
-        theInfoList = myData.getTaxInfo();
+        theData = pReader.getData();
+        theList = theData.getTaxYears();
+        theInfoList = theData.getTaxInfo();
         setDataList(theList);
 
         /* Set up info Sheet */
@@ -184,20 +189,35 @@ public class SheetTaxYear
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
+        /* Set range */
+        nameRange();
+
+        /* If we are not creating a backup */
+        if (!isBackup()) {
+            /* Apply validation */
+            applyDataValidation(COL_REGIME, SheetTaxRegime.AREA_TAXREGIMENAMES);
+        }
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Calculate the date range */
+        theData.calculateDateRange();
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Set default */
+        int myLastCol = COL_REGIME;
+
         /* If we are not creating a backup */
         if (!isBackup()) {
             /* Name range plus infoSet */
-            nameRange(COL_REGIME
-                      + theInfoSheet.getXtraColumnCount());
-
-            /* Apply validation */
-            applyDataValidation(COL_REGIME, SheetTaxRegime.AREA_TAXREGIMENAMES);
-
-            /* else this is a backup */
-        } else {
-            /* Name basic range */
-            nameRange(COL_REGIME);
+            myLastCol += theInfoSheet.getXtraColumnCount();
         }
+
+        /* Return the last column */
+        return myLastCol;
     }
 
     /**

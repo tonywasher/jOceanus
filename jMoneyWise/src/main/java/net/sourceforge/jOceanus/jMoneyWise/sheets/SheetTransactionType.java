@@ -131,7 +131,7 @@ public class SheetTransactionType
     /**
      * Load the Transaction Types from an archive.
      * @param pTask the task control
-     * @param pHelper the sheet helper
+     * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error

@@ -97,9 +97,6 @@ public class SheetTaxYearInfo
 
     @Override
     protected void postProcessOnLoad() throws JDataException {
-        /* Calculate the date range */
-        theData.calculateDateRange();
-
         /* Mark active items */
         theTaxYears.markActiveItems();
 

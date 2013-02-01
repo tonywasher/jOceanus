@@ -46,6 +46,11 @@ public class DataRow {
     private final boolean isReadOnly;
 
     /**
+     * Is this derived from a view.
+     */
+    private final boolean isView;
+
+    /**
      * The underlying sheet.
      */
     private final DataSheet theSheet;
@@ -135,6 +140,7 @@ public class DataRow {
         theView = null;
         theRowIndex = pExcelRow.getRowNum();
         isReadOnly = false;
+        isView = false;
     }
 
     /**
@@ -152,6 +158,7 @@ public class DataRow {
         theView = null;
         theRowIndex = pOasisRow.getRowIndex();
         isReadOnly = false;
+        isView = false;
     }
 
     /**
@@ -170,6 +177,7 @@ public class DataRow {
         theRowIndex = pExcelRow.getRowNum()
                       - pView.getFirstCell().getRowIndex();
         isReadOnly = true;
+        isView = true;
     }
 
     /**
@@ -188,6 +196,7 @@ public class DataRow {
         theRowIndex = pOasisRow.getRowIndex()
                       - pView.getFirstCell().getRowIndex();
         isReadOnly = true;
+        isView = true;
     }
 
     /**
@@ -199,10 +208,27 @@ public class DataRow {
         int myIndex = theRowIndex + 1;
 
         /* Return the next row */
-        if (theView != null) {
-            return theView.getRowByIndex(myIndex);
+        if (isView) {
+            if (!theView.validRowIndex(myIndex)) {
+                return null;
+            }
+            switch (theBookType) {
+                case ExcelXLS:
+                    return theSheet.getViewRowByIndex(theView, myIndex);
+                case OasisODS:
+                    return new DataRow(theView, theOasisRow.getNextRow());
+                default:
+                    return null;
+            }
         } else {
-            return theSheet.getRowByIndex(myIndex);
+            switch (theBookType) {
+                case ExcelXLS:
+                    return theSheet.getRowByIndex(myIndex);
+                case OasisODS:
+                    return new DataRow(theSheet, theOasisRow.getNextRow());
+                default:
+                    return null;
+            }
         }
     }
 
@@ -214,11 +240,32 @@ public class DataRow {
         /* Determine the required index */
         int myIndex = theRowIndex - 1;
 
+        if (myIndex < 0) {
+            return null;
+        }
+
         /* Return the next row */
-        if (theView != null) {
-            return theView.getRowByIndex(myIndex);
+        if (isView) {
+            if (!theView.validRowIndex(myIndex)) {
+                return null;
+            }
+            switch (theBookType) {
+                case ExcelXLS:
+                    return theSheet.getViewRowByIndex(theView, myIndex);
+                case OasisODS:
+                    return new DataRow(theView, theOasisRow.getPreviousRow());
+                default:
+                    return null;
+            }
         } else {
-            return theSheet.getRowByIndex(myIndex);
+            switch (theBookType) {
+                case ExcelXLS:
+                    return theSheet.getRowByIndex(myIndex);
+                case OasisODS:
+                    return new DataRow(theSheet, theOasisRow.getPreviousRow());
+                default:
+                    return null;
+            }
         }
     }
 
@@ -228,7 +275,7 @@ public class DataRow {
      */
     public int getColumnCount() {
         /* If this is a view */
-        if (theView != null) {
+        if (isView) {
             /* Number of columns is the number of columns in the view */
             return theView.getColumnCount();
         }
@@ -254,7 +301,7 @@ public class DataRow {
         int myIndex = pIndex;
 
         /* if this is a view row */
-        if (theView != null) {
+        if (isView) {
             /* Handle invalid index */
             if (!theView.validColumnIndex(pIndex)) {
                 return null;
@@ -297,7 +344,7 @@ public class DataRow {
         int myIndex = pIndex;
 
         /* if this is a view row */
-        if (theView != null) {
+        if (isView) {
             /* Not allowed */
             return null;
         }

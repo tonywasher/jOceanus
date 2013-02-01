@@ -112,6 +112,12 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(COL_VALUE);
+        nameRange();
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return COL_VALUE;
     }
 }

@@ -106,6 +106,12 @@ public class SheetDataKey
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(COL_KEYDATA);
+        nameRange();
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return COL_KEYDATA;
     }
 }

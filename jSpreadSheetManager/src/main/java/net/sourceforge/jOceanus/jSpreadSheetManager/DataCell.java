@@ -167,7 +167,7 @@ public class DataCell {
     }
 
     /**
-     * Obtain boolean value of the cell
+     * Obtain boolean value of the cell.
      * @return the boolean value
      */
     public Boolean getBooleanValue() {
@@ -182,7 +182,7 @@ public class DataCell {
     }
 
     /**
-     * Obtain date value of the cell
+     * Obtain date value of the cell.
      * @return the date value
      */
     public Date getDateValue() {
@@ -242,7 +242,7 @@ public class DataCell {
                         return myValue.formatAsString();
                 }
             case OasisODS:
-                return theOasisCell.getStringValue();
+                return theOasisCell.getDisplayText();
             default:
                 return null;
         }
@@ -426,7 +426,12 @@ public class DataCell {
                     theExcelCell.setCellValue(pValue.doubleValue());
                     break;
                 case OasisODS:
-                    theOasisCell.setDoubleValue(pValue.doubleValue());
+                    if (pValue instanceof JRate) {
+                        theOasisCell.setPercentageValue(pValue.doubleValue());
+                        theOasisCell.setDisplayText(pValue.toString());
+                    } else {
+                        theOasisCell.setDoubleValue(pValue.doubleValue());
+                    }
                     break;
                 default:
                     break;
@@ -491,6 +496,9 @@ public class DataCell {
      * @return the required CellStyle
      */
     protected static CellStyleType getCellStyle(final JDecimal pValue) {
+        if (pValue instanceof JPrice) {
+            return CellStyleType.Price;
+        }
         if (pValue instanceof JMoney) {
             return CellStyleType.Money;
         }
@@ -499,9 +507,6 @@ public class DataCell {
         }
         if (pValue instanceof JRate) {
             return CellStyleType.Rate;
-        }
-        if (pValue instanceof JPrice) {
-            return CellStyleType.Price;
         }
         if (pValue instanceof JDilution) {
             return CellStyleType.Dilution;

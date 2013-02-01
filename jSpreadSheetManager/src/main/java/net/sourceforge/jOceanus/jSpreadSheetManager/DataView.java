@@ -22,10 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
+import java.util.Iterator;
+
 /**
  * Represents a view of a range of cells.
  */
-public class DataView {
+public class DataView
+        implements Iterable<DataRow> {
     /**
      * Underlying Sheet.
      */
@@ -118,7 +121,7 @@ public class DataView {
      * @param pRowIndex the index
      * @return valid true/false.
      */
-    private boolean validRowIndex(final int pRowIndex) {
+    protected boolean validRowIndex(final int pRowIndex) {
         /* Check that the row is within range */
         return ((pRowIndex >= 0) && (pRowIndex < getRowCount()));
     }
@@ -176,5 +179,10 @@ public class DataView {
         /* Return the cell */
         DataRow myRow = getRowByIndex(pPosition.getRowIndex());
         return myRow.getCellByIndex(pPosition.getColumnIndex());
+    }
+
+    @Override
+    public Iterator<DataRow> iterator() {
+        return new DataRowIterator(this);
     }
 }

@@ -141,8 +141,8 @@ public class SheetPattern
     protected void loadOpenItem() throws JDataException {
         /* Access the Account */
         Integer myID = loadInteger(COL_ID);
-        String myCredit = loadString(COL_DEBIT);
-        String myDebit = loadString(COL_CREDIT);
+        String myDebit = loadString(COL_DEBIT);
+        String myCredit = loadString(COL_CREDIT);
         String myTransType = loadString(COL_TRAN);
         String myFrequency = loadString(COL_FREQ);
 
@@ -210,7 +210,7 @@ public class SheetPattern
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(COL_FREQ);
+        nameRange();
 
         /* If we are not creating a backup */
         if (!isBackup()) {
@@ -220,6 +220,12 @@ public class SheetPattern
             applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
             applyDataValidation(COL_FREQ, SheetFrequency.AREA_FREQUENCYNAMES);
         }
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return COL_FREQ;
     }
 
     /**

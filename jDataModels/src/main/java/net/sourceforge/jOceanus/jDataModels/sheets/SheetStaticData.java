@@ -178,9 +178,6 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
         writeHeader(COL_NAME, StaticData.FIELD_NAME.getName());
         writeHeader(COL_DESC, StaticData.FIELD_DESC.getName());
 
-        /* Set the Id column as hidden */
-        setHiddenColumn(COL_ID);
-
         /* Set default column types */
         setIntegerColumn(COL_ID);
         setBooleanColumn(COL_ENABLED);
@@ -196,12 +193,18 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(COL_DESC);
+        nameRange();
 
         /* If we are not creating a backup */
         if (!isBackup()) {
             /* Set the name column range */
             nameColumnRange(COL_NAME, theNames);
         }
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return COL_DESC;
     }
 }

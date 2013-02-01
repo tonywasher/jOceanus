@@ -64,6 +64,12 @@ public class OasisCellAddress {
                                            + CHAR_APOS;
 
     /**
+     * Period search string.
+     */
+    private static final String STR_PERIOD = ""
+                                             + CHAR_PERIOD;
+
+    /**
      * Row radix.
      */
     private static final int RADIX_ROW = 10;
@@ -180,8 +186,8 @@ public class OasisCellAddress {
         /* Build the name */
         pBuilder.append(CHAR_DOLLAR);
         if (topCol > 0) {
-            pBuilder.append(CHAR_CBASE
-                            + topCol);
+            pBuilder.append((char) (CHAR_CBASE
+                                    + topCol - 1));
         }
         pBuilder.append((char) (CHAR_CBASE + col));
         pBuilder.append(CHAR_DOLLAR);
@@ -335,6 +341,11 @@ public class OasisCellAddress {
 
             /* Need to escape if there is an apostrophe in the name */
             if (pName.contains(STR_APOS)) {
+                return true;
+            }
+
+            /* Need to escape if there is a period in the name */
+            if (pName.contains(STR_PERIOD)) {
                 return true;
             }
 

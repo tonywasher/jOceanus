@@ -246,7 +246,7 @@ public class ExcelWorkBook {
         /* Create the constraint */
         DVConstraint myConstraint = DVConstraint.createFormulaListConstraint(pValidRange);
 
-        /* Link the two and use drip down arrow */
+        /* Link the two and use drop down arrow */
         DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
         myValidation.setSuppressDropDownArrow(false);
 

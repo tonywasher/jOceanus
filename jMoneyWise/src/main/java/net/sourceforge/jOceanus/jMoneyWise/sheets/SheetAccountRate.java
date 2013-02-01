@@ -176,13 +176,19 @@ public class SheetAccountRate
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(COL_ENDDATE);
+        nameRange();
 
         /* If we are not creating a backup */
         if (!isBackup()) {
             /* Set validation */
             applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
         }
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return COL_ENDDATE;
     }
 
     /**

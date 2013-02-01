@@ -85,8 +85,8 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
 
             /* Write titles */
             theOwner.writeHeader(iCol, DataItem.FIELD_ID.getName());
-            theOwner.setHiddenColumn(iCol);
             theOwner.writeHeader(iData, myClass.name());
+            theOwner.setHiddenColumn(iCol);
 
             /* Switch on the data type */
             switch (myClass.getDataType()) {
@@ -231,6 +231,23 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
                     if (myDate != null) {
                         Integer myId = theOwner.loadInteger(iCol);
                         pInfoList.addOpenItem(myId, pOwner, myClass, myDate);
+                    }
+                    break;
+                case INTEGER:
+                    /* If this is a link */
+                    if (myClass.isLink()) {
+                        String myValue = theOwner.loadString(iData);
+                        if (myValue != null) {
+                            Integer myId = theOwner.loadInteger(iCol);
+                            pInfoList.addOpenItem(myId, pOwner, myClass, myValue);
+                        }
+                        /* else standard integer */
+                    } else {
+                        Integer myValue = theOwner.loadInteger(iData);
+                        if (myValue != null) {
+                            Integer myId = theOwner.loadInteger(iCol);
+                            pInfoList.addOpenItem(myId, pOwner, myClass, myValue);
+                        }
                     }
                     break;
                 default:

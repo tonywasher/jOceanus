@@ -129,6 +129,12 @@ public class SheetControl
     @Override
     protected void postProcessOnWrite() throws JDataException {
         /* Set the range */
-        nameRange(isBackup() ? COL_CONTROLID : COL_VERSION);
+        nameRange();
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return isBackup() ? COL_CONTROLID : COL_VERSION;
     }
 }

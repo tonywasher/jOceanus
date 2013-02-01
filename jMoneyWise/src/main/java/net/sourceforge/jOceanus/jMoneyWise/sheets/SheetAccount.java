@@ -233,12 +233,11 @@ public class SheetAccount
 
     @Override
     protected void postProcessOnWrite() throws JDataException {
+        /* Set range */
+        nameRange();
+
         /* If we are not creating a backup */
         if (!isBackup()) {
-            /* Name range plus infoSet */
-            nameRange(COL_CLOSED
-                      + theInfoSheet.getXtraColumnCount());
-
             /* Set the name column range */
             nameColumnRange(COL_NAME, AREA_ACCOUNTNAMES);
 
@@ -246,12 +245,22 @@ public class SheetAccount
             applyDataValidation(COL_ACCOUNTTYPE, SheetAccountType.AREA_ACCOUNTTYPENAMES);
             theInfoSheet.applyDataValidation(AccountInfoClass.Parent, AREA_ACCOUNTNAMES);
             theInfoSheet.applyDataValidation(AccountInfoClass.Alias, AREA_ACCOUNTNAMES);
-
-            /* else this is a backup */
-        } else {
-            /* Name basic range */
-            nameRange(COL_CLOSED);
         }
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Set default */
+        int myLastCol = COL_CLOSED;
+
+        /* If we are not creating a backup */
+        if (!isBackup()) {
+            /* Name range plus infoSet */
+            myLastCol += theInfoSheet.getXtraColumnCount();
+        }
+
+        /* Return the last column */
+        return myLastCol;
     }
 
     /**

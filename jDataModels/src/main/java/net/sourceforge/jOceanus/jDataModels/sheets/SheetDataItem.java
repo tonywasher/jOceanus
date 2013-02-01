@@ -229,6 +229,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Access the view of the range */
             DataView myView = theWorkBook.getRangeView(theRangeName);
+            Iterator<DataRow> myIterator = myView.iterator();
 
             /* Declare the new stage */
             if (!theTask.setNewStage(theRangeName)) {
@@ -248,9 +249,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             }
 
             /* Loop through the rows of the range */
-            for (theCurrRow = 0; theCurrRow < myTotal; theCurrRow++) {
+            for (theCurrRow = 0; myIterator.hasNext(); theCurrRow++) {
                 /* Access the row */
-                theActiveRow = myView.getRowByIndex(theCurrRow);
+                theActiveRow = myIterator.next();
 
                 /* load the item */
                 if (isBackup) {
@@ -270,9 +271,10 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             /* If we need a second pass */
             if (isDoubleLoad) {
                 /* Loop through the rows of the range */
-                for (theCurrRow = 0; theCurrRow < myTotal; theCurrRow++) {
+                myIterator = myView.iterator();
+                for (theCurrRow = 0; myIterator.hasNext(); theCurrRow++) {
                     /* Access the row */
-                    theActiveRow = myView.getRowByIndex(theCurrRow);
+                    theActiveRow = myIterator.next();
 
                     /* load the item */
                     loadSecondPass();
@@ -315,9 +317,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                 return false;
             }
 
-            /* Create the sheet */
-            theWorkSheet = theWorkBook.newSheet(theRangeName);
-
             /* Access the number of reporting steps */
             int mySteps = theTask.getReportingSteps();
 
@@ -329,6 +328,14 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                 return false;
             }
 
+            /* Determine size of sheet */
+            int myNumRows = (isBackup) ? myTotal : myTotal + 1;
+            int myNumCols = getLastColumn() + 1;
+
+            /* Create the sheet */
+            theWorkSheet = theWorkBook.newSheet(theRangeName, myNumRows, myNumCols);
+            Iterator<DataRow> myRowIterator = theWorkSheet.iterator();
+
             /* Initialise counts */
             theBaseRow = 0;
             theCurrRow = theBaseRow;
@@ -336,19 +343,25 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* If this is an open write */
             if (!isBackup) {
+                /* Create a new row */
+                theActiveRow = myRowIterator.next();
+
                 /* Format Header */
                 formatHeader();
+
+                /* Set the Id column as hidden */
+                setHiddenColumn(COL_ID);
             }
 
             /* Access the iterator */
-            Iterator<T> myIterator = theList.iterator();
+            Iterator<T> myItemIterator = theList.iterator();
 
             /* Loop through the data items */
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
+            while (myItemIterator.hasNext()) {
+                T myCurr = myItemIterator.next();
 
                 /* Create the new row */
-                newRow();
+                theActiveRow = myRowIterator.next();
 
                 /* insert the item */
                 if (isBackup) {
@@ -461,13 +474,16 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     protected abstract void postProcessOnWrite() throws JDataException;
 
     /**
+     * Determine last active column.
+     * @return the last active column
+     */
+    protected abstract int getLastColumn();
+
+    /**
      * Adjust for header.
      * @throws JDataException on error
      */
     private void formatHeader() throws JDataException {
-        /* Create a new row */
-        newRow();
-
         /* Write the Id header */
         writeHeader(COL_ID, DataItem.FIELD_ID.getName());
 
@@ -488,17 +504,17 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      */
     protected void newRow() {
         /* Create the new row */
-        theActiveRow = theWorkSheet.createRowByIndex(theCurrRow);
+        theActiveRow = theWorkSheet.getRowByIndex(theCurrRow);
     }
 
     /**
      * Name the basic range.
-     * @param pLastCol the last column in the range
      * @throws JDataException on error
      */
-    protected void nameRange(final int pLastCol) throws JDataException {
+    protected void nameRange() throws JDataException {
         /* Adjust column if necessary */
-        int myCol = adjustColumn(pLastCol);
+        int myCol = getLastColumn();
+        myCol = adjustColumn(myCol);
 
         /* Name the range */
         CellPosition myFirst = new CellPosition(0, theBaseRow);

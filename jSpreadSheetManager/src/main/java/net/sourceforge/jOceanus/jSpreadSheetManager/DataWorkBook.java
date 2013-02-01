@@ -207,6 +207,31 @@ public class DataWorkBook {
     }
 
     /**
+     * Create a new Sheet with the given name.
+     * @param pName the name of the new sheet
+     * @param pNumRows the number of rows to allocate
+     * @param pNumCols the number of columns to allocate
+     * @return the new sheet
+     * @throws JDataException on error
+     */
+    public DataSheet newSheet(final String pName,
+                              final int pNumRows,
+                              final int pNumCols) throws JDataException {
+        /* Check for modification rights */
+        checkReadOnly();
+
+        /* Switch on workbook type */
+        switch (theBookType) {
+            case ExcelXLS:
+                return theExcelBook.newSheet(pName);
+            case OasisODS:
+                return theOasisBook.newSheet(pName, pNumRows, pNumCols);
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Access a named Sheet.
      * @param pName the name of the sheet
      * @return the sheet
@@ -270,7 +295,7 @@ public class DataWorkBook {
         }
 
         /**
-         * Constructor
+         * Constructor.
          * @param pExtension the extension code
          */
         private WorkBookType(final String pExtension) {
@@ -278,7 +303,7 @@ public class DataWorkBook {
         }
 
         /**
-         * Determine workBookType of file
+         * Determine workBookType of file.
          * @param pFileName the filename
          * @return the workBookType
          * @throws JDataException on error

@@ -18,8 +18,9 @@ public class Tester {
         /**
          * Load an ODS Spreadsheet using jOpenDocument
          */
-        OasisCellRange myRange = new OasisCellRange("'19''87'.A22:.A45");
+        OasisCellRange myRange = new OasisCellRange("'19''87'.AA22:.AC45");
         OasisCellRange myTwo = new OasisCellRange("Test'1987", myRange.getFirstCell().getPosition(), myRange.getLastCell().getPosition());
+        String h = myTwo.toString();
         loadRange(null);
         try {
             DataWorkBook myBook = new DataWorkBook(WorkBookType.OasisODS);

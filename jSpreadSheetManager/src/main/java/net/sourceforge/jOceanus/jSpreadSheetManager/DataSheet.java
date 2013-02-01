@@ -1,5 +1,7 @@
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
+import java.util.Iterator;
+
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
@@ -13,7 +15,6 @@ import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.odftoolkit.odfdom.doc.table.OdfTable;
-import org.odftoolkit.odfdom.doc.table.OdfTableCellRange;
 import org.odftoolkit.odfdom.doc.table.OdfTableColumn;
 import org.odftoolkit.odfdom.doc.table.OdfTableRow;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
@@ -21,7 +22,8 @@ import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
 /**
  * Class representing a sheet within a workBook.
  */
-public class DataSheet {
+public class DataSheet
+        implements Iterable<DataRow> {
     /**
      * Character width.
      */
@@ -141,26 +143,12 @@ public class DataSheet {
         /* Switch on book type */
         switch (theBookType) {
             case ExcelXLS:
+                /* Access existing row */
                 HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
-                return new DataRow(this, myExcelRow);
-            case OasisODS:
-                OdfTableRow myOasisRow = theOasisSheet.getRowByIndex(pRowIndex);
-                return new DataRow(this, myOasisRow);
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * Create the row at required index within the sheet.
-     * @param pRowIndex the requested row index
-     * @return the requested row.
-     */
-    public DataRow createRowByIndex(final int pRowIndex) {
-        /* Switch on book type */
-        switch (theBookType) {
-            case ExcelXLS:
-                HSSFRow myExcelRow = theExcelSheet.createRow(pRowIndex);
+                if (myExcelRow == null) {
+                    /* Create the row if it does not exist */
+                    myExcelRow = theExcelSheet.createRow(pRowIndex);
+                }
                 return new DataRow(this, myExcelRow);
             case OasisODS:
                 OdfTableRow myOasisRow = theOasisSheet.getRowByIndex(pRowIndex);
@@ -249,12 +237,8 @@ public class DataSheet {
                 theExcelBook.applyDataValidation(theExcelSheet, myCells, pName);
                 break;
             case OasisODS:
-                /* Create the CellAddressList */
-                OdfTableCellRange myRange = theOasisSheet.getCellRangeByPosition(pFirstCell.getColumnIndex(), pFirstCell.getRowIndex(),
-                        pLastCell.getRowIndex(), pLastCell.getColumnIndex());
-
                 /* Declare to workBook */
-                theOasisBook.applyDataValidation(theOasisSheet, myRange, pName);
+                theOasisBook.applyDataValidation(theOasisSheet, pFirstCell, pLastCell, pName);
                 break;
             default:
                 break;
@@ -376,5 +360,10 @@ public class DataSheet {
             default:
                 break;
         }
+    }
+
+    @Override
+    public Iterator<DataRow> iterator() {
+        return new DataRowIterator(this);
     }
 }
