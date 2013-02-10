@@ -81,55 +81,48 @@ public class SheetControl
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myVersion = loadInteger(COL_VERSION);
 
         /* Access the Control Key */
         Integer myControl = loadInteger(COL_CONTROLID);
 
         /* Add the Control */
-        theList.addSecureItem(myID, myVersion, myControl);
+        theList.addSecureItem(pId, myVersion, myControl);
     }
 
     @Override
-    protected void loadOpenItem() throws JDataException {
-        /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
+    protected void loadOpenItem(final Integer pId) throws JDataException {
+        /* Access the specific values */
         Integer myVersion = loadInteger(COL_VERSION);
 
         /* Add the Control */
-        theList.addOpenItem(myID, myVersion);
+        theList.addOpenItem(pId, myVersion);
     }
 
     @Override
     protected void insertSecureItem(final ControlData pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_VERSION, pItem.getDataVersion());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
     }
 
     @Override
     protected void insertOpenItem(final ControlData pItem) throws JDataException {
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_VERSION, pItem.getDataVersion());
     }
 
     @Override
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_VERSION, ControlData.FIELD_VERSION.getName());
-
-        /* Set default column types */
-        setIntegerColumn(COL_VERSION);
     }
 
     @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange();
+    protected void formatSheet() throws JDataException {
+        /* Set default column types */
+        setIntegerColumn(COL_VERSION);
     }
 
     @Override

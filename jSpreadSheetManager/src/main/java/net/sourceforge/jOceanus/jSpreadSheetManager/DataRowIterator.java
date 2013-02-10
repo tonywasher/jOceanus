@@ -73,12 +73,14 @@ public class DataRowIterator
     @Override
     public boolean hasNext() {
         /* Calculate the next index */
-        int iIndex = (theLastRow != null) ? theLastRow.getRowIndex() + 1 : 0;
+        int iIndex = (theLastRow != null)
+                ? theLastRow.getRowIndex() + 1
+                : 0;
 
         /* If this is based on a view */
         if (isView) {
             /* Check that the row is within the view */
-            return theView.validRowIndex(iIndex);
+            return (theView.convertRowIndex(iIndex) >= 0);
         }
 
         /* Always capable of new row for sheet */

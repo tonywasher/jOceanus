@@ -35,14 +35,19 @@ public class DataView
     private final DataSheet theSheet;
 
     /**
-     * Top Left Cell Position.
+     * Base Cell Position.
      */
-    private final CellPosition theFirstCell;
+    private final CellPosition theBaseCell;
 
     /**
-     * Bottom Right Cell Position.
+     * Number of rows in view.
      */
-    private final CellPosition theLastCell;
+    private final int theNumRows;
+
+    /**
+     * Number of columns in view.
+     */
+    private final int theNumColumns;
 
     /**
      * Obtain the underlying sheet.
@@ -56,16 +61,8 @@ public class DataView
      * Obtain the top left position.
      * @return the top left position
      */
-    public CellPosition getFirstCell() {
-        return theFirstCell;
-    }
-
-    /**
-     * Obtain the bottom right position.
-     * @return the bottom right position
-     */
-    public CellPosition getLastCell() {
-        return theLastCell;
+    public CellPosition getBaseCell() {
+        return theBaseCell;
     }
 
     /**
@@ -73,9 +70,7 @@ public class DataView
      * @return the number of rows.
      */
     public int getRowCount() {
-        return theLastCell.getRowIndex()
-               - theFirstCell.getRowIndex()
-               + 1;
+        return theNumRows;
     }
 
     /**
@@ -83,9 +78,7 @@ public class DataView
      * @return the number of columns.
      */
     public int getColumnCount() {
-        return theLastCell.getColumnIndex()
-               - theFirstCell.getColumnIndex()
-               + 1;
+        return theNumColumns;
     }
 
     /**
@@ -99,8 +92,13 @@ public class DataView
                        final CellPosition pLastCell) {
         /* Store parameters */
         theSheet = pSheet;
-        theFirstCell = pFirstCell;
-        theLastCell = pLastCell;
+        theBaseCell = pFirstCell;
+        theNumRows = pLastCell.getRowIndex()
+                     - pFirstCell.getRowIndex()
+                     + 1;
+        theNumColumns = pLastCell.getColumnIndex()
+                        - pFirstCell.getColumnIndex()
+                        + 1;
     }
 
     /**
@@ -111,29 +109,41 @@ public class DataView
     protected DataView(final DataCell pFirstCell,
                        final DataCell pLastCell) {
         /* Store parameters */
-        theSheet = pFirstCell.getSheet();
-        theFirstCell = pFirstCell.getPosition();
-        theLastCell = pLastCell.getPosition();
+        this(pFirstCell.getSheet(), pFirstCell.getPosition(), pLastCell.getPosition());
     }
 
     /**
-     * Validate Row index.
-     * @param pRowIndex the index
-     * @return valid true/false.
+     * Convert Row index.
+     * @param pRowIndex the view index
+     * @return the sheet index or -1 if outside view
      */
-    protected boolean validRowIndex(final int pRowIndex) {
-        /* Check that the row is within range */
-        return ((pRowIndex >= 0) && (pRowIndex < getRowCount()));
+    protected int convertRowIndex(final int pRowIndex) {
+        /* Reject values outside range */
+        if ((pRowIndex < 0)
+            || (pRowIndex >= theNumRows)) {
+            return -1;
+        }
+
+        /* Return adjusted index */
+        return pRowIndex
+               + theBaseCell.getRowIndex();
     }
 
     /**
-     * Validate Column index.
-     * @param pColumnIndex the index
-     * @return valid true/false.
+     * Convert Column index.
+     * @param pColIndex the view index
+     * @return the sheet index or -1 if outside view
      */
-    protected boolean validColumnIndex(final int pColumnIndex) {
-        /* Check that the column is within range */
-        return ((pColumnIndex >= 0) && (pColumnIndex < getColumnCount()));
+    protected int convertColumnIndex(final int pColIndex) {
+        /* Reject values outside range */
+        if ((pColIndex < 0)
+            || (pColIndex >= theNumColumns)) {
+            return -1;
+        }
+
+        /* Return adjusted index */
+        return pColIndex
+               + theBaseCell.getColumnIndex();
     }
 
     /**
@@ -142,13 +152,8 @@ public class DataView
      * @return the requested row.
      */
     public DataRow getRowByIndex(final int pRowIndex) {
-        /* Handle invalid index */
-        if (!validRowIndex(pRowIndex)) {
-            return null;
-        }
-
         /* Return the row */
-        return theSheet.getViewRowByIndex(this, pRowIndex);
+        return theSheet.getRowByIndex(this, pRowIndex);
     }
 
     /**
@@ -170,15 +175,9 @@ public class DataView
      * @return the requested cell.
      */
     public DataCell getCellByPosition(final CellPosition pPosition) {
-        /* Handle invalid indices */
-        if ((!validRowIndex(pPosition.getRowIndex()))
-            || (!validColumnIndex(pPosition.getColumnIndex()))) {
-            return null;
-        }
-
         /* Return the cell */
         DataRow myRow = getRowByIndex(pPosition.getRowIndex());
-        return myRow.getCellByIndex(pPosition.getColumnIndex());
+        return (myRow == null) ? null : myRow.getCellByIndex(pPosition.getColumnIndex());
     }
 
     @Override

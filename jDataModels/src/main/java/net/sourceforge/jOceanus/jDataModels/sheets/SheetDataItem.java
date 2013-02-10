@@ -253,11 +253,14 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                 /* Access the row */
                 theActiveRow = myIterator.next();
 
+                /* Access the ID */
+                Integer myID = loadInteger(COL_ID);
+
                 /* load the item */
                 if (isBackup) {
-                    loadSecureItem();
+                    loadSecureItem(myID);
                 } else {
-                    loadOpenItem();
+                    loadOpenItem(myID);
                 }
 
                 /* Report the progress */
@@ -276,8 +279,11 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                     /* Access the row */
                     theActiveRow = myIterator.next();
 
+                    /* Access the ID */
+                    Integer myID = loadInteger(COL_ID);
+
                     /* load the item */
-                    loadSecondPass();
+                    loadSecondPass(myID);
 
                     /* Report the progress */
                     myCount++;
@@ -348,9 +354,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
                 /* Format Header */
                 formatHeader();
-
-                /* Set the Id column as hidden */
-                setHiddenColumn(COL_ID);
             }
 
             /* Access the iterator */
@@ -362,6 +365,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
                 /* Create the new row */
                 theActiveRow = myRowIterator.next();
+
+                /* Write the id */
+                writeInteger(COL_ID, myCurr.getId());
 
                 /* insert the item */
                 if (isBackup) {
@@ -381,13 +387,13 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* If this is an open write */
             if (!isBackup) {
-                /* Freeze the titles */
-                freezeTitles();
+                /* format the data */
+                formatData();
             }
 
-            /* If data was written then post-process */
+            /* If data was written then name the range */
             if (theCurrRow > theBaseRow) {
-                postProcessOnWrite();
+                nameRange();
             }
         } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to create "
@@ -420,22 +426,25 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
     /**
      * Load secure item from spreadsheet.
+     * @param pId the id
      * @throws JDataException on error
      */
-    protected abstract void loadSecureItem() throws JDataException;
+    protected abstract void loadSecureItem(final Integer pId) throws JDataException;
 
     /**
      * Load open item from spreadsheet.
+     * @param pId the id
      * @throws JDataException on error
      */
-    protected void loadOpenItem() throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JDataException {
     }
 
     /**
      * Load second pass.
+     * @param pId the id
      * @throws JDataException on error
      */
-    protected void loadSecondPass() throws JDataException {
+    protected void loadSecondPass(final Integer pId) throws JDataException {
     }
 
     /**
@@ -461,17 +470,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     }
 
     /**
-     * Format Sheet Header and Columns prior to writing.
+     * Prepare sheet for writing.
      * @throws JDataException on error
      */
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
     }
 
     /**
-     * PostProcess on write.
+     * Format sheet after writing.
      * @throws JDataException on error
      */
-    protected abstract void postProcessOnWrite() throws JDataException;
+    protected void formatSheet() throws JDataException {
+    }
 
     /**
      * Determine last active column.
@@ -487,16 +497,28 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         /* Write the Id header */
         writeHeader(COL_ID, DataItem.FIELD_ID.getName());
 
-        /* Hide the ID column */
-        setHiddenColumn(COL_ID);
-        setIntegerColumn(COL_ID);
-
-        /* Format Sheet Header */
-        formatSheetHeader();
+        /* Prepare sheet */
+        prepareSheet();
 
         /* Adjust rows */
         theCurrRow++;
         theBaseRow++;
+    }
+
+    /**
+     * Format sheet after data has been written.
+     * @throws JDataException on error
+     */
+    private void formatData() throws JDataException {
+        /* Hide the ID column */
+        setIntegerColumn(COL_ID);
+        setHiddenColumn(COL_ID);
+
+        /* Freeze the titles */
+        freezeTitles();
+
+        /* Format the sheet data */
+        formatSheet();
     }
 
     /**
@@ -564,6 +586,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         /* Freeze the top row */
         CellPosition myPoint = new CellPosition(2, theBaseRow);
         theWorkSheet.createFreezePane(myPoint);
+    }
+
+    /**
+     * Freeze titles.
+     */
+    protected void applyDataFilter(final int pOffset) throws JDataException {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Freeze the top row */
+        CellPosition myPoint = new CellPosition(myCol, 0);
+        theWorkSheet.applyDataFilter(myPoint, theCurrRow);
     }
 
     /**

@@ -85,9 +85,8 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myInfoTypeId = loadInteger(COL_INFOTYPE);
         Integer myOwnerId = loadInteger(COL_OWNER);
@@ -96,23 +95,16 @@ public abstract class SheetDataInfo<T extends DataInfo<T, ?, ?, ?>>
         byte[] myValueBytes = loadBytes(COL_VALUE);
 
         /* Load the item */
-        loadEncryptedItem(myID, myControlId, myInfoTypeId, myOwnerId, myValueBytes);
+        loadEncryptedItem(pId, myControlId, myInfoTypeId, myOwnerId, myValueBytes);
     }
 
     @Override
     protected void insertSecureItem(final T pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_INFOTYPE, pItem.getInfoTypeId());
         writeInteger(COL_OWNER, pItem.getOwnerId());
         writeBytes(COL_VALUE, pItem.getValueBytes());
-    }
-
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange();
     }
 
     @Override

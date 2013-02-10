@@ -117,9 +117,8 @@ public class SheetPattern
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myDebitId = loadInteger(COL_DEBIT);
         Integer myCreditId = loadInteger(COL_CREDIT);
@@ -134,13 +133,12 @@ public class SheetPattern
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(myID, myControlId, myDate, myDesc, myDebitId, myCreditId, myTranId, myAmount, myFreqId);
+        theList.addSecureItem(pId, myControlId, myDate, myDesc, myDebitId, myCreditId, myTranId, myAmount, myFreqId);
     }
 
     @Override
-    protected void loadOpenItem() throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the Account */
-        Integer myID = loadInteger(COL_ID);
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
         String myTransType = loadString(COL_TRAN);
@@ -154,13 +152,12 @@ public class SheetPattern
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        theList.addOpenItem(myID, myDate, myDesc, myDebit, myCredit, myTransType, myAmount, myFrequency);
+        theList.addOpenItem(pId, myDate, myDesc, myDebit, myCredit, myTransType, myAmount, myFrequency);
     }
 
     @Override
     protected void insertSecureItem(final Pattern pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_DEBIT, pItem.getDebitId());
         writeInteger(COL_CREDIT, pItem.getCreditId());
@@ -174,7 +171,6 @@ public class SheetPattern
     @Override
     protected void insertOpenItem(final Pattern pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeString(COL_DEBIT, pItem.getDebitName());
         writeString(COL_CREDIT, pItem.getCreditName());
         writeString(COL_TRAN, pItem.getTransTypeName());
@@ -185,7 +181,7 @@ public class SheetPattern
     }
 
     @Override
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
         writeHeader(COL_DESC, EventBase.FIELD_DESC.getName());
@@ -194,7 +190,10 @@ public class SheetPattern
         writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
         writeHeader(COL_TRAN, EventBase.FIELD_TRNTYP.getName());
         writeHeader(COL_FREQ, Pattern.FIELD_FREQ.getName());
+    }
 
+    @Override
+    protected void formatSheet() throws JDataException {
         /* Set the Account column width */
         setColumnWidth(COL_DESC, Event.DESCLEN);
         setColumnWidth(COL_DEBIT, Account.NAMELEN);
@@ -205,21 +204,12 @@ public class SheetPattern
         /* Set Number columns */
         setDateColumn(COL_DATE);
         setMoneyColumn(COL_AMOUNT);
-    }
 
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange();
-
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Apply Validation */
-            applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
-            applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
-            applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
-            applyDataValidation(COL_FREQ, SheetFrequency.AREA_FREQUENCYNAMES);
-        }
+        /* Apply Validation */
+        applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
+        applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
+        applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
+        applyDataValidation(COL_FREQ, SheetFrequency.AREA_FREQUENCYNAMES);
     }
 
     @Override

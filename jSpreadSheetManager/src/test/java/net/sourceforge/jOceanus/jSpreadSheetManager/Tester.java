@@ -1,10 +1,15 @@
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Date;
 
+import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
 
@@ -21,25 +26,37 @@ public class Tester {
         OasisCellRange myRange = new OasisCellRange("'19''87'.AA22:.AC45");
         OasisCellRange myTwo = new OasisCellRange("Test'1987", myRange.getFirstCell().getPosition(), myRange.getLastCell().getPosition());
         String h = myTwo.toString();
-        loadRange(null);
+        // loadRange(null);
         try {
             DataWorkBook myBook = new DataWorkBook(WorkBookType.OasisODS);
             DataSheet mySheet = myBook.newSheet("TestData");
+            mySheet.setDefaultColumnStyle(1, CellStyleType.String);
+            mySheet.setDefaultColumnStyle(2, CellStyleType.Date);
+            mySheet.setDefaultColumnStyle(10, CellStyleType.Boolean);
+            mySheet.setDefaultColumnStyle(4, CellStyleType.Rate);
+            mySheet.setDefaultColumnStyle(5, CellStyleType.Units);
+            mySheet.setDefaultColumnStyle(7, CellStyleType.Integer);
             int i = mySheet.getRowCount();
             DataRow myRow = mySheet.getRowByIndex(2);
             i = mySheet.getRowCount();
             // mySheet.setColumnHidden(1, false);
             // SheetCell myCell = myRow.getCellByIndex(0);
             // myCell.setStringValue("Banking:Current");
-            DataCell myCell = myRow.getCellByIndex(1);
+            DataCell myCell = myRow.createCellByIndex(1);
             myCell.setStringValue("Barclays");
-            myCell = myRow.getCellByIndex(2);
+            myCell = myRow.createCellByIndex(2);
             myCell.setDateValue(new Date());
-            myCell = myRow.getCellByIndex(10);
+            myCell = myRow.createCellByIndex(10);
             myCell.setBooleanValue(Boolean.TRUE);
-            // File myFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
-            // FileOutputStream myOutFile = new FileOutputStream(myFile);
-            // BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
+            myCell = myRow.createCellByIndex(4);
+            myCell.setDecimalValue(new JRate("0.2"));
+            myCell = myRow.createCellByIndex(5);
+            myCell.setDecimalValue(new JUnits("0.10"));
+            myCell = myRow.createCellByIndex(7);
+            myCell.setIntegerValue(4);
+            File myFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
+            FileOutputStream myOutFile = new FileOutputStream(myFile);
+            BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
             myCell = null;
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,19 +84,33 @@ public class Tester {
                 DataCell myCell = myRow.getCellByIndex(0);
                 String myType = myCell.getStringValue();
                 myCell = myRow.getCellByIndex(1);
-                String myParent = (myCell == null) ? null : myCell.getStringValue();
+                String myParent = (myCell == null)
+                        ? null
+                        : myCell.getStringValue();
                 myCell = myRow.getCellByIndex(2);
-                String myAlias = (myCell == null) ? null : myCell.getStringValue();
+                String myAlias = (myCell == null)
+                        ? null
+                        : myCell.getStringValue();
                 myCell = myRow.getCellByIndex(3);
-                String myPortfolio = (myCell == null) ? null : myCell.getStringValue();
+                String myPortfolio = (myCell == null)
+                        ? null
+                        : myCell.getStringValue();
                 myCell = myRow.getCellByIndex(4);
-                String myBalance = (myCell == null) ? null : myCell.getStringValue();
+                String myBalance = (myCell == null)
+                        ? null
+                        : myCell.getStringValue();
                 myCell = myRow.getCellByIndex(5);
-                String mySymbol = (myCell == null) ? null : myCell.getStringValue();
+                String mySymbol = (myCell == null)
+                        ? null
+                        : myCell.getStringValue();
                 myCell = myRow.getCellByIndex(6);
-                Boolean isTaxFree = (myCell == null) ? null : myCell.getBooleanValue();
+                Boolean isTaxFree = (myCell == null)
+                        ? null
+                        : myCell.getBooleanValue();
                 myCell = myRow.getCellByIndex(7);
-                Boolean isClosed = (myCell == null) ? null : myCell.getBooleanValue();
+                Boolean isClosed = (myCell == null)
+                        ? null
+                        : myCell.getBooleanValue();
                 myCell = myRow.getCellByIndex(8);
                 myCell = null;
             }

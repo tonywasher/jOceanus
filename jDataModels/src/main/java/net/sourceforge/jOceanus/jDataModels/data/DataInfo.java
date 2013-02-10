@@ -280,10 +280,10 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @throws JDataException on error
      */
     protected DataInfo(final DataInfoList<T, O, I, E> pList,
-                       final int uId,
-                       final int uControlId,
-                       final int uInfoTypeId,
-                       final int uOwnerId) throws JDataException {
+                       final Integer uId,
+                       final Integer uControlId,
+                       final Integer uInfoTypeId,
+                       final Integer uOwnerId) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -318,7 +318,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @param pOwner the owner
      */
     protected DataInfo(final DataInfoList<T, O, I, E> pList,
-                       final int uId,
+                       final Integer uId,
                        final I pInfoType,
                        final O pOwner) {
         /* Initialise the item */

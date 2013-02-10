@@ -141,9 +141,8 @@ public class SheetEvent
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myDebitId = loadInteger(COL_DEBIT);
         Integer myCreditId = loadInteger(COL_CREDIT);
@@ -157,13 +156,12 @@ public class SheetEvent
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(myID, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myTranId);
+        theList.addSecureItem(pId, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myTranId);
     }
 
     @Override
-    protected void loadOpenItem() throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the Account */
-        Integer myID = loadInteger(COL_ID);
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
         String myTransType = loadString(COL_TRAN);
@@ -176,7 +174,7 @@ public class SheetEvent
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        Event myEvent = theList.addOpenItem(myID, myDate, myDesc, myAmount, myDebit, myCredit, myTransType);
+        Event myEvent = theList.addOpenItem(pId, myDate, myDesc, myAmount, myDebit, myCredit, myTransType);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myEvent);
@@ -185,7 +183,6 @@ public class SheetEvent
     @Override
     protected void insertSecureItem(final Event pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeDate(COL_DATE, pItem.getDate());
         writeInteger(COL_DEBIT, pItem.getDebitId());
@@ -198,7 +195,6 @@ public class SheetEvent
     @Override
     protected void insertOpenItem(final Event pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeDate(COL_DATE, pItem.getDate());
         writeString(COL_DESC, pItem.getDesc());
         writeDecimal(COL_AMOUNT, pItem.getAmount());
@@ -211,7 +207,7 @@ public class SheetEvent
     }
 
     @Override
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
         writeHeader(COL_DESC, EventBase.FIELD_DESC.getName());
@@ -220,9 +216,12 @@ public class SheetEvent
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
         writeHeader(COL_TRAN, EventBase.FIELD_TRNTYP.getName());
 
-        /* write infoSet titles */
-        theInfoSheet.writeTitles();
+        /* prepare the info sheet */
+        theInfoSheet.prepareSheet();
+    }
 
+    @Override
+    protected void formatSheet() throws JDataException {
         /* Set the Account column width */
         setColumnWidth(COL_DESC, EventBase.DESCLEN);
         setColumnWidth(COL_DEBIT, AccountBase.NAMELEN);
@@ -233,25 +232,15 @@ public class SheetEvent
         setDateColumn(COL_DATE);
         setMoneyColumn(COL_AMOUNT);
 
-        /* Set column width for ThirdParty */
-        theInfoSheet.setColumnWidth(EventInfoClass.ThirdParty, AccountBase.NAMELEN);
-    }
+        /* Apply validation */
+        applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
+        applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
+        applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
 
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set range */
-        nameRange();
+        /* Format the info sheet */
+        theInfoSheet.formatSheet();
 
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Apply validation */
-            applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
-            applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
-            applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
-
-            /* Set validation for ThirdParty */
-            theInfoSheet.applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);
-        }
+        applyDataFilter(COL_DEBIT);
     }
 
     @Override
@@ -433,6 +422,18 @@ public class SheetEvent
                                  final SheetDataItem<Event> pOwner,
                                  final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
+        }
+
+        @Override
+        public void formatSheet() throws JDataException {
+            /* Apply basic formatting */
+            super.formatSheet();
+
+            /* Set column width for ThirdParty */
+            setColumnWidth(EventInfoClass.ThirdParty, AccountBase.NAMELEN);
+
+            /* Set validation for ThirdParty */
+            applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);
         }
     }
 }

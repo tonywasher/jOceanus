@@ -101,9 +101,8 @@ public class SheetAccountPrice
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myActId = loadInteger(COL_ACCOUNT);
 
@@ -112,13 +111,12 @@ public class SheetAccountPrice
         byte[] myPriceBytes = loadBytes(COL_PRICE);
 
         /* Load the item */
-        theList.addSecureItem(myID, myControlId, myDate, myActId, myPriceBytes);
+        theList.addSecureItem(pId, myControlId, myDate, myActId, myPriceBytes);
     }
 
     @Override
-    protected void loadOpenItem() throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the Account */
-        Integer myID = loadInteger(COL_ID);
         String myAccount = loadString(COL_ACCOUNT);
 
         /* Access the name and description bytes */
@@ -126,13 +124,12 @@ public class SheetAccountPrice
         String myPrice = loadString(COL_PRICE);
 
         /* Load the item */
-        theList.addOpenItem(myID, myDate, myAccount, myPrice);
+        theList.addOpenItem(pId, myDate, myAccount, myPrice);
     }
 
     @Override
     protected void insertSecureItem(final AccountPrice pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_ACCOUNT, pItem.getAccountId());
         writeDate(COL_DATE, pItem.getDate());
@@ -142,37 +139,30 @@ public class SheetAccountPrice
     @Override
     protected void insertOpenItem(final AccountPrice pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeString(COL_ACCOUNT, pItem.getAccountName());
         writeDate(COL_DATE, pItem.getDate());
         writeDecimal(COL_PRICE, pItem.getPrice());
     }
 
     @Override
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_ACCOUNT, AccountPrice.FIELD_ACCOUNT.getName());
         writeHeader(COL_DATE, AccountPrice.FIELD_DATE.getName());
         writeHeader(COL_PRICE, AccountPrice.FIELD_PRICE.getName());
+    }
 
+    @Override
+    protected void formatSheet() throws JDataException {
         /* Set the Account column width */
         setColumnWidth(COL_ACCOUNT, AccountBase.NAMELEN);
 
         /* Set Price and Date columns */
         setDateColumn(COL_DATE);
         setPriceColumn(COL_PRICE);
-    }
 
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange();
-
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Apply validation */
-            applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
-        }
+        /* Apply validation */
+        applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
     }
 
     @Override

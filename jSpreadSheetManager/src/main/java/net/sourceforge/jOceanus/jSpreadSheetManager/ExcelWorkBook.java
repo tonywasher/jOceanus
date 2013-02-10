@@ -47,7 +47,6 @@ import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -110,9 +109,6 @@ public class ExcelWorkBook {
             theEvaluator = new HSSFFormulaEvaluator(theBook);
             theFormatter = new DataFormatter();
 
-            /* Set the missing Cell Policy */
-            theBook.setMissingCellPolicy(Row.RETURN_BLANK_AS_NULL);
-
         } catch (IOException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load workbook", e);
         }
@@ -129,9 +125,6 @@ public class ExcelWorkBook {
         /* Create evaluator and formatter */
         theEvaluator = new HSSFFormulaEvaluator(theBook);
         theFormatter = new DataFormatter();
-
-        /* Set the missing Cell Policy */
-        theBook.setMissingCellPolicy(Row.CREATE_NULL_AS_BLANK);
 
         /* Create standard cell styles */
         createCellStyles();
@@ -158,7 +151,7 @@ public class ExcelWorkBook {
     protected DataSheet newSheet(final String pName) {
         /* Create the new Sheet */
         HSSFSheet mySheet = theBook.createSheet(pName);
-        return new DataSheet(this, mySheet);
+        return new ExcelSheet(this, mySheet, theBook.getSheetIndex(pName));
     }
 
     /**
@@ -169,7 +162,7 @@ public class ExcelWorkBook {
     protected DataSheet getSheet(final String pName) {
         /* Create the new Sheet */
         HSSFSheet mySheet = theBook.getSheet(pName);
-        return new DataSheet(this, mySheet);
+        return new ExcelSheet(this, mySheet, theBook.getSheetIndex(mySheet));
     }
 
     /**
@@ -252,6 +245,18 @@ public class ExcelWorkBook {
 
         /* Apply to the sheet */
         pSheet.addValidationData(myValidation);
+    }
+
+    /**
+     * Apply Data Filter.
+     * @param pSheet the sheet to filter
+     * @param pRange the range to apply the filter to
+     * @throws JDataException on error
+     */
+    public void applyDataFilter(final Sheet pSheet,
+                                final CellRangeAddressList pRange) throws JDataException {
+        /* Create the new filter */
+        pSheet.setAutoFilter(pRange.getCellRangeAddress(0));
     }
 
     /**

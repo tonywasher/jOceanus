@@ -22,12 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import java.util.Calendar;
 import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
@@ -35,28 +33,11 @@ import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
-
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.odftoolkit.odfdom.doc.table.OdfTableCell;
 
 /**
  * Class representing a cell within a sheet or a view.
  */
-public class DataCell {
-    /**
-     * Sheet type.
-     */
-    private final WorkBookType theBookType;
-
-    /**
-     * Is cell readOnly?
-     */
-    private final boolean isReadOnly;
-
+public abstract class DataCell {
     /**
      * The underlying row.
      */
@@ -71,16 +52,6 @@ public class DataCell {
      * The position of the cell.
      */
     private final CellPosition thePosition;
-
-    /**
-     * The Excel Cell.
-     */
-    private final HSSFCell theExcelCell;
-
-    /**
-     * The Oasis Cell.
-     */
-    private final OdfTableCell theOasisCell;
 
     /**
      * Obtain the underlying sheet.
@@ -120,133 +91,36 @@ public class DataCell {
      * @param pExcelCell the Excel Cell
      */
     protected DataCell(final DataRow pRow,
-                       final HSSFCell pExcelCell) {
+                       final int pColIndex) {
         /* Store parameters */
         theRow = pRow;
-        theExcelCell = pExcelCell;
-        theOasisCell = null;
-        theBookType = WorkBookType.ExcelXLS;
         theView = pRow.getView();
-        int myIndex = pExcelCell.getColumnIndex();
-        if (theView != null) {
-            myIndex -= theView.getFirstCell().getColumnIndex();
-        }
-        thePosition = new CellPosition(pRow.getRowIndex(), myIndex);
-        isReadOnly = pRow.isReadOnly();
-    }
-
-    /**
-     * Constructor.
-     * @param pRow the row for the cell
-     * @param pOasisCell the Oasis Cell
-     */
-    protected DataCell(final DataRow pRow,
-                       final OdfTableCell pOasisCell) {
-        /* Store parameters */
-        theRow = pRow;
-        theExcelCell = null;
-        theOasisCell = pOasisCell;
-        theBookType = WorkBookType.OasisODS;
-        theView = pRow.getView();
-        int myIndex = pOasisCell.getColumnIndex();
-        if (theView != null) {
-            myIndex -= theView.getFirstCell().getColumnIndex();
-        }
-        thePosition = new CellPosition(pRow.getRowIndex(), myIndex);
-        isReadOnly = pRow.isReadOnly();
-    }
-
-    /**
-     * Check for readOnly.
-     * @throws JDataException on error
-     */
-    private void checkReadOnly() throws JDataException {
-        if (isReadOnly) {
-            throw new JDataException(ExceptionClass.LOGIC, "Attempt to modify readOnly Book");
-        }
+        thePosition = new CellPosition(pColIndex, pRow.getRowIndex());
     }
 
     /**
      * Obtain boolean value of the cell.
      * @return the boolean value
      */
-    public Boolean getBooleanValue() {
-        switch (theBookType) {
-            case ExcelXLS:
-                return theExcelCell.getBooleanCellValue();
-            case OasisODS:
-                return theOasisCell.getBooleanValue();
-            default:
-                return null;
-        }
-    }
+    public abstract Boolean getBooleanValue();
 
     /**
      * Obtain date value of the cell.
      * @return the date value
      */
-    public Date getDateValue() {
-        switch (theBookType) {
-            case ExcelXLS:
-                return theExcelCell.getDateCellValue();
-            case OasisODS:
-                Calendar myCalendar = theOasisCell.getDateValue();
-                return (myCalendar == null) ? null : myCalendar.getTime();
-            default:
-                return null;
-        }
-    }
+    public abstract Date getDateValue();
 
     /**
      * Obtain integer value of the cell.
      * @return the integer value
      */
-    public Integer getIntegerValue() {
-        Double myValue;
-        switch (theBookType) {
-            case ExcelXLS:
-                myValue = theExcelCell.getNumericCellValue();
-                return (myValue == null) ? null : myValue.intValue();
-            case OasisODS:
-                myValue = theOasisCell.getDoubleValue();
-                return (myValue == null) ? null : myValue.intValue();
-            default:
-                return null;
-        }
-    }
+    public abstract Integer getIntegerValue();
 
     /**
      * Obtain string value of the cell.
      * @return the string value
      */
-    public String getStringValue() {
-        switch (theBookType) {
-            case ExcelXLS:
-                /* Handle the various field types */
-                switch (theExcelCell.getCellType()) {
-                    case Cell.CELL_TYPE_STRING:
-                    default:
-                        return theExcelCell.getStringCellValue();
-
-                    case Cell.CELL_TYPE_NUMERIC:
-                        /* Pick up the formatted value */
-                        return Double.toString(theExcelCell.getNumericCellValue());
-
-                    case Cell.CELL_TYPE_BOOLEAN:
-                        /* Pick up the formatted value */
-                        return theRow.formatCellValue(theExcelCell);
-
-                    case Cell.CELL_TYPE_FORMULA:
-                        /* Pick up the formatted value */
-                        CellValue myValue = theRow.evaluateFormula(theExcelCell);
-                        return myValue.formatAsString();
-                }
-            case OasisODS:
-                return theOasisCell.getDisplayText();
-            default:
-                return null;
-        }
-    }
+    public abstract String getStringValue();
 
     /**
      * Obtain byte array value of the cell.
@@ -272,21 +146,7 @@ public class DataCell {
      * Set null value for the cell.
      * @throws JDataException on error
      */
-    public void setNullValue() throws JDataException {
-        /* Check for readOnly */
-        checkReadOnly();
-
-        switch (theBookType) {
-            case ExcelXLS:
-                theExcelCell.setCellValue((String) null);
-                break;
-            case OasisODS:
-                theOasisCell.removeContent();
-                break;
-            default:
-                break;
-        }
-    }
+    public abstract void setNullValue() throws JDataException;
 
     /**
      * Set boolean value of the cell.
@@ -298,24 +158,17 @@ public class DataCell {
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Check for readOnly */
-            checkReadOnly();
-
-            switch (theBookType) {
-                case ExcelXLS:
-                    theExcelCell.setCellValue(pValue);
-                    break;
-                case OasisODS:
-                    theOasisCell.setBooleanValue(pValue);
-                    break;
-                default:
-                    break;
-            }
-
-            /* Set the style for the cell */
-            theRow.setCellStyle(this, CellStyleType.Boolean);
+            /* Set value */
+            setBoolean(pValue);
         }
     }
+
+    /**
+     * Set non-null boolean value of the cell.
+     * @param pValue the integer value
+     * @throws JDataException on error
+     */
+    protected abstract void setBoolean(final Boolean pValue) throws JDataException;
 
     /**
      * Set date value of the cell.
@@ -327,26 +180,17 @@ public class DataCell {
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Check for readOnly */
-            checkReadOnly();
-
-            switch (theBookType) {
-                case ExcelXLS:
-                    theExcelCell.setCellValue(pValue);
-                    break;
-                case OasisODS:
-                    Calendar myCalendar = Calendar.getInstance();
-                    myCalendar.setTime(pValue);
-                    theOasisCell.setDateValue(myCalendar);
-                    break;
-                default:
-                    break;
-            }
-
-            /* Set the style for the cell */
-            theRow.setCellStyle(this, CellStyleType.Date);
+            /* Set value */
+            setDate(pValue);
         }
     }
+
+    /**
+     * Set non-null date value of the cell.
+     * @param pValue the integer value
+     * @throws JDataException on error
+     */
+    protected abstract void setDate(final Date pValue) throws JDataException;
 
     /**
      * Set integer value of the cell.
@@ -358,26 +202,17 @@ public class DataCell {
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Check for readOnly */
-            checkReadOnly();
-
-            /* Convert to string */
-            Double myValue = pValue.doubleValue();
-            switch (theBookType) {
-                case ExcelXLS:
-                    theExcelCell.setCellValue(myValue);
-                    break;
-                case OasisODS:
-                    theOasisCell.setDoubleValue(myValue);
-                    break;
-                default:
-                    break;
-            }
-
-            /* Set the style for the cell */
-            theRow.setCellStyle(this, CellStyleType.Integer);
+            /* Set value */
+            setInteger(pValue);
         }
     }
+
+    /**
+     * Set non-null integer value of the cell.
+     * @param pValue the integer value
+     * @throws JDataException on error
+     */
+    protected abstract void setInteger(final Integer pValue) throws JDataException;
 
     /**
      * Set string value of the cell.
@@ -389,24 +224,17 @@ public class DataCell {
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Check for readOnly */
-            checkReadOnly();
-
-            switch (theBookType) {
-                case ExcelXLS:
-                    theExcelCell.setCellValue(pValue);
-                    break;
-                case OasisODS:
-                    theOasisCell.setStringValue(pValue);
-                    break;
-                default:
-                    break;
-            }
-
-            /* Set the style for the cell */
-            theRow.setCellStyle(this, CellStyleType.String);
+            /* Set value */
+            setString(pValue);
         }
     }
+
+    /**
+     * Set non-null string value of the cell.
+     * @param pValue the string value
+     * @throws JDataException on error
+     */
+    protected abstract void setString(final String pValue) throws JDataException;
 
     /**
      * Set decimal value of the cell.
@@ -418,29 +246,17 @@ public class DataCell {
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Check for readOnly */
-            checkReadOnly();
-
-            switch (theBookType) {
-                case ExcelXLS:
-                    theExcelCell.setCellValue(pValue.doubleValue());
-                    break;
-                case OasisODS:
-                    if (pValue instanceof JRate) {
-                        theOasisCell.setPercentageValue(pValue.doubleValue());
-                        theOasisCell.setDisplayText(pValue.toString());
-                    } else {
-                        theOasisCell.setDoubleValue(pValue.doubleValue());
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            /* Set the style for the cell */
-            theRow.setCellStyle(this, getCellStyle(pValue));
+            /* Set value */
+            setDecimal(pValue);
         }
     }
+
+    /**
+     * Set non-null decimal value of the cell.
+     * @param pValue the decimal value
+     * @throws JDataException on error
+     */
+    protected abstract void setDecimal(final JDecimal pValue) throws JDataException;
 
     /**
      * Set header value of the cell.
@@ -452,13 +268,17 @@ public class DataCell {
         if (pValue == null) {
             setNullValue();
         } else {
-            /* Set as string value */
-            setStringValue(pValue);
-
-            /* Adjust the style for the cell */
-            theRow.setCellStyle(this, CellStyleType.Header);
+            /* Set value */
+            setHeader(pValue);
         }
     }
+
+    /**
+     * Set non-null header value of the cell.
+     * @param pValue the header value
+     * @throws JDataException on error
+     */
+    protected abstract void setHeader(final String pValue) throws JDataException;
 
     /**
      * Set byte array value of the cell.
@@ -512,21 +332,5 @@ public class DataCell {
             return CellStyleType.Dilution;
         }
         return null;
-    }
-
-    /**
-     * Set cell style.
-     * @param pStyle the style type to use
-     */
-    protected void setCellStyle(final HSSFCellStyle pStyle) {
-        theExcelCell.setCellStyle(pStyle);
-    }
-
-    /**
-     * Set cell style.
-     * @param pStyle the style type to use
-     */
-    protected void setCellStyle(final String pStyle) {
-        theOasisCell.getOdfElement().setTableStyleNameAttribute(pStyle);
     }
 }

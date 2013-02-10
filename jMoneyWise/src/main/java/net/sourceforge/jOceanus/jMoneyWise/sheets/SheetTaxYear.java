@@ -122,23 +122,19 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myRegimeId = loadInteger(COL_REGIME);
 
         /* Access the dates */
         Date myYear = loadDate(COL_TAXYEAR);
 
         /* Add the Tax Year */
-        theList.addSecureItem(myID, myRegimeId, myYear);
+        theList.addSecureItem(pId, myRegimeId, myYear);
     }
 
     @Override
-    protected void loadOpenItem() throws JDataException {
-        /* Access the ID */
-        Integer myID = loadInteger(COL_ID);
-
+    protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the Strings */
         String myTaxRegime = loadString(COL_REGIME);
 
@@ -146,7 +142,7 @@ public class SheetTaxYear
         Date myYear = loadDate(COL_TAXYEAR);
 
         /* Add the Tax Year */
-        TaxYear myTaxYear = theList.addOpenItem(myID, myTaxRegime, myYear);
+        TaxYear myTaxYear = theList.addOpenItem(pId, myTaxRegime, myYear);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myTaxYear);
@@ -155,7 +151,6 @@ public class SheetTaxYear
     @Override
     protected void insertSecureItem(final TaxYear pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
         writeInteger(COL_REGIME, pItem.getTaxRegimeId());
     }
@@ -163,7 +158,6 @@ public class SheetTaxYear
     @Override
     protected void insertOpenItem(final TaxYear pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeDate(COL_TAXYEAR, pItem.getTaxYear());
         writeString(COL_REGIME, pItem.getTaxRegimeName());
 
@@ -172,31 +166,28 @@ public class SheetTaxYear
     }
 
     @Override
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_TAXYEAR, TaxYearBase.FIELD_TAXYEAR.getName());
         writeHeader(COL_REGIME, TaxYearBase.FIELD_REGIME.getName());
 
-        /* write infoSet titles */
-        theInfoSheet.writeTitles();
+        /* prepare infoSet sheet */
+        theInfoSheet.prepareSheet();
+    }
 
+    @Override
+    protected void formatSheet() throws JDataException {
         /* Set the String column width */
         setColumnWidth(COL_REGIME, StaticData.NAMELEN);
 
         /* Set Date columns */
         setDateColumn(COL_TAXYEAR);
-    }
 
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set range */
-        nameRange();
+        /* Apply validation */
+        applyDataValidation(COL_REGIME, SheetTaxRegime.AREA_TAXREGIMENAMES);
 
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Apply validation */
-            applyDataValidation(COL_REGIME, SheetTaxRegime.AREA_TAXREGIMENAMES);
-        }
+        /* Format the info sheet */
+        theInfoSheet.formatSheet();
     }
 
     @Override

@@ -138,6 +138,9 @@ public class CreateExtract<T extends DataSet<T>>
 
             /* Report the failure */
             throw e;
+            /* Catch any exceptions */
+        } catch (Exception e) {
+            throw new JDataException(ExceptionClass.LOGIC, "Failed", e);
         }
 
         /* Return nothing */

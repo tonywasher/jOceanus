@@ -76,7 +76,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * Fill in titles.
      * @throws JDataException on error
      */
-    public void writeTitles() throws JDataException {
+    public void prepareSheet() throws JDataException {
         /* Loop through the class values */
         for (E myClass : theClass.getEnumConstants()) {
             /* Obtain the id and data columns */
@@ -86,6 +86,22 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
             /* Write titles */
             theOwner.writeHeader(iCol, DataItem.FIELD_ID.getName());
             theOwner.writeHeader(iData, myClass.name());
+        }
+    }
+
+    /**
+     * Fill in titles.
+     * @throws JDataException on error
+     */
+    public void formatSheet() throws JDataException {
+        /* Loop through the class values */
+        for (E myClass : theClass.getEnumConstants()) {
+            /* Obtain the id and data columns */
+            int iCol = getIdColumn(myClass);
+            int iData = iCol + 1;
+
+            /* Write titles */
+            theOwner.setIntegerColumn(iCol);
             theOwner.setHiddenColumn(iCol);
 
             /* Switch on the data type */
@@ -124,8 +140,8 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * @param pClass the class to set
      * @param pNumChars the character width to set
      */
-    public void setColumnWidth(final E pClass,
-                               final int pNumChars) {
+    protected void setColumnWidth(final E pClass,
+                                  final int pNumChars) {
         /* Obtain the data column */
         int iCol = 1 + getIdColumn(pClass);
 
@@ -139,8 +155,8 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * @param pList name of validation range
      * @throws JDataException on error
      */
-    public void applyDataValidation(final E pClass,
-                                    final String pList) throws JDataException {
+    protected void applyDataValidation(final E pClass,
+                                       final String pList) throws JDataException {
         /* Obtain the data column */
         int iCol = 1 + getIdColumn(pClass);
 
@@ -277,7 +293,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
      * @return the additional columns.
      */
     public int getXtraColumnCount() {
-        /* Calculate the id column */
+        /* Calculate the extra columns */
         return 2 * theClass.getEnumConstants().length;
     }
 }

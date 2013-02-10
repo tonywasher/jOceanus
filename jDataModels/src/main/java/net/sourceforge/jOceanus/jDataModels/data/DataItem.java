@@ -272,7 +272,7 @@ public abstract class DataItem
      * Get the Id for this item.
      * @return the Id
      */
-    public int getId() {
+    public Integer getId() {
         return theId;
     }
 

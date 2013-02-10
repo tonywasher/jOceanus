@@ -105,9 +105,8 @@ public class SheetAccountRate
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myActId = loadInteger(COL_ACCOUNT);
 
@@ -117,13 +116,12 @@ public class SheetAccountRate
         Date myEndDate = loadDate(COL_ENDDATE);
 
         /* Load the item */
-        theList.addSecureItem(myID, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
+        theList.addSecureItem(pId, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
     }
 
     @Override
-    protected void loadOpenItem() throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the account */
-        int myID = loadInteger(COL_ID);
         String myAccount = loadString(COL_ACCOUNT);
 
         /* Access the name and description bytes */
@@ -132,13 +130,12 @@ public class SheetAccountRate
         Date myEndDate = loadDate(COL_ENDDATE);
 
         /* Load the item */
-        theList.addOpenItem(myID, myAccount, myRate, myEndDate, myBonus);
+        theList.addOpenItem(pId, myAccount, myRate, myEndDate, myBonus);
     }
 
     @Override
     protected void insertSecureItem(final AccountRate pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_ACCOUNT, pItem.getAccountId());
         writeBytes(COL_RATE, pItem.getRateBytes());
@@ -149,7 +146,6 @@ public class SheetAccountRate
     @Override
     protected void insertOpenItem(final AccountRate pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeString(COL_ACCOUNT, pItem.getAccountName());
         writeDecimal(COL_RATE, pItem.getRate());
         writeDecimal(COL_BONUS, pItem.getBonus());
@@ -157,13 +153,16 @@ public class SheetAccountRate
     }
 
     @Override
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_ACCOUNT, AccountRate.FIELD_ACCOUNT.getName());
         writeHeader(COL_RATE, AccountRate.FIELD_RATE.getName());
         writeHeader(COL_BONUS, AccountRate.FIELD_BONUS.getName());
         writeHeader(COL_ENDDATE, AccountRate.FIELD_ENDDATE.getName());
+    }
 
+    @Override
+    protected void formatSheet() throws JDataException {
         /* Set the Account column width */
         setColumnWidth(COL_ACCOUNT, AccountBase.NAMELEN);
 
@@ -171,18 +170,9 @@ public class SheetAccountRate
         setRateColumn(COL_RATE);
         setRateColumn(COL_BONUS);
         setDateColumn(COL_ENDDATE);
-    }
 
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange();
-
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Set validation */
-            applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
-        }
+        /* Set validation */
+        applyDataValidation(COL_ACCOUNT, SheetAccount.AREA_ACCOUNTNAMES);
     }
 
     @Override

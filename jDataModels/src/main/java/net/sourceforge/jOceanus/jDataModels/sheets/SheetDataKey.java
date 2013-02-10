@@ -81,9 +81,8 @@ public class SheetDataKey
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myControl = loadInteger(COL_CONTROLID);
         Integer myKeyType = loadInteger(COL_KEYTYPE);
 
@@ -91,22 +90,15 @@ public class SheetDataKey
         byte[] myKey = loadBytes(COL_KEYDATA);
 
         /* Add the DataKey */
-        theList.addSecureItem(myID, myControl, myKeyType, myKey);
+        theList.addSecureItem(pId, myControl, myKeyType, myKey);
     }
 
     @Override
     protected void insertSecureItem(final DataKey pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_KEYTYPE, pItem.getKeyTypeId());
         writeBytes(COL_KEYDATA, pItem.getSecuredKeyDef());
-    }
-
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange();
     }
 
     @Override

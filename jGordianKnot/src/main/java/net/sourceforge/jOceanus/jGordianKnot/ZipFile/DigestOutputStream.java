@@ -29,10 +29,11 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jGordianKnot.MsgDigest;
 
 /**
- * Provides a digest OutputStream. This class simply calculates a digest of the data in the stream at this
- * point and passes the data onto the next Output Stream in the chain.
+ * Provides a digest OutputStream. This class simply calculates a digest of the data in the stream at this point and passes the data onto the next Output Stream
+ * in the chain.
  */
-public class DigestOutputStream extends OutputStream {
+public class DigestOutputStream
+        extends OutputStream {
     /**
      * The underlying output stream.
      */
@@ -95,12 +96,10 @@ public class DigestOutputStream extends OutputStream {
     @Override
     public void flush() throws IOException {
         /* If we are already closed throw IO Exception */
-        if (isClosed) {
-            throw new IOException("Stream is closed");
+        if (!isClosed) {
+            /* Flush the output stream */
+            theStream.flush();
         }
-
-        /* Flush the output stream */
-        theStream.flush();
     }
 
     @Override

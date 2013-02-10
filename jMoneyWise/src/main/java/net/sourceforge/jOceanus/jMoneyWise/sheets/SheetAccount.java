@@ -141,9 +141,8 @@ public class SheetAccount
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myActTypeId = loadInteger(COL_ACCOUNTTYPE);
 
@@ -155,13 +154,12 @@ public class SheetAccount
         byte[] myDesc = loadBytes(COL_DESC);
 
         /* Load the item */
-        theList.addSecureItem(myID, myControlId, myName, myActTypeId, myDesc, isClosed);
+        theList.addSecureItem(pId, myControlId, myName, myActTypeId, myDesc, isClosed);
     }
 
     @Override
-    protected void loadOpenItem() throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the Account */
-        Integer myID = loadInteger(COL_ID);
         String myName = loadString(COL_NAME);
         String myActType = loadString(COL_ACCOUNTTYPE);
         String myDesc = loadString(COL_DESC);
@@ -170,16 +168,13 @@ public class SheetAccount
         Boolean isClosed = loadBoolean(COL_CLOSED);
 
         /* Load the item */
-        theList.addOpenItem(myID, myName, myActType, myDesc, isClosed);
+        theList.addOpenItem(pId, myName, myActType, myDesc, isClosed);
     }
 
     @Override
-    protected void loadSecondPass() throws JDataException {
-        /* Access the Account Id */
-        Integer myID = loadInteger(COL_ID);
-
+    protected void loadSecondPass(final Integer pId) throws JDataException {
         /* Access the account */
-        Account myAccount = theList.findItemById(myID);
+        Account myAccount = theList.findItemById(pId);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myAccount);
@@ -188,7 +183,6 @@ public class SheetAccount
     @Override
     protected void insertSecureItem(final Account pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_ACCOUNTTYPE, pItem.getActTypeId());
         writeBoolean(COL_CLOSED, pItem.isClosed());
@@ -199,7 +193,6 @@ public class SheetAccount
     @Override
     protected void insertOpenItem(final Account pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeString(COL_NAME, pItem.getName());
         writeString(COL_ACCOUNTTYPE, pItem.getActTypeName());
         writeString(COL_DESC, pItem.getDesc());
@@ -210,42 +203,35 @@ public class SheetAccount
     }
 
     @Override
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_NAME, AccountBase.FIELD_NAME.getName());
         writeHeader(COL_ACCOUNTTYPE, AccountBase.FIELD_TYPE.getName());
         writeHeader(COL_DESC, AccountBase.FIELD_DESC.getName());
         writeHeader(COL_CLOSED, AccountBase.FIELD_CLOSED.getName());
 
-        /* write infoSet titles */
-        theInfoSheet.writeTitles();
+        /* prepare infoSet sheet */
+        theInfoSheet.prepareSheet();
+    }
 
+    @Override
+    protected void formatSheet() throws JDataException {
         /* Set the Account column width */
         setColumnWidth(COL_NAME, AccountBase.NAMELEN);
         setColumnWidth(COL_ACCOUNTTYPE, StaticData.NAMELEN);
         setColumnWidth(COL_DESC, AccountBase.DESCLEN);
-        theInfoSheet.setColumnWidth(AccountInfoClass.Parent, AccountBase.NAMELEN);
-        theInfoSheet.setColumnWidth(AccountInfoClass.Alias, AccountBase.NAMELEN);
 
         /* Set Boolean column */
         setBooleanColumn(COL_CLOSED);
-    }
 
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set range */
-        nameRange();
+        /* Set the name column range */
+        nameColumnRange(COL_NAME, AREA_ACCOUNTNAMES);
 
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Set the name column range */
-            nameColumnRange(COL_NAME, AREA_ACCOUNTNAMES);
+        /* Set the Validations */
+        applyDataValidation(COL_ACCOUNTTYPE, SheetAccountType.AREA_ACCOUNTTYPENAMES);
 
-            /* Set the Validations */
-            applyDataValidation(COL_ACCOUNTTYPE, SheetAccountType.AREA_ACCOUNTTYPENAMES);
-            theInfoSheet.applyDataValidation(AccountInfoClass.Parent, AREA_ACCOUNTNAMES);
-            theInfoSheet.applyDataValidation(AccountInfoClass.Alias, AREA_ACCOUNTNAMES);
-        }
+        /* Format the info sheet */
+        theInfoSheet.formatSheet();
     }
 
     @Override
@@ -383,6 +369,20 @@ public class SheetAccount
                                    final SheetDataItem<Account> pOwner,
                                    final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
+        }
+
+        @Override
+        public void formatSheet() throws JDataException {
+            /* Apply basic formatting */
+            super.formatSheet();
+
+            /* Set the column widths */
+            setColumnWidth(AccountInfoClass.Parent, AccountBase.NAMELEN);
+            setColumnWidth(AccountInfoClass.Alias, AccountBase.NAMELEN);
+
+            /* Set the Validations */
+            applyDataValidation(AccountInfoClass.Parent, AREA_ACCOUNTNAMES);
+            applyDataValidation(AccountInfoClass.Alias, AREA_ACCOUNTNAMES);
         }
     }
 }

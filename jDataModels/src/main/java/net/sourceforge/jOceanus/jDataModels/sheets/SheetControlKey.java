@@ -76,28 +76,18 @@ public class SheetControlKey
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
-        /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
-
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the binary values */
         byte[] myHash = loadBytes(COL_KEYDATA);
 
         /* Add the Control */
-        theList.addSecureItem(myID, myHash);
+        theList.addSecureItem(pId, myHash);
     }
 
     @Override
     protected void insertSecureItem(final ControlKey pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeBytes(COL_KEYDATA, pItem.getHashBytes());
-    }
-
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange();
     }
 
     @Override

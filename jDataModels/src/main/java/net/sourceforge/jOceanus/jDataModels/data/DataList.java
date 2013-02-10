@@ -310,7 +310,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Get Max Id.
      * @return the Maximum Id
      */
-    public int getMaxId() {
+    public Integer getMaxId() {
         return theMgr.getMaxId();
     }
 

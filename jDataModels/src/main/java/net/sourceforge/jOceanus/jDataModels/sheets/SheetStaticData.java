@@ -23,7 +23,6 @@
 package net.sourceforge.jOceanus.jDataModels.sheets;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 
 /**
@@ -118,9 +117,8 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     }
 
     @Override
-    protected void loadSecureItem() throws JDataException {
+    protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Integer myControlId = loadInteger(COL_CONTROLID);
         Boolean myEnabled = loadBoolean(COL_ENABLED);
         Integer myOrder = loadInteger(COL_ORDER);
@@ -130,13 +128,12 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
         byte[] myDescBytes = loadBytes(COL_DESC);
 
         /* Load the item */
-        loadEncryptedItem(myID, myControlId, myEnabled, myOrder, myNameBytes, myDescBytes);
+        loadEncryptedItem(pId, myControlId, myEnabled, myOrder, myNameBytes, myDescBytes);
     }
 
     @Override
-    protected void loadOpenItem() throws JDataException {
+    protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the IDs */
-        Integer myID = loadInteger(COL_ID);
         Boolean myEnabled = loadBoolean(COL_ENABLED);
         Integer myOrder = loadInteger(COL_ORDER);
 
@@ -145,13 +142,12 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
         String myDesc = loadString(COL_DESC);
 
         /* Load the item */
-        loadClearTextItem(myID, myEnabled, myOrder, myName, myDesc);
+        loadClearTextItem(pId, myEnabled, myOrder, myName, myDesc);
     }
 
     @Override
     protected void insertSecureItem(final T pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeBoolean(COL_ENABLED, pItem.getEnabled());
         writeInteger(COL_ORDER, pItem.getOrder());
@@ -162,7 +158,6 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     @Override
     protected void insertOpenItem(final T pItem) throws JDataException {
         /* Set the fields */
-        writeInteger(COL_ID, pItem.getId());
         writeBoolean(COL_ENABLED, pItem.getEnabled());
         writeInteger(COL_ORDER, pItem.getOrder());
         writeString(COL_NAME, pItem.getName());
@@ -170,16 +165,17 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     }
 
     @Override
-    protected void formatSheetHeader() throws JDataException {
+    protected void prepareSheet() throws JDataException {
         /* Write titles */
-        writeHeader(COL_ID, DataItem.FIELD_ID.getName());
         writeHeader(COL_ORDER, StaticData.FIELD_ORDER.getName());
         writeHeader(COL_ENABLED, StaticData.FIELD_ENABLED.getName());
         writeHeader(COL_NAME, StaticData.FIELD_NAME.getName());
         writeHeader(COL_DESC, StaticData.FIELD_DESC.getName());
+    }
 
+    @Override
+    protected void formatSheet() throws JDataException {
         /* Set default column types */
-        setIntegerColumn(COL_ID);
         setBooleanColumn(COL_ENABLED);
         setIntegerColumn(COL_ORDER);
 
@@ -188,18 +184,9 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
 
         /* Set description column width */
         setColumnWidth(COL_DESC, StaticData.DESCLEN);
-    }
 
-    @Override
-    protected void postProcessOnWrite() throws JDataException {
-        /* Set the range */
-        nameRange();
-
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Set the name column range */
-            nameColumnRange(COL_NAME, theNames);
-        }
+        /* Set the name column range */
+        nameColumnRange(COL_NAME, theNames);
     }
 
     @Override
