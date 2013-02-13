@@ -152,7 +152,9 @@ public abstract class AccountBase
      */
     public Integer getActTypeId() {
         AccountType myType = getActType();
-        return (myType == null) ? null : myType.getId();
+        return (myType == null)
+                ? null
+                : myType.getId();
     }
 
     /**
@@ -161,7 +163,9 @@ public abstract class AccountBase
      */
     public String getActTypeName() {
         AccountType myType = getActType();
-        return (myType == null) ? null : myType.getName();
+        return (myType == null)
+                ? null
+                : myType.getName();
     }
 
     /**
@@ -338,7 +342,9 @@ public abstract class AccountBase
      * @param pValue the value
      */
     private void setValueClosed(final Boolean pValue) {
-        getValueSet().setValue(FIELD_CLOSED, (pValue != null) ? pValue : Boolean.FALSE);
+        getValueSet().setValue(FIELD_CLOSED, (pValue != null)
+                ? pValue
+                : Boolean.FALSE);
     }
 
     @Override
@@ -792,6 +798,7 @@ public abstract class AccountBase
         if (!Difference.isEqual(isClosed(), myAccount.isClosed())) {
             setValueClosed(myAccount.isClosed());
         }
+
         /* Check for changes */
         return checkForHistory();
     }

@@ -31,6 +31,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
@@ -138,7 +139,9 @@ public abstract class EventBase
      */
     public Integer getTransTypeId() {
         TransactionType myType = getTransType();
-        return (myType == null) ? null : myType.getId();
+        return (myType == null)
+                ? null
+                : myType.getId();
     }
 
     /**
@@ -147,7 +150,9 @@ public abstract class EventBase
      */
     public String getTransTypeName() {
         TransactionType myType = getTransType();
-        return (myType == null) ? null : myType.getName();
+        return (myType == null)
+                ? null
+                : myType.getName();
     }
 
     /**
@@ -188,7 +193,9 @@ public abstract class EventBase
      */
     public Integer getDebitId() {
         Account myAccount = getDebit();
-        return (myAccount == null) ? null : myAccount.getId();
+        return (myAccount == null)
+                ? null
+                : myAccount.getId();
     }
 
     /**
@@ -197,7 +204,9 @@ public abstract class EventBase
      */
     public String getDebitName() {
         Account myAccount = getDebit();
-        return (myAccount == null) ? null : myAccount.getName();
+        return (myAccount == null)
+                ? null
+                : myAccount.getName();
     }
 
     /**
@@ -214,7 +223,9 @@ public abstract class EventBase
      */
     public Integer getCreditId() {
         Account myAccount = getCredit();
-        return (myAccount == null) ? null : myAccount.getId();
+        return (myAccount == null)
+                ? null
+                : myAccount.getId();
     }
 
     /**
@@ -223,7 +234,9 @@ public abstract class EventBase
      */
     public String getCreditName() {
         Account myAccount = getCredit();
-        return (myAccount == null) ? null : myAccount.getName();
+        return (myAccount == null)
+                ? null
+                : myAccount.getName();
     }
 
     /**
@@ -396,7 +409,7 @@ public abstract class EventBase
      * Set debit value.
      * @param pValue the value
      */
-    private void setValueDebit(final Account pValue) {
+    protected void setValueDebit(final Account pValue) {
         getValueSet().setValue(FIELD_DEBIT, pValue);
     }
 
@@ -412,7 +425,7 @@ public abstract class EventBase
      * Set credit value.
      * @param pValue the value
      */
-    private void setValueCredit(final Account pValue) {
+    protected void setValueCredit(final Account pValue) {
         getValueSet().setValue(FIELD_CREDIT, pValue);
     }
 
@@ -616,7 +629,9 @@ public abstract class EventBase
 
         /* If header settings differ */
         if (isHeader() != pThat.isHeader()) {
-            return isHeader() ? -1 : 1;
+            return isHeader()
+                    ? -1
+                    : 1;
         }
 
         /* If the dates differ */
@@ -1086,7 +1101,9 @@ public abstract class EventBase
      * @param pDate the new date
      */
     public void setDate(final JDateDay pDate) {
-        setValueDate((pDate == null) ? null : new JDateDay(pDate));
+        setValueDate((pDate == null)
+                ? null
+                : new JDateDay(pDate));
     }
 
     /**
@@ -1187,6 +1204,57 @@ public abstract class EventBase
                 || (myTransType.isStockSplit()) || (myTransType.isStockTakeover()))) {
             addError("Amount must be zero for Stock Split/Demerger/Takeover", FIELD_AMOUNT);
         }
+    }
+
+    /**
+     * Update base event from an edited event.
+     * @param pEvent the edited event
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final DataItem pEvent) {
+        /* Can only update from an event */
+        if (!(pEvent instanceof EventBase)) {
+            return false;
+        }
+
+        EventBase myEvent = (EventBase) pEvent;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Update the Date if required */
+        if (!Difference.isEqual(getDate(), myEvent.getDate())) {
+            setValueDate(myEvent.getDate());
+        }
+
+        /* Update the description if required */
+        if (!Difference.isEqual(getDesc(), myEvent.getDesc())) {
+            setValueDesc(myEvent.getDescField());
+        }
+
+        /* Update the transaction type if required */
+        if (!Difference.isEqual(getTransType(), myEvent.getTransType())) {
+            setValueTransType(myEvent.getTransType());
+        }
+
+        /* Update the debit account if required */
+        if (!Difference.isEqual(getDebit(), myEvent.getDebit())) {
+            setValueDebit(myEvent.getDebit());
+        }
+
+        /* Update the credit account if required */
+        if (!Difference.isEqual(getCredit(), myEvent.getCredit())) {
+            setValueCredit(myEvent.getCredit());
+        }
+
+        /* Update the amount if required */
+        if (!Difference.isEqual(getAmount(), myEvent.getAmount())) {
+            setValueAmount(myEvent.getAmountField());
+        }
+
+        /* Check for changes */
+        return checkForHistory();
     }
 
     /**

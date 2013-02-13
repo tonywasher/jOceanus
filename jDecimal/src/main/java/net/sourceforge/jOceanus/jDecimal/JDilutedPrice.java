@@ -27,7 +27,8 @@ import java.util.Currency;
 /**
  * Represents a Diluted Price object.
  */
-public class JDilutedPrice extends JMoney {
+public class JDilutedPrice
+        extends JMoney {
     /**
      * Additional number of decimals for Price.
      */
@@ -39,7 +40,8 @@ public class JDilutedPrice extends JMoney {
      */
     protected JDilutedPrice(final Currency pCurrency) {
         super(pCurrency);
-        recordScale(pCurrency.getDefaultFractionDigits() + XTRA_DECIMALS);
+        recordScale(pCurrency.getDefaultFractionDigits()
+                    + XTRA_DECIMALS);
     }
 
     /**
@@ -58,7 +60,7 @@ public class JDilutedPrice extends JMoney {
      */
     protected JDilutedPrice(final JPrice pPrice,
                             final JDilution pDilution) {
-        super(pPrice.getCurrency());
+        this(pPrice.getCurrency());
         calculateProduct(pPrice, pDilution);
     }
 

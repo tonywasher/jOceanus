@@ -110,7 +110,9 @@ public class Pattern
      */
     public Integer getFrequencyId() {
         Frequency myFreq = getFrequency();
-        return (myFreq == null) ? null : myFreq.getId();
+        return (myFreq == null)
+                ? null
+                : myFreq.getId();
     }
 
     /**
@@ -119,7 +121,9 @@ public class Pattern
      */
     public String getFrequencyName() {
         Frequency myFreq = getFrequency();
-        return (myFreq == null) ? null : myFreq.getName();
+        return (myFreq == null)
+                ? null
+                : myFreq.getName();
     }
 
     /**
@@ -161,7 +165,9 @@ public class Pattern
      * @return the partner
      */
     public Account getPartner() {
-        return isCredit() ? getDebit() : getCredit();
+        return isCredit()
+                ? getDebit()
+                : getCredit();
     }
 
     @Override
@@ -498,6 +504,16 @@ public class Pattern
             setDate(myPattern.getDate());
         }
 
+        /* Update the partner account if required */
+        if (!Difference.isEqual(getDebit(), myPattern.getDebit())) {
+            setValueDebit(myPattern.getDebit());
+        }
+
+        /* Update the credit account if required */
+        if (!Difference.isEqual(getCredit(), myPattern.getCredit())) {
+            setValueCredit(myPattern.getCredit());
+        }
+
         /* Check for changes */
         return checkForHistory();
     }
@@ -536,7 +552,9 @@ public class Pattern
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
-                return (theAccount == null) ? JDataFieldValue.SkipField : theAccount;
+                return (theAccount == null)
+                        ? JDataFieldValue.SkipField
+                        : theAccount;
             }
             return super.getFieldValue(pField);
         }
