@@ -37,7 +37,6 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetWriter;
 import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
@@ -239,9 +238,6 @@ public class FinanceSheet
             /* Create a YearRange */
             YearRange myRange = new YearRange();
 
-            /* Create the dilution event list */
-            DilutionEventList myDilution = new DilutionEventList(myData);
-
             /* Determine Year Range */
             boolean bContinue = loadArchive(pTask, myWorkbook, myData, myRange);
 
@@ -285,10 +281,7 @@ public class FinanceSheet
                 bContinue = SheetAccountRate.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
-                bContinue = SheetDilution.loadArchive(pTask, myWorkbook, myData, myDilution);
-            }
-            if (bContinue) {
-                bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData, myDilution);
+                bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
                 bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);

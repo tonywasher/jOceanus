@@ -21,6 +21,7 @@
       <!--<item name="Download" href="http://sourceforge.net/projects/joceanus/files/"/>-->
       <item name="Release Notes" href="releaseNotes.html" />
       <item name="JavaDoc" href="apidocs/index.html" />
+      <item name="Source Xref" href="xref/index.html" />
     </menu>
 
     <menu ref="modules"/>

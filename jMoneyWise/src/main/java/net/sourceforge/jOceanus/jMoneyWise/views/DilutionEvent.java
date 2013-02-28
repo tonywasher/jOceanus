@@ -34,12 +34,9 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
-import net.sourceforge.jOceanus.jDecimal.JDilutedPrice;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
@@ -455,58 +452,6 @@ public final class DilutionEvent
 
             /* Return to caller */
             return myDilution;
-        }
-
-        /**
-         * Add undiluted price for the account and date.
-         * @param pAccount the account to dilute
-         * @param pDate the date of the price
-         * @param pPrice the (possibly) diluted price
-         * @throws JDataException on error
-         */
-        public void addPrice(final String pAccount,
-                             final Date pDate,
-                             final String pPrice) throws JDataException {
-            /* Obtain the prices and accounts */
-            AccountList myAccounts = theData.getAccounts();
-            AccountPriceList myPrices = theData.getPrices();
-
-            /* Search for the account */
-            Account myAccount = myAccounts.findItemByName(pAccount);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid Price account ["
-                                                              + pAccount
-                                                              + "]");
-            }
-
-            /* Create the date */
-            JDateDay myDate = new JDateDay(pDate);
-            JPrice myPrice;
-
-            /* Protect against exceptions */
-            try {
-                /* If the account has diluted prices for this date */
-                JDilution myDilution = getDilutionFactor(myAccount, myDate);
-                if (myDilution != null) {
-                    /* Obtain the diluted price */
-                    JDilutedPrice myDilutedPrice = theParser.parseDilutedPriceValue(pPrice);
-
-                    /* Obtain the undiluted price */
-                    myPrice = myDilutedPrice.getPrice(myDilution);
-
-                    /* Else this is just a price */
-                } else {
-                    /* Obtain the the price */
-                    myPrice = theParser.parsePriceValue(pPrice);
-                }
-                /* Catch exceptions */
-            } catch (IllegalArgumentException e) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid Price: "
-                                                              + pPrice, e);
-            }
-
-            /* Add the item to the list */
-            myPrices.addOpenItem(myAccount, myDate, myPrice);
         }
     }
 }

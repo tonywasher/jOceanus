@@ -136,7 +136,9 @@ public class AccountPrice
      */
     public Integer getAccountId() {
         Account myAccount = getAccount();
-        return (myAccount == null) ? null : myAccount.getId();
+        return (myAccount == null)
+                ? null
+                : myAccount.getId();
     }
 
     /**
@@ -145,7 +147,9 @@ public class AccountPrice
      */
     public String getAccountName() {
         Account myAccount = getAccount();
-        return (myAccount == null) ? null : myAccount.getName();
+        return (myAccount == null)
+                ? null
+                : myAccount.getName();
     }
 
     /**
@@ -861,35 +865,6 @@ public class AccountPrice
 
             /* Add to the list */
             append(myPrice);
-        }
-
-        /**
-         * Allow a price to be added.
-         * @param pAccount the account
-         * @param pDate the date
-         * @param pPrice the price
-         * @return the new item
-         * @throws JDataException on error
-         */
-        public AccountPrice addOpenItem(final Account pAccount,
-                                        final JDateDay pDate,
-                                        final JPrice pPrice) throws JDataException {
-            /* Create the price and PricePoint */
-            AccountPrice myPrice = new AccountPrice(this, pAccount, pDate, pPrice);
-
-            /* Validate the price */
-            myPrice.validate();
-
-            /* Handle validation failure */
-            if (myPrice.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myPrice, "Failed validation");
-            }
-
-            /* Add to the list */
-            append(myPrice);
-
-            /* Return the caller */
-            return myPrice;
         }
     }
 }

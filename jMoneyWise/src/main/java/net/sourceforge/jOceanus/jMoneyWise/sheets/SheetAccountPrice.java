@@ -32,7 +32,6 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
@@ -176,14 +175,12 @@ public class SheetAccountPrice
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
-     * @param pDilution the dilution events to modify the prices with
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final FinanceData pData,
-                                         final DilutionEventList pDilution) throws JDataException {
+                                         final FinanceData pData) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -203,6 +200,9 @@ public class SheetAccountPrice
             int myCols = myView.getColumnCount();
             int myTotal = (myRows - 1)
                           * (myCols - 2);
+
+            /* Access the list of prices */
+            AccountPriceList myList = pData.getPrices();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -238,7 +238,7 @@ public class SheetAccountPrice
                         /* If the price is non-zero */
                         if (!myPrice.equals("0.0")) {
                             /* Add the item to the data set */
-                            pDilution.addPrice(myAccount, myDate, myPrice);
+                            myList.addOpenItem(0, myDate, myAccount, myPrice);
                         }
                     }
 
@@ -252,7 +252,7 @@ public class SheetAccountPrice
             }
 
             /* Sort the list */
-            pData.getPrices().reSort();
+            myList.reSort();
 
             /* Handle exceptions */
         } catch (JDataException e) {
