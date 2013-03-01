@@ -88,7 +88,7 @@ public abstract class DataCell {
     /**
      * Constructor.
      * @param pRow the row for the cell
-     * @param pExcelCell the Excel Cell
+     * @param pColIndex the column index
      */
     protected DataCell(final DataRow pRow,
                        final int pColIndex) {
@@ -129,7 +129,9 @@ public abstract class DataCell {
      */
     public byte[] getBytesValue() throws JDataException {
         String myValue = getStringValue();
-        return (myValue == null) ? null : DataConverter.hexStringToBytes(myValue);
+        return (myValue == null)
+                ? null
+                : DataConverter.hexStringToBytes(myValue);
     }
 
     /**
@@ -139,7 +141,9 @@ public abstract class DataCell {
      */
     public char[] getCharArrayValue() throws JDataException {
         byte[] myValue = getBytesValue();
-        return (myValue == null) ? null : DataConverter.bytesToCharArray(myValue);
+        return (myValue == null)
+                ? null
+                : DataConverter.bytesToCharArray(myValue);
     }
 
     /**

@@ -51,6 +51,7 @@ public class OasisCell
      * Constructor.
      * @param pRow the row for the cell
      * @param pOasisCell the Oasis Cell
+     * @param pColIndex the column index
      */
     protected OasisCell(final OasisRow pRow,
                         final Cell pOasisCell,
@@ -69,13 +70,17 @@ public class OasisCell
     @Override
     public Date getDateValue() {
         Calendar myCalendar = theOasisCell.getDateValue();
-        return (myCalendar == null) ? null : myCalendar.getTime();
+        return (myCalendar == null)
+                ? null
+                : myCalendar.getTime();
     }
 
     @Override
     public Integer getIntegerValue() {
         Double myValue = theOasisCell.getDoubleValue();
-        return (myValue == null) ? null : myValue.intValue();
+        return (myValue == null)
+                ? null
+                : myValue.intValue();
     }
 
     @Override

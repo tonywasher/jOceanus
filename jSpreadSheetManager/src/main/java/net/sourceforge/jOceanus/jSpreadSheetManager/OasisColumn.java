@@ -56,7 +56,7 @@ public class OasisColumn {
     private final int theColIndex;
 
     /**
-     * The repeat index of the column
+     * The repeat index of the column.
      */
     private int theColInstance;
 
@@ -145,7 +145,7 @@ public class OasisColumn {
     }
 
     /**
-     * Is the column a virtual column.
+     * Is the column a virtual column?
      * @return true/false
      */
     protected boolean isVirtual() {
@@ -172,7 +172,7 @@ public class OasisColumn {
     }
 
     /**
-     * Obtain the column style name
+     * Obtain the column style name.
      * @return the column style name
      */
     protected String getColumnStyle() {
@@ -180,7 +180,7 @@ public class OasisColumn {
     }
 
     /**
-     * Obtain the default cell style name
+     * Obtain the default cell style name.
      * @return the column style name
      */
     protected String getDefaultCellStyle() {
@@ -199,7 +199,7 @@ public class OasisColumn {
     }
 
     /**
-     * Set the column style
+     * Set the column style.
      * @param pStyle the column style
      */
     protected void setColumnStyle(final String pStyle) {
@@ -211,7 +211,7 @@ public class OasisColumn {
     }
 
     /**
-     * Set the default column style
+     * Set the default column style.
      * @param pStyle the default column style
      */
     protected void setDefaultCellStyle(final String pStyle) {
@@ -223,7 +223,7 @@ public class OasisColumn {
     }
 
     /**
-     * Set the hidden property
+     * Set the hidden property.
      * @param isHidden true/false
      */
     protected void setHidden(final boolean isHidden) {

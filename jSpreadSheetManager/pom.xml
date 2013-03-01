@@ -24,21 +24,11 @@
       <artifactId>jDataManager</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!--<dependency>
-      <groupId>org.odftoolkit</groupId>
-      <artifactId>odfdom-java</artifactId>
-      <version>0.8.7</version>
-    </dependency>
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
       <version>2.9.1</version>
     </dependency>
-    <dependency>
-      <groupId>org.jopendocument</groupId>
-      <artifactId>jOpenDocument</artifactId>
-      <version>1.3b1</version>
-    </dependency>-->
   </dependencies>
   <scm>
     <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</connection>

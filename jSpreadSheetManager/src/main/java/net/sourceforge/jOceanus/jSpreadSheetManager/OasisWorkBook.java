@@ -150,6 +150,7 @@ public class OasisWorkBook {
 
     /**
      * Obtain the contentsDom.
+     * @return the content Dom
      */
     protected OdfContentDom getContentDom() {
         return theContentDom;

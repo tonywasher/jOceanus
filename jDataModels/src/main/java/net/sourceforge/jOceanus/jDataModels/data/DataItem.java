@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,7 +171,9 @@ public abstract class DataItem
             return isActive();
         }
         if (FIELD_BASE.equals(pField)) {
-            return (theBase == null) ? JDataFieldValue.SkipField : theBase;
+            return (theBase == null)
+                    ? JDataFieldValue.SkipField
+                    : theBase;
         }
         if (FIELD_STATE.equals(pField)) {
             return getState();
@@ -180,19 +182,29 @@ public abstract class DataItem
             return getEditState();
         }
         if (FIELD_DELETED.equals(pField)) {
-            return isDeleted() ? Boolean.TRUE : JDataFieldValue.SkipField;
+            return isDeleted()
+                    ? Boolean.TRUE
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_VERSION.equals(pField)) {
-            return (theValueSet != null) ? theValueSet.getVersion() : JDataFieldValue.SkipField;
+            return (theValueSet != null)
+                    ? theValueSet.getVersion()
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_HEADER.equals(pField)) {
-            return (isHeader) ? isHeader : JDataFieldValue.SkipField;
+            return (isHeader)
+                    ? isHeader
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_HISTORY.equals(pField)) {
-            return hasHistory() ? theHistory : JDataFieldValue.SkipField;
+            return hasHistory()
+                    ? theHistory
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_ERRORS.equals(pField)) {
-            return hasErrors() ? theErrors : JDataFieldValue.SkipField;
+            return hasErrors()
+                    ? theErrors
+                    : JDataFieldValue.SkipField;
         }
 
         /* Not recognised */
@@ -546,7 +558,9 @@ public abstract class DataItem
      * @return <code>true/false</code>
      */
     public Difference fieldChanged(final JDataField pField) {
-        return ((pField != null) && (pField.isValueSetField())) ? theHistory.fieldChanged(pField) : Difference.Identical;
+        return ((pField != null) && (pField.isValueSetField()))
+                ? theHistory.fieldChanged(pField)
+                : Difference.Identical;
     }
 
     /**
@@ -579,7 +593,9 @@ public abstract class DataItem
      * @return <code>true/false</code>
      */
     public boolean hasErrors(final JDataField pField) {
-        return (pField != null) ? theErrors.hasErrors(pField) : false;
+        return (pField != null)
+                ? theErrors.hasErrors(pField)
+                : false;
     }
 
     /**
@@ -600,7 +616,9 @@ public abstract class DataItem
      * Clear all errors for this item.
      */
     public void clearErrors() {
-        theEdit = (theValueSet.getVersion() > 0) ? EditState.DIRTY : EditState.CLEAN;
+        theEdit = (theValueSet.getVersion() > 0)
+                ? EditState.DIRTY
+                : EditState.CLEAN;
         theErrors.clearErrors();
     }
 
@@ -621,7 +639,9 @@ public abstract class DataItem
 
     @Override
     public String getFieldErrors(final JDataField pField) {
-        return (pField != null) ? theErrors.getFieldErrors(pField) : null;
+        return (pField != null)
+                ? theErrors.getFieldErrors(pField)
+                : null;
     }
 
     @Override
@@ -673,7 +693,9 @@ public abstract class DataItem
         theHistory = new ValueSetHistory();
 
         /* Allocate initial value set and declare it */
-        ValueSet myValues = (this instanceof EncryptedItem) ? new EncryptedValueSet(this) : new ValueSet(this);
+        ValueSet myValues = (this instanceof EncryptedItem)
+                ? new EncryptedValueSet(this)
+                : new ValueSet(this);
         declareValues(myValues);
         theHistory.setValues(myValues);
 
@@ -871,7 +893,9 @@ public abstract class DataItem
      */
     protected DataState getBaseState() {
         DataItem myBase = getBase();
-        return (myBase == null) ? DataState.NOSTATE : myBase.getState();
+        return (myBase == null)
+                ? DataState.NOSTATE
+                : myBase.getState();
     }
 
     /**

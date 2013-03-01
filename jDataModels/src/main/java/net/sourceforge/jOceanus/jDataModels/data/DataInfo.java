@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -174,7 +174,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      */
     public static <X> X getValue(final EncryptedValueSet pValueSet,
                                  final Class<X> pClass) {
-        return pValueSet.isDeletion() ? null : pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
+        return pValueSet.isDeletion()
+                ? null
+                : pValueSet.getEncryptedFieldValue(FIELD_VALUE, pClass);
     }
 
     /**
@@ -183,7 +185,9 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * @return the Value
      */
     public static EncryptedField<?> getField(final EncryptedValueSet pValueSet) {
-        return pValueSet.isDeletion() ? null : pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
+        return pValueSet.isDeletion()
+                ? null
+                : pValueSet.getValue(FIELD_VALUE, EncryptedField.class);
     }
 
     /**

@@ -43,17 +43,17 @@ import org.w3c.dom.Node;
  */
 public class OasisColumnMap {
     /**
-     * Underlying sheet
+     * Underlying sheet.
      */
     private final OasisSheet theOasisSheet;
 
     /**
-     * Underlying table element
+     * Underlying table element.
      */
     private final TableTableElement theOasisTable;
 
     /**
-     * Number of columns
+     * Number of columns.
      */
     private int theNumColumns = 0;
 
@@ -63,7 +63,7 @@ public class OasisColumnMap {
     private OasisColumn theLastColumn = null;
 
     /**
-     * List of of columns
+     * List of of columns.
      */
     private List<OasisColumn> theColumns = new ArrayList<OasisColumn>();
 
@@ -121,7 +121,7 @@ public class OasisColumnMap {
     }
 
     /**
-     * Process header columns
+     * Process header columns.
      * @param pHeaders the header columns to process
      * @throws JDataException on error
      */
@@ -146,7 +146,7 @@ public class OasisColumnMap {
     }
 
     /**
-     * Process a column
+     * Process a column.
      * @param pColumn the column to process
      */
     private void processColumn(final TableTableColumnElement pColumn) {
@@ -168,6 +168,7 @@ public class OasisColumnMap {
     /**
      * Obtain a column by its index.
      * @param pColIndex the index of the column.
+     * @return the column
      */
     protected OasisColumn getColumnByIndex(final int pColIndex) {
         /* Handle negative column index */
@@ -238,7 +239,7 @@ public class OasisColumnMap {
     }
 
     /**
-     * Make the column an individual column
+     * Make the column an individual column.
      * @param pColumn the column
      */
     public void makeIndividual(final OasisColumn pColumn) {

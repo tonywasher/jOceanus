@@ -66,7 +66,7 @@ public class OasisRow
     /**
      * Constructor.
      * @param pView the view for the row
-     * @param pOasisRow the Excel Row
+     * @param pRow the Oasis Row
      * @param pRowIndex the RowIndex
      */
     protected OasisRow(final DataView pView,
@@ -87,11 +87,15 @@ public class OasisRow
         /* If this is a view */
         if (isView) {
             /* Handle next row in view */
-            return (getView().convertRowIndex(myIndex) < 0) ? null : new OasisRow(getView(), theOasisRow.getNextRow(), myIndex);
+            return (getView().convertRowIndex(myIndex) < 0)
+                    ? null
+                    : new OasisRow(getView(), theOasisRow.getNextRow(), myIndex);
         }
 
         /* Handle next row in sheet */
-        return (myIndex >= theOasisSheet.getRowCount()) ? theOasisSheet.getRowByIndex(myIndex) : new OasisRow(theOasisSheet, theOasisRow.getNextRow(), myIndex);
+        return (myIndex >= theOasisSheet.getRowCount())
+                ? theOasisSheet.getRowByIndex(myIndex)
+                : new OasisRow(theOasisSheet, theOasisRow.getNextRow(), myIndex);
     }
 
     @Override
@@ -103,25 +107,33 @@ public class OasisRow
         }
 
         /* Return the previous row */
-        return (isView) ? new OasisRow(getView(), theOasisRow.getPreviousRow(), myIndex) : new OasisRow(theOasisSheet, theOasisRow.getPreviousRow(), myIndex);
+        return (isView)
+                ? new OasisRow(getView(), theOasisRow.getPreviousRow(), myIndex)
+                : new OasisRow(theOasisSheet, theOasisRow.getPreviousRow(), myIndex);
     }
 
     @Override
     public int getCellCount() {
         /* Return cell count */
-        return (isView) ? getView().getColumnCount() : theOasisRow.getCellCount();
+        return (isView)
+                ? getView().getColumnCount()
+                : theOasisRow.getCellCount();
     }
 
     @Override
     public DataCell getCellByIndex(final int pIndex) {
-        int myIndex = (isView) ? getView().convertColumnIndex(pIndex) : pIndex;
+        int myIndex = (isView)
+                ? getView().convertColumnIndex(pIndex)
+                : pIndex;
         if (myIndex < 0) {
             return null;
         }
 
         /* Return the cell */
         Cell myOasisCell = theOasisRow.getCellByIndex(myIndex);
-        return (myOasisCell.getValueType() != null) ? new OasisCell(this, myOasisCell, pIndex) : null;
+        return (myOasisCell.getValueType() != null)
+                ? new OasisCell(this, myOasisCell, pIndex)
+                : null;
     }
 
     @Override

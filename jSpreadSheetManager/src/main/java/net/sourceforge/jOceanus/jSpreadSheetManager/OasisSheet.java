@@ -147,6 +147,11 @@ public class OasisSheet
         return new OasisRow(this, theOasisSheet.getRowByIndex(pRowIndex), pRowIndex);
     }
 
+    /**
+     * Obtain the column by index.
+     * @param pColIndex the column index
+     * @return the column
+     */
     private Column getColumnByIndex(final int pColIndex) {
         /* Handle negative row index */
         if (pColIndex < 0) {
@@ -226,7 +231,7 @@ public class OasisSheet
     }
 
     /**
-     * Add columns to rows
+     * Add columns to rows.
      */
     protected void addColumnsToRows() {
     }
@@ -269,7 +274,7 @@ public class OasisSheet
     }
 
     /**
-     * Create a new TableTableColumnElement
+     * Create a new TableTableColumnElement.
      * @return the new element
      */
     protected TableTableColumnElement newColumnElement() {

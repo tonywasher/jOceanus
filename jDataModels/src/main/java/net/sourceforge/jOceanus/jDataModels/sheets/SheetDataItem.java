@@ -244,7 +244,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myTotal = myView.getRowCount();
 
             /* Declare the number of steps */
-            if (!theTask.setNumSteps((isDoubleLoad) ? myTotal << 1 : myTotal)) {
+            if (!theTask.setNumSteps((isDoubleLoad)
+                    ? myTotal << 1
+                    : myTotal)) {
                 return false;
             }
 
@@ -335,7 +337,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             }
 
             /* Determine size of sheet */
-            int myNumRows = (isBackup) ? myTotal : myTotal + 1;
+            int myNumRows = (isBackup)
+                    ? myTotal
+                    : myTotal + 1;
             int myNumCols = getLastColumn() + 1;
 
             /* Create the sheet */
@@ -590,6 +594,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
     /**
      * Freeze titles.
+     * @param pOffset column offset to freeze at
+     * @throws JDataException on error
      */
     protected void applyDataFilter(final int pOffset) throws JDataException {
         /* Adjust column if necessary */
@@ -743,7 +749,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return (myCell != null) ? myCell.getIntegerValue() : null;
+        return (myCell != null)
+                ? myCell.getIntegerValue()
+                : null;
     }
 
     /**
@@ -759,7 +767,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return (myCell != null) ? myCell.getBooleanValue() : null;
+        return (myCell != null)
+                ? myCell.getBooleanValue()
+                : null;
     }
 
     /**
@@ -775,7 +785,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return (myCell != null) ? myCell.getDateValue() : null;
+        return (myCell != null)
+                ? myCell.getDateValue()
+                : null;
     }
 
     /**
@@ -791,7 +803,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return (myCell != null) ? myCell.getStringValue() : null;
+        return (myCell != null)
+                ? myCell.getStringValue()
+                : null;
     }
 
     /**
@@ -808,7 +822,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return (myCell != null) ? myCell.getBytesValue() : null;
+        return (myCell != null)
+                ? myCell.getBytesValue()
+                : null;
     }
 
     /**
@@ -825,7 +841,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         DataCell myCell = theActiveRow.getCellByIndex(myCol);
 
         /* Return the value */
-        return (myCell != null) ? myCell.getCharArrayValue() : null;
+        return (myCell != null)
+                ? myCell.getCharArrayValue()
+                : null;
     }
 
     /**

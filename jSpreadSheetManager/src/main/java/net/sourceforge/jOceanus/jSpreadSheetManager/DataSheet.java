@@ -47,8 +47,7 @@ public abstract class DataSheet
 
     /**
      * Constructor for Excel Sheet.
-     * @param pBook the WorkBook
-     * @param pSheet the Excel sheet
+     * @param pName the sheet name
      */
     protected DataSheet(final String pName) {
         /* Store parameters */
