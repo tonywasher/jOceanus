@@ -22,141 +22,292 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
+import java.util.Date;
 
-import org.odftoolkit.simple.table.Cell;
-import org.odftoolkit.simple.table.Row;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jDecimal.JDecimal;
+import net.sourceforge.jOceanus.jDecimal.JDilution;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JPrice;
+import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
+
+import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
+import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 
 /**
- * Class representing a row within a sheet or a view.
+ * Class representing a row in Oasis.
+ * @author Tony Washer
  */
 public class OasisRow
         extends DataRow {
     /**
-     * The Oasis Sheet.
+     * The list of rows.
      */
-    private final OasisSheet theOasisSheet;
+    private final OasisRowMap theRowMap;
 
     /**
-     * The Oasis Row.
+     * The list of cells.
      */
-    private final Row theOasisRow;
+    private final OasisCellMap theCellMap;
 
     /**
-     * Is this a View row.
+     * The underlying ODFDOM row.
      */
-    private final boolean isView;
+    private TableTableRowElement theOasisRow;
+
+    /**
+     * The previous row.
+     */
+    private final OasisRow thePreviousRow;
+
+    /**
+     * The next row.
+     */
+    private OasisRow theNextRow;
+
+    /**
+     * The row index.
+     */
+    private final int theRowIndex;
+
+    /**
+     * The repeat index of the row.
+     */
+    private int theRowInstance;
 
     /**
      * Constructor.
-     * @param pSheet the sheet for the row
-     * @param pRow the Oasis Row
-     * @param pRowIndex the RowIndex
+     * @param pMap the row map
+     * @param pPrevious the previous row.
+     * @param pRow the Oasis row
+     * @param pIndex the index
+     * @param pInstance the repeat instance
      */
-    protected OasisRow(final OasisSheet pSheet,
-                       final Row pRow,
-                       final int pRowIndex) {
+    protected OasisRow(final OasisRowMap pMap,
+                       final OasisRow pPrevious,
+                       final TableTableRowElement pRow,
+                       final int pIndex,
+                       final int pInstance) {
         /* Store parameters */
-        super(pSheet, pRowIndex);
-        theOasisSheet = pSheet;
+        super(pMap.getSheet(), pIndex);
+        theRowMap = pMap;
+        thePreviousRow = pPrevious;
+        theNextRow = null;
         theOasisRow = pRow;
-        isView = false;
+        theRowIndex = pIndex;
+        theRowInstance = pInstance;
+
+        /* Create the cell map */
+        theCellMap = new OasisCellMap(this);
+
+        /* If we have a previous column */
+        if (thePreviousRow != null) {
+            /* Link it */
+            thePreviousRow.theNextRow = this;
+        }
     }
 
     /**
-     * Constructor.
-     * @param pView the view for the row
-     * @param pRow the Oasis Row
-     * @param pRowIndex the RowIndex
+     * Obtain the underlying table element.
+     * @return the element
      */
-    protected OasisRow(final DataView pView,
-                       final Row pRow,
-                       final int pRowIndex) {
-        /* Store parameters */
-        super(pView, pRowIndex);
-        theOasisSheet = (OasisSheet) getSheet();
-        theOasisRow = pRow;
-        isView = true;
+    protected TableTableRowElement getRowElement() {
+        return theOasisRow;
+    }
+
+    /**
+     * Set the underlying table element.
+     * @param pElement the element
+     */
+    protected void setRowElement(final TableTableRowElement pElement) {
+        theOasisRow = pElement;
     }
 
     @Override
-    public DataRow getNextRow() {
-        /* Determine the required index */
-        int myIndex = getRowIndex() + 1;
-
-        /* If this is a view */
-        if (isView) {
-            /* Handle next row in view */
-            return (getView().convertRowIndex(myIndex) < 0)
-                    ? null
-                    : new OasisRow(getView(), theOasisRow.getNextRow(), myIndex);
-        }
-
-        /* Handle next row in sheet */
-        return (myIndex >= theOasisSheet.getRowCount())
-                ? theOasisSheet.getRowByIndex(myIndex)
-                : new OasisRow(theOasisSheet, theOasisRow.getNextRow(), myIndex);
+    public OasisRow getNextRow() {
+        return theNextRow;
     }
 
     @Override
-    public DataRow getPreviousRow() {
-        /* Determine the required index */
-        int myIndex = getRowIndex() - 1;
-        if (myIndex < 0) {
-            return null;
-        }
+    public OasisRow getPreviousRow() {
+        return thePreviousRow;
+    }
 
-        /* Return the previous row */
-        return (isView)
-                ? new OasisRow(getView(), theOasisRow.getPreviousRow(), myIndex)
-                : new OasisRow(theOasisSheet, theOasisRow.getPreviousRow(), myIndex);
+    /**
+     * Obtain the index of the row.
+     * @return the index
+     */
+    protected int getIndex() {
+        return theRowIndex;
+    }
+
+    /**
+     * Obtain the instance of the row.
+     * @return the instance
+     */
+    protected int getInstance() {
+        return theRowInstance;
+    }
+
+    /**
+     * Set the instance of the row.
+     * @param pInstance the instance
+     */
+    protected void setInstance(final int pInstance) {
+        theRowInstance = pInstance;
+    }
+
+    /**
+     * Is the row a virtual row?
+     * @return true/false
+     */
+    protected boolean isVirtual() {
+        return (theRowInstance != 0);
+    }
+
+    /**
+     * Is the column the final row in the sequence.
+     * @return true/false
+     */
+    protected boolean isLastRow() {
+        return (theRowInstance + 1 == getRepeatCount());
+    }
+
+    /**
+     * Obtain the repeat count of the row.
+     * @return true/false
+     */
+    protected Integer getRepeatCount() {
+        Integer myCount = theOasisRow.getTableNumberRowsRepeatedAttribute();
+        return (myCount != null)
+                ? myCount
+                : null;
+    }
+
+    /**
+     * Obtain the row style name.
+     * @return the row style name
+     */
+    protected String getRowStyle() {
+        return theOasisRow.getTableStyleNameAttribute();
+    }
+
+    /**
+     * Is the row hidden?
+     * @return true/false
+     */
+    protected boolean isHidden() {
+        String myString = theOasisRow.getTableVisibilityAttribute();
+        return (myString == null)
+                ? false
+                : myString.equals(TableVisibilityAttribute.Value.COLLAPSE.toString());
+    }
+
+    /**
+     * Set the row style.
+     * @param pStyle the row style
+     */
+    protected void setRowStyle(final String pStyle) {
+        /* ensure that the column is individual */
+        ensureIndividual();
+
+        /* Set the row style */
+        theOasisRow.setTableStyleNameAttribute(pStyle);
+    }
+
+    /**
+     * Set the hidden property.
+     * @param isHidden true/false
+     */
+    protected void setHidden(final boolean isHidden) {
+        /* ensure that the row is individual */
+        ensureIndividual();
+
+        /* Set the visibility attribute */
+        theOasisRow.setTableVisibilityAttribute(isHidden
+                ? TableVisibilityAttribute.Value.COLLAPSE.toString()
+                : TableVisibilityAttribute.Value.VISIBLE.toString());
+    }
+
+    /**
+     * Ensure that the column is an individual column.
+     */
+    private void ensureIndividual() {
+        /* If the repeat count is greater than one */
+        if (getRepeatCount() > 1) {
+            /* We need to make this item an individual */
+            theRowMap.makeIndividual(this);
+        }
     }
 
     @Override
     public int getCellCount() {
-        /* Return cell count */
-        return (isView)
-                ? getView().getColumnCount()
-                : theOasisRow.getCellCount();
+        return theCellMap.getCellCount();
     }
 
     @Override
-    public DataCell getCellByIndex(final int pIndex) {
-        int myIndex = (isView)
-                ? getView().convertColumnIndex(pIndex)
-                : pIndex;
-        if (myIndex < 0) {
-            return null;
-        }
-
-        /* Return the cell */
-        Cell myOasisCell = theOasisRow.getCellByIndex(myIndex);
-        return (myOasisCell.getValueType() != null)
-                ? new OasisCell(this, myOasisCell, pIndex)
-                : null;
+    public OasisCell getCellByIndex(int pIndex) {
+        return theCellMap.getCellByIndex(pIndex);
     }
 
     @Override
-    public DataCell createCellByIndex(final int pIndex) {
-        /* if this is a view row */
-        if (isView) {
-            /* Not allowed */
-            return null;
-        }
-
-        /* Create the cell */
-        Cell myOasisCell = theOasisRow.getCellByIndex(pIndex);
-        return new OasisCell(this, myOasisCell, pIndex);
+    public OasisCell createCellByIndex(int pIndex) {
+        return theCellMap.getCellByIndex(pIndex);
     }
 
     /**
-     * Set cell style.
-     * @param pCell the cell to style
-     * @param pStyle the style type to use
+     * Format object value
+     * @param pValue the value
+     * @return the formatted value
      */
-    protected void setCellStyle(final OasisCell pCell,
-                                final CellStyleType pStyle) {
-        /* Pass through to the sheet */
-        theOasisSheet.setCellStyle(pCell, pStyle);
+    protected String formatValue(final Object pValue) {
+        JDataFormatter myFormatter = theRowMap.getFormatter();
+        if (pValue instanceof JDecimal) {
+            /* Format the decimal */
+            JDecimal myDecimal = (JDecimal) pValue;
+            return myFormatter.getDecimalFormatter().formatDecimal(myDecimal);
+        }
+        if (pValue instanceof Date) {
+            /* Format the date */
+            Date myDate = (Date) pValue;
+            return myFormatter.getDateFormatter().formatDate(myDate);
+        }
+        return null;
+    }
+
+    /**
+     * Parse object value
+     * @param pValue the value
+     * @return the formatted value
+     */
+    protected <T> T parseValue(final String pSource,
+                               final Class<T> pClass) {
+        JDataFormatter myFormatter = theRowMap.getFormatter();
+        if (pClass == Date.class) {
+            /* Parse the date */
+            return pClass.cast(myFormatter.getDateFormatter().parseDate(pSource));
+        }
+        if (pClass == JPrice.class) {
+            /* Parse the price */
+            return pClass.cast(myFormatter.getDecimalParser().parsePriceValue(pSource));
+        }
+        if (pClass == JMoney.class) {
+            /* Parse the money */
+            return pClass.cast(myFormatter.getDecimalParser().parseMoneyValue(pSource));
+        }
+        if (pClass == JRate.class) {
+            /* Parse the rate */
+            return pClass.cast(myFormatter.getDecimalParser().parseRateValue(pSource));
+        }
+        if (pClass == JUnits.class) {
+            /* Parse the units */
+            return pClass.cast(myFormatter.getDecimalParser().parseUnitsValue(pSource));
+        }
+        if (pClass == JDilution.class) {
+            /* Parse the dilution */
+            return pClass.cast(myFormatter.getDecimalParser().parseDilutionValue(pSource));
+        }
+        return null;
     }
 }

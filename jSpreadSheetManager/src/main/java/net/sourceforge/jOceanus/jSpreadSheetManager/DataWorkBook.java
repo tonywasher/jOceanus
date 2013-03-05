@@ -34,6 +34,51 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
  */
 public class DataWorkBook {
     /**
+     * Date width.
+     */
+    protected static final int WIDTH_DATE = 11;
+
+    /**
+     * Integer width.
+     */
+    protected static final int WIDTH_INT = 8;
+
+    /**
+     * Boolean width.
+     */
+    protected static final int WIDTH_BOOL = 8;
+
+    /**
+     * Money width.
+     */
+    protected static final int WIDTH_MONEY = 13;
+
+    /**
+     * Units width.
+     */
+    protected static final int WIDTH_UNITS = 13;
+
+    /**
+     * Rate width.
+     */
+    protected static final int WIDTH_RATE = 13;
+
+    /**
+     * Dilution width.
+     */
+    protected static final int WIDTH_DILUTION = 13;
+
+    /**
+     * Price width.
+     */
+    protected static final int WIDTH_PRICE = 15;
+
+    /**
+     * String width.
+     */
+    protected static final int WIDTH_STRING = 30;
+
+    /**
      * Font Height.
      */
     protected static final int FONT_HEIGHT = 10;
@@ -47,6 +92,11 @@ public class DataWorkBook {
      * Numeric Font.
      */
     protected static final String FONT_NUMERIC = "Courier";
+
+    /**
+     * Internal date format.
+     */
+    protected static final String FORMAT_DATE = "YYYY-MM-DD";
 
     /**
      * ReadOnly.
@@ -322,60 +372,5 @@ public class DataWorkBook {
             throw new JDataException(ExceptionClass.EXCEL, "Unrecognised file type "
                                                            + pFileName);
         }
-    }
-
-    /**
-     * Cell Styles.
-     */
-    public enum CellStyleType {
-        /**
-         * Integer.
-         */
-        Integer,
-
-        /**
-         * Boolean.
-         */
-        Boolean,
-
-        /**
-         * Rate.
-         */
-        Rate,
-
-        /**
-         * Dilution.
-         */
-        Dilution,
-
-        /**
-         * Price.
-         */
-        Price,
-
-        /**
-         * Money.
-         */
-        Money,
-
-        /**
-         * Units.
-         */
-        Units,
-
-        /**
-         * Date.
-         */
-        Date,
-
-        /**
-         * String.
-         */
-        String,
-
-        /**
-         * Header.
-         */
-        Header;
     }
 }

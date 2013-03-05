@@ -32,7 +32,6 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 
 /**
  * Class representing a cell within a sheet or a view.

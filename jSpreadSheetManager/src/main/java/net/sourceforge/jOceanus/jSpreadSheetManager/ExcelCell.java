@@ -26,7 +26,6 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -75,7 +74,9 @@ public class ExcelCell
     @Override
     public Integer getIntegerValue() {
         Double myValue = theExcelCell.getNumericCellValue();
-        return (myValue == null) ? null : myValue.intValue();
+        return (myValue == null)
+                ? null
+                : myValue.intValue();
     }
 
     @Override
@@ -126,7 +127,9 @@ public class ExcelCell
     @Override
     protected void setInteger(final Integer pValue) throws JDataException {
         /* Set the value */
-        theExcelCell.setCellValue((pValue == null) ? null : pValue.doubleValue());
+        theExcelCell.setCellValue((pValue == null)
+                ? null
+                : pValue.doubleValue());
 
         /* Set the style for the cell */
         theExcelRow.setCellStyle(this, CellStyleType.Integer);

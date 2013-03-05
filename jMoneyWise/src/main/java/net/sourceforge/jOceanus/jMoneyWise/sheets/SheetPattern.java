@@ -26,11 +26,8 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
-import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
@@ -194,14 +191,12 @@ public class SheetPattern
 
     @Override
     protected void formatSheet() throws JDataException {
-        /* Set the Account column width */
-        setColumnWidth(COL_DESC, Event.DESCLEN);
-        setColumnWidth(COL_DEBIT, Account.NAMELEN);
-        setColumnWidth(COL_CREDIT, Account.NAMELEN);
-        setColumnWidth(COL_TRAN, StaticData.NAMELEN);
-        setColumnWidth(COL_FREQ, StaticData.NAMELEN);
-
-        /* Set Number columns */
+        /* Set the column types */
+        setStringColumn(COL_DESC);
+        setStringColumn(COL_DEBIT);
+        setStringColumn(COL_CREDIT);
+        setStringColumn(COL_TRAN);
+        setStringColumn(COL_FREQ);
         setDateColumn(COL_DATE);
         setMoneyColumn(COL_AMOUNT);
 
@@ -271,7 +266,11 @@ public class SheetPattern
                 String myFrequency = myRow.getCellByIndex(iAdjust++).getStringValue();
 
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myDate, myDesc, isCredit ? myPartner : myAccount, isCredit ? myAccount : myPartner, myTransType, myAmount, myFrequency);
+                myList.addOpenItem(0, myDate, myDesc, isCredit
+                        ? myPartner
+                        : myAccount, isCredit
+                        ? myAccount
+                        : myPartner, myTransType, myAmount, myFrequency);
 
                 /* Report the progress */
                 myCount++;

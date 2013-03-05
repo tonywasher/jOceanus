@@ -22,19 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import java.util.List;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
+import net.sourceforge.jOceanus.jSpreadSheetManager.OasisWorkBook.OasisStyle;
 
 import org.odftoolkit.odfdom.dom.OdfContentDom;
-import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
+import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
-import org.odftoolkit.simple.table.Column;
-import org.odftoolkit.simple.table.Row;
-import org.odftoolkit.simple.table.Table;
+import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 
 /**
  * Class representing an Oasis sheet within a workBook.
@@ -62,19 +59,14 @@ public class OasisSheet
     private final TableTableElement theOasisTable;
 
     /**
-     * The Oasis Sheet.
+     * The Row Map.
      */
-    private final Table theOasisSheet;
+    private OasisRowMap theRowMap;
 
     /**
-     * The Row Count.
+     * The Column Map.
      */
-    private int theRowCount;
-
-    /**
-     * The Column Count.
-     */
-    private int theColCount;
+    private OasisColumnMap theColMap;
 
     /**
      * Constructor for Oasis Sheet.
@@ -93,9 +85,18 @@ public class OasisSheet
         theContentDom = pBook.getContentDom();
         theIndex = pIndex;
         theOasisTable = pTable;
-        theOasisSheet = Table.getInstance(pTable);
-        theRowCount = theOasisSheet.getRowCount();
-        theColCount = theOasisSheet.getColumnCount();
+
+        /* Create the maps */
+        theColMap = new OasisColumnMap(this);
+        theRowMap = new OasisRowMap(this, theColMap.getColumnCount());
+    }
+
+    /**
+     * Obtain formatter.
+     * @return the formatter.
+     */
+    protected JDataFormatter getFormatter() {
+        return theOasisBook.getFormatter();
     }
 
     /**
@@ -113,87 +114,56 @@ public class OasisSheet
 
     @Override
     public int getRowCount() {
-        return theRowCount;
+        return theRowMap.getRowCount();
     }
 
     @Override
-    public DataRow getRowByIndex(final int pRowIndex) {
-        /* Handle negative row index */
-        if (pRowIndex < 0) {
-            return null;
-        }
-
-        /* If we need to extend the table */
-        if (pRowIndex >= theRowCount) {
-            /* If we need to add just a single row */
-            if (pRowIndex == theRowCount) {
-                /* Append row and return it */
-                theRowCount++;
-                return new OasisRow(this, theOasisSheet.appendRow(), pRowIndex);
-            }
-
-            /* Create the extra rows */
-            int myXtraRows = pRowIndex
-                             - theRowCount
-                             + 1;
-            List<Row> myRows = theOasisSheet.appendRows(myXtraRows);
-
-            /* Access required row and return it */
-            theRowCount += myXtraRows;
-            return new OasisRow(this, myRows.get(myXtraRows - 1), pRowIndex);
-        }
-
-        /* Just return the required row */
-        return new OasisRow(this, theOasisSheet.getRowByIndex(pRowIndex), pRowIndex);
-    }
-
-    /**
-     * Obtain the column by index.
-     * @param pColIndex the column index
-     * @return the column
-     */
-    private Column getColumnByIndex(final int pColIndex) {
-        /* Handle negative row index */
-        if (pColIndex < 0) {
-            return null;
-        }
-
-        /* If we need to extend the table */
-        if (pColIndex >= theColCount) {
-            /* If we need to add just a single column */
-            if (pColIndex == theColCount) {
-                /* Append column and return it */
-                theColCount++;
-                return theOasisSheet.appendColumn();
-            }
-
-            /* Create the extra columns */
-            int myXtraCols = pColIndex
-                             - theColCount
-                             + 1;
-            List<Column> myColumns = theOasisSheet.appendColumns(myXtraCols);
-
-            /* Access required column and return it */
-            theColCount += myXtraCols;
-            return myColumns.get(myXtraCols - 1);
-        }
-
-        /* Just return the required column */
-        return theOasisSheet.getColumnByIndex(pColIndex);
+    public OasisRow getRowByIndex(final int pRowIndex) {
+        /* Obtain row from row map */
+        return theRowMap.getRowByIndex(pRowIndex);
     }
 
     @Override
-    protected DataRow getRowByIndex(final DataView pView,
-                                    final int pRowIndex) {
-        /* Determine the actual index of the row */
-        int myIndex = pView.convertRowIndex(pRowIndex);
-        if (myIndex < 0) {
-            return null;
-        }
+    public OasisRow createRowByIndex(final int pRowIndex) {
+        /* Obtain row from row map, creating row if necessary */
+        return theRowMap.createRowByIndex(pRowIndex);
+    }
 
-        /* Switch on book type */
-        Row myOasisRow = theOasisSheet.getRowByIndex(myIndex);
-        return new OasisRow(pView, myOasisRow, pRowIndex);
+    @Override
+    public OasisColumn getColumnByIndex(final int pColIndex) {
+        /* Obtain column from column map */
+        return theColMap.getColumnByIndex(pColIndex);
+    }
+
+    @Override
+    public OasisColumn createColumnByIndex(final int pColIndex) {
+        /* Obtain column from column map, creating column if necessary */
+        return theColMap.createColumnByIndex(pColIndex);
+    }
+
+    // @Override
+    // protected OasisRow getRowByIndex(final DataView pView,
+    // final int pRowIndex) {
+    // /* Determine the actual index of the row */
+    // int myIndex = pView.convertRowIndex(pRowIndex);
+    // if (myIndex < 0) {
+    // return null;
+    // }
+    //
+    // /* Obtain from row map */
+    // return theRowMap.getRowByIndex(myIndex);
+    // }
+
+    @Override
+    public boolean isHidden() {
+        return false;
+    }
+
+    @Override
+    public void setHidden(final boolean isHidden) {
+        theOasisTable.setTableStyleNameAttribute(isHidden
+                ? OasisWorkBook.getStyleName(OasisStyle.HiddenTable)
+                : OasisWorkBook.getStyleName(OasisStyle.Table));
     }
 
     @Override
@@ -212,7 +182,7 @@ public class OasisSheet
                                     final CellPosition pLastCell,
                                     final String pName) throws JDataException {
         /* Declare to workBook */
-        theOasisBook.applyDataValidation(theOasisSheet, pFirstCell, pLastCell, pName);
+        theOasisBook.applyDataValidation(this, pFirstCell, pLastCell, pName);
     }
 
     @Override
@@ -232,45 +202,11 @@ public class OasisSheet
 
     /**
      * Add columns to rows.
+     * @param pNumNewCols number of new columns to add
      */
-    protected void addColumnsToRows() {
-    }
-
-    @Override
-    public void setColumnHidden(final int pColIndex,
-                                final boolean isHidden) {
-        /* Obtain the column definition */
-        Column myCol = theOasisSheet.getColumnByIndex(pColIndex);
-        TableTableColumnElement myElement = myCol.getOdfElement();
-        myElement.setTableVisibilityAttribute(isHidden
-                ? TableVisibilityAttribute.Value.COLLAPSE.toString()
-                : TableVisibilityAttribute.Value.VISIBLE.toString());
-    }
-
-    @Override
-    public void setColumnWidth(final int pColIndex,
-                               final int pWidth) {
-        /* Obtain the column definition */
-        Column myCol = theOasisSheet.getColumnByIndex(pColIndex);
-        myCol.setWidth(pWidth << 1);
-    }
-
-    @Override
-    public void setDefaultColumnStyle(final int pColIndex,
-                                      final CellStyleType pStyle) {
-        /* Obtain the column definition */
-        Column myCol = getColumnByIndex(pColIndex);
-        myCol.setDefaultCellStyle(theOasisBook.getCellStyle(pStyle));
-    }
-
-    /**
-     * Set cell style.
-     * @param pCell the cell to style
-     * @param pStyle the style type to use
-     */
-    protected void setCellStyle(final OasisCell pCell,
-                                final CellStyleType pStyle) {
-        pCell.setCellStyle(theOasisBook.getStyleName(pStyle));
+    protected void addColumnsToRows(final int pNumNewCols) {
+        /* pass call to rows */
+        theRowMap.addColumnsToRows(pNumNewCols);
     }
 
     /**
@@ -279,5 +215,36 @@ public class OasisSheet
      */
     protected TableTableColumnElement newColumnElement() {
         return new TableTableColumnElement(theContentDom);
+    }
+
+    /**
+     * Create a new TableTableRowElement.
+     * @param pNumCols the number of columns for the row
+     * @return the new element
+     */
+    protected TableTableRowElement newRowElement(final int pNumCols) {
+        /* Allocate the row */
+        TableTableRowElement myRow = new TableTableRowElement(theContentDom);
+        myRow.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.Row));
+
+        /* Allocate a cell for the row */
+        TableTableCellElement myCell = new TableTableCellElement(theContentDom);
+        myRow.appendChild(myCell);
+
+        /* Handle repeat count */
+        if (pNumCols > 1) {
+            myCell.setTableNumberColumnsRepeatedAttribute(pNumCols);
+        }
+
+        /* Return the row */
+        return myRow;
+    }
+
+    /**
+     * Create a new TableTableCellElement.
+     * @return the new element
+     */
+    protected TableTableCellElement newCellElement() {
+        return new TableTableCellElement(theContentDom);
     }
 }

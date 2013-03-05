@@ -24,7 +24,6 @@ package net.sourceforge.jOceanus.jGordianKnot;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -72,7 +71,9 @@ public final class EncryptedData {
      * @return the value
      */
     public static <T> T getValue(final EncryptedField<T> pField) {
-        return (pField == null) ? null : pField.getValue();
+        return (pField == null)
+                ? null
+                : pField.getValue();
     }
 
     /**
@@ -81,7 +82,9 @@ public final class EncryptedData {
      * @return the value
      */
     public static byte[] getBytes(final EncryptedField<?> pField) {
-        return (pField == null) ? null : pField.getBytes();
+        return (pField == null)
+                ? null
+                : pField.getBytes();
     }
 
     /**
@@ -228,7 +231,9 @@ public final class EncryptedData {
          * @return the encrypted value
          */
         public byte[] getBytes() {
-            return (theEncrypted == null) ? null : Arrays.copyOf(theEncrypted, theEncrypted.length);
+            return (theEncrypted == null)
+                    ? null
+                    : Arrays.copyOf(theEncrypted, theEncrypted.length);
         }
 
         /**
@@ -285,8 +290,9 @@ public final class EncryptedData {
             theCipherSet = pCipherSet;
 
             /* If we need to renew the encryption */
-            if ((pField == null) || (Difference.getDifference(pCipherSet, pField.getCipherSet()).isDifferent())
-                    || (Difference.getDifference(getValue(), pField.getValue()).isDifferent())) {
+            if ((pField == null)
+                || (Difference.getDifference(pCipherSet, pField.getCipherSet()).isDifferent())
+                || (Difference.getDifference(getValue(), pField.getValue()).isDifferent())) {
                 /* encrypt the value */
                 encryptValue();
 
@@ -327,7 +333,8 @@ public final class EncryptedData {
         @Override
         public int hashCode() {
             /* Calculate hash allowing for field that has not been encrypted yet */
-            int myHashCode = SecurityGenerator.HASH_PRIME * getValue().hashCode();
+            int myHashCode = SecurityGenerator.HASH_PRIME
+                             * getValue().hashCode();
             if (theEncrypted != null) {
                 myHashCode += Arrays.hashCode(theEncrypted);
             }
@@ -828,7 +835,7 @@ public final class EncryptedData {
                 /* Catch Exceptions */
             } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
-            } catch (ParseException e) {
+            } catch (IllegalArgumentException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -904,7 +911,7 @@ public final class EncryptedData {
                 return getDateFormatter().parseDateDay(myInput);
 
                 /* Catch Exceptions */
-            } catch (ParseException e) {
+            } catch (IllegalArgumentException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);

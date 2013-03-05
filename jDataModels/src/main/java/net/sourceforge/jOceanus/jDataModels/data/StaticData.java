@@ -95,12 +95,12 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * StaticData Name length.
      */
-    public static final int NAMELEN = 50;
+    public static final int NAMELEN = 30;
 
     /**
      * StaticData Description length.
      */
-    public static final int DESCLEN = 100;
+    public static final int DESCLEN = 50;
 
     /**
      * Return the name of the Static Data.
@@ -589,7 +589,9 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      */
     public static String format(final StaticData<?, ?> pData) {
         String myFormat;
-        myFormat = (pData != null) ? pData.getName() : "null";
+        myFormat = (pData != null)
+                ? pData.getName()
+                : "null";
         return myFormat;
     }
 

@@ -170,9 +170,13 @@ public class JDateDayFormatter
         JDateDay myEnd = pRange.getEnd();
 
         /* Build range description */
-        String myFormat = (myStart == null) ? JDateDayRange.DESC_UNBOUNDED : formatDateDay(myStart);
+        String myFormat = (myStart == null)
+                ? JDateDayRange.DESC_UNBOUNDED
+                : formatDateDay(myStart);
         myFormat += JDateDayRange.DESC_LINK;
-        myFormat += (myEnd == null) ? JDateDayRange.DESC_UNBOUNDED : formatDateDay(myEnd);
+        myFormat += (myEnd == null)
+                ? JDateDayRange.DESC_UNBOUNDED
+                : formatDateDay(myEnd);
 
         /* return the format */
         return myFormat;
@@ -182,19 +186,23 @@ public class JDateDayFormatter
      * Parse Date.
      * @param pValue Formatted Date
      * @return the Date
-     * @throws ParseException on error
      */
-    public Date parseDate(final String pValue) throws ParseException {
-        return theDateFormat.parse(pValue);
+    public Date parseDate(final String pValue) {
+        /* Parse the date */
+        try {
+            return theDateFormat.parse(pValue);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date: "
+                                               + pValue, e);
+        }
     }
 
     /**
      * Parse CalendarDay.
      * @param pValue Formatted CalendarDay
      * @return the CalendarDay
-     * @throws ParseException on error
      */
-    public Calendar parseCalendarDay(final String pValue) throws ParseException {
+    public Calendar parseCalendarDay(final String pValue) {
         Date myDate = parseDate(pValue);
         Calendar myCalendar = Calendar.getInstance(theLocale);
         myCalendar.setTime(myDate);
@@ -205,9 +213,8 @@ public class JDateDayFormatter
      * Parse DateDay.
      * @param pValue Formatted DateDay
      * @return the DateDay
-     * @throws ParseException on error
      */
-    public JDateDay parseDateDay(final String pValue) throws ParseException {
+    public JDateDay parseDateDay(final String pValue) {
         Date myDate = parseDate(pValue);
         return new JDateDay(myDate);
     }

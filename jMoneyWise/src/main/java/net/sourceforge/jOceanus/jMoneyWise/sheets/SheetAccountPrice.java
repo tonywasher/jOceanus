@@ -28,7 +28,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -153,10 +152,8 @@ public class SheetAccountPrice
 
     @Override
     protected void formatSheet() throws JDataException {
-        /* Set the Account column width */
-        setColumnWidth(COL_ACCOUNT, AccountBase.NAMELEN);
-
-        /* Set Price and Date columns */
+        /* Set the column types */
+        setStringColumn(COL_ACCOUNT);
         setDateColumn(COL_DATE);
         setPriceColumn(COL_PRICE);
 

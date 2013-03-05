@@ -128,25 +128,13 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
                     if (!myClass.isLink()) {
                         theOwner.setIntegerColumn(iData);
                     }
+                    theOwner.setStringColumn(iData);
                     break;
                 default:
+                    theOwner.setStringColumn(iData);
                     break;
             }
         }
-    }
-
-    /**
-     * Set column width.
-     * @param pClass the class to set
-     * @param pNumChars the character width to set
-     */
-    protected void setColumnWidth(final E pClass,
-                                  final int pNumChars) {
-        /* Obtain the data column */
-        int iCol = 1 + getIdColumn(pClass);
-
-        /* Set the width */
-        theOwner.setColumnWidth(iCol, pNumChars);
     }
 
     /**

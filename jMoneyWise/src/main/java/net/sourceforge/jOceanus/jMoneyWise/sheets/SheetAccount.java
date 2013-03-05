@@ -26,7 +26,6 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
@@ -137,7 +136,9 @@ public class SheetAccount
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup() ? null : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CLOSED);
+        theInfoSheet = isBackup()
+                ? null
+                : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CLOSED);
     }
 
     @Override
@@ -216,12 +217,10 @@ public class SheetAccount
 
     @Override
     protected void formatSheet() throws JDataException {
-        /* Set the Account column width */
-        setColumnWidth(COL_NAME, AccountBase.NAMELEN);
-        setColumnWidth(COL_ACCOUNTTYPE, StaticData.NAMELEN);
-        setColumnWidth(COL_DESC, AccountBase.DESCLEN);
-
-        /* Set Boolean column */
+        /* Set the column types */
+        setStringColumn(COL_NAME);
+        setStringColumn(COL_ACCOUNTTYPE);
+        setStringColumn(COL_DESC);
         setBooleanColumn(COL_CLOSED);
 
         /* Set the name column range */
@@ -375,10 +374,6 @@ public class SheetAccount
         public void formatSheet() throws JDataException {
             /* Apply basic formatting */
             super.formatSheet();
-
-            /* Set the column widths */
-            setColumnWidth(AccountInfoClass.Parent, AccountBase.NAMELEN);
-            setColumnWidth(AccountInfoClass.Alias, AccountBase.NAMELEN);
 
             /* Set the Validations */
             applyDataValidation(AccountInfoClass.Parent, AREA_ACCOUNTNAMES);

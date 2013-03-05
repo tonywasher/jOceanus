@@ -27,7 +27,6 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
@@ -100,7 +99,9 @@ public class SheetTaxYear
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup() ? null : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
+        theInfoSheet = isBackup()
+                ? null
+                : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
     }
 
     /**
@@ -118,7 +119,9 @@ public class SheetTaxYear
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup() ? null : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
+        theInfoSheet = isBackup()
+                ? null
+                : new SheetTaxInfoSet(TaxYearInfoClass.class, this, COL_REGIME);
     }
 
     @Override
@@ -177,10 +180,8 @@ public class SheetTaxYear
 
     @Override
     protected void formatSheet() throws JDataException {
-        /* Set the String column width */
-        setColumnWidth(COL_REGIME, StaticData.NAMELEN);
-
-        /* Set Date columns */
+        /* Set the column types */
+        setStringColumn(COL_REGIME);
         setDateColumn(COL_TAXYEAR);
 
         /* Apply validation */

@@ -134,7 +134,7 @@ public class DataView
      * @param pColIndex the view index
      * @return the sheet index or -1 if outside view
      */
-    protected int convertColumnIndex(final int pColIndex) {
+    private int convertColumnIndex(final int pColIndex) {
         /* Reject values outside range */
         if ((pColIndex < 0)
             || (pColIndex >= theNumColumns)) {
@@ -153,7 +153,10 @@ public class DataView
      */
     public DataRow getRowByIndex(final int pRowIndex) {
         /* Return the row */
-        return theSheet.getRowByIndex(this, pRowIndex);
+        int myIndex = convertRowIndex(pRowIndex);
+        return (myIndex < 0)
+                ? null
+                : theSheet.getRowByIndex(myIndex);
     }
 
     /**
@@ -177,7 +180,24 @@ public class DataView
     public DataCell getCellByPosition(final CellPosition pPosition) {
         /* Return the cell */
         DataRow myRow = getRowByIndex(pPosition.getRowIndex());
-        return (myRow == null) ? null : myRow.getCellByIndex(pPosition.getColumnIndex());
+        return (myRow == null)
+                ? null
+                : getRowCellByIndex(myRow, pPosition.getColumnIndex());
+    }
+
+    /**
+     * Obtain the cell at required index.
+     * @param pRow the row to extract from
+     * @param pIndex the requested index
+     * @return the requested cell.
+     */
+    public DataCell getRowCellByIndex(final DataRow pRow,
+                                      final int pIndex) {
+        /* Return the cell */
+        int myIndex = convertColumnIndex(pIndex);
+        return (myIndex < 0)
+                ? null
+                : pRow.getCellByIndex(myIndex);
     }
 
     @Override

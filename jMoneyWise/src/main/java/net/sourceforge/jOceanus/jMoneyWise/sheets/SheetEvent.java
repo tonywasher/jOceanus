@@ -27,13 +27,11 @@ import java.util.Date;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
@@ -119,7 +117,9 @@ public class SheetEvent
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup() ? null : new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
+        theInfoSheet = isBackup()
+                ? null
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
     }
 
     /**
@@ -137,7 +137,9 @@ public class SheetEvent
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup() ? null : new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
+        theInfoSheet = isBackup()
+                ? null
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
     }
 
     @Override
@@ -222,11 +224,11 @@ public class SheetEvent
 
     @Override
     protected void formatSheet() throws JDataException {
-        /* Set the Account column width */
-        setColumnWidth(COL_DESC, EventBase.DESCLEN);
-        setColumnWidth(COL_DEBIT, AccountBase.NAMELEN);
-        setColumnWidth(COL_CREDIT, AccountBase.NAMELEN);
-        setColumnWidth(COL_TRAN, StaticData.NAMELEN);
+        /* Set the column types */
+        setStringColumn(COL_DESC);
+        setStringColumn(COL_DEBIT);
+        setStringColumn(COL_CREDIT);
+        setStringColumn(COL_TRAN);
 
         /* Set Number columns */
         setDateColumn(COL_DATE);
@@ -370,7 +372,9 @@ public class SheetEvent
                             myValue.negate();
                             isCredit = false;
                         }
-                        myInfoList.addOpenItem(0, myEvent, isCredit ? EventInfoClass.CreditUnits : EventInfoClass.DebitUnits, myValue);
+                        myInfoList.addOpenItem(0, myEvent, isCredit
+                                ? EventInfoClass.CreditUnits
+                                : EventInfoClass.DebitUnits, myValue);
                     }
 
                     /* Add information relating to the account */
@@ -428,9 +432,6 @@ public class SheetEvent
         public void formatSheet() throws JDataException {
             /* Apply basic formatting */
             super.formatSheet();
-
-            /* Set column width for ThirdParty */
-            setColumnWidth(EventInfoClass.ThirdParty, AccountBase.NAMELEN);
 
             /* Set validation for ThirdParty */
             applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);

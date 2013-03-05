@@ -23,7 +23,6 @@
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -108,7 +107,15 @@ public class ExcelSheet
     }
 
     @Override
-    public DataRow getRowByIndex(final int pRowIndex) {
+    public ExcelRow getRowByIndex(final int pRowIndex) {
+        HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
+        return (myExcelRow == null)
+                ? null
+                : new ExcelRow(this, myExcelRow, pRowIndex);
+    }
+
+    @Override
+    public ExcelRow createRowByIndex(final int pRowIndex) {
         HSSFRow myExcelRow = theExcelSheet.getRow(pRowIndex);
         if (myExcelRow == null) {
             /* Create the row if it does not exist */
@@ -118,17 +125,37 @@ public class ExcelSheet
     }
 
     @Override
-    protected DataRow getRowByIndex(final DataView pView,
-                                    final int pRowIndex) {
-        /* Determine the actual index of the row */
-        int myIndex = pView.convertRowIndex(pRowIndex);
-        if (myIndex < 0) {
-            return null;
-        }
-
-        HSSFRow myExcelRow = theExcelSheet.getRow(myIndex);
-        return new ExcelRow(pView, myExcelRow, pRowIndex);
+    public ExcelColumn getColumnByIndex(final int pColIndex) {
+        return new ExcelColumn(this, pColIndex);
     }
+
+    @Override
+    public ExcelColumn createColumnByIndex(final int pColIndex) {
+        return getColumnByIndex(pColIndex);
+    }
+
+    @Override
+    public boolean isHidden() {
+        return theExcelBook.isSheetHidden(theIndex);
+    }
+
+    @Override
+    public void setHidden(final boolean isHidden) {
+        theExcelBook.setSheetHidden(theIndex, isHidden);
+    }
+
+    // @Override
+    // protected ExcelRow getRowByIndex(final DataView pView,
+    // final int pRowIndex) {
+    // /* Determine the actual index of the row */
+    // int myIndex = pView.convertRowIndex(pRowIndex);
+    // if (myIndex < 0) {
+    // return null;
+    // }
+    //
+    // HSSFRow myExcelRow = theExcelSheet.getRow(myIndex);
+    // return new ExcelRow(pView, myExcelRow, pRowIndex);
+    // }
 
     @Override
     public void declareRange(final String pName,
@@ -175,24 +202,34 @@ public class ExcelSheet
         theExcelSheet.createFreezePane(pFreezeCell.getColumnIndex(), pFreezeCell.getRowIndex());
     }
 
-    @Override
-    public void setColumnHidden(final int pColIndex,
-                                final boolean isHidden) {
+    /**
+     * Set the column's hidden status.
+     * @param pColIndex the column index
+     * @param isHidden true/false
+     */
+    protected void setColumnHidden(final int pColIndex,
+                                   final boolean isHidden) {
         theExcelSheet.setColumnHidden(pColIndex, isHidden);
     }
 
-    @Override
-    public void setColumnWidth(final int pColIndex,
-                               final int pWidth) {
-        /* Set the column width */
-        theExcelSheet.setColumnWidth(pColIndex, WIDTH_CHAR
-                                                * pWidth);
+    /**
+     * Is the column hidden?
+     * @param pColIndex the column
+     * @return true/false
+     */
+    protected boolean isColumnHidden(final int pColIndex) {
+        return theExcelSheet.isColumnHidden(pColIndex);
     }
 
-    @Override
-    public void setDefaultColumnStyle(final int pColIndex,
-                                      final CellStyleType pStyle) {
+    /**
+     * Set the default style for the column.
+     * @param pColIndex the column index
+     * @param pStyle the style
+     */
+    protected void setDefaultCellStyle(final int pColIndex,
+                                       final CellStyleType pStyle) {
         theExcelSheet.setDefaultColumnStyle(pColIndex, theExcelBook.getCellStyle(pStyle));
+        theExcelSheet.setColumnWidth(pColIndex, getColumnWidth(pStyle));
     }
 
     /**
@@ -203,5 +240,43 @@ public class ExcelSheet
     protected void setCellStyle(final ExcelCell pCell,
                                 final CellStyleType pStyle) {
         pCell.setCellStyle(theExcelBook.getCellStyle(pStyle));
+    }
+
+    /**
+     * Obtain column cell width.
+     * @param pStyle the style type
+     * @return the name of the style
+     */
+    private static int getColumnWidth(final CellStyleType pStyle) {
+        switch (pStyle) {
+            case Integer:
+                return DataWorkBook.WIDTH_INT
+                       * WIDTH_CHAR;
+            case Boolean:
+                return DataWorkBook.WIDTH_BOOL
+                       * WIDTH_CHAR;
+            case Date:
+                return DataWorkBook.WIDTH_DATE
+                       * WIDTH_CHAR;
+            case Money:
+                return DataWorkBook.WIDTH_MONEY
+                       * WIDTH_CHAR;
+            case Price:
+                return DataWorkBook.WIDTH_PRICE
+                       * WIDTH_CHAR;
+            case Units:
+                return DataWorkBook.WIDTH_UNITS
+                       * WIDTH_CHAR;
+            case Rate:
+                return DataWorkBook.WIDTH_RATE
+                       * WIDTH_CHAR;
+            case Dilution:
+                return DataWorkBook.WIDTH_DILUTION
+                       * WIDTH_CHAR;
+            case String:
+            default:
+                return DataWorkBook.WIDTH_STRING
+                       * WIDTH_CHAR;
+        }
     }
 }

@@ -34,12 +34,12 @@ import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jSpreadSheetManager.CellPosition;
+import net.sourceforge.jOceanus.jSpreadSheetManager.CellStyleType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataSheet;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 
 /**
  * SheetDataItem class for accessing a sheet that is related to a data type.
@@ -56,46 +56,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * ControlId column.
      */
     protected static final int COL_CONTROLID = COL_ID + 1;
-
-    /**
-     * Date width.
-     */
-    protected static final int WIDTH_DATE = 11;
-
-    /**
-     * Integer width.
-     */
-    protected static final int WIDTH_INT = 8;
-
-    /**
-     * Boolean width.
-     */
-    protected static final int WIDTH_BOOL = 8;
-
-    /**
-     * Money width.
-     */
-    protected static final int WIDTH_MONEY = 13;
-
-    /**
-     * Units width.
-     */
-    protected static final int WIDTH_UNITS = 13;
-
-    /**
-     * Rate width.
-     */
-    protected static final int WIDTH_RATE = 13;
-
-    /**
-     * Dilution width.
-     */
-    protected static final int WIDTH_DILUTION = 13;
-
-    /**
-     * Price width.
-     */
-    protected static final int WIDTH_PRICE = 15;
 
     /**
      * The task control.
@@ -615,7 +575,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply to the sheet */
-        theWorkSheet.setColumnHidden(myCol, true);
+        theWorkSheet.createColumnByIndex(myCol).setHidden(true);
     }
 
     /**
@@ -627,8 +587,19 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Date);
-        theWorkSheet.setColumnWidth(myCol, WIDTH_DATE);
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Date);
+    }
+
+    /**
+     * Set String column.
+     * @param pOffset the offset of the column
+     */
+    protected void setStringColumn(final int pOffset) {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Apply the style to the sheet */
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.String);
     }
 
     /**
@@ -640,8 +611,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Money);
-        theWorkSheet.setColumnWidth(myCol, WIDTH_MONEY);
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Money);
     }
 
     /**
@@ -653,8 +623,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Price);
-        theWorkSheet.setColumnWidth(myCol, WIDTH_PRICE);
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Price);
     }
 
     /**
@@ -666,8 +635,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Units);
-        theWorkSheet.setColumnWidth(myCol, WIDTH_UNITS);
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Units);
     }
 
     /**
@@ -679,8 +647,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Rate);
-        theWorkSheet.setColumnWidth(myCol, WIDTH_RATE);
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Rate);
     }
 
     /**
@@ -692,8 +659,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Dilution);
-        theWorkSheet.setColumnWidth(myCol, WIDTH_DILUTION);
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Dilution);
     }
 
     /**
@@ -705,8 +671,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Boolean);
-        theWorkSheet.setColumnWidth(myCol, WIDTH_BOOL);
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Boolean);
     }
 
     /**
@@ -718,22 +683,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.setDefaultColumnStyle(myCol, CellStyleType.Integer);
-        theWorkSheet.setColumnWidth(myCol, WIDTH_INT);
-    }
-
-    /**
-     * Set Column width.
-     * @param pOffset the offset of the column
-     * @param pNumChars the number of characters
-     */
-    protected void setColumnWidth(final int pOffset,
-                                  final int pNumChars) {
-        /* Adjust column if necessary */
-        int myCol = adjustColumn(pOffset);
-
-        /* Apply to the sheet */
-        theWorkSheet.setColumnWidth(myCol, pNumChars);
+        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Integer);
     }
 
     /**

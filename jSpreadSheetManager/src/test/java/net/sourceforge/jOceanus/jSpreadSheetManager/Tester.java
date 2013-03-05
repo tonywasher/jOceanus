@@ -9,7 +9,6 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
 
@@ -28,16 +27,20 @@ public class Tester {
         String h = myTwo.toString();
         // loadRange(null);
         try {
+            // File myFile = new File("C:\\Users\\Tony\\Documents\\NewFinance.ods");
+            // FileInputStream myInFile = new FileInputStream(myFile);
+            // BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
+            // DataWorkBook myBook = new DataWorkBook(myInBuffer, WorkBookType.OasisODS);
             DataWorkBook myBook = new DataWorkBook(WorkBookType.OasisODS);
-            DataSheet mySheet = myBook.newSheet("TestData");
-            mySheet.setDefaultColumnStyle(1, CellStyleType.String);
-            mySheet.setDefaultColumnStyle(2, CellStyleType.Date);
-            mySheet.setDefaultColumnStyle(10, CellStyleType.Boolean);
-            mySheet.setDefaultColumnStyle(4, CellStyleType.Rate);
-            mySheet.setDefaultColumnStyle(5, CellStyleType.Units);
-            mySheet.setDefaultColumnStyle(7, CellStyleType.Integer);
+            DataSheet mySheet = myBook.newSheet("TestData", 3, 11);
+            mySheet.createColumnByIndex(1).setDefaultCellStyle(CellStyleType.String);
+            mySheet.createColumnByIndex(2).setDefaultCellStyle(CellStyleType.Date);
+            mySheet.createColumnByIndex(10).setDefaultCellStyle(CellStyleType.Boolean);
+            mySheet.createColumnByIndex(4).setDefaultCellStyle(CellStyleType.Rate);
+            mySheet.createColumnByIndex(5).setDefaultCellStyle(CellStyleType.Units);
+            mySheet.createColumnByIndex(7).setDefaultCellStyle(CellStyleType.Integer);
             int i = mySheet.getRowCount();
-            DataRow myRow = mySheet.getRowByIndex(2);
+            DataRow myRow = mySheet.createRowByIndex(2);
             i = mySheet.getRowCount();
             // mySheet.setColumnHidden(1, false);
             // SheetCell myCell = myRow.getCellByIndex(0);
@@ -54,8 +57,8 @@ public class Tester {
             myCell.setDecimalValue(new JUnits("0.10"));
             myCell = myRow.createCellByIndex(7);
             myCell.setIntegerValue(4);
-            File myFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
-            FileOutputStream myOutFile = new FileOutputStream(myFile);
+            File myXFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
+            FileOutputStream myOutFile = new FileOutputStream(myXFile);
             BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
             myCell = null;
         } catch (Exception e) {

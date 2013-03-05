@@ -99,7 +99,7 @@ public class DataRowIterator
                 /* else we are based on a sheet */
             } else {
                 /* Access the first element of the sheet */
-                theLastRow = theSheet.getRowByIndex(0);
+                theLastRow = theSheet.createRowByIndex(0);
             }
         } else {
             /* Return the next row */

@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 
 import org.odftoolkit.odfdom.dom.OdfDocumentNamespace;
 import org.odftoolkit.odfdom.dom.attribute.table.TableNumberColumnsRepeatedAttribute;
@@ -72,36 +71,21 @@ public class OasisColumnMap {
      * @param pSheet the underlying sheet.
      * @throws JDataException on error
      */
-    protected OasisColumnMap(final OasisSheet pSheet) throws JDataException {
+    protected OasisColumnMap(final OasisSheet pSheet) {
         /* Store parameters */
         theOasisSheet = pSheet;
         theOasisTable = pSheet.getTableElement();
 
-        /* Loop through the children of the table */
-        for (Node myNode = theOasisTable.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
-            /* If this is a column element */
-            if (myNode instanceof TableTableColumnElement) {
-                /* Add column to list */
-                TableTableColumnElement myColumn = (TableTableColumnElement) myNode;
-                processColumn(myColumn);
-                continue;
-            }
+        /* Process the columns */
+        processColumnNode(theOasisTable);
+    }
 
-            /* If this is a header columns element */
-            if (myNode instanceof TableTableHeaderColumnsElement) {
-                /* Add column to list */
-                TableTableHeaderColumnsElement myHeaders = (TableTableHeaderColumnsElement) myNode;
-                processHeaders(myHeaders);
-                continue;
-            }
-
-            /* Don't allow columns or column group elements */
-            if ((myNode instanceof TableTableColumnsElement)
-                || (myNode instanceof TableTableColumnGroupElement)) {
-                /* Add column to list */
-                throw new JDataException(ExceptionClass.LOGIC, myNode, "Unsupported node");
-            }
-        }
+    /**
+     * Obtain OasisSheet.
+     * @return the last row.
+     */
+    protected OasisSheet getSheet() {
+        return theOasisSheet;
     }
 
     /**
@@ -121,33 +105,31 @@ public class OasisColumnMap {
     }
 
     /**
-     * Process header columns.
-     * @param pHeaders the header columns to process
-     * @throws JDataException on error
+     * Process column node.
+     * @param pNode the node to process
      */
-    private void processHeaders(final TableTableHeaderColumnsElement pHeaders) throws JDataException {
-        /* Loop through the column children of the header */
-        for (Node myNode = pHeaders.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
-            /* If this is a column */
+    private void processColumnNode(final Node pNode) {
+        /* Loop through the children of the node */
+        for (Node myNode = pNode.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
+            /* If this is a column element */
             if (myNode instanceof TableTableColumnElement) {
                 /* Add column to list */
                 TableTableColumnElement myColumn = (TableTableColumnElement) myNode;
                 processColumn(myColumn);
-            }
 
-            /* Don't allow columns or column group elements */
-            if ((myNode instanceof TableTableHeaderColumnsElement)
-                || (myNode instanceof TableTableColumnsElement)
-                || (myNode instanceof TableTableColumnGroupElement)) {
-                /* Add column to list */
-                throw new JDataException(ExceptionClass.LOGIC, myNode, "Unsupported node");
+                /* If this is a node that contains columns */
+            } else if ((myNode instanceof TableTableHeaderColumnsElement)
+                       || (myNode instanceof TableTableColumnGroupElement)
+                       || (myNode instanceof TableTableColumnsElement)) {
+                /* Process nodes */
+                processColumnNode(myNode);
             }
         }
     }
 
     /**
-     * Process a column.
-     * @param pColumn the column to process
+     * Process a column node.
+     * @param pColumn the column node to process
      */
     private void processColumn(final TableTableColumnElement pColumn) {
         /* Determine the number of repeated columns */
@@ -171,6 +153,26 @@ public class OasisColumnMap {
      * @return the column
      */
     protected OasisColumn getColumnByIndex(final int pColIndex) {
+        /* Handle negative column index */
+        if (pColIndex < 0) {
+            return null;
+        }
+
+        /* If we need to extend the table */
+        if (pColIndex >= theNumColumns) {
+            return null;
+        }
+
+        /* Just return the column */
+        return theColumns.get(pColIndex);
+    }
+
+    /**
+     * Obtain a column by its index.
+     * @param pColIndex the index of the column.
+     * @return the column
+     */
+    protected OasisColumn createColumnByIndex(final int pColIndex) {
         /* Handle negative column index */
         if (pColIndex < 0) {
             return null;
@@ -210,7 +212,7 @@ public class OasisColumnMap {
                     myElement.setTableNumberColumnsRepeatedAttribute(myRepeat);
 
                     /* Report addition of columns */
-                    theOasisSheet.addColumnsToRows();
+                    theOasisSheet.addColumnsToRows(myXtraCols);
 
                     /* Return the required column */
                     return theLastColumn;
@@ -228,7 +230,7 @@ public class OasisColumnMap {
             processColumn(myElement);
 
             /* Report addition of columns */
-            theOasisSheet.addColumnsToRows();
+            theOasisSheet.addColumnsToRows(myXtraCols);
 
             /* Return the required column */
             return theLastColumn;
@@ -261,9 +263,16 @@ public class OasisColumnMap {
 
             /* Loop through the earlier columns */
             OasisColumn myCol = pColumn.getPreviousColumn();
-            while (myCol.getInstance() > 0) {
+            while (myCol != null) {
                 /* Map to new column */
                 myCol.setColumnElement(myNew);
+
+                /* Break loop if this is not a virtual instance */
+                if (!myCol.isVirtual()) {
+                    break;
+                }
+
+                /* Move to previous column */
                 myCol = myCol.getPreviousColumn();
             }
         }
@@ -272,7 +281,7 @@ public class OasisColumnMap {
         int myRepeatCount = pColumn.getRepeatCount();
         int myNumCols = myRepeatCount
                         - myInstance
-                        + 1;
+                        - 1;
 
         /* Clear the number of columns */
         myElement.removeAttributeNS(OdfDocumentNamespace.TABLE.getUri(), TableNumberColumnsRepeatedAttribute.ATTRIBUTE_NAME.getLocalName());
@@ -295,7 +304,7 @@ public class OasisColumnMap {
             /* Set the element for this column */
             pColumn.setColumnElement(myNew);
 
-            /* Loop through the later rows */
+            /* Loop through the later columns */
             OasisColumn myCol = pColumn.getNextColumn();
             for (int i = 0; i < myNumCols; i++) {
                 /* Map to new column */

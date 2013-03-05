@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
+import net.sourceforge.jOceanus.jSpreadSheetManager.OasisWorkBook.OasisStyle;
+
 import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
 
@@ -29,7 +31,8 @@ import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
  * Class representing a column in Oasis.
  * @author Tony Washer
  */
-public class OasisColumn {
+public class OasisColumn
+        extends DataColumn {
     /**
      * The list of columns.
      */
@@ -46,14 +49,9 @@ public class OasisColumn {
     private final OasisColumn thePreviousColumn;
 
     /**
-     * The underlying ODFDOM column.
+     * The next column.
      */
     private OasisColumn theNextColumn;
-
-    /**
-     * The column index.
-     */
-    private final int theColIndex;
 
     /**
      * The repeat index of the column.
@@ -74,11 +72,11 @@ public class OasisColumn {
                           final int pIndex,
                           final int pInstance) {
         /* Store parameters */
+        super(pMap.getSheet(), pIndex);
         theColumnMap = pMap;
         thePreviousColumn = pPrevious;
         theNextColumn = null;
         theOasisColumn = pColumn;
-        theColIndex = pIndex;
         theColInstance = pInstance;
 
         /* If we have a previous column */
@@ -104,28 +102,14 @@ public class OasisColumn {
         theOasisColumn = pElement;
     }
 
-    /**
-     * Obtain the next column.
-     * @return the next column
-     */
-    protected OasisColumn getNextColumn() {
+    @Override
+    public OasisColumn getNextColumn() {
         return theNextColumn;
     }
 
-    /**
-     * Obtain the previous column.
-     * @return the previous column
-     */
-    protected OasisColumn getPreviousColumn() {
+    @Override
+    public OasisColumn getPreviousColumn() {
         return thePreviousColumn;
-    }
-
-    /**
-     * Obtain the index of the column.
-     * @return the index
-     */
-    protected int getIndex() {
-        return theColIndex;
     }
 
     /**
@@ -179,54 +163,28 @@ public class OasisColumn {
         return theOasisColumn.getTableStyleNameAttribute();
     }
 
-    /**
-     * Obtain the default cell style name.
-     * @return the column style name
-     */
-    protected String getDefaultCellStyle() {
-        return theOasisColumn.getTableDefaultCellStyleNameAttribute();
-    }
-
-    /**
-     * Is the column hidden?
-     * @return true/false
-     */
-    protected boolean isHidden() {
+    @Override
+    public boolean isHidden() {
         String myString = theOasisColumn.getTableVisibilityAttribute();
         return (myString == null)
                 ? false
                 : myString.equals(TableVisibilityAttribute.Value.COLLAPSE.toString());
     }
 
-    /**
-     * Set the column style.
-     * @param pStyle the column style
-     */
-    protected void setColumnStyle(final String pStyle) {
+    @Override
+    public void setDefaultCellStyle(final CellStyleType pStyle) {
         /* ensure that the column is individual */
         ensureIndividual();
 
-        /* Set the column style */
-        theOasisColumn.setTableStyleNameAttribute(pStyle);
+        /* Set the default cell style and the column style */
+        OasisStyle myStyle = OasisWorkBook.getOasisCellStyle(pStyle);
+        OasisStyle myColStyle = OasisWorkBook.getOasisColumnStyle(myStyle);
+        theOasisColumn.setTableDefaultCellStyleNameAttribute(OasisWorkBook.getStyleName(myStyle));
+        theOasisColumn.setTableStyleNameAttribute(OasisWorkBook.getStyleName(myColStyle));
     }
 
-    /**
-     * Set the default column style.
-     * @param pStyle the default column style
-     */
-    protected void setDefaultCellStyle(final String pStyle) {
-        /* ensure that the column is individual */
-        ensureIndividual();
-
-        /* Set the default cell style */
-        theOasisColumn.setTableDefaultCellStyleNameAttribute(pStyle);
-    }
-
-    /**
-     * Set the hidden property.
-     * @param isHidden true/false
-     */
-    protected void setHidden(final boolean isHidden) {
+    @Override
+    public void setHidden(final boolean isHidden) {
         /* ensure that the column is individual */
         ensureIndividual();
 

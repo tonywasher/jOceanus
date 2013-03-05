@@ -30,7 +30,7 @@ import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
 
 import org.odftoolkit.odfdom.dom.OdfContentDom;
@@ -45,12 +45,14 @@ import org.odftoolkit.odfdom.dom.element.table.TableErrorMessageElement;
 import org.odftoolkit.odfdom.dom.element.table.TableNamedExpressionsElement;
 import org.odftoolkit.odfdom.dom.element.table.TableNamedRangeElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
-import org.odftoolkit.odfdom.dom.element.table.TableTableCellElementBase;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 import org.odftoolkit.odfdom.dom.style.OdfStyleFamily;
 import org.odftoolkit.odfdom.dom.style.props.OdfParagraphProperties;
+import org.odftoolkit.odfdom.dom.style.props.OdfTableColumnProperties;
+import org.odftoolkit.odfdom.dom.style.props.OdfTableProperties;
+import org.odftoolkit.odfdom.dom.style.props.OdfTableRowProperties;
 import org.odftoolkit.odfdom.dom.style.props.OdfTextProperties;
 import org.odftoolkit.odfdom.incubator.doc.number.OdfNumberDateStyle;
 import org.odftoolkit.odfdom.incubator.doc.number.OdfNumberPercentageStyle;
@@ -59,9 +61,6 @@ import org.odftoolkit.odfdom.incubator.doc.office.OdfOfficeAutomaticStyles;
 import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
 import org.odftoolkit.odfdom.pkg.OdfElement;
 import org.odftoolkit.simple.SpreadsheetDocument;
-import org.odftoolkit.simple.table.Cell;
-import org.odftoolkit.simple.table.Row;
-import org.odftoolkit.simple.table.Table;
 import org.w3c.dom.Node;
 
 /**
@@ -87,6 +86,12 @@ public class OasisWorkBook {
      * bold font value.
      */
     private static final String FONT_BOLD = "bold";
+
+    /**
+     * font size.
+     */
+    private static final String FONT_SIZE = DataWorkBook.FONT_HEIGHT
+                                            + "pt";
 
     /**
      * Oasis WorkBook.
@@ -119,6 +124,11 @@ public class OasisWorkBook {
     private final TableDatabaseRangesElement theFilters;
 
     /**
+     * Data formatter.
+     */
+    private final JDataFormatter theFormatter;
+
+    /**
      * Count of table elements.
      */
     private int theNumTables = 0;
@@ -136,7 +146,7 @@ public class OasisWorkBook {
     /**
      * Map of Data styles.
      */
-    private final Map<CellStyleType, OdfStyle> theStyleMap;
+    private final Map<OasisStyle, OdfStyle> theStyleMap;
 
     /**
      * Map of Ranges.
@@ -157,6 +167,14 @@ public class OasisWorkBook {
     }
 
     /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    protected JDataFormatter getFormatter() {
+        return theFormatter;
+    }
+
+    /**
      * Constructor.
      * @param pInput the input stream
      * @throws JDataException on error
@@ -169,6 +187,10 @@ public class OasisWorkBook {
             theContentDom = theBook.getContentDom();
             theStyleMap = null;
             theConstraintMap = null;
+
+            /* Allocate the formatter and set date format */
+            theFormatter = new JDataFormatter();
+            theFormatter.setFormat(DataWorkBook.FORMAT_DATE);
 
             /* Allocate the maps */
             theSheetMap = new HashMap<String, OasisSheet>();
@@ -198,6 +220,10 @@ public class OasisWorkBook {
             theContents = theBook.getContentRoot();
             theContentDom = theBook.getContentDom();
 
+            /* Allocate the formatter and set date format */
+            theFormatter = new JDataFormatter();
+            theFormatter.setFormat(DataWorkBook.FORMAT_DATE);
+
             /* Clean out the document */
             cleanOutDocument();
 
@@ -208,7 +234,7 @@ public class OasisWorkBook {
 
             /* Allocate the maps */
             theSheetMap = new HashMap<String, OasisSheet>();
-            theStyleMap = new EnumMap<CellStyleType, OdfStyle>(CellStyleType.class);
+            theStyleMap = new EnumMap<OasisStyle, OdfStyle>(OasisStyle.class);
             theRangeMap = new HashMap<String, TableNamedRangeElement>();
             theConstraintMap = new HashMap<String, TableContentValidationElement>();
 
@@ -245,16 +271,18 @@ public class OasisWorkBook {
         /* Create the new Sheet */
         TableTableElement myElement = theContents.newTableTableElement();
         myElement.setTableNameAttribute(pName);
+        myElement.setTableStyleNameAttribute(getStyleName(OasisStyle.Table));
 
         /* Create the columns */
         TableTableColumnElement myCol = myElement.newTableTableColumnElement();
-        myCol.setTableDefaultCellStyleNameAttribute("Default");
+        myCol.setTableStyleNameAttribute(getStyleName(OasisStyle.StringColumn));
         if (pNumCols > 1) {
             myCol.setTableNumberColumnsRepeatedAttribute(pNumCols);
         }
 
         /* Create the rows */
         TableTableRowElement myRow = myElement.newTableTableRowElement();
+        myRow.setTableStyleNameAttribute(getStyleName(OasisStyle.Row));
         if (pNumRows > 1) {
             myRow.setTableNumberRowsRepeatedAttribute(pNumRows);
         }
@@ -326,7 +354,7 @@ public class OasisWorkBook {
      * Build sheet map.
      */
     private void buildSheetMap() {
-        /* Loop through the named ranges */
+        /* Loop through the tables */
         for (Node myNode = theContents.getFirstChild(); myNode != null; myNode = myNode.getNextSibling()) {
             /* Skip uninteresting elements */
             if (!(myNode instanceof TableTableElement)) {
@@ -391,10 +419,10 @@ public class OasisWorkBook {
      * @param pValidRange the name of the validation range
      * @throws JDataException on error
      */
-    public void applyDataValidation(final Table pSheet,
-                                    final CellPosition pFirstCell,
-                                    final CellPosition pLastCell,
-                                    final String pValidRange) throws JDataException {
+    protected void applyDataValidation(final OasisSheet pSheet,
+                                       final CellPosition pFirstCell,
+                                       final CellPosition pLastCell,
+                                       final String pValidRange) throws JDataException {
         /* Access constraint */
         TableContentValidationElement myConstraint = theConstraintMap.get(pValidRange);
         String myName;
@@ -422,21 +450,18 @@ public class OasisWorkBook {
 
         /* Determine size of range */
         myName = myConstraint.getTableNameAttribute();
-        int iFirstRow = pFirstCell.getRowIndex();
+        int iRow = pFirstCell.getRowIndex();
         int iLastRow = pLastCell.getRowIndex();
         int iFirstCol = pFirstCell.getColumnIndex();
         int iLastCol = pLastCell.getColumnIndex();
-        int iRow;
-        Row myRow;
 
         /* Loop through the rows */
-        for (iRow = iFirstRow, myRow = pSheet.getRowByIndex(iRow); iRow <= iLastRow; iRow++, myRow = myRow.getNextRow()) {
+        for (OasisRow myRow = pSheet.getRowByIndex(iRow); iRow <= iLastRow; iRow++, myRow = myRow.getNextRow()) {
             /* Loop through the columns */
             for (int iCol = iFirstCol; iCol <= iLastCol; iCol++) {
                 /* Access the cell and set the constraint */
-                Cell myCell = myRow.getCellByIndex(iCol);
-                TableTableCellElementBase myElement = myCell.getOdfElement();
-                myElement.setTableContentValidationNameAttribute(myName);
+                OasisCell myCell = myRow.getCellByIndex(iCol);
+                myCell.setValidationName(myName);
             }
         }
     }
@@ -446,7 +471,7 @@ public class OasisWorkBook {
      * @param pRange the range to apply the filter to
      * @throws JDataException on error
      */
-    public void applyDataFilter(final OasisCellRange pRange) throws JDataException {
+    protected void applyDataFilter(final OasisCellRange pRange) throws JDataException {
         /* Create the new filter */
         TableDatabaseRangeElement myFilter = theFilters.newTableDatabaseRangeElement("Events.E1:Events.E15");
         myFilter.setTableNameAttribute("__Anonymous_Sheet_DB__14");
@@ -467,22 +492,121 @@ public class OasisWorkBook {
 
     /**
      * Obtain data style name.
-     * @param pType the style type
+     * @param pStyle the style type
      * @return the name of the style
      */
-    protected String getDataStyleName(final CellStyleType pType) {
+    private static String getDataStyleName(final OasisStyle pStyle) {
         return "dsn"
-               + pType;
+               + pStyle;
     }
 
     /**
      * Obtain style name.
-     * @param pType the style type
+     * @param pStyle the style type
      * @return the name of the style
      */
-    protected String getStyleName(final CellStyleType pType) {
+    protected static String getStyleName(final OasisStyle pStyle) {
         return "sn"
-               + pType;
+               + pStyle;
+    }
+
+    /**
+     * Obtain cell style.
+     * @param pStyle the style type
+     * @return the name of the style
+     */
+    protected static OasisStyle getOasisCellStyle(final CellStyleType pStyle) {
+        switch (pStyle) {
+            case Integer:
+                return OasisStyle.IntegerCell;
+            case Boolean:
+                return OasisStyle.BooleanCell;
+            case Date:
+                return OasisStyle.DateCell;
+            case Money:
+                return OasisStyle.MoneyCell;
+            case Price:
+                return OasisStyle.PriceCell;
+            case Units:
+                return OasisStyle.UnitsCell;
+            case Rate:
+                return OasisStyle.RateCell;
+            case Dilution:
+                return OasisStyle.DilutionCell;
+            case Header:
+                return OasisStyle.HeaderCell;
+            case String:
+            default:
+                return OasisStyle.StringCell;
+        }
+    }
+
+    /**
+     * Obtain column cell style.
+     * @param pStyle the style type
+     * @return the name of the style
+     */
+    protected static OasisStyle getOasisColumnStyle(final OasisStyle pStyle) {
+        switch (pStyle) {
+            case IntegerCell:
+                return OasisStyle.IntegerColumn;
+            case BooleanCell:
+                return OasisStyle.BooleanColumn;
+            case DateCell:
+                return OasisStyle.DateColumn;
+            case MoneyCell:
+                return OasisStyle.MoneyColumn;
+            case PriceCell:
+                return OasisStyle.PriceColumn;
+            case UnitsCell:
+                return OasisStyle.UnitsColumn;
+            case RateCell:
+                return OasisStyle.RateColumn;
+            case DilutionCell:
+                return OasisStyle.DilutionColumn;
+            case StringCell:
+            default:
+                return OasisStyle.StringColumn;
+        }
+    }
+
+    /**
+     * Obtain column cell width.
+     * @param pStyle the style type
+     * @return the name of the style
+     */
+    protected static int getOasisColumnWidth(final OasisStyle pStyle) {
+        switch (pStyle) {
+            case IntegerCell:
+                return DataWorkBook.WIDTH_INT << 1;
+            case BooleanCell:
+                return DataWorkBook.WIDTH_BOOL << 1;
+            case DateCell:
+                return DataWorkBook.WIDTH_DATE << 1;
+            case MoneyCell:
+                return DataWorkBook.WIDTH_MONEY << 1;
+            case PriceCell:
+                return DataWorkBook.WIDTH_PRICE << 1;
+            case UnitsCell:
+                return DataWorkBook.WIDTH_UNITS << 1;
+            case RateCell:
+                return DataWorkBook.WIDTH_RATE << 1;
+            case DilutionCell:
+                return DataWorkBook.WIDTH_DILUTION << 1;
+            case StringCell:
+            default:
+                return DataWorkBook.WIDTH_STRING << 1;
+        }
+    }
+
+    /**
+     * Obtain column width.
+     * @param pChars the character in width
+     * @return the name of the style
+     */
+    protected String getStyleWidth(final int pWidth) {
+        return (pWidth << 1)
+               + "mm";
     }
 
     /**
@@ -494,107 +618,306 @@ public class OasisWorkBook {
         theBook.getOrCreateDocumentStyles();
 
         /* Create the Date Cell Style */
-        OdfNumberDateStyle myDateStyle = new OdfNumberDateStyle(theContentDom, "dd-MMM-yy", getDataStyleName(CellStyleType.Date));
+        OdfNumberDateStyle myDateStyle = new OdfNumberDateStyle(theContentDom, "dd-MMM-yy", getDataStyleName(OasisStyle.DateCell));
         myStyles.appendChild(myDateStyle);
         OdfStyle myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(CellStyleType.Date));
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Date));
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.DateCell));
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.DateCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_LEFT);
-        theStyleMap.put(CellStyleType.Date, myStyle);
+        theStyleMap.put(OasisStyle.DateCell, myStyle);
+
+        /* Create the Date Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.DateColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_DATE));
+        theStyleMap.put(OasisStyle.DateColumn, myStyle);
 
         /* Create the Money Cell Style */
-        OdfNumberStyle myNumberStyle = new OdfNumberStyle(theContentDom, "£#,##0.00", getDataStyleName(CellStyleType.Money));
+        OdfNumberStyle myNumberStyle = new OdfNumberStyle(theContentDom, "£#,##0.00", getDataStyleName(OasisStyle.MoneyCell));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(CellStyleType.Money));
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Money));
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.MoneyCell));
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.MoneyCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_RIGHT);
-        theStyleMap.put(CellStyleType.Money, myStyle);
+        theStyleMap.put(OasisStyle.MoneyCell, myStyle);
+
+        /* Create the Money Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.MoneyColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_MONEY));
+        theStyleMap.put(OasisStyle.MoneyColumn, myStyle);
 
         /* Create the Price Cell Style */
-        myNumberStyle = new OdfNumberStyle(theContentDom, "£#,##0.0000", getDataStyleName(CellStyleType.Price));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "£#,##0.0000", getDataStyleName(OasisStyle.PriceCell));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(CellStyleType.Price));
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Price));
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.PriceCell));
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.PriceCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_RIGHT);
-        theStyleMap.put(CellStyleType.Price, myStyle);
+        theStyleMap.put(OasisStyle.PriceCell, myStyle);
+
+        /* Create the Price Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.PriceColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_PRICE));
+        theStyleMap.put(OasisStyle.PriceColumn, myStyle);
 
         /* Create the Units Cell Style */
-        myNumberStyle = new OdfNumberStyle(theContentDom, "#,##0.0000", getDataStyleName(CellStyleType.Units));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "#,##0.0000", getDataStyleName(OasisStyle.UnitsCell));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(CellStyleType.Units));
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Units));
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.UnitsCell));
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.UnitsCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_RIGHT);
-        theStyleMap.put(CellStyleType.Units, myStyle);
+        theStyleMap.put(OasisStyle.UnitsCell, myStyle);
+
+        /* Create the Units Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.UnitsColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_UNITS));
+        theStyleMap.put(OasisStyle.UnitsColumn, myStyle);
 
         /* Create the Rate Cell Style */
-        OdfNumberPercentageStyle myPercentStyle = new OdfNumberPercentageStyle(theContentDom, "0.00%", getDataStyleName(CellStyleType.Rate));
+        OdfNumberPercentageStyle myPercentStyle = new OdfNumberPercentageStyle(theContentDom, "0.00%", getDataStyleName(OasisStyle.RateCell));
         myStyles.appendChild(myPercentStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(CellStyleType.Rate));
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Rate));
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.RateCell));
+        myStyle.setStyleParentStyleNameAttribute("Default");
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.RateCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_RIGHT);
-        theStyleMap.put(CellStyleType.Rate, myStyle);
+        theStyleMap.put(OasisStyle.RateCell, myStyle);
+
+        /* Create the Rate Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.RateColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_RATE));
+        theStyleMap.put(OasisStyle.RateColumn, myStyle);
 
         /* Create the Dilution Cell Style */
-        myNumberStyle = new OdfNumberStyle(theContentDom, "0.000000", getDataStyleName(CellStyleType.Dilution));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "0.000000", getDataStyleName(OasisStyle.DilutionCell));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(CellStyleType.Dilution));
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Dilution));
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.DilutionCell));
+        myStyle.setStyleParentStyleNameAttribute("Default");
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.DilutionCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_RIGHT);
-        theStyleMap.put(CellStyleType.Dilution, myStyle);
+        theStyleMap.put(OasisStyle.DilutionCell, myStyle);
+
+        /* Create the Dilution Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.DilutionColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_DILUTION));
+        theStyleMap.put(OasisStyle.DilutionColumn, myStyle);
 
         /* Create the Integer Cell Style */
-        myNumberStyle = new OdfNumberStyle(theContentDom, "0", getDataStyleName(CellStyleType.Integer));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "0", getDataStyleName(OasisStyle.IntegerCell));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(CellStyleType.Integer));
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Integer));
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.IntegerCell));
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.IntegerCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_RIGHT);
-        theStyleMap.put(CellStyleType.Integer, myStyle);
+        theStyleMap.put(OasisStyle.IntegerCell, myStyle);
+
+        /* Create the Integer Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.IntegerColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_INT));
+        theStyleMap.put(OasisStyle.IntegerColumn, myStyle);
 
         /* Create the Boolean Cell Style */
-        myNumberStyle = new OdfNumberStyle(theContentDom, "BOOLEAN", getDataStyleName(CellStyleType.Boolean));
+        myNumberStyle = new OdfNumberStyle(theContentDom, "BOOLEAN", getDataStyleName(OasisStyle.BooleanCell));
         myStyles.appendChild(myNumberStyle);
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(CellStyleType.Boolean));
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Boolean));
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.BooleanCell));
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.BooleanCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_VALUE);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_CENT);
-        theStyleMap.put(CellStyleType.Boolean, myStyle);
+        theStyleMap.put(OasisStyle.BooleanCell, myStyle);
+
+        /* Create the Boolean Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.BooleanColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_BOOL));
+        theStyleMap.put(OasisStyle.BooleanColumn, myStyle);
 
         /* Create the String Cell Style */
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.String));
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.StringCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_VALUE);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_LEFT);
-        theStyleMap.put(CellStyleType.String, myStyle);
+        theStyleMap.put(OasisStyle.StringCell, myStyle);
 
         /* Create the Header Cell Style */
         myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
-        myStyle.setStyleNameAttribute(getStyleName(CellStyleType.Header));
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.HeaderCell));
         myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_VALUE);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
         myStyle.setProperty(OdfTextProperties.FontWeight, FONT_BOLD);
         myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_CENT);
-        theStyleMap.put(CellStyleType.Header, myStyle);
+        theStyleMap.put(OasisStyle.HeaderCell, myStyle);
+
+        /* Create the String Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.StringColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(20));
+        theStyleMap.put(OasisStyle.StringColumn, myStyle);
+
+        /* Create the Table Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.Table);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.Table));
+        myStyle.setProperty(OdfTableProperties.Display, Boolean.TRUE.toString());
+        theStyleMap.put(OasisStyle.Table, myStyle);
+
+        /* Create the Hidden Table Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.Table);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.HiddenTable));
+        myStyle.setProperty(OdfTableProperties.Display, Boolean.FALSE.toString());
+        theStyleMap.put(OasisStyle.HiddenTable, myStyle);
+
+        /* Create the Row Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableRow);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.Row));
+        myStyle.setProperty(OdfTableRowProperties.RowHeight, "5mm");
+        theStyleMap.put(OasisStyle.Row, myStyle);
     }
 
     /**
      * Obtain the required CellStyle.
-     * @param pType the CellStyleType
+     * @param pType the OasisStyle
      * @return the required CellStyle
      */
-    protected OdfStyle getCellStyle(final CellStyleType pType) {
-        return theStyleMap.get(pType);
+    protected OdfStyle getCellStyle(final OasisStyle pStyle) {
+        return theStyleMap.get(pStyle);
+    }
+
+    /**
+     * OasisCellStyle.
+     */
+    protected enum OasisStyle {
+        /**
+         * Visible table.
+         */
+        Table,
+
+        /**
+         * Hidden Table.
+         */
+        HiddenTable,
+
+        /**
+         * Row.
+         */
+        Row,
+
+        /**
+         * Integer Cell.
+         */
+        IntegerCell,
+
+        /**
+         * Integer Column.
+         */
+        IntegerColumn,
+
+        /**
+         * Boolean Cell.
+         */
+        BooleanCell,
+
+        /**
+         * Boolean Column.
+         */
+        BooleanColumn,
+
+        /**
+         * Date Cell.
+         */
+        DateCell,
+
+        /**
+         * Date Column.
+         */
+        DateColumn,
+
+        /**
+         * Money Cell.
+         */
+        MoneyCell,
+
+        /**
+         * Money Column.
+         */
+        MoneyColumn,
+
+        /**
+         * Price Cell.
+         */
+        PriceCell,
+
+        /**
+         * Price Column.
+         */
+        PriceColumn,
+
+        /**
+         * Rate Cell.
+         */
+        RateCell,
+
+        /**
+         * Rate Column.
+         */
+        RateColumn,
+
+        /**
+         * Units Cell.
+         */
+        UnitsCell,
+
+        /**
+         * Units Column.
+         */
+        UnitsColumn,
+
+        /**
+         * Dilution Cell.
+         */
+        DilutionCell,
+
+        /**
+         * Dilution Column.
+         */
+        DilutionColumn,
+
+        /**
+         * String Cell.
+         */
+        StringCell,
+
+        /**
+         * String Column.
+         */
+        StringColumn,
+
+        /**
+         * Header Cell.
+         */
+        HeaderCell;
     }
 }

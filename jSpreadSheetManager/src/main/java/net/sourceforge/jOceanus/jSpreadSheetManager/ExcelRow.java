@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
-
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -43,11 +41,6 @@ public class ExcelRow
      * The Excel Row.
      */
     private final HSSFRow theExcelRow;
-
-    /**
-     * Is this a View row.
-     */
-    private final boolean isView;
 
     /**
      * evaluate the formula for a cell.
@@ -80,36 +73,19 @@ public class ExcelRow
         super(pSheet, pRowIndex);
         theExcelSheet = pSheet;
         theExcelRow = pRow;
-        isView = false;
-    }
-
-    /**
-     * Constructor.
-     * @param pView the view for the row
-     * @param pRow the Excel Row
-     * @param pRowIndex the RowIndex
-     */
-    protected ExcelRow(final DataView pView,
-                       final HSSFRow pRow,
-                       final int pRowIndex) {
-        /* Store parameters */
-        super(pView, pRowIndex);
-        theExcelSheet = (ExcelSheet) getSheet();
-        theExcelRow = pRow;
-        isView = true;
     }
 
     @Override
-    public DataRow getNextRow() {
+    public ExcelRow getNextRow() {
         /* Determine the required index */
         int myIndex = getRowIndex() + 1;
 
         /* Return the next row */
-        return (isView) ? theExcelSheet.getRowByIndex(getView(), myIndex) : theExcelSheet.getRowByIndex(myIndex);
+        return theExcelSheet.createRowByIndex(myIndex);
     }
 
     @Override
-    public DataRow getPreviousRow() {
+    public ExcelRow getPreviousRow() {
         /* Determine the required index */
         int myIndex = getRowIndex() - 1;
         if (myIndex < 0) {
@@ -117,39 +93,39 @@ public class ExcelRow
         }
 
         /* Return the previous row */
-        return (isView) ? theExcelSheet.getRowByIndex(getView(), myIndex) : theExcelSheet.getRowByIndex(myIndex);
+        return theExcelSheet.getRowByIndex(myIndex);
     }
 
     @Override
     public int getCellCount() {
-        /* If this is a view */
-        return (isView) ? getView().getColumnCount() : theExcelRow.getLastCellNum();
+        /* return the cell count */
+        return theExcelRow.getLastCellNum();
     }
 
     @Override
-    public DataCell getCellByIndex(final int pIndex) {
+    public ExcelCell getCellByIndex(final int pIndex) {
         /* Record the required index */
-        int myIndex = (isView) ? getView().convertColumnIndex(pIndex) : pIndex;
-        if (myIndex < 0) {
+        // int myIndex = (isView)
+        // ? getView().convertColumnIndex(pIndex)
+        // : pIndex;
+        if (pIndex < 0) {
             return null;
         }
 
         /* Access the cell */
-        HSSFCell myExcelCell = theExcelRow.getCell(myIndex, Row.RETURN_BLANK_AS_NULL);
-        return (myExcelCell != null) ? new ExcelCell(this, myExcelCell, pIndex) : null;
+        HSSFCell myExcelCell = theExcelRow.getCell(pIndex, Row.RETURN_BLANK_AS_NULL);
+        return (myExcelCell != null)
+                ? new ExcelCell(this, myExcelCell, pIndex)
+                : null;
     }
 
     @Override
-    public DataCell createCellByIndex(final int pIndex) {
-        /* if this is a view row */
-        if (isView) {
-            /* Not allowed */
-            return null;
-        }
-
+    public ExcelCell createCellByIndex(final int pIndex) {
         /* Create the cell */
         HSSFCell myExcelCell = theExcelRow.createCell(pIndex);
-        return (myExcelCell != null) ? new ExcelCell(this, myExcelCell, pIndex) : null;
+        return (myExcelCell != null)
+                ? new ExcelCell(this, myExcelCell, pIndex)
+                : null;
     }
 
     /**

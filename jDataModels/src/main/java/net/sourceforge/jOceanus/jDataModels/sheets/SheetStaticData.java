@@ -178,12 +178,8 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
         /* Set default column types */
         setBooleanColumn(COL_ENABLED);
         setIntegerColumn(COL_ORDER);
-
-        /* Set the name column width */
-        setColumnWidth(COL_NAME, StaticData.NAMELEN);
-
-        /* Set description column width */
-        setColumnWidth(COL_DESC, StaticData.DESCLEN);
+        setStringColumn(COL_NAME);
+        setStringColumn(COL_DESC);
 
         /* Set the name column range */
         nameColumnRange(COL_NAME, theNames);

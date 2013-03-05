@@ -25,7 +25,6 @@ package net.sourceforge.jOceanus.jSpreadSheetManager;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 
 /**
  * Class representing a sheet within a workBook.
@@ -61,26 +60,50 @@ public abstract class DataSheet
     public abstract int getSheetIndex();
 
     /**
+     * Is the sheet hidden?
+     * @return true/false
+     */
+    public abstract boolean isHidden();
+
+    /**
+     * Set sheet hidden status.
+     * @param isHidden true/false
+     */
+    public abstract void setHidden(final boolean isHidden);
+
+    /**
      * Get row count.
      * @return the count of rows
      */
     public abstract int getRowCount();
 
     /**
-     * Obtain the row at required index within the sheet.
+     * Obtain the row at required index within the sheet, if it exists.
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
     public abstract DataRow getRowByIndex(final int pRowIndex);
 
     /**
-     * Obtain the row at required index within the view.
-     * @param pView the requested row index
+     * Obtain the row at required index within the sheet, create it if it does not exist.
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    protected abstract DataRow getRowByIndex(final DataView pView,
-                                             final int pRowIndex);
+    public abstract DataRow createRowByIndex(final int pRowIndex);
+
+    /**
+     * Obtain the column by index.
+     * @param pColIndex the column index
+     * @return the column
+     */
+    public abstract DataColumn getColumnByIndex(final int pColIndex);
+
+    /**
+     * Obtain the column by index, creating column if it does not exist.
+     * @param pColIndex the column index
+     * @return the column
+     */
+    public abstract DataColumn createColumnByIndex(final int pColIndex);
 
     /**
      * Name a range.
@@ -130,30 +153,6 @@ public abstract class DataSheet
      * @param pFreezeCell the cell to freeze at
      */
     public abstract void createFreezePane(final CellPosition pFreezeCell);
-
-    /**
-     * Set Column hidden status.
-     * @param pColIndex the column to show/hide
-     * @param isHidden is the column hidden?
-     */
-    public abstract void setColumnHidden(final int pColIndex,
-                                         final boolean isHidden);
-
-    /**
-     * Set Column width.
-     * @param pColIndex the column to set width for
-     * @param pWidth the width in characters
-     */
-    public abstract void setColumnWidth(final int pColIndex,
-                                        final int pWidth);
-
-    /**
-     * Set Column width.
-     * @param pColIndex the column to set style for
-     * @param pStyle the default style type
-     */
-    public abstract void setDefaultColumnStyle(final int pColIndex,
-                                               final CellStyleType pStyle);
 
     @Override
     public Iterator<DataRow> iterator() {

@@ -30,7 +30,6 @@ import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.CellStyleType;
 
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -166,6 +165,25 @@ public class ExcelWorkBook {
     }
 
     /**
+     * Is the sheet hidden?
+     * @param pSheetIndex the sheet index
+     * @return true/false
+     */
+    protected boolean isSheetHidden(final int pSheetIndex) {
+        return theBook.isSheetHidden(pSheetIndex);
+    }
+
+    /**
+     * Set the sheet's hidden status.
+     * @param pSheetIndex the sheet index
+     * @param isHidden true/false
+     */
+    protected void setSheetHidden(final int pSheetIndex,
+                                  final boolean isHidden) {
+        theBook.setSheetHidden(pSheetIndex, isHidden);
+    }
+
+    /**
      * Obtain a view of the named range.
      * @param pName the name of the range
      * @return the view of the range
@@ -233,9 +251,9 @@ public class ExcelWorkBook {
      * @param pValidRange the name of the validation range
      * @throws JDataException on error
      */
-    public void applyDataValidation(final Sheet pSheet,
-                                    final CellRangeAddressList pCells,
-                                    final String pValidRange) throws JDataException {
+    protected void applyDataValidation(final Sheet pSheet,
+                                       final CellRangeAddressList pCells,
+                                       final String pValidRange) throws JDataException {
         /* Create the constraint */
         DVConstraint myConstraint = DVConstraint.createFormulaListConstraint(pValidRange);
 
@@ -253,8 +271,8 @@ public class ExcelWorkBook {
      * @param pRange the range to apply the filter to
      * @throws JDataException on error
      */
-    public void applyDataFilter(final Sheet pSheet,
-                                final CellRangeAddressList pRange) throws JDataException {
+    protected void applyDataFilter(final Sheet pSheet,
+                                   final CellRangeAddressList pRange) throws JDataException {
         /* Create the new filter */
         pSheet.setAutoFilter(pRange.getCellRangeAddress(0));
     }
