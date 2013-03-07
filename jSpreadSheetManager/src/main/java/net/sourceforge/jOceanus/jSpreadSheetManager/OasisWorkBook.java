@@ -94,6 +94,11 @@ public class OasisWorkBook {
                                             + "pt";
 
     /**
+     * Self Reference.
+     */
+    private final OasisWorkBook theWorkBook = this;
+
+    /**
      * Oasis WorkBook.
      */
     private final SpreadsheetDocument theBook;
@@ -139,9 +144,9 @@ public class OasisWorkBook {
     private int theNumConstraints = 0;
 
     /**
-     * Map of Data styles.
+     * Map of Sheets.
      */
-    private final Map<String, OasisSheet> theSheetMap;
+    private final Map<String, SheetReference> theSheetMap;
 
     /**
      * Map of Data styles.
@@ -193,7 +198,7 @@ public class OasisWorkBook {
             theFormatter.setFormat(DataWorkBook.FORMAT_DATE);
 
             /* Allocate the maps */
-            theSheetMap = new HashMap<String, OasisSheet>();
+            theSheetMap = new HashMap<String, SheetReference>();
             theRangeMap = new HashMap<String, TableNamedRangeElement>();
 
             /* Access Key elements */
@@ -233,7 +238,7 @@ public class OasisWorkBook {
             theFilters = theContents.newTableDatabaseRangesElement();
 
             /* Allocate the maps */
-            theSheetMap = new HashMap<String, OasisSheet>();
+            theSheetMap = new HashMap<String, SheetReference>();
             theStyleMap = new EnumMap<OasisStyle, OdfStyle>(OasisStyle.class);
             theRangeMap = new HashMap<String, TableNamedRangeElement>();
             theConstraintMap = new HashMap<String, TableContentValidationElement>();
@@ -275,7 +280,6 @@ public class OasisWorkBook {
 
         /* Create the columns */
         TableTableColumnElement myCol = myElement.newTableTableColumnElement();
-        myCol.setTableStyleNameAttribute(getStyleName(OasisStyle.StringColumn));
         if (pNumCols > 1) {
             myCol.setTableNumberColumnsRepeatedAttribute(pNumCols);
         }
@@ -295,7 +299,9 @@ public class OasisWorkBook {
         }
 
         /* Create the sheet representation */
-        return new OasisSheet(this, myElement, theNumTables++);
+        SheetReference myRef = new SheetReference(myElement);
+        myRef.addToMap();
+        return myRef.getSheet();
     }
 
     /**
@@ -314,7 +320,10 @@ public class OasisWorkBook {
      */
     protected DataSheet getSheet(final String pName) {
         /* Obtain the existing sheet */
-        return theSheetMap.get(pName);
+        SheetReference myRef = theSheetMap.get(pName);
+        return (myRef == null)
+                ? null
+                : myRef.getSheet();
     }
 
     /**
@@ -363,8 +372,8 @@ public class OasisWorkBook {
 
             /* Add sheet to map */
             TableTableElement myTable = (TableTableElement) myNode;
-            OasisSheet mySheet = new OasisSheet(this, myTable, theNumTables++);
-            theSheetMap.put(myTable.getTableNameAttribute(), mySheet);
+            SheetReference myRef = new SheetReference(myTable);
+            myRef.addToMap();
         }
     }
 
@@ -601,7 +610,7 @@ public class OasisWorkBook {
 
     /**
      * Obtain column width.
-     * @param pChars the character in width
+     * @param pWidth the character width
      * @return the name of the style
      */
     protected String getStyleWidth(final int pWidth) {
@@ -775,7 +784,7 @@ public class OasisWorkBook {
         /* Create the String Column Style */
         myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
         myStyle.setStyleNameAttribute(getStyleName(OasisStyle.StringColumn));
-        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(20));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_STRING));
         theStyleMap.put(OasisStyle.StringColumn, myStyle);
 
         /* Create the Table Style */
@@ -799,11 +808,57 @@ public class OasisWorkBook {
 
     /**
      * Obtain the required CellStyle.
-     * @param pType the OasisStyle
+     * @param pStyle the OasisStyle
      * @return the required CellStyle
      */
     protected OdfStyle getCellStyle(final OasisStyle pStyle) {
         return theStyleMap.get(pStyle);
+    }
+
+    /**
+     * Sheet Reference class
+     */
+    private class SheetReference {
+        /**
+         * Table name.
+         */
+        private final String theName;
+
+        /**
+         * Table index.
+         */
+        private final int theIndex;
+
+        /**
+         * Table element.
+         */
+        private final TableTableElement theElement;
+
+        /**
+         * Constructor.
+         */
+        private SheetReference(final TableTableElement pElement) {
+            /* Store parameters */
+            theName = pElement.getTableNameAttribute();
+            theIndex = theNumTables++;
+            theElement = pElement;
+        }
+
+        /**
+         * Add to map.
+         */
+        private void addToMap() {
+            /* Add to the map */
+            theSheetMap.put(theName, this);
+        }
+
+        /**
+         * Obtain Sheet representation,
+         * @return the sheet representation
+         */
+        private OasisSheet getSheet() {
+            return new OasisSheet(theWorkBook, theElement, theIndex);
+        }
     }
 
     /**

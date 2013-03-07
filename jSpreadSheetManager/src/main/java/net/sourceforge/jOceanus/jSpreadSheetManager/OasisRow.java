@@ -108,6 +108,11 @@ public class OasisRow
         }
     }
 
+    @Override
+    public OasisSheet getSheet() {
+        return (OasisSheet) super.getSheet();
+    }
+
     /**
      * Obtain the underlying table element.
      * @return the element
@@ -247,17 +252,17 @@ public class OasisRow
     }
 
     @Override
-    public OasisCell getCellByIndex(int pIndex) {
+    public OasisCell getCellByIndex(final int pIndex) {
         return theCellMap.getCellByIndex(pIndex);
     }
 
     @Override
-    public OasisCell createCellByIndex(int pIndex) {
+    public OasisCell createCellByIndex(final int pIndex) {
         return theCellMap.getCellByIndex(pIndex);
     }
 
     /**
-     * Format object value
+     * Format object value.
      * @param pValue the value
      * @return the formatted value
      */
@@ -277,8 +282,10 @@ public class OasisRow
     }
 
     /**
-     * Parse object value
-     * @param pValue the value
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pClass the value type class
      * @return the formatted value
      */
     protected <T> T parseValue(final String pSource,

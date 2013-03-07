@@ -96,7 +96,7 @@ public class DataWorkBook {
     /**
      * Internal date format.
      */
-    protected static final String FORMAT_DATE = "YYYY-MM-DD";
+    protected static final String FORMAT_DATE = "yyyy-MM-dd";
 
     /**
      * ReadOnly.

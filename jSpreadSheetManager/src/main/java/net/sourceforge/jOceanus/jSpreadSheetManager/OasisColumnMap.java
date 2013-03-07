@@ -24,8 +24,7 @@ package net.sourceforge.jOceanus.jSpreadSheetManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.sourceforge.jOceanus.jDataManager.JDataException;
+import java.util.ListIterator;
 
 import org.odftoolkit.odfdom.dom.OdfDocumentNamespace;
 import org.odftoolkit.odfdom.dom.attribute.table.TableNumberColumnsRepeatedAttribute;
@@ -37,10 +36,23 @@ import org.odftoolkit.odfdom.dom.element.table.TableTableHeaderColumnsElement;
 import org.w3c.dom.Node;
 
 /**
- * Class representing a list of columns in Oasis.
- * @author Tony Washer
+ * Class to manage the columns for a Sheet in Oasis.
+ * <p>
+ * A simple array list is maintained to map from column number to underlying element (and instance of that element).
+ * <p>
+ * The map is sparsely populated at the end to avoid addressing unused columns. The map will initially only map up to the last TableTableColumnElement
+ * regardless of the number of columns that this last element represents. If columns are subsequently referenced past this point, then the map will be expanded
+ * as required.
+ * <p>
+ * Additional columns can only be appended using the {@link #createColumnByIndex} method, if these are referenced using {@link #getColumnByIndex} then null will
+ * be returned.
  */
 public class OasisColumnMap {
+    /**
+     * Self Reference.
+     */
+    private final OasisColumnMap theSelf = this;
+
     /**
      * Underlying sheet.
      */
@@ -57,19 +69,18 @@ public class OasisColumnMap {
     private int theNumColumns = 0;
 
     /**
-     * The last column.
+     * The last reference.
      */
-    private OasisColumn theLastColumn = null;
+    private ColumnReference theLastReference = null;
 
     /**
      * List of of columns.
      */
-    private List<OasisColumn> theColumns = new ArrayList<OasisColumn>();
+    private final List<ColumnReference> theColumns = new ArrayList<ColumnReference>();
 
     /**
      * Constructor.
      * @param pSheet the underlying sheet.
-     * @throws JDataException on error
      */
     protected OasisColumnMap(final OasisSheet pSheet) {
         /* Store parameters */
@@ -86,14 +97,6 @@ public class OasisColumnMap {
      */
     protected OasisSheet getSheet() {
         return theOasisSheet;
-    }
-
-    /**
-     * Obtain last column.
-     * @return the last column.
-     */
-    protected OasisColumn getLastColumn() {
-        return theLastColumn;
     }
 
     /**
@@ -138,19 +141,24 @@ public class OasisColumnMap {
             myRepeat = 1;
         }
 
-        /* Loop through the repeated columns */
-        for (int myInstance = 0; myInstance < myRepeat; myInstance++) {
-            /* Create the instance and add to columns */
-            OasisColumn myCol = new OasisColumn(this, theLastColumn, pColumn, theNumColumns++, myInstance);
-            theColumns.add(myCol);
-            theLastColumn = myCol;
+        /* If we have references to extend */
+        if (theColumns.size() < theNumColumns) {
+            /* Ensure that references are fully extended */
+            theLastReference.extendReferences(theNumColumns);
         }
+
+        /* Create the new reference and add it */
+        ColumnReference myRef = new ColumnReference(pColumn, theNumColumns, 0);
+        myRef.addToList();
+
+        /* Adjust number of columns */
+        theNumColumns += myRepeat;
     }
 
     /**
-     * Obtain a column by its index.
+     * Obtain a readOnly column by its index.
      * @param pColIndex the index of the column.
-     * @return the column
+     * @return the column if it exists, else null
      */
     protected OasisColumn getColumnByIndex(final int pColIndex) {
         /* Handle negative column index */
@@ -158,17 +166,24 @@ public class OasisColumnMap {
             return null;
         }
 
-        /* If we need to extend the table */
+        /* Handle beyond table limits */
         if (pColIndex >= theNumColumns) {
             return null;
         }
 
+        /* If we have references to extend */
+        if (theColumns.size() < pColIndex + 1) {
+            /* Ensure that references are extended sufficiently */
+            theLastReference.extendReferences(pColIndex);
+        }
+
         /* Just return the column */
-        return theColumns.get(pColIndex);
+        ColumnReference myRef = theColumns.get(pColIndex);
+        return myRef.getReadOnlyColumn();
     }
 
     /**
-     * Obtain a column by its index.
+     * Obtain a changeable column by its index, creating column if it does not exist.
      * @param pColIndex the index of the column.
      * @return the column
      */
@@ -188,34 +203,38 @@ public class OasisColumnMap {
                              - theNumColumns
                              + 1;
 
-            /* If we have existing columns */
-            if (theLastColumn != null) {
-                /* Obtain the last column */
-                myElement = theLastColumn.getColumnElement();
+            /* If we have existing reference */
+            if (theLastReference != null) {
+                /* If we have references to extend */
+                if (theColumns.size() < theNumColumns) {
+                    /* Ensure that references are fully extended */
+                    theLastReference.extendReferences(theNumColumns);
+                }
 
-                /* Determine the existing number of repeated columns */
-                Integer myRepeat = theLastColumn.getRepeatCount();
+                /* If the last element is empty */
+                if (theLastReference.isEmpty()) {
+                    /* Obtain the last column */
+                    myElement = theLastReference.getElement();
 
-                /* If we have a repeated item */
-                if (myRepeat > 1) {
-                    /* Loop through the additional columns */
-                    for (int myInstance = 0; myInstance < myXtraCols; myInstance++) {
-                        /* Create the instance and add to columns */
-                        OasisColumn myCol = new OasisColumn(this, theLastColumn, myElement, theNumColumns++, myRepeat
-                                                                                                             + myInstance);
-                        theColumns.add(myCol);
-                        theLastColumn = myCol;
-                    }
+                    /* Determine the existing number of repeated columns */
+                    Integer myRepeat = theLastReference.getRepeat();
 
                     /* Adjust the number of repeated columns */
                     myRepeat += myXtraCols;
                     myElement.setTableNumberColumnsRepeatedAttribute(myRepeat);
 
+                    /* Adjust number of columns */
+                    theNumColumns += myRepeat;
+
+                    /* Ensure that references are fully extended */
+                    theLastReference.extendReferences(theNumColumns);
+
                     /* Report addition of columns */
                     theOasisSheet.addColumnsToRows(myXtraCols);
 
                     /* Return the required column */
-                    return theLastColumn;
+                    ColumnReference myRef = theColumns.get(pColIndex);
+                    return myRef.getColumn();
                 }
             }
 
@@ -233,83 +252,198 @@ public class OasisColumnMap {
             theOasisSheet.addColumnsToRows(myXtraCols);
 
             /* Return the required column */
-            return theLastColumn;
+            ColumnReference myRef = theColumns.get(pColIndex);
+            return myRef.getColumn();
+        }
+
+        /* If we have references to extend */
+        if (theColumns.size() <= pColIndex + 1) {
+            /* Ensure that references are extended sufficiently */
+            theLastReference.extendReferences(pColIndex + 1);
         }
 
         /* Just return the column */
-        return theColumns.get(pColIndex);
+        ColumnReference myRef = theColumns.get(pColIndex);
+        return myRef.getColumn();
     }
 
     /**
-     * Make the column an individual column.
-     * @param pColumn the column
+     * Column Reference class
      */
-    public void makeIndividual(final OasisColumn pColumn) {
-        /* Access the column element */
-        TableTableColumnElement myElement = pColumn.getColumnElement();
-        int myInstance = pColumn.getInstance();
+    private class ColumnReference {
+        /**
+         * Column index.
+         */
+        private final int theIndex;
 
-        /* If there are prior elements to hive off */
-        if (myInstance > 0) {
-            /* Create a new column element and add it before this one */
-            TableTableColumnElement myNew = theOasisSheet.newColumnElement();
-            theOasisTable.insertBefore(myNew, myElement);
+        /**
+         * Column instance.
+         */
+        private int theInstance;
 
-            /* If there are multiple columns before the split */
-            if (myInstance > 1) {
-                /* Set the number of columns */
-                myNew.setTableNumberColumnsRepeatedAttribute(myInstance);
-            }
+        /**
+         * Column element.
+         */
+        private TableTableColumnElement theElement;
 
-            /* Loop through the earlier columns */
-            OasisColumn myCol = pColumn.getPreviousColumn();
-            while (myCol != null) {
-                /* Map to new column */
-                myCol.setColumnElement(myNew);
+        /**
+         * Access Repeat count.
+         * @return the repeat count
+         */
+        private int getRepeat() {
+            /* Determine the maximum instance */
+            Integer myRepeat = theElement.getTableNumberColumnsRepeatedAttribute();
+            return (myRepeat == null)
+                    ? 1
+                    : myRepeat;
+        }
 
-                /* Break loop if this is not a virtual instance */
-                if (!myCol.isVirtual()) {
+        /**
+         * Access Column element.
+         * @return the element
+         */
+        private TableTableColumnElement getElement() {
+            return theElement;
+        }
+
+        /**
+         * Constructor.
+         */
+        private ColumnReference(final TableTableColumnElement pElement,
+                                final int pIndex,
+                                final int pInstance) {
+            /* Store parameters */
+            theIndex = pIndex;
+            theInstance = pInstance;
+            theElement = pElement;
+        }
+
+        /**
+         * Add to list.
+         */
+        private void addToList() {
+            /* Add to the map */
+            theColumns.add(this);
+            theLastReference = this;
+        }
+
+        /**
+         * Is the Column element empty.
+         */
+        private boolean isEmpty() {
+            /* Empty if none of the data attributes exist */
+            return ((theElement.getTableDefaultCellStyleNameAttribute() != null)
+                    || (theElement.getTableStyleNameAttribute() != null) || (theElement.getTableVisibilityAttribute() != null));
+        }
+
+        /**
+         * Extend column references.
+         * @param pIndex the index to extend to
+         */
+        private void extendReferences(final int pIndex) {
+            /* Loop through remaining instances */
+            int myRepeat = getRepeat();
+            for (int iInstance = theInstance + 1, iIndex = theIndex + 1; iInstance < myRepeat; iInstance++, iIndex++) {
+                /* Break loop if we have extended far enough */
+                if (iIndex > pIndex) {
                     break;
                 }
 
-                /* Move to previous column */
-                myCol = myCol.getPreviousColumn();
+                /* Create the new reference and add it */
+                ColumnReference myRef = new ColumnReference(theElement, iIndex, iInstance);
+                myRef.addToList();
             }
         }
 
-        /* Determine how many trailing elements to hive off */
-        int myRepeatCount = pColumn.getRepeatCount();
-        int myNumCols = myRepeatCount
-                        - myInstance
-                        - 1;
-
-        /* Clear the number of columns */
-        myElement.removeAttributeNS(OdfDocumentNamespace.TABLE.getUri(), TableNumberColumnsRepeatedAttribute.ATTRIBUTE_NAME.getLocalName());
-
-        /* Set zero instance */
-        pColumn.setInstance(0);
-
-        /* If we have trailing columns */
-        if (myNumCols > 0) {
-            /* Create a new column element and add it before this one */
-            TableTableColumnElement myNew = theOasisSheet.newColumnElement();
-            theOasisTable.insertBefore(myNew, myElement);
-
-            /* Adjust the repeat count for trailing elements */
-            if (myNumCols > 1) {
-                /* Set the number of columns */
-                myElement.setTableNumberColumnsRepeatedAttribute(myNumCols);
+        /**
+         * Obtain Column representation.
+         * @return the column representation
+         */
+        private OasisColumn getColumn() {
+            /* If we are asking for an editable item that is a repeated element */
+            if (getRepeat() > 1) {
+                /* Make this element individual */
+                makeIndividual();
             }
 
-            /* Set the element for this column */
-            pColumn.setColumnElement(myNew);
+            /* Create and return the column object */
+            return new OasisColumn(theSelf, theElement, theIndex, false);
+        }
 
-            /* Loop through the later columns */
-            OasisColumn myCol = pColumn.getNextColumn();
-            for (int i = 0; i < myNumCols; i++) {
-                /* Map to new column */
-                myCol.setInstance(i);
-                myCol = myCol.getNextColumn();
+        /**
+         * Obtain ReadOnly Column representation.
+         * @return the column representation
+         */
+        private OasisColumn getReadOnlyColumn() {
+            /* Create and return the column object */
+            return new OasisColumn(theSelf, theElement, theIndex, true);
+        }
+
+        /**
+         * Make the column an individual column.
+         */
+        private void makeIndividual() {
+            /* If there are prior elements to hive off */
+            if (theInstance > 0) {
+                /* Create a new column element and add it before this one */
+                TableTableColumnElement myNew = theOasisSheet.newColumnElement();
+                theOasisTable.insertBefore(myNew, theElement);
+
+                /* If there are multiple columns before the split */
+                if (theInstance > 1) {
+                    /* Set the number of columns */
+                    myNew.setTableNumberColumnsRepeatedAttribute(theInstance);
+                }
+
+                /* Loop through the earlier columns */
+                ListIterator<ColumnReference> myIterator = theColumns.listIterator(theIndex);
+                while (myIterator.hasPrevious()) {
+                    /* Map to new column element */
+                    ColumnReference myRef = myIterator.previous();
+                    myRef.theElement = myNew;
+
+                    /* Break loop if this is not a virtual instance */
+                    if (myRef.theInstance == 0) {
+                        break;
+                    }
+                }
+            }
+
+            /* Determine how many trailing elements to hive off */
+            int myRepeatCount = getRepeat();
+            int myNumCols = myRepeatCount
+                            - theInstance
+                            - 1;
+
+            /* Clear the number of columns */
+            theElement.removeAttributeNS(OdfDocumentNamespace.TABLE.getUri(), TableNumberColumnsRepeatedAttribute.ATTRIBUTE_NAME.getLocalName());
+
+            /* Set zero instance */
+            theInstance = 0;
+
+            /* If we have trailing columns */
+            if (myNumCols > 0) {
+                /* Create a new column element and add it before this one */
+                TableTableColumnElement myNew = theOasisSheet.newColumnElement();
+                theOasisTable.insertBefore(myNew, theElement);
+
+                /* Adjust the repeat count for trailing elements */
+                if (myNumCols > 1) {
+                    /* Set the number of columns */
+                    theElement.setTableNumberColumnsRepeatedAttribute(myNumCols);
+                }
+
+                /* Set the element for this column */
+                theElement = myNew;
+
+                /* Loop through the later columns */
+                ListIterator<ColumnReference> myIterator = theColumns.listIterator(theIndex + 1);
+                for (int i = 0; myIterator.hasNext()
+                                && (i < myNumCols); i++) {
+                    /* Map to new instance */
+                    ColumnReference myRef = myIterator.next();
+                    myRef.theInstance = i;
+                }
             }
         }
     }

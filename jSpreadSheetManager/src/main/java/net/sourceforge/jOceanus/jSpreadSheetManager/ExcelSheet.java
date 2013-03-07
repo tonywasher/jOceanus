@@ -126,12 +126,12 @@ public class ExcelSheet
 
     @Override
     public ExcelColumn getColumnByIndex(final int pColIndex) {
-        return new ExcelColumn(this, pColIndex);
+        return new ExcelColumn(this, pColIndex, true);
     }
 
     @Override
     public ExcelColumn createColumnByIndex(final int pColIndex) {
-        return getColumnByIndex(pColIndex);
+        return new ExcelColumn(this, pColIndex, false);
     }
 
     @Override
@@ -143,19 +143,6 @@ public class ExcelSheet
     public void setHidden(final boolean isHidden) {
         theExcelBook.setSheetHidden(theIndex, isHidden);
     }
-
-    // @Override
-    // protected ExcelRow getRowByIndex(final DataView pView,
-    // final int pRowIndex) {
-    // /* Determine the actual index of the row */
-    // int myIndex = pView.convertRowIndex(pRowIndex);
-    // if (myIndex < 0) {
-    // return null;
-    // }
-    //
-    // HSSFRow myExcelRow = theExcelSheet.getRow(myIndex);
-    // return new ExcelRow(pView, myExcelRow, pRowIndex);
-    // }
 
     @Override
     public void declareRange(final String pName,

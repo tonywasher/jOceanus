@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Date;
 
+import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
@@ -39,6 +40,7 @@ public class Tester {
             mySheet.createColumnByIndex(4).setDefaultCellStyle(CellStyleType.Rate);
             mySheet.createColumnByIndex(5).setDefaultCellStyle(CellStyleType.Units);
             mySheet.createColumnByIndex(7).setDefaultCellStyle(CellStyleType.Integer);
+            mySheet.createColumnByIndex(3).setDefaultCellStyle(CellStyleType.Money);
             int i = mySheet.getRowCount();
             DataRow myRow = mySheet.createRowByIndex(2);
             i = mySheet.getRowCount();
@@ -57,9 +59,12 @@ public class Tester {
             myCell.setDecimalValue(new JUnits("0.10"));
             myCell = myRow.createCellByIndex(7);
             myCell.setIntegerValue(4);
+            myCell = myRow.createCellByIndex(3);
+            myCell.setDecimalValue(new JMoney("13.45"));
             File myXFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
             FileOutputStream myOutFile = new FileOutputStream(myXFile);
             BufferedOutputStream myOutBuffer = new BufferedOutputStream(myOutFile);
+            myBook.saveToStream(myOutBuffer);
             myCell = null;
         } catch (Exception e) {
             e.printStackTrace();

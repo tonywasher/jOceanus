@@ -23,7 +23,7 @@
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
 /**
- * Cell Style type
+ * Cell Style type.
  */
 public enum CellStyleType {
 

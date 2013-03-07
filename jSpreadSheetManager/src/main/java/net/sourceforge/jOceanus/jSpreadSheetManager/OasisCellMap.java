@@ -68,13 +68,13 @@ public class OasisCellMap {
 
     /**
      * Constructor.
-     * @param pSheet the underlying sheet.
+     * @param pRoe the underlying row.
      */
     protected OasisCellMap(final OasisRow pRow) {
         /* Store parameters */
         theOasisRow = pRow;
         theOasisTableRow = pRow.getRowElement();
-        theOasisSheet = null;
+        theOasisSheet = pRow.getSheet();
 
         /* Loop through the children of the table */
         processCellNode(theOasisTableRow);
@@ -186,6 +186,13 @@ public class OasisCellMap {
             while (myCell != null) {
                 /* Map to new cell */
                 myCell.setCellElement(myNew);
+
+                /* Break loop if this is not a virtual instance */
+                if (!myCell.isVirtual()) {
+                    break;
+                }
+
+                /* Move to previous cell */
                 myCell = myCell.getPreviousCell();
             }
         }

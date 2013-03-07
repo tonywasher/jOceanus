@@ -237,7 +237,9 @@ public class OasisCell
 
     /**
      * Parse a value.
+     * @param T the value type to parse
      * @param pSource the string to parse.
+     * @param pClass the value type class.
      * @return the parsed value
      */
     private <T> T parseValue(final String pSource,
@@ -283,7 +285,7 @@ public class OasisCell
         String myType = theOasisCell.getOfficeValueTypeAttribute();
         if ((myType != null)
             && (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.STRING)) {
-
+            return theOasisCell.getTextContent();
         }
         return null;
     }
@@ -320,7 +322,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setBoolean(Boolean pValue) throws JDataException {
+    protected void setBoolean(final Boolean pValue) throws JDataException {
         /* ensure that the column is individual */
         ensureIndividual();
 
@@ -334,7 +336,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setDate(Date pValue) throws JDataException {
+    protected void setDate(final Date pValue) throws JDataException {
         /* ensure that the column is individual */
         ensureIndividual();
 
@@ -348,7 +350,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setInteger(Integer pValue) throws JDataException {
+    protected void setInteger(final Integer pValue) throws JDataException {
         /* ensure that the column is individual */
         ensureIndividual();
 
@@ -362,7 +364,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setString(String pValue) throws JDataException {
+    protected void setString(final String pValue) throws JDataException {
         /* ensure that the column is individual */
         ensureIndividual();
 
@@ -376,7 +378,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setDecimal(JDecimal pValue) throws JDataException {
+    protected void setDecimal(final JDecimal pValue) throws JDataException {
         /* ensure that the column is individual */
         ensureIndividual();
 
@@ -397,7 +399,7 @@ public class OasisCell
     }
 
     @Override
-    protected void setHeader(String pValue) throws JDataException {
+    protected void setHeader(final String pValue) throws JDataException {
         /* ensure that the column is individual */
         ensureIndividual();
 

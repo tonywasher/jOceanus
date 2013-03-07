@@ -23,7 +23,7 @@
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
 /**
- * Class representing and Exvel column
+ * Class representing and Excel column.
  * @author Tony Washer
  */
 public class ExcelColumn
@@ -34,18 +34,23 @@ public class ExcelColumn
     private final ExcelSheet theExcelSheet;
 
     /**
+     * Is the column readOnly.
+     */
+    private final boolean isReadOnly;
+
+    /**
      * Constructor.
-     * @param pMap the column map
-     * @param pPrevious the previous column.
-     * @param pColumn the Oasis column
+     * @param pSheet the excel sheet
      * @param pIndex the index
-     * @param pInstance the repeat instance
+     * @param pReadOnly is the column readOnly?
      */
     protected ExcelColumn(final ExcelSheet pSheet,
-                          final int pIndex) {
+                          final int pIndex,
+                          final boolean pReadOnly) {
         /* Store parameters */
         super(pSheet, pIndex);
         theExcelSheet = pSheet;
+        isReadOnly = pReadOnly;
     }
 
     @Override
@@ -70,8 +75,11 @@ public class ExcelColumn
     }
 
     @Override
-    public void setHidden(boolean isHidden) {
-        theExcelSheet.setColumnHidden(getIndex(), isHidden);
+    public void setHidden(final boolean isHidden) {
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            theExcelSheet.setColumnHidden(getIndex(), isHidden);
+        }
     }
 
     @Override
@@ -80,7 +88,10 @@ public class ExcelColumn
     }
 
     @Override
-    public void setDefaultCellStyle(CellStyleType pStyle) {
-        theExcelSheet.setDefaultCellStyle(getIndex(), pStyle);
+    public void setDefaultCellStyle(final CellStyleType pStyle) {
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            theExcelSheet.setDefaultCellStyle(getIndex(), pStyle);
+        }
     }
 }

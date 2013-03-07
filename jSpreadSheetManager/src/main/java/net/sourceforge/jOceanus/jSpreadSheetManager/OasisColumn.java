@@ -41,107 +41,39 @@ public class OasisColumn
     /**
      * The underlying ODFDOM column.
      */
-    private TableTableColumnElement theOasisColumn;
+    private final TableTableColumnElement theOasisColumn;
 
     /**
-     * The previous column.
+     * Is the column readOnly.
      */
-    private final OasisColumn thePreviousColumn;
-
-    /**
-     * The next column.
-     */
-    private OasisColumn theNextColumn;
-
-    /**
-     * The repeat index of the column.
-     */
-    private int theColInstance;
+    private final boolean isReadOnly;
 
     /**
      * Constructor.
      * @param pMap the column map
-     * @param pPrevious the previous column.
      * @param pColumn the Oasis column
      * @param pIndex the index
-     * @param pInstance the repeat instance
+     * @param pReadOnly is the column readOnly?
      */
     protected OasisColumn(final OasisColumnMap pMap,
-                          final OasisColumn pPrevious,
                           final TableTableColumnElement pColumn,
                           final int pIndex,
-                          final int pInstance) {
+                          final boolean pReadOnly) {
         /* Store parameters */
         super(pMap.getSheet(), pIndex);
         theColumnMap = pMap;
-        thePreviousColumn = pPrevious;
-        theNextColumn = null;
         theOasisColumn = pColumn;
-        theColInstance = pInstance;
-
-        /* If we have a previous column */
-        if (thePreviousColumn != null) {
-            /* Link it */
-            thePreviousColumn.theNextColumn = this;
-        }
-    }
-
-    /**
-     * Obtain the underlying table element.
-     * @return the element
-     */
-    protected TableTableColumnElement getColumnElement() {
-        return theOasisColumn;
-    }
-
-    /**
-     * Set the underlying table element.
-     * @param pElement the element
-     */
-    protected void setColumnElement(final TableTableColumnElement pElement) {
-        theOasisColumn = pElement;
+        isReadOnly = pReadOnly;
     }
 
     @Override
     public OasisColumn getNextColumn() {
-        return theNextColumn;
+        return theColumnMap.getColumnByIndex(getIndex() + 1);
     }
 
     @Override
     public OasisColumn getPreviousColumn() {
-        return thePreviousColumn;
-    }
-
-    /**
-     * Obtain the instance of the column.
-     * @return the instance
-     */
-    protected int getInstance() {
-        return theColInstance;
-    }
-
-    /**
-     * Set the instance of the column.
-     * @param pInstance the instance
-     */
-    protected void setInstance(final int pInstance) {
-        theColInstance = pInstance;
-    }
-
-    /**
-     * Is the column a virtual column?
-     * @return true/false
-     */
-    protected boolean isVirtual() {
-        return (theColInstance != 0);
-    }
-
-    /**
-     * Is the column the final column in the sequence.
-     * @return true/false
-     */
-    protected boolean isLastCol() {
-        return (theColInstance + 1 == getRepeatCount());
+        return theColumnMap.getColumnByIndex(getIndex() - 1);
     }
 
     /**
@@ -173,35 +105,24 @@ public class OasisColumn
 
     @Override
     public void setDefaultCellStyle(final CellStyleType pStyle) {
-        /* ensure that the column is individual */
-        ensureIndividual();
-
-        /* Set the default cell style and the column style */
-        OasisStyle myStyle = OasisWorkBook.getOasisCellStyle(pStyle);
-        OasisStyle myColStyle = OasisWorkBook.getOasisColumnStyle(myStyle);
-        theOasisColumn.setTableDefaultCellStyleNameAttribute(OasisWorkBook.getStyleName(myStyle));
-        theOasisColumn.setTableStyleNameAttribute(OasisWorkBook.getStyleName(myColStyle));
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Set the default cell style and the column style */
+            OasisStyle myStyle = OasisWorkBook.getOasisCellStyle(pStyle);
+            OasisStyle myColStyle = OasisWorkBook.getOasisColumnStyle(myStyle);
+            theOasisColumn.setTableDefaultCellStyleNameAttribute(OasisWorkBook.getStyleName(myStyle));
+            theOasisColumn.setTableStyleNameAttribute(OasisWorkBook.getStyleName(myColStyle));
+        }
     }
 
     @Override
     public void setHidden(final boolean isHidden) {
-        /* ensure that the column is individual */
-        ensureIndividual();
-
-        /* Set the visibility attribute */
-        theOasisColumn.setTableVisibilityAttribute(isHidden
-                ? TableVisibilityAttribute.Value.COLLAPSE.toString()
-                : TableVisibilityAttribute.Value.VISIBLE.toString());
-    }
-
-    /**
-     * Ensure that the column is an individual column.
-     */
-    private void ensureIndividual() {
-        /* If the repeat count is greater than one */
-        if (getRepeatCount() > 1) {
-            /* We need to make this item an individual */
-            theColumnMap.makeIndividual(this);
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Set the visibility attribute */
+            theOasisColumn.setTableVisibilityAttribute(isHidden
+                    ? TableVisibilityAttribute.Value.COLLAPSE.toString()
+                    : TableVisibilityAttribute.Value.VISIBLE.toString());
         }
     }
 }

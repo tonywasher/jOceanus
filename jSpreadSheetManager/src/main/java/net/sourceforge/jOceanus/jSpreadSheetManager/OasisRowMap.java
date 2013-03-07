@@ -284,6 +284,13 @@ public class OasisRowMap {
             while (myRow != null) {
                 /* Map to new row */
                 myRow.setRowElement(myNew);
+
+                /* Break loop if this is not a virtual instance */
+                if (!myRow.isVirtual()) {
+                    break;
+                }
+
+                /* Move to previous row */
                 myRow = myRow.getPreviousRow();
             }
         }
