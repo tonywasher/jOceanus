@@ -56,42 +56,42 @@ public class ExcelColumn
     @Override
     public ExcelColumn getNextColumn() {
         /* Determine the required index */
-        int myIndex = getIndex() + 1;
+        int myIndex = getColumnIndex() + 1;
 
         /* Return the next row */
-        return theExcelSheet.createColumnByIndex(myIndex);
+        return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
     }
 
     @Override
     public ExcelColumn getPreviousColumn() {
         /* Determine the required index */
-        int myIndex = getIndex() - 1;
+        int myIndex = getColumnIndex() - 1;
         if (myIndex < 0) {
             return null;
         }
 
         /* Return the previous row */
-        return theExcelSheet.getColumnByIndex(myIndex);
+        return theExcelSheet.getReadOnlyColumnByIndex(myIndex);
     }
 
     @Override
     public void setHidden(final boolean isHidden) {
         /* Ignore if readOnly */
         if (!isReadOnly) {
-            theExcelSheet.setColumnHidden(getIndex(), isHidden);
+            theExcelSheet.setColumnHidden(getColumnIndex(), isHidden);
         }
     }
 
     @Override
     public boolean isHidden() {
-        return theExcelSheet.isColumnHidden(getIndex());
+        return theExcelSheet.isColumnHidden(getColumnIndex());
     }
 
     @Override
     public void setDefaultCellStyle(final CellStyleType pStyle) {
         /* Ignore if readOnly */
         if (!isReadOnly) {
-            theExcelSheet.setDefaultCellStyle(getIndex(), pStyle);
+            theExcelSheet.setDefaultCellStyle(getColumnIndex(), pStyle);
         }
     }
 }

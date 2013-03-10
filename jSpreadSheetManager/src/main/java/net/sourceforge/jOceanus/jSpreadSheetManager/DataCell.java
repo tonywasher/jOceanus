@@ -85,6 +85,14 @@ public abstract class DataCell {
     }
 
     /**
+     * Obtain the cell index.
+     * @return the index
+     */
+    public int getCellIndex() {
+        return thePosition.getColumnIndex();
+    }
+
+    /**
      * Constructor.
      * @param pRow the row for the cell
      * @param pColIndex the column index

@@ -33,33 +33,33 @@ public class Tester {
             // BufferedInputStream myInBuffer = new BufferedInputStream(myInFile);
             // DataWorkBook myBook = new DataWorkBook(myInBuffer, WorkBookType.OasisODS);
             DataWorkBook myBook = new DataWorkBook(WorkBookType.OasisODS);
-            DataSheet mySheet = myBook.newSheet("TestData", 3, 11);
-            mySheet.createColumnByIndex(1).setDefaultCellStyle(CellStyleType.String);
-            mySheet.createColumnByIndex(2).setDefaultCellStyle(CellStyleType.Date);
-            mySheet.createColumnByIndex(10).setDefaultCellStyle(CellStyleType.Boolean);
-            mySheet.createColumnByIndex(4).setDefaultCellStyle(CellStyleType.Rate);
-            mySheet.createColumnByIndex(5).setDefaultCellStyle(CellStyleType.Units);
-            mySheet.createColumnByIndex(7).setDefaultCellStyle(CellStyleType.Integer);
-            mySheet.createColumnByIndex(3).setDefaultCellStyle(CellStyleType.Money);
+            DataSheet mySheet = myBook.newSheet("TestData");
+            mySheet.getMutableColumnByIndex(1).setDefaultCellStyle(CellStyleType.String);
+            mySheet.getMutableColumnByIndex(2).setDefaultCellStyle(CellStyleType.Date);
+            mySheet.getMutableColumnByIndex(10).setDefaultCellStyle(CellStyleType.Boolean);
+            mySheet.getMutableColumnByIndex(4).setDefaultCellStyle(CellStyleType.Rate);
+            mySheet.getMutableColumnByIndex(5).setDefaultCellStyle(CellStyleType.Units);
+            mySheet.getMutableColumnByIndex(7).setDefaultCellStyle(CellStyleType.Integer);
+            mySheet.getMutableColumnByIndex(3).setDefaultCellStyle(CellStyleType.Money);
             int i = mySheet.getRowCount();
-            DataRow myRow = mySheet.createRowByIndex(2);
+            DataRow myRow = mySheet.getMutableRowByIndex(2);
             i = mySheet.getRowCount();
             // mySheet.setColumnHidden(1, false);
             // SheetCell myCell = myRow.getCellByIndex(0);
             // myCell.setStringValue("Banking:Current");
-            DataCell myCell = myRow.createCellByIndex(1);
+            DataCell myCell = myRow.getMutableCellByIndex(1);
             myCell.setStringValue("Barclays");
-            myCell = myRow.createCellByIndex(2);
+            myCell = myRow.getMutableCellByIndex(2);
             myCell.setDateValue(new Date());
-            myCell = myRow.createCellByIndex(10);
+            myCell = myRow.getMutableCellByIndex(10);
             myCell.setBooleanValue(Boolean.TRUE);
-            myCell = myRow.createCellByIndex(4);
+            myCell = myRow.getMutableCellByIndex(4);
             myCell.setDecimalValue(new JRate("0.2"));
-            myCell = myRow.createCellByIndex(5);
+            myCell = myRow.getMutableCellByIndex(5);
             myCell.setDecimalValue(new JUnits("0.10"));
-            myCell = myRow.createCellByIndex(7);
+            myCell = myRow.getMutableCellByIndex(7);
             myCell.setIntegerValue(4);
-            myCell = myRow.createCellByIndex(3);
+            myCell = myRow.getMutableCellByIndex(3);
             myCell.setDecimalValue(new JMoney("13.45"));
             File myXFile = new File("C:\\Users\\Tony\\Documents\\TestODS.ods");
             FileOutputStream myOutFile = new FileOutputStream(myXFile);
@@ -89,37 +89,37 @@ public class Tester {
             int iNumRows = myView.getRowCount();
             int iNumCols = myView.getColumnCount();
             for (DataRow myRow = myView.getRowByIndex(0); myRow != null; myRow = myRow.getNextRow()) {
-                DataCell myCell = myRow.getCellByIndex(0);
+                DataCell myCell = myView.getRowCellByIndex(myRow, 0);
                 String myType = myCell.getStringValue();
-                myCell = myRow.getCellByIndex(1);
+                myCell = myView.getRowCellByIndex(myRow, 1);
                 String myParent = (myCell == null)
                         ? null
                         : myCell.getStringValue();
-                myCell = myRow.getCellByIndex(2);
+                myCell = myView.getRowCellByIndex(myRow, 2);
                 String myAlias = (myCell == null)
                         ? null
                         : myCell.getStringValue();
-                myCell = myRow.getCellByIndex(3);
+                myCell = myView.getRowCellByIndex(myRow, 3);
                 String myPortfolio = (myCell == null)
                         ? null
                         : myCell.getStringValue();
-                myCell = myRow.getCellByIndex(4);
+                myCell = myView.getRowCellByIndex(myRow, 4);
                 String myBalance = (myCell == null)
                         ? null
                         : myCell.getStringValue();
-                myCell = myRow.getCellByIndex(5);
+                myCell = myView.getRowCellByIndex(myRow, 5);
                 String mySymbol = (myCell == null)
                         ? null
                         : myCell.getStringValue();
-                myCell = myRow.getCellByIndex(6);
+                myCell = myView.getRowCellByIndex(myRow, 6);
                 Boolean isTaxFree = (myCell == null)
                         ? null
                         : myCell.getBooleanValue();
-                myCell = myRow.getCellByIndex(7);
+                myCell = myView.getRowCellByIndex(myRow, 7);
                 Boolean isClosed = (myCell == null)
                         ? null
                         : myCell.getBooleanValue();
-                myCell = myRow.getCellByIndex(8);
+                myCell = myView.getRowCellByIndex(myRow, 8);
                 myCell = null;
             }
         } catch (Exception e) {

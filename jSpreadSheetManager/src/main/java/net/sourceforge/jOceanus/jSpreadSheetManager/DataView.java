@@ -156,7 +156,7 @@ public class DataView
         int myIndex = convertRowIndex(pRowIndex);
         return (myIndex < 0)
                 ? null
-                : theSheet.getRowByIndex(myIndex);
+                : theSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     /**
@@ -197,11 +197,75 @@ public class DataView
         int myIndex = convertColumnIndex(pIndex);
         return (myIndex < 0)
                 ? null
-                : pRow.getCellByIndex(myIndex);
+                : pRow.getReadOnlyCellByIndex(myIndex);
     }
 
     @Override
     public Iterator<DataRow> iterator() {
-        return new DataRowIterator(this);
+        return new RowIterator(this);
+    }
+
+    /**
+     * Iterator class for rows.
+     */
+    private static class RowIterator
+            implements Iterator<DataRow> {
+        /**
+         * The data view.
+         */
+        private final DataView theView;
+
+        /**
+         * The base row.
+         */
+        private final int theBaseRow;
+
+        /**
+         * The last row.
+         */
+        private DataRow theLastRow;
+
+        /**
+         * Constructor.
+         * @param pView the underlying view.
+         */
+        protected RowIterator(final DataView pView) {
+            theLastRow = null;
+            theView = pView;
+            theBaseRow = theView.getBaseCell().getRowIndex();
+        }
+
+        @Override
+        public boolean hasNext() {
+            /* Calculate the next index */
+            int iIndex = (theLastRow != null)
+                    ? theLastRow.getRowIndex() + 1
+                    : theBaseRow;
+
+            /* Check that the row is within the view */
+            iIndex -= theBaseRow;
+            return ((iIndex >= 0) && (iIndex < theView.getRowCount()));
+        }
+
+        @Override
+        public DataRow next() {
+            /* If we are a new iterator */
+            if (theLastRow == null) {
+                /* Access the first element of the view */
+                theLastRow = theView.getRowByIndex(0);
+            } else {
+                /* Return the next row */
+                theLastRow = theLastRow.getNextRow();
+            }
+
+            /* Return the next row */
+            return theLastRow;
+        }
+
+        @Override
+        public void remove() {
+            /* Throw exception */
+            throw new UnsupportedOperationException();
+        }
     }
 }

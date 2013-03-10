@@ -221,22 +221,22 @@ public class SheetAccountRate
                 int iAdjust = 0;
 
                 /* Access account */
-                DataCell myCell = myRow.getCellByIndex(iAdjust++);
+                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myAccount = myCell.getStringValue();
 
                 /* Handle Rate */
-                myCell = myRow.getCellByIndex(iAdjust++);
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myRate = myCell.getStringValue();
 
                 /* Handle bonus which may be missing */
-                myCell = myRow.getCellByIndex(iAdjust++);
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myBonus = null;
                 if (myCell != null) {
                     myBonus = myCell.getStringValue();
                 }
 
                 /* Handle expiration which may be missing */
-                myCell = myRow.getCellByIndex(iAdjust++);
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Date myExpiry = null;
                 if (myCell != null) {
                     myExpiry = myCell.getDateValue();

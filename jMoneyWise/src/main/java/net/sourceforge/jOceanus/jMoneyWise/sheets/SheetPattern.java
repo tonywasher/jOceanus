@@ -256,14 +256,14 @@ public class SheetPattern
                 int iAdjust = 0;
 
                 /* Access strings */
-                String myAccount = myRow.getCellByIndex(iAdjust++).getStringValue();
-                Date myDate = myRow.getCellByIndex(iAdjust++).getDateValue();
-                String myDesc = myRow.getCellByIndex(iAdjust++).getStringValue();
-                String myAmount = myRow.getCellByIndex(iAdjust++).getStringValue();
-                String myPartner = myRow.getCellByIndex(iAdjust++).getStringValue();
-                String myTransType = myRow.getCellByIndex(iAdjust++).getStringValue();
-                boolean isCredit = myRow.getCellByIndex(iAdjust++).getBooleanValue();
-                String myFrequency = myRow.getCellByIndex(iAdjust++).getStringValue();
+                String myAccount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                Date myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
+                String myDesc = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                String myPartner = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                String myTransType = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                boolean isCredit = myView.getRowCellByIndex(myRow, iAdjust++).getBooleanValue();
+                String myFrequency = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
                 /* Add the value into the finance tables */
                 myList.addOpenItem(0, myDate, myDesc, isCredit

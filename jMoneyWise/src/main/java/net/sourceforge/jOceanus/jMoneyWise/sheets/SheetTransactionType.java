@@ -168,7 +168,7 @@ public class SheetTransactionType
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
                 DataRow myRow = myView.getRowByIndex(i);
-                DataCell myCell = myRow.getCellByIndex(0);
+                DataCell myCell = myView.getRowCellByIndex(myRow, 0);
 
                 /* Add the value into the finance tables */
                 myList.addBasicItem(myCell.getStringValue());

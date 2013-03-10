@@ -213,21 +213,20 @@ public class SheetAccountPrice
                 DataRow myRow = myView.getRowByIndex(i);
 
                 /* Access date */
-                DataCell myCell = myRow.getCellByIndex(0);
+                DataCell myCell = myView.getRowCellByIndex(myRow, 0);
                 Date myDate = myCell.getDateValue();
 
                 /* Loop through the columns of the table */
                 for (int j = 2; j < myCols; j++) {
-
                     /* Access account */
-                    myCell = myActRow.getCellByIndex(j);
+                    myCell = myView.getRowCellByIndex(myActRow, j);
                     if (myCell == null) {
                         continue;
                     }
                     String myAccount = myCell.getStringValue();
 
                     /* Handle price which may be missing */
-                    myCell = myRow.getCellByIndex(j);
+                    myCell = myView.getRowCellByIndex(myRow, j);
                     if (myCell != null) {
                         /* Access the formatted cell */
                         String myPrice = myCell.getStringValue();

@@ -49,7 +49,7 @@ public abstract class DataColumn {
      * Obtain the column index.
      * @return column index
      */
-    public int getIndex() {
+    public int getColumnIndex() {
         return theColIndex;
     }
 

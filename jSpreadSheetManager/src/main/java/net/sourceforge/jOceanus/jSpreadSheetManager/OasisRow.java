@@ -54,58 +54,32 @@ public class OasisRow
     /**
      * The underlying ODFDOM row.
      */
-    private TableTableRowElement theOasisRow;
+    private final TableTableRowElement theOasisRow;
 
     /**
-     * The previous row.
+     * Is the row readOnly.
      */
-    private final OasisRow thePreviousRow;
-
-    /**
-     * The next row.
-     */
-    private OasisRow theNextRow;
-
-    /**
-     * The row index.
-     */
-    private final int theRowIndex;
-
-    /**
-     * The repeat index of the row.
-     */
-    private int theRowInstance;
+    private final boolean isReadOnly;
 
     /**
      * Constructor.
      * @param pMap the row map
-     * @param pPrevious the previous row.
      * @param pRow the Oasis row
      * @param pIndex the index
-     * @param pInstance the repeat instance
+     * @param pReadOnly is the row readOnly?
      */
     protected OasisRow(final OasisRowMap pMap,
-                       final OasisRow pPrevious,
                        final TableTableRowElement pRow,
                        final int pIndex,
-                       final int pInstance) {
+                       final boolean pReadOnly) {
         /* Store parameters */
         super(pMap.getSheet(), pIndex);
         theRowMap = pMap;
-        thePreviousRow = pPrevious;
-        theNextRow = null;
         theOasisRow = pRow;
-        theRowIndex = pIndex;
-        theRowInstance = pInstance;
+        isReadOnly = pReadOnly;
 
         /* Create the cell map */
         theCellMap = new OasisCellMap(this);
-
-        /* If we have a previous column */
-        if (thePreviousRow != null) {
-            /* Link it */
-            thePreviousRow.theNextRow = this;
-        }
     }
 
     @Override
@@ -113,81 +87,22 @@ public class OasisRow
         return (OasisSheet) super.getSheet();
     }
 
-    /**
-     * Obtain the underlying table element.
-     * @return the element
-     */
-    protected TableTableRowElement getRowElement() {
-        return theOasisRow;
-    }
-
-    /**
-     * Set the underlying table element.
-     * @param pElement the element
-     */
-    protected void setRowElement(final TableTableRowElement pElement) {
-        theOasisRow = pElement;
-    }
-
     @Override
     public OasisRow getNextRow() {
-        return theNextRow;
+        return theRowMap.getReadOnlyRowByIndex(getRowIndex() + 1);
     }
 
     @Override
     public OasisRow getPreviousRow() {
-        return thePreviousRow;
+        return theRowMap.getReadOnlyRowByIndex(getRowIndex() - 1);
     }
 
     /**
-     * Obtain the index of the row.
-     * @return the index
+     * Obtain the row element.
+     * @return the row element
      */
-    protected int getIndex() {
-        return theRowIndex;
-    }
-
-    /**
-     * Obtain the instance of the row.
-     * @return the instance
-     */
-    protected int getInstance() {
-        return theRowInstance;
-    }
-
-    /**
-     * Set the instance of the row.
-     * @param pInstance the instance
-     */
-    protected void setInstance(final int pInstance) {
-        theRowInstance = pInstance;
-    }
-
-    /**
-     * Is the row a virtual row?
-     * @return true/false
-     */
-    protected boolean isVirtual() {
-        return (theRowInstance != 0);
-    }
-
-    /**
-     * Is the column the final row in the sequence.
-     * @return true/false
-     */
-    protected boolean isLastRow() {
-        return (theRowInstance + 1 == getRepeatCount());
-    }
-
-    /**
-     * Obtain the repeat count of the row.
-     * @return true/false
-     */
-    protected Integer getRepeatCount() {
-        Integer myCount = theOasisRow.getTableNumberRowsRepeatedAttribute();
-        return (myCount != null)
-                ? myCount
-                : null;
+    protected TableTableRowElement getRowElement() {
+        return theOasisRow;
     }
 
     /**
@@ -214,11 +129,11 @@ public class OasisRow
      * @param pStyle the row style
      */
     protected void setRowStyle(final String pStyle) {
-        /* ensure that the column is individual */
-        ensureIndividual();
-
-        /* Set the row style */
-        theOasisRow.setTableStyleNameAttribute(pStyle);
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Set the row style */
+            theOasisRow.setTableStyleNameAttribute(pStyle);
+        }
     }
 
     /**
@@ -226,23 +141,12 @@ public class OasisRow
      * @param isHidden true/false
      */
     protected void setHidden(final boolean isHidden) {
-        /* ensure that the row is individual */
-        ensureIndividual();
-
-        /* Set the visibility attribute */
-        theOasisRow.setTableVisibilityAttribute(isHidden
-                ? TableVisibilityAttribute.Value.COLLAPSE.toString()
-                : TableVisibilityAttribute.Value.VISIBLE.toString());
-    }
-
-    /**
-     * Ensure that the column is an individual column.
-     */
-    private void ensureIndividual() {
-        /* If the repeat count is greater than one */
-        if (getRepeatCount() > 1) {
-            /* We need to make this item an individual */
-            theRowMap.makeIndividual(this);
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Set the visibility attribute */
+            theOasisRow.setTableVisibilityAttribute(isHidden
+                    ? TableVisibilityAttribute.Value.COLLAPSE.toString()
+                    : TableVisibilityAttribute.Value.VISIBLE.toString());
         }
     }
 
@@ -252,13 +156,24 @@ public class OasisRow
     }
 
     @Override
-    public OasisCell getCellByIndex(final int pIndex) {
-        return theCellMap.getCellByIndex(pIndex);
+    public OasisCell getReadOnlyCellByIndex(final int pIndex) {
+        return theCellMap.getReadOnlyCellByIndex(pIndex);
     }
 
     @Override
-    public OasisCell createCellByIndex(final int pIndex) {
-        return theCellMap.getCellByIndex(pIndex);
+    public OasisCell getMutableCellByIndex(final int pIndex) {
+        return (isReadOnly)
+                ? null
+                : theCellMap.getMutableCellByIndex(pIndex);
+    }
+
+    /**
+     * Add extra columns to row.
+     * @param pNumNewCols the number of new columns to add
+     */
+    protected void addColumnsToRow(final int pNumNewCols) {
+        /* Pass call to CellMap */
+        theCellMap.addAdditionalCells(pNumNewCols);
     }
 
     /**

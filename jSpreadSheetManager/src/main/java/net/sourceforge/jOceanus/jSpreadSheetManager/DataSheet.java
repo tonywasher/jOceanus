@@ -22,15 +22,12 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import java.util.Iterator;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 
 /**
  * Class representing a sheet within a workBook.
  */
-public abstract class DataSheet
-        implements Iterable<DataRow> {
+public abstract class DataSheet {
     /**
      * Name of sheet.
      */
@@ -82,28 +79,28 @@ public abstract class DataSheet
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    public abstract DataRow getRowByIndex(final int pRowIndex);
+    public abstract DataRow getReadOnlyRowByIndex(final int pRowIndex);
 
     /**
      * Obtain the row at required index within the sheet, create it if it does not exist.
      * @param pRowIndex the requested row index
      * @return the requested row.
      */
-    public abstract DataRow createRowByIndex(final int pRowIndex);
+    public abstract DataRow getMutableRowByIndex(final int pRowIndex);
 
     /**
      * Obtain the column by index.
      * @param pColIndex the column index
      * @return the column
      */
-    public abstract DataColumn getColumnByIndex(final int pColIndex);
+    public abstract DataColumn getReadOnlyColumnByIndex(final int pColIndex);
 
     /**
      * Obtain the column by index, creating column if it does not exist.
      * @param pColIndex the column index
      * @return the column
      */
-    public abstract DataColumn createColumnByIndex(final int pColIndex);
+    public abstract DataColumn getMutableColumnByIndex(final int pColIndex);
 
     /**
      * Name a range.
@@ -153,9 +150,4 @@ public abstract class DataSheet
      * @param pFreezeCell the cell to freeze at
      */
     public abstract void createFreezePane(final CellPosition pFreezeCell);
-
-    @Override
-    public Iterator<DataRow> iterator() {
-        return new DataRowIterator(this);
-    }
 }

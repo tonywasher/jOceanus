@@ -43,6 +43,11 @@ public class ExcelRow
     private final HSSFRow theExcelRow;
 
     /**
+     * Is the row readOnly.
+     */
+    private final boolean isReadOnly;
+
+    /**
      * evaluate the formula for a cell.
      * @param pCell the cell to evaluate
      * @return the calculated value
@@ -65,14 +70,17 @@ public class ExcelRow
      * @param pSheet the sheet for the row
      * @param pRow the Excel Row
      * @param pRowIndex the RowIndex
+     * @param pReadOnly is the row readOnly?
      */
     protected ExcelRow(final ExcelSheet pSheet,
                        final HSSFRow pRow,
-                       final int pRowIndex) {
+                       final int pRowIndex,
+                       final boolean pReadOnly) {
         /* Store parameters */
         super(pSheet, pRowIndex);
         theExcelSheet = pSheet;
         theExcelRow = pRow;
+        isReadOnly = pReadOnly;
     }
 
     @Override
@@ -81,7 +89,7 @@ public class ExcelRow
         int myIndex = getRowIndex() + 1;
 
         /* Return the next row */
-        return theExcelSheet.createRowByIndex(myIndex);
+        return theExcelSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     @Override
@@ -93,7 +101,7 @@ public class ExcelRow
         }
 
         /* Return the previous row */
-        return theExcelSheet.getRowByIndex(myIndex);
+        return theExcelSheet.getReadOnlyRowByIndex(myIndex);
     }
 
     @Override
@@ -103,11 +111,8 @@ public class ExcelRow
     }
 
     @Override
-    public ExcelCell getCellByIndex(final int pIndex) {
-        /* Record the required index */
-        // int myIndex = (isView)
-        // ? getView().convertColumnIndex(pIndex)
-        // : pIndex;
+    public ExcelCell getReadOnlyCellByIndex(final int pIndex) {
+        /* Handle negative index */
         if (pIndex < 0) {
             return null;
         }
@@ -115,16 +120,22 @@ public class ExcelRow
         /* Access the cell */
         HSSFCell myExcelCell = theExcelRow.getCell(pIndex, Row.RETURN_BLANK_AS_NULL);
         return (myExcelCell != null)
-                ? new ExcelCell(this, myExcelCell, pIndex)
+                ? new ExcelCell(this, myExcelCell, pIndex, true)
                 : null;
     }
 
     @Override
-    public ExcelCell createCellByIndex(final int pIndex) {
+    public ExcelCell getMutableCellByIndex(final int pIndex) {
+        /* Handle negative index and readOnly */
+        if ((pIndex < 0)
+            || (isReadOnly)) {
+            return null;
+        }
+
         /* Create the cell */
         HSSFCell myExcelCell = theExcelRow.createCell(pIndex);
         return (myExcelCell != null)
-                ? new ExcelCell(this, myExcelCell, pIndex)
+                ? new ExcelCell(this, myExcelCell, pIndex, false)
                 : null;
     }
 

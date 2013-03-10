@@ -51,68 +51,26 @@ public class OasisCell
     private TableTableCellElement theOasisCell;
 
     /**
-     * The previous cell.
+     * Is the row readOnly.
      */
-    private final OasisCell thePreviousCell;
-
-    /**
-     * The next cell.
-     */
-    private OasisCell theNextCell;
-
-    /**
-     * The cell index.
-     */
-    private final int theCellIndex;
-
-    /**
-     * The repeat index of the cell.
-     */
-    private int theCellInstance;
+    private final boolean isReadOnly;
 
     /**
      * Constructor.
      * @param pMap the cell map
-     * @param pPrevious the previous cell.
      * @param pCell the Oasis cell
      * @param pIndex the index
-     * @param pInstance the repeat instance
+     * @param pReadOnly is the cell readOnly?
      */
     protected OasisCell(final OasisCellMap pMap,
-                        final OasisCell pPrevious,
                         final TableTableCellElement pCell,
                         final int pIndex,
-                        final int pInstance) {
+                        final boolean pReadOnly) {
         /* Store parameters */
         super(pMap.getRow(), pIndex);
         theCellMap = pMap;
-        thePreviousCell = pPrevious;
-        theNextCell = null;
         theOasisCell = pCell;
-        theCellIndex = pIndex;
-        theCellInstance = pInstance;
-
-        /* If we have a previous cell */
-        if (thePreviousCell != null) {
-            /* Link it */
-            thePreviousCell.theNextCell = this;
-        }
-    }
-
-    /**
-     * Obtain the underlying table element.
-     * @return the element
-     */
-    protected TableTableCellElement getCellElement() {
-        return theOasisCell;
-    }
-
-    /**
-     * Set the underlying table element.
-     * @param pElement the element
-     */
-    protected void setCellElement(final TableTableCellElement pElement) {
-        theOasisCell = pElement;
+        isReadOnly = pReadOnly;
     }
 
     /**
@@ -120,7 +78,7 @@ public class OasisCell
      * @return the next cell
      */
     protected OasisCell getNextCell() {
-        return theNextCell;
+        return theCellMap.getReadOnlyCellByIndex(getCellIndex() + 1);
     }
 
     /**
@@ -128,58 +86,7 @@ public class OasisCell
      * @return the previous cell
      */
     protected OasisCell getPreviousCell() {
-        return thePreviousCell;
-    }
-
-    /**
-     * Obtain the index of the cell.
-     * @return the index
-     */
-    protected int getIndex() {
-        return theCellIndex;
-    }
-
-    /**
-     * Obtain the instance of the cell.
-     * @return the instance
-     */
-    protected int getInstance() {
-        return theCellInstance;
-    }
-
-    /**
-     * Set the instance of the cell.
-     * @param pInstance the instance
-     */
-    protected void setInstance(final int pInstance) {
-        theCellInstance = pInstance;
-    }
-
-    /**
-     * Is the cell a virtual cell?
-     * @return true/false
-     */
-    protected boolean isVirtual() {
-        return (theCellInstance != 0);
-    }
-
-    /**
-     * Is the column the final cell in the sequence.
-     * @return true/false
-     */
-    protected boolean isLastCell() {
-        return (theCellInstance + 1 == getRepeatCount());
-    }
-
-    /**
-     * Obtain the repeat count of the cell.
-     * @return true/false
-     */
-    protected Integer getRepeatCount() {
-        Integer myCount = theOasisCell.getTableNumberColumnsRepeatedAttribute();
-        return (myCount != null)
-                ? myCount
-                : null;
+        return theCellMap.getReadOnlyCellByIndex(getCellIndex() - 1);
     }
 
     /**
@@ -195,11 +102,11 @@ public class OasisCell
      * @param pStyle the row style
      */
     protected void setCellStyle(final String pStyle) {
-        /* ensure that the column is individual */
-        ensureIndividual();
-
-        /* Set the cell style */
-        theOasisCell.setTableStyleNameAttribute(pStyle);
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Set the cell style */
+            theOasisCell.setTableStyleNameAttribute(pStyle);
+        }
     }
 
     /**
@@ -207,21 +114,10 @@ public class OasisCell
      * @param pValidation the validation name
      */
     protected void setValidationName(final String pValidation) {
-        /* ensure that the column is individual */
-        ensureIndividual();
-
-        /* Set the content validation name */
-        theOasisCell.setTableContentValidationNameAttribute(pValidation);
-    }
-
-    /**
-     * Ensure that the cell is an individual cell.
-     */
-    private void ensureIndividual() {
-        /* If the repeat count is greater than one */
-        if (getRepeatCount() > 1) {
-            /* We need to make this item an individual */
-            theCellMap.makeIndividual(this);
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Set the content validation name */
+            theOasisCell.setTableContentValidationNameAttribute(pValidation);
         }
     }
 
@@ -237,7 +133,7 @@ public class OasisCell
 
     /**
      * Parse a value.
-     * @param T the value type to parse
+     * @param <T> the value type to parse
      * @param pSource the string to parse.
      * @param pClass the value type class.
      * @return the parsed value
@@ -284,7 +180,9 @@ public class OasisCell
     public String getStringValue() {
         String myType = theOasisCell.getOfficeValueTypeAttribute();
         if ((myType != null)
-            && (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.STRING)) {
+            && ((OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.STRING)
+                || (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.PERCENTAGE) || (OfficeValueTypeAttribute.Value
+                    .enumValueOf(myType) == OfficeValueTypeAttribute.Value.FLOAT))) {
             return theOasisCell.getTextContent();
         }
         return null;
@@ -292,11 +190,11 @@ public class OasisCell
 
     @Override
     public void setNullValue() throws JDataException {
-        /* ensure that the column is individual */
-        ensureIndividual();
-
-        /* Remove Cell content */
-        removeCellContent();
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove Cell content */
+            removeCellContent();
+        }
     }
 
     /**
@@ -323,92 +221,92 @@ public class OasisCell
 
     @Override
     protected void setBoolean(final Boolean pValue) throws JDataException {
-        /* ensure that the column is individual */
-        ensureIndividual();
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove existing content */
+            removeCellContent();
 
-        /* Remove existing content */
-        removeCellContent();
-
-        /* Set value type and value */
-        theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.BOOLEAN.toString());
-        theOasisCell.setOfficeBooleanValueAttribute(pValue);
-        theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.BooleanCell));
+            /* Set value type and value */
+            theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.BOOLEAN.toString());
+            theOasisCell.setOfficeBooleanValueAttribute(pValue);
+            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.BooleanCell));
+        }
     }
 
     @Override
     protected void setDate(final Date pValue) throws JDataException {
-        /* ensure that the column is individual */
-        ensureIndividual();
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove existing content */
+            removeCellContent();
 
-        /* Remove existing content */
-        removeCellContent();
-
-        /* Set value type and value */
-        theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.DATE.toString());
-        theOasisCell.setOfficeDateValueAttribute(formatValue(pValue));
-        theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.DateCell));
+            /* Set value type and value */
+            theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.DATE.toString());
+            theOasisCell.setOfficeDateValueAttribute(formatValue(pValue));
+            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.DateCell));
+        }
     }
 
     @Override
     protected void setInteger(final Integer pValue) throws JDataException {
-        /* ensure that the column is individual */
-        ensureIndividual();
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove existing content */
+            removeCellContent();
 
-        /* Remove existing content */
-        removeCellContent();
-
-        /* Set value type and value */
-        theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.FLOAT.toString());
-        theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
-        theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.IntegerCell));
+            /* Set value type and value */
+            theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.FLOAT.toString());
+            theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
+            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.IntegerCell));
+        }
     }
 
     @Override
     protected void setString(final String pValue) throws JDataException {
-        /* ensure that the column is individual */
-        ensureIndividual();
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove existing content */
+            removeCellContent();
 
-        /* Remove existing content */
-        removeCellContent();
-
-        /* Set value type and value */
-        theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.STRING.toString());
-        setTextContent(pValue);
-        theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.StringCell));
+            /* Set value type and value */
+            theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.STRING.toString());
+            setTextContent(pValue);
+            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.StringCell));
+        }
     }
 
     @Override
     protected void setDecimal(final JDecimal pValue) throws JDataException {
-        /* ensure that the column is individual */
-        ensureIndividual();
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove existing content */
+            removeCellContent();
 
-        /* Remove existing content */
-        removeCellContent();
+            /* Set value type and value */
+            theOasisCell.setOfficeValueTypeAttribute((pValue instanceof JRate)
+                    ? OfficeValueTypeAttribute.Value.PERCENTAGE.toString()
+                    : OfficeValueTypeAttribute.Value.FLOAT.toString());
+            theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
+            setTextContent(formatValue(pValue));
 
-        /* Set value type and value */
-        theOasisCell.setOfficeValueTypeAttribute((pValue instanceof JRate)
-                ? OfficeValueTypeAttribute.Value.PERCENTAGE.toString()
-                : OfficeValueTypeAttribute.Value.FLOAT.toString());
-        theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
-        setTextContent(formatValue(pValue));
-
-        /* Set the style for the cell */
-        CellStyleType myStyleType = getCellStyle(pValue);
-        OasisStyle myStyle = OasisWorkBook.getOasisCellStyle(myStyleType);
-        theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(myStyle));
+            /* Set the style for the cell */
+            CellStyleType myStyleType = getCellStyle(pValue);
+            OasisStyle myStyle = OasisWorkBook.getOasisCellStyle(myStyleType);
+            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(myStyle));
+        }
     }
 
     @Override
     protected void setHeader(final String pValue) throws JDataException {
-        /* ensure that the column is individual */
-        ensureIndividual();
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove existing content */
+            removeCellContent();
 
-        /* Remove existing content */
-        removeCellContent();
-
-        /* Set value type and value */
-        theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.STRING.toString());
-        theOasisCell.setTextContent(pValue);
-        theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.HeaderCell));
+            /* Set value type and value */
+            theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.STRING.toString());
+            setTextContent(pValue);
+            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.HeaderCell));
+        }
     }
 }

@@ -108,6 +108,11 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     private DataRow theActiveRow = null;
 
     /**
+     * The Active view.
+     */
+    private DataView theActiveView = null;
+
+    /**
      * The Row number of the current row.
      */
     private int theCurrRow = 0;
@@ -188,8 +193,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             theWorkBook = theReader.getWorkBook();
 
             /* Access the view of the range */
-            DataView myView = theWorkBook.getRangeView(theRangeName);
-            Iterator<DataRow> myIterator = myView.iterator();
+            theActiveView = theWorkBook.getRangeView(theRangeName);
+            Iterator<DataRow> myIterator = theActiveView.iterator();
 
             /* Declare the new stage */
             if (!theTask.setNewStage(theRangeName)) {
@@ -201,7 +206,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCount = 0;
 
             /* Determine count of rows */
-            int myTotal = myView.getRowCount();
+            int myTotal = theActiveView.getRowCount();
 
             /* Declare the number of steps */
             if (!theTask.setNumSteps((isDoubleLoad)
@@ -236,7 +241,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             /* If we need a second pass */
             if (isDoubleLoad) {
                 /* Loop through the rows of the range */
-                myIterator = myView.iterator();
+                myIterator = theActiveView.iterator();
                 for (theCurrRow = 0; myIterator.hasNext(); theCurrRow++) {
                     /* Access the row */
                     theActiveRow = myIterator.next();
@@ -304,7 +309,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Create the sheet */
             theWorkSheet = theWorkBook.newSheet(theRangeName, myNumRows, myNumCols);
-            Iterator<DataRow> myRowIterator = theWorkSheet.iterator();
 
             /* Initialise counts */
             theBaseRow = 0;
@@ -314,7 +318,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             /* If this is an open write */
             if (!isBackup) {
                 /* Create a new row */
-                theActiveRow = myRowIterator.next();
+                newRow();
 
                 /* Format Header */
                 formatHeader();
@@ -328,7 +332,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                 T myCurr = myItemIterator.next();
 
                 /* Create the new row */
-                theActiveRow = myRowIterator.next();
+                newRow();
 
                 /* Write the id */
                 writeInteger(COL_ID, myCurr.getId());
@@ -490,7 +494,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      */
     protected void newRow() {
         /* Create the new row */
-        theActiveRow = theWorkSheet.getRowByIndex(theCurrRow);
+        theActiveRow = theWorkSheet.getMutableRowByIndex(theCurrRow);
     }
 
     /**
@@ -575,7 +579,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setHidden(true);
+        theWorkSheet.getMutableColumnByIndex(myCol).setHidden(true);
     }
 
     /**
@@ -587,7 +591,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Date);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Date);
     }
 
     /**
@@ -599,7 +603,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.String);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.String);
     }
 
     /**
@@ -611,7 +615,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Money);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Money);
     }
 
     /**
@@ -623,7 +627,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Price);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Price);
     }
 
     /**
@@ -635,7 +639,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Units);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Units);
     }
 
     /**
@@ -647,7 +651,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Rate);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Rate);
     }
 
     /**
@@ -659,7 +663,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Dilution);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Dilution);
     }
 
     /**
@@ -671,7 +675,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Boolean);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Boolean);
     }
 
     /**
@@ -683,7 +687,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Apply the style to the sheet */
-        theWorkSheet.createColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Integer);
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Integer);
     }
 
     /**
@@ -696,7 +700,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        DataCell myCell = theActiveRow.getCellByIndex(myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
 
         /* Return the value */
         return (myCell != null)
@@ -714,7 +718,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        DataCell myCell = theActiveRow.getCellByIndex(myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
 
         /* Return the value */
         return (myCell != null)
@@ -732,7 +736,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        DataCell myCell = theActiveRow.getCellByIndex(myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
 
         /* Return the value */
         return (myCell != null)
@@ -750,7 +754,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        DataCell myCell = theActiveRow.getCellByIndex(myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
 
         /* Return the value */
         return (myCell != null)
@@ -769,7 +773,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        DataCell myCell = theActiveRow.getCellByIndex(myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
 
         /* Return the value */
         return (myCell != null)
@@ -788,7 +792,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         int myCol = adjustColumn(pOffset);
 
         /* Access the cells by reference */
-        DataCell myCell = theActiveRow.getCellByIndex(myCol);
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
 
         /* Return the value */
         return (myCell != null)
@@ -810,7 +814,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setIntegerValue(pValue);
         }
     }
@@ -829,7 +833,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setBooleanValue(pValue);
         }
     }
@@ -848,7 +852,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setDateValue(pValue.getDate());
         }
     }
@@ -867,7 +871,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setDecimalValue(pValue);
         }
     }
@@ -886,7 +890,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setHeaderValue(pHeader);
         }
     }
@@ -905,7 +909,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setStringValue(pValue);
         }
     }
@@ -924,7 +928,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setBytesValue(pBytes);
         }
     }
@@ -943,7 +947,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
             int myCol = adjustColumn(pOffset);
 
             /* Create the cell and set its value */
-            DataCell myCell = theActiveRow.createCellByIndex(myCol);
+            DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
             myCell.setCharArrayValue(pChars);
         }
     }

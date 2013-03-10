@@ -323,7 +323,7 @@ public class OasisWorkBook {
         SheetReference myRef = theSheetMap.get(pName);
         return (myRef == null)
                 ? null
-                : myRef.getSheet();
+                : myRef.getReadOnlySheet();
     }
 
     /**
@@ -465,11 +465,11 @@ public class OasisWorkBook {
         int iLastCol = pLastCell.getColumnIndex();
 
         /* Loop through the rows */
-        for (OasisRow myRow = pSheet.getRowByIndex(iRow); iRow <= iLastRow; iRow++, myRow = myRow.getNextRow()) {
+        for (OasisRow myRow = pSheet.getMutableRowByIndex(iRow); iRow <= iLastRow; iRow++, myRow = pSheet.getMutableRowByIndex(iRow)) {
             /* Loop through the columns */
             for (int iCol = iFirstCol; iCol <= iLastCol; iCol++) {
                 /* Access the cell and set the constraint */
-                OasisCell myCell = myRow.getCellByIndex(iCol);
+                OasisCell myCell = myRow.getMutableCellByIndex(iCol);
                 myCell.setValidationName(myName);
             }
         }
@@ -816,9 +816,42 @@ public class OasisWorkBook {
     }
 
     /**
-     * Sheet Reference class
+     * Add element as next sibling of reference node.
+     * @param pNew the node to add
+     * @param pRef the node to add after
      */
-    private class SheetReference {
+    protected static void addAsNextSibling(final Node pNew,
+                                           final Node pRef) {
+        /* Obtain parent of reference node */
+        Node myParent = pRef.getParentNode();
+
+        /* Obtain the next element */
+        Node myNextElement = pRef.getNextSibling();
+        if (myNextElement != null) {
+            myParent.insertBefore(pNew, myNextElement);
+        } else {
+            myParent.appendChild(pNew);
+        }
+    }
+
+    /**
+     * Add element as previous sibling of reference node.
+     * @param pNew the node to add
+     * @param pRef the node to add after
+     */
+    protected static void addAsPriorSibling(final Node pNew,
+                                            final Node pRef) {
+        /* Obtain parent of reference node */
+        Node myParent = pRef.getParentNode();
+
+        /* Insert before reference node */
+        myParent.insertBefore(pNew, pRef);
+    }
+
+    /**
+     * Sheet Reference class.
+     */
+    private final class SheetReference {
         /**
          * Table name.
          */
@@ -836,6 +869,7 @@ public class OasisWorkBook {
 
         /**
          * Constructor.
+         * @param pElement the sheet element
          */
         private SheetReference(final TableTableElement pElement) {
             /* Store parameters */
@@ -853,11 +887,19 @@ public class OasisWorkBook {
         }
 
         /**
-         * Obtain Sheet representation,
+         * Obtain ReadOnly Sheet representation.
+         * @return the sheet representation
+         */
+        private OasisSheet getReadOnlySheet() {
+            return new OasisSheet(theWorkBook, theElement, theIndex, true);
+        }
+
+        /**
+         * Obtain Sheet representation.
          * @return the sheet representation
          */
         private OasisSheet getSheet() {
-            return new OasisSheet(theWorkBook, theElement, theIndex);
+            return new OasisSheet(theWorkBook, theElement, theIndex, false);
         }
     }
 

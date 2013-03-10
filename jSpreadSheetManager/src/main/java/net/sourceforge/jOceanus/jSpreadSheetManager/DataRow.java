@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-
 /**
  * Class representing a row within a sheet or a view.
  */
@@ -115,12 +114,12 @@ public abstract class DataRow {
      * @param pIndex the column index.
      * @return the cell
      */
-    public abstract DataCell getCellByIndex(final int pIndex);
+    public abstract DataCell getReadOnlyCellByIndex(final int pIndex);
 
     /**
      * Get the cell at the required index.
      * @param pIndex the column index.
      * @return the cell
      */
-    public abstract DataCell createCellByIndex(final int pIndex);
+    public abstract DataCell getMutableCellByIndex(final int pIndex);
 }

@@ -150,7 +150,7 @@ public class ExcelWorkBook {
     protected DataSheet newSheet(final String pName) {
         /* Create the new Sheet */
         HSSFSheet mySheet = theBook.createSheet(pName);
-        return new ExcelSheet(this, mySheet, theBook.getSheetIndex(pName));
+        return new ExcelSheet(this, mySheet, theBook.getSheetIndex(pName), false);
     }
 
     /**
@@ -161,7 +161,7 @@ public class ExcelWorkBook {
     protected DataSheet getSheet(final String pName) {
         /* Create the new Sheet */
         HSSFSheet mySheet = theBook.getSheet(pName);
-        return new ExcelSheet(this, mySheet, theBook.getSheetIndex(mySheet));
+        return new ExcelSheet(this, mySheet, theBook.getSheetIndex(mySheet), true);
     }
 
     /**

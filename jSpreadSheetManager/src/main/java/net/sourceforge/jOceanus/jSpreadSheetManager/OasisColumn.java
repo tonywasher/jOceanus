@@ -68,23 +68,12 @@ public class OasisColumn
 
     @Override
     public OasisColumn getNextColumn() {
-        return theColumnMap.getColumnByIndex(getIndex() + 1);
+        return theColumnMap.getReadOnlyColumnByIndex(getColumnIndex() + 1);
     }
 
     @Override
     public OasisColumn getPreviousColumn() {
-        return theColumnMap.getColumnByIndex(getIndex() - 1);
-    }
-
-    /**
-     * Obtain the repeat count of the column.
-     * @return true/false
-     */
-    protected Integer getRepeatCount() {
-        Integer myCount = theOasisColumn.getTableNumberColumnsRepeatedAttribute();
-        return (myCount != null)
-                ? myCount
-                : null;
+        return theColumnMap.getReadOnlyColumnByIndex(getColumnIndex() - 1);
     }
 
     /**

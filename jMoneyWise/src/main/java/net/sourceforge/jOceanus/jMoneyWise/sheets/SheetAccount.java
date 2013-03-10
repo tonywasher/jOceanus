@@ -292,32 +292,32 @@ public class SheetAccount
                 int iAdjust = 0;
 
                 /* Access account and account type */
-                String myName = myRow.getCellByIndex(iAdjust++).getStringValue();
-                String myAcType = myRow.getCellByIndex(iAdjust++).getStringValue();
+                String myName = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                String myAcType = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
                 /* Handle maturity which may be missing */
-                DataCell myCell = myRow.getCellByIndex(iAdjust++);
+                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Date myMaturity = null;
                 if (myCell != null) {
                     myMaturity = myCell.getDateValue();
                 }
 
                 /* Handle parent which may be missing */
-                myCell = myRow.getCellByIndex(iAdjust++);
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myParent = null;
                 if (myCell != null) {
                     myParent = myCell.getStringValue();
                 }
 
                 /* Handle alias which may be missing */
-                myCell = myRow.getCellByIndex(iAdjust++);
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myAlias = null;
                 if (myCell != null) {
                     myAlias = myCell.getStringValue();
                 }
 
                 /* Handle closed which may be missing */
-                myCell = myRow.getCellByIndex(iAdjust++);
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Boolean isClosed = Boolean.FALSE;
                 if (myCell != null) {
                     isClosed = Boolean.TRUE;

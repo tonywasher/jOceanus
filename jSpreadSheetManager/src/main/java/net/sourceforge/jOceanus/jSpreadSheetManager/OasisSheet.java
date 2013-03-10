@@ -69,14 +69,21 @@ public class OasisSheet
     private OasisColumnMap theColMap;
 
     /**
+     * Is the sheet readOnly.
+     */
+    private final boolean isReadOnly;
+
+    /**
      * Constructor for Oasis Sheet.
      * @param pBook the WorkBook
      * @param pTable the Oasis table
      * @param pIndex the index of the sheet
+     * @param pReadOnly is the sheet readOnly?
      */
     protected OasisSheet(final OasisWorkBook pBook,
                          final TableTableElement pTable,
-                         final int pIndex) {
+                         final int pIndex,
+                         final boolean pReadOnly) {
         /* Construct super-class */
         super(pTable.getTableNameAttribute());
 
@@ -85,6 +92,7 @@ public class OasisSheet
         theContentDom = pBook.getContentDom();
         theIndex = pIndex;
         theOasisTable = pTable;
+        isReadOnly = pReadOnly;
 
         /* Create the maps */
         theColMap = new OasisColumnMap(this);
@@ -118,41 +126,32 @@ public class OasisSheet
     }
 
     @Override
-    public OasisRow getRowByIndex(final int pRowIndex) {
+    public OasisRow getReadOnlyRowByIndex(final int pRowIndex) {
         /* Obtain row from row map */
-        return theRowMap.getRowByIndex(pRowIndex);
+        return theRowMap.getReadOnlyRowByIndex(pRowIndex);
     }
 
     @Override
-    public OasisRow createRowByIndex(final int pRowIndex) {
+    public OasisRow getMutableRowByIndex(final int pRowIndex) {
         /* Obtain row from row map, creating row if necessary */
-        return theRowMap.createRowByIndex(pRowIndex);
+        return (isReadOnly)
+                ? null
+                : theRowMap.getMutableRowByIndex(pRowIndex);
     }
 
     @Override
-    public OasisColumn getColumnByIndex(final int pColIndex) {
+    public OasisColumn getReadOnlyColumnByIndex(final int pColIndex) {
         /* Obtain column from column map */
-        return theColMap.getColumnByIndex(pColIndex);
+        return theColMap.getReadOnlyColumnByIndex(pColIndex);
     }
 
     @Override
-    public OasisColumn createColumnByIndex(final int pColIndex) {
+    public OasisColumn getMutableColumnByIndex(final int pColIndex) {
         /* Obtain column from column map, creating column if necessary */
-        return theColMap.createColumnByIndex(pColIndex);
+        return (isReadOnly)
+                ? null
+                : theColMap.getMutableColumnByIndex(pColIndex);
     }
-
-    // @Override
-    // protected OasisRow getRowByIndex(final DataView pView,
-    // final int pRowIndex) {
-    // /* Determine the actual index of the row */
-    // int myIndex = pView.convertRowIndex(pRowIndex);
-    // if (myIndex < 0) {
-    // return null;
-    // }
-    //
-    // /* Obtain from row map */
-    // return theRowMap.getRowByIndex(myIndex);
-    // }
 
     @Override
     public boolean isHidden() {
@@ -161,39 +160,47 @@ public class OasisSheet
 
     @Override
     public void setHidden(final boolean isHidden) {
-        theOasisTable.setTableStyleNameAttribute(isHidden
-                ? OasisWorkBook.getStyleName(OasisStyle.HiddenTable)
-                : OasisWorkBook.getStyleName(OasisStyle.Table));
+        if (!isReadOnly) {
+            theOasisTable.setTableStyleNameAttribute(isHidden
+                    ? OasisWorkBook.getStyleName(OasisStyle.HiddenTable)
+                    : OasisWorkBook.getStyleName(OasisStyle.Table));
+        }
     }
 
     @Override
     public void declareRange(final String pName,
                              final CellPosition pFirstCell,
                              final CellPosition pLastCell) throws JDataException {
-        /* Build the range */
-        OasisCellRange myRange = new OasisCellRange(getName(), pFirstCell, pLastCell);
+        if (!isReadOnly) {
+            /* Build the range */
+            OasisCellRange myRange = new OasisCellRange(getName(), pFirstCell, pLastCell);
 
-        /* Declare to workBook */
-        theOasisBook.declareRange(pName, myRange);
+            /* Declare to workBook */
+            theOasisBook.declareRange(pName, myRange);
+        }
     }
 
     @Override
     public void applyDataValidation(final CellPosition pFirstCell,
                                     final CellPosition pLastCell,
                                     final String pName) throws JDataException {
-        /* Declare to workBook */
-        theOasisBook.applyDataValidation(this, pFirstCell, pLastCell, pName);
+        if (!isReadOnly) {
+            /* Declare to workBook */
+            theOasisBook.applyDataValidation(this, pFirstCell, pLastCell, pName);
+        }
     }
 
     @Override
     public void applyDataFilter(final CellPosition pBaseCell,
                                 final int pNumRows) throws JDataException {
-        /* Build the range */
-        CellPosition myEnd = new CellPosition(pBaseCell.getColumnIndex(), pNumRows - 1);
-        OasisCellRange myRange = new OasisCellRange(getName(), pBaseCell, myEnd);
+        if (!isReadOnly) {
+            /* Build the range */
+            CellPosition myEnd = new CellPosition(pBaseCell.getColumnIndex(), pNumRows - 1);
+            OasisCellRange myRange = new OasisCellRange(getName(), pBaseCell, myEnd);
 
-        /* Declare to workbook */
-        theOasisBook.applyDataFilter(myRange);
+            /* Declare to workbook */
+            theOasisBook.applyDataFilter(myRange);
+        }
     }
 
     @Override

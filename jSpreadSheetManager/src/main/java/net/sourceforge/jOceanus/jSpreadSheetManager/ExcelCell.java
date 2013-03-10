@@ -47,18 +47,26 @@ public class ExcelCell
     private final HSSFCell theExcelCell;
 
     /**
+     * Is the cell readOnly.
+     */
+    private final boolean isReadOnly;
+
+    /**
      * Constructor.
      * @param pRow the row for the cell
      * @param pExcelCell the Excel Cell
      * @param pColIndex the column index
+     * @param pReadOnly is the cell readOnly?
      */
     protected ExcelCell(final ExcelRow pRow,
                         final HSSFCell pExcelCell,
-                        final int pColIndex) {
+                        final int pColIndex,
+                        final boolean pReadOnly) {
         /* Store parameters */
         super(pRow, pColIndex);
         theExcelRow = pRow;
         theExcelCell = pExcelCell;
+        isReadOnly = pReadOnly;
     }
 
     @Override
@@ -103,63 +111,77 @@ public class ExcelCell
 
     @Override
     public void setNullValue() throws JDataException {
-        theExcelCell.setCellValue((String) null);
+        if (!isReadOnly) {
+            theExcelCell.setCellValue((String) null);
+        }
     }
 
     @Override
     protected void setBoolean(final Boolean pValue) throws JDataException {
-        /* Set the value */
-        theExcelCell.setCellValue(pValue);
+        if (!isReadOnly) {
+            /* Set the value */
+            theExcelCell.setCellValue(pValue);
 
-        /* Set the style for the cell */
-        theExcelRow.setCellStyle(this, CellStyleType.Boolean);
+            /* Set the style for the cell */
+            theExcelRow.setCellStyle(this, CellStyleType.Boolean);
+        }
     }
 
     @Override
     protected void setDate(final Date pValue) throws JDataException {
-        /* Set the value */
-        theExcelCell.setCellValue(pValue);
+        if (!isReadOnly) {
+            /* Set the value */
+            theExcelCell.setCellValue(pValue);
 
-        /* Set the style for the cell */
-        theExcelRow.setCellStyle(this, CellStyleType.Date);
+            /* Set the style for the cell */
+            theExcelRow.setCellStyle(this, CellStyleType.Date);
+        }
     }
 
     @Override
     protected void setInteger(final Integer pValue) throws JDataException {
-        /* Set the value */
-        theExcelCell.setCellValue((pValue == null)
-                ? null
-                : pValue.doubleValue());
+        if (!isReadOnly) {
+            /* Set the value */
+            theExcelCell.setCellValue((pValue == null)
+                    ? null
+                    : pValue.doubleValue());
 
-        /* Set the style for the cell */
-        theExcelRow.setCellStyle(this, CellStyleType.Integer);
+            /* Set the style for the cell */
+            theExcelRow.setCellStyle(this, CellStyleType.Integer);
+        }
     }
 
     @Override
     protected void setString(final String pValue) throws JDataException {
-        /* Set the value */
-        theExcelCell.setCellValue(pValue);
+        if (!isReadOnly) {
+            /* Set the value */
+            theExcelCell.setCellValue(pValue);
 
-        /* Set the style for the cell */
-        theExcelRow.setCellStyle(this, CellStyleType.String);
+            /* Set the style for the cell */
+            theExcelRow.setCellStyle(this, CellStyleType.String);
+        }
     }
 
     @Override
     protected void setHeader(final String pValue) throws JDataException {
-        /* Set as string value */
-        theExcelCell.setCellValue(pValue);
+        if (!isReadOnly) {
+            /* Set as string value */
+            theExcelCell.setCellValue(pValue);
 
-        /* Adjust the style for the cell */
-        theExcelRow.setCellStyle(this, CellStyleType.Header);
+            /* Adjust the style for the cell */
+            theExcelRow.setCellStyle(this, CellStyleType.Header);
+        }
     }
 
     @Override
     protected void setDecimal(final JDecimal pValue) throws JDataException {
-        /* Set the value */
-        theExcelCell.setCellValue(pValue.doubleValue());
+        if (!isReadOnly) {
+            /* Set the value */
+            theExcelCell.setCellValue(pValue.doubleValue());
 
-        /* Set the style for the cell */
-        theExcelRow.setCellStyle(this, getCellStyle(pValue));
+            /* Set the style for the cell */
+            theExcelRow.setCellStyle(this, getCellStyle(pValue));
+        }
     }
 
     /**

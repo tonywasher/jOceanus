@@ -146,9 +146,9 @@ public class FinanceSheet
 
         /* Access the Year Range */
         DataRow myRow = myView.getRowByIndex(0);
-        DataCell myCell = myRow.getCellByIndex(0);
+        DataCell myCell = myView.getRowCellByIndex(myRow, 0);
         pRange.setMinYear(myCell.getIntegerValue());
-        myCell = myRow.getCellByIndex(1);
+        myCell = myView.getRowCellByIndex(myRow, 1);
         pRange.setMaxYear(myCell.getIntegerValue());
 
         /* Access the static */

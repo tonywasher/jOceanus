@@ -316,16 +316,16 @@ public class SheetEvent
                     int iAdjust = 0;
 
                     /* Access date */
-                    Date myDate = myRow.getCellByIndex(iAdjust++).getDateValue();
+                    Date myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
 
                     /* Access the values */
-                    String myDesc = myRow.getCellByIndex(iAdjust++).getStringValue();
-                    String myAmount = myRow.getCellByIndex(iAdjust++).getStringValue();
-                    String myDebit = myRow.getCellByIndex(iAdjust++).getStringValue();
-                    String myCredit = myRow.getCellByIndex(iAdjust++).getStringValue();
+                    String myDesc = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                    String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                    String myDebit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                    String myCredit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
                     /* Handle Dilution which may be missing */
-                    DataCell myCell = myRow.getCellByIndex(iAdjust++);
+                    DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     String myDilution = null;
                     if (myCell != null) {
                         myDilution = myCell.getStringValue();
@@ -335,24 +335,24 @@ public class SheetEvent
                     }
 
                     /* Handle Units which may be missing */
-                    myCell = myRow.getCellByIndex(iAdjust++);
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     String myUnitsVal = null;
                     if (myCell != null) {
                         myUnitsVal = myCell.getStringValue();
                     }
 
                     /* Handle transaction type */
-                    String myTranType = myRow.getCellByIndex(iAdjust++).getStringValue();
+                    String myTranType = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
                     /* Handle Tax Credit which may be missing */
-                    myCell = myRow.getCellByIndex(iAdjust++);
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     String myTaxCredit = null;
                     if (myCell != null) {
                         myTaxCredit = myCell.getStringValue();
                     }
 
                     /* Handle Years which may be missing */
-                    myCell = myRow.getCellByIndex(iAdjust++);
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     Integer myYears = null;
                     if (myCell != null) {
                         myYears = myCell.getIntegerValue();
