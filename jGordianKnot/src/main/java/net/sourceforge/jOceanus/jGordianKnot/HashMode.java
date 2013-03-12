@@ -26,75 +26,13 @@ import java.security.SecureRandom;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 
 /**
  * Hash Mode. Encapsulates PasswordHash options.
  * @author Tony Washer
  */
-public class HashMode extends SecurityMode {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AsymKeyMode.class.getSimpleName(),
-            SecurityMode.FIELD_DEFS);
-
-    /**
-     * Prime digest field.
-     */
-    public static final JDataField FIELD_PRIMETYPE = FIELD_DEFS.declareLocalField("PrimeDigest");
-
-    /**
-     * Alternate digest field.
-     */
-    public static final JDataField FIELD_ALTTYPE = FIELD_DEFS.declareLocalField("AlternateDigest");
-
-    /**
-     * Secret digest field.
-     */
-    public static final JDataField FIELD_SECRETTYPE = FIELD_DEFS.declareLocalField("SecretDigest");
-
-    /**
-     * Cipher digest field.
-     */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherDigest");
-
-    /**
-     * Final iteration field.
-     */
-    public static final JDataField FIELD_ADJUST = FIELD_DEFS.declareLocalField("Adjust");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_PRIMETYPE.equals(pField)) {
-            return thePrimeDigest;
-        }
-        if (FIELD_ALTTYPE.equals(pField)) {
-            return theAlternateDigest;
-        }
-        if (FIELD_SECRETTYPE.equals(pField)) {
-            return theSecretDigest;
-        }
-        if (FIELD_CIPHER.equals(pField)) {
-            return theCipherDigest;
-        }
-        if (FIELD_ADJUST.equals(pField)) {
-            return theAdjust;
-        }
-        return super.getFieldValue(pField);
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
-
+public class HashMode
+        extends SecurityMode {
     /**
      * Number of digests.
      */
@@ -242,7 +180,8 @@ public class HashMode extends SecurityMode {
 
         /* Not allowed unless version is current */
         if (getVersion() != VERSION_CURRENT) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid mode version: " + getVersion());
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid mode version: "
+                                                           + getVersion());
         }
 
         /* Store Key type and digest */

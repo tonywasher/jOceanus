@@ -33,60 +33,12 @@ import javax.crypto.spec.IvParameterSpec;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 
 /**
  * Symmetric Key implementation.
  * @author Tony Washer
  */
-public class SymmetricKey implements JDataContents {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(SymmetricKey.class.getSimpleName());
-
-    /**
-     * KeyType Field ID.
-     */
-    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareLocalField("KeyType");
-
-    /**
-     * KeyLength Field ID.
-     */
-    public static final JDataField FIELD_KEYLEN = FIELD_DEFS.declareLocalField("KeyLength");
-
-    /**
-     * InitVector Length Field ID.
-     */
-    public static final JDataField FIELD_IVLEN = FIELD_DEFS.declareLocalField("IVLength");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_KEYTYPE.equals(pField)) {
-            return theKeyType;
-        }
-        if (FIELD_KEYLEN.equals(pField)) {
-            return theKeyLen;
-        }
-        if (FIELD_IVLEN.equals(pField)) {
-            return IVSIZE;
-        }
-        return JDataFieldValue.UnknownField;
-    }
-
-    @Override
-    public String formatObject() {
-        return "SymmetricKey(" + theKeyType + ")";
-    }
-
+public class SymmetricKey {
     /**
      * Encrypted ID Key Size.
      */
@@ -162,7 +114,9 @@ public class SymmetricKey implements JDataContents {
      * @return key length
      */
     protected static int getKeyLen(final boolean useRestricted) {
-        return useRestricted ? SMALL_KEYLEN : BIG_KEYLEN;
+        return useRestricted
+                ? SMALL_KEYLEN
+                : BIG_KEYLEN;
     }
 
     /**
@@ -172,7 +126,8 @@ public class SymmetricKey implements JDataContents {
      */
     public static int getEncryptionLength(final int pDataLength) {
         int iBlocks = 1 + ((pDataLength - 1) % IVSIZE);
-        return iBlocks * IVSIZE;
+        return iBlocks
+               * IVSIZE;
     }
 
     /**
@@ -216,7 +171,8 @@ public class SymmetricKey implements JDataContents {
     @Override
     public int hashCode() {
         /* Calculate and return the hashCode for this symmetric key */
-        int hashCode = SecurityGenerator.HASH_PRIME * Arrays.hashCode(theEncodedKeyDef);
+        int hashCode = SecurityGenerator.HASH_PRIME
+                       * Arrays.hashCode(theEncodedKeyDef);
         hashCode += theKeyType.hashCode();
         return hashCode;
     }

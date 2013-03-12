@@ -26,59 +26,13 @@ import java.security.SecureRandom;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 
 /**
  * Encryption Mode. Encapsulates Encryption options.
  * @author Tony Washer
  */
-public class EncryptionMode extends NybbleArray {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EncryptionMode.class.getSimpleName(),
-            NybbleArray.FIELD_DEFS);
-
-    /**
-     * Local Report fields.
-     */
-    private final JDataFields theLocalFields;
-
-    /**
-     * Allocate local fields.
-     * @return the local fields
-     */
-    private static JDataFields declareFields() {
-        return new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
-    }
-
-    /**
-     * Field IDs.
-     */
-    public static final String FIELD_SYMKEY = "SymKey";
-
-    @Override
-    public JDataFields getDataFields() {
-        return theLocalFields;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        /* If the field is a symKey, handle specially */
-        if ((pField.getAnchor() == theLocalFields) && (pField.getName().startsWith(FIELD_SYMKEY))) {
-            /* Return the relevant SymKeyType */
-            String myId = pField.getName().substring(FIELD_SYMKEY.length());
-            return theKeyTypes[Integer.parseInt(myId) - 1];
-        }
-        return super.getFieldValue(pField);
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
-
+public class EncryptionMode
+        extends NybbleArray {
     /**
      * The # types location (in nybbles).
      */
@@ -110,9 +64,6 @@ public class EncryptionMode extends NybbleArray {
      */
     protected EncryptionMode(final int pNumEncrypts,
                              final SecureRandom pRandom) throws JDataException {
-        /* Declare local fields */
-        theLocalFields = declareFields();
-
         /* Access a random set of Key/DigestTypes */
         theKeyTypes = SymKeyType.getRandomTypes(pNumEncrypts, pRandom);
 
@@ -126,9 +77,6 @@ public class EncryptionMode extends NybbleArray {
      * @throws JDataException on error
      */
     protected EncryptionMode(final byte[] pEncoded) throws JDataException {
-        /* Declare local fields */
-        theLocalFields = declareFields();
-
         /* Set the initial encoded version */
         setEncoded(pEncoded);
 
@@ -136,7 +84,7 @@ public class EncryptionMode extends NybbleArray {
         int iNumEncrypts = getValue(PLACE_NUMTYPES);
         if (iNumEncrypts > SymKeyType.values().length) {
             throw new JDataException(ExceptionClass.DATA, "Invalid number of encryption steps: "
-                    + iNumEncrypts);
+                                                          + iNumEncrypts);
         }
 
         /* Allocate the array */
@@ -145,7 +93,8 @@ public class EncryptionMode extends NybbleArray {
         /* Loop through the key types */
         for (int i = 0; i < iNumEncrypts; i++) {
             /* Pick up the key type */
-            theKeyTypes[i] = SymKeyType.fromId(getValue(PLACE_SYMKEY + i));
+            theKeyTypes[i] = SymKeyType.fromId(getValue(PLACE_SYMKEY
+                                                        + i));
         }
 
         /* Re-encode the key mode */
@@ -159,7 +108,9 @@ public class EncryptionMode extends NybbleArray {
         int iNumEncrypts = theKeyTypes.length;
 
         /* Allocate the encoded array */
-        allocateEncoded(PLACE_SYMKEY + iNumEncrypts - 1);
+        allocateEncoded(PLACE_SYMKEY
+                        + iNumEncrypts
+                        - 1);
 
         /* Set the number of keys */
         setValue(PLACE_NUMTYPES, iNumEncrypts);
@@ -167,10 +118,8 @@ public class EncryptionMode extends NybbleArray {
         /* Loop through the key types */
         for (int i = 0; i < iNumEncrypts; i++) {
             /* Set the key type */
-            setValue(PLACE_SYMKEY + i, theKeyTypes[i].getId());
-
-            /* Declare the field */
-            theLocalFields.declareLocalField(FIELD_SYMKEY + (i + 1));
+            setValue(PLACE_SYMKEY
+                     + i, theKeyTypes[i].getId());
         }
     }
 }

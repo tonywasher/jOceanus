@@ -36,6 +36,11 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
+import net.sourceforge.jOceanus.jDecimal.JDilution;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JPrice;
+import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
 
 /**
  * Generic Data object formatter.
@@ -159,7 +164,9 @@ public class JDataFormatter {
             return (String) pValue;
         }
         if (myClass == Boolean.class) {
-            return (((Boolean) pValue)) ? "true" : "false";
+            return (((Boolean) pValue))
+                    ? "true"
+                    : "false";
         }
         if (myClass == Short.class) {
             return ((Short) pValue).toString();
@@ -227,5 +234,73 @@ public class JDataFormatter {
 
         /* Standard format option */
         return pValue.getClass().getCanonicalName();
+    }
+
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pClass the value type class
+     * @return the formatted value
+     */
+    public <T> T parseValue(final String pSource,
+                            final Class<T> pClass) {
+        if (pClass == Boolean.class) {
+            return pClass.cast(Boolean.parseBoolean(pSource));
+        }
+        if (pClass == Short.class) {
+            return pClass.cast(Short.parseShort(pSource));
+        }
+        if (pClass == Integer.class) {
+            return pClass.cast(Integer.parseInt(pSource));
+        }
+        if (pClass == Long.class) {
+            return pClass.cast(Long.parseLong(pSource));
+        }
+        if (pClass == Float.class) {
+            return pClass.cast(Float.parseFloat(pSource));
+        }
+        if (pClass == Double.class) {
+            return pClass.cast(Double.parseDouble(pSource));
+        }
+        if (pClass == BigInteger.class) {
+            return pClass.cast(new BigInteger(pSource));
+        }
+        if (pClass == BigDecimal.class) {
+            return pClass.cast(new BigDecimal(pSource));
+        }
+        if (pClass == Date.class) {
+            /* Parse the date */
+            return pClass.cast(theDateFormatter.parseDate(pSource));
+        }
+        if (pClass == JDateDay.class) {
+            /* Parse the date */
+            return pClass.cast(theDateFormatter.parseDateDay(pSource));
+        }
+        if (pClass == Calendar.class) {
+            /* Parse the date */
+            return pClass.cast(theDateFormatter.parseCalendarDay(pSource));
+        }
+        if (pClass == JPrice.class) {
+            /* Parse the price */
+            return pClass.cast(theDecimalParser.parsePriceValue(pSource));
+        }
+        if (pClass == JMoney.class) {
+            /* Parse the money */
+            return pClass.cast(theDecimalParser.parseMoneyValue(pSource));
+        }
+        if (pClass == JRate.class) {
+            /* Parse the rate */
+            return pClass.cast(theDecimalParser.parseRateValue(pSource));
+        }
+        if (pClass == JUnits.class) {
+            /* Parse the units */
+            return pClass.cast(theDecimalParser.parseUnitsValue(pSource));
+        }
+        if (pClass == JDilution.class) {
+            /* Parse the dilution */
+            return pClass.cast(theDecimalParser.parseDilutionValue(pSource));
+        }
+        return null;
     }
 }

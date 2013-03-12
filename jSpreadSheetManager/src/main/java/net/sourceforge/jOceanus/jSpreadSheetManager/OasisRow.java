@@ -22,15 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import java.util.Date;
-
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JDilution;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
 
 import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
@@ -183,17 +175,7 @@ public class OasisRow
      */
     protected String formatValue(final Object pValue) {
         JDataFormatter myFormatter = theRowMap.getFormatter();
-        if (pValue instanceof JDecimal) {
-            /* Format the decimal */
-            JDecimal myDecimal = (JDecimal) pValue;
-            return myFormatter.getDecimalFormatter().formatDecimal(myDecimal);
-        }
-        if (pValue instanceof Date) {
-            /* Format the date */
-            Date myDate = (Date) pValue;
-            return myFormatter.getDateFormatter().formatDate(myDate);
-        }
-        return null;
+        return myFormatter.formatObject(pValue);
     }
 
     /**
@@ -206,30 +188,6 @@ public class OasisRow
     protected <T> T parseValue(final String pSource,
                                final Class<T> pClass) {
         JDataFormatter myFormatter = theRowMap.getFormatter();
-        if (pClass == Date.class) {
-            /* Parse the date */
-            return pClass.cast(myFormatter.getDateFormatter().parseDate(pSource));
-        }
-        if (pClass == JPrice.class) {
-            /* Parse the price */
-            return pClass.cast(myFormatter.getDecimalParser().parsePriceValue(pSource));
-        }
-        if (pClass == JMoney.class) {
-            /* Parse the money */
-            return pClass.cast(myFormatter.getDecimalParser().parseMoneyValue(pSource));
-        }
-        if (pClass == JRate.class) {
-            /* Parse the rate */
-            return pClass.cast(myFormatter.getDecimalParser().parseRateValue(pSource));
-        }
-        if (pClass == JUnits.class) {
-            /* Parse the units */
-            return pClass.cast(myFormatter.getDecimalParser().parseUnitsValue(pSource));
-        }
-        if (pClass == JDilution.class) {
-            /* Parse the dilution */
-            return pClass.cast(myFormatter.getDecimalParser().parseDilutionValue(pSource));
-        }
-        return null;
+        return myFormatter.parseValue(pSource, pClass);
     }
 }

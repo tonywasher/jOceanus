@@ -32,69 +32,13 @@ import javax.crypto.Mac;
 import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.HashModeNeedle;
 
 /**
  * Password Hash implementation.
  * @author Tony Washer
  */
-public class PasswordHash implements JDataContents {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(PasswordHash.class.getSimpleName());
-
-    /**
-     * Field ID for mode.
-     */
-    public static final JDataField FIELD_MODE = FIELD_DEFS.declareLocalField("Mode");
-
-    /**
-     * Field ID for hash.
-     */
-    public static final JDataField FIELD_HASH = FIELD_DEFS.declareLocalField("Hash");
-
-    /**
-     * Field ID for cipher set.
-     */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherSet");
-
-    /**
-     * Field ID for symKey map.
-     */
-    public static final JDataField FIELD_SYMKEYMAP = FIELD_DEFS.declareLocalField("SymKeyMap");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_MODE.equals(pField)) {
-            return theHashMode;
-        }
-        if (FIELD_HASH.equals(pField)) {
-            return Arrays.copyOf(theHashBytes, theHashBytes.length);
-        }
-        if (FIELD_CIPHER.equals(pField)) {
-            return theCipherSet;
-        }
-        if (FIELD_SYMKEYMAP.equals(pField)) {
-            return theSymKeyMap;
-        }
-        return JDataFieldValue.UnknownField;
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
-
+public class PasswordHash {
     /**
      * Salt length for passwords.
      */
@@ -398,7 +342,8 @@ public class PasswordHash implements JDataContents {
             /* Obtain configuration details */
             byte[] mySeed = theGenerator.getSecurityBytes();
             int iIterations = theGenerator.getNumHashIterations();
-            int iFinal = theHashMode.getAdjustment() + iIterations;
+            int iFinal = theHashMode.getAdjustment()
+                         + iIterations;
 
             /* Convert password to bytes */
             myPassBytes = DataConverter.charsToByteArray(pPassword);
@@ -477,7 +422,7 @@ public class PasswordHash implements JDataContents {
             /* Check whether the HashBytes is too large */
             if (myHashBytes.length > HASHSIZE) {
                 throw new JDataException(ExceptionClass.DATA, "Password Hash too large: "
-                        + myHashBytes.length);
+                                                              + myHashBytes.length);
             }
 
             /* Return to caller */

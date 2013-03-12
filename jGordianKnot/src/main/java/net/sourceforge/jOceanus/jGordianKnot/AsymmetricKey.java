@@ -42,63 +42,14 @@ import javax.crypto.ShortBufferException;
 import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.AsymModeNeedle;
 import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.SymKeyNeedle;
 
 /**
- * Asymmetric Key class. Note that the RSA asymmetric key cannot be used for bulk encryption due to
- * limitations in the RSA implementation. The Asymmetric Keys should only be used for Signatures and Wrapping
- * keys.
+ * Asymmetric Key class. Note that the RSA asymmetric key cannot be used for bulk encryption due to limitations in the RSA implementation. The Asymmetric Keys
+ * should only be used for Signatures and Wrapping keys.
  */
-public class AsymmetricKey implements JDataContents {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AsymmetricKey.class.getSimpleName());
-
-    /**
-     * Field ID for Key Mode.
-     */
-    public static final JDataField FIELD_KEYMODE = FIELD_DEFS.declareLocalField("KeyMode");
-
-    /**
-     * Field ID for Cipher Map.
-     */
-    public static final JDataField FIELD_CIPHERMAP = FIELD_DEFS.declareLocalField("CipherMap");
-
-    /**
-     * Field ID for Symmetric Key Map.
-     */
-    public static final JDataField FIELD_SYMKEYMAP = FIELD_DEFS.declareLocalField("SymKeyMap");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_KEYMODE.equals(pField)) {
-            return theKeyMode;
-        }
-        if (FIELD_CIPHERMAP.equals(pField)) {
-            return theCipherMap;
-        }
-        if (FIELD_SYMKEYMAP.equals(pField)) {
-            return theSymKeyMap;
-        }
-        return JDataFieldValue.UnknownField;
-    }
-
-    @Override
-    public String formatObject() {
-        return "AsymmetricKey(" + theKeyType + ")";
-    }
-
+public class AsymmetricKey {
     /**
      * Encoded Size for Public Keys.
      */
@@ -248,7 +199,8 @@ public class AsymmetricKey implements JDataContents {
 
         /* Check whether the PublicKey is too large */
         if (theExternalKeyDef.length > PUBLICSIZE) {
-            throw new JDataException(ExceptionClass.DATA, "PublicKey too large: " + theExternalKeyDef.length);
+            throw new JDataException(ExceptionClass.DATA, "PublicKey too large: "
+                                                          + theExternalKeyDef.length);
         }
     }
 
@@ -376,9 +328,9 @@ public class AsymmetricKey implements JDataContents {
      */
     public CipherSet getCipherSet(final AsymmetricKey pPartner) throws JDataException {
         /* Both keys must be elliptic */
-        if ((!theKeyType.isElliptic()) || (pPartner.getKeyType() != theKeyType)) {
-            throw new JDataException(ExceptionClass.LOGIC,
-                    "Shared Keys require both partners to be similar Elliptic");
+        if ((!theKeyType.isElliptic())
+            || (pPartner.getKeyType() != theKeyType)) {
+            throw new JDataException(ExceptionClass.LOGIC, "Shared Keys require both partners to be similar Elliptic");
         }
 
         /* Look for an already resolved CipherSet */
@@ -458,8 +410,7 @@ public class AsymmetricKey implements JDataContents {
 
                 /* unwrap the key */
                 SymKeyType myType = myNeedle.getSymKeyType();
-                SecretKey myKey = (SecretKey) myCipher.unwrap(myNeedle.getEncodedKey(),
-                                                              myType.getAlgorithm(), Cipher.SECRET_KEY);
+                SecretKey myKey = (SecretKey) myCipher.unwrap(myNeedle.getEncodedKey(), myType.getAlgorithm(), Cipher.SECRET_KEY);
 
                 /* Build the symmetric key */
                 mySymKey = new SymmetricKey(theGenerator, myKey, myType);
@@ -539,9 +490,9 @@ public class AsymmetricKey implements JDataContents {
      */
     private synchronized byte[] getSharedSecret(final AsymmetricKey pPartner) throws JDataException {
         /* Both keys must be elliptic */
-        if ((!theKeyType.isElliptic()) || (!theKeyMode.equals(pPartner.getKeyMode()))) {
-            throw new JDataException(ExceptionClass.LOGIC,
-                    "Shared Keys require both partners to be similar Elliptic");
+        if ((!theKeyType.isElliptic())
+            || (!theKeyMode.equals(pPartner.getKeyMode()))) {
+            throw new JDataException(ExceptionClass.LOGIC, "Shared Keys require both partners to be similar Elliptic");
         }
 
         /* Cannot generate unless we have the private key */
@@ -578,7 +529,8 @@ public class AsymmetricKey implements JDataContents {
      */
     public Signature getSignature(final boolean bSign) throws JDataException {
         /* Cannot sign unless we have the private key */
-        if ((bSign) && (isPublicOnly())) {
+        if ((bSign)
+            && (isPublicOnly())) {
             throw new JDataException(ExceptionClass.LOGIC, "Cannot sign without private key");
         }
 
@@ -612,8 +564,7 @@ public class AsymmetricKey implements JDataContents {
                                 final AsymmetricKey pTarget) throws JDataException {
         /* Target must be identical key type */
         if (!theKeyMode.equals(pTarget.getKeyMode())) {
-            throw new JDataException(ExceptionClass.LOGIC,
-                    "Asymmetric Encryption must be between similar partners");
+            throw new JDataException(ExceptionClass.LOGIC, "Asymmetric Encryption must be between similar partners");
         }
 
         /* If we are elliptic */
@@ -658,7 +609,8 @@ public class AsymmetricKey implements JDataContents {
             int iNumBlocks = 1 + ((iDataLen - 1) / iBlockSize);
 
             /* Allocate the output buffer */
-            byte[] myOutput = new byte[iNumBlocks * iOutSize];
+            byte[] myOutput = new byte[iNumBlocks
+                                       * iOutSize];
 
             /* Initialise offsets */
             int iOffset = 0;
@@ -718,8 +670,7 @@ public class AsymmetricKey implements JDataContents {
 
         /* Source must be identical key type */
         if (!theKeyMode.equals(pSource.getKeyMode())) {
-            throw new JDataException(ExceptionClass.LOGIC,
-                    "Asymmetric Encryption must be between similar partners");
+            throw new JDataException(ExceptionClass.LOGIC, "Asymmetric Encryption must be between similar partners");
         }
 
         /* If we are elliptic */
@@ -758,7 +709,8 @@ public class AsymmetricKey implements JDataContents {
             int iNumBlocks = 1 + ((iDataLen - 1) / iBlockSize);
 
             /* Allocate the output buffer */
-            byte[] myOutput = new byte[iNumBlocks * iOutSize];
+            byte[] myOutput = new byte[iNumBlocks
+                                       * iOutSize];
 
             /* Initialise offsets */
             int iOffset = 0;

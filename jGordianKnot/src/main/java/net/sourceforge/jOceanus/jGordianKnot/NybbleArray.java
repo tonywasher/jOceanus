@@ -25,44 +25,12 @@ package net.sourceforge.jOceanus.jGordianKnot;
 import java.util.Arrays;
 
 import net.sourceforge.jOceanus.jDataManager.DataConverter;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 
 /**
  * An array of bytes treated as an array of nybbles (i.e. two entries per byte).
  * @author Tony Washer
  */
-public class NybbleArray implements JDataContents {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(NybbleArray.class.getSimpleName());
-
-    /**
-     * Encoded array Field ID.
-     */
-    public static final JDataField FIELD_ENCODED = FIELD_DEFS.declareEqualityField("Encoded");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_ENCODED.equals(pField)) {
-            return Arrays.copyOf(theEncoded, theEncoded.length);
-        }
-        return JDataFieldValue.UnknownField;
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
-
+public class NybbleArray {
     /**
      * The mask shift.
      */
@@ -124,7 +92,9 @@ public class NybbleArray implements JDataContents {
         boolean bHigh = ((iPos % 2) == 0);
 
         /* Return the relevant nybble */
-        return (short) ((bHigh) ? ((myByte >> MASK_SHIFT) & MASK_LOW) : (myByte & MASK_LOW));
+        return (short) ((bHigh)
+                ? ((myByte >> MASK_SHIFT) & MASK_LOW)
+                : (myByte & MASK_LOW));
     }
 
     /**
@@ -143,8 +113,10 @@ public class NybbleArray implements JDataContents {
         }
 
         /* Ensure that it is within range */
-        if ((pValue > MASK_LOW) || (pValue < 0)) {
-            throw new IllegalArgumentException("Invalid value - " + pValue);
+        if ((pValue > MASK_LOW)
+            || (pValue < 0)) {
+            throw new IllegalArgumentException("Invalid value - "
+                                               + pValue);
         }
 
         /* Obtain the relevant byte from the array */

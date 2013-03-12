@@ -35,44 +35,12 @@ import javax.crypto.spec.IvParameterSpec;
 import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 
 /**
  * Wrapper class for Cipher used to encryption data objects.
  * @author Tony Washer
  */
-public class DataCipher implements JDataContents {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataCipher.class.getSimpleName());
-
-    /**
-     * Symmetric Key Field ID.
-     */
-    public static final JDataField FIELD_SYMKEY = FIELD_DEFS.declareLocalField("SymmetricKey");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_SYMKEY.equals(pField)) {
-            return theSymKey;
-        }
-        return JDataFieldValue.UnknownField;
-    }
-
-    @Override
-    public String formatObject() {
-        return "DataCipher(" + getSymKeyType() + ")";
-    }
-
+public class DataCipher {
     /**
      * The cipher.
      */

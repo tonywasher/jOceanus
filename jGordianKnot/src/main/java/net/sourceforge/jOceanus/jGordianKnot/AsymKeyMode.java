@@ -26,51 +26,13 @@ import java.security.SecureRandom;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 
 /**
  * Asymmetric Key Mode. Encapsulates Asymmetric Key options
  * @author Tony Washer
  */
-public class AsymKeyMode extends SecurityMode {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AsymKeyMode.class.getSimpleName(),
-            SecurityMode.FIELD_DEFS);
-
-    /**
-     * Field ID for Cipher Digest.
-     */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherDigest");
-
-    /**
-     * Field ID for Asymmetric KeyType.
-     */
-    public static final JDataField FIELD_ASYMTYPE = FIELD_DEFS.declareLocalField("AsymType");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_CIPHER.equals(pField)) {
-            return theCipherDigest;
-        }
-        if (FIELD_ASYMTYPE.equals(pField)) {
-            return theAsymKeyType;
-        }
-        return super.getFieldValue(pField);
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
-
+public class AsymKeyMode
+        extends SecurityMode {
     /**
      * The locations of the ASYMTYPE (in nybbles).
      */
@@ -153,7 +115,8 @@ public class AsymKeyMode extends SecurityMode {
         setVersion(VERSION_CURRENT);
 
         /* Use restricted if local or source requires it */
-        setRestricted(useRestricted || pSource.useRestricted());
+        setRestricted(useRestricted
+                      || pSource.useRestricted());
 
         /* encode the keyMode */
         encodeKeyMode();
@@ -170,7 +133,8 @@ public class AsymKeyMode extends SecurityMode {
 
         /* Not allowed unless version is current */
         if (getVersion() != VERSION_CURRENT) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid mode version: " + getVersion());
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid mode version: "
+                                                           + getVersion());
         }
 
         /* Store Key type and digest */

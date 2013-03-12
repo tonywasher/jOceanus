@@ -22,51 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jGordianKnot;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 
 /**
  * Security mode base class.
  * @author Tony Washer
  */
-public abstract class SecurityMode extends NybbleArray {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(SecurityMode.class.getSimpleName(),
-            NybbleArray.FIELD_DEFS);
-
-    /**
-     * Version Field ID.
-     */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField("Version");
-
-    /**
-     * Restricted Field ID.
-     */
-    public static final JDataField FIELD_RESTRICT = FIELD_DEFS.declareLocalField("Restricted");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_VERSION.equals(pField)) {
-            return theVersion;
-        }
-        if (FIELD_RESTRICT.equals(pField)) {
-            return useRestricted;
-        }
-        return super.getFieldValue(pField);
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
-
+public abstract class SecurityMode
+        extends NybbleArray {
     /**
      * The Version location (in units of 4-bit shifts).
      */
@@ -142,7 +104,9 @@ public abstract class SecurityMode extends NybbleArray {
      */
     private void encodeHeader() {
         /* Build flags value */
-        theFlags = (useRestricted ? FLAG_RESTRICT : 0);
+        theFlags = (useRestricted
+                ? FLAG_RESTRICT
+                : 0);
     }
 
     @Override
@@ -165,7 +129,8 @@ public abstract class SecurityMode extends NybbleArray {
         theDataOffset = PLACE_FLAGS + 1;
 
         /* Allocate the encoded array */
-        super.allocateEncoded(iMaxPos + theDataOffset);
+        super.allocateEncoded(iMaxPos
+                              + theDataOffset);
 
         /* Encode the header */
         encodeHeader();
@@ -182,7 +147,8 @@ public abstract class SecurityMode extends NybbleArray {
      */
     protected short getDataValue(final int iPos) {
         /* Adjust for data offset */
-        return getValue(iPos + theDataOffset);
+        return getValue(iPos
+                        + theDataOffset);
     }
 
     /**
@@ -193,6 +159,7 @@ public abstract class SecurityMode extends NybbleArray {
     protected void setDataValue(final int iPos,
                                 final int pValue) {
         /* Adjust for data offset */
-        setValue(iPos + theDataOffset, pValue);
+        setValue(iPos
+                 + theDataOffset, pValue);
     }
 }

@@ -35,10 +35,6 @@ import javax.crypto.spec.SecretKeySpec;
 import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.EncryptModeNeedle;
 import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.SymKeyNeedle;
 
@@ -46,43 +42,7 @@ import net.sourceforge.jOceanus.jGordianKnot.DataHayStack.SymKeyNeedle;
  * Set of DataCiphers used for encryption.
  * @author Tony Washer
  */
-public class CipherSet implements JDataContents {
-    /**
-     * Report fields.
-     */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(CipherSet.class.getSimpleName());
-
-    /**
-     * Field IDs for number of steps.
-     */
-    public static final JDataField FIELD_STEPS = FIELD_DEFS.declareLocalField("NumSteps");
-
-    /**
-     * Field IDs for data key map.
-     */
-    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField("DataKeyMap");
-
-    @Override
-    public JDataFields getDataFields() {
-        return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_STEPS.equals(pField)) {
-            return theNumSteps;
-        }
-        if (FIELD_MAP.equals(pField)) {
-            return theMap;
-        }
-        return JDataFieldValue.UnknownField;
-    }
-
-    @Override
-    public String formatObject() {
-        return FIELD_DEFS.getName();
-    }
-
+public class CipherSet {
     /**
      * Maximum number of encryption steps.
      */
@@ -197,7 +157,8 @@ public class CipherSet implements JDataContents {
 
     @Override
     public int hashCode() {
-        int myHash = SecurityGenerator.HASH_PRIME * theNumSteps;
+        int myHash = SecurityGenerator.HASH_PRIME
+                     * theNumSteps;
         myHash += theMap.hashCode();
         return myHash;
     }
@@ -233,7 +194,8 @@ public class CipherSet implements JDataContents {
     private void buildCipher(final SymKeyType pKeyType,
                              final byte[] pSecret) throws JDataException {
         /* Determine the key length in bytes */
-        int myKeyLen = SymmetricKey.getKeyLen(useRestricted) / Byte.SIZE;
+        int myKeyLen = SymmetricKey.getKeyLen(useRestricted)
+                       / Byte.SIZE;
 
         /* Create a buffer to hold the resulting key and # of bytes built */
         byte[] myKeyBytes = new byte[myKeyLen];
@@ -249,7 +211,8 @@ public class CipherSet implements JDataContents {
             byte[] mySection = buildCipherSection(myMac, myCount.iterate(), pKeyType);
 
             /* Determine how many bytes of this hash should be used */
-            int myNeeded = myKeyLen - myBuilt;
+            int myNeeded = myKeyLen
+                           - myBuilt;
             if (myNeeded > mySection.length) {
                 myNeeded = mySection.length;
             }
@@ -409,7 +372,8 @@ public class CipherSet implements JDataContents {
                                            final byte[] pVector) {
         /* Determine index into array for Key Type */
         byte[] myNew = new byte[pVector.length];
-        int myIndex = VECTOR_SHIFT * pKeyType.getId();
+        int myIndex = VECTOR_SHIFT
+                      * pKeyType.getId();
         myIndex %= pVector.length;
 
         /* Access current vector */
@@ -418,8 +382,10 @@ public class CipherSet implements JDataContents {
         /* If we need to shift the array */
         if (myIndex > 0) {
             /* Access shifted array */
-            System.arraycopy(myVector, myIndex, myNew, 0, myVector.length - myIndex);
-            System.arraycopy(myVector, 0, myNew, myVector.length - myIndex, myIndex);
+            System.arraycopy(myVector, myIndex, myNew, 0, myVector.length
+                                                          - myIndex);
+            System.arraycopy(myVector, 0, myNew, myVector.length
+                                                 - myIndex, myIndex);
             myVector = myNew;
         }
 
@@ -563,7 +529,8 @@ public class CipherSet implements JDataContents {
 
         /* Check whether the SecuredKey is too large */
         if (myEncrypted.length > AsymmetricKey.PRIVATESIZE) {
-            throw new JDataException(ExceptionClass.DATA, "PrivateKey too large: " + myEncrypted.length);
+            throw new JDataException(ExceptionClass.DATA, "PrivateKey too large: "
+                                                          + myEncrypted.length);
         }
 
         /* Return the wrapped key */
@@ -580,7 +547,9 @@ public class CipherSet implements JDataContents {
     public AsymmetricKey deriveAsymmetricKey(final byte[] pEncrypted,
                                              final byte[] pPublicKey) throws JDataException {
         /* Decrypt the encoded bytes */
-        byte[] myEncoded = (pEncrypted == null) ? null : decryptBytes(pEncrypted);
+        byte[] myEncoded = (pEncrypted == null)
+                ? null
+                : decryptBytes(pEncrypted);
 
         /* Create the Asymmetric Key */
         AsymmetricKey myKey = new AsymmetricKey(theGenerator, myEncoded, pPublicKey);
