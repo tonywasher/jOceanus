@@ -40,15 +40,16 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
  * Account selection panel.
  * @author Tony Washer
  */
-public class AccountSelect extends JEventPanel {
+public class AccountSelect
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -107,7 +108,7 @@ public class AccountSelect extends JEventPanel {
     /**
      * Account types comboBox.
      */
-    private final JComboBox<AccountType> theTypesBox;
+    private final JComboBox<AccountCategoryType> theTypesBox;
 
     /**
      * Accounts comboBox.
@@ -156,7 +157,7 @@ public class AccountSelect extends JEventPanel {
      * Get the account type.
      * @return the account type
      */
-    public final AccountType getType() {
+    public final AccountCategoryType getType() {
         return theState.getType();
     }
 
@@ -189,7 +190,7 @@ public class AccountSelect extends JEventPanel {
         theView = pView;
 
         /* Create the boxes */
-        theTypesBox = new JComboBox<AccountType>();
+        theTypesBox = new JComboBox<AccountCategoryType>();
         theAccountBox = new JComboBox<Account>();
         theShowClosed = new JCheckBox();
         theShowDeleted = new JCheckBox();
@@ -282,8 +283,8 @@ public class AccountSelect extends JEventPanel {
      */
     private void buildAccountTypes() {
         FinanceData myData;
-        AccountType myType = null;
-        AccountType myFirst = null;
+        AccountCategoryType myType = null;
+        AccountCategoryType myFirst = null;
         boolean doShowDeleted;
         boolean doShowClosed;
 
@@ -291,7 +292,7 @@ public class AccountSelect extends JEventPanel {
         myData = theView.getData();
 
         /* Access types and accounts */
-        AccountTypeList myTypes = myData.getAccountTypes();
+        AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
         theAccounts = myData.getAccounts();
 
         /* Access current values */
@@ -325,12 +326,14 @@ public class AccountSelect extends JEventPanel {
             }
 
             /* Skip deleted items */
-            if ((!doShowDeleted) && (myAccount.isDeleted())) {
+            if ((!doShowDeleted)
+                && (myAccount.isDeleted())) {
                 continue;
             }
 
             /* Skip closed items if required */
-            if ((!doShowClosed) && (myAccount.isClosed())) {
+            if ((!doShowClosed)
+                && (myAccount.isClosed())) {
                 continue;
             }
 
@@ -359,12 +362,14 @@ public class AccountSelect extends JEventPanel {
             }
 
             /* Skip deleted items */
-            if ((!doShowDeleted) && (myAccount.isDeleted())) {
+            if ((!doShowDeleted)
+                && (myAccount.isDeleted())) {
                 continue;
             }
 
             /* Skip closed items if required */
-            if ((!doShowClosed) && (myAccount.isClosed())) {
+            if ((!doShowClosed)
+                && (myAccount.isClosed())) {
                 continue;
             }
 
@@ -405,7 +410,7 @@ public class AccountSelect extends JEventPanel {
         /* Access current values */
         boolean doShowDeleted = doShowDeleted();
         boolean doShowClosed = doShowClosed();
-        AccountType myType = getType();
+        AccountCategoryType myType = getType();
         Account mySelected = getSelected();
         Account myOld = mySelected;
 
@@ -448,12 +453,14 @@ public class AccountSelect extends JEventPanel {
         while (myIterator.hasNext()) {
             Account myAcct = myIterator.next();
             /* Skip deleted items */
-            if ((!doShowDeleted) && (myAcct.isDeleted())) {
+            if ((!doShowDeleted)
+                && (myAcct.isDeleted())) {
                 continue;
             }
 
             /* Skip closed items if required */
-            if ((!doShowClosed) && (myAcct.isClosed())) {
+            if ((!doShowClosed)
+                && (myAcct.isClosed())) {
                 continue;
             }
 
@@ -508,14 +515,18 @@ public class AccountSelect extends JEventPanel {
         theTypesBox.setSelectedItem(getType());
 
         /* If we need to show closed items */
-        if ((!doShowClosed()) && (myAccount != null) && (myAccount.isClosed())) {
+        if ((!doShowClosed())
+            && (myAccount != null)
+            && (myAccount.isClosed())) {
             /* Set the flag correctly */
             theState.setDoShowClosed(true);
             theShowClosed.setSelected(true);
         }
 
         /* If we need to show deleted items */
-        if ((!doShowDeleted()) && (myAccount != null) && (myAccount.isDeleted())) {
+        if ((!doShowDeleted())
+            && (myAccount != null)
+            && (myAccount.isDeleted())) {
             /* Set the flag correctly */
             theState.setDoShowDeleted(true);
             theShowDeleted.setSelected(true);
@@ -543,19 +554,22 @@ public class AccountSelect extends JEventPanel {
         boolean bLock = ((mySelected != null) && (mySelected.isClosed()));
 
         /* Lock Show Closed */
-        theShowClosed.setEnabled(bEnable && !bLock);
+        theShowClosed.setEnabled(bEnable
+                                 && !bLock);
 
         /* Can't switch off show deleted if account is deleted */
         bLock = ((mySelected != null) && (mySelected.isDeleted()));
 
         /* Lock Show Deleted */
-        theShowDeleted.setEnabled(bEnable && !bLock);
+        theShowDeleted.setEnabled(bEnable
+                                  && !bLock);
     }
 
     /**
      * Account Listener class.
      */
-    private final class AccountListener implements ItemListener {
+    private final class AccountListener
+            implements ItemListener {
         @Override
         public void itemStateChanged(final ItemEvent evt) {
             Object o = evt.getSource();
@@ -566,9 +580,10 @@ public class AccountSelect extends JEventPanel {
             }
 
             /* If this event relates to the types box */
-            if ((theTypesBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            if ((theTypesBox.equals(o))
+                && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Select the new type and rebuild account list */
-                AccountType myType = (AccountType) evt.getItem();
+                AccountCategoryType myType = (AccountCategoryType) evt.getItem();
                 if (theState.setType(myType)) {
                     /* Rebuild accounts */
                     buildAccounts();
@@ -576,7 +591,8 @@ public class AccountSelect extends JEventPanel {
                 }
 
                 /* If this event relates to the account box */
-            } else if ((theAccountBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            } else if ((theAccountBox.equals(o))
+                       && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Select the new account */
                 Account myAcct = (Account) evt.getItem();
                 if (theState.setSelected(myAcct)) {
@@ -584,13 +600,15 @@ public class AccountSelect extends JEventPanel {
                 }
 
                 /* If this event relates to the showClosed box */
-            } else if ((theShowClosed.equals(o)) && (theState.setDoShowClosed(theShowClosed.isSelected()))) {
+            } else if ((theShowClosed.equals(o))
+                       && (theState.setDoShowClosed(theShowClosed.isSelected()))) {
                 /* Build lists */
                 buildAccountTypes();
                 buildAccounts();
 
                 /* If this event relates to the showDeleted box */
-            } else if ((theShowDeleted.equals(o)) && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
+            } else if ((theShowDeleted.equals(o))
+                       && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
                 /* Build lists */
                 buildAccountTypes();
                 buildAccounts();
@@ -605,7 +623,7 @@ public class AccountSelect extends JEventPanel {
         /**
          * Account type.
          */
-        private AccountType theType = null;
+        private AccountCategoryType theType = null;
 
         /**
          * Selected account.
@@ -626,7 +644,7 @@ public class AccountSelect extends JEventPanel {
          * Get the account type.
          * @return the account type
          */
-        private AccountType getType() {
+        private AccountCategoryType getType() {
             return theType;
         }
 
@@ -674,7 +692,7 @@ public class AccountSelect extends JEventPanel {
          * @param pType the AccountType
          * @return true/false did a change occur
          */
-        private boolean setType(final AccountType pType) {
+        private boolean setType(final AccountCategoryType pType) {
             if (!Difference.isEqual(pType, theType)) {
                 theType = pType;
                 return true;
@@ -732,8 +750,12 @@ public class AccountSelect extends JEventPanel {
             setEnabled(true);
             theShowClosed.setSelected(doShowClosed);
             theShowDeleted.setSelected(doShowDeleted);
-            theTypesBox.setSelectedItem((theType == null) ? null : theType.getName());
-            theAccountBox.setSelectedItem((theSelected == null) ? null : theSelected.getName());
+            theTypesBox.setSelectedItem((theType == null)
+                    ? null
+                    : theType.getName());
+            theAccountBox.setSelectedItem((theSelected == null)
+                    ? null
+                    : theSelected.getName());
         }
     }
 }

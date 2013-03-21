@@ -37,11 +37,12 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
 
 /**
  * Account DataItem utilising AccountInfo.
@@ -124,6 +125,21 @@ public class Account
      * Alias Field Id.
      */
     public static final JDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
+
+    /**
+     * PortFolio Field Id.
+     */
+    public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField("PortFolio");
+
+    /**
+     * Symbol Field Id.
+     */
+    public static final JDataField FIELD_SYMBOL = FIELD_DEFS.declareLocalField("Symbol");
+
+    /**
+     * OpeningBalance Field Id.
+     */
+    public static final JDataField FIELD_OPENBAL = FIELD_DEFS.declareLocalField("OpeningBalance");
 
     /**
      * WebSite Field Id.
@@ -209,7 +225,9 @@ public class Account
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
-            return hasInfoSet ? theInfoSet : JDataFieldValue.SkipField;
+            return hasInfoSet
+                    ? theInfoSet
+                    : JDataFieldValue.SkipField;
         }
 
         /* Handle InfoSet fields */
@@ -220,34 +238,54 @@ public class Account
 
         /* Handle flags */
         if (FIELD_EVTFIRST.equals(pField)) {
-            return (theEarliest != null) ? theEarliest : JDataFieldValue.SkipField;
+            return (theEarliest != null)
+                    ? theEarliest
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_EVTLAST.equals(pField)) {
-            return (theLatest != null) ? theLatest : JDataFieldValue.SkipField;
+            return (theLatest != null)
+                    ? theLatest
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_INITPRC.equals(pField)) {
-            return (theInitPrice != null) ? theInitPrice : JDataFieldValue.SkipField;
+            return (theInitPrice != null)
+                    ? theInitPrice
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_CLOSEDATE.equals(pField)) {
-            return (theCloseDate != null) ? theCloseDate : JDataFieldValue.SkipField;
+            return (theCloseDate != null)
+                    ? theCloseDate
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_HASDEBTS.equals(pField)) {
-            return hasDebts ? hasDebts : JDataFieldValue.SkipField;
+            return hasDebts
+                    ? hasDebts
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_HASRATES.equals(pField)) {
-            return hasRates ? hasRates : JDataFieldValue.SkipField;
+            return hasRates
+                    ? hasRates
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_HASPRICE.equals(pField)) {
-            return hasPrices ? hasPrices : JDataFieldValue.SkipField;
+            return hasPrices
+                    ? hasPrices
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_HASPATT.equals(pField)) {
-            return hasPatterns ? hasPatterns : JDataFieldValue.SkipField;
+            return hasPatterns
+                    ? hasPatterns
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_ISPARENT.equals(pField)) {
-            return isParent ? isParent : JDataFieldValue.SkipField;
+            return isParent
+                    ? isParent
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_ISALIASD.equals(pField)) {
-            return isAliasedTo ? isAliasedTo : JDataFieldValue.SkipField;
+            return isAliasedTo
+                    ? isAliasedTo
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_ISCLSABL.equals(pField)) {
             return isCloseable;
@@ -271,6 +309,15 @@ public class Account
         }
         if (FIELD_ALIAS.equals(pField)) {
             return AccountInfoClass.Alias;
+        }
+        if (FIELD_PORTFOLIO.equals(pField)) {
+            return AccountInfoClass.Portfolio;
+        }
+        if (FIELD_SYMBOL.equals(pField)) {
+            return AccountInfoClass.Symbol;
+        }
+        if (FIELD_OPENBAL.equals(pField)) {
+            return AccountInfoClass.OpeningBalance;
         }
         if (FIELD_WEBSITE.equals(pField)) {
             return AccountInfoClass.WebSite;
@@ -382,7 +429,9 @@ public class Account
      * @return the maturity date
      */
     public JDateDay getMaturity() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Maturity, JDateDay.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.Maturity, JDateDay.class)
+                : null;
     }
 
     /**
@@ -390,7 +439,9 @@ public class Account
      * @return the parent
      */
     public Account getParent() {
-        return hasInfoSet ? theInfoSet.getAccount(AccountInfoClass.Parent) : null;
+        return hasInfoSet
+                ? theInfoSet.getAccount(AccountInfoClass.Parent)
+                : null;
     }
 
     /**
@@ -398,7 +449,39 @@ public class Account
      * @return the alias
      */
     public Account getAlias() {
-        return hasInfoSet ? theInfoSet.getAccount(AccountInfoClass.Alias) : null;
+        return hasInfoSet
+                ? theInfoSet.getAccount(AccountInfoClass.Alias)
+                : null;
+    }
+
+    /**
+     * Obtain PortFolio.
+     * @return the portFolio
+     */
+    public Account getPortfolio() {
+        return hasInfoSet
+                ? theInfoSet.getAccount(AccountInfoClass.Portfolio)
+                : null;
+    }
+
+    /**
+     * Obtain Symbol.
+     * @return the symbol
+     */
+    public String getSymbol() {
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.Symbol, String.class)
+                : null;
+    }
+
+    /**
+     * Obtain Opening Balance.
+     * @return the Opening balance
+     */
+    public JMoney getOpeningBalance() {
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.OpeningBalance, JMoney.class)
+                : null;
     }
 
     /**
@@ -406,7 +489,9 @@ public class Account
      * @return the webSite
      */
     public char[] getWebSite() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.WebSite, char[].class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.WebSite, char[].class)
+                : null;
     }
 
     /**
@@ -414,7 +499,9 @@ public class Account
      * @return the customer #
      */
     public char[] getCustNo() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.CustNo, char[].class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.CustNo, char[].class)
+                : null;
     }
 
     /**
@@ -422,7 +509,9 @@ public class Account
      * @return the userId
      */
     public char[] getUserId() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.UserId, char[].class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.UserId, char[].class)
+                : null;
     }
 
     /**
@@ -430,7 +519,9 @@ public class Account
      * @return the password
      */
     public char[] getPassword() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Password, char[].class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.Password, char[].class)
+                : null;
     }
 
     /**
@@ -438,7 +529,9 @@ public class Account
      * @return the account
      */
     public char[] getAccount() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Account, char[].class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.Account, char[].class)
+                : null;
     }
 
     /**
@@ -446,7 +539,9 @@ public class Account
      * @return the notes
      */
     public char[] getNotes() {
-        return hasInfoSet ? theInfoSet.getValue(AccountInfoClass.Notes, char[].class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.Notes, char[].class)
+                : null;
     }
 
     /**
@@ -627,7 +722,9 @@ public class Account
         /* Handle InfoSet fields */
         AccountInfoClass myClass = getFieldClass(pField);
         if (myClass != null) {
-            return (useInfoSet) ? theInfoSet.fieldChanged(myClass) : Difference.Identical;
+            return (useInfoSet)
+                    ? theInfoSet.fieldChanged(myClass)
+                    : Difference.Identical;
         }
 
         /* Check super fields */
@@ -792,7 +889,9 @@ public class Account
      */
     public void adjustDates() throws JDataException {
         /* Access latest activity date */
-        JDateDay myCloseDate = (theLatest == null) ? null : theLatest.getDate();
+        JDateDay myCloseDate = (theLatest == null)
+                ? null
+                : theLatest.getDate();
 
         /* Store the close date */
         theCloseDate = myCloseDate;
@@ -938,6 +1037,33 @@ public class Account
     }
 
     /**
+     * Set a new portFolio.
+     * @param pPortFolio the new portFolio
+     * @throws JDataException on error
+     */
+    public void setPortFolio(final Account pPortFolio) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Portfolio, pPortFolio);
+    }
+
+    /**
+     * Set a new symbol.
+     * @param pSymbol the new symbol
+     * @throws JDataException on error
+     */
+    public void setSymbol(final String pSymbol) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Symbol, pSymbol);
+    }
+
+    /**
+     * Set a new opening balance.
+     * @param pBalance the new opening balance
+     * @throws JDataException on error
+     */
+    public void setOpeningBalance(final JMoney pBalance) throws JDataException {
+        setInfoSetValue(AccountInfoClass.OpeningBalance, pBalance);
+    }
+
+    /**
      * Set a new WebSite.
      * @param pWebSite the new webSite
      * @throws JDataException on error
@@ -1020,16 +1146,22 @@ public class Account
             case Parent:
             case Alias:
                 /* Access account of object */
-                myValue = hasInfoSet ? theInfoSet.getAccount(pInfoClass) : null;
+                myValue = hasInfoSet
+                        ? theInfoSet.getAccount(pInfoClass)
+                        : null;
                 break;
             default:
                 /* Access value of object */
-                myValue = hasInfoSet ? theInfoSet.getField(pInfoClass) : null;
+                myValue = hasInfoSet
+                        ? theInfoSet.getField(pInfoClass)
+                        : null;
                 break;
 
         }
         /* Return the value */
-        return (myValue != null) ? myValue : JDataFieldValue.SkipField;
+        return (myValue != null)
+                ? myValue
+                : JDataFieldValue.SkipField;
     }
 
     @Override
@@ -1072,7 +1204,7 @@ public class Account
      */
     @Override
     public void validate() {
-        AccountType myType = getActType();
+        AccountCategoryType myType = getActType();
         Account myParent = getParent();
         Account myAlias = getAlias();
 
@@ -1142,7 +1274,7 @@ public class Account
         /* If we have an alias */
         if (myAlias != null) {
             /* Access the alias type */
-            AccountType myAliasType = myAlias.getActType();
+            AccountCategoryType myAliasType = myAlias.getActType();
 
             /* Cannot alias to self */
             if (Difference.isEqual(this, myAlias)) {
@@ -1265,7 +1397,9 @@ public class Account
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
-                return (theAccount == null) ? JDataFieldValue.SkipField : theAccount;
+                return (theAccount == null)
+                        ? JDataFieldValue.SkipField
+                        : theAccount;
             }
             return super.getFieldValue(pField);
         }
@@ -1387,7 +1521,7 @@ public class Account
          * @param pType the account type
          * @return the edit Extract
          */
-        public AccountList deriveEditList(final AccountType pType) {
+        public AccountList deriveEditList(final AccountCategoryType pType) {
             /* Build an empty Extract List */
             AccountList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1506,10 +1640,10 @@ public class Account
                                    final Boolean isClosed) throws JDataException {
             /* Access the account types and accounts */
             FinanceData myData = getDataSet();
-            AccountTypeList myActTypes = myData.getAccountTypes();
+            AccountCategoryTypeList myActTypes = myData.getAccountCategoryTypes();
 
             /* Look up the Account Type */
-            AccountType myActType = myActTypes.findItemByName(pAcType);
+            AccountCategoryType myActType = myActTypes.findItemByName(pAcType);
             if (myActType == null) {
                 throw new JDataException(ExceptionClass.DATA, "Account ["
                                                               + pName

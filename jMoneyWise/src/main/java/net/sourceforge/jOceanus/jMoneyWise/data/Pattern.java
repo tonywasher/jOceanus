@@ -42,11 +42,11 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.FreqClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.FrequencyClass;
 
 /**
  * Pattern data type.
@@ -226,7 +226,7 @@ public class Pattern
         /* Default to monthly frequency */
         FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
-        setValueFrequency(myFrequencies.findItemByClass(FreqClass.Monthly));
+        setValueFrequency(myFrequencies.findItemByClass(FrequencyClass.Monthly));
     }
 
     /**
@@ -277,7 +277,7 @@ public class Pattern
      * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pTransType the transaction type
+     * @param pCategory the category type
      * @param pAmount the amount
      * @param pFrequency the frequency
      * @throws JDataException on error
@@ -288,11 +288,11 @@ public class Pattern
                     final String pDesc,
                     final Account pDebit,
                     final Account pCredit,
-                    final TransactionType pTransType,
+                    final EventCategoryType pCategory,
                     final String pAmount,
                     final Frequency pFrequency) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, pDate, pDesc, pDebit, pCredit, pTransType, pAmount);
+        super(pList, uId, pDate, pDesc, pDebit, pCredit, pCategory, pAmount);
 
         /* Record the values */
         setValueFrequency(pFrequency);
@@ -341,7 +341,7 @@ public class Pattern
                            final TaxYear pTaxYear,
                            final JDateDay pDate) throws JDataException {
         /* Access the frequency */
-        FreqClass myFreq = getFrequency().getFrequency();
+        FrequencyClass myFreq = getFrequency().getFrequency();
         JDateDay myDate;
         int iAdjust;
 
@@ -352,7 +352,7 @@ public class Pattern
         /* If this is the first request for an event */
         if (pDate.compareTo(getDate()) == 0) {
             /* If the frequency is maturity */
-            if (myFreq == FreqClass.Maturity) {
+            if (myFreq == FrequencyClass.Maturity) {
                 /* Access the maturity date */
                 myDate = getDebit().getMaturity();
 
@@ -410,7 +410,7 @@ public class Pattern
             }
 
             /* If this is a ten month repeat */
-            if (myFreq == FreqClass.TenMonths) {
+            if (myFreq == FrequencyClass.TenMonths) {
                 myDate = new JDateDay(getDate());
 
                 /* Calculate the difference in years */
@@ -479,9 +479,9 @@ public class Pattern
         /* Store the current detail into history */
         pushHistory();
 
-        /* Update the transtype if required */
-        if (!Difference.isEqual(getTransType(), myPattern.getTransType())) {
-            setTransType(myPattern.getTransType());
+        /* Update the categoryType if required */
+        if (!Difference.isEqual(getCategoryType(), myPattern.getCategoryType())) {
+            setCategoryType(myPattern.getCategoryType());
         }
 
         /* Update the frequency if required */
@@ -719,7 +719,7 @@ public class Pattern
          * @param pDesc the description
          * @param pDebit the debit account
          * @param pCredit the credit account
-         * @param pTransType the transaction type
+         * @param pCategory the category type
          * @param pAmount the amount
          * @param pFrequency the frequency
          * @throws JDataException on error
@@ -729,14 +729,14 @@ public class Pattern
                                 final String pDesc,
                                 final String pDebit,
                                 final String pCredit,
-                                final String pTransType,
+                                final String pCategory,
                                 final String pAmount,
                                 final String pFrequency) throws JDataException {
             /* Access the Lists */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
             AccountList myAccounts = myData.getAccounts();
-            TransTypeList myTranTypes = myData.getTransTypes();
+            EventCategoryTypeList myCatTypes = myData.getEventCategoryTypes();
             FrequencyList myFrequencies = myData.getFrequencys();
 
             /* Look up the Debit */
@@ -759,13 +759,13 @@ public class Pattern
                                                               + "]");
             }
 
-            /* Look up the TransType */
-            TransactionType myTransType = myTranTypes.findItemByName(pTransType);
-            if (myTransType == null) {
+            /* Look up the CategoryType */
+            EventCategoryType myCategory = myCatTypes.findItemByName(pCategory);
+            if (myCategory == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
                                                               + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid TransType ["
-                                                              + pTransType
+                                                              + "] has invalid CategoryType ["
+                                                              + pCategory
                                                               + "]");
             }
 
@@ -780,7 +780,7 @@ public class Pattern
             }
 
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, uId, pDate, pDesc, myDebit, myCredit, myTransType, pAmount, myFrequency);
+            Pattern myPattern = new Pattern(this, uId, pDate, pDesc, myDebit, myCredit, myCategory, pAmount, myFrequency);
 
             /* Validate the pattern */
             myPattern.validate();

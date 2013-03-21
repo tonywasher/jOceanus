@@ -77,9 +77,19 @@ public enum EventInfoClass implements DataInfoClass {
     Dilution(9, 8, DataType.DILUTION),
 
     /**
-     * ThirdParty Account.
+     * Reference.
      */
-    ThirdParty(10, 9);
+    Reference(10, 9, DataType.STRING),
+
+    /**
+     * Donation.
+     */
+    Donation(11, 10, DataType.MONEY),
+
+    /**
+     * ThirdParty.
+     */
+    ThirdParty(12, 11);
 
     /**
      * Class Id.

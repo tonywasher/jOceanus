@@ -68,7 +68,7 @@ public class TablePattern
         myTableDef.addEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_DEBIT, TableAccount.TABLE_NAME);
         myTableDef.addReferenceColumn(EventBase.FIELD_CREDIT, TableAccount.TABLE_NAME);
-        myTableDef.addReferenceColumn(EventBase.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
+        myTableDef.addReferenceColumn(EventBase.FIELD_CATTYP, TableEventCategoryType.TABLE_NAME);
         myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(Pattern.FIELD_FREQ, TableFrequency.TABLE_NAME);
 
@@ -92,7 +92,7 @@ public class TablePattern
         byte[] myDesc = myTableDef.getBinaryValue(EventBase.FIELD_DESC);
         Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
         Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
-        Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_TRNTYP);
+        Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_CATTYP);
         byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
         Integer myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
@@ -115,8 +115,8 @@ public class TablePattern
             myTableDef.setIntegerValue(EventBase.FIELD_DEBIT, pItem.getDebitId());
         } else if (EventBase.FIELD_CREDIT.equals(iField)) {
             myTableDef.setIntegerValue(EventBase.FIELD_CREDIT, pItem.getCreditId());
-        } else if (EventBase.FIELD_TRNTYP.equals(iField)) {
-            myTableDef.setIntegerValue(EventBase.FIELD_TRNTYP, pItem.getTransTypeId());
+        } else if (EventBase.FIELD_CATTYP.equals(iField)) {
+            myTableDef.setIntegerValue(EventBase.FIELD_CATTYP, pItem.getCategoryTypeId());
         } else if (Pattern.FIELD_FREQ.equals(iField)) {
             myTableDef.setIntegerValue(Pattern.FIELD_FREQ, pItem.getFrequencyId());
         } else {

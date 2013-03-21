@@ -47,34 +47,54 @@ public enum AccountInfoClass implements DataInfoClass {
     Alias(3, 2),
 
     /**
+     * PortFolio Id.
+     */
+    Portfolio(4, 3),
+
+    /**
+     * Symbol.
+     */
+    Symbol(5, 4, DataType.STRING),
+
+    /**
+     * Opening Balance.
+     */
+    OpeningBalance(6, 5, DataType.MONEY),
+
+    /**
+     * AutoExpense Category.
+     */
+    AutoExpense(7, 6),
+
+    /**
      * WebSite.
      */
-    WebSite(4, 3, DataType.CHARARRAY),
+    WebSite(8, 7, DataType.CHARARRAY),
 
     /**
      * Customer #.
      */
-    CustNo(5, 4, DataType.CHARARRAY),
+    CustNo(9, 8, DataType.CHARARRAY),
 
     /**
      * User Id.
      */
-    UserId(6, 5, DataType.CHARARRAY),
+    UserId(10, 9, DataType.CHARARRAY),
 
     /**
      * Password.
      */
-    Password(7, 6, DataType.CHARARRAY),
+    Password(11, 10, DataType.CHARARRAY),
 
     /**
      * Account.
      */
-    Account(8, 7, DataType.CHARARRAY),
+    Account(12, 11, DataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    Notes(9, 8, DataType.CHARARRAY);
+    Notes(13, 12, DataType.CHARARRAY);
 
     /**
      * Class Id.

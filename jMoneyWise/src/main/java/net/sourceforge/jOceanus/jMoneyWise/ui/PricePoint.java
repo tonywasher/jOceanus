@@ -57,7 +57,7 @@ import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.SpotSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.SpotPrices;
 import net.sourceforge.jOceanus.jMoneyWise.views.SpotPrices.SpotList;
@@ -133,7 +133,7 @@ public class PricePoint
     /**
      * The Account type.
      */
-    private transient AccountType theAccountType = null;
+    private transient AccountCategoryType theAccountType = null;
 
     /**
      * The Spot selection panel.
@@ -348,7 +348,7 @@ public class PricePoint
      * @param pDate the Date for the extract
      * @throws JDataException on error
      */
-    public void setSelection(final AccountType pType,
+    public void setSelection(final AccountCategoryType pType,
                              final JDateDay pDate) throws JDataException {
         /* Record selection */
         theDate = pDate;
@@ -472,7 +472,7 @@ public class PricePoint
                 setShowAll(theSelect.getShowClosed());
 
                 /* Access selection */
-                AccountType myType = theSelect.getAccountType();
+                AccountCategoryType myType = theSelect.getAccountType();
                 JDateDay myDate = theSelect.getDate();
 
                 /* If the selection differs */
@@ -580,7 +580,9 @@ public class PricePoint
          */
         @Override
         public int getColumnCount() {
-            return (theColumns == null) ? 0 : theColumns.getColumnCount();
+            return (theColumns == null)
+                    ? 0
+                    : theColumns.getColumnCount();
         }
 
         /**
@@ -589,7 +591,9 @@ public class PricePoint
          */
         @Override
         public int getRowCount() {
-            return (thePrices == null) ? 0 : thePrices.size();
+            return (thePrices == null)
+                    ? 0
+                    : thePrices.size();
         }
 
         @Override

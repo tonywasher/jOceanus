@@ -27,9 +27,9 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
 
 /**
- * Enumeration of Transaction Type Classes.
+ * Enumeration of EventCategory Classes.
  */
-public enum TransClass implements StaticInterface {
+public enum EventCategoryClass implements StaticInterface {
     /**
      * Taxed Salary Income.
      */
@@ -245,8 +245,8 @@ public enum TransClass implements StaticInterface {
      * @param uId the id
      * @param uOrder the default order.
      */
-    private TransClass(final int uId,
-                       final int uOrder) {
+    private EventCategoryClass(final int uId,
+                               final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -257,8 +257,8 @@ public enum TransClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static TransClass fromId(final int id) throws JDataException {
-        for (TransClass myClass : values()) {
+    public static EventCategoryClass fromId(final int id) throws JDataException {
+        for (EventCategoryClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }

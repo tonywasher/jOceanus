@@ -49,15 +49,16 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
  * SpotPrice Date selection panel.
  * @author Tony Washer
  */
-public class SpotSelect extends JEventPanel {
+public class SpotSelect
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -141,7 +142,7 @@ public class SpotSelect extends JEventPanel {
     /**
      * The accountTypes comboBox.
      */
-    private final JComboBox<AccountType> theTypesBox;
+    private final JComboBox<AccountCategoryType> theTypesBox;
 
     /**
      * The current state.
@@ -175,7 +176,7 @@ public class SpotSelect extends JEventPanel {
      * Get the selected account type.
      * @return the account type
      */
-    public final AccountType getAccountType() {
+    public final AccountCategoryType getAccountType() {
         return theState.getAccountType();
     }
 
@@ -214,7 +215,7 @@ public class SpotSelect extends JEventPanel {
         thePrev = new JButton(NLS_PREV);
 
         /* Create the Type box */
-        theTypesBox = new JComboBox<AccountType>();
+        theTypesBox = new JComboBox<AccountCategoryType>();
         theTypesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
 
         /* Create initial state */
@@ -259,8 +260,8 @@ public class SpotSelect extends JEventPanel {
      * Refresh data.
      */
     public final void refreshData() {
-        AccountType myType = null;
-        AccountType myFirst = null;
+        AccountCategoryType myType = null;
+        AccountCategoryType myFirst = null;
 
         /* Access the data */
         JDateDayRange myRange = theView.getRange();
@@ -272,7 +273,7 @@ public class SpotSelect extends JEventPanel {
         FinanceData myData = theView.getData();
 
         /* Access types and accounts */
-        AccountTypeList myTypes = myData.getAccountTypes();
+        AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
         AccountList myAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
@@ -298,12 +299,15 @@ public class SpotSelect extends JEventPanel {
             Account myAccount = myIterator.next();
 
             /* Skip non-priced, deleted and alias items */
-            if ((!myAccount.isPriced()) || (myAccount.isDeleted()) || (myAccount.isAlias())) {
+            if ((!myAccount.isPriced())
+                || (myAccount.isDeleted())
+                || (myAccount.isAlias())) {
                 continue;
             }
 
             /* Skip closed items if required */
-            if ((!doShowClosed) && (myAccount.isClosed())) {
+            if ((!doShowClosed)
+                && (myAccount.isClosed())) {
                 continue;
             }
 
@@ -341,8 +345,12 @@ public class SpotSelect extends JEventPanel {
      * @param pRange the Range to set
      */
     public final void setRange(final JDateDayRange pRange) {
-        JDateDay myStart = (pRange == null) ? null : pRange.getStart();
-        JDateDay myEnd = (pRange == null) ? null : pRange.getEnd();
+        JDateDay myStart = (pRange == null)
+                ? null
+                : pRange.getStart();
+        JDateDay myEnd = (pRange == null)
+                ? null
+                : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);
@@ -351,8 +359,10 @@ public class SpotSelect extends JEventPanel {
 
     @Override
     public void setEnabled(final boolean bEnabled) {
-        theNext.setEnabled(bEnabled && (theState.getNextDate() != null));
-        thePrev.setEnabled(bEnabled && (theState.getPrevDate() != null));
+        theNext.setEnabled(bEnabled
+                           && (theState.getNextDate() != null));
+        thePrev.setEnabled(bEnabled
+                           && (theState.getPrevDate() != null));
         theDateButton.setEnabled(bEnabled);
         theTypesBox.setEnabled(bEnabled);
     }
@@ -390,7 +400,8 @@ public class SpotSelect extends JEventPanel {
     /**
      * Listener class.
      */
-    private final class SpotListener implements ActionListener, PropertyChangeListener, ItemListener {
+    private final class SpotListener
+            implements ActionListener, PropertyChangeListener, ItemListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -412,7 +423,8 @@ public class SpotSelect extends JEventPanel {
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
             /* if this date relates to the Date button */
-            if ((theDateButton.equals(evt.getSource())) && (theState.setDate(theDateButton))) {
+            if ((theDateButton.equals(evt.getSource()))
+                && (theState.setDate(theDateButton))) {
                 fireStateChanged();
             }
         }
@@ -433,8 +445,9 @@ public class SpotSelect extends JEventPanel {
                 fireStateChanged();
 
                 /* If this event relates to the Account Type box */
-            } else if ((theTypesBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                AccountType myType = (AccountType) evt.getItem();
+            } else if ((theTypesBox.equals(o))
+                       && (evt.getStateChange() == ItemEvent.SELECTED)) {
+                AccountCategoryType myType = (AccountCategoryType) evt.getItem();
 
                 /* Select the new type */
                 if (theState.setType(myType)) {
@@ -451,7 +464,7 @@ public class SpotSelect extends JEventPanel {
         /**
          * AccountType.
          */
-        private AccountType theType = null;
+        private AccountCategoryType theType = null;
 
         /**
          * Selected date.
@@ -472,7 +485,7 @@ public class SpotSelect extends JEventPanel {
          * Get the account type.
          * @return the account type
          */
-        private AccountType getAccountType() {
+        private AccountCategoryType getAccountType() {
             return theType;
         }
 
@@ -527,7 +540,7 @@ public class SpotSelect extends JEventPanel {
          * @param pType the AccountType
          * @return true/false did a change occur
          */
-        private boolean setType(final AccountType pType) {
+        private boolean setType(final AccountCategoryType pType) {
             /* Adjust the selected account */
             if (!Difference.isEqual(pType, theType)) {
                 theType = pType;

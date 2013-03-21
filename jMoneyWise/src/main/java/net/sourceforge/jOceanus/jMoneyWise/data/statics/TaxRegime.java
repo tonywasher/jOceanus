@@ -35,7 +35,7 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * @author Tony Washer
  */
 public class TaxRegime
-        extends StaticData<TaxRegime, TaxRegClass> {
+        extends StaticData<TaxRegime, TaxRegimeClass> {
     /**
      * Object name.
      */
@@ -61,7 +61,7 @@ public class TaxRegime
      * Return the TaxRegime class of the TaxRegime.
      * @return the class
      */
-    public TaxRegClass getRegime() {
+    public TaxRegimeClass getRegime() {
         return super.getStaticClass();
     }
 
@@ -159,7 +159,7 @@ public class TaxRegime
      * Represents a list of {@link TaxRegime} objects.
      */
     public static class TaxRegimeList
-            extends StaticList<TaxRegime, TaxRegClass> {
+            extends StaticList<TaxRegime, TaxRegimeClass> {
         /**
          * Local Report fields.
          */
@@ -176,8 +176,8 @@ public class TaxRegime
         }
 
         @Override
-        protected Class<TaxRegClass> getEnumClass() {
-            return TaxRegClass.class;
+        protected Class<TaxRegimeClass> getEnumClass() {
+            return TaxRegimeClass.class;
         }
 
         /**

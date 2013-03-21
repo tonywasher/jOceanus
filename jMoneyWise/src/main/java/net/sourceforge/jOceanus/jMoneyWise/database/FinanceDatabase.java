@@ -51,9 +51,9 @@ public class FinanceDatabase
      */
     private void declareTables() {
         /* Add additional tables */
-        addTable(new TableAccountType(this));
-        addTable(new TableTransactionType(this));
-        addTable(new TableTaxType(this));
+        addTable(new TableAccountCategoryType(this));
+        addTable(new TableEventCategoryType(this));
+        addTable(new TableTaxCategory(this));
         addTable(new TableTaxRegime(this));
         addTable(new TableFrequency(this));
         addTable(new TableTaxYearInfoType(this));

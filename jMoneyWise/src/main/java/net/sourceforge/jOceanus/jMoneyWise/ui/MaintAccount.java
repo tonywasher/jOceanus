@@ -66,8 +66,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.AccountSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
@@ -155,7 +155,7 @@ public class MaintAccount
     /**
      * The types comboBox.
      */
-    private final JComboBox<AccountType> theTypesBox;
+    private final JComboBox<AccountCategoryType> theTypesBox;
 
     /**
      * The parent comboBox.
@@ -273,7 +273,7 @@ public class MaintAccount
         theStatus = new JTextField();
 
         /* Create the combo boxes */
-        theTypesBox = new JComboBox<AccountType>();
+        theTypesBox = new JComboBox<AccountCategoryType>();
         theParentBox = new JComboBox<Account>();
         theAliasBox = new JComboBox<Account>();
 
@@ -392,7 +392,7 @@ public class MaintAccount
          */
         theFieldSet.addFieldElement(Account.FIELD_NAME, DataType.STRING, myNameLabel, myName);
         theFieldSet.addFieldElement(Account.FIELD_DESC, DataType.STRING, myDescLabel, myDesc);
-        theFieldSet.addFieldElement(Account.FIELD_TYPE, AccountType.class, myTypeLabel, theTypesBox);
+        theFieldSet.addFieldElement(Account.FIELD_TYPE, AccountCategoryType.class, myTypeLabel, theTypesBox);
         theFieldSet.addFieldElement(Account.FIELD_PARENT, Account.class, myParLabel, theParentBox);
         theFieldSet.addFieldElement(Account.FIELD_ALIAS, Account.class, myAlsLabel, theAliasBox);
         theFieldSet.addFieldElement(Account.FIELD_MATURITY, DataType.DATEDAY, myMatLabel, myMaturity);
@@ -559,7 +559,9 @@ public class MaintAccount
      * @return the EditState
      */
     public EditState getEditState() {
-        return (theAccount == null) ? EditState.CLEAN : theAccount.getEditState();
+        return (theAccount == null)
+                ? EditState.CLEAN
+                : theAccount.getEditState();
     }
 
     /**
@@ -585,7 +587,7 @@ public class MaintAccount
         FinanceData myData = theView.getData();
 
         /* Access type */
-        AccountTypeList myAcTypList = myData.getAccountTypes();
+        AccountCategoryTypeList myAcTypList = myData.getAccountCategoryTypes();
         theAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
@@ -601,11 +603,11 @@ public class MaintAccount
         }
 
         /* Create an account type iterator */
-        Iterator<AccountType> myTypeIterator = myAcTypList.iterator();
+        Iterator<AccountCategoryType> myTypeIterator = myAcTypList.iterator();
 
         /* Add the AccountType values to the types box */
         while (myTypeIterator.hasNext()) {
-            AccountType myType = myTypeIterator.next();
+            AccountCategoryType myType = myTypeIterator.next();
             /* Ignore the type if it is reserved or not enabled */
             if ((myType.isReserved())
                 || (!myType.getEnabled())) {
@@ -652,7 +654,7 @@ public class MaintAccount
             Account myAcct = myActIterator.next();
 
             /* Access the type */
-            AccountType myType = myAcct.getActType();
+            AccountCategoryType myType = myAcct.getActType();
 
             /* Ignore the account if it is not an owner */
             if (!myType.isOwner()) {
@@ -721,7 +723,7 @@ public class MaintAccount
      */
     private void showAccount() {
         /* Access the type from the selection */
-        AccountType myType = theSelect.getType();
+        AccountCategoryType myType = theSelect.getType();
 
         /* If we have an active account */
         if (theAccount != null) {
@@ -798,16 +800,22 @@ public class MaintAccount
             JDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Set the First Event */
-            theFirst.setText((theAccount.getEarliest() != null) ? myFormatter.formatObject(theAccount.getEarliest().getDate()) : "N/A");
+            theFirst.setText((theAccount.getEarliest() != null)
+                    ? myFormatter.formatObject(theAccount.getEarliest().getDate())
+                    : "N/A");
 
             /* Set the Last Event */
-            theLast.setText((theAccount.getLatest() != null) ? myFormatter.formatObject(theAccount.getLatest().getDate()) : "N/A");
+            theLast.setText((theAccount.getLatest() != null)
+                    ? myFormatter.formatObject(theAccount.getLatest().getDate())
+                    : "N/A");
 
             /* Set the Status */
             theStatus.setText(determineStatus().toString());
 
             /* Set text for close button */
-            theClsButton.setText((isClosed) ? "ReOpen" : "Close");
+            theClsButton.setText((isClosed)
+                    ? "ReOpen"
+                    : "Close");
 
             /* Make sure buttons are visible */
             boolean isDeletable = theAccount.isDeletable();
@@ -1002,7 +1010,7 @@ public class MaintAccount
                     /* If this is our Account type */
                 } else if (myField.equals(Account.FIELD_TYPE)) {
                     /* Update the Value */
-                    theAccount.setActType(pUpdate.getValue(AccountType.class));
+                    theAccount.setActType(pUpdate.getValue(AccountCategoryType.class));
 
                     /* If the account is now a bond */
                     if (theAccount.isBond()) {
@@ -1145,7 +1153,9 @@ public class MaintAccount
         }
 
         /* Handle standard account */
-        return (theAccount.isCloseable()) ? AccountStatus.Inactive : AccountStatus.Active;
+        return (theAccount.isCloseable())
+                ? AccountStatus.Inactive
+                : AccountStatus.Active;
     }
 
     /**

@@ -41,11 +41,10 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.BaseEventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.ActDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetAccount;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.BucketType;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.ValueAccount;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
+import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisBucket.BucketType;
 import net.sourceforge.jOceanus.jTableFilter.TableFilter;
 
 /**
@@ -152,7 +151,7 @@ public class Statement
     /**
      * The Account bucket.
      */
-    private ActDetail theBucket = null;
+    private AccountBucket theBucket = null;
 
     /**
      * The date range.
@@ -246,7 +245,7 @@ public class Statement
      * Obtain the account type.
      * @return the type
      */
-    public AccountType getActType() {
+    public AccountCategoryType getActType() {
         return theAccount.getActType();
     }
 
@@ -263,7 +262,9 @@ public class Statement
      * @return the iterator
      */
     public Iterator<StatementLine> getIterator() {
-        return (theFilter == null) ? theLines.listIterator() : theFilter.viewIterator();
+        return (theFilter == null)
+                ? theLines.listIterator()
+                : theFilter.viewIterator();
     }
 
     /**
@@ -298,20 +299,20 @@ public class Statement
      * Set the ending balances for the statement.
      * @param pAccount the Account Bucket
      */
-    protected void setStartBalances(final ActDetail pAccount) {
+    protected void setStartBalances(final AccountBucket pAccount) {
         /* Record the bucket and access bucket type */
         theBucket = pAccount;
 
         /* If the bucket has a balance */
         if (hasBalance()) {
             /* Set starting balance */
-            theStartBalance = new JMoney(((ValueAccount) theBucket).getValue());
+            theStartBalance = new JMoney(((ValueBucket) theBucket).getValue());
         }
 
         /* If the bucket has units */
         if (hasUnits()) {
             /* Set starting units */
-            theStartUnits = new JUnits(((AssetAccount) theBucket).getUnits());
+            theStartUnits = new JUnits(((AssetAccountDetail) theBucket).getUnits());
         }
     }
 
@@ -322,13 +323,13 @@ public class Statement
         /* If the bucket has a balance */
         if (hasBalance()) {
             /* Set ending balance */
-            theEndBalance = new JMoney(((ValueAccount) theBucket).getValue());
+            theEndBalance = new JMoney(((ValueBucket) theBucket).getValue());
         }
 
         /* If the bucket has units */
         if (hasUnits()) {
             /* Set ending units */
-            theEndUnits = new JUnits(((AssetAccount) theBucket).getUnits());
+            theEndUnits = new JUnits(((AssetAccountDetail) theBucket).getUnits());
         }
     }
 
@@ -346,7 +347,7 @@ public class Statement
      * @return TRUE/FALSE
      */
     public boolean hasBalance() {
-        return (theBucket.getBucketType() != BucketType.EXTERNALDETAIL);
+        return (theBucket.getBucketType() != BucketType.PAYEEDETAIL);
     }
 
     /**
@@ -531,16 +532,20 @@ public class Statement
          * @return the account
          */
         public Account getAccount() {
-            return isCredit() ? getCredit() : getDebit();
+            return isCredit()
+                    ? getCredit()
+                    : getDebit();
         }
 
         /**
          * Obtain the account type.
          * @return the type
          */
-        public AccountType getActType() {
+        public AccountCategoryType getActType() {
             Account myAccount = getAccount();
-            return (myAccount == null) ? null : myAccount.getActType();
+            return (myAccount == null)
+                    ? null
+                    : myAccount.getActType();
         }
 
         /**
@@ -548,7 +553,9 @@ public class Statement
          * @return the partner
          */
         public Account getPartner() {
-            return isCredit() ? getDebit() : getCredit();
+            return isCredit()
+                    ? getDebit()
+                    : getCredit();
         }
 
         /**
@@ -603,7 +610,7 @@ public class Statement
          * Obtain the bucket.
          * @return the bucket
          */
-        private ActDetail getBucket() {
+        private AccountBucket getBucket() {
             return theStatement.theBucket;
         }
 
@@ -675,13 +682,13 @@ public class Statement
             /* If the bucket has a balance */
             if (theStatement.hasBalance()) {
                 /* Set current balance */
-                theBalance = new JMoney(((ValueAccount) getBucket()).getValue());
+                theBalance = new JMoney(((ValueBucket) getBucket()).getValue());
             }
 
             /* If the bucket has units */
             if (theStatement.hasUnits()) {
                 /* Set current units */
-                theBalUnits = new JUnits(((AssetAccount) getBucket()).getUnits());
+                theBalUnits = new JUnits(((AssetAccountDetail) getBucket()).getUnits());
             }
         }
 
@@ -723,9 +730,13 @@ public class Statement
             JDataField myField = iField;
             /* Re-Map Credit/Debit field errors */
             if (iField == FIELD_CREDIT) {
-                myField = isCredit() ? FIELD_ACCOUNT : FIELD_PARTNER;
+                myField = isCredit()
+                        ? FIELD_ACCOUNT
+                        : FIELD_PARTNER;
             } else if (iField == FIELD_DEBIT) {
-                myField = isCredit() ? FIELD_PARTNER : FIELD_ACCOUNT;
+                myField = isCredit()
+                        ? FIELD_PARTNER
+                        : FIELD_ACCOUNT;
             }
 
             /* Call super class */

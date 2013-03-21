@@ -32,8 +32,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
@@ -96,25 +96,39 @@ public class IncomeBreakdown
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_SALARY.equals(pField)) {
-            return (theSalary.size() > 0) ? theSalary : JDataFieldValue.SkipField;
+            return (theSalary.size() > 0)
+                    ? theSalary
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_RENTAL.equals(pField)) {
-            return (theRental.size() > 0) ? theRental : JDataFieldValue.SkipField;
+            return (theRental.size() > 0)
+                    ? theRental
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_INTEREST.equals(pField)) {
-            return (theTaxedInterest.size() > 0) ? theTaxedInterest : JDataFieldValue.SkipField;
+            return (theTaxedInterest.size() > 0)
+                    ? theTaxedInterest
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_TFINTEREST.equals(pField)) {
-            return (theTaxFreeInterest.size() > 0) ? theTaxFreeInterest : JDataFieldValue.SkipField;
+            return (theTaxFreeInterest.size() > 0)
+                    ? theTaxFreeInterest
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_DIVIDEND.equals(pField)) {
-            return (theTaxedDividend.size() > 0) ? theTaxedDividend : JDataFieldValue.SkipField;
+            return (theTaxedDividend.size() > 0)
+                    ? theTaxedDividend
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_TFDIVIDEND.equals(pField)) {
-            return (theTaxFreeDividend.size() > 0) ? theTaxFreeDividend : JDataFieldValue.SkipField;
+            return (theTaxFreeDividend.size() > 0)
+                    ? theTaxFreeDividend
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_UTDIVIDEND.equals(pField)) {
-            return (theUnitTrustDividend.size() > 0) ? theUnitTrustDividend : JDataFieldValue.SkipField;
+            return (theUnitTrustDividend.size() > 0)
+                    ? theUnitTrustDividend
+                    : JDataFieldValue.SkipField;
         }
         return JDataFieldValue.UnknownField;
     }
@@ -237,10 +251,10 @@ public class IncomeBreakdown
     protected void processEvent(final Event pEvent) {
         AccountRecord myRecord;
         Account myDebit = pEvent.getDebit();
-        TransactionType myTrans = pEvent.getTransType();
+        EventCategoryType myCategory = pEvent.getCategoryType();
 
-        /* Switch on Transaction Type */
-        switch (myTrans.getTranClass()) {
+        /* Switch on Category Type */
+        switch (myCategory.getCategoryClass()) {
             case Interest:
                 if (myDebit.isTaxFree()) {
                     myRecord = theTaxFreeInterest.findAccountRecord(myDebit.getParent());
@@ -251,11 +265,17 @@ public class IncomeBreakdown
                 break;
             case Dividend:
                 if (myDebit.isTaxFree()) {
-                    myRecord = theTaxFreeDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
+                    myRecord = theTaxFreeDividend.findAccountRecord(myDebit.isChild()
+                            ? myDebit.getParent()
+                            : myDebit);
                 } else if (myDebit.isUnitTrust()) {
-                    myRecord = theUnitTrustDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
+                    myRecord = theUnitTrustDividend.findAccountRecord(myDebit.isChild()
+                            ? myDebit.getParent()
+                            : myDebit);
                 } else {
-                    myRecord = theTaxedDividend.findAccountRecord(myDebit.isChild() ? myDebit.getParent() : myDebit);
+                    myRecord = theTaxedDividend.findAccountRecord(myDebit.isChild()
+                            ? myDebit.getParent()
+                            : myDebit);
                 }
                 myRecord.processEvent(pEvent);
                 break;
@@ -426,10 +446,14 @@ public class IncomeBreakdown
                 return theListTotals;
             }
             if (FIELD_EVENTS.equals(pField)) {
-                return (theEvents.size() > 0) ? theEvents : JDataFieldValue.SkipField;
+                return (theEvents.size() > 0)
+                        ? theEvents
+                        : JDataFieldValue.SkipField;
             }
             if (FIELD_CHILDREN.equals(pField)) {
-                return (theChildren.size() > 0) ? theChildren : JDataFieldValue.SkipField;
+                return (theChildren.size() > 0)
+                        ? theChildren
+                        : JDataFieldValue.SkipField;
             }
 
             /* Unknown */
@@ -539,11 +563,11 @@ public class IncomeBreakdown
             JMoney myAmount = pEvent.getAmount();
             JMoney myTax = pEvent.getTaxCredit();
             Account myDebit = pEvent.getDebit();
-            TransactionType myTrans = pEvent.getTransType();
+            EventCategoryType myCategory = pEvent.getCategoryType();
 
             /* If we are NatInsurance/Benefit */
-            if ((myTrans.getTranClass() == TransClass.NatInsurance)
-                || (myTrans.getTranClass() == TransClass.Benefit)) {
+            if ((myCategory.getCategoryClass() == EventCategoryClass.NatInsurance)
+                || (myCategory.getCategoryClass() == EventCategoryClass.Benefit)) {
                 /* Just add to gross */
                 theTotals.theGrossIncome.addAmount(myAmount);
                 theListTotals.theGrossIncome.addAmount(myAmount);

@@ -68,14 +68,14 @@ public class SheetPattern
     private static final int COL_CREDIT = COL_DEBIT + 1;
 
     /**
-     * TransType column.
+     * CategoryType column.
      */
-    private static final int COL_TRAN = COL_CREDIT + 1;
+    private static final int COL_CATEGORY = COL_CREDIT + 1;
 
     /**
      * Amount column.
      */
-    private static final int COL_AMOUNT = COL_TRAN + 1;
+    private static final int COL_AMOUNT = COL_CATEGORY + 1;
 
     /**
      * Frequency column.
@@ -119,7 +119,7 @@ public class SheetPattern
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myDebitId = loadInteger(COL_DEBIT);
         Integer myCreditId = loadInteger(COL_CREDIT);
-        Integer myTranId = loadInteger(COL_TRAN);
+        Integer myCatId = loadInteger(COL_CATEGORY);
         Integer myFreqId = loadInteger(COL_FREQ);
 
         /* Access the date */
@@ -130,7 +130,7 @@ public class SheetPattern
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDesc, myDebitId, myCreditId, myTranId, myAmount, myFreqId);
+        theList.addSecureItem(pId, myControlId, myDate, myDesc, myDebitId, myCreditId, myCatId, myAmount, myFreqId);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class SheetPattern
         /* Access the Account */
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
-        String myTransType = loadString(COL_TRAN);
+        String myCategory = loadString(COL_CATEGORY);
         String myFrequency = loadString(COL_FREQ);
 
         /* Access the date */
@@ -149,7 +149,7 @@ public class SheetPattern
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        theList.addOpenItem(pId, myDate, myDesc, myDebit, myCredit, myTransType, myAmount, myFrequency);
+        theList.addOpenItem(pId, myDate, myDesc, myDebit, myCredit, myCategory, myAmount, myFrequency);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class SheetPattern
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_DEBIT, pItem.getDebitId());
         writeInteger(COL_CREDIT, pItem.getCreditId());
-        writeInteger(COL_TRAN, pItem.getTransTypeId());
+        writeInteger(COL_CATEGORY, pItem.getCategoryTypeId());
         writeInteger(COL_FREQ, pItem.getFrequencyId());
         writeDate(COL_DATE, pItem.getDate());
         writeBytes(COL_DESC, pItem.getDescBytes());
@@ -170,7 +170,7 @@ public class SheetPattern
         /* Set the fields */
         writeString(COL_DEBIT, pItem.getDebitName());
         writeString(COL_CREDIT, pItem.getCreditName());
-        writeString(COL_TRAN, pItem.getTransTypeName());
+        writeString(COL_CATEGORY, pItem.getCategoryTypeName());
         writeString(COL_FREQ, pItem.getFrequencyName());
         writeDate(COL_DATE, pItem.getDate());
         writeString(COL_DESC, pItem.getDesc());
@@ -185,7 +185,7 @@ public class SheetPattern
         writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
         writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
-        writeHeader(COL_TRAN, EventBase.FIELD_TRNTYP.getName());
+        writeHeader(COL_CATEGORY, EventBase.FIELD_CATTYP.getName());
         writeHeader(COL_FREQ, Pattern.FIELD_FREQ.getName());
     }
 
@@ -195,7 +195,7 @@ public class SheetPattern
         setStringColumn(COL_DESC);
         setStringColumn(COL_DEBIT);
         setStringColumn(COL_CREDIT);
-        setStringColumn(COL_TRAN);
+        setStringColumn(COL_CATEGORY);
         setStringColumn(COL_FREQ);
         setDateColumn(COL_DATE);
         setMoneyColumn(COL_AMOUNT);
@@ -203,7 +203,7 @@ public class SheetPattern
         /* Apply Validation */
         applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
         applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
-        applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
+        applyDataValidation(COL_CATEGORY, SheetEventCategoryType.AREA_CATTYPENAMES);
         applyDataValidation(COL_FREQ, SheetFrequency.AREA_FREQUENCYNAMES);
     }
 

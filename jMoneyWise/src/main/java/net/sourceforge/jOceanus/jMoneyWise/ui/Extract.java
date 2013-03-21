@@ -77,7 +77,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.ui.MainTab.ActionRequest;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
@@ -109,9 +109,9 @@ public class Extract
     protected static final String TITLE_DESC = NLS_BUNDLE.getString("TitleDesc");
 
     /**
-     * TransType column title.
+     * CategoryType column title.
      */
-    protected static final String TITLE_TRANS = NLS_BUNDLE.getString("TitleTran");
+    protected static final String TITLE_CATEGORY = NLS_BUNDLE.getString("TitleCategory");
 
     /**
      * Amount column title.
@@ -292,9 +292,9 @@ public class Extract
     private static final int COLUMN_DATE = 0;
 
     /**
-     * TransType column id.
+     * CategoryType column id.
      */
-    private static final int COLUMN_TRANTYP = 1;
+    private static final int COLUMN_CATTYP = 1;
 
     /**
      * Description column id.
@@ -347,9 +347,9 @@ public class Extract
     private static final int WIDTH_DATE = 90;
 
     /**
-     * TransType column width.
+     * CategoryType column width.
      */
-    private static final int WIDTH_TRANTYP = 110;
+    private static final int WIDTH_CATTYP = 110;
 
     /**
      * Description column width.
@@ -595,12 +595,12 @@ public class Extract
 
         /* Switch on column */
         switch (column) {
-            case COLUMN_TRANTYP:
-                return theComboList.getAllTransTypes();
+            case COLUMN_CATTYP:
+                return theComboList.getAllCategoryTypes();
             case COLUMN_CREDIT:
-                return theComboList.getCreditAccounts(myEvent.getTransType(), myEvent.getDebit());
+                return theComboList.getCreditAccounts(myEvent.getCategoryType(), myEvent.getDebit());
             case COLUMN_DEBIT:
-                return theComboList.getDebitAccounts(myEvent.getTransType());
+                return theComboList.getDebitAccounts(myEvent.getCategoryType());
             default:
                 return null;
         }
@@ -710,7 +710,9 @@ public class Extract
          */
         @Override
         public int getColumnCount() {
-            return (theColumns == null) ? 0 : theColumns.getColumnCount();
+            return (theColumns == null)
+                    ? 0
+                    : theColumns.getColumnCount();
         }
 
         /**
@@ -719,7 +721,9 @@ public class Extract
          */
         @Override
         public int getRowCount() {
-            return (theEvents == null) ? 0 : theEvents.size();
+            return (theEvents == null)
+                    ? 0
+                    : theEvents.size();
         }
 
         @Override
@@ -729,8 +733,8 @@ public class Extract
                     return TITLE_DATE;
                 case COLUMN_DESC:
                     return TITLE_DESC;
-                case COLUMN_TRANTYP:
-                    return TITLE_TRANS;
+                case COLUMN_CATTYP:
+                    return TITLE_CATEGORY;
                 case COLUMN_AMOUNT:
                     return TITLE_AMOUNT;
                 case COLUMN_CREDIT:
@@ -757,7 +761,7 @@ public class Extract
             switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
-                case COLUMN_TRANTYP:
+                case COLUMN_CATTYP:
                     return String.class;
                 case COLUMN_CREDIT:
                     return String.class;
@@ -783,8 +787,8 @@ public class Extract
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
                     return Event.FIELD_DESC;
-                case COLUMN_TRANTYP:
-                    return Event.FIELD_TRNTYP;
+                case COLUMN_CATTYP:
+                    return Event.FIELD_CATTYP;
                 case COLUMN_AMOUNT:
                     return Event.FIELD_AMOUNT;
                 case COLUMN_CREDIT:
@@ -819,14 +823,14 @@ public class Extract
             switch (pColIndex) {
                 case COLUMN_DATE:
                     return true;
-                case COLUMN_TRANTYP:
+                case COLUMN_CATTYP:
                     return (pEvent.getDate() != null);
                 case COLUMN_DESC:
-                    return ((pEvent.getDate() != null) && (pEvent.getTransType() != null));
+                    return ((pEvent.getDate() != null) && (pEvent.getCategoryType() != null));
                 default:
                     if ((pEvent.getDate() == null)
                         || (pEvent.getDesc() == null)
-                        || (pEvent.getTransType() == null)) {
+                        || (pEvent.getCategoryType() == null)) {
                         return false;
                     }
                     switch (pColIndex) {
@@ -835,11 +839,11 @@ public class Extract
                         case COLUMN_CREDUNITS:
                             return ((pEvent.getCredit() != null) && (pEvent.getCredit().isPriced()));
                         case COLUMN_YEARS:
-                            return ((pEvent.getTransType() != null) && (pEvent.getTransType().isTaxableGain()));
+                            return ((pEvent.getCategoryType() != null) && (pEvent.getCategoryType().isTaxableGain()));
                         case COLUMN_TAXCRED:
-                            return Event.needsTaxCredit(pEvent.getTransType(), pEvent.getDebit());
+                            return Event.needsTaxCredit(pEvent.getCategoryType(), pEvent.getDebit());
                         case COLUMN_DILUTE:
-                            return Event.needsDilution(pEvent.getTransType());
+                            return Event.needsDilution(pEvent.getCategoryType());
                         default:
                             return true;
                     }
@@ -853,8 +857,8 @@ public class Extract
             switch (pColIndex) {
                 case COLUMN_DATE:
                     return pEvent.getDate();
-                case COLUMN_TRANTYP:
-                    return pEvent.getTransType();
+                case COLUMN_CATTYP:
+                    return pEvent.getCategoryType();
                 case COLUMN_CREDIT:
                     return pEvent.getCredit();
                 case COLUMN_DEBIT:
@@ -883,7 +887,7 @@ public class Extract
                                  final int pColIndex,
                                  final Object pValue) throws JDataException {
             /* Determine whether the line needs a tax credit */
-            boolean needsTaxCredit = Event.needsTaxCredit(pEvent.getTransType(), pEvent.getDebit());
+            boolean needsTaxCredit = Event.needsTaxCredit(pEvent.getCategoryType(), pEvent.getDebit());
 
             /* Store the appropriate value */
             switch (pColIndex) {
@@ -893,10 +897,10 @@ public class Extract
                 case COLUMN_DESC:
                     pEvent.setDescription((String) pValue);
                     break;
-                case COLUMN_TRANTYP:
-                    pEvent.setTransType((TransactionType) pValue);
+                case COLUMN_CATTYP:
+                    pEvent.setCategoryType((EventCategoryType) pValue);
                     /* If the need for a tax credit has changed */
-                    if (needsTaxCredit != Event.needsTaxCredit(pEvent.getTransType(), pEvent.getDebit())) {
+                    if (needsTaxCredit != Event.needsTaxCredit(pEvent.getCategoryType(), pEvent.getDebit())) {
                         /* Determine new Tax Credit */
                         if (needsTaxCredit) {
                             pEvent.setTaxCredit(null);
@@ -1092,10 +1096,10 @@ public class Extract
                 /* Access as event */
                 Event myEvent = (Event) myRow;
                 JMoney myTax = myEvent.getTaxCredit();
-                TransactionType myTrans = myEvent.getTransType();
+                EventCategoryType myCat = myEvent.getCategoryType();
 
                 /* If we have a calculable tax credit that is null/zero */
-                boolean isTaxable = ((myTrans != null) && ((myTrans.isInterest()) || (myTrans.isDividend())));
+                boolean isTaxable = ((myCat != null) && ((myCat.isInterest()) || (myCat.isDividend())));
                 if ((isTaxable)
                     && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
@@ -1268,12 +1272,12 @@ public class Extract
 
                 /* Access the event */
                 Event myEvent = (Event) myRow;
-                TransactionType myTrans = myEvent.getTransType();
+                EventCategoryType myCat = myEvent.getCategoryType();
                 JMoney myTax = myEvent.getTaxCredit();
 
-                /* Ignore rows with invalid transaction type */
-                if ((myTrans == null)
-                    || ((!myTrans.isInterest()) && (!myTrans.isDividend()))) {
+                /* Ignore rows with invalid category type */
+                if ((myCat == null)
+                    || ((!myCat.isInterest()) && (!myCat.isDividend()))) {
                     continue;
                 }
 
@@ -1410,7 +1414,7 @@ public class Extract
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            addColumn(new JDataTableColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_CATTYP, WIDTH_CATTYP, theStringRenderer, theComboEditor));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, theMoneyEditor));
             addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, theComboEditor));

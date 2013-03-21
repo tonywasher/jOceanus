@@ -27,288 +27,288 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
 
 /**
- * Enumeration of Tax Type Classes.
+ * Enumeration of Tax Category Classes.
  */
-public enum TaxClass implements StaticInterface {
+public enum TaxCategoryClass implements StaticInterface {
     /**
      * Gross Salary Income.
      */
-    GrossSalary(1, 0, TaxBucket.TRANSSUMM),
+    GrossSalary(1, 0, TaxCategorySection.CATSUMM),
 
     /**
      * Gross Interest Income.
      */
-    GrossInterest(2, 1, TaxBucket.TRANSSUMM),
+    GrossInterest(2, 1, TaxCategorySection.CATSUMM),
 
     /**
      * Gross Dividend Income.
      */
-    GrossDividend(3, 2, TaxBucket.TRANSSUMM),
+    GrossDividend(3, 2, TaxCategorySection.CATSUMM),
 
     /**
      * Gross Unit Trust Dividend Income.
      */
-    GrossUTDividend(4, 3, TaxBucket.TRANSSUMM),
+    GrossUTDividend(4, 3, TaxCategorySection.CATSUMM),
 
     /**
      * Gross Rental Income.
      */
-    GrossRental(5, 4, TaxBucket.TRANSSUMM),
+    GrossRental(5, 4, TaxCategorySection.CATSUMM),
 
     /**
      * Gross Taxable gains.
      */
-    GrossTaxableGains(6, 5, TaxBucket.TRANSSUMM),
+    GrossTaxableGains(6, 5, TaxCategorySection.CATSUMM),
 
     /**
      * Gross Capital gains.
      */
-    GrossCapitalGains(7, 6, TaxBucket.TRANSSUMM),
+    GrossCapitalGains(7, 6, TaxCategorySection.CATSUMM),
 
     /**
      * Total Tax Paid.
      */
-    TaxPaid(8, 7, TaxBucket.TRANSSUMM),
+    TaxPaid(8, 7, TaxCategorySection.CATSUMM),
 
     /**
      * Market Growth/Shrinkage.
      */
-    Market(9, 8, TaxBucket.TRANSSUMM),
+    Market(9, 8, TaxCategorySection.CATSUMM),
 
     /**
      * Tax Free Income.
      */
-    TaxFree(10, 9, TaxBucket.TRANSSUMM),
+    TaxFree(10, 9, TaxCategorySection.CATSUMM),
 
     /**
      * Gross Expense.
      */
-    Expense(11, 10, TaxBucket.TRANSSUMM),
+    Expense(11, 10, TaxCategorySection.CATSUMM),
 
     /**
      * Virtual Income.
      */
-    Virtual(12, 11, TaxBucket.TRANSSUMM),
+    Virtual(12, 11, TaxCategorySection.CATSUMM),
 
     /**
      * Non-Core Income.
      */
-    NonCore(13, 12, TaxBucket.TRANSSUMM),
+    NonCore(13, 12, TaxCategorySection.CATSUMM),
 
     /**
      * Profit on Year.
      */
-    ProfitLoss(14, 0, TaxBucket.TRANSTOTAL),
+    ProfitLoss(14, 0, TaxCategorySection.CATTOTAL),
 
     /**
      * Core Income after tax ignoring market movements and inheritance.
      */
-    CoreIncome(15, 1, TaxBucket.TRANSTOTAL),
+    CoreIncome(15, 1, TaxCategorySection.CATTOTAL),
 
     /**
      * Profit on year after ignoring market movements and inheritance.
      */
-    CoreProfitLoss(16, 2, TaxBucket.TRANSTOTAL),
+    CoreProfitLoss(16, 2, TaxCategorySection.CATTOTAL),
 
     /**
      * Gross Income.
      */
-    GrossIncome(17, 0, TaxBucket.TAXDETAIL),
+    GrossIncome(17, 0, TaxCategorySection.TAXDETAIL),
 
     /**
      * Original Allowance.
      */
-    OriginalAllowance(18, 1, TaxBucket.TAXDETAIL),
+    OriginalAllowance(18, 1, TaxCategorySection.TAXDETAIL),
 
     /**
      * Adjusted Allowance.
      */
-    AdjustedAllowance(19, 2, TaxBucket.TAXDETAIL),
+    AdjustedAllowance(19, 2, TaxCategorySection.TAXDETAIL),
 
     /**
      * High Tax Band.
      */
-    HiTaxBand(20, 3, TaxBucket.TAXDETAIL),
+    HiTaxBand(20, 3, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at nil-rate.
      */
-    SalaryNilRate(21, 4, TaxBucket.TAXDETAIL),
+    SalaryNilRate(21, 4, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at low-rate.
      */
-    SalaryLoRate(22, 5, TaxBucket.TAXDETAIL),
+    SalaryLoRate(22, 5, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at basic-rate.
      */
-    SalaryBasicRate(23, 6, TaxBucket.TAXDETAIL),
+    SalaryBasicRate(23, 6, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at high-rate.
      */
-    SalaryHiRate(24, 7, TaxBucket.TAXDETAIL),
+    SalaryHiRate(24, 7, TaxCategorySection.TAXDETAIL),
 
     /**
      * Salary at additional-rate.
      */
-    SalaryAdditionalRate(25, 8, TaxBucket.TAXDETAIL),
+    SalaryAdditionalRate(25, 8, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at nil-rate.
      */
-    RentalNilRate(26, 9, TaxBucket.TAXDETAIL),
+    RentalNilRate(26, 9, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at low-rate.
      */
-    RentalLoRate(27, 10, TaxBucket.TAXDETAIL),
+    RentalLoRate(27, 10, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at basic-rate.
      */
-    RentalBasicRate(28, 11, TaxBucket.TAXDETAIL),
+    RentalBasicRate(28, 11, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at high-rate.
      */
-    RentalHiRate(29, 12, TaxBucket.TAXDETAIL),
+    RentalHiRate(29, 12, TaxCategorySection.TAXDETAIL),
 
     /**
      * Rental at additional-rate.
      */
-    RentalAdditionalRate(30, 13, TaxBucket.TAXDETAIL),
+    RentalAdditionalRate(30, 13, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at nil-rate.
      */
-    InterestNilRate(31, 14, TaxBucket.TAXDETAIL),
+    InterestNilRate(31, 14, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at low-rate.
      */
-    InterestLoRate(32, 15, TaxBucket.TAXDETAIL),
+    InterestLoRate(32, 15, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at basic-rate.
      */
-    InterestBasicRate(33, 16, TaxBucket.TAXDETAIL),
+    InterestBasicRate(33, 16, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at high-rate.
      */
-    InterestHiRate(34, 17, TaxBucket.TAXDETAIL),
+    InterestHiRate(34, 17, TaxCategorySection.TAXDETAIL),
 
     /**
      * Interest at additional-rate.
      */
-    InterestAdditionalRate(35, 18, TaxBucket.TAXDETAIL),
+    InterestAdditionalRate(35, 18, TaxCategorySection.TAXDETAIL),
 
     /**
      * Dividends at basic-rate.
      */
-    DividendBasicRate(36, 19, TaxBucket.TAXDETAIL),
+    DividendBasicRate(36, 19, TaxCategorySection.TAXDETAIL),
 
     /**
      * Dividends at high-rate.
      */
-    DividendHiRate(37, 20, TaxBucket.TAXDETAIL),
+    DividendHiRate(37, 20, TaxCategorySection.TAXDETAIL),
 
     /**
      * Dividends at additional-rate.
      */
-    DividendAdditionalRate(38, 21, TaxBucket.TAXDETAIL),
+    DividendAdditionalRate(38, 21, TaxCategorySection.TAXDETAIL),
 
     /**
      * Slice at basic-rate.
      */
-    SliceBasicRate(39, 22, TaxBucket.TAXDETAIL),
+    SliceBasicRate(39, 22, TaxCategorySection.TAXDETAIL),
 
     /**
      * Slice at high-rate.
      */
-    SliceHiRate(40, 23, TaxBucket.TAXDETAIL),
+    SliceHiRate(40, 23, TaxCategorySection.TAXDETAIL),
 
     /**
      * Slice at additional-rate.
      */
-    SliceAdditionalRate(41, 24, TaxBucket.TAXDETAIL),
+    SliceAdditionalRate(41, 24, TaxCategorySection.TAXDETAIL),
 
     /**
      * Gains at basic-rate.
      */
-    GainsBasicRate(42, 25, TaxBucket.TAXDETAIL),
+    GainsBasicRate(42, 25, TaxCategorySection.TAXDETAIL),
 
     /**
      * Gains at high-rate.
      */
-    GainsHiRate(43, 26, TaxBucket.TAXDETAIL),
+    GainsHiRate(43, 26, TaxCategorySection.TAXDETAIL),
 
     /**
      * Gains at additional-rate.
      */
-    GainsAdditionalRate(44, 27, TaxBucket.TAXDETAIL),
+    GainsAdditionalRate(44, 27, TaxCategorySection.TAXDETAIL),
 
     /**
      * Capital at nil-rate.
      */
-    CapitalNilRate(45, 28, TaxBucket.TAXDETAIL),
+    CapitalNilRate(45, 28, TaxCategorySection.TAXDETAIL),
 
     /**
      * Capital at basic-rate.
      */
-    CapitalBasicRate(46, 29, TaxBucket.TAXDETAIL),
+    CapitalBasicRate(46, 29, TaxCategorySection.TAXDETAIL),
 
     /**
      * Capital at high-rate.
      */
-    CapitalHiRate(47, 30, TaxBucket.TAXDETAIL),
+    CapitalHiRate(47, 30, TaxCategorySection.TAXDETAIL),
 
     /**
      * Total Taxation Due on Salary.
      */
-    TaxDueSalary(48, 0, TaxBucket.TAXSUMM),
+    TaxDueSalary(48, 0, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Rental.
      */
-    TaxDueRental(49, 1, TaxBucket.TAXSUMM),
+    TaxDueRental(49, 1, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Interest.
      */
-    TaxDueInterest(50, 2, TaxBucket.TAXSUMM),
+    TaxDueInterest(50, 2, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Dividends.
      */
-    TaxDueDividend(51, 3, TaxBucket.TAXSUMM),
+    TaxDueDividend(51, 3, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Taxable Gains.
      */
-    TaxDueTaxableGains(52, 4, TaxBucket.TAXSUMM),
+    TaxDueTaxableGains(52, 4, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Slice.
      */
-    TaxDueSlice(53, 5, TaxBucket.TAXSUMM),
+    TaxDueSlice(53, 5, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due on Capital Gains.
      */
-    TaxDueCapitalGains(54, 6, TaxBucket.TAXSUMM),
+    TaxDueCapitalGains(54, 6, TaxCategorySection.TAXSUMM),
 
     /**
      * Total Taxation Due.
      */
-    TotalTaxationDue(55, 0, TaxBucket.TAXTOTAL),
+    TotalTaxationDue(55, 0, TaxCategorySection.TAXTOTAL),
 
     /**
      * Taxation Profit (TaxDue-TaxPaid).
      */
-    TaxProfitLoss(56, 1, TaxBucket.TAXTOTAL);
+    TaxProfitLoss(56, 1, TaxCategorySection.TAXTOTAL);
 
     /**
      * Class Id.
@@ -321,9 +321,9 @@ public enum TaxClass implements StaticInterface {
     private final int theOrder;
 
     /**
-     * Class Bucket.
+     * Class Section.
      */
-    private TaxBucket theBucket = null;
+    private final TaxCategorySection theSection;
 
     @Override
     public int getClassId() {
@@ -331,11 +331,11 @@ public enum TaxClass implements StaticInterface {
     }
 
     /**
-     * Obtain Class Bucket.
-     * @return the class bucket
+     * Obtain Class Section.
+     * @return the class section
      */
-    public TaxBucket getClassBucket() {
-        return theBucket;
+    public TaxCategorySection getClassSection() {
+        return theSection;
     }
 
     @Override
@@ -347,16 +347,16 @@ public enum TaxClass implements StaticInterface {
      * Constructor.
      * @param uId the id
      * @param uOrder the order
-     * @param pBucket the bucket
+     * @param pSection the section
      */
-    private TaxClass(final int uId,
-                     final int uOrder,
-                     final TaxBucket pBucket) {
+    private TaxCategoryClass(final int uId,
+                             final int uOrder,
+                             final TaxCategorySection pSection) {
         /* Set values */
         theId = uId;
-        theOrder = pBucket.getBase()
+        theOrder = pSection.getBase()
                    + uOrder;
-        theBucket = pBucket;
+        theSection = pSection;
     }
 
     /**
@@ -365,8 +365,8 @@ public enum TaxClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static TaxClass fromId(final int id) throws JDataException {
-        for (TaxClass myClass : values()) {
+    public static TaxCategoryClass fromId(final int id) throws JDataException {
+        for (TaxCategoryClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }

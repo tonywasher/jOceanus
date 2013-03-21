@@ -47,9 +47,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
 
 /**
  * New version of Event DataItem utilising EventInfo.
@@ -129,6 +129,16 @@ public class Event
     public static final JDataField FIELD_XFERDELAY = FIELD_DEFS.declareLocalField("XferDelay");
 
     /**
+     * Reference Field Id.
+     */
+    public static final JDataField FIELD_REFERENCE = FIELD_DEFS.declareLocalField("Reference");
+
+    /**
+     * Donation Field Id.
+     */
+    public static final JDataField FIELD_DONATION = FIELD_DEFS.declareLocalField("Donation");
+
+    /**
      * ThirdParty Field Id.
      */
     public static final JDataField FIELD_THIRDPARTY = FIELD_DEFS.declareLocalField("ThirdParty");
@@ -137,7 +147,9 @@ public class Event
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
-            return hasInfoSet ? theInfoSet : JDataFieldValue.SkipField;
+            return hasInfoSet
+                    ? theInfoSet
+                    : JDataFieldValue.SkipField;
         }
 
         /* Handle InfoSet fields */
@@ -183,6 +195,12 @@ public class Event
         if (FIELD_XFERDELAY.equals(pField)) {
             return EventInfoClass.XferDelay;
         }
+        if (FIELD_REFERENCE.equals(pField)) {
+            return EventInfoClass.Reference;
+        }
+        if (FIELD_DONATION.equals(pField)) {
+            return EventInfoClass.Donation;
+        }
         if (FIELD_THIRDPARTY.equals(pField)) {
             return EventInfoClass.ThirdParty;
         }
@@ -217,7 +235,9 @@ public class Event
      * @return the Debit Units
      */
     public JUnits getDebitUnits() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.DebitUnits, JUnits.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.DebitUnits, JUnits.class)
+                : null;
     }
 
     /**
@@ -225,7 +245,9 @@ public class Event
      * @return the Credit Units
      */
     public JUnits getCreditUnits() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.CreditUnits, JUnits.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.CreditUnits, JUnits.class)
+                : null;
     }
 
     /**
@@ -233,7 +255,9 @@ public class Event
      * @return the Tax Credit
      */
     public JMoney getTaxCredit() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.TaxCredit, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.TaxCredit, JMoney.class)
+                : null;
     }
 
     /**
@@ -241,7 +265,9 @@ public class Event
      * @return the Dilution
      */
     public JDilution getDilution() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.Dilution, JDilution.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.Dilution, JDilution.class)
+                : null;
     }
 
     /**
@@ -249,7 +275,9 @@ public class Event
      * @return the Years
      */
     public Integer getYears() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.QualifyYears, Integer.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.QualifyYears, Integer.class)
+                : null;
     }
 
     /**
@@ -257,7 +285,9 @@ public class Event
      * @return the xferDelay
      */
     public Integer getXferDelay() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.XferDelay, Integer.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.XferDelay, Integer.class)
+                : null;
     }
 
     /**
@@ -265,7 +295,9 @@ public class Event
      * @return the NatInsurance
      */
     public JMoney getNatInsurance() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.NatInsurance, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.NatInsurance, JMoney.class)
+                : null;
     }
 
     /**
@@ -273,7 +305,9 @@ public class Event
      * @return the Benefit
      */
     public JMoney getBenefit() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.Benefit, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.Benefit, JMoney.class)
+                : null;
     }
 
     /**
@@ -281,7 +315,29 @@ public class Event
      * @return the Pension
      */
     public JMoney getPension() {
-        return hasInfoSet ? theInfoSet.getValue(EventInfoClass.Pension, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.Pension, JMoney.class)
+                : null;
+    }
+
+    /**
+     * Obtain Donation.
+     * @return the Donation
+     */
+    public JMoney getDonation() {
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.Donation, JMoney.class)
+                : null;
+    }
+
+    /**
+     * Obtain Reference.
+     * @return the Reference
+     */
+    public String getReference() {
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.Reference, String.class)
+                : null;
     }
 
     /**
@@ -289,7 +345,9 @@ public class Event
      * @return the ThirdParty
      */
     public Account getThirdParty() {
-        return hasInfoSet ? theInfoSet.getAccount(EventInfoClass.ThirdParty) : null;
+        return hasInfoSet
+                ? theInfoSet.getAccount(EventInfoClass.ThirdParty)
+                : null;
     }
 
     @Override
@@ -384,7 +442,9 @@ public class Event
         /* Handle InfoSet fields */
         EventInfoClass myClass = getFieldClass(pField);
         if (myClass != null) {
-            return (useInfoSet) ? theInfoSet.fieldChanged(myClass) : Difference.Identical;
+            return (useInfoSet)
+                    ? theInfoSet.fieldChanged(myClass)
+                    : Difference.Identical;
         }
 
         /* Check super fields */
@@ -449,7 +509,7 @@ public class Event
         useInfoSet = true;
 
         /* If we need a tax Credit */
-        if (needsTaxCredit(getTransType(), getDebit())) {
+        if (needsTaxCredit(getCategoryType(), getDebit())) {
             /* Calculate the tax credit */
             setTaxCredit(calculateTaxCredit());
         }
@@ -478,7 +538,7 @@ public class Event
      * @param pDesc the description
      * @param uDebit the debit id
      * @param uCredit the credit id
-     * @param uTransType the transType id
+     * @param uCatType the categoryType id
      * @param pAmount the amount
      * @throws JDataException on error
      */
@@ -489,10 +549,10 @@ public class Event
                     final byte[] pDesc,
                     final Integer uDebit,
                     final Integer uCredit,
-                    final Integer uTransType,
+                    final Integer uCatType,
                     final byte[] pAmount) throws JDataException {
         /* Initialise item */
-        super(pList, uId, uControlId, pDate, pDesc, uDebit, uCredit, uTransType, pAmount);
+        super(pList, uId, uControlId, pDate, pDesc, uDebit, uCredit, uCatType, pAmount);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -508,7 +568,7 @@ public class Event
      * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pTransType the transaction type
+     * @param pCatType the category type
      * @param pAmount the amount
      * @throws JDataException on error
      */
@@ -518,10 +578,10 @@ public class Event
                     final String pDesc,
                     final Account pDebit,
                     final Account pCredit,
-                    final TransactionType pTransType,
+                    final EventCategoryType pCatType,
                     final String pAmount) throws JDataException {
         /* Initialise item */
-        super(pList, uId, pDate, pDesc, pDebit, pCredit, pTransType, pAmount);
+        super(pList, uId, pDate, pDesc, pDebit, pCredit, pCatType, pAmount);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -536,10 +596,13 @@ public class Event
     public void validate() {
         Account myDebit = getDebit();
         Account myCredit = getCredit();
-        TransactionType myTrans = getTransType();
+        EventCategoryType myTrans = getCategoryType();
         JUnits myDebitUnits = getDebitUnits();
         JUnits myCreditUnits = getCreditUnits();
         JMoney myTaxCred = getTaxCredit();
+        // JMoney myBenefit = getBenefit();
+        // JMoney myNatIns = getNatInsurance();
+        // JMoney myDonation = getDonation();
         Integer myYears = getYears();
         JDilution myDilution = getDilution();
 
@@ -740,9 +803,9 @@ public class Event
             return getTaxCredit();
         }
 
-        /* Ignore unless transaction type is interest/dividend */
-        if ((getTransType() == null)
-            || ((!getTransType().isInterest()) && (!getTransType().isDividend()))) {
+        /* Ignore unless category type is interest/dividend */
+        if ((getCategoryType() == null)
+            || ((!getCategoryType().isInterest()) && (!getCategoryType().isDividend()))) {
             return getTaxCredit();
         }
 
@@ -750,7 +813,9 @@ public class Event
         TaxYear myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
-        JRate myRate = (getTransType().isInterest()) ? myTax.getIntTaxRate() : myTax.getDivTaxRate();
+        JRate myRate = (getCategoryType().isInterest())
+                ? myTax.getIntTaxRate()
+                : myTax.getDivTaxRate();
 
         /* Calculate the tax credit */
         return getAmount().taxCreditAtRate(myRate);
@@ -838,6 +903,24 @@ public class Event
     }
 
     /**
+     * Set a new Donation.
+     * @param pDonation the new donation
+     * @throws JDataException on error
+     */
+    public void setDonation(final JMoney pDonation) throws JDataException {
+        setInfoSetValue(EventInfoClass.Donation, pDonation);
+    }
+
+    /**
+     * Set a new Reference.
+     * @param pReference the new reference
+     * @throws JDataException on error
+     */
+    public void setReference(final String pReference) throws JDataException {
+        setInfoSetValue(EventInfoClass.Reference, pReference);
+    }
+
+    /**
      * Set a new ThirdParty.
      * @param pParty the new thirdParty
      * @throws JDataException on error
@@ -870,10 +953,14 @@ public class Event
      */
     private Object getInfoSetValue(final EventInfoClass pInfoClass) {
         /* Access value of object */
-        Object myValue = hasInfoSet ? theInfoSet.getField(pInfoClass) : null;
+        Object myValue = hasInfoSet
+                ? theInfoSet.getField(pInfoClass)
+                : null;
 
         /* Return the value */
-        return (myValue != null) ? myValue : JDataFieldValue.SkipField;
+        return (myValue != null)
+                ? myValue
+                : JDataFieldValue.SkipField;
     }
 
     @Override
@@ -1182,7 +1269,7 @@ public class Event
          * @param pAmount the amount
          * @param pDebit the debit account
          * @param pCredit the credit account
-         * @param pTransType the transaction type
+         * @param pCatType the category type
          * @return the new event
          * @throws JDataException on error
          */
@@ -1192,19 +1279,19 @@ public class Event
                                  final String pAmount,
                                  final String pDebit,
                                  final String pCredit,
-                                 final String pTransType) throws JDataException {
+                                 final String pCatType) throws JDataException {
             /* Access the accounts */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
             AccountList myAccounts = myData.getAccounts();
 
-            /* Look up the Transaction Type */
-            TransactionType myTransType = myData.getTransTypes().findItemByName(pTransType);
-            if (myTransType == null) {
+            /* Look up the Category Type */
+            EventCategoryType myCategory = myData.getEventCategoryTypes().findItemByName(pCatType);
+            if (myCategory == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
                                                               + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Transact Type ["
-                                                              + pTransType
+                                                              + "] has invalid Category Type ["
+                                                              + pCatType
                                                               + "]");
             }
 
@@ -1229,7 +1316,7 @@ public class Event
             }
 
             /* Create the new Event */
-            Event myEvent = new Event(this, uId, pDate, pDesc, myDebit, myCredit, myTransType, pAmount);
+            Event myEvent = new Event(this, uId, pDate, pDesc, myDebit, myCredit, myCategory, pAmount);
 
             /* Add the Event to the list */
             append(myEvent);
@@ -1245,7 +1332,7 @@ public class Event
          * @param pAmount the amount
          * @param uDebitId the debit id
          * @param uCreditId the credit id
-         * @param uTransId the transaction id
+         * @param uCatId the category id
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer uId,
@@ -1255,9 +1342,9 @@ public class Event
                                   final byte[] pAmount,
                                   final Integer uDebitId,
                                   final Integer uCreditId,
-                                  final Integer uTransId) throws JDataException {
+                                  final Integer uCatId) throws JDataException {
             /* Create the new Event */
-            Event myEvent = new Event(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId, pAmount);
+            Event myEvent = new Event(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uCatId, pAmount);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(uId)) {

@@ -27,51 +27,46 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
- * SheetStaticData extension for TransactionType.
+ * SheetStaticData extension for EventCategoryType.
  * @author Tony Washer
  */
-public class SheetTransactionType
-        extends SheetStaticData<TransactionType> {
+public class SheetEventCategoryType
+        extends SheetStaticData<EventCategoryType> {
 
     /**
-     * NamedArea for Transaction Types.
+     * NamedArea for Category Types.
      */
-    private static final String AREA_TRANSTYPES = TransactionType.LIST_NAME;
+    private static final String AREA_CATTYPES = EventCategoryType.LIST_NAME;
 
     /**
-     * NameList for TranTypes.
+     * NameList for Category Types.
      */
-    protected static final String AREA_TRANSTYPENAMES = TransactionType.OBJECT_NAME
-                                                        + "Names";
+    protected static final String AREA_CATTYPENAMES = EventCategoryType.OBJECT_NAME
+                                                      + "Names";
 
     /**
-     * Alternative NamedArea for Transaction Types.
+     * EventCategoryTypes data list.
      */
-    private static final String AREA_TRANSTYPES1 = "TransType";
-
-    /**
-     * TransactionTypes data list.
-     */
-    private final TransTypeList theList;
+    private final EventCategoryTypeList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTransactionType(final FinanceReader pReader) {
+    protected SheetEventCategoryType(final FinanceReader pReader) {
         /* Call super-constructor */
-        super(pReader, AREA_TRANSTYPES);
+        super(pReader, AREA_CATTYPES);
 
-        /* Access the Transaction Type list */
-        theList = pReader.getData().getTransTypes();
+        /* Access the Category Type list */
+        theList = pReader.getData().getEventCategoryTypes();
         setDataList(theList);
     }
 
@@ -79,12 +74,12 @@ public class SheetTransactionType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTransactionType(final FinanceWriter pWriter) {
+    protected SheetEventCategoryType(final FinanceWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_TRANSTYPES, AREA_TRANSTYPENAMES);
+        super(pWriter, AREA_CATTYPES, AREA_CATTYPENAMES);
 
-        /* Access the Transaction Type list */
-        theList = pWriter.getData().getTransTypes();
+        /* Access the Category Type list */
+        theList = pWriter.getData().getEventCategoryTypes();
         setDataList(theList);
     }
 
@@ -142,10 +137,10 @@ public class SheetTransactionType
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_TRANSTYPES1);
+            DataView myView = pWorkBook.getRangeView(AREA_CATTYPES);
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_TRANSTYPES)) {
+            if (!pTask.setNewStage(AREA_CATTYPES)) {
                 return false;
             }
 
@@ -153,11 +148,11 @@ public class SheetTransactionType
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
-            /* Count the number of TransactionTypes */
+            /* Count the number of EventCategoryTypes */
             int myTotal = myView.getRowCount();
 
-            /* Access the list of transaction types */
-            TransTypeList myList = pData.getTransTypes();
+            /* Access the list of category types */
+            EventCategoryTypeList myList = pData.getEventCategoryTypes();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -186,7 +181,7 @@ public class SheetTransactionType
 
             /* Handle exceptions */
         } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Transaction Types", e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Category Types", e);
         }
 
         /* Return to caller */

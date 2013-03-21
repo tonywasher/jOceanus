@@ -29,7 +29,7 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
 /**
  * Enumeration of TaxRegime Classes.
  */
-public enum TaxRegClass implements StaticInterface {
+public enum TaxRegimeClass implements StaticInterface {
     /**
      * Archive tax regime.
      */
@@ -75,8 +75,8 @@ public enum TaxRegClass implements StaticInterface {
      * @param uId the id
      * @param uOrder the default order
      */
-    private TaxRegClass(final int uId,
-                        final int uOrder) {
+    private TaxRegimeClass(final int uId,
+                           final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -87,8 +87,8 @@ public enum TaxRegClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static TaxRegClass fromId(final int id) throws JDataException {
-        for (TaxRegClass myClass : values()) {
+    public static TaxRegimeClass fromId(final int id) throws JDataException {
+        for (TaxRegimeClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }

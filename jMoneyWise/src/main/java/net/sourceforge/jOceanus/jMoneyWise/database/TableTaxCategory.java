@@ -27,36 +27,37 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType.TaxTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory.TaxCategoryList;
 
 /**
- * TableStaticData extension for TaxType.
+ * TableStaticData extension for TaxBucket.
  * @author Tony Washer
  */
-public class TableTaxType extends TableStaticData<TaxType> {
+public class TableTaxCategory
+        extends TableStaticData<TaxCategory> {
     /**
-     * The name of the TaxType table.
+     * The name of the TaxCategory table.
      */
-    private static final String TABLE_NAME = TaxType.LIST_NAME;
+    private static final String TABLE_NAME = TaxCategory.LIST_NAME;
 
     /**
-     * The tax type list.
+     * The tax category list.
      */
-    private TaxTypeList theList = null;
+    private TaxCategoryList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTaxType(final Database<?> pDatabase) {
+    protected TableTaxCategory(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theList = myData.getTaxTypes();
+        theList = myData.getTaxCategories();
         setList(theList);
     }
 

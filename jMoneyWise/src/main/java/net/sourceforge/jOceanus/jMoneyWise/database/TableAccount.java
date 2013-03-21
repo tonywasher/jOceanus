@@ -62,7 +62,7 @@ public class TableAccount
 
         /* Define the columns */
         myTableDef.addEncryptedColumn(AccountBase.FIELD_NAME, AccountBase.NAMELEN);
-        ColumnDefinition mySortCol = myTableDef.addReferenceColumn(AccountBase.FIELD_TYPE, TableAccountType.TABLE_NAME);
+        ColumnDefinition mySortCol = myTableDef.addReferenceColumn(AccountBase.FIELD_TYPE, TableAccountCategoryType.TABLE_NAME);
         myTableDef.addNullEncryptedColumn(AccountBase.FIELD_DESC, AccountBase.DESCLEN);
         myTableDef.addBooleanColumn(AccountBase.FIELD_CLOSED);
 

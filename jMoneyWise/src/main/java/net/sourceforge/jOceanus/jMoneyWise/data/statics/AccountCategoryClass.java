@@ -27,9 +27,9 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
 
 /**
- * Enumeration of Account Type Classes.
+ * Enumeration of AccountCategory Type Classes.
  */
-public enum AccountClass implements StaticInterface {
+public enum AccountCategoryClass implements StaticInterface {
     /**
      * Current Banking Account.
      */
@@ -190,8 +190,8 @@ public enum AccountClass implements StaticInterface {
      * @param uId the Id
      * @param uOrder the default order.
      */
-    private AccountClass(final int uId,
-                         final int uOrder) {
+    private AccountCategoryClass(final int uId,
+                                 final int uOrder) {
         theId = uId;
         theOrder = uOrder;
     }
@@ -202,8 +202,8 @@ public enum AccountClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static AccountClass fromId(final int id) throws JDataException {
-        for (AccountClass myClass : values()) {
+    public static AccountCategoryClass fromId(final int id) throws JDataException {
+        for (AccountCategoryClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }

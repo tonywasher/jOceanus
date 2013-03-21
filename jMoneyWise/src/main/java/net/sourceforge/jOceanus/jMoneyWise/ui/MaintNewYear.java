@@ -163,9 +163,9 @@ public class MaintNewYear
     private static final String TITLE_DESC = Extract.TITLE_DESC;
 
     /**
-     * Transaction Type column title.
+     * Category Type column title.
      */
-    private static final String TITLE_TRANTYPE = Extract.TITLE_TRANS;
+    private static final String TITLE_CATTYPE = Extract.TITLE_CATEGORY;
 
     /**
      * Amount column title.
@@ -193,9 +193,9 @@ public class MaintNewYear
     private static final int COLUMN_DESC = 1;
 
     /**
-     * Transaction Type column id.
+     * Category Type column id.
      */
-    private static final int COLUMN_TRANTYP = 2;
+    private static final int COLUMN_CATTYP = 2;
 
     /**
      * Amount column id.
@@ -223,9 +223,9 @@ public class MaintNewYear
     private static final int WIDTH_DESC = 150;
 
     /**
-     * Transaction Type column width.
+     * Category Type column width.
      */
-    private static final int WIDTH_TRANTYP = 110;
+    private static final int WIDTH_CATTYP = 110;
 
     /**
      * Amount column width.
@@ -430,7 +430,9 @@ public class MaintNewYear
          */
         @Override
         public int getColumnCount() {
-            return (theColumns == null) ? 0 : theColumns.getColumnCount();
+            return (theColumns == null)
+                    ? 0
+                    : theColumns.getColumnCount();
         }
 
         /**
@@ -439,7 +441,9 @@ public class MaintNewYear
          */
         @Override
         public int getRowCount() {
-            return (theEvents == null) ? 0 : theEvents.size();
+            return (theEvents == null)
+                    ? 0
+                    : theEvents.size();
         }
 
         @Override
@@ -449,8 +453,8 @@ public class MaintNewYear
                     return TITLE_DATE;
                 case COLUMN_DESC:
                     return TITLE_DESC;
-                case COLUMN_TRANTYP:
-                    return TITLE_TRANTYPE;
+                case COLUMN_CATTYP:
+                    return TITLE_CATTYPE;
                 case COLUMN_AMOUNT:
                     return TITLE_AMOUNT;
                 case COLUMN_CREDIT:
@@ -470,8 +474,8 @@ public class MaintNewYear
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
                     return Event.FIELD_DESC;
-                case COLUMN_TRANTYP:
-                    return Event.FIELD_TRNTYP;
+                case COLUMN_CATTYP:
+                    return Event.FIELD_CATTYP;
                 case COLUMN_AMOUNT:
                     return Event.FIELD_AMOUNT;
                 case COLUMN_CREDIT:
@@ -488,7 +492,7 @@ public class MaintNewYear
             switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
-                case COLUMN_TRANTYP:
+                case COLUMN_CATTYP:
                     return String.class;
                 case COLUMN_CREDIT:
                     return String.class;
@@ -512,8 +516,8 @@ public class MaintNewYear
             switch (pColIndex) {
                 case COLUMN_DATE:
                     return pEvent.getDate();
-                case COLUMN_TRANTYP:
-                    return pEvent.getTransType();
+                case COLUMN_CATTYP:
+                    return pEvent.getCategoryType();
                 case COLUMN_CREDIT:
                     return pEvent.getCredit();
                 case COLUMN_DEBIT:
@@ -568,7 +572,7 @@ public class MaintNewYear
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_TRANTYP, WIDTH_TRANTYP, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_CATTYP, WIDTH_CATTYP, theStringRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, null));

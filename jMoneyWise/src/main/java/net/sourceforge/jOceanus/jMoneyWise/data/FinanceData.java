@@ -41,14 +41,14 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory.TaxCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType.TaxTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 
 /**
@@ -70,17 +70,17 @@ public class FinanceData
     /**
      * AccountTypes Field Id.
      */
-    public static final JDataField FIELD_ACTTYPES = FIELD_DEFS.declareLocalField("AccountTypes");
+    public static final JDataField FIELD_ACTCATTYPES = FIELD_DEFS.declareLocalField("AccountCategoryTypes");
 
     /**
      * TransactionTypes Field Id.
      */
-    public static final JDataField FIELD_TRANTYPES = FIELD_DEFS.declareLocalField("TransactionTypes");
+    public static final JDataField FIELD_EVTCATTYPES = FIELD_DEFS.declareLocalField("EventCategoryTypes");
 
     /**
      * TaxTypes Field Id.
      */
-    public static final JDataField FIELD_TAXTYPES = FIELD_DEFS.declareLocalField("TaxTypes");
+    public static final JDataField FIELD_TAXCATEGORIES = FIELD_DEFS.declareLocalField("TaxCategories");
 
     /**
      * Frequencies Field Id.
@@ -159,56 +159,90 @@ public class FinanceData
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (FIELD_ACTTYPES.equals(pField)) {
-            return (theActTypes.size() > 0) ? theActTypes : JDataFieldValue.SkipField;
+        if (FIELD_ACTCATTYPES.equals(pField)) {
+            return (theActCatTypes.size() > 0)
+                    ? theActCatTypes
+                    : JDataFieldValue.SkipField;
         }
-        if (FIELD_TRANTYPES.equals(pField)) {
-            return (theTransTypes.size() > 0) ? theTransTypes : JDataFieldValue.SkipField;
+        if (FIELD_EVTCATTYPES.equals(pField)) {
+            return (theEvtCatTypes.size() > 0)
+                    ? theEvtCatTypes
+                    : JDataFieldValue.SkipField;
         }
-        if (FIELD_TAXTYPES.equals(pField)) {
-            return (theTaxTypes.size() > 0) ? theTaxTypes : JDataFieldValue.SkipField;
+        if (FIELD_TAXCATEGORIES.equals(pField)) {
+            return (theTaxCategories.size() > 0)
+                    ? theTaxCategories
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXREGS.equals(pField)) {
-            return (theTaxRegimes.size() > 0) ? theTaxRegimes : JDataFieldValue.SkipField;
+            return (theTaxRegimes.size() > 0)
+                    ? theTaxRegimes
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_FREQS.equals(pField)) {
-            return (theFrequencys.size() > 0) ? theFrequencys : JDataFieldValue.SkipField;
+            return (theFrequencys.size() > 0)
+                    ? theFrequencys
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXINFOTYPES.equals(pField)) {
-            return (theTaxInfoTypes.size() > 0) ? theTaxInfoTypes : JDataFieldValue.SkipField;
+            return (theTaxInfoTypes.size() > 0)
+                    ? theTaxInfoTypes
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_ACTINFOTYPES.equals(pField)) {
-            return (theActInfoTypes.size() > 0) ? theActInfoTypes : JDataFieldValue.SkipField;
+            return (theActInfoTypes.size() > 0)
+                    ? theActInfoTypes
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_EVTINFOTYPES.equals(pField)) {
-            return (theEventInfoTypes.size() > 0) ? theEventInfoTypes : JDataFieldValue.SkipField;
+            return (theEventInfoTypes.size() > 0)
+                    ? theEventInfoTypes
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXYEARS.equals(pField)) {
-            return (theTaxYears.size() > 0) ? theTaxYears : JDataFieldValue.SkipField;
+            return (theTaxYears.size() > 0)
+                    ? theTaxYears
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXINFO.equals(pField)) {
-            return (theTaxInfo.size() > 0) ? theTaxInfo : JDataFieldValue.SkipField;
+            return (theTaxInfo.size() > 0)
+                    ? theTaxInfo
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_ACCOUNTS.equals(pField)) {
-            return (theAccounts.size() > 0) ? theAccounts : JDataFieldValue.SkipField;
+            return (theAccounts.size() > 0)
+                    ? theAccounts
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_ACCOUNTINFO.equals(pField)) {
-            return (theAccountInfo.size() > 0) ? theAccountInfo : JDataFieldValue.SkipField;
+            return (theAccountInfo.size() > 0)
+                    ? theAccountInfo
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_RATES.equals(pField)) {
-            return (theRates.size() > 0) ? theRates : JDataFieldValue.SkipField;
+            return (theRates.size() > 0)
+                    ? theRates
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_PRICES.equals(pField)) {
-            return (thePrices.size() > 0) ? thePrices : JDataFieldValue.SkipField;
+            return (thePrices.size() > 0)
+                    ? thePrices
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_PATTERNS.equals(pField)) {
-            return (thePatterns.size() > 0) ? thePatterns : JDataFieldValue.SkipField;
+            return (thePatterns.size() > 0)
+                    ? thePatterns
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_EVENTS.equals(pField)) {
-            return (theEvents.size() > 0) ? theEvents : JDataFieldValue.SkipField;
+            return (theEvents.size() > 0)
+                    ? theEvents
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_EVENTINFO.equals(pField)) {
-            return (theEventInfo.size() > 0) ? theEventInfo : JDataFieldValue.SkipField;
+            return (theEventInfo.size() > 0)
+                    ? theEventInfo
+                    : JDataFieldValue.SkipField;
         }
         return super.getFieldValue(pField);
     }
@@ -219,19 +253,19 @@ public class FinanceData
     }
 
     /**
-     * AccountTypes.
+     * AccountCategoryTypes.
      */
-    private AccountTypeList theActTypes = null;
+    private AccountCategoryTypeList theActCatTypes = null;
 
     /**
-     * TransactionTypes.
+     * EventCategoryTypes.
      */
-    private TransTypeList theTransTypes = null;
+    private EventCategoryTypeList theEvtCatTypes = null;
 
     /**
-     * TaxTypes.
+     * TaxBuckets.
      */
-    private TaxTypeList theTaxTypes = null;
+    private TaxCategoryList theTaxCategories = null;
 
     /**
      * TaxRegimes.
@@ -314,27 +348,27 @@ public class FinanceData
     private final JDataFormatter theFormatter;
 
     /**
-     * Obtain AccountTypes.
-     * @return the Account types
+     * Obtain AccountCategoryTypes.
+     * @return the Account category types
      */
-    public AccountTypeList getAccountTypes() {
-        return theActTypes;
+    public AccountCategoryTypeList getAccountCategoryTypes() {
+        return theActCatTypes;
     }
 
     /**
-     * Obtain TransactionTypes.
-     * @return the Transaction types
+     * Obtain EventCategoryTypes.
+     * @return the Event Category types
      */
-    public TransTypeList getTransTypes() {
-        return theTransTypes;
+    public EventCategoryTypeList getEventCategoryTypes() {
+        return theEvtCatTypes;
     }
 
     /**
-     * Obtain TaxTypes.
-     * @return the Tax types
+     * Obtain TaxCategories.
+     * @return the Tax categories
      */
-    public TaxTypeList getTaxTypes() {
-        return theTaxTypes;
+    public TaxCategoryList getTaxCategories() {
+        return theTaxCategories;
     }
 
     /**
@@ -478,9 +512,9 @@ public class FinanceData
         super(pSecurity, pPreferenceMgr);
 
         /* Create the empty lists */
-        theActTypes = new AccountTypeList(this);
-        theTransTypes = new TransTypeList(this);
-        theTaxTypes = new TaxTypeList(this);
+        theActCatTypes = new AccountCategoryTypeList(this);
+        theEvtCatTypes = new EventCategoryTypeList(this);
+        theTaxCategories = new TaxCategoryList(this);
         theTaxRegimes = new TaxRegimeList(this);
         theFrequencys = new FrequencyList(this);
         theTaxInfoTypes = new TaxYearInfoTypeList(this);
@@ -524,9 +558,9 @@ public class FinanceData
         myExtract.deriveUpdateSet(this);
 
         /* Build the static extract */
-        myExtract.theActTypes = theActTypes.deriveList(ListStyle.UPDATE);
-        myExtract.theTransTypes = theTransTypes.deriveList(ListStyle.UPDATE);
-        myExtract.theTaxTypes = theTaxTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theActCatTypes = theActCatTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theEvtCatTypes = theEvtCatTypes.deriveList(ListStyle.UPDATE);
+        myExtract.theTaxCategories = theTaxCategories.deriveList(ListStyle.UPDATE);
         myExtract.theTaxRegimes = theTaxRegimes.deriveList(ListStyle.UPDATE);
         myExtract.theFrequencys = theFrequencys.deriveList(ListStyle.UPDATE);
         myExtract.theTaxInfoTypes = theTaxInfoTypes.deriveList(ListStyle.UPDATE);
@@ -560,9 +594,9 @@ public class FinanceData
         myExtract.deriveCloneSet(this);
 
         /* Build the static extract */
-        myExtract.theActTypes = theActTypes.cloneList(this);
-        myExtract.theTransTypes = theTransTypes.cloneList(this);
-        myExtract.theTaxTypes = theTaxTypes.cloneList(this);
+        myExtract.theActCatTypes = theActCatTypes.cloneList(this);
+        myExtract.theEvtCatTypes = theEvtCatTypes.cloneList(this);
+        myExtract.theTaxCategories = theTaxCategories.cloneList(this);
         myExtract.theTaxRegimes = theTaxRegimes.cloneList(this);
         myExtract.theFrequencys = theFrequencys.cloneList(this);
         myExtract.theTaxInfoTypes = theTaxInfoTypes.cloneList(this);
@@ -604,9 +638,9 @@ public class FinanceData
         myDiffers.deriveDifferences(this, pOld);
 
         /* Build the static differences */
-        myDiffers.theActTypes = theActTypes.deriveDifferences(pOld.getAccountTypes());
-        myDiffers.theTransTypes = theTransTypes.deriveDifferences(pOld.getTransTypes());
-        myDiffers.theTaxTypes = theTaxTypes.deriveDifferences(pOld.getTaxTypes());
+        myDiffers.theActCatTypes = theActCatTypes.deriveDifferences(pOld.getAccountCategoryTypes());
+        myDiffers.theEvtCatTypes = theEvtCatTypes.deriveDifferences(pOld.getEventCategoryTypes());
+        myDiffers.theTaxCategories = theTaxCategories.deriveDifferences(pOld.getTaxCategories());
         myDiffers.theTaxRegimes = theTaxRegimes.deriveDifferences(pOld.getTaxRegimes());
         myDiffers.theFrequencys = theFrequencys.deriveDifferences(pOld.getFrequencys());
         myDiffers.theTaxInfoTypes = theTaxInfoTypes.deriveDifferences(pOld.getTaxInfoTypes());
@@ -642,9 +676,9 @@ public class FinanceData
         super.reBase(pOld);
 
         /* ReBase the static items */
-        theActTypes.reBase(pOld.getAccountTypes());
-        theTransTypes.reBase(pOld.getTransTypes());
-        theTaxTypes.reBase(pOld.getTaxTypes());
+        theActCatTypes.reBase(pOld.getAccountCategoryTypes());
+        theEvtCatTypes.reBase(pOld.getEventCategoryTypes());
+        theTaxCategories.reBase(pOld.getTaxCategories());
         theTaxRegimes.reBase(pOld.getTaxRegimes());
         theFrequencys.reBase(pOld.getFrequencys());
         theTaxInfoTypes.reBase(pOld.getTaxInfoTypes());
@@ -668,9 +702,9 @@ public class FinanceData
      */
     private void declareLists() {
         /* Declare the lists */
-        addList(theActTypes);
-        addList(theTransTypes);
-        addList(theTaxTypes);
+        addList(theActCatTypes);
+        addList(theEvtCatTypes);
+        addList(theTaxCategories);
         addList(theTaxRegimes);
         addList(theFrequencys);
         addList(theTaxInfoTypes);
@@ -701,8 +735,8 @@ public class FinanceData
      */
     public void initialiseAnalysis() throws JDataException {
         /* Reset the flags on static data (ignoring TaxTypes) */
-        theActTypes.clearActive();
-        theTransTypes.clearActive();
+        theActCatTypes.clearActive();
+        theEvtCatTypes.clearActive();
         theTaxRegimes.clearActive();
         theFrequencys.clearActive();
         theTaxInfoTypes.clearActive();

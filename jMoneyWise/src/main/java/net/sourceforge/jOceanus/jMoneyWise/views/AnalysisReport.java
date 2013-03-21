@@ -32,32 +32,31 @@ import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AnalysisBucket;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetAccount;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.DebtAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.MoneyAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetSummary;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetTotal;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.BucketList;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.BucketType;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.DebtAccount;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.ExternalAccount;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.ExternalTotal;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.MarketTotal;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.MoneyAccount;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.TaxDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.TransDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.TransSummary;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.TransTotal;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.ValueAccount;
+import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.PayeeTotal;
+import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisBucket.BucketType;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.AccountRecord;
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.IncomeTotals;
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.RecordList;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.CategorySummary;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.CategoryTotal;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.TaxDetail;
 
 /**
  * Reporting class to build HTML from analysis.
@@ -261,7 +260,7 @@ public class AnalysisReport {
             theReport.endRow(myOutput);
 
             /* Access the type */
-            AccountType myType = mySummary.getAccountType();
+            AccountCategoryType myType = mySummary.getAccountType();
 
             /* Format the detail */
             if (myType.isMoney()) {
@@ -331,10 +330,10 @@ public class AnalysisReport {
             }
 
             /* Access the summary bucket */
-            AssetAccount myAsset = (AssetAccount) myBucket;
+            AssetAccountDetail myAsset = (AssetAccountDetail) myBucket;
 
             /* Access the type */
-            AccountType myType = myAsset.getAccountType();
+            AccountCategoryType myType = myAsset.getAccountType();
 
             /* Ignore non-priced items */
             if (!myType.isPriced()) {
@@ -414,19 +413,19 @@ public class AnalysisReport {
             AnalysisBucket myBucket = myIterator.next();
 
             /* Skip bucket if this is not an external account */
-            if (myBucket.getBucketType() != BucketType.EXTERNALDETAIL) {
+            if (myBucket.getBucketType() != BucketType.PAYEEDETAIL) {
                 continue;
             }
 
             /* Access the account */
-            ExternalAccount myExternal = (ExternalAccount) myBucket;
+            PayeeAccountDetail myPayee = (PayeeAccountDetail) myBucket;
 
             /* Format the detail */
-            theReport.startDataRow(myOutput, isOdd, myExternal.getName());
-            theReport.makeValueCell(myOutput, myExternal.getIncome());
-            theReport.makeValueCell(myOutput, myExternal.getExpense());
-            theReport.makeValueCell(myOutput, myExternal.getPrevIncome());
-            theReport.makeValueCell(myOutput, myExternal.getPrevExpense());
+            theReport.startDataRow(myOutput, isOdd, myPayee.getName());
+            theReport.makeValueCell(myOutput, myPayee.getIncome());
+            theReport.makeValueCell(myOutput, myPayee.getExpense());
+            theReport.makeValueCell(myOutput, myPayee.getPrevIncome());
+            theReport.makeValueCell(myOutput, myPayee.getPrevExpense());
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -434,7 +433,7 @@ public class AnalysisReport {
         }
 
         /* Access the totals */
-        ExternalTotal myTotal = myList.getExternalTotal();
+        PayeeTotal myTotal = myList.getPayeeTotal();
 
         /* Format the totals */
         theReport.startTotalRow(myOutput, TOTAL_TEXT);
@@ -469,7 +468,7 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Access the type */
-        AccountType myType = pSummary.getAccountType();
+        AccountCategoryType myType = pSummary.getAccountType();
 
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
@@ -490,12 +489,12 @@ public class AnalysisReport {
             AnalysisBucket myBucket = myIterator.next();
 
             /* Skip record if not a value account */
-            if (!(myBucket instanceof ValueAccount)) {
+            if (!(myBucket instanceof ValueBucket)) {
                 continue;
             }
 
             /* Access the bucket */
-            ValueAccount myValue = (ValueAccount) myBucket;
+            ValueBucket myValue = (ValueBucket) myBucket;
 
             /* Skip record if incorrect type */
             if (!Difference.isEqual(myValue.getAccountType(), myType)) {
@@ -534,7 +533,7 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Access the type */
-        AccountType myType = pSummary.getAccountType();
+        AccountCategoryType myType = pSummary.getAccountType();
 
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
@@ -554,12 +553,12 @@ public class AnalysisReport {
             AnalysisBucket myBucket = myIterator.next();
 
             /* Skip record if this is not a money detail */
-            if (myBucket.getBucketType() != BucketType.MONEYDETAIL) {
+            if (myBucket.getBucketType() != BucketType.BANKDETAIL) {
                 continue;
             }
 
             /* Access the bucket */
-            MoneyAccount myMoney = (MoneyAccount) myBucket;
+            MoneyAccountDetail myMoney = (MoneyAccountDetail) myBucket;
 
             /* Skip record if incorrect type */
             if (!Difference.isEqual(myMoney.getAccountType(), myType)) {
@@ -600,7 +599,7 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Access the type */
-        AccountType myType = pSummary.getAccountType();
+        AccountCategoryType myType = pSummary.getAccountType();
 
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
@@ -623,7 +622,7 @@ public class AnalysisReport {
             }
 
             /* Access the bucket */
-            DebtAccount myDebt = (DebtAccount) myBucket;
+            DebtAccountDetail myDebt = (DebtAccountDetail) myBucket;
 
             /* Skip record if incorrect type */
             if (!Difference.isEqual(myDebt.getAccountType(), myType)) {
@@ -660,7 +659,7 @@ public class AnalysisReport {
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Access the type */
-        AccountType myType = pSummary.getAccountType();
+        AccountCategoryType myType = pSummary.getAccountType();
 
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
@@ -685,7 +684,7 @@ public class AnalysisReport {
             }
 
             /* Access the bucket */
-            AssetAccount myAsset = (AssetAccount) myBucket;
+            AssetAccountDetail myAsset = (AssetAccountDetail) myBucket;
 
             /* Skip record if incorrect type */
             if (!Difference.isEqual(myAsset.getAccountType(), myType)) {
@@ -725,7 +724,7 @@ public class AnalysisReport {
      * @param pAsset the asset to report on
      * @return Web output
      */
-    public StringBuilder makeCapitalEventReport(final AssetAccount pAsset) {
+    public StringBuilder makeCapitalEventReport(final AssetAccountDetail pAsset) {
         /* Access the event lists */
         CapitalEventList myList = pAsset.getCapitalEvents();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
@@ -811,8 +810,8 @@ public class AnalysisReport {
             /* Switch on bucket type */
             switch (myBucket.getBucketType()) {
             /* Summary */
-                case TRANSSUMMARY:
-                    TransSummary mySummary = (TransSummary) myBucket;
+                case CATSUMMARY:
+                    CategorySummary mySummary = (CategorySummary) myBucket;
 
                     /* Format the detail */
                     theReport.startDataRow(myOutput, isOdd, mySummary.getName());
@@ -821,8 +820,8 @@ public class AnalysisReport {
                     theReport.endRow(myOutput);
                     break;
                 /* Total */
-                case TRANSTOTAL:
-                    TransTotal myTotal = (TransTotal) myBucket;
+                case CATTOTAL:
+                    CategoryTotal myTotal = (CategoryTotal) myBucket;
 
                     /* Format the detail */
                     theReport.startDataRow(myOutput, isOdd, myTotal.getName());
@@ -861,12 +860,12 @@ public class AnalysisReport {
             AnalysisBucket myBucket = myIterator.next();
 
             /* Skip entries that are not TransDetail */
-            if (myBucket.getBucketType() != BucketType.TRANSDETAIL) {
+            if (myBucket.getBucketType() != BucketType.CATDETAIL) {
                 continue;
             }
 
             /* Access the detail */
-            TransDetail myDetail = (TransDetail) myBucket;
+            EventCategoryDetail myDetail = (EventCategoryDetail) myBucket;
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, myDetail.getName());
@@ -946,21 +945,21 @@ public class AnalysisReport {
         }
 
         /* Access the Total taxation bucket */
-        myTax = myList.getTaxDetail(TaxClass.TotalTaxationDue);
+        myTax = myList.getTaxDetail(TaxCategoryClass.TotalTaxationDue);
         theReport.startTotalRow(myOutput, myTax.getName());
         theReport.makeTotalCell(myOutput, myTax.getAmount());
         theReport.makeTotalCell(myOutput, myTax.getTaxation());
         theReport.endRow(myOutput);
 
         /* Access the Tax Paid bucket */
-        TransSummary myTrans = myList.getTransSummary(TaxClass.TaxPaid);
+        CategorySummary myTrans = myList.getCategorySummary(TaxCategoryClass.TaxPaid);
         theReport.startTotalRow(myOutput, myTrans.getName());
         theReport.makeTotalCell(myOutput);
         theReport.makeTotalCell(myOutput, myTrans.getAmount());
         theReport.endRow(myOutput);
 
         /* Access the Tax Profit bucket */
-        myTax = myList.getTaxDetail(TaxClass.TaxProfitLoss);
+        myTax = myList.getTaxDetail(TaxCategoryClass.TaxProfitLoss);
         theReport.startTotalRow(myOutput, myTax.getName());
         theReport.makeTotalCell(myOutput, myTax.getAmount());
         theReport.makeTotalCell(myOutput, myTax.getTaxation());
@@ -1015,7 +1014,9 @@ public class AnalysisReport {
         }
         theReport.startTableBody(myOutput);
         theReport.startDataRow(myOutput, true, "Salary/Rental");
-        theReport.makeValueCell(myOutput, theYear.hasLoSalaryBand() ? theYear.getLoTaxRate() : null);
+        theReport.makeValueCell(myOutput, theYear.hasLoSalaryBand()
+                ? theYear.getLoTaxRate()
+                : null);
         theReport.makeValueCell(myOutput, theYear.getBasicTaxRate());
         theReport.makeValueCell(myOutput, theYear.getHiTaxRate());
         if (theYear.hasAdditionalTaxBand()) {
@@ -1067,7 +1068,7 @@ public class AnalysisReport {
         theReport.endRow(myOutput);
 
         /* Access the original allowance */
-        myTax = myList.getTaxDetail(TaxClass.OriginalAllowance);
+        myTax = myList.getTaxDetail(TaxCategoryClass.OriginalAllowance);
         theReport.startDataRow(myOutput, false, "Personal Allowance");
         theReport.makeValueCell(myOutput, myTax.getAmount());
         theReport.endRow(myOutput);
@@ -1075,13 +1076,13 @@ public class AnalysisReport {
         /* if we have adjusted the allowance */
         if (theAnalysis.hasReducedAllow()) {
             /* Access the gross income */
-            myTax = myList.getTaxDetail(TaxClass.GrossIncome);
+            myTax = myList.getTaxDetail(TaxCategoryClass.GrossIncome);
             theReport.startDataRow(myOutput, true, "Gross Taxable Income");
             theReport.makeValueCell(myOutput, myTax.getAmount());
             theReport.endRow(myOutput);
 
             /* Access the gross income */
-            myTax = myList.getTaxDetail(TaxClass.AdjustedAllowance);
+            myTax = myList.getTaxDetail(TaxCategoryClass.AdjustedAllowance);
             theReport.startDataRow(myOutput, false, "Adjusted Allowance");
             theReport.makeValueCell(myOutput, myTax.getAmount());
             theReport.endRow(myOutput);
@@ -1104,7 +1105,7 @@ public class AnalysisReport {
         /* If we have a high tax band */
         if (theYear.hasAdditionalTaxBand()) {
             /* Access the gross income */
-            myTax = myList.getTaxDetail(TaxClass.HiTaxBand);
+            myTax = myList.getTaxDetail(TaxCategoryClass.HiTaxBand);
             theReport.startDataRow(myOutput, !isOdd, "High Tax Band");
             theReport.makeValueCell(myOutput, myTax.getAmount());
             theReport.endRow(myOutput);
@@ -1245,7 +1246,7 @@ public class AnalysisReport {
         theReport.endTable(myOutput);
 
         /* Access the Summary Tax Due Slice */
-        TaxDetail myTax = myList.getTaxDetail(TaxClass.TaxDueSlice);
+        TaxDetail myTax = myList.getTaxDetail(TaxCategoryClass.TaxDueSlice);
 
         /* Add the Slice taxation details */
         myOutput.append(makeTaxReport(myTax));
@@ -1298,7 +1299,9 @@ public class AnalysisReport {
         /* Format the detail */
         String myLinkName = pList.getName();
         Account myOwner = pList.getOwner();
-        theReport.makeLinkSubHeading(myOutput, myLinkName, (myOwner == null) ? myLinkName : myOwner.getName());
+        theReport.makeLinkSubHeading(myOutput, myLinkName, (myOwner == null)
+                ? myLinkName
+                : myOwner.getName());
         theReport.startTable(myOutput);
         theReport.makeTableColumn(myOutput, "Account");
         theReport.makeTableColumn(myOutput, "Gross");
@@ -1397,13 +1400,13 @@ public class AnalysisReport {
             theReport.makeValueCell(myOutput, myEvent.getDesc());
 
             /* Calculate Gross */
-            TransactionType myTrans = myEvent.getTransType();
+            EventCategoryType myCat = myEvent.getCategoryType();
             JMoney myGross = new JMoney(myEvent.getAmount());
             JMoney myNet = myEvent.getAmount();
 
             /* If we are NatInsurance/Benefit */
-            if ((myTrans.getTranClass() == TransClass.NatInsurance)
-                || (myTrans.getTranClass() == TransClass.Benefit)) {
+            if ((myCat.getCategoryClass() == EventCategoryClass.NatInsurance)
+                || (myCat.getCategoryClass() == EventCategoryClass.Benefit)) {
                 /* Just add to gross */
                 myNet = new JMoney();
             } else if (myEvent.getTaxCredit() != null) {

@@ -29,7 +29,7 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
 /**
  * Enumeration of Frequency Classes.
  */
-public enum FreqClass implements StaticInterface {
+public enum FrequencyClass implements StaticInterface {
     /**
      * Weekly Frequency.
      */
@@ -114,9 +114,9 @@ public enum FreqClass implements StaticInterface {
      * @param uOrder the default order
      * @param uAdjust the adjustment
      */
-    private FreqClass(final int uId,
-                      final int uOrder,
-                      final int uAdjust) {
+    private FrequencyClass(final int uId,
+                           final int uOrder,
+                           final int uAdjust) {
         theId = uId;
         theOrder = uOrder;
         theAdjust = uAdjust;
@@ -128,8 +128,8 @@ public enum FreqClass implements StaticInterface {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static FreqClass fromId(final int id) throws JDataException {
-        for (FreqClass myClass : values()) {
+    public static FrequencyClass fromId(final int id) throws JDataException {
+        for (FrequencyClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }

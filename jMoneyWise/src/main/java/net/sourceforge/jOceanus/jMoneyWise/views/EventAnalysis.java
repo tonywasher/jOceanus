@@ -48,16 +48,15 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.ActDetail;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AnalysisState;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetAccount;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.BucketList;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.ExternalAccount;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.TransDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.Statement.StatementLine;
 import net.sourceforge.jOceanus.jMoneyWise.views.Statement.StatementLines;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
@@ -109,19 +108,29 @@ public class EventAnalysis
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
-            return (theAnalysis == null) ? JDataFieldValue.SkipField : theAnalysis;
+            return (theAnalysis == null)
+                    ? JDataFieldValue.SkipField
+                    : theAnalysis;
         }
         if (FIELD_YEARS.equals(pField)) {
-            return (theYears == null) ? JDataFieldValue.SkipField : theYears;
+            return (theYears == null)
+                    ? JDataFieldValue.SkipField
+                    : theYears;
         }
         if (FIELD_ACCOUNT.equals(pField)) {
-            return (theAccount == null) ? JDataFieldValue.SkipField : theAccount;
+            return (theAccount == null)
+                    ? JDataFieldValue.SkipField
+                    : theAccount;
         }
         if (FIELD_DATE.equals(pField)) {
-            return (theDate == null) ? JDataFieldValue.SkipField : theDate;
+            return (theDate == null)
+                    ? JDataFieldValue.SkipField
+                    : theDate;
         }
         if (FIELD_DILUTIONS.equals(pField)) {
-            return (theDilutions == null) ? JDataFieldValue.SkipField : theDilutions;
+            return (theDilutions == null)
+                    ? JDataFieldValue.SkipField
+                    : theDilutions;
         }
 
         /* Unknown */
@@ -166,7 +175,7 @@ public class EventAnalysis
     /**
      * The account being analysed.
      */
-    private ActDetail theAccount = null;
+    private AccountBucket theAccount = null;
 
     /**
      * The date for the analysis.
@@ -181,12 +190,12 @@ public class EventAnalysis
     /**
      * The taxMan account.
      */
-    private ExternalAccount theTaxMan = null;
+    private PayeeAccountDetail theTaxMan = null;
 
     /**
      * The taxPaid bucket.
      */
-    private TransDetail theTaxPaid = null;
+    private EventCategoryDetail theTaxPaid = null;
 
     /**
      * Obtain the analysis.
@@ -218,7 +227,9 @@ public class EventAnalysis
      * @return the analysis
      */
     public AnalysisYear getAnalysisYear(final TaxYear pYear) {
-        return (theYears == null) ? null : theYears.findItemForYear(pYear);
+        return (theYears == null)
+                ? null
+                : theYears.findItemForYear(pYear);
     }
 
     /**
@@ -250,8 +261,8 @@ public class EventAnalysis
         /* Access the TaxMan account and Tax Credit transaction */
         Account myTaxMan = theData.getAccounts().getTaxMan();
         BucketList myBuckets = theAnalysis.getList();
-        theTaxMan = (ExternalAccount) myBuckets.getAccountDetail(myTaxMan);
-        theTaxPaid = myBuckets.getTransDetail(TransClass.TaxCredit);
+        theTaxMan = (PayeeAccountDetail) myBuckets.getAccountBucket(myTaxMan);
+        theTaxPaid = myBuckets.getCategoryDetail(EventCategoryClass.TaxCredit);
 
         /* Access the events and the iterator */
         EventList myEvents = pData.getEvents();
@@ -301,9 +312,9 @@ public class EventAnalysis
         /* Access the TaxMan account and Tax Credit transaction */
         Account myTaxMan = theData.getAccounts().getTaxMan();
         BucketList myBuckets = theAnalysis.getList();
-        theTaxMan = (ExternalAccount) myBuckets.getAccountDetail(myTaxMan);
-        theTaxPaid = myBuckets.getTransDetail(TransClass.TaxCredit);
-        theAccount = myBuckets.getAccountDetail(myAccount);
+        theTaxMan = (PayeeAccountDetail) myBuckets.getAccountBucket(myTaxMan);
+        theTaxPaid = myBuckets.getCategoryDetail(EventCategoryClass.TaxCredit);
+        theAccount = myBuckets.getAccountBucket(myAccount);
 
         /* Access the events and the iterator */
         EventList myEvents = pData.getEvents();
@@ -374,7 +385,7 @@ public class EventAnalysis
      */
     protected final void resetStatementBalance(final Statement pStatement) throws JDataException {
         /* If we don't have balances just return */
-        if (theAccount instanceof ExternalAccount) {
+        if (theAccount instanceof PayeeAccountDetail) {
             return;
         }
 
@@ -394,7 +405,7 @@ public class EventAnalysis
 
             /* Ignore if it is not a valid event */
             if ((myCurr.getPartner() == null)
-                || (myCurr.getTransType() == null)
+                || (myCurr.getCategoryType() == null)
                 || (myCurr.getAmount() == null)) {
                 continue;
             }
@@ -474,8 +485,8 @@ public class EventAnalysis
 
                 /* Access the TaxMan account bucket and Tax Credit transaction */
                 BucketList myBuckets = theAnalysis.getList();
-                theTaxMan = (ExternalAccount) myBuckets.getAccountDetail(myTaxMan);
-                theTaxPaid = myBuckets.getTransDetail(TransClass.TaxCredit);
+                theTaxMan = (PayeeAccountDetail) myBuckets.getAccountBucket(myTaxMan);
+                theTaxPaid = myBuckets.getCategoryDetail(EventCategoryClass.TaxCredit);
             }
 
             /* Touch credit account */
@@ -486,9 +497,9 @@ public class EventAnalysis
             myAccount = myCurr.getDebit();
             myAccount.touchItem(myCurr);
 
-            /* Touch Transaction Type */
-            TransactionType myTransType = myCurr.getTransType();
-            myTransType.touchItem(myCurr);
+            /* Touch Category Type */
+            EventCategoryType myCategory = myCurr.getCategoryType();
+            myCategory.touchItem(myCurr);
 
             /* If the event has a dilution factor */
             if (myCurr.getDilution() != null) {
@@ -851,16 +862,16 @@ public class EventAnalysis
 
             /* Else handle the event normally */
         } else {
-            TransactionType myTrans = pEvent.getTransType();
-            TransTypeList myTranList = theData.getTransTypes();
+            EventCategoryType myCat = pEvent.getCategoryType();
+            EventCategoryTypeList myTranList = theData.getEventCategoryTypes();
             BucketList myBuckets = theAnalysis.getList();
 
             /* If the event is interest */
-            if (myTrans.isInterest()) {
+            if (myCat.isInterest()) {
                 /* If the account is tax free */
                 if (myDebit.isTaxFree()) {
                     /* The true transaction type is TaxFreeInterest */
-                    myTrans = myTranList.findItemByClass(TransClass.TaxFreeInterest);
+                    myCat = myTranList.findItemByClass(EventCategoryClass.TaxFreeInterest);
                 }
 
                 /* True debit account is the parent */
@@ -868,11 +879,11 @@ public class EventAnalysis
             }
 
             /* Adjust the debit account bucket */
-            ActDetail myBucket = myBuckets.getAccountDetail(myDebit);
+            AccountBucket myBucket = myBuckets.getAccountBucket(myDebit);
             myBucket.adjustForDebit(pEvent);
 
             /* Adjust the credit account bucket */
-            myBucket = myBuckets.getAccountDetail(myCredit);
+            myBucket = myBuckets.getAccountBucket(myCredit);
             myBucket.adjustForCredit(pEvent);
 
             /* If the event causes a tax credit */
@@ -882,9 +893,9 @@ public class EventAnalysis
                 theTaxPaid.adjustForTaxCredit(pEvent);
             }
 
-            /* Adjust the relevant transaction bucket */
-            TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
-            myTranBucket.adjustAmount(pEvent);
+            /* Adjust the relevant category bucket */
+            EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
+            myCatBucket.adjustAmount(pEvent);
         }
     }
 
@@ -894,10 +905,10 @@ public class EventAnalysis
      * @throws JDataException on error
      */
     private void processCapitalEvent(final Event pEvent) throws JDataException {
-        TransactionType myTrans = pEvent.getTransType();
+        EventCategoryType myCat = pEvent.getCategoryType();
 
-        /* Switch on the transaction */
-        switch (myTrans.getTranClass()) {
+        /* Switch on the category */
+        switch (myCat.getCategoryClass()) {
         /* Process a stock split */
             case StockSplit:
             case AdminCharge:
@@ -945,8 +956,8 @@ public class EventAnalysis
                 break;
             /* Throw an Exception */
             default:
-                throw new JDataException(ExceptionClass.LOGIC, "Unexpected transaction type: "
-                                                               + myTrans.getTranClass());
+                throw new JDataException(ExceptionClass.LOGIC, "Unexpected category type: "
+                                                               + myCat.getCategoryClass());
         }
     }
 
@@ -965,7 +976,7 @@ public class EventAnalysis
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
-        AssetAccount myAsset = (AssetAccount) myBuckets.getAccountDetail(myAccount);
+        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
 
         /* Allocate a Capital event and record Current and delta units */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -987,11 +998,11 @@ public class EventAnalysis
         Account myDebit = pEvent.getDebit();
         JUnits myUnits = pEvent.getCreditUnits();
         JMoney myAmount = pEvent.getAmount();
-        TransactionType myTrans = pEvent.getTransType();
+        EventCategoryType myCat = pEvent.getCategoryType();
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
-        AssetAccount myAsset = (AssetAccount) myBuckets.getAccountDetail(myAccount);
+        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
 
         /* Allocate a Capital event and record Current and delta costs */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1029,12 +1040,12 @@ public class EventAnalysis
         }
 
         /* Adjust the debit account bucket */
-        ActDetail myBucket = myBuckets.getAccountDetail(myDebit);
+        AccountBucket myBucket = myBuckets.getAccountBucket(myDebit);
         myBucket.adjustForDebit(pEvent);
 
         /* Adjust the relevant transaction bucket */
-        TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
-        myTranBucket.adjustAmount(pEvent);
+        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
+        myCatBucket.adjustAmount(pEvent);
     }
 
     /**
@@ -1045,8 +1056,8 @@ public class EventAnalysis
         /* The main account that we are interested in is the debit account */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        TransactionType myTrans = pEvent.getTransType();
-        TransTypeList myTranList = theData.getTransTypes();
+        EventCategoryType myCat = pEvent.getCategoryType();
+        EventCategoryTypeList myCatList = theData.getEventCategoryTypes();
         JMoney myAmount = pEvent.getAmount();
         JMoney myTaxCredit = pEvent.getTaxCredit();
         JUnits myUnits = pEvent.getCreditUnits();
@@ -1054,13 +1065,13 @@ public class EventAnalysis
 
         /* If the account is tax free */
         if (myAccount.isTaxFree()) {
-            /* The true transaction type is TaxFreeDividend */
-            myTrans = myTranList.findItemByClass(TransClass.TaxFreeDividend);
+            /* The true category type is TaxFreeDividend */
+            myCat = myCatList.findItemByClass(EventCategoryClass.TaxFreeDividend);
 
             /* else if the account is a unit trust */
         } else if (myAccount.isUnitTrust()) {
-            /* The true transaction type is UnitTrustDividend */
-            myTrans = myTranList.findItemByClass(TransClass.UnitTrustDividend);
+            /* The true category type is UnitTrustDividend */
+            myCat = myCatList.findItemByClass(EventCategoryClass.UnitTrustDividend);
         }
 
         /* True debit account is the parent */
@@ -1068,11 +1079,11 @@ public class EventAnalysis
 
         /* Adjust the debit account bucket */
         BucketList myBuckets = theAnalysis.getList();
-        ActDetail myBucket = myBuckets.getAccountDetail(myDebit);
+        AccountBucket myBucket = myBuckets.getAccountBucket(myDebit);
         myBucket.adjustForDebit(pEvent);
 
         /* Access the Asset Account Bucket */
-        AssetAccount myAsset = (AssetAccount) myBuckets.getAccountDetail(myAccount);
+        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
 
         /* Allocate a Capital event and record Current and delta costs */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1136,7 +1147,7 @@ public class EventAnalysis
             myEvent.addAttribute(CapitalEvent.CAPITAL_FINALDIVIDEND, myAsset.getDividend());
 
             /* Adjust the credit account bucket */
-            myBucket = myBuckets.getAccountDetail(myCredit);
+            myBucket = myBuckets.getAccountBucket(myCredit);
             myBucket.adjustForCredit(pEvent);
         }
 
@@ -1148,8 +1159,8 @@ public class EventAnalysis
         }
 
         /* Adjust the relevant transaction bucket */
-        TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
-        myTranBucket.adjustAmount(pEvent);
+        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
+        myCatBucket.adjustAmount(pEvent);
     }
 
     /**
@@ -1162,7 +1173,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
         JUnits myUnits = pEvent.getDebitUnits();
-        TransactionType myTrans = pEvent.getTransType();
+        EventCategoryType myCat = pEvent.getCategoryType();
         JMoney myReduction;
         JMoney myDeltaCost;
         JMoney myDeltaGains;
@@ -1170,7 +1181,7 @@ public class EventAnalysis
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
-        AssetAccount myAsset = (AssetAccount) myBuckets.getAccountDetail(myAccount);
+        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
 
         /* Allocate a Capital event and record Current and delta costs */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1246,12 +1257,12 @@ public class EventAnalysis
         }
 
         /* Adjust the credit account bucket */
-        ActDetail myBucket = myBuckets.getAccountDetail(myCredit);
+        AccountBucket myBucket = myBuckets.getAccountBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
         /* Adjust the relevant transaction bucket */
-        TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
-        myTranBucket.adjustAmount(pEvent);
+        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
+        myCatBucket.adjustAmount(pEvent);
     }
 
     /**
@@ -1264,7 +1275,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
         JUnits myUnits = pEvent.getDebitUnits();
-        TransactionType myTrans = pEvent.getTransType();
+        EventCategoryType myCat = pEvent.getCategoryType();
         JMoney myReduction;
         JMoney myDeltaCost;
         JMoney myDeltaGains;
@@ -1273,7 +1284,7 @@ public class EventAnalysis
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
-        AssetAccount myAsset = (AssetAccount) myBuckets.getAccountDetail(myAccount);
+        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
 
         /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1352,17 +1363,17 @@ public class EventAnalysis
         myDebit = myAccount.getParent();
 
         /* Adjust the debit account bucket */
-        ExternalAccount myDebitBucket = (ExternalAccount) myBuckets.getAccountDetail(myDebit);
+        PayeeAccountDetail myDebitBucket = (PayeeAccountDetail) myBuckets.getAccountBucket(myDebit);
         myDebitBucket.adjustForTaxGainTaxCredit(pEvent);
 
         /* Adjust the credit account bucket */
-        ActDetail myBucket = myBuckets.getAccountDetail(myCredit);
+        AccountBucket myBucket = myBuckets.getAccountBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
-        /* Adjust the relevant transaction bucket */
-        TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
-        myTranBucket.adjustAmount(pEvent);
-        myTranBucket.getAmount().subtractAmount(myReduction);
+        /* Adjust the relevant category bucket */
+        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
+        myCatBucket.adjustAmount(pEvent);
+        myCatBucket.getAmount().subtractAmount(myReduction);
 
         /* Adjust the TaxMan account for the tax credit */
         theTaxMan.adjustForTaxCredit(pEvent);
@@ -1382,7 +1393,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
         JMoney myAmount = pEvent.getAmount();
-        TransactionType myTrans = pEvent.getTransType();
+        EventCategoryType myCat = pEvent.getCategoryType();
         AccountPrice myActPrice;
         JPrice myPrice;
         JMoney myValue;
@@ -1394,7 +1405,7 @@ public class EventAnalysis
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
-        AssetAccount myAsset = (AssetAccount) myBuckets.getAccountDetail(myAccount);
+        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
 
         /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1469,12 +1480,12 @@ public class EventAnalysis
         myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINS, myAsset.getGains());
 
         /* Adjust the credit account bucket */
-        ActDetail myBucket = myBuckets.getAccountDetail(myCredit);
+        AccountBucket myBucket = myBuckets.getAccountBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
-        /* Adjust the relevant transaction bucket */
-        TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
-        myTranBucket.adjustAmount(pEvent);
+        /* Adjust the relevant category bucket */
+        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
+        myCatBucket.adjustAmount(pEvent);
     }
 
     /**
@@ -1492,7 +1503,7 @@ public class EventAnalysis
 
         /* Access the Debit Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
-        AssetAccount myAsset = (AssetAccount) myBuckets.getAccountDetail(myDebit);
+        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myDebit);
 
         /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1522,7 +1533,7 @@ public class EventAnalysis
         myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, myAsset.getInvested());
 
         /* Access the Credit Asset Account Bucket */
-        myAsset = (AssetAccount) myBuckets.getAccountDetail(myCredit);
+        myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myCredit);
 
         /* Allocate a Capital event */
         myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1565,7 +1576,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
         JMoney myAmount = pEvent.getAmount();
-        TransactionType myTrans = pEvent.getTransType();
+        EventCategoryType myCat = pEvent.getCategoryType();
         AccountPrice myActPrice;
         JPrice myPrice;
         JMoney myValue;
@@ -1578,7 +1589,7 @@ public class EventAnalysis
 
         /* Access the Debit Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
-        AssetAccount myAsset = (AssetAccount) myBuckets.getAccountDetail(myDebit);
+        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myDebit);
 
         /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1657,12 +1668,12 @@ public class EventAnalysis
         }
 
         /* Adjust the credit account bucket */
-        ActDetail myBucket = myBuckets.getAccountDetail(myCredit);
+        AccountBucket myBucket = myBuckets.getAccountBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
-        /* Adjust the relevant transaction bucket */
-        TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
-        myTranBucket.adjustAmount(pEvent);
+        /* Adjust the relevant category bucket */
+        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
+        myCatBucket.adjustAmount(pEvent);
     }
 
     /**
@@ -1675,7 +1686,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
         JUnits myUnits = pEvent.getCreditUnits();
-        TransactionType myTrans = pEvent.getTransType();
+        EventCategoryType myCat = pEvent.getCategoryType();
         AccountPrice myActPrice;
         JPrice myPrice;
         JMoney myValue;
@@ -1691,8 +1702,8 @@ public class EventAnalysis
 
         /* Access the Asset Account Buckets */
         BucketList myBuckets = theAnalysis.getList();
-        AssetAccount myDebAsset = (AssetAccount) myBuckets.getAccountDetail(myDebit);
-        AssetAccount myCredAsset = (AssetAccount) myBuckets.getAccountDetail(myCredit);
+        AssetAccountDetail myDebAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myDebit);
+        AssetAccountDetail myCredAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myCredit);
 
         /* Access the cash takeover record for the debit account if it exists */
         myDebEvent = myDebAsset.getCapitalEvents().getCashTakeOver();
@@ -1789,7 +1800,7 @@ public class EventAnalysis
         myCredEvent.addAttribute(CapitalEvent.CAPITAL_FINALUNITS, myCredAsset.getUnits());
 
         /* Adjust the relevant transaction bucket */
-        TransDetail myTranBucket = myBuckets.getTransDetail(myTrans);
-        myTranBucket.adjustAmount(pEvent);
+        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
+        myCatBucket.adjustAmount(pEvent);
     }
 }

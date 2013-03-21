@@ -1,5 +1,5 @@
 /*******************************************************************************
- * jMoneyWise: Finance Application
+- * jMoneyWise: Finance Application
  * Copyright 2012 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -243,13 +243,13 @@ public class FinanceSheet
 
             /* Load Tables */
             if (bContinue) {
-                bContinue = SheetAccountType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetAccountCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
-                bContinue = SheetTransactionType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetEventCategoryType.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
-                bContinue = SheetTaxType.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetTaxCategory.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
                 bContinue = SheetTaxRegime.loadArchive(pTask, myWorkbook, myData);

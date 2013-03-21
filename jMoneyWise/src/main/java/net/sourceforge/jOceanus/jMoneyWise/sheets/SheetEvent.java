@@ -83,9 +83,9 @@ public class SheetEvent
     private static final int COL_CREDIT = COL_DEBIT + 1;
 
     /**
-     * TransType column.
+     * CategoryType column.
      */
-    private static final int COL_TRAN = COL_CREDIT + 1;
+    private static final int COL_CATEGORY = COL_CREDIT + 1;
 
     /**
      * Events data list.
@@ -119,7 +119,7 @@ public class SheetEvent
         /* Set up info Sheet */
         theInfoSheet = isBackup()
                 ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_CATEGORY);
     }
 
     /**
@@ -139,7 +139,7 @@ public class SheetEvent
         /* Set up info Sheet */
         theInfoSheet = isBackup()
                 ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_TRAN);
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_CATEGORY);
     }
 
     @Override
@@ -148,7 +148,7 @@ public class SheetEvent
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myDebitId = loadInteger(COL_DEBIT);
         Integer myCreditId = loadInteger(COL_CREDIT);
-        Integer myTranId = loadInteger(COL_TRAN);
+        Integer myCatId = loadInteger(COL_CATEGORY);
 
         /* Access the date and years */
         Date myDate = loadDate(COL_DATE);
@@ -158,7 +158,7 @@ public class SheetEvent
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myTranId);
+        theList.addSecureItem(pId, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myCatId);
     }
 
     @Override
@@ -166,7 +166,7 @@ public class SheetEvent
         /* Access the Account */
         String myDebit = loadString(COL_DEBIT);
         String myCredit = loadString(COL_CREDIT);
-        String myTransType = loadString(COL_TRAN);
+        String myCategory = loadString(COL_CATEGORY);
 
         /* Access the date and name and description bytes */
         Date myDate = loadDate(COL_DATE);
@@ -176,7 +176,7 @@ public class SheetEvent
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        Event myEvent = theList.addOpenItem(pId, myDate, myDesc, myAmount, myDebit, myCredit, myTransType);
+        Event myEvent = theList.addOpenItem(pId, myDate, myDesc, myAmount, myDebit, myCredit, myCategory);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myEvent);
@@ -189,7 +189,7 @@ public class SheetEvent
         writeDate(COL_DATE, pItem.getDate());
         writeInteger(COL_DEBIT, pItem.getDebitId());
         writeInteger(COL_CREDIT, pItem.getCreditId());
-        writeInteger(COL_TRAN, pItem.getTransTypeId());
+        writeInteger(COL_CATEGORY, pItem.getCategoryTypeId());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
     }
@@ -202,7 +202,7 @@ public class SheetEvent
         writeDecimal(COL_AMOUNT, pItem.getAmount());
         writeString(COL_DEBIT, pItem.getDebitName());
         writeString(COL_CREDIT, pItem.getCreditName());
-        writeString(COL_TRAN, pItem.getTransTypeName());
+        writeString(COL_CATEGORY, pItem.getCategoryTypeName());
 
         /* Write infoSet fields */
         theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
@@ -216,7 +216,7 @@ public class SheetEvent
         writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
         writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
-        writeHeader(COL_TRAN, EventBase.FIELD_TRNTYP.getName());
+        writeHeader(COL_CATEGORY, EventBase.FIELD_CATTYP.getName());
 
         /* prepare the info sheet */
         theInfoSheet.prepareSheet();
@@ -228,7 +228,7 @@ public class SheetEvent
         setStringColumn(COL_DESC);
         setStringColumn(COL_DEBIT);
         setStringColumn(COL_CREDIT);
-        setStringColumn(COL_TRAN);
+        setStringColumn(COL_CATEGORY);
 
         /* Set Number columns */
         setDateColumn(COL_DATE);
@@ -237,7 +237,7 @@ public class SheetEvent
         /* Apply validation */
         applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
         applyDataValidation(COL_CREDIT, SheetAccount.AREA_ACCOUNTNAMES);
-        applyDataValidation(COL_TRAN, SheetTransactionType.AREA_TRANSTYPENAMES);
+        applyDataValidation(COL_CATEGORY, SheetEventCategoryType.AREA_CATTYPENAMES);
 
         /* Format the info sheet */
         theInfoSheet.formatSheet();
@@ -248,7 +248,7 @@ public class SheetEvent
     @Override
     protected int getLastColumn() {
         /* Set default */
-        int myLastCol = COL_TRAN;
+        int myLastCol = COL_CATEGORY;
 
         /* If we are not creating a backup */
         if (!isBackup()) {

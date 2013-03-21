@@ -27,45 +27,45 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
- * SheetStaticData extension for AccountType.
+ * SheetStaticData extension for AccountCategoryType.
  * @author Tony Washer
  */
-public class SheetAccountType
-        extends SheetStaticData<AccountType> {
+public class SheetAccountCategoryType
+        extends SheetStaticData<AccountCategoryType> {
     /**
-     * NamedArea for AccountTypes.
+     * NamedArea for AccountCategoryTypes.
      */
-    private static final String AREA_ACCOUNTTYPES = AccountType.LIST_NAME;
+    private static final String AREA_ACCOUNTCATTYPES = AccountCategoryType.LIST_NAME;
 
     /**
-     * NameList for AccountTypes.
+     * NameList for AccountCategoryTypes.
      */
-    protected static final String AREA_ACCOUNTTYPENAMES = AccountType.OBJECT_NAME
-                                                          + "Names";
+    protected static final String AREA_ACCOUNTCATTYPENAMES = AccountCategoryType.OBJECT_NAME
+                                                             + "Names";
 
     /**
-     * AccountTypes data list.
+     * AccountCategoryTypes data list.
      */
-    private final AccountTypeList theList;
+    private final AccountCategoryTypeList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetAccountType(final FinanceReader pReader) {
+    protected SheetAccountCategoryType(final FinanceReader pReader) {
         /* Call super-constructor */
-        super(pReader, AREA_ACCOUNTTYPES);
+        super(pReader, AREA_ACCOUNTCATTYPES);
 
         /* Access the Account Type list */
-        theList = pReader.getData().getAccountTypes();
+        theList = pReader.getData().getAccountCategoryTypes();
         setDataList(theList);
     }
 
@@ -73,12 +73,12 @@ public class SheetAccountType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetAccountType(final FinanceWriter pWriter) {
+    protected SheetAccountCategoryType(final FinanceWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_ACCOUNTTYPES, AREA_ACCOUNTTYPENAMES);
+        super(pWriter, AREA_ACCOUNTCATTYPES, AREA_ACCOUNTCATTYPENAMES);
 
         /* Access the Account Type list */
-        theList = pWriter.getData().getAccountTypes();
+        theList = pWriter.getData().getAccountCategoryTypes();
         setDataList(theList);
     }
 
@@ -136,10 +136,10 @@ public class SheetAccountType
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_ACCOUNTTYPES);
+            DataView myView = pWorkBook.getRangeView(AREA_ACCOUNTCATTYPES);
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_ACCOUNTTYPES)) {
+            if (!pTask.setNewStage(AREA_ACCOUNTCATTYPES)) {
                 return false;
             }
 
@@ -147,11 +147,11 @@ public class SheetAccountType
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
-            /* Count the number of AccountTypes */
+            /* Count the number of AccountCategoryTypes */
             int myTotal = myView.getRowCount();
 
             /* Access the list of account types */
-            AccountTypeList myList = pData.getAccountTypes();
+            AccountCategoryTypeList myList = pData.getAccountCategoryTypes();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {

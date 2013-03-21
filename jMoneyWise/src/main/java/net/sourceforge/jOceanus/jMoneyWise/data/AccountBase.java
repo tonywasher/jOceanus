@@ -35,8 +35,8 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType.AccountTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 
 /**
  * Account data type.
@@ -142,8 +142,8 @@ public abstract class AccountBase
      * Obtain Account Type.
      * @return the type
      */
-    public AccountType getActType() {
-        return getAccountType(getValueSet());
+    public AccountCategoryType getActType() {
+        return getAccountCategoryType(getValueSet());
     }
 
     /**
@@ -151,7 +151,7 @@ public abstract class AccountBase
      * @return the actTypeId
      */
     public Integer getActTypeId() {
-        AccountType myType = getActType();
+        AccountCategoryType myType = getActType();
         return (myType == null)
                 ? null
                 : myType.getId();
@@ -162,7 +162,7 @@ public abstract class AccountBase
      * @return the actTypeName
      */
     public String getActTypeName() {
-        AccountType myType = getActType();
+        AccountCategoryType myType = getActType();
         return (myType == null)
                 ? null
                 : myType.getName();
@@ -239,12 +239,12 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain AccountType.
+     * Obtain AccountCategoryType.
      * @param pValueSet the valueSet
-     * @return the AccountType
+     * @return the AccountCategoryType
      */
-    public static AccountType getAccountType(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TYPE, AccountType.class);
+    public static AccountCategoryType getAccountCategoryType(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_TYPE, AccountCategoryType.class);
     }
 
     /**
@@ -254,8 +254,8 @@ public abstract class AccountBase
      */
     public static Integer getOrder(final ValueSet pValueSet) {
         Object myType = pValueSet.getValue(FIELD_TYPE);
-        if (myType instanceof AccountType) {
-            return ((AccountType) myType).getOrder();
+        if (myType instanceof AccountCategoryType) {
+            return ((AccountCategoryType) myType).getOrder();
         }
         return null;
     }
@@ -325,7 +325,7 @@ public abstract class AccountBase
      * Set account type value.
      * @param pValue the value
      */
-    private void setValueType(final AccountType pValue) {
+    private void setValueType(final AccountCategoryType pValue) {
         getValueSet().setValue(FIELD_TYPE, pValue);
     }
 
@@ -562,8 +562,8 @@ public abstract class AccountBase
 
             /* Look up the Account Type */
             FinanceData myData = getDataSet();
-            AccountTypeList myTypes = myData.getAccountTypes();
-            AccountType myActType = myTypes.findItemById(uAcTypeId);
+            AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
+            AccountCategoryType myActType = myTypes.findItemById(uAcTypeId);
             if (myActType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
             }
@@ -613,8 +613,8 @@ public abstract class AccountBase
 
             /* Look up the Account Type */
             FinanceData myData = getDataSet();
-            AccountTypeList myTypes = myData.getAccountTypes();
-            AccountType myActType = myTypes.findItemById(uAcTypeId);
+            AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
+            AccountCategoryType myActType = myTypes.findItemById(uAcTypeId);
             if (myActType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
             }
@@ -672,11 +672,11 @@ public abstract class AccountBase
 
         /* Access Account types */
         FinanceData myData = getDataSet();
-        AccountTypeList myTypes = myData.getAccountTypes();
+        AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
 
-        /* Update to use the local copy of the AccountTypes */
-        AccountType myType = getActType();
-        AccountType myNewType = myTypes.findItemById(myType.getId());
+        /* Update to use the local copy of the AccountCategoryTypes */
+        AccountCategoryType myType = getActType();
+        AccountCategoryType myNewType = myTypes.findItemById(myType.getId());
         setValueType(myNewType);
     }
 
@@ -685,16 +685,16 @@ public abstract class AccountBase
      */
     @Override
     public void validate() {
-        AccountType myType = getActType();
+        AccountCategoryType myType = getActType();
         String myName = getName();
         String myDesc = getDesc();
         AccountBaseList<?> myList = (AccountBaseList<?>) getList();
 
-        /* AccountType must be non-null */
+        /* AccountCategoryType must be non-null */
         if (myType == null) {
-            addError("AccountType must be non-null", FIELD_TYPE);
+            addError("AccountCategoryType must be non-null", FIELD_TYPE);
         } else if (!myType.getEnabled()) {
-            addError("AccountType must be enabled", FIELD_TYPE);
+            addError("AccountCategoryType must be enabled", FIELD_TYPE);
         }
 
         /* Name must be non-null */
@@ -733,7 +733,7 @@ public abstract class AccountBase
      * Set a new account type.
      * @param pType the new type
      */
-    public void setActType(final AccountType pType) {
+    public void setActType(final AccountCategoryType pType) {
         setValueType(pType);
     }
 

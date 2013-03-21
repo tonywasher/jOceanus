@@ -35,7 +35,7 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * @author Tony Washer
  */
 public class Frequency
-        extends StaticData<Frequency, FreqClass> {
+        extends StaticData<Frequency, FrequencyClass> {
     /**
      * Object name.
      */
@@ -60,7 +60,7 @@ public class Frequency
      * Return the Frequency class of the Frequency.
      * @return the class
      */
-    public FreqClass getFrequency() {
+    public FrequencyClass getFrequency() {
         return super.getStaticClass();
     }
 
@@ -134,7 +134,7 @@ public class Frequency
      * Represents a list of {@link Frequency} objects.
      */
     public static class FrequencyList
-            extends StaticList<Frequency, FreqClass> {
+            extends StaticList<Frequency, FrequencyClass> {
         /**
          * Local Report fields.
          */
@@ -151,8 +151,8 @@ public class Frequency
         }
 
         @Override
-        protected Class<FreqClass> getEnumClass() {
-            return FreqClass.class;
+        protected Class<FrequencyClass> getEnumClass() {
+            return FrequencyClass.class;
         }
 
         /**

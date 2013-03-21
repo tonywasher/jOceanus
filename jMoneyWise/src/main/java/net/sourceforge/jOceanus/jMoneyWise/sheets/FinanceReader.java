@@ -57,9 +57,9 @@ public class FinanceReader
         boolean isBackup = isBackup();
 
         /* Register the sheets */
-        addSheet(new SheetAccountType(this));
-        addSheet(new SheetTransactionType(this));
-        addSheet(new SheetTaxType(this));
+        addSheet(new SheetAccountCategoryType(this));
+        addSheet(new SheetEventCategoryType(this));
+        addSheet(new SheetTaxCategory(this));
         addSheet(new SheetTaxRegime(this));
         addSheet(new SheetFrequency(this));
         addSheet(new SheetTaxYearInfoType(this));

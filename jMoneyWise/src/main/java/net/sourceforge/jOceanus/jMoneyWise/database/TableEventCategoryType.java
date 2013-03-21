@@ -27,36 +27,37 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
 
 /**
- * TableStaticData extension for TransactionType.
+ * TableStaticData extension for EventCategoryType.
  * @author Tony Washer
  */
-public class TableTransactionType extends TableStaticData<TransactionType> {
+public class TableEventCategoryType
+        extends TableStaticData<EventCategoryType> {
     /**
-     * The name of the TransType table.
+     * The name of the CategoryType table.
      */
-    protected static final String TABLE_NAME = TransactionType.LIST_NAME;
+    protected static final String TABLE_NAME = EventCategoryType.LIST_NAME;
 
     /**
-     * The transaction type list.
+     * The event category type list.
      */
-    private TransTypeList theList = null;
+    private EventCategoryTypeList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableTransactionType(final Database<?> pDatabase) {
+    protected TableEventCategoryType(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theList = myData.getTransTypes();
+        theList = myData.getEventCategoryTypes();
         setList(theList);
     }
 

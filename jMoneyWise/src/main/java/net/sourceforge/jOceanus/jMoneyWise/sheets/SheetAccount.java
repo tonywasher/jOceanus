@@ -227,7 +227,7 @@ public class SheetAccount
         nameColumnRange(COL_NAME, AREA_ACCOUNTNAMES);
 
         /* Set the Validations */
-        applyDataValidation(COL_ACCOUNTTYPE, SheetAccountType.AREA_ACCOUNTTYPENAMES);
+        applyDataValidation(COL_ACCOUNTTYPE, SheetAccountCategoryType.AREA_ACCOUNTCATTYPENAMES);
 
         /* Format the info sheet */
         theInfoSheet.formatSheet();

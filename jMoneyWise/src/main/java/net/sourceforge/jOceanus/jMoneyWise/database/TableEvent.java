@@ -69,7 +69,7 @@ public class TableEvent
         myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_DEBIT, TableAccount.TABLE_NAME);
         myTableDef.addReferenceColumn(EventBase.FIELD_CREDIT, TableAccount.TABLE_NAME);
-        myTableDef.addReferenceColumn(EventBase.FIELD_TRNTYP, TableTransactionType.TABLE_NAME);
+        myTableDef.addReferenceColumn(EventBase.FIELD_CATTYP, TableEventCategoryType.TABLE_NAME);
 
         /* Declare the sort order */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -93,7 +93,7 @@ public class TableEvent
         byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
         Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
         Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
-        Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_TRNTYP);
+        Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_CATTYP);
 
         /* Add into the list */
         theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myTranType);
@@ -114,8 +114,8 @@ public class TableEvent
             myTableDef.setIntegerValue(EventBase.FIELD_DEBIT, pItem.getDebitId());
         } else if (EventBase.FIELD_CREDIT.equals(iField)) {
             myTableDef.setIntegerValue(EventBase.FIELD_CREDIT, pItem.getCreditId());
-        } else if (EventBase.FIELD_TRNTYP.equals(iField)) {
-            myTableDef.setIntegerValue(EventBase.FIELD_TRNTYP, pItem.getTransTypeId());
+        } else if (EventBase.FIELD_CATTYP.equals(iField)) {
+            myTableDef.setIntegerValue(EventBase.FIELD_CATTYP, pItem.getCategoryTypeId());
         } else {
             super.setFieldValue(pItem, iField);
         }

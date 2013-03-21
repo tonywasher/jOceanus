@@ -42,9 +42,9 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedMoney;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransactionType.TransTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
 
 /**
  * Event data type.
@@ -74,9 +74,9 @@ public abstract class EventBase
     public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
 
     /**
-     * TransType Field Id.
+     * CategoryType Field Id.
      */
-    public static final JDataField FIELD_TRNTYP = FIELD_DEFS.declareEqualityValueField("TransType");
+    public static final JDataField FIELD_CATTYP = FIELD_DEFS.declareEqualityValueField("CategoryType");
 
     /**
      * Amount Field Id.
@@ -126,30 +126,30 @@ public abstract class EventBase
     }
 
     /**
-     * Obtain transaction Type.
-     * @return the tranType
+     * Obtain category Type.
+     * @return the categoryType
      */
-    public final TransactionType getTransType() {
-        return getTransType(getValueSet());
+    public final EventCategoryType getCategoryType() {
+        return getCategoryType(getValueSet());
     }
 
     /**
-     * Obtain TransTypeId.
-     * @return the transTypeId
+     * Obtain CategoryTypeId.
+     * @return the categoryTypeId
      */
-    public Integer getTransTypeId() {
-        TransactionType myType = getTransType();
+    public Integer getCategoryTypeId() {
+        EventCategoryType myType = getCategoryType();
         return (myType == null)
                 ? null
                 : myType.getId();
     }
 
     /**
-     * Obtain transTypeName.
-     * @return the transTypeName
+     * Obtain categoryTypeName.
+     * @return the categoryTypeName
      */
-    public String getTransTypeName() {
-        TransactionType myType = getTransType();
+    public String getCategoryTypeName() {
+        EventCategoryType myType = getCategoryType();
         return (myType == null)
                 ? null
                 : myType.getName();
@@ -276,12 +276,12 @@ public abstract class EventBase
     }
 
     /**
-     * Obtain Transaction type.
+     * Obtain Category type.
      * @param pValueSet the valueSet
-     * @return the tranType
+     * @return the categoryType
      */
-    public static TransactionType getTransType(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TRNTYP, TransactionType.class);
+    public static EventCategoryType getCategoryType(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CATTYP, EventCategoryType.class);
     }
 
     /**
@@ -364,19 +364,19 @@ public abstract class EventBase
     }
 
     /**
-     * Set transType value.
+     * Set categoryType value.
      * @param pValue the value
      */
-    private void setValueTransType(final TransactionType pValue) {
-        getValueSet().setValue(FIELD_TRNTYP, pValue);
+    private void setValueCategoryType(final EventCategoryType pValue) {
+        getValueSet().setValue(FIELD_CATTYP, pValue);
     }
 
     /**
-     * Set transType id.
+     * Set categoryType id.
      * @param pId the id
      */
-    private void setValueTransType(final Integer pId) {
-        getValueSet().setValue(FIELD_TRNTYP, pId);
+    private void setValueCategoryType(final Integer pId) {
+        getValueSet().setValue(FIELD_CATTYP, pId);
     }
 
     /**
@@ -459,29 +459,6 @@ public abstract class EventBase
     }
 
     /**
-     * Construct a new event from an Account pattern.
-     * @param pList the list to build into
-     * @param pLine The Line to copy
-     * @throws JDataException on error
-     */
-    // protected EventBase(final EncryptedList<? extends EventBase> pList,
-    // final Pattern pLine) throws JDataException {
-    /* Set standard values */
-    // super(pList, pLine);
-
-    /* Create a new EventInfoSet if required */
-    // if (requiredInfoSet()) {
-    // theInfoSet = new EventInfoSet(this);
-    // }
-
-    /* If we need a tax Credit */
-    // if (needsTaxCredit(getTransType(), getDebit())) {
-    /* Calculate the tax credit */
-    // setTaxCredit(calculateTaxCredit());
-    // }
-    // }
-
-    /**
      * Edit constructor.
      * @param pList the list
      */
@@ -499,7 +476,7 @@ public abstract class EventBase
      * @param pDesc the description
      * @param uDebit the debit id
      * @param uCredit the credit id
-     * @param uTransType the transType id
+     * @param uCatType the categoryType id
      * @param pAmount the amount
      * @throws JDataException on error
      */
@@ -510,7 +487,7 @@ public abstract class EventBase
                         final byte[] pDesc,
                         final Integer uDebit,
                         final Integer uCredit,
-                        final Integer uTransType,
+                        final Integer uCatType,
                         final byte[] pAmount) throws JDataException {
         /* Initialise item */
         super(pList, uId);
@@ -524,7 +501,7 @@ public abstract class EventBase
             /* Store the IDs that we will look up */
             setValueDebit(uDebit);
             setValueCredit(uCredit);
-            setValueTransType(uTransType);
+            setValueCategoryType(uCatType);
             setControlKey(uControlId);
 
             /* Create the date */
@@ -544,12 +521,12 @@ public abstract class EventBase
             }
             setValueCredit(myAccount);
 
-            /* Look up the Transaction Type */
-            TransactionType myTransType = myData.getTransTypes().findItemById(uTransType);
-            if (myTransType == null) {
+            /* Look up the Category Type */
+            EventCategoryType myCatType = myData.getEventCategoryTypes().findItemById(uCatType);
+            if (myCatType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Transaction Type Id");
             }
-            setValueTransType(myTransType);
+            setValueCategoryType(myCatType);
 
             /* Record the encrypted values */
             setValueDesc(pDesc);
@@ -570,7 +547,7 @@ public abstract class EventBase
      * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pTransType the transaction type
+     * @param pCatType the category type
      * @param pAmount the amount
      * @throws JDataException on error
      */
@@ -580,7 +557,7 @@ public abstract class EventBase
                         final String pDesc,
                         final Account pDebit,
                         final Account pCredit,
-                        final TransactionType pTransType,
+                        final EventCategoryType pCatType,
                         final String pAmount) throws JDataException {
         /* Initialise item */
         super(pList, uId);
@@ -596,7 +573,7 @@ public abstract class EventBase
             setValueDesc(pDesc);
             setValueDebit(pDebit);
             setValueCredit(pCredit);
-            setValueTransType(pTransType);
+            setValueCategoryType(pCatType);
             setValueDate(new JDateDay(pDate));
             setValueAmount(myParser.parseMoneyValue(pAmount));
 
@@ -640,8 +617,8 @@ public abstract class EventBase
             return iDiff;
         }
 
-        /* If the transaction types differ */
-        iDiff = Difference.compareObject(getTransType(), pThat.getTransType());
+        /* If the category types differ */
+        iDiff = Difference.compareObject(getCategoryType(), pThat.getCategoryType());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -664,7 +641,7 @@ public abstract class EventBase
         /* Access Lists */
         FinanceData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
-        TransTypeList myTranTypes = myData.getTransTypes();
+        EventCategoryTypeList myCatTypes = myData.getEventCategoryTypes();
 
         /* Update credit to use the local copy of the Accounts */
         Account myAct = getCredit();
@@ -676,21 +653,21 @@ public abstract class EventBase
         myNewAct = myAccounts.findItemById(myAct.getId());
         setValueDebit(myNewAct);
 
-        /* Update transtype to use the local copy */
-        TransactionType myTran = getTransType();
-        TransactionType myNewTran = myTranTypes.findItemById(myTran.getId());
-        setValueTransType(myNewTran);
+        /* Update categoryType to use the local copy */
+        EventCategoryType myCat = getCategoryType();
+        EventCategoryType myNewCat = myCatTypes.findItemById(myCat.getId());
+        setValueCategoryType(myNewCat);
     }
 
     /**
      * Determines whether an event can be valid.
-     * @param pTrans The transaction type of the event
+     * @param pCategory The category type of the event
      * @param pType The account type of the event
      * @param pCredit is the account a credit or a debit
      * @return valid true/false
      */
-    public static boolean isValidEvent(final TransactionType pTrans,
-                                       final AccountType pType,
+    public static boolean isValidEvent(final EventCategoryType pCategory,
+                                       final AccountCategoryType pType,
                                        final boolean pCredit) {
         boolean myResult = false;
         boolean isCredit = pCredit;
@@ -700,8 +677,8 @@ public abstract class EventBase
             return false;
         }
 
-        /* Switch on the TransType */
-        switch (pTrans.getTranClass()) {
+        /* Switch on the CategoryType */
+        switch (pCategory.getCategoryClass()) {
             case TaxFreeIncome:
                 if (!isCredit) {
                     myResult = (pType.isExternal() && !pType.isCash());
@@ -864,19 +841,19 @@ public abstract class EventBase
 
     /**
      * Is an event allowed between these two accounts, used for more detailed analysis once the event is deemed valid based on the account types.
-     * @param pTrans The transaction type of the event
+     * @param pCategory The category type of the event
      * @param pDebit the debit account
      * @param pCredit the credit account
      * @return true/false
      */
-    public static boolean isValidEvent(final TransactionType pTrans,
+    public static boolean isValidEvent(final EventCategoryType pCategory,
                                        final Account pDebit,
                                        final Account pCredit) {
         /* Generally we must not be recursive */
         boolean myResult = !Difference.isEqual(pDebit, pCredit);
 
-        /* Switch on the TransType */
-        switch (pTrans.getTranClass()) {
+        /* Switch on the CategoryType */
+        switch (pCategory.getCategoryClass()) {
         /* Dividend */
             case Dividend:
                 /* If the credit account is capital */
@@ -968,8 +945,8 @@ public abstract class EventBase
      */
     public boolean isDividendReInvestment() {
         /* Check for dividend re-investment */
-        if ((getTransType() != null)
-            && (!getTransType().isDividend())) {
+        if ((getCategoryType() != null)
+            && (!getCategoryType().isDividend())) {
             return false;
         }
         return ((getCredit() != null) && (getCredit().isPriced()));
@@ -981,7 +958,7 @@ public abstract class EventBase
      */
     public boolean isInterest() {
         /* Check for interest */
-        return ((getTransType() != null) && (getTransType().isInterest()));
+        return ((getCategoryType() != null) && (getCategoryType().isInterest()));
     }
 
     /**
@@ -990,7 +967,7 @@ public abstract class EventBase
      */
     public final boolean isStockSplit() {
         /* Check for stock split */
-        return ((getTransType() != null) && (getTransType().isStockSplit()));
+        return ((getCategoryType() != null) && (getCategoryType().isStockSplit()));
     }
 
     /**
@@ -999,24 +976,24 @@ public abstract class EventBase
      */
     public final boolean isAdminCharge() {
         /* Check for Admin charge */
-        return ((getTransType() != null) && (getTransType().isAdminCharge()));
+        return ((getCategoryType() != null) && (getCategoryType().isAdminCharge()));
     }
 
     /**
      * Determines whether an event needs a tax credit.
-     * @param pTrans the transaction type
+     * @param pCategory the category type
      * @param pDebit the debit account
      * @return needs tax credit true/false
      */
-    public static boolean needsTaxCredit(final TransactionType pTrans,
+    public static boolean needsTaxCredit(final EventCategoryType pCategory,
                                          final Account pDebit) {
-        /* Handle null transType */
-        if (pTrans == null) {
+        /* Handle null categoryType */
+        if (pCategory == null) {
             return false;
         }
 
-        /* Switch on transaction type */
-        switch (pTrans.getTranClass()) {
+        /* Switch on category type */
+        switch (pCategory.getCategoryClass()) {
         /* If this is a Taxable Gain/TaxedIncome we need a tax credit */
             case TaxableGain:
             case TaxedIncome:
@@ -1033,17 +1010,17 @@ public abstract class EventBase
 
     /**
      * Determines whether an event needs a dilution factor.
-     * @param pTrans the transaction type
+     * @param pCategory the category type
      * @return needs dilution factor true/false
      */
-    public static boolean needsDilution(final TransactionType pTrans) {
-        /* Handle null transType */
-        if (pTrans == null) {
+    public static boolean needsDilution(final EventCategoryType pCategory) {
+        /* Handle null categoryType */
+        if (pCategory == null) {
             return false;
         }
 
-        /* Switch on transaction type */
-        switch (pTrans.getTranClass()) {
+        /* Switch on category type */
+        switch (pCategory.getCategoryClass()) {
         /* If this is a Stock Operation we need a dilution factor */
             case StockDeMerger:
             case StockRightsTaken:
@@ -1071,11 +1048,11 @@ public abstract class EventBase
     }
 
     /**
-     * Set a new transType.
-     * @param pTransType the transType
+     * Set a new categoryType.
+     * @param pCategory the categoryType
      */
-    public void setTransType(final TransactionType pTransType) {
-        setValueTransType(pTransType);
+    public void setCategoryType(final EventCategoryType pCategory) {
+        setValueCategoryType(pCategory);
     }
 
     /**
@@ -1110,8 +1087,8 @@ public abstract class EventBase
      * Mark active items.
      */
     protected void markActiveItems() {
-        /* mark the transaction type referred to */
-        getTransType().touchItem(this);
+        /* mark the category type referred to */
+        getCategoryType().touchItem(this);
 
         /* Mark the credit and debit accounts */
         getDebit().touchItem(this);
@@ -1128,7 +1105,7 @@ public abstract class EventBase
         Account myDebit = getDebit();
         Account myCredit = getCredit();
         JMoney myAmount = getAmount();
-        TransactionType myTransType = getTransType();
+        EventCategoryType myCategory = getCategoryType();
 
         /* Determine date range to check for */
         EventBaseList<?> myList = getList();
@@ -1143,15 +1120,15 @@ public abstract class EventBase
             addError("Date must be within range", FIELD_DATE);
         }
 
-        /* TransType must be non-null */
-        if (myTransType == null) {
-            addError("TransType must be non-null", FIELD_TRNTYP);
+        /* CategoryType must be non-null */
+        if (myCategory == null) {
+            addError("CategoryType must be non-null", FIELD_CATTYP);
             /* Must be enabled */
-        } else if (!myTransType.getEnabled()) {
-            addError("TransType must be enabled", FIELD_TRNTYP);
+        } else if (!myCategory.getEnabled()) {
+            addError("CategoryType must be enabled", FIELD_CATTYP);
             /* Must not be hidden */
-        } else if (myTransType.isHiddenType()) {
-            addError("Hidden transaction types are not allowed", FIELD_TRNTYP);
+        } else if (myCategory.isHiddenType()) {
+            addError("Hidden category types are not allowed", FIELD_CATTYP);
         }
 
         /* The description must be non-null */
@@ -1165,26 +1142,26 @@ public abstract class EventBase
         /* Credit account must be non-null */
         if (myCredit == null) {
             addError("Credit account must be non-null", FIELD_CREDIT);
-            /* And valid for transaction type */
-        } else if ((myTransType != null)
-                   && (!isValidEvent(myTransType, myCredit.getActType(), true))) {
+            /* And valid for category type */
+        } else if ((myCategory != null)
+                   && (!isValidEvent(myCategory, myCredit.getActType(), true))) {
             addError("Invalid credit account for transaction", FIELD_CREDIT);
         }
 
         /* Debit account must be non-null */
         if (myDebit == null) {
             addError("Debit account must be non-null", FIELD_DEBIT);
-            /* And valid for transaction type */
-        } else if ((myTransType != null)
-                   && (!isValidEvent(myTransType, myDebit.getActType(), false))) {
+            /* And valid for category type */
+        } else if ((myCategory != null)
+                   && (!isValidEvent(myCategory, myDebit.getActType(), false))) {
             addError("Invalid debit account for transaction", FIELD_DEBIT);
         }
 
         /* Check valid Credit/Debit combination */
-        if ((myTransType != null)
+        if ((myCategory != null)
             && (myCredit != null)
             && (myDebit != null)
-            && (!isValidEvent(myTransType, myDebit, myCredit))) {
+            && (!isValidEvent(myCategory, myDebit, myCredit))) {
             addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
             addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
         }
@@ -1199,9 +1176,9 @@ public abstract class EventBase
         /* Money must be zero for stock split/demerger */
         if ((myAmount != null)
             && (myAmount.isNonZero())
-            && (myTransType != null)
-            && ((myTransType.isStockDemerger())
-                || (myTransType.isStockSplit()) || (myTransType.isStockTakeover()))) {
+            && (myCategory != null)
+            && ((myCategory.isStockDemerger())
+                || (myCategory.isStockSplit()) || (myCategory.isStockTakeover()))) {
             addError("Amount must be zero for Stock Split/Demerger/Takeover", FIELD_AMOUNT);
         }
     }
@@ -1233,9 +1210,9 @@ public abstract class EventBase
             setValueDesc(myEvent.getDescField());
         }
 
-        /* Update the transaction type if required */
-        if (!Difference.isEqual(getTransType(), myEvent.getTransType())) {
-            setValueTransType(myEvent.getTransType());
+        /* Update the category type if required */
+        if (!Difference.isEqual(getCategoryType(), myEvent.getCategoryType())) {
+            setValueCategoryType(myEvent.getCategoryType());
         }
 
         /* Update the debit account if required */

@@ -39,7 +39,7 @@ import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TransClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
@@ -267,7 +267,9 @@ public final class CapitalEvent
     @Override
     public Integer getOrderedId() {
         /* This is the id of the event, or in the case where there is no event, the negative Date id */
-        return (theEvent != null) ? theEvent.getId() : -theDate.getId();
+        return (theEvent != null)
+                ? theEvent.getId()
+                : -theDate.getId();
     }
 
     @Override
@@ -277,7 +279,9 @@ public final class CapitalEvent
             return theDate;
         }
         if (FIELD_EVENT.equals(pField)) {
-            return (theEvent == null) ? JDataFieldValue.SkipField : theEvent;
+            return (theEvent == null)
+                    ? JDataFieldValue.SkipField
+                    : theEvent;
         }
 
         /* If the field is an attribute handle specially */
@@ -570,7 +574,7 @@ public final class CapitalEvent
             /* If the element is a cash takeover */
             if ((myEvent != null)
                 && (myEvent.getEvent() != null)
-                && (myEvent.getEvent().getTransType().getTranClass() == TransClass.CashTakeOver)) {
+                && (myEvent.getEvent().getCategoryType().getCategoryClass() == EventCategoryClass.CashTakeOver)) {
                 return myEvent;
             }
 

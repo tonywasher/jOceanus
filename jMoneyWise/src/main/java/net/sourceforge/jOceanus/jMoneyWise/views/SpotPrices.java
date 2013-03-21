@@ -40,7 +40,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
 
 /**
  * Extension of AccountPrice to cater for spot prices.
@@ -124,7 +124,7 @@ public class SpotPrices
     /**
      * The account type.
      */
-    private final AccountType theType;
+    private final AccountCategoryType theType;
 
     /**
      * The date.
@@ -140,7 +140,7 @@ public class SpotPrices
      * Obtain account type.
      * @return the account type
      */
-    public AccountType getAccountType() {
+    public AccountCategoryType getAccountType() {
         return theType;
     }
 
@@ -208,7 +208,7 @@ public class SpotPrices
      * @param pDate the date
      */
     public SpotPrices(final View pView,
-                      final AccountType pType,
+                      final AccountCategoryType pType,
                       final JDateDay pDate) {
         /* Create a copy of the date and initiate the list */
         theView = pView;
@@ -292,7 +292,7 @@ public class SpotPrices
         /**
          * The account type.
          */
-        private final AccountType theType;
+        private final AccountCategoryType theType;
 
         /**
          * The next date.
@@ -592,7 +592,9 @@ public class SpotPrices
          */
         @Override
         public void setValidEdit() {
-            setEditState((hasHistory()) ? EditState.VALID : EditState.CLEAN);
+            setEditState((hasHistory())
+                    ? EditState.VALID
+                    : EditState.CLEAN);
         }
 
         @Override
@@ -625,16 +627,22 @@ public class SpotPrices
             /* If the original price is Null */
             if (getPrice(myBase) == null) {
                 /* Return status */
-                return myCurr.isDeletion() ? DataState.DELNEW : DataState.NEW;
+                return myCurr.isDeletion()
+                        ? DataState.DELNEW
+                        : DataState.NEW;
             }
 
             /* If we are deleted return so */
             if (myCurr.isDeletion()) {
-                return myBase.isDeletion() ? DataState.CLEAN : DataState.DELETED;
+                return myBase.isDeletion()
+                        ? DataState.CLEAN
+                        : DataState.DELETED;
             }
 
             /* Return RECOVERED or CHANGED depending on whether we started as deleted */
-            return (myBase.isDeletion()) ? DataState.RECOVERED : DataState.CHANGED;
+            return (myBase.isDeletion())
+                    ? DataState.RECOVERED
+                    : DataState.CHANGED;
         }
     }
 }

@@ -31,15 +31,15 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 
 /**
- * TransactionType data type.
+ * EventCategoryType data type.
  * @author Tony Washer
  */
-public class TransactionType
-        extends StaticData<TransactionType, TransClass> {
+public class EventCategoryType
+        extends StaticData<EventCategoryType, EventCategoryClass> {
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = TransactionType.class.getSimpleName();
+    public static final String OBJECT_NAME = EventCategoryType.class.getSimpleName();
 
     /**
      * List name.
@@ -58,10 +58,10 @@ public class TransactionType
     }
 
     /**
-     * Return the Transaction class of the Transaction Type.
+     * Return the Category class of the Category Type.
      * @return the class
      */
-    public TransClass getTranClass() {
+    public EventCategoryClass getCategoryClass() {
         return super.getStaticClass();
     }
 
@@ -72,68 +72,68 @@ public class TransactionType
     }
 
     @Override
-    public TransactionType getBase() {
-        return (TransactionType) super.getBase();
+    public EventCategoryType getBase() {
+        return (EventCategoryType) super.getBase();
     }
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Transaction Type with
-     * @param pTransType The Transaction Type to copy
+     * @param pList The list to associate the Category Type with
+     * @param pTransType The Category Type to copy
      */
-    protected TransactionType(final TransTypeList pList,
-                              final TransactionType pTransType) {
+    protected EventCategoryType(final EventCategoryTypeList pList,
+                                final EventCategoryType pTransType) {
         super(pList, pTransType);
     }
 
     /**
      * Basic Constructor.
-     * @param pList The list to associate the Transaction Type with
-     * @param sName Name of Transaction Type
+     * @param pList The list to associate the Category Type with
+     * @param sName Name of Category Type
      * @throws JDataException on error
      */
-    private TransactionType(final TransTypeList pList,
-                            final String sName) throws JDataException {
+    private EventCategoryType(final EventCategoryTypeList pList,
+                              final String sName) throws JDataException {
         super(pList, sName);
     }
 
     /**
      * Open Constructor.
-     * @param pList The list to associate the Transaction Type with
-     * @param uId ID of Transaction Type
-     * @param isEnabled is the TransType enabled
+     * @param pList The list to associate the Category Type with
+     * @param uId ID of Category Type
+     * @param isEnabled is the EventCategoryType enabled
      * @param uOrder the sort order
-     * @param pName Name of Transaction Type
-     * @param pDesc Description of Transaction Type
+     * @param pName Name of Category Type
+     * @param pDesc Description of Category Type
      * @throws JDataException on error
      */
-    private TransactionType(final TransTypeList pList,
-                            final Integer uId,
-                            final Boolean isEnabled,
-                            final Integer uOrder,
-                            final String pName,
-                            final String pDesc) throws JDataException {
+    private EventCategoryType(final EventCategoryTypeList pList,
+                              final Integer uId,
+                              final Boolean isEnabled,
+                              final Integer uOrder,
+                              final String pName,
+                              final String pDesc) throws JDataException {
         super(pList, uId, isEnabled, uOrder, pName, pDesc);
     }
 
     /**
      * Secure Constructor.
-     * @param pList The list to associate the Transaction Type with
-     * @param uId ID of Transaction Type
+     * @param pList The list to associate the Category Type with
+     * @param uId ID of Category Type
      * @param uControlId the control id of the new item
-     * @param isEnabled is the TransType enabled
+     * @param isEnabled is the EventCategoryType enabled
      * @param uOrder the sort order
-     * @param pName Encrypted Name of Transaction Type
-     * @param pDesc Encrypted Description of Transaction Type
+     * @param pName Encrypted Name of Category Type
+     * @param pDesc Encrypted Description of Category Type
      * @throws JDataException on error
      */
-    private TransactionType(final TransTypeList pList,
-                            final Integer uId,
-                            final Integer uControlId,
-                            final Boolean isEnabled,
-                            final Integer uOrder,
-                            final byte[] pName,
-                            final byte[] pDesc) throws JDataException {
+    private EventCategoryType(final EventCategoryTypeList pList,
+                              final Integer uId,
+                              final Integer uControlId,
+                              final Boolean isEnabled,
+                              final Integer uOrder,
+                              final byte[] pName,
+                              final byte[] pDesc) throws JDataException {
         super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
     }
 
@@ -142,7 +142,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is transfer, <code>false</code> otherwise.
      */
     public boolean isTransfer() {
-        return getTranClass().isTransfer();
+        return getCategoryClass().isTransfer();
     }
 
     /**
@@ -150,7 +150,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is dividend, <code>false</code> otherwise.
      */
     public boolean isDividend() {
-        return getTranClass().isDividend();
+        return getCategoryClass().isDividend();
     }
 
     /**
@@ -158,7 +158,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is interest, <code>false</code> otherwise.
      */
     public boolean isInterest() {
-        return getTranClass().isInterest();
+        return getCategoryClass().isInterest();
     }
 
     /**
@@ -166,7 +166,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is cash payment, <code>false</code> otherwise.
      */
     public boolean isCashPayment() {
-        return getTranClass().isCashPayment();
+        return getCategoryClass().isCashPayment();
     }
 
     /**
@@ -174,7 +174,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is cash recovery, <code>false</code> otherwise.
      */
     public boolean isCashRecovery() {
-        return getTranClass().isCashRecovery();
+        return getCategoryClass().isCashRecovery();
     }
 
     /**
@@ -182,7 +182,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is write off, <code>false</code> otherwise.
      */
     protected boolean isWriteOff() {
-        return getTranClass().isWriteOff();
+        return getCategoryClass().isWriteOff();
     }
 
     /**
@@ -190,7 +190,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is inheritance, <code>false</code> otherwise.
      */
     protected boolean isInherited() {
-        return getTranClass().isInherited();
+        return getCategoryClass().isInherited();
     }
 
     /**
@@ -198,7 +198,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is tax owed, <code>false</code> otherwise.
      */
     protected boolean isTaxOwed() {
-        return getTranClass().isTaxOwed();
+        return getCategoryClass().isTaxOwed();
     }
 
     /**
@@ -206,7 +206,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is tax refund, <code>false</code> otherwise.
      */
     protected boolean isTaxRefund() {
-        return getTranClass().isTaxRefund();
+        return getCategoryClass().isTaxRefund();
     }
 
     /**
@@ -214,7 +214,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is tax relief, <code>false</code> otherwise.
      */
     protected boolean isTaxRelief() {
-        return getTranClass().isTaxRelief();
+        return getCategoryClass().isTaxRelief();
     }
 
     /**
@@ -222,7 +222,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is debt interest, <code>false</code> otherwise.
      */
     protected boolean isDebtInterest() {
-        return getTranClass().isDebtInterest();
+        return getCategoryClass().isDebtInterest();
     }
 
     /**
@@ -230,7 +230,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is rental income, <code>false</code> otherwise.
      */
     protected boolean isRentalIncome() {
-        return getTranClass().isRentalIncome();
+        return getCategoryClass().isRentalIncome();
     }
 
     /**
@@ -238,7 +238,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is benefit, <code>false</code> otherwise.
      */
     protected boolean isBenefit() {
-        return getTranClass().isBenefit();
+        return getCategoryClass().isBenefit();
     }
 
     /**
@@ -246,7 +246,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is taxable gain, <code>false</code> otherwise.
      */
     public boolean isTaxableGain() {
-        return getTranClass().isTaxableGain();
+        return getCategoryClass().isTaxableGain();
     }
 
     /**
@@ -254,7 +254,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is capital gain, <code>false</code> otherwise.
      */
     public boolean isCapitalGain() {
-        return getTranClass().isCapitalGain();
+        return getCategoryClass().isCapitalGain();
     }
 
     /**
@@ -262,7 +262,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is capital loss, <code>false</code> otherwise.
      */
     public boolean isCapitalLoss() {
-        return getTranClass().isCapitalLoss();
+        return getCategoryClass().isCapitalLoss();
     }
 
     /**
@@ -270,7 +270,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock split, <code>false</code> otherwise.
      */
     public boolean isStockSplit() {
-        return getTranClass().isStockSplit();
+        return getCategoryClass().isStockSplit();
     }
 
     /**
@@ -278,7 +278,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is admin charge, <code>false</code> otherwise.
      */
     public boolean isAdminCharge() {
-        return getTranClass().isAdminCharge();
+        return getCategoryClass().isAdminCharge();
     }
 
     /**
@@ -286,7 +286,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock demerger, <code>false</code> otherwise.
      */
     public boolean isStockDemerger() {
-        return getTranClass().isStockDemerger();
+        return getCategoryClass().isStockDemerger();
     }
 
     /**
@@ -294,7 +294,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock right taken, <code>false</code> otherwise.
      */
     public boolean isStockRightTaken() {
-        return getTranClass().isStockRightTaken();
+        return getCategoryClass().isStockRightTaken();
     }
 
     /**
@@ -302,7 +302,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock right waived, <code>false</code> otherwise.
      */
     public boolean isStockRightWaived() {
-        return getTranClass().isStockRightWaived();
+        return getCategoryClass().isStockRightWaived();
     }
 
     /**
@@ -310,7 +310,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is cash takeover, <code>false</code> otherwise.
      */
     public boolean isCashTakeover() {
-        return getTranClass().isCashTakeover();
+        return getCategoryClass().isCashTakeover();
     }
 
     /**
@@ -318,7 +318,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is stock takeover, <code>false</code> otherwise.
      */
     public boolean isStockTakeover() {
-        return getTranClass().isStockTakeover();
+        return getCategoryClass().isStockTakeover();
     }
 
     /**
@@ -326,7 +326,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is recovery, <code>false</code> otherwise.
      */
     public boolean isRecovered() {
-        return getTranClass().isRecovered();
+        return getCategoryClass().isRecovered();
     }
 
     /**
@@ -334,7 +334,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is hidden, <code>false</code> otherwise.
      */
     public boolean isHiddenType() {
-        return getTranClass().isHiddenType();
+        return getCategoryClass().isHiddenType();
     }
 
     /**
@@ -342,7 +342,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction should have a tax credit, <code>false</code> otherwise.
      */
     public boolean needsTaxCredit() {
-        return getTranClass().needsTaxCredit();
+        return getCategoryClass().needsTaxCredit();
     }
 
     /**
@@ -350,7 +350,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is income, <code>false</code> otherwise.
      */
     protected boolean isIncome() {
-        return getTranClass().isIncome();
+        return getCategoryClass().isIncome();
     }
 
     /**
@@ -358,7 +358,7 @@ public class TransactionType
      * @return <code>true</code> if the transaction is expense, <code>false</code> otherwise.
      */
     protected boolean isExpense() {
-        return getTranClass().isExpense();
+        return getCategoryClass().isExpense();
     }
 
     /**
@@ -366,18 +366,18 @@ public class TransactionType
      * @return <code>true</code> if the transaction is dilutable, <code>false</code> otherwise.
      */
     public boolean isDilutable() {
-        return getTranClass().isDilutable();
+        return getCategoryClass().isDilutable();
     }
 
     /**
-     * Represents a list of {@link TransactionType} objects.
+     * Represents a list of {@link EventCategoryType} objects.
      */
-    public static class TransTypeList
-            extends StaticList<TransactionType, TransClass> {
+    public static class EventCategoryTypeList
+            extends StaticList<EventCategoryType, EventCategoryClass> {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TransTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(EventCategoryTypeList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -390,46 +390,46 @@ public class TransactionType
         }
 
         @Override
-        protected Class<TransClass> getEnumClass() {
-            return TransClass.class;
+        protected Class<EventCategoryClass> getEnumClass() {
+            return EventCategoryClass.class;
         }
 
         /**
-         * Construct an empty CORE transaction type list.
+         * Construct an empty CORE category type list.
          * @param pData the DataSet for the list
          */
-        public TransTypeList(final DataSet<?> pData) {
-            super(TransactionType.class, pData, ListStyle.CORE);
+        public EventCategoryTypeList(final DataSet<?> pData) {
+            super(EventCategoryType.class, pData, ListStyle.CORE);
         }
 
         /**
          * Constructor for a cloned List.
          * @param pSource the source List
          */
-        private TransTypeList(final TransTypeList pSource) {
+        private EventCategoryTypeList(final EventCategoryTypeList pSource) {
             super(pSource);
         }
 
         @Override
-        protected TransTypeList getEmptyList(final ListStyle pStyle) {
-            TransTypeList myList = new TransTypeList(this);
+        protected EventCategoryTypeList getEmptyList(final ListStyle pStyle) {
+            EventCategoryTypeList myList = new EventCategoryTypeList(this);
             myList.setStyle(pStyle);
             return myList;
         }
 
         @Override
-        public TransTypeList cloneList(final DataSet<?> pDataSet) {
-            return (TransTypeList) super.cloneList(pDataSet);
+        public EventCategoryTypeList cloneList(final DataSet<?> pDataSet) {
+            return (EventCategoryTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public TransTypeList deriveList(final ListStyle pStyle) {
-            return (TransTypeList) super.deriveList(pStyle);
+        public EventCategoryTypeList deriveList(final ListStyle pStyle) {
+            return (EventCategoryTypeList) super.deriveList(pStyle);
         }
 
         @Override
-        public TransTypeList deriveDifferences(final DataList<TransactionType> pOld) {
-            return (TransTypeList) super.deriveDifferences(pOld);
+        public EventCategoryTypeList deriveDifferences(final DataList<EventCategoryType> pOld) {
+            return (EventCategoryTypeList) super.deriveDifferences(pOld);
         }
 
         /**
@@ -438,13 +438,13 @@ public class TransactionType
          * @return the newly added item
          */
         @Override
-        public TransactionType addCopyItem(final DataItem pItem) {
-            /* Can only clone a TransactionType */
-            if (!(pItem instanceof TransactionType)) {
+        public EventCategoryType addCopyItem(final DataItem pItem) {
+            /* Can only clone a EventCategoryType */
+            if (!(pItem instanceof EventCategoryType)) {
                 return null;
             }
 
-            TransactionType myType = new TransactionType(this, (TransactionType) pItem);
+            EventCategoryType myType = new EventCategoryType(this, (EventCategoryType) pItem);
             add(myType);
             return myType;
         }
@@ -454,7 +454,7 @@ public class TransactionType
          * @return the newly added item
          */
         @Override
-        public TransactionType addNewItem() {
+        public EventCategoryType addNewItem() {
             return null;
         }
 
@@ -467,103 +467,103 @@ public class TransactionType
         }
 
         /**
-         * Add a TransactionType.
-         * @param pTransType the Name of the transaction type
+         * Add a EventCategoryType.
+         * @param pEventCategoryType the Name of the category type
          * @throws JDataException on error
          */
-        public void addBasicItem(final String pTransType) throws JDataException {
-            /* Create a new Transaction Type */
-            TransactionType myTransType = new TransactionType(this, pTransType);
+        public void addBasicItem(final String pEventCategoryType) throws JDataException {
+            /* Create a new Category Type */
+            EventCategoryType myCatType = new EventCategoryType(this, pEventCategoryType);
 
-            /* Check that this TransTypeId has not been previously added */
-            if (!isIdUnique(myTransType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate TranTypeId");
+            /* Check that this EventCategoryTypeId has not been previously added */
+            if (!isIdUnique(myCatType.getId())) {
+                throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate EventCategoryTypeId");
             }
 
-            /* Check that this TransactionType has not been previously added */
-            if (findItemByName(pTransType) != null) {
-                throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate Transaction Type");
+            /* Check that this EventCategoryType has not been previously added */
+            if (findItemByName(pEventCategoryType) != null) {
+                throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate Category Type");
             }
 
-            /* Add the Transaction Type to the list */
-            append(myTransType);
+            /* Add the Category Type to the list */
+            append(myCatType);
 
-            /* Validate the TransType */
-            myTransType.validate();
+            /* Validate the EventCategoryType */
+            myCatType.validate();
 
             /* Handle validation failure */
-            if (myTransType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTransType, "Failed validation");
+            if (myCatType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myCatType, "Failed validation");
             }
         }
 
         /**
-         * Add a TransactionType to the list.
-         * @param uId ID of Transaction Type
-         * @param isEnabled is the TransType enabled
+         * Add a EventCategoryType to the list.
+         * @param uId ID of Category Type
+         * @param isEnabled is the EventCategoryType enabled
          * @param uOrder the sort order
-         * @param pTranType the Name of the transaction type
-         * @param pDesc the Description of the transaction type
+         * @param pCatType the Name of the category type
+         * @param pDesc the Description of the category type
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer uId,
                                 final Boolean isEnabled,
                                 final Integer uOrder,
-                                final String pTranType,
+                                final String pCatType,
                                 final String pDesc) throws JDataException {
-            /* Create a new Transaction Type */
-            TransactionType myTransType = new TransactionType(this, uId, isEnabled, uOrder, pTranType, pDesc);
+            /* Create a new Category Type */
+            EventCategoryType myCatType = new EventCategoryType(this, uId, isEnabled, uOrder, pCatType, pDesc);
 
-            /* Check that this TransTypeId has not been previously added */
-            if (!isIdUnique(myTransType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate TranTypeId");
+            /* Check that this EventCategoryTypeId has not been previously added */
+            if (!isIdUnique(myCatType.getId())) {
+                throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate EventCategoryTypeId");
             }
 
-            /* Add the Transaction Type to the list */
-            append(myTransType);
+            /* Add the Category Type to the list */
+            append(myCatType);
 
-            /* Validate the TransType */
-            myTransType.validate();
+            /* Validate the EventCategoryType */
+            myCatType.validate();
 
             /* Handle validation failure */
-            if (myTransType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTransType, "Failed validation");
+            if (myCatType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myCatType, "Failed validation");
             }
         }
 
         /**
-         * Add a TransactionType.
-         * @param uId the Id of the transaction type
+         * Add a EventCategoryType.
+         * @param uId the Id of the category type
          * @param uControlId the control id of the new item
-         * @param isEnabled is the TransType enabled
+         * @param isEnabled is the EventCategoryType enabled
          * @param uOrder the sort order
-         * @param pTransType the Encrypted Name of the transaction type
-         * @param pDesc the Encrypted Description of the transaction type
+         * @param pCatType the Encrypted Name of the category type
+         * @param pDesc the Encrypted Description of the category type
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer uId,
                                   final Integer uControlId,
                                   final Boolean isEnabled,
                                   final Integer uOrder,
-                                  final byte[] pTransType,
+                                  final byte[] pCatType,
                                   final byte[] pDesc) throws JDataException {
-            /* Create a new Transaction Type */
-            TransactionType myTransType = new TransactionType(this, uId, uControlId, isEnabled, uOrder, pTransType, pDesc);
+            /* Create a new Category Type */
+            EventCategoryType myCatType = new EventCategoryType(this, uId, uControlId, isEnabled, uOrder, pCatType, pDesc);
 
-            /* Check that this TransTypeId has not been previously added */
+            /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, myTransType, "Duplicate TransTypeId");
+                throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate EventCategoryTypeId");
             }
 
-            /* Add the Transaction Type to the list */
-            append(myTransType);
+            /* Add the Category Type to the list */
+            append(myCatType);
 
-            /* Validate the TransType */
-            myTransType.validate();
+            /* Validate the EventCategoryType */
+            myCatType.validate();
 
             /* Handle validation failure */
-            if (myTransType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTransType, "Failed validation");
+            if (myCatType.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myCatType, "Failed validation");
             }
         }
     }

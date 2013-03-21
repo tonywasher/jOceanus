@@ -27,45 +27,45 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxType.TaxTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory.TaxCategoryList;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 
 /**
- * SheetStaticData extension for TaxType.
+ * SheetStaticData extension for TaxCategory.
  * @author Tony Washer
  */
-public class SheetTaxType
-        extends SheetStaticData<TaxType> {
+public class SheetTaxCategory
+        extends SheetStaticData<TaxCategory> {
     /**
      * NamedArea for Tax Types.
      */
-    private static final String AREA_TAXCLASSES = "TaxClasses";
+    private static final String AREA_TAXCATEGORIES = TaxCategory.LIST_NAME;
 
     /**
      * NameList for TaxTypes.
      */
-    protected static final String AREA_TAXTYPENAMES = TaxType.OBJECT_NAME
-                                                      + "Names";
+    protected static final String AREA_TAXCATEGORYNAMES = TaxCategory.OBJECT_NAME
+                                                          + "Names";
 
     /**
-     * TaxTypes data list.
+     * TaxCategories data list.
      */
-    private final TaxTypeList theList;
+    private final TaxCategoryList theList;
 
     /**
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetTaxType(final FinanceReader pReader) {
+    protected SheetTaxCategory(final FinanceReader pReader) {
         /* Call super-constructor */
-        super(pReader, AREA_TAXCLASSES);
+        super(pReader, AREA_TAXCATEGORIES);
 
         /* Access the Tax Type list */
-        theList = pReader.getData().getTaxTypes();
+        theList = pReader.getData().getTaxCategories();
         setDataList(theList);
     }
 
@@ -73,12 +73,12 @@ public class SheetTaxType
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetTaxType(final FinanceWriter pWriter) {
+    protected SheetTaxCategory(final FinanceWriter pWriter) {
         /* Call super-constructor */
-        super(pWriter, AREA_TAXCLASSES, AREA_TAXTYPENAMES);
+        super(pWriter, AREA_TAXCATEGORIES, AREA_TAXCATEGORYNAMES);
 
         /* Access the Tax Type list */
-        theList = pWriter.getData().getTaxTypes();
+        theList = pWriter.getData().getTaxCategories();
         setDataList(theList);
     }
 
@@ -136,10 +136,10 @@ public class SheetTaxType
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_TAXCLASSES);
+            DataView myView = pWorkBook.getRangeView(AREA_TAXCATEGORIES);
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_TAXCLASSES)) {
+            if (!pTask.setNewStage(AREA_TAXCATEGORIES)) {
                 return false;
             }
 
@@ -147,11 +147,11 @@ public class SheetTaxType
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
-            /* Count the number of TaxTypes */
+            /* Count the number of TaxCategories */
             int myTotal = myView.getRowCount();
 
-            /* Access the list of tax types */
-            TaxTypeList myList = pData.getTaxTypes();
+            /* Access the list of tax categories */
+            TaxCategoryList myList = pData.getTaxCategories();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {
@@ -180,7 +180,7 @@ public class SheetTaxType
 
             /* Handle exceptions */
         } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Tax Types", e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Tax Buckets", e);
         }
 
         /* Return to caller */

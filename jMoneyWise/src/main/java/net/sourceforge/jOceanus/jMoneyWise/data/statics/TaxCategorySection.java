@@ -23,18 +23,18 @@
 package net.sourceforge.jOceanus.jMoneyWise.data.statics;
 
 /**
- * Enumeration of Tax Type Buckets.
+ * Enumeration of Tax Bucket Sections.
  */
-public enum TaxBucket {
+public enum TaxCategorySection {
     /**
-     * Transaction Summary.
+     * Category Summary.
      */
-    TRANSSUMM(0),
+    CATSUMM(0),
 
     /**
-     * Transaction Total.
+     * Category Total.
      */
-    TRANSTOTAL(100),
+    CATTOTAL(100),
 
     /**
      * Tax Detail.
@@ -68,7 +68,7 @@ public enum TaxBucket {
      * Constructor.
      * @param pBase the base
      */
-    private TaxBucket(final int pBase) {
+    private TaxCategorySection(final int pBase) {
         theBase = pBase;
     }
 }
