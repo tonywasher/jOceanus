@@ -30,16 +30,17 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.DebtAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.LoanAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.MoneyAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
@@ -251,7 +252,7 @@ public class MetaAnalysis {
         AccountList myAccounts = myData.getAccounts();
 
         /* Obtain access to key elements */
-        theMarketAccount = (PayeeAccountDetail) theList.getAccountBucket(myAccounts.getMarket());
+        theMarketAccount = (PayeeAccountDetail) theList.getAccountBucket(myAccounts.getSingularClass(AccountCategoryClass.Market));
         theMarketGrowth = theList.getCategoryDetail(EventCategoryClass.MarketGrowth);
         theMarketShrink = theList.getCategoryDetail(EventCategoryClass.MarketShrink);
         theCapitalGains = theList.getCategoryDetail(EventCategoryClass.CapitalGain);
@@ -332,7 +333,7 @@ public class MetaAnalysis {
         /* If there have been gains realised in this period */
         if (myGain.isNonZero()) {
             /* If we are subject to capital gains */
-            if (myAccount.isCapitalGains()) {
+            if (myAccount.getAccountCategoryClass().isCapitalGains()) {
                 /* Subtract them from the market movement */
                 myMarket.subtractAmount(myGain);
 
@@ -350,7 +351,7 @@ public class MetaAnalysis {
                 }
 
                 /* else if this is a LifeBond */
-            } else if (myAccount.isLifeBond()) {
+            } else if (myAccount.isCategoryClass(AccountCategoryClass.LifeBond)) {
                 /* Subtract them from the market movement */
                 myMarket.subtractAmount(myGain);
 
@@ -434,7 +435,7 @@ public class MetaAnalysis {
 
                 /* Accounts with valuations */
                 case BANKDETAIL:
-                case DEBTDETAIL:
+                case LOANDETAIL:
                     /* Adjust Value Summaries */
                     if (myCurr.isRelevant()) {
                         adjustAssetSummary(myTotals, (AccountBucket) myCurr);
@@ -643,14 +644,14 @@ public class MetaAnalysis {
                     }
                     break;
 
-                case DEBTDETAIL:
+                case LOANDETAIL:
                     /* Access the Account */
-                    DebtAccountDetail myDebt = (DebtAccountDetail) myCurr;
+                    LoanAccountDetail myLoan = (LoanAccountDetail) myCurr;
 
                     /* If we have non-zero value */
-                    if (myDebt.getValue().isNonZero()) {
+                    if (myLoan.getValue().isNonZero()) {
                         /* Set the account as non-close-able */
-                        myAccount = myDebt.getAccount();
+                        myAccount = myLoan.getAccount();
                         myAccount.setNonCloseable();
                     }
                     break;
@@ -668,22 +669,22 @@ public class MetaAnalysis {
     private void adjustAssetSummary(final BucketList pTotals,
                                     final AccountBucket pBucket) {
         ValueBucket myAccount = null;
-        AccountCategoryType myType = pBucket.getAccountType();
+        AccountCategory myCategory = pBucket.getAccountCategory();
 
         /* Switch on the bucket type */
         switch (pBucket.getBucketType()) {
         /* Asset/Money/Debt details */
             case ASSETDETAIL:
             case BANKDETAIL:
-            case DEBTDETAIL:
+            case LOANDETAIL:
                 /* Access the account */
                 myAccount = (ValueBucket) pBucket;
 
                 /* If we need to look up the Asset summary */
                 if ((theAssetSummary == null)
-                    || (!theAssetSummary.getAccountType().equals(myType))) {
+                    || (!theAssetSummary.getAccountCategory().equals(myCategory))) {
                     /* Access the asset summary */
-                    theAssetSummary = pTotals.getAssetSummary(myType);
+                    theAssetSummary = pTotals.getAssetSummary(myCategory);
                 }
 
                 /* Add the value to the asset summary */
@@ -701,11 +702,11 @@ public class MetaAnalysis {
      */
     private static void adjustCategorySummary(final BucketList pTotals,
                                               final EventCategoryDetail pBucket) {
-        EventCategoryType myCat = pBucket.getCategoryType();
+        EventCategory myCategory = pBucket.getCategory();
         CategorySummary myBucket;
 
         /* Switch on the category type */
-        switch (myCat.getCategoryClass()) {
+        switch (myCategory.getCategoryTypeClass()) {
             case TaxedIncome:
                 /* Adjust the Gross salary bucket */
                 myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossSalary);
@@ -757,20 +758,14 @@ public class MetaAnalysis {
                 myBucket.addValues(pBucket);
                 break;
             case TaxCredit:
-            case TaxOwed:
+            case TaxSettlement:
                 /* Adjust the Tax Paid bucket */
                 myBucket = pTotals.getCategorySummary(TaxCategoryClass.TaxPaid);
                 myBucket.addValues(pBucket);
                 break;
-            case TaxRefund:
-                /* Adjust the Tax Paid bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.TaxPaid);
-                myBucket.subtractValues(pBucket);
-                break;
-            case TaxFreeIncome:
             case TaxFreeInterest:
             case TaxFreeDividend:
-            case DebtInterest:
+            case LoanInterest:
                 /* Adjust the Tax Free bucket */
                 myBucket = pTotals.getCategorySummary(TaxCategoryClass.TaxFree);
                 myBucket.addValues(pBucket);
@@ -785,15 +780,11 @@ public class MetaAnalysis {
                 myBucket.addValues(pBucket);
                 break;
             case Expense:
-            case Mortgage:
-            case Insurance:
-            case ExtraTax:
             case WriteOff:
                 /* Adjust the Expense bucket */
                 myBucket = pTotals.getCategorySummary(TaxCategoryClass.Expense);
                 myBucket.addValues(pBucket);
                 break;
-            case Recovered:
             case TaxRelief:
                 /* Adjust the Expense bucket */
                 myBucket = pTotals.getCategorySummary(TaxCategoryClass.Expense);
@@ -817,7 +808,6 @@ public class MetaAnalysis {
                 myBucket = pTotals.getCategorySummary(TaxCategoryClass.NonCore);
                 myBucket.subtractValues(pBucket);
                 break;
-            case CashTakeOver:
             case StockTakeOver:
             case StockSplit:
             case StockDeMerger:
@@ -825,8 +815,6 @@ public class MetaAnalysis {
             case StockRightsWaived:
             case Transfer:
             case Endowment:
-            case CashPayment:
-            case CashRecovery:
             default:
                 break;
         }

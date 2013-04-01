@@ -65,19 +65,24 @@ public class SheetAccount
     private static final int COL_NAME = COL_CONTROLID + 1;
 
     /**
-     * AccountType column.
+     * AccountCategory column.
      */
-    private static final int COL_ACCOUNTTYPE = COL_NAME + 1;
+    private static final int COL_ACCOUNTCAT = COL_NAME + 1;
 
     /**
      * Description column.
      */
-    private static final int COL_DESC = COL_ACCOUNTTYPE + 1;
+    private static final int COL_DESC = COL_ACCOUNTCAT + 1;
 
     /**
-     * EndDate column.
+     * Closed column.
      */
     private static final int COL_CLOSED = COL_DESC + 1;
+
+    /**
+     * TaxFree column.
+     */
+    private static final int COL_TAXFREE = COL_CLOSED + 1;
 
     /**
      * Account data list.
@@ -116,7 +121,7 @@ public class SheetAccount
             /* else extract load */
         } else {
             /* Set up info Sheet and ask for two-pass load */
-            theInfoSheet = new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CLOSED);
+            theInfoSheet = new SheetAccountInfoSet(AccountInfoClass.class, this, COL_TAXFREE);
             requestDoubleLoad();
         }
     }
@@ -138,38 +143,40 @@ public class SheetAccount
         /* Set up info Sheet */
         theInfoSheet = isBackup()
                 ? null
-                : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CLOSED);
+                : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_TAXFREE);
     }
 
     @Override
     protected void loadSecureItem(final Integer pId) throws JDataException {
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
-        Integer myActTypeId = loadInteger(COL_ACCOUNTTYPE);
+        Integer myCategoryId = loadInteger(COL_ACCOUNTCAT);
 
-        /* Access the dates */
+        /* Access the flags */
         Boolean isClosed = loadBoolean(COL_CLOSED);
+        Boolean isTaxFree = loadBoolean(COL_TAXFREE);
 
         /* Access the binary values */
         byte[] myName = loadBytes(COL_NAME);
         byte[] myDesc = loadBytes(COL_DESC);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myName, myActTypeId, myDesc, isClosed);
+        theList.addSecureItem(pId, myControlId, myName, myCategoryId, myDesc, isClosed, isTaxFree);
     }
 
     @Override
     protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the Account */
         String myName = loadString(COL_NAME);
-        String myActType = loadString(COL_ACCOUNTTYPE);
+        String myCategory = loadString(COL_ACCOUNTCAT);
         String myDesc = loadString(COL_DESC);
 
-        /* Access the date */
+        /* Access the flags */
         Boolean isClosed = loadBoolean(COL_CLOSED);
+        Boolean isTaxFree = loadBoolean(COL_TAXFREE);
 
         /* Load the item */
-        theList.addOpenItem(pId, myName, myActType, myDesc, isClosed);
+        theList.addOpenItem(pId, myName, myCategory, myDesc, isClosed, isTaxFree);
     }
 
     @Override
@@ -185,8 +192,9 @@ public class SheetAccount
     protected void insertSecureItem(final Account pItem) throws JDataException {
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
-        writeInteger(COL_ACCOUNTTYPE, pItem.getActTypeId());
+        writeInteger(COL_ACCOUNTCAT, pItem.getAccountCategoryId());
         writeBoolean(COL_CLOSED, pItem.isClosed());
+        writeBoolean(COL_TAXFREE, pItem.isTaxFree());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
     }
@@ -195,9 +203,10 @@ public class SheetAccount
     protected void insertOpenItem(final Account pItem) throws JDataException {
         /* Set the fields */
         writeString(COL_NAME, pItem.getName());
-        writeString(COL_ACCOUNTTYPE, pItem.getActTypeName());
+        writeString(COL_ACCOUNTCAT, pItem.getAccountCategoryName());
         writeString(COL_DESC, pItem.getDesc());
         writeBoolean(COL_CLOSED, pItem.isClosed());
+        writeBoolean(COL_TAXFREE, pItem.isTaxFree());
 
         /* Write infoSet fields */
         theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
@@ -207,9 +216,10 @@ public class SheetAccount
     protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_NAME, AccountBase.FIELD_NAME.getName());
-        writeHeader(COL_ACCOUNTTYPE, AccountBase.FIELD_TYPE.getName());
+        writeHeader(COL_ACCOUNTCAT, AccountBase.FIELD_CATEGORY.getName());
         writeHeader(COL_DESC, AccountBase.FIELD_DESC.getName());
         writeHeader(COL_CLOSED, AccountBase.FIELD_CLOSED.getName());
+        writeHeader(COL_TAXFREE, AccountBase.FIELD_TAXFREE.getName());
 
         /* prepare infoSet sheet */
         theInfoSheet.prepareSheet();
@@ -219,15 +229,16 @@ public class SheetAccount
     protected void formatSheet() throws JDataException {
         /* Set the column types */
         setStringColumn(COL_NAME);
-        setStringColumn(COL_ACCOUNTTYPE);
+        setStringColumn(COL_ACCOUNTCAT);
         setStringColumn(COL_DESC);
         setBooleanColumn(COL_CLOSED);
+        setBooleanColumn(COL_TAXFREE);
 
         /* Set the name column range */
         nameColumnRange(COL_NAME, AREA_ACCOUNTNAMES);
 
         /* Set the Validations */
-        applyDataValidation(COL_ACCOUNTTYPE, SheetAccountCategoryType.AREA_ACCOUNTCATTYPENAMES);
+        applyDataValidation(COL_ACCOUNTCAT, SheetAccountCategory.AREA_ACTCATEGORIES);
 
         /* Format the info sheet */
         theInfoSheet.formatSheet();
@@ -236,7 +247,7 @@ public class SheetAccount
     @Override
     protected int getLastColumn() {
         /* Set default */
-        int myLastCol = COL_CLOSED;
+        int myLastCol = COL_TAXFREE;
 
         /* If we are not creating a backup */
         if (!isBackup()) {
@@ -324,7 +335,7 @@ public class SheetAccount
                 }
 
                 /* Add the value into the finance tables */
-                Account myAccount = myList.addOpenItem(0, myName, myAcType, null, isClosed);
+                Account myAccount = myList.addOpenItem(0, myName, myAcType, null, isClosed, false);
 
                 /* Add information relating to the account */
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);

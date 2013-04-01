@@ -37,11 +37,11 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.BaseEventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisBucket.BucketType;
@@ -242,11 +242,11 @@ public class Statement
     }
 
     /**
-     * Obtain the account type.
-     * @return the type
+     * Obtain the account category.
+     * @return the category
      */
-    public AccountCategoryType getActType() {
-        return theAccount.getActType();
+    public AccountCategory getAccountCategory() {
+        return theAccount.getAccountCategory();
     }
 
     /**
@@ -538,14 +538,14 @@ public class Statement
         }
 
         /**
-         * Obtain the account type.
-         * @return the type
+         * Obtain the account category.
+         * @return the category
          */
-        public AccountCategoryType getActType() {
+        public AccountCategory getActType() {
             Account myAccount = getAccount();
             return (myAccount == null)
                     ? null
-                    : myAccount.getActType();
+                    : myAccount.getAccountCategory();
         }
 
         /**

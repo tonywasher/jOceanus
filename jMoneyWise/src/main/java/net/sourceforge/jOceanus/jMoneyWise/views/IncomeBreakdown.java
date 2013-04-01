@@ -31,9 +31,10 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
@@ -251,10 +252,10 @@ public class IncomeBreakdown
     protected void processEvent(final Event pEvent) {
         AccountRecord myRecord;
         Account myDebit = pEvent.getDebit();
-        EventCategoryType myCategory = pEvent.getCategoryType();
+        EventCategory myCategory = pEvent.getCategory();
 
         /* Switch on Category Type */
-        switch (myCategory.getCategoryClass()) {
+        switch (myCategory.getCategoryTypeClass()) {
             case Interest:
                 if (myDebit.isTaxFree()) {
                     myRecord = theTaxFreeInterest.findAccountRecord(myDebit.getParent());
@@ -265,15 +266,15 @@ public class IncomeBreakdown
                 break;
             case Dividend:
                 if (myDebit.isTaxFree()) {
-                    myRecord = theTaxFreeDividend.findAccountRecord(myDebit.isChild()
+                    myRecord = theTaxFreeDividend.findAccountRecord(myDebit.getAccountCategoryClass().isChild()
                             ? myDebit.getParent()
                             : myDebit);
-                } else if (myDebit.isUnitTrust()) {
-                    myRecord = theUnitTrustDividend.findAccountRecord(myDebit.isChild()
+                } else if (myDebit.isCategoryClass(AccountCategoryClass.UnitTrust)) {
+                    myRecord = theUnitTrustDividend.findAccountRecord(myDebit.getAccountCategoryClass().isChild()
                             ? myDebit.getParent()
                             : myDebit);
                 } else {
-                    myRecord = theTaxedDividend.findAccountRecord(myDebit.isChild()
+                    myRecord = theTaxedDividend.findAccountRecord(myDebit.getAccountCategoryClass().isChild()
                             ? myDebit.getParent()
                             : myDebit);
                 }
@@ -563,11 +564,11 @@ public class IncomeBreakdown
             JMoney myAmount = pEvent.getAmount();
             JMoney myTax = pEvent.getTaxCredit();
             Account myDebit = pEvent.getDebit();
-            EventCategoryType myCategory = pEvent.getCategoryType();
+            EventCategory myCategory = pEvent.getCategory();
 
             /* If we are NatInsurance/Benefit */
-            if ((myCategory.getCategoryClass() == EventCategoryClass.NatInsurance)
-                || (myCategory.getCategoryClass() == EventCategoryClass.Benefit)) {
+            if ((myCategory.getCategoryTypeClass() == EventCategoryClass.NatInsurance)
+                || (myCategory.getCategoryTypeClass() == EventCategoryClass.Benefit)) {
                 /* Just add to gross */
                 theTotals.theGrossIncome.addAmount(myAmount);
                 theListTotals.theGrossIncome.addAmount(myAmount);

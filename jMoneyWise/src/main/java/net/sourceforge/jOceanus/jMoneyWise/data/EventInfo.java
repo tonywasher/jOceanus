@@ -139,7 +139,9 @@ public class EventInfo
      * @return the Account
      */
     public static Account getAccount(final ValueSet pValueSet) {
-        return pValueSet.isDeletion() ? null : pValueSet.getValue(FIELD_ACCOUNT, Account.class);
+        return pValueSet.isDeletion()
+                ? null
+                : pValueSet.getValue(FIELD_ACCOUNT, Account.class);
     }
 
     /**
@@ -152,8 +154,11 @@ public class EventInfo
 
     @Override
     public String getLinkName() {
-        Account myAccount = getAccount();
-        return (myAccount == null) ? null : myAccount.getName();
+        DataItem myItem = getLink(DataItem.class);
+        if (myItem instanceof Account) {
+            return ((Account) myItem).getName();
+        }
+        return null;
     }
 
     @Override
@@ -381,7 +386,9 @@ public class EventInfo
         EventInfoType myType = getInfoType();
         switch (myType.getDataType()) {
             case INTEGER:
-                return myFormatter.formatObject(myType.isLink() ? getAccount() : getValue(Integer.class));
+                return myFormatter.formatObject(myType.isLink()
+                        ? getAccount()
+                        : getValue(Integer.class));
             case MONEY:
                 return myFormatter.formatObject(getValue(JMoney.class));
             case UNITS:

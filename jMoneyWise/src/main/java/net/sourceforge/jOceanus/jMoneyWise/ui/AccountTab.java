@@ -370,7 +370,7 @@ public class AccountTab
 
         /* If the account has rates */
         if ((theAccount != null)
-            && (theAccount.isMoney())) {
+            && (theAccount.isSavings())) {
 
             /* Add the Rates if not present */
             if (iIndex == -1) {
@@ -406,7 +406,7 @@ public class AccountTab
 
         /* If the account has prices */
         if ((theAccount != null)
-            && (theAccount.isPriced())) {
+            && (theAccount.hasUnits())) {
 
             /* Add the Prices if not present */
             if (iIndex == -1) {

@@ -38,9 +38,10 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 
@@ -127,9 +128,14 @@ public class Account
     public static final JDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
 
     /**
-     * PortFolio Field Id.
+     * Currency Field Id.
      */
-    public static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField("PortFolio");
+    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField("Currency");
+
+    /**
+     * AutoExpense Field Id.
+     */
+    public static final JDataField FIELD_AUTOEXP = FIELD_DEFS.declareLocalField("AutoExpense");
 
     /**
      * Symbol Field Id.
@@ -187,9 +193,9 @@ public class Account
     public static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField("InitialPrice");
 
     /**
-     * hasDebts Field Id.
+     * hasLoans Field Id.
      */
-    public static final JDataField FIELD_HASDEBTS = FIELD_DEFS.declareLocalField("hasDebts");
+    public static final JDataField FIELD_HASLOANS = FIELD_DEFS.declareLocalField("hasLoans");
 
     /**
      * hasRates Field Id.
@@ -257,9 +263,9 @@ public class Account
                     ? theCloseDate
                     : JDataFieldValue.SkipField;
         }
-        if (FIELD_HASDEBTS.equals(pField)) {
-            return hasDebts
-                    ? hasDebts
+        if (FIELD_HASLOANS.equals(pField)) {
+            return hasLoans
+                    ? hasLoans
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_HASRATES.equals(pField)) {
@@ -310,8 +316,11 @@ public class Account
         if (FIELD_ALIAS.equals(pField)) {
             return AccountInfoClass.Alias;
         }
-        if (FIELD_PORTFOLIO.equals(pField)) {
-            return AccountInfoClass.Portfolio;
+        if (FIELD_CURRENCY.equals(pField)) {
+            return AccountInfoClass.Currency;
+        }
+        if (FIELD_AUTOEXP.equals(pField)) {
+            return AccountInfoClass.AutoExpense;
         }
         if (FIELD_SYMBOL.equals(pField)) {
             return AccountInfoClass.Symbol;
@@ -389,9 +398,9 @@ public class Account
     private boolean isCloseable = true;
 
     /**
-     * DOes this have debts?
+     * Does this have loans?
      */
-    private boolean hasDebts = false;
+    private boolean hasLoans = false;
 
     /**
      * Does this have rates?
@@ -455,12 +464,22 @@ public class Account
     }
 
     /**
-     * Obtain PortFolio.
-     * @return the portFolio
+     * Obtain Currency.
+     * @return the currency
      */
-    public Account getPortfolio() {
+    public AccountCurrency getCurrency() {
         return hasInfoSet
-                ? theInfoSet.getAccount(AccountInfoClass.Portfolio)
+                ? theInfoSet.getValue(AccountInfoClass.Currency, AccountCurrency.class)
+                : null;
+    }
+
+    /**
+     * Obtain AutoExpense.
+     * @return the autoExpense category
+     */
+    public EventCategory getAutoExpense() {
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.AutoExpense, EventCategory.class)
                 : null;
     }
 
@@ -577,11 +596,11 @@ public class Account
     }
 
     /**
-     * Does the account have debts?
+     * Does the account have loans?
      * @return true/false
      */
-    public boolean hasDebts() {
-        return hasDebts;
+    public boolean hasLoans() {
+        return hasLoans;
     }
 
     /**
@@ -627,7 +646,7 @@ public class Account
                 && (!hasRates)
                 && ((!hasPrices) || (getState() == DataState.NEW))
                 && (!hasPatterns)
-                && (!isAliasedTo) && (!getActType().isReserved()));
+                && (!isAliasedTo) && (!getAccountCategoryClass().isSingular()));
     }
 
     @Override
@@ -767,7 +786,7 @@ public class Account
         hasPatterns = pItem.hasPatterns;
         hasRates = pItem.hasRates;
         hasPrices = pItem.hasPrices;
-        hasDebts = pItem.hasDebts;
+        hasLoans = pItem.hasLoans;
     }
 
     /**
@@ -812,23 +831,25 @@ public class Account
     /**
      * Secure constructor.
      * @param pList the List to add to
-     * @param uId the Account id
-     * @param uControlId the control id
+     * @param pId the Account id
+     * @param pControlId the control id
      * @param pName the Encrypted Name of the account
-     * @param uAcTypeId the Account type id
+     * @param pActCatId the Account category id
      * @param pDesc the Encrypted Description of the account
      * @param isClosed is the account closed?
+     * @param isTaxFree is the account taxFree?
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
-                    final Integer uId,
-                    final Integer uControlId,
+                    final Integer pId,
+                    final Integer pControlId,
                     final byte[] pName,
-                    final Integer uAcTypeId,
+                    final Integer pActCatId,
                     final byte[] pDesc,
-                    final Boolean isClosed) throws JDataException {
+                    final Boolean isClosed,
+                    final Boolean isTaxFree) throws JDataException {
         /* Initialise the item */
-        super(pList, uId, uControlId, pName, uAcTypeId, pDesc, isClosed);
+        super(pList, pId, pControlId, pName, pActCatId, pDesc, isClosed, isTaxFree);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -839,21 +860,23 @@ public class Account
     /**
      * Open constructor.
      * @param pList the List to add to
-     * @param uId the id
-     * @param sName the Name of the account
-     * @param uAcTypeId the Account type id
+     * @param pId the id
+     * @param pName the Name of the account
+     * @param pCategory the Account category
      * @param pDesc the description
      * @param isClosed is the account closed?
+     * @param isTaxFree is the account taxFree?
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
-                    final Integer uId,
-                    final String sName,
-                    final Integer uAcTypeId,
+                    final Integer pId,
+                    final String pName,
+                    final AccountCategory pCategory,
                     final String pDesc,
-                    final Boolean isClosed) throws JDataException {
+                    final Boolean isClosed,
+                    final Boolean isTaxFree) throws JDataException {
         /* Initialise the item */
-        super(pList, uId, sName, uAcTypeId, pDesc, isClosed);
+        super(pList, pId, pName, pCategory, pDesc, isClosed, isTaxFree);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -897,7 +920,7 @@ public class Account
         theCloseDate = myCloseDate;
 
         /* If the maturity is null for a bond set it to close date */
-        if (isBond()
+        if (isCategoryClass(AccountCategoryClass.Bond)
             && getMaturity() == null) {
             /* Record a date for maturity */
             setMaturity(theCloseDate);
@@ -932,7 +955,7 @@ public class Account
         theEarliest = null;
         theLatest = null;
         theInitPrice = null;
-        hasDebts = false;
+        hasLoans = false;
         hasRates = false;
         hasPrices = false;
         hasPatterns = false;
@@ -964,16 +987,8 @@ public class Account
 
             /* If we are being touched by a pattern */
         } else if (pObject instanceof Pattern) {
-            /* Access as pattern */
-            Pattern myPattern = (Pattern) pObject;
-
             /* Note flags */
-            if (Difference.isEqual(myPattern.getCredit(), this)) {
-                hasPatterns = true;
-            }
-            if (Difference.isEqual(myPattern.getDebit(), this)) {
-                hasPatterns = true;
-            }
+            hasPatterns = true;
 
             /* If we are being touched by an event */
         } else if (pObject instanceof Event) {
@@ -1002,8 +1017,8 @@ public class Account
             }
             if (Difference.isEqual(myAccount.getParent(), this)) {
                 isParent = true;
-                if (myAccount.isDebt()) {
-                    hasDebts = true;
+                if (myAccount.isLoan()) {
+                    hasLoans = true;
                 }
             }
         }
@@ -1037,15 +1052,6 @@ public class Account
     }
 
     /**
-     * Set a new portFolio.
-     * @param pPortFolio the new portFolio
-     * @throws JDataException on error
-     */
-    public void setPortFolio(final Account pPortFolio) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Portfolio, pPortFolio);
-    }
-
-    /**
      * Set a new symbol.
      * @param pSymbol the new symbol
      * @throws JDataException on error
@@ -1061,6 +1067,24 @@ public class Account
      */
     public void setOpeningBalance(final JMoney pBalance) throws JDataException {
         setInfoSetValue(AccountInfoClass.OpeningBalance, pBalance);
+    }
+
+    /**
+     * Set a new currency.
+     * @param pCurrency the new currency
+     * @throws JDataException on error
+     */
+    public void setCurrency(final AccountCurrency pCurrency) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Currency, pCurrency);
+    }
+
+    /**
+     * Set a new autoExpense.
+     * @param pCategory the new autoExpense
+     * @throws JDataException on error
+     */
+    public void setAuroExpense(final EventCategory pCategory) throws JDataException {
+        setInfoSetValue(AccountInfoClass.AutoExpense, pCategory);
     }
 
     /**
@@ -1150,6 +1174,18 @@ public class Account
                         ? theInfoSet.getAccount(pInfoClass)
                         : null;
                 break;
+            case AutoExpense:
+                /* Access event category of object */
+                myValue = hasInfoSet
+                        ? theInfoSet.getEventCategory(pInfoClass)
+                        : null;
+                break;
+            case Currency:
+                /* Access currency of object */
+                myValue = hasInfoSet
+                        ? theInfoSet.getAccountCurrency(pInfoClass)
+                        : null;
+                break;
             default:
                 /* Access value of object */
                 myValue = hasInfoSet
@@ -1204,26 +1240,26 @@ public class Account
      */
     @Override
     public void validate() {
-        AccountCategoryType myType = getActType();
+        AccountCategoryClass myClass = getAccountCategoryClass();
         Account myParent = getParent();
         Account myAlias = getAlias();
 
         /* Validate base components */
         super.validate();
 
-        /* If the account is priced */
-        if (myType.isPriced()) {
+        /* If the account has units */
+        if (myClass.hasUnits()) {
             /* If this account has an alias */
             if (myAlias != null) {
                 /* Must not have prices */
                 if (hasPrices) {
-                    addError("Aliased account has prices", FIELD_TYPE);
+                    addError("Aliased account has prices", FIELD_CATEGORY);
                 }
 
                 /* Alias account must have prices */
                 if ((!myAlias.hasPrices)
                     && (myAlias.theEarliest != null)) {
-                    addError("Alias account has no prices", FIELD_TYPE);
+                    addError("Alias account has no prices", FIELD_CATEGORY);
                 }
 
                 /* else this is a standard account */
@@ -1231,7 +1267,7 @@ public class Account
                 /* Must have prices */
                 if ((!hasPrices)
                     && (theEarliest != null)) {
-                    addError("Priced account has no prices", FIELD_TYPE);
+                    addError("Priced account has no prices", FIELD_CATEGORY);
                 }
             }
 
@@ -1239,12 +1275,12 @@ public class Account
         } else {
             /* Prices cannot exist */
             if (hasPrices) {
-                addError("non-Priced account has prices", FIELD_TYPE);
+                addError("non-Priced account has prices", FIELD_CATEGORY);
             }
         }
 
         /* If the account is not a child then parent cannot exist */
-        if (!myType.isChild()) {
+        if (!myClass.isChild()) {
             if (myParent != null) {
                 addError("Non-child account has parent", FIELD_PARENT);
             }
@@ -1259,8 +1295,8 @@ public class Account
             /* if we have a parent */
             if (myParent != null) {
                 /* check that any parent is owner */
-                if (!myParent.isOwner()) {
-                    addError("Parent account must be owner", FIELD_PARENT);
+                if (!myClass.canParent()) {
+                    addError("Parent account cannot have children", FIELD_PARENT);
                 }
 
                 /* If we are open then parent must be open */
@@ -1274,19 +1310,19 @@ public class Account
         /* If we have an alias */
         if (myAlias != null) {
             /* Access the alias type */
-            AccountCategoryType myAliasType = myAlias.getActType();
+            AccountCategoryClass myAliasClass = myAlias.getAccountCategoryClass();
 
             /* Cannot alias to self */
             if (Difference.isEqual(this, myAlias)) {
                 addError("Cannot alias to self", FIELD_ALIAS);
 
                 /* Cannot alias to same type */
-            } else if (Difference.isEqual(myType, myAliasType)) {
+            } else if (Difference.isEqual(myClass, myAliasClass)) {
                 addError("Cannot alias to same account type", FIELD_ALIAS);
             }
 
             /* Must be alias type */
-            if (!myType.canAlias()) {
+            if (!myClass.canAlias()) {
                 addError("This account type cannot alias", FIELD_ALIAS);
             }
 
@@ -1296,7 +1332,7 @@ public class Account
             }
 
             /* Alias must be alias type */
-            if (!myAliasType.canAlias()) {
+            if (!myAliasClass.canAlias()) {
                 addError("The alias account type is invalid", FIELD_ALIAS);
             }
 
@@ -1308,21 +1344,21 @@ public class Account
 
         /* If the account has rates then it must be money-based */
         if ((hasRates)
-            && (!myType.isMoney())) {
-            addError("non-Money account has rates", FIELD_TYPE);
+            && (!myClass.hasValue())) {
+            addError("non-Money account has rates", FIELD_CATEGORY);
         }
 
         /* If the account has a maturity rate then it must be a bond */
         if ((getMaturity() != null)
-            && (!myType.isBond())) {
+            && (myClass != AccountCategoryClass.Bond)) {
             addError("non-Bond has maturity date", FIELD_MATURITY);
         }
 
         /* Open Bond accounts must have maturity */
-        if ((myType.isBond())
+        if ((myClass == AccountCategoryClass.Bond)
             && !isClosed()
             && (getMaturity() == null)) {
-            addError("Bond must have maturity date", FIELD_MATURITY);
+            addError("Open Bond must have maturity date", FIELD_MATURITY);
         }
 
         /* If data has been fully loaded and the account is closed it must be closeable */
@@ -1518,10 +1554,10 @@ public class Account
 
         /**
          * Construct an edit extract for an Account.
-         * @param pType the account type
+         * @param pCategory the account category
          * @return the edit Extract
          */
-        public AccountList deriveEditList(final AccountCategoryType pType) {
+        public AccountList deriveEditList(final AccountCategory pCategory) {
             /* Build an empty Extract List */
             AccountList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1536,7 +1572,7 @@ public class Account
 
             /* Create a new account */
             Account myNew = new Account(myList);
-            myNew.setActType(pType);
+            myNew.setAccountCategory(pCategory);
             myNew.setNewVersion();
 
             /* Add to the list and store as master account */
@@ -1627,32 +1663,35 @@ public class Account
          * Add an Account.
          * @param uId the is
          * @param pName the Name of the account
-         * @param pAcType the Name of the account type
+         * @param pCategory the Name of the account category
          * @param pDesc the description of the account
          * @param isClosed is the account closed?
+         * @param isTaxFree is the account taxFree?
          * @return the new account
          * @throws JDataException on error
          */
         public Account addOpenItem(final Integer uId,
                                    final String pName,
-                                   final String pAcType,
+                                   final String pCategory,
                                    final String pDesc,
-                                   final Boolean isClosed) throws JDataException {
+                                   final Boolean isClosed,
+                                   final Boolean isTaxFree) throws JDataException {
             /* Access the account types and accounts */
             FinanceData myData = getDataSet();
-            AccountCategoryTypeList myActTypes = myData.getAccountCategoryTypes();
+            AccountCategoryList myCategories = myData.getAccountCategories();
 
-            /* Look up the Account Type */
-            AccountCategoryType myActType = myActTypes.findItemByName(pAcType);
-            if (myActType == null) {
+            /* Look up the Account Category */
+            AccountCategory myCategory = myCategories.findItemByName(pCategory);
+            if (myCategory == null) {
                 throw new JDataException(ExceptionClass.DATA, "Account ["
                                                               + pName
-                                                              + "] has invalid Account Type ["
-                                                              + pAcType
+                                                              + "] has invalid Account Category ["
+                                                              + pCategory
                                                               + "]");
             }
+
             /* Create the new account */
-            Account myAccount = new Account(this, uId, pName, myActType.getId(), pDesc, isClosed);
+            Account myAccount = new Account(this, uId, pName, myCategory, pDesc, isClosed, isTaxFree);
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
@@ -1669,19 +1708,21 @@ public class Account
          * @param uId the Id of the account
          * @param uControlId the control id
          * @param pName the Encrypted Name of the account
-         * @param uAcTypeId the Id of the account type
+         * @param uActCatId the Id of the account category
          * @param pDesc the Encrypted Description of the account (or null)
          * @param isClosed is the account closed?
+         * @param isTaxFree is the account taxFree?
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer uId,
                                   final Integer uControlId,
                                   final byte[] pName,
-                                  final Integer uAcTypeId,
+                                  final Integer uActCatId,
                                   final byte[] pDesc,
-                                  final Boolean isClosed) throws JDataException {
+                                  final Boolean isClosed,
+                                  final Boolean isTaxFree) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, uId, uControlId, pName, uAcTypeId, pDesc, isClosed);
+            Account myAccount = new Account(this, uId, uControlId, pName, uActCatId, pDesc, isClosed, isTaxFree);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(uId)) {

@@ -378,21 +378,29 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     @Override
     public void validate() {
         StaticList<?, ?> myList = (StaticList<?, ?>) getList();
+        String myName = getName();
+        String myDesc = getDesc();
 
         /* Name must be non-null */
-        if (getName() == null) {
+        if (myName == null) {
             addError("Name must be non-null", FIELD_NAME);
 
             /* Check that the name is unique */
         } else {
             /* The description must not be too long */
-            if (getName().length() > NAMELEN) {
+            if (myName.length() > NAMELEN) {
                 addError("Name is too long", FIELD_NAME);
             }
 
-            if (myList.countInstances(getName()) > 1) {
+            if (myList.countInstances(myName) > 1) {
                 addError("Name must be unique", FIELD_NAME);
             }
+        }
+
+        /* Check description length */
+        if ((myDesc != null)
+            && (myDesc.length() > DESCLEN)) {
+            addError("Description is too long", FIELD_NAME);
         }
 
         /* The order must not be negative */
@@ -444,33 +452,33 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * Open constructor.
      * @param pList The list to associate the Static Data with
-     * @param uId the id of the new item
+     * @param pId the id of the new item
      * @param isEnabled is the account type enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pValue the name of the new item
      * @param pDesc the description of the new item
      * @throws JDataException on error
      */
     protected StaticData(final StaticList<T, E> pList,
-                         final Integer uId,
+                         final Integer pId,
                          final Boolean isEnabled,
-                         final Integer uOrder,
+                         final Integer pOrder,
                          final String pValue,
                          final String pDesc) throws JDataException {
         /* Call super constructor */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Protect against exceptions */
         try {
             /* Store the details */
             setValueEnabled(isEnabled);
-            setValueOrder(uOrder);
+            setValueOrder(pOrder);
             setValueName(pValue);
             setValueDesc(pDesc);
 
             /* Determine the class */
             theEnumClass = pList.getEnumClass();
-            parseEnumId(uId);
+            parseEnumId(pId);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -482,38 +490,38 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * Secure constructor.
      * @param pList The list to associate the Static Data with
-     * @param uId the id of the new item
-     * @param uControlId the control id of the new item
+     * @param pId the id of the new item
+     * @param pControlId the control id of the new item
      * @param isEnabled is the account type enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pValue the encrypted name of the new item
      * @param pDesc the encrypted description of the new item
      * @throws JDataException on error
      */
     protected StaticData(final StaticList<T, E> pList,
-                         final Integer uId,
-                         final Integer uControlId,
+                         final Integer pId,
+                         final Integer pControlId,
                          final Boolean isEnabled,
-                         final Integer uOrder,
+                         final Integer pOrder,
                          final byte[] pValue,
                          final byte[] pDesc) throws JDataException {
         /* Call super constructor */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Protect against exceptions */
         try {
             /* Store the controlId */
-            setControlKey(uControlId);
+            setControlKey(pControlId);
 
             /* Store the details */
             setValueEnabled(isEnabled);
-            setValueOrder(uOrder);
+            setValueOrder(pOrder);
             setValueName(pValue);
             setValueDesc(pDesc);
 
             /* Determine the class */
             theEnumClass = pList.getEnumClass();
-            parseEnumId(uId);
+            parseEnumId(pId);
 
             /* Catch Exceptions */
         } catch (JDataException e) {

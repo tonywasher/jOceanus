@@ -41,9 +41,8 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.FrequencyClass;
@@ -277,7 +276,7 @@ public class Pattern
      * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pCategory the category type
+     * @param pCategory the category
      * @param pAmount the amount
      * @param pFrequency the frequency
      * @throws JDataException on error
@@ -288,7 +287,7 @@ public class Pattern
                     final String pDesc,
                     final Account pDebit,
                     final Account pCredit,
-                    final EventCategoryType pCategory,
+                    final EventCategory pCategory,
                     final String pAmount,
                     final Frequency pFrequency) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
@@ -479,9 +478,9 @@ public class Pattern
         /* Store the current detail into history */
         pushHistory();
 
-        /* Update the categoryType if required */
-        if (!Difference.isEqual(getCategoryType(), myPattern.getCategoryType())) {
-            setCategoryType(myPattern.getCategoryType());
+        /* Update the category if required */
+        if (!Difference.isEqual(getCategory(), myPattern.getCategory())) {
+            setCategory(myPattern.getCategory());
         }
 
         /* Update the frequency if required */
@@ -736,7 +735,7 @@ public class Pattern
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
             AccountList myAccounts = myData.getAccounts();
-            EventCategoryTypeList myCatTypes = myData.getEventCategoryTypes();
+            EventCategoryList myCategories = myData.getEventCategories();
             FrequencyList myFrequencies = myData.getFrequencys();
 
             /* Look up the Debit */
@@ -759,12 +758,12 @@ public class Pattern
                                                               + "]");
             }
 
-            /* Look up the CategoryType */
-            EventCategoryType myCategory = myCatTypes.findItemByName(pCategory);
+            /* Look up the Category */
+            EventCategory myCategory = myCategories.findItemByName(pCategory);
             if (myCategory == null) {
                 throw new JDataException(ExceptionClass.DATA, "Pattern on ["
                                                               + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid CategoryType ["
+                                                              + "] has invalid Category ["
                                                               + pCategory
                                                               + "]");
             }

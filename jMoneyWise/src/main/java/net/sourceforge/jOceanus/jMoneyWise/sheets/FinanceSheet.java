@@ -50,9 +50,9 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 public class FinanceSheet
         extends SpreadSheet<FinanceData> {
     /**
-     * Number of base archive load areas. 8xStatic,Dilution,Pattern,Rate,Price,Account,TaxYear,Range+Event.
+     * Number of base archive load areas. 9xStatic,2*Category,Pattern,Rate,Price,Account,TaxYear,Range+Event.
      */
-    private static final int NUM_ARCHIVE_AREAS = 16;
+    private static final int NUM_ARCHIVE_AREAS = 18;
 
     /**
      * Obtain a sheet reader.
@@ -239,7 +239,7 @@ public class FinanceSheet
             YearRange myRange = new YearRange();
 
             /* Determine Year Range */
-            boolean bContinue = loadArchive(pTask, myWorkbook, myData, myRange);
+            boolean bContinue = true; // loadArchive(pTask, myWorkbook, myData, myRange);
 
             /* Load Tables */
             if (bContinue) {
@@ -250,6 +250,9 @@ public class FinanceSheet
             }
             if (bContinue) {
                 bContinue = SheetTaxCategory.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountCurrency.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
                 bContinue = SheetTaxRegime.loadArchive(pTask, myWorkbook, myData);
@@ -265,6 +268,13 @@ public class FinanceSheet
             }
             if (bContinue) {
                 bContinue = SheetEventInfoType.loadArchive(pTask, myWorkbook, myData);
+            }
+
+            if (bContinue) {
+                bContinue = SheetAccountCategory.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetEventCategory.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {

@@ -28,9 +28,7 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfo;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
@@ -38,6 +36,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -69,24 +68,6 @@ public class AccountInfo
         return FIELD_DEFS;
     }
 
-    /**
-     * Account Field Id.
-     */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField("Account");
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if ((FIELD_ACCOUNT.equals(pField))
-            && !getInfoType().isLink()) {
-            return JDataFieldValue.SkipField;
-        }
-        if ((FIELD_VALUE.equals(pField))
-            && getInfoType().isLink()) {
-            return JDataFieldValue.SkipField;
-        }
-        return super.getFieldValue(pField);
-    }
-
     @Override
     public AccountInfoType getInfoType() {
         return getInfoType(getValueSet(), AccountInfoType.class);
@@ -114,6 +95,22 @@ public class AccountInfo
     }
 
     /**
+     * Obtain EventCategory.
+     * @return the EventCategory
+     */
+    public EventCategory getEventCategory() {
+        return getEventCategory(getValueSet());
+    }
+
+    /**
+     * Obtain Currency.
+     * @return the Currency
+     */
+    public AccountCurrency getAccountCurrency() {
+        return getAccountCurrency(getValueSet());
+    }
+
+    /**
      * Obtain InfoType.
      * @param pValueSet the valueSet
      * @return the InfoType
@@ -123,26 +120,51 @@ public class AccountInfo
     }
 
     /**
-     * Obtain Owner Account.
+     * Obtain Linked Account.
      * @param pValueSet the valueSet
      * @return the Account
      */
     public static Account getAccount(final ValueSet pValueSet) {
-        return pValueSet.isDeletion() ? null : pValueSet.getValue(FIELD_ACCOUNT, Account.class);
+        return pValueSet.isDeletion()
+                ? null
+                : pValueSet.getValue(FIELD_LINK, Account.class);
+    }
+
+    /**
+     * Obtain Linked EventCategory.
+     * @param pValueSet the valueSet
+     * @return the EventCategory
+     */
+    public static EventCategory getEventCategory(final ValueSet pValueSet) {
+        return pValueSet.isDeletion()
+                ? null
+                : pValueSet.getValue(FIELD_LINK, EventCategory.class);
+    }
+
+    /**
+     * Obtain Linked AccountCurrency.
+     * @param pValueSet the valueSet
+     * @return the AccountCurrency
+     */
+    public static AccountCurrency getAccountCurrency(final ValueSet pValueSet) {
+        return pValueSet.isDeletion()
+                ? null
+                : pValueSet.getValue(FIELD_LINK, AccountCurrency.class);
     }
 
     @Override
     public String getLinkName() {
-        Account myAccount = getAccount();
-        return (myAccount == null) ? null : myAccount.getName();
-    }
-
-    /**
-     * Set Account.
-     * @param pAccount the account
-     */
-    private void setValueAccount(final Account pAccount) {
-        getValueSet().setValue(FIELD_ACCOUNT, pAccount);
+        DataItem myItem = getLink(DataItem.class);
+        if (myItem instanceof Account) {
+            return ((Account) myItem).getName();
+        }
+        if (myItem instanceof EventCategory) {
+            return ((EventCategory) myItem).getName();
+        }
+        if (myItem instanceof AccountCurrency) {
+            return ((AccountCurrency) myItem).getName();
+        }
+        return null;
     }
 
     @Override
@@ -228,11 +250,25 @@ public class AccountInfo
                 case INTEGER:
                     setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        Account myLink = myAccounts.findItemById(getValue(Integer.class));
-                        if (myLink == null) {
-                            throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
+                        DataItem myLink = null;
+                        switch (myType.getInfoClass()) {
+                            case Alias:
+                            case Parent:
+                                myLink = myAccounts.findItemById(getValue(Integer.class));
+                                break;
+                            case AutoExpense:
+                                myLink = myData.getEventCategories().findItemById(getValue(Integer.class));
+                                break;
+                            case Currency:
+                                myLink = myData.getAccountCurrencies().findItemById(getValue(Integer.class));
+                                break;
+                            default:
+                                break;
                         }
-                        setValueAccount(myLink);
+                        if (myLink == null) {
+                            throw new JDataException(ExceptionClass.DATA, this, "Invalid Link Id");
+                        }
+                        setValueLink(myLink);
                     }
                     break;
                 case DATEDAY:
@@ -344,10 +380,25 @@ public class AccountInfo
 
         /* If the value is a link */
         if (myType.isLink()) {
-            /* Update account value */
-            myAccount = getAccount();
-            Account myNewAct = myAccounts.findItemById(myAccount.getId());
-            setValueAccount(myNewAct);
+            Integer myId = getValue(Integer.class);
+            DataItem myNewLink = null;
+            switch (myType.getInfoClass()) {
+                case Alias:
+                case Parent:
+                    myNewLink = myAccounts.findItemById(myId);
+                    break;
+                case AutoExpense:
+                    myNewLink = myData.getEventCategories().findItemById(myId);
+                    break;
+                case Currency:
+                    myNewLink = myData.getAccountCurrencies().findItemById(myId);
+                    break;
+                default:
+                    break;
+            }
+
+            /* Update link value */
+            setValueLink(myNewLink);
         }
 
         /* Access the AccountInfoSet and register this data */
@@ -363,7 +414,7 @@ public class AccountInfo
         /* Switch on type of Data */
         switch (getInfoType().getDataType()) {
             case INTEGER:
-                return myFormatter.formatObject(getAccount());
+                return myFormatter.formatObject(getLink(DataItem.class));
             case DATEDAY:
                 return myFormatter.formatObject(getValue(JDateDay.class));
             case CHARARRAY:
@@ -389,21 +440,35 @@ public class AccountInfo
             case INTEGER:
                 if (myType.isLink()) {
                     if (pValue instanceof String) {
-                        AccountList myList = getDataSet().getAccounts();
-                        Account myAccount = myList.findItemByName((String) pValue);
-                        if (myAccount == null) {
-                            throw new JDataException(ExceptionClass.DATA, this, "Invalid AccountName ["
+                        DataItem myLink = null;
+                        FinanceData myData = getDataSet();
+                        switch (myType.getInfoClass()) {
+                            case Alias:
+                            case Parent:
+                                myLink = myData.getAccounts().findItemById(getValue(Integer.class));
+                                break;
+                            case AutoExpense:
+                                myLink = myData.getEventCategories().findItemById(getValue(Integer.class));
+                                break;
+                            case Currency:
+                                myLink = myData.getAccountCurrencies().findItemById(getValue(Integer.class));
+                                break;
+                            default:
+                                break;
+                        }
+                        if (myLink == null) {
+                            throw new JDataException(ExceptionClass.DATA, this, "Invalid LinkName ["
                                                                                 + pValue
                                                                                 + "]");
                         }
-                        setValueValue(myAccount.getId());
-                        setValueAccount(myAccount);
+                        setValueValue(myLink.getId());
+                        setValueLink(myLink);
                         bValueOK = true;
                     }
-                    if (pValue instanceof Account) {
-                        Account myAccount = (Account) pValue;
-                        setValueValue(myAccount.getId());
-                        setValueAccount(myAccount);
+                    if (pValue instanceof DataItem) {
+                        DataItem myItem = (DataItem) pValue;
+                        setValueValue(myItem.getId());
+                        setValueLink(myItem);
                         bValueOK = true;
                     }
                 }
@@ -455,7 +520,7 @@ public class AccountInfo
         if (!Difference.isEqual(getField(), myActInfo.getField())) {
             setValueValue(myActInfo.getField());
             if (getInfoType().isLink()) {
-                setValueAccount(myActInfo.getAccount());
+                setValueLink(myActInfo.getLink(DataItem.class));
             }
         }
 

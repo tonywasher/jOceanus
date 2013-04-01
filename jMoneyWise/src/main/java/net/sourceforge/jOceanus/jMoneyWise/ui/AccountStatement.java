@@ -70,10 +70,11 @@ import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.ui.MainTab.ActionRequest;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.StatementSelect;
@@ -333,9 +334,9 @@ public class AccountStatement
     private static final int COLUMN_DATE = 0;
 
     /**
-     * Category Type column id.
+     * Category column id.
      */
-    private static final int COLUMN_CATTYP = 1;
+    private static final int COLUMN_CATEGORY = 1;
 
     /**
      * Description column id.
@@ -385,7 +386,7 @@ public class AccountStatement
     /**
      * Category column width.
      */
-    private static final int WIDTH_CATTYP = 110;
+    private static final int WIDTH_CATEGORY = 110;
 
     /**
      * Description column width.
@@ -688,14 +689,14 @@ public class AccountStatement
 
         /* Switch on column */
         switch (column) {
-            case COLUMN_CATTYP:
+            case COLUMN_CATEGORY:
                 return (myLine.isCredit())
-                        ? theComboList.getCreditCategoryTypes(theStatement.getAccount())
-                        : theComboList.getDebitCategoryTypes(theStatement.getAccount());
+                        ? theComboList.getCreditCategories(theStatement.getAccount())
+                        : theComboList.getDebitCategories(theStatement.getAccount());
             case COLUMN_PARTNER:
                 return (myLine.isCredit())
-                        ? theComboList.getDebitAccounts(myLine.getCategoryType(), theStatement.getAccount())
-                        : theComboList.getCreditAccounts(myLine.getCategoryType(), theStatement.getAccount());
+                        ? theComboList.getDebitAccounts(myLine.getCategory(), theStatement.getAccount())
+                        : theComboList.getCreditAccounts(myLine.getCategory(), theStatement.getAccount());
             default:
                 return null;
         }
@@ -754,7 +755,7 @@ public class AccountStatement
                     return TITLE_DATE;
                 case COLUMN_DESC:
                     return TITLE_DESC;
-                case COLUMN_CATTYP:
+                case COLUMN_CATEGORY:
                     return TITLE_CATEGORY;
                 case COLUMN_PARTNER:
                     return TITLE_PARTNER;
@@ -780,7 +781,7 @@ public class AccountStatement
             switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
-                case COLUMN_CATTYP:
+                case COLUMN_CATEGORY:
                     return String.class;
                 case COLUMN_PARTNER:
                     return String.class;
@@ -798,8 +799,8 @@ public class AccountStatement
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
                     return Event.FIELD_DESC;
-                case COLUMN_CATTYP:
-                    return Event.FIELD_CATTYP;
+                case COLUMN_CATEGORY:
+                    return Event.FIELD_CATEGORY;
                 case COLUMN_PARTNER:
                     return StatementLine.FIELD_PARTNER;
                 case COLUMN_DILUTION:
@@ -852,19 +853,19 @@ public class AccountStatement
                     return false;
                 case COLUMN_DATE:
                     return true;
-                case COLUMN_CATTYP:
+                case COLUMN_CATEGORY:
                     return (pLine.getDate() != null);
                 case COLUMN_DESC:
-                    return ((pLine.getDate() != null) && (pLine.getCategoryType() != null));
+                    return ((pLine.getDate() != null) && (pLine.getCategory() != null));
                 default:
                     if ((pLine.getDate() == null)
                         || (pLine.getDesc() == null)
-                        || (pLine.getCategoryType() == null)) {
+                        || (pLine.getCategory() == null)) {
                         return false;
                     }
 
-                    /* Access the category type */
-                    EventCategoryType myType = pLine.getCategoryType();
+                    /* Access the category */
+                    EventCategory myCategory = pLine.getCategory();
 
                     /* Handle columns */
                     switch (pColIndex) {
@@ -873,11 +874,11 @@ public class AccountStatement
                         case COLUMN_DEBIT:
                             return !pLine.isCredit();
                         case COLUMN_YEARS:
-                            return myType.isTaxableGain();
+                            return pLine.isCategoryClass(EventCategoryClass.TaxableGain);
                         case COLUMN_TAXCREDIT:
-                            return myType.needsTaxCredit();
+                            return myCategory.getCategoryTypeClass().needsTaxCredit();
                         case COLUMN_DILUTION:
-                            return myType.isDilutable();
+                            return myCategory.getCategoryTypeClass().isDilutable();
                         default:
                             return true;
                     }
@@ -895,8 +896,8 @@ public class AccountStatement
             switch (pColIndex) {
                 case COLUMN_DATE:
                     return pLine.getDate();
-                case COLUMN_CATTYP:
-                    return pLine.getCategoryType();
+                case COLUMN_CATEGORY:
+                    return pLine.getCategory();
                 case COLUMN_PARTNER:
                     return pLine.getPartner();
                 case COLUMN_BALANCE:
@@ -943,7 +944,7 @@ public class AccountStatement
                                  final int pColIndex,
                                  final Object pValue) throws JDataException {
             /* Determine whether the line needs a tax credit */
-            boolean needsTaxCredit = Event.needsTaxCredit(pLine.getCategoryType(), pLine.isCredit()
+            boolean needsTaxCredit = Event.needsTaxCredit(pLine.getCategory(), pLine.isCredit()
                     ? pLine.getPartner()
                     : pLine.getAccount());
 
@@ -955,11 +956,11 @@ public class AccountStatement
                 case COLUMN_DESC:
                     pLine.setDescription((String) pValue);
                     break;
-                case COLUMN_CATTYP:
-                    pLine.setCategoryType((EventCategoryType) pValue);
+                case COLUMN_CATEGORY:
+                    pLine.setCategory((EventCategory) pValue);
 
                     /* If the need for a tax credit has changed */
-                    if (needsTaxCredit != Event.needsTaxCredit(pLine.getCategoryType(), pLine.isCredit()
+                    if (needsTaxCredit != Event.needsTaxCredit(pLine.getCategory(), pLine.isCredit()
                             ? pLine.getPartner()
                             : pLine.getAccount())) {
                         /* Determine new Tax Credit */
@@ -1128,7 +1129,7 @@ public class AccountStatement
             JMenuItem myItem;
             StatementLine myLine;
             JMoney myTax;
-            EventCategoryType myCat;
+            EventCategory myCat;
             boolean enableCalcTax = false;
             boolean enablePattern = false;
             boolean enableCredit = false;
@@ -1154,7 +1155,7 @@ public class AccountStatement
                 /* Access as line */
                 myLine = (StatementLine) myRow;
                 myTax = myLine.getTaxCredit();
-                myCat = myLine.getCategoryType();
+                myCat = myLine.getCategory();
 
                 /* Enable Debit if we have credit */
                 if (myLine.isCredit()) {
@@ -1166,7 +1167,7 @@ public class AccountStatement
                 }
 
                 /* If we have a calculable tax credit that is null/zero */
-                boolean isTaxable = ((myCat != null) && ((myCat.isInterest()) || (myCat.isDividend())));
+                boolean isTaxable = ((myCat != null) && ((myLine.isInterest()) || (myLine.isDividend())));
                 if ((isTaxable)
                     && ((myTax == null) || (!myTax.isNonZero()))) {
                     enableCalcTax = true;
@@ -1276,7 +1277,7 @@ public class AccountStatement
             pMenu.add(myItem);
 
             /* If we are a child */
-            if (theAccount.isChild()) {
+            if (theAccount.hasValue()) {
                 /* Access parent account */
                 myParent = theAccount.getParent();
 
@@ -1451,12 +1452,12 @@ public class AccountStatement
 
                 /* Access the line */
                 StatementLine myLine = (StatementLine) myRow;
-                EventCategoryType myCat = myLine.getCategoryType();
+                EventCategory myCat = myLine.getCategory();
                 JMoney myTax = myLine.getTaxCredit();
 
                 /* Ignore rows with invalid category type */
                 if ((myCat == null)
-                    || ((!myCat.isInterest()) && (!myCat.isDividend()))) {
+                    || ((!myLine.isInterest()) && (!myLine.isDividend()))) {
                     continue;
                 }
 
@@ -1653,7 +1654,7 @@ public class AccountStatement
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            addColumn(new JDataTableColumn(COLUMN_CATTYP, WIDTH_CATTYP, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_CATEGORY, theStringRenderer, theComboEditor));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
             theCreditCol = new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer, theMoneyEditor);
@@ -1701,8 +1702,6 @@ public class AccountStatement
          * Set visible columns according to the statement type.
          */
         private void setColumns() {
-            AccountCategoryType myType;
-
             /* Hide optional columns */
             if (theBalanceCol.isMember()) {
                 removeColumn(theBalanceCol);
@@ -1720,22 +1719,19 @@ public class AccountStatement
             /* Switch on statement type */
             switch (theStateType) {
                 case Extract:
-                    /* Access account type */
-                    myType = theAccount.getActType();
-
                     /* Show Dilution column for shares */
-                    if (myType.isShares()) {
+                    if (theAccount.isCategoryClass(AccountCategoryClass.Shares)) {
                         addColumn(theDiluteCol);
                     }
 
                     /* Show the TaxCredit column as required */
-                    if (myType.isMoney()
-                        && !myType.isTaxFree()) {
+                    if (theAccount.hasValue()
+                        && !theAccount.isTaxFree()) {
                         addColumn(theTaxCredCol);
                     }
 
                     /* Show the years column for LifeBonds */
-                    if (myType.isLifeBond()) {
+                    if (theAccount.isCategoryClass(AccountCategoryClass.LifeBond)) {
                         addColumn(theYearsCol);
                     }
 
@@ -1748,20 +1744,17 @@ public class AccountStatement
                     theDebitCol.setCellEditor(theMoneyEditor);
                     break;
                 case Value:
-                    /* Access account type */
-                    myType = theAccount.getActType();
-
                     /* Show Balance column */
                     addColumn(theBalanceCol);
 
                     /* Show the TaxCredit column as required */
-                    if (myType.isMoney()
-                        && !myType.isTaxFree()) {
+                    if (theAccount.hasValue()
+                        && !theAccount.isTaxFree()) {
                         addColumn(theTaxCredCol);
                     }
 
                     /* Show the years column for LifeBonds */
-                    if (myType.isLifeBond()) {
+                    if (theAccount.isCategoryClass(AccountCategoryClass.LifeBond)) {
                         addColumn(theYearsCol);
                     }
 

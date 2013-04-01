@@ -72,279 +72,63 @@ public class AccountCategoryType
 
     /**
      * Copy Constructor.
-     * @param pList The list to associate the Account Category with
-     * @param pAcType The Account Category to copy
+     * @param pList The list to associate the Account Category Type with
+     * @param pAcCatType The Account Category Type to copy
      */
     protected AccountCategoryType(final AccountCategoryTypeList pList,
-                                  final AccountCategoryType pAcType) {
-        super(pList, pAcType);
+                                  final AccountCategoryType pAcCatType) {
+        super(pList, pAcCatType);
     }
 
     /**
      * Basic constructor.
-     * @param pList The list to associate the Account Category with
-     * @param sName Name of Account Category
+     * @param pList The list to associate the Account Category Type with
+     * @param pName Name of Account Category Type
      * @throws JDataException on error
      */
     private AccountCategoryType(final AccountCategoryTypeList pList,
-                                final String sName) throws JDataException {
-        super(pList, sName);
+                                final String pName) throws JDataException {
+        super(pList, pName);
     }
 
     /**
      * Open Constructor.
-     * @param pList The list to associate the Account Category with
-     * @param uId the id
-     * @param isEnabled is the account type enabled
-     * @param uOrder the sort order
-     * @param pName Name of Account Category
-     * @param pDesc Description of Account Category
+     * @param pList The list to associate the Account Category Type with
+     * @param pId the id
+     * @param isEnabled is the account category type enabled
+     * @param pOrder the sort order
+     * @param pName Name of Account Category Type
+     * @param pDesc Description of Account Category Type
      * @throws JDataException on error
      */
     private AccountCategoryType(final AccountCategoryTypeList pList,
-                                final Integer uId,
+                                final Integer pId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
+                                final Integer pOrder,
                                 final String pName,
                                 final String pDesc) throws JDataException {
-        super(pList, uId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
      * Secure Constructor.
-     * @param pList The list to associate the Account Category with
-     * @param uId ID of Account Category
-     * @param uControlId the control id of the new item
-     * @param isEnabled is the account type enabled
-     * @param uOrder the sort order
-     * @param pName Encrypted Name of Account Category
-     * @param pDesc Encrypted Description of Account Category
+     * @param pList The list to associate the Account Category Type with
+     * @param pId ID of Account Category
+     * @param pControlId the control id of the new item
+     * @param isEnabled is the account category type enabled
+     * @param pOrder the sort order
+     * @param pName Encrypted Name of Account Category Type
+     * @param pDesc Encrypted Description of Account Category Type
      * @throws JDataException on error
      */
     private AccountCategoryType(final AccountCategoryTypeList pList,
-                                final Integer uId,
-                                final Integer uControlId,
+                                final Integer pId,
+                                final Integer pControlId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
+                                final Integer pOrder,
                                 final byte[] pName,
                                 final byte[] pDesc) throws JDataException {
-        super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is external.
-     * @return <code>true</code> if the account is external, <code>false</code> otherwise.
-     */
-    public boolean isExternal() {
-        return getAccountClass().isExternal();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is special external.
-     * @return <code>true</code> if the account is special external, <code>false</code> otherwise.
-     */
-    public boolean isSpecial() {
-        return getAccountClass().isSpecial();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is priced.
-     * @return <code>true</code> if the account is priced, <code>false</code> otherwise.
-     */
-    public boolean isPriced() {
-        return getAccountClass().isPriced();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is dividend provider.
-     * @return <code>true</code> if the account is a dividend provider, <code>false</code> otherwise.
-     */
-    public boolean isDividend() {
-        return getAccountClass().isDividend();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is unit dividend provider.
-     * @return <code>true</code> if the account is a unit dividend provider, <code>false</code> otherwise.
-     */
-    public boolean isUnitTrust() {
-        return getAccountClass().isUnitTrust();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is tax-free provider.
-     * @return <code>true</code> if the account is a tax free dividend provider, <code>false</code> otherwise.
-     */
-    public boolean isTaxFree() {
-        return getAccountClass().isTaxFree();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is savings.
-     * @return <code>true</code> if the account is savings, <code>false</code> otherwise.
-     */
-    public boolean isMoney() {
-        return getAccountClass().isMoney();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is a bond.
-     * @return <code>true</code> if the account is a bond, <code>false</code> otherwise.
-     */
-    public boolean isBond() {
-        return getAccountClass().isBond();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is debt.
-     * @return <code>true</code> if the account is debt, <code>false</code> otherwise.
-     */
-    public boolean isDebt() {
-        return getAccountClass().isDebt();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is child.
-     * @return <code>true</code> if the account is child, <code>false</code> otherwise.
-     */
-    public boolean isChild() {
-        return getAccountClass().isChild();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is reserved.
-     * @return <code>true</code> if the account is reserved, <code>false</code> otherwise.
-     */
-    public boolean isReserved() {
-        return getAccountClass().isReserved();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType can alias.
-     * @return <code>true</code> if the account can alias, <code>false</code> otherwise.
-     */
-    public boolean canAlias() {
-        return getAccountClass().canAlias();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is subject to Capital Gains.
-     * @return <code>true</code> if the account is subject to Capital Gains, <code>false</code> otherwise.
-     */
-    public boolean isCapitalGains() {
-        return getAccountClass().isCapitalGains();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is Capital.
-     * @return <code>true</code> if the account is Capital, <code>false</code> otherwise.
-     */
-    public boolean isCapital() {
-        return getAccountClass().isCapital();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is Owner.
-     * @return <code>true</code> if the account is Owner, <code>false</code> otherwise.
-     */
-    public boolean isOwner() {
-        return getAccountClass().isOwner();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is cash.
-     * @return <code>true</code> if the account is cash, <code>false</code> otherwise.
-     */
-    public boolean isCash() {
-        return getAccountClass().isCash();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is inheritance.
-     * @return <code>true</code> if the account is inheritance, <code>false</code> otherwise.
-     */
-    public boolean isInheritance() {
-        return getAccountClass().isInheritance();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is WriteOff.
-     * @return <code>true</code> if the account is WriteOff, <code>false</code> otherwise.
-     */
-    public boolean isWriteOff() {
-        return getAccountClass().isWriteOff();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is market.
-     * @return <code>true</code> if the account is market, <code>false</code> otherwise.
-     */
-    public boolean isMarket() {
-        return getAccountClass().isMarket();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is TaxMan.
-     * @return <code>true</code> if the account is TaxMan, <code>false</code> otherwise.
-     */
-    public boolean isTaxMan() {
-        return getAccountClass().isTaxMan();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is Employer.
-     * @return <code>true</code> if the account is employer, <code>false</code> otherwise.
-     */
-    public boolean isEmployer() {
-        return getAccountClass().isEmployer();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is endowment.
-     * @return <code>true</code> if the account is endowment, <code>false</code> otherwise.
-     */
-    public boolean isEndowment() {
-        return getAccountClass().isEndowment();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is deferred.
-     * @return <code>true</code> if the account is deferred, <code>false</code> otherwise.
-     */
-    public boolean isDeferred() {
-        return getAccountClass().isDeferred();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is benefit.
-     * @return <code>true</code> if the account is benefit, <code>false</code> otherwise.
-     */
-    public boolean isBenefit() {
-        return getAccountClass().isBenefit();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is a Share.
-     * @return <code>true</code> if the account is Share, <code>false</code> otherwise.
-     */
-    public boolean isShares() {
-        return getAccountClass().isShares();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is a LifeBond.
-     * @return <code>true</code> if the account is LifeBond, <code>false</code> otherwise.
-     */
-    public boolean isLifeBond() {
-        return getAccountClass().isLifeBond();
-    }
-
-    /**
-     * Determine whether the AccountCategoryType is internal.
-     * @return <code>true</code> if the account is internal, <code>false</code> otherwise.
-     */
-    public boolean isInternal() {
-        return !isExternal();
+        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
@@ -437,16 +221,16 @@ public class AccountCategoryType
 
         /**
          * Add an AccountCategoryType to the list.
-         * @param pActType the Name of the account type
+         * @param pActCatType the Name of the account category type
          * @throws JDataException on error
          */
-        public void addBasicItem(final String pActType) throws JDataException {
-            /* Create a new Account Category */
-            AccountCategoryType myActType = new AccountCategoryType(this, pActType);
+        public void addBasicItem(final String pActCatType) throws JDataException {
+            /* Create a new Account Category Type */
+            AccountCategoryType myActType = new AccountCategoryType(this, pActCatType);
 
             /* Check that this AccountCategoryType has not been previously added */
-            if (findItemByName(pActType) != null) {
-                throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate Account Category");
+            if (findItemByName(pActCatType) != null) {
+                throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate Account Category Type");
             }
 
             /* Check that this AccountCategoryTypeId has not been previously added */
@@ -468,27 +252,27 @@ public class AccountCategoryType
 
         /**
          * Add an AccountCategoryType to the list.
-         * @param uId the Id of the account type
-         * @param isEnabled is the account type enabled
-         * @param uOrder the sort order
-         * @param pActType the Name of the account type
-         * @param pDesc the Description of the account type
+         * @param pId the Id of the account category type
+         * @param isEnabled is the account category type enabled
+         * @param pOrder the sort order
+         * @param pActCatType the Name of the account category type
+         * @param pDesc the Description of the account category type
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
-                                final String pActType,
+                                final Integer pOrder,
+                                final String pActCatType,
                                 final String pDesc) throws JDataException {
-            /* Create a new Account Category */
-            AccountCategoryType myActType = new AccountCategoryType(this, uId, isEnabled, uOrder, pActType, pDesc);
+            /* Create a new Account Category Type */
+            AccountCategoryType myActType = new AccountCategoryType(this, pId, isEnabled, pOrder, pActCatType, pDesc);
 
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(myActType.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate AccountCategoryTypeId");
             }
 
-            /* Add the Account Category to the list */
+            /* Add the Account Category Type to the list */
             append(myActType);
 
             /* Validate the AccountCategoryType */
@@ -502,29 +286,29 @@ public class AccountCategoryType
 
         /**
          * Add an AccountCategoryType to the list.
-         * @param uId the Id of the account type
-         * @param uControlId the control id of the new item
-         * @param isEnabled is the account type enabled
-         * @param uOrder the sort order
-         * @param pActType the encrypted Name of the account type
-         * @param pDesc the Encrypted Description of the account type
+         * @param pId the Id of the account category type
+         * @param pControlId the control id of the new item
+         * @param isEnabled is the account category type enabled
+         * @param pOrder the sort order
+         * @param pActCatType the encrypted Name of the account category type
+         * @param pDesc the Encrypted Description of the account category type
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Boolean isEnabled,
-                                  final Integer uOrder,
-                                  final byte[] pActType,
+                                  final Integer pOrder,
+                                  final byte[] pActCatType,
                                   final byte[] pDesc) throws JDataException {
-            /* Create a new Account Category */
-            AccountCategoryType myActType = new AccountCategoryType(this, uId, uControlId, isEnabled, uOrder, pActType, pDesc);
+            /* Create a new Account CategoryType */
+            AccountCategoryType myActType = new AccountCategoryType(this, pId, pControlId, isEnabled, pOrder, pActCatType, pDesc);
 
             /* Check that this AccountCategoryTypeId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate AccountCategoryTypeId");
             }
 
-            /* Add the Account Category to the list */
+            /* Add the AccountCategoryType to the list */
             append(myActType);
 
             /* Validate the AccountCategoryType */

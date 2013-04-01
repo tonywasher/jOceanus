@@ -163,9 +163,9 @@ public class MaintNewYear
     private static final String TITLE_DESC = Extract.TITLE_DESC;
 
     /**
-     * Category Type column title.
+     * Category column title.
      */
-    private static final String TITLE_CATTYPE = Extract.TITLE_CATEGORY;
+    private static final String TITLE_CATEGORY = Extract.TITLE_CATEGORY;
 
     /**
      * Amount column title.
@@ -193,9 +193,9 @@ public class MaintNewYear
     private static final int COLUMN_DESC = 1;
 
     /**
-     * Category Type column id.
+     * Category column id.
      */
-    private static final int COLUMN_CATTYP = 2;
+    private static final int COLUMN_CATEGORY = 2;
 
     /**
      * Amount column id.
@@ -223,9 +223,9 @@ public class MaintNewYear
     private static final int WIDTH_DESC = 150;
 
     /**
-     * Category Type column width.
+     * Category column width.
      */
-    private static final int WIDTH_CATTYP = 110;
+    private static final int WIDTH_CATEGORY = 110;
 
     /**
      * Amount column width.
@@ -453,8 +453,8 @@ public class MaintNewYear
                     return TITLE_DATE;
                 case COLUMN_DESC:
                     return TITLE_DESC;
-                case COLUMN_CATTYP:
-                    return TITLE_CATTYPE;
+                case COLUMN_CATEGORY:
+                    return TITLE_CATEGORY;
                 case COLUMN_AMOUNT:
                     return TITLE_AMOUNT;
                 case COLUMN_CREDIT:
@@ -474,8 +474,8 @@ public class MaintNewYear
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
                     return Event.FIELD_DESC;
-                case COLUMN_CATTYP:
-                    return Event.FIELD_CATTYP;
+                case COLUMN_CATEGORY:
+                    return Event.FIELD_CATEGORY;
                 case COLUMN_AMOUNT:
                     return Event.FIELD_AMOUNT;
                 case COLUMN_CREDIT:
@@ -492,7 +492,7 @@ public class MaintNewYear
             switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
-                case COLUMN_CATTYP:
+                case COLUMN_CATEGORY:
                     return String.class;
                 case COLUMN_CREDIT:
                     return String.class;
@@ -516,8 +516,8 @@ public class MaintNewYear
             switch (pColIndex) {
                 case COLUMN_DATE:
                     return pEvent.getDate();
-                case COLUMN_CATTYP:
-                    return pEvent.getCategoryType();
+                case COLUMN_CATEGORY:
+                    return pEvent.getCategory();
                 case COLUMN_CREDIT:
                     return pEvent.getCredit();
                 case COLUMN_DEBIT:
@@ -572,7 +572,7 @@ public class MaintNewYear
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, null));
-            addColumn(new JDataTableColumn(COLUMN_CATTYP, WIDTH_CATTYP, theStringRenderer, null));
+            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_CATEGORY, theStringRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_AMOUNT, WIDTH_AMOUNT, theDecimalRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_DEBIT, WIDTH_DEBIT, theStringRenderer, null));
             addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theStringRenderer, null));

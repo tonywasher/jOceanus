@@ -27,37 +27,37 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency.AccountCurrencyList;
 
 /**
  * TableStaticData extension for AccountCategoryType.
  * @author Tony Washer
  */
-public class TableAccountCategoryType
-        extends TableStaticData<AccountCategoryType> {
+public class TableAccountCurrency
+        extends TableStaticData<AccountCurrency> {
     /**
      * The table name.
      */
-    protected static final String TABLE_NAME = AccountCategoryType.LIST_NAME;
+    protected static final String TABLE_NAME = AccountCurrency.LIST_NAME;
 
     /**
-     * The account category type list.
+     * The account currency list.
      */
-    private AccountCategoryTypeList theList = null;
+    private AccountCurrencyList theList = null;
 
     /**
      * Constructors.
      * @param pDatabase the database control
      */
-    protected TableAccountCategoryType(final Database<FinanceData> pDatabase) {
+    protected TableAccountCurrency(final Database<FinanceData> pDatabase) {
         super(pDatabase, TABLE_NAME);
     }
 
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theList = myData.getAccountCategoryTypes();
+        theList = myData.getAccountCurrencies();
         setList(theList);
     }
 

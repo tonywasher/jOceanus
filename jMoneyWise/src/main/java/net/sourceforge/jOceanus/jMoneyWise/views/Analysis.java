@@ -31,15 +31,15 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.DebtAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.LoanAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.MoneyAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
@@ -374,9 +374,9 @@ public class Analysis
                         theList.add(myAsset);
                     }
                     break;
-                case DEBTDETAIL:
+                case LOANDETAIL:
                     if (myCurr.isActive()) {
-                        DebtAccountDetail myDebt = new DebtAccountDetail((DebtAccountDetail) myCurr);
+                        LoanAccountDetail myDebt = new LoanAccountDetail((LoanAccountDetail) myCurr);
                         theList.add(myDebt);
                     }
                     break;
@@ -499,9 +499,9 @@ public class Analysis
                     case PAYEEDETAIL:
                         myItem = new PayeeAccountDetail(pAccount);
                         break;
-                    case DEBTDETAIL:
+                    case LOANDETAIL:
                     default:
-                        myItem = new DebtAccountDetail(pAccount);
+                        myItem = new LoanAccountDetail(pAccount);
                         break;
                 }
 
@@ -514,14 +514,14 @@ public class Analysis
         }
 
         /**
-         * Obtain the Asset Summary Bucket for a given account type.
-         * @param pActType the account type
+         * Obtain the Asset Summary Bucket for a given account category.
+         * @param pCategory the account category
          * @return the bucket
          */
-        protected AssetSummary getAssetSummary(final AccountCategoryType pActType) {
+        protected AssetSummary getAssetSummary(final AccountCategory pCategory) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.ASSETSUMMARY;
-            int uId = pActType.getId()
+            int uId = pCategory.getId()
                       + myBucket.getIdShift();
 
             /* Locate the bucket in the list */
@@ -530,7 +530,7 @@ public class Analysis
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Allocate it and add to the list */
-                myItem = new AssetSummary(pActType);
+                myItem = new AssetSummary(pCategory);
                 add(myItem);
             }
 
@@ -545,21 +545,21 @@ public class Analysis
          */
         protected EventCategoryDetail getCategoryDetail(final EventCategoryClass pCategoryClass) {
             /* Calculate the id that we are looking for */
-            EventCategoryType myCat = theData.getEventCategoryTypes().findItemByClass(pCategoryClass);
+            EventCategory myCat = theData.getEventCategories().getSingularClass(pCategoryClass);
 
             /* Return the bucket */
             return getCategoryDetail(myCat);
         }
 
         /**
-         * Obtain the category Detail Bucket for a given category type.
-         * @param pCategoryType the category type
+         * Obtain the category Detail Bucket for a given category.
+         * @param pCategory the category
          * @return the bucket
          */
-        protected EventCategoryDetail getCategoryDetail(final EventCategoryType pCategoryType) {
+        protected EventCategoryDetail getCategoryDetail(final EventCategory pCategory) {
             /* Calculate the id that we are looking for */
             BucketType myBucket = BucketType.CATDETAIL;
-            int uId = pCategoryType.getId()
+            int uId = pCategory.getId()
                       + myBucket.getIdShift();
 
             /* Locate the bucket in the list */
@@ -568,7 +568,7 @@ public class Analysis
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Allocate it and add to the list */
-                myItem = new EventCategoryDetail(pCategoryType);
+                myItem = new EventCategoryDetail(pCategory);
                 add(myItem);
             }
 
@@ -751,14 +751,14 @@ public class Analysis
     }
 
     /**
-     * The Account Type Bucket class.
+     * The Account Category Bucket class.
      */
-    private abstract static class AccountTypeBucket
+    private abstract static class AccountCategoryBucket
             extends AnalysisBucket {
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountTypeBucket.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCategoryBucket.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
         @Override
         public String formatObject() {
@@ -766,49 +766,49 @@ public class Analysis
         }
 
         /**
-         * Account Type Field Id.
+         * Account Category Field Id.
          */
-        public static final JDataField FIELD_ACTTYPE = FIELD_DEFS.declareEqualityField("AccountType");
+        public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityField("AccountCategory");
 
         @Override
         public Object getFieldValue(final JDataField pField) {
-            if (FIELD_ACTTYPE.equals(pField)) {
-                return theAccountType;
+            if (FIELD_CATEGORY.equals(pField)) {
+                return theAccountCategory;
             }
             return super.getFieldValue(pField);
         }
 
         /**
-         * The AccountType.
+         * The AccountCategory.
          */
-        private final AccountCategoryType theAccountType;
+        private final AccountCategory theAccountCategory;
 
         /**
          * Obtain name.
          * @return the name
          */
         public String getName() {
-            return theAccountType.getName();
+            return theAccountCategory.getName();
         }
 
         /**
-         * Obtain account type.
+         * Obtain account category.
          * @return the type
          */
-        public AccountCategoryType getAccountType() {
-            return theAccountType;
+        public AccountCategory getAccountCategory() {
+            return theAccountCategory;
         }
 
         /**
          * Constructor.
-         * @param pAccountType the account type
+         * @param pAccountCategory the account category
          */
-        private AccountTypeBucket(final AccountCategoryType pAccountType) {
+        private AccountCategoryBucket(final AccountCategory pAccountCategory) {
             /* Call super-constructor */
-            super(BucketType.ASSETSUMMARY, pAccountType.getId());
+            super(BucketType.ASSETSUMMARY, pAccountCategory.getId());
 
-            /* Store the account type */
-            theAccountType = pAccountType;
+            /* Store the account category */
+            theAccountCategory = pAccountCategory;
         }
 
         @Override
@@ -827,11 +827,11 @@ public class Analysis
                 return result;
             }
 
-            /* Access the object as an ActType Bucket */
-            AccountTypeBucket myThat = (AccountTypeBucket) pThat;
+            /* Access the object as an Account Category Bucket */
+            AccountCategoryBucket myThat = (AccountCategoryBucket) pThat;
 
-            /* Compare the AccountTypes */
-            return getAccountType().compareTo(myThat.getAccountType());
+            /* Compare the AccountCategories */
+            return getAccountCategory().compareTo(myThat.getAccountCategory());
         }
     }
 
@@ -839,11 +839,11 @@ public class Analysis
      * The AssetSummary Bucket class.
      */
     public static final class AssetSummary
-            extends AccountTypeBucket {
+            extends AccountCategoryBucket {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AssetSummary.class.getSimpleName(), AccountTypeBucket.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(AssetSummary.class.getSimpleName(), AccountCategoryBucket.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -904,11 +904,11 @@ public class Analysis
 
         /**
          * Constructor.
-         * @param pAccountType the account type
+         * @param pAccountCategory the account category
          */
-        private AssetSummary(final AccountCategoryType pAccountType) {
+        private AssetSummary(final AccountCategory pAccountCategory) {
             /* Call super-constructor */
-            super(pAccountType);
+            super(pAccountCategory);
 
             /* Initialise the Money values */
             theValue = new JMoney();

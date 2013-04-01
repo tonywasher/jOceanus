@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
-import java.util.Date;
-
 import javax.swing.SortOrder;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -33,49 +31,49 @@ import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 
 /**
- * TableEncrypted extension for AccountPrice.
+ * TableEncrypted extension for Account Category.
  * @author Tony Washer
  */
-public class TableAccountPrice
-        extends TableEncrypted<AccountPrice> {
+public class TableAccountCategory
+        extends TableEncrypted<AccountCategory> {
     /**
-     * The name of the Prices table.
+     * The name of the Category table.
      */
-    protected static final String TABLE_NAME = AccountPrice.LIST_NAME;
+    protected static final String TABLE_NAME = AccountCategory.LIST_NAME;
 
     /**
-     * The price list.
+     * The category list.
      */
-    private AccountPriceList theList = null;
+    private AccountCategoryList theList = null;
 
     /**
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableAccountPrice(final Database<?> pDatabase) {
+    protected TableAccountCategory(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 
         /* Declare the columns */
-        ColumnDefinition myActCol = myTableDef.addReferenceColumn(AccountPrice.FIELD_ACCOUNT, TableAccount.TABLE_NAME);
-        ColumnDefinition myDateCol = myTableDef.addDateColumn(AccountPrice.FIELD_DATE);
-        myTableDef.addEncryptedColumn(AccountPrice.FIELD_PRICE, EncryptedData.PRICELEN);
+        ColumnDefinition myCatCol = myTableDef.addReferenceColumn(AccountCategory.FIELD_CATTYPE, TableAccountCategoryType.TABLE_NAME);
+        ColumnDefinition myParentCol = myTableDef.addNullReferenceColumn(AccountCategory.FIELD_PARENT, TABLE_NAME);
+        myTableDef.addEncryptedColumn(AccountCategory.FIELD_NAME, AccountCategory.NAMELEN);
+        myTableDef.addNullEncryptedColumn(AccountCategory.FIELD_DESC, AccountCategory.DESCLEN);
 
         /* Declare Sort Columns */
-        myDateCol.setSortOrder(SortOrder.ASCENDING);
-        myActCol.setSortOrder(SortOrder.ASCENDING);
+        myParentCol.setSortOrder(SortOrder.DESCENDING);
+        myCatCol.setSortOrder(SortOrder.ASCENDING);
     }
 
     @Override
     protected void declareData(final DataSet<?> pData) {
         FinanceData myData = (FinanceData) pData;
-        theList = myData.getPrices();
+        theList = myData.getAccountCategories();
         setList(theList);
     }
 
@@ -84,25 +82,28 @@ public class TableAccountPrice
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        Integer myAccountId = myTableDef.getIntegerValue(AccountPrice.FIELD_ACCOUNT);
-        Date myDate = myTableDef.getDateValue(AccountPrice.FIELD_DATE);
-        byte[] myPrice = myTableDef.getBinaryValue(AccountPrice.FIELD_PRICE);
+        Integer myCategoryId = myTableDef.getIntegerValue(AccountCategory.FIELD_CATTYPE);
+        Integer myParentId = myTableDef.getIntegerValue(AccountCategory.FIELD_PARENT);
+        byte[] myName = myTableDef.getBinaryValue(AccountCategory.FIELD_NAME);
+        byte[] myDesc = myTableDef.getBinaryValue(AccountCategory.FIELD_DESC);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myAccountId, myPrice);
+        theList.addSecureItem(pId, pControlId, myName, myDesc, myCategoryId, myParentId);
     }
 
     @Override
-    protected void setFieldValue(final AccountPrice pItem,
+    protected void setFieldValue(final AccountCategory pItem,
                                  final JDataField iField) throws JDataException {
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
-        if (AccountPrice.FIELD_ACCOUNT.equals(iField)) {
-            myTableDef.setIntegerValue(iField, pItem.getAccountId());
-        } else if (AccountPrice.FIELD_DATE.equals(iField)) {
-            myTableDef.setDateValue(iField, pItem.getDate());
-        } else if (AccountPrice.FIELD_PRICE.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getPriceBytes());
+        if (AccountCategory.FIELD_CATTYPE.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
+        } else if (AccountCategory.FIELD_PARENT.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getParentCategoryId());
+        } else if (AccountCategory.FIELD_NAME.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getNameBytes());
+        } else if (AccountCategory.FIELD_DESC.equals(iField)) {
+            myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else {
             super.setFieldValue(pItem, iField);
         }

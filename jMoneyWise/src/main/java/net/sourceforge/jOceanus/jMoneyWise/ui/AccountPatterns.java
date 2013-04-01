@@ -57,10 +57,10 @@ import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.StringCellRenderer;
 import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
@@ -213,7 +213,7 @@ public class AccountPatterns
     /**
      * Category column id.
      */
-    private static final int COLUMN_CATTYP = 1;
+    private static final int COLUMN_CATEGORY = 1;
 
     /**
      * Description column id.
@@ -248,7 +248,7 @@ public class AccountPatterns
     /**
      * Category column width.
      */
-    private static final int WIDTH_CATTYP = 110;
+    private static final int WIDTH_CATEGORY = 110;
 
     /**
      * Description column width.
@@ -421,14 +421,14 @@ public class AccountPatterns
         switch (column) {
             case COLUMN_FREQ:
                 return theFreqBox;
-            case COLUMN_CATTYP:
+            case COLUMN_CATEGORY:
                 return (myPattern.isCredit())
-                        ? theComboList.getCreditCategoryTypes(theAccount)
-                        : theComboList.getDebitCategoryTypes(theAccount);
+                        ? theComboList.getCreditCategories(theAccount)
+                        : theComboList.getDebitCategories(theAccount);
             case COLUMN_PARTNER:
                 return (myPattern.isCredit())
-                        ? theComboList.getDebitAccounts(myPattern.getCategoryType(), theAccount)
-                        : theComboList.getCreditAccounts(myPattern.getCategoryType(), theAccount);
+                        ? theComboList.getDebitAccounts(myPattern.getCategory(), theAccount)
+                        : theComboList.getCreditAccounts(myPattern.getCategory(), theAccount);
             default:
                 return null;
         }
@@ -533,7 +533,7 @@ public class AccountPatterns
                     return TITLE_DATE;
                 case COLUMN_DESC:
                     return TITLE_DESC;
-                case COLUMN_CATTYP:
+                case COLUMN_CATEGORY:
                     return TITLE_CATEGORY;
                 case COLUMN_PARTNER:
                     return TITLE_PARTNER;
@@ -553,7 +553,7 @@ public class AccountPatterns
             switch (pColIndex) {
                 case COLUMN_DESC:
                     return String.class;
-                case COLUMN_CATTYP:
+                case COLUMN_CATEGORY:
                     return String.class;
                 case COLUMN_PARTNER:
                     return String.class;
@@ -577,8 +577,8 @@ public class AccountPatterns
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
                     return Event.FIELD_DESC;
-                case COLUMN_CATTYP:
-                    return Event.FIELD_CATTYP;
+                case COLUMN_CATEGORY:
+                    return Event.FIELD_CATEGORY;
                 case COLUMN_CREDIT:
                     return Event.FIELD_AMOUNT;
                 case COLUMN_DEBIT:
@@ -627,8 +627,8 @@ public class AccountPatterns
                     return pPattern.getDate();
                 case COLUMN_DESC:
                     return pPattern.getDesc();
-                case COLUMN_CATTYP:
-                    return pPattern.getCategoryType();
+                case COLUMN_CATEGORY:
+                    return pPattern.getCategory();
                 case COLUMN_PARTNER:
                     return pPattern.getPartner();
                 case COLUMN_CREDIT:
@@ -658,8 +658,8 @@ public class AccountPatterns
                 case COLUMN_DESC:
                     pPattern.setDescription((String) pValue);
                     break;
-                case COLUMN_CATTYP:
-                    pPattern.setCategoryType((EventCategoryType) pValue);
+                case COLUMN_CATEGORY:
+                    pPattern.setCategory((EventCategory) pValue);
                     break;
                 case COLUMN_CREDIT:
                 case COLUMN_DEBIT:
@@ -883,7 +883,7 @@ public class AccountPatterns
 
             /* Create the columns */
             addColumn(new JDataTableColumn(COLUMN_DATE, WIDTH_DATE, theDateRenderer, theDateEditor));
-            addColumn(new JDataTableColumn(COLUMN_CATTYP, WIDTH_CATTYP, theStringRenderer, theComboEditor));
+            addColumn(new JDataTableColumn(COLUMN_CATEGORY, WIDTH_CATEGORY, theStringRenderer, theComboEditor));
             addColumn(new JDataTableColumn(COLUMN_DESC, WIDTH_DESC, theStringRenderer, theStringEditor));
             addColumn(new JDataTableColumn(COLUMN_PARTNER, WIDTH_PARTNER, theStringRenderer, theComboEditor));
             addColumn(new JDataTableColumn(COLUMN_CREDIT, WIDTH_CREDIT, theDecimalRenderer, theMoneyEditor));

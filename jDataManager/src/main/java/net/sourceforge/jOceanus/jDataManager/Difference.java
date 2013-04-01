@@ -103,7 +103,9 @@ public enum Difference {
             case Identical:
                 return pThat;
             case Security:
-                return (pThat == Different) ? pThat : this;
+                return (pThat == Different)
+                        ? pThat
+                        : this;
             default:
                 return this;
         }
@@ -123,7 +125,8 @@ public enum Difference {
         }
 
         /* Neither value can be null */
-        if ((pCurr == null) || (pNew == null)) {
+        if ((pCurr == null)
+            || (pNew == null)) {
             return Different;
         }
 
@@ -138,7 +141,9 @@ public enum Difference {
         }
 
         /* Handle Standard cases */
-        return (pCurr.equals(pNew)) ? Identical : Different;
+        return (pCurr.equals(pNew))
+                ? Identical
+                : Different;
     }
 
     /**
@@ -155,7 +160,8 @@ public enum Difference {
         }
 
         /* Neither value can be null */
-        if ((pCurr == null) || (pNew == null)) {
+        if ((pCurr == null)
+            || (pNew == null)) {
             return false;
         }
 
@@ -187,7 +193,7 @@ public enum Difference {
      * @param <X> the object type
      * @param pCurr The current object
      * @param pNew The new object
-     * @return true/false
+     * @return order
      */
     public static <X extends Comparable<? super X>> int compareObject(final X pCurr,
                                                                       final X pNew) {
@@ -196,15 +202,39 @@ public enum Difference {
             return 0;
         }
 
-        /* Null is at the end of the list */
-        if (pCurr == null) {
-            return 1;
-        }
-        if (pNew == null) {
-            return -1;
+        /* Pass the call on, defaulting null to the end of the list */
+        return compareObject(pCurr, pNew, true);
+    }
+
+    /**
+     * Compare two similar objects for order.
+     * @param <X> the object type
+     * @param pCurr The current object
+     * @param pNew The new object
+     * @param pNullLast is Null at end of list?
+     * @return order
+     */
+    public static <X extends Comparable<? super X>> int compareObject(final X pCurr,
+                                                                      final X pNew,
+                                                                      final boolean pNullLast) {
+        /* Handle identity */
+        if (pCurr == pNew) {
+            return 0;
         }
 
-        /* Pass the call on */
+        /* Handle positioning of nulls */
+        if (pCurr == null) {
+            return (pNullLast)
+                    ? 1
+                    : -1;
+        }
+        if (pNew == null) {
+            return (pNullLast)
+                    ? -1
+                    : 1;
+        }
+
+        /* Both non-Null, so pass the call on */
         return pCurr.compareTo(pNew);
     }
 }

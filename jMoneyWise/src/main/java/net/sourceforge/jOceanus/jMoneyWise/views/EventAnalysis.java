@@ -45,12 +45,13 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AnalysisState;
@@ -259,7 +260,7 @@ public class EventAnalysis
         theMetaAnalysis = new MetaAnalysis(theAnalysis);
 
         /* Access the TaxMan account and Tax Credit transaction */
-        Account myTaxMan = theData.getAccounts().getTaxMan();
+        Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
         BucketList myBuckets = theAnalysis.getList();
         theTaxMan = (PayeeAccountDetail) myBuckets.getAccountBucket(myTaxMan);
         theTaxPaid = myBuckets.getCategoryDetail(EventCategoryClass.TaxCredit);
@@ -310,7 +311,7 @@ public class EventAnalysis
         theAnalysis = new Analysis(theData, myAccount, theDate);
 
         /* Access the TaxMan account and Tax Credit transaction */
-        Account myTaxMan = theData.getAccounts().getTaxMan();
+        Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
         BucketList myBuckets = theAnalysis.getList();
         theTaxMan = (PayeeAccountDetail) myBuckets.getAccountBucket(myTaxMan);
         theTaxPaid = myBuckets.getCategoryDetail(EventCategoryClass.TaxCredit);
@@ -405,7 +406,7 @@ public class EventAnalysis
 
             /* Ignore if it is not a valid event */
             if ((myCurr.getPartner() == null)
-                || (myCurr.getCategoryType() == null)
+                || (myCurr.getCategory() == null)
                 || (myCurr.getAmount() == null)) {
                 continue;
             }
@@ -433,7 +434,7 @@ public class EventAnalysis
         theData = pData;
 
         /* Access the TaxMan account */
-        Account myTaxMan = theData.getAccounts().getTaxMan();
+        Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
 
         /* Access the top level debug entry for this analysis */
         JDataEntry mySection = pView.getDataEntry(DataControl.DATA_ANALYSIS);
@@ -497,8 +498,8 @@ public class EventAnalysis
             myAccount = myCurr.getDebit();
             myAccount.touchItem(myCurr);
 
-            /* Touch Category Type */
-            EventCategoryType myCategory = myCurr.getCategoryType();
+            /* Touch Category */
+            EventCategory myCategory = myCurr.getCategory();
             myCategory.touchItem(myCurr);
 
             /* If the event has a dilution factor */
@@ -855,23 +856,23 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
 
         /* If the event relates to a priced item split out the workings */
-        if ((myDebit.isPriced())
-            || (myCredit.isPriced())) {
+        if ((myDebit.hasUnits())
+            || (myCredit.hasUnits())) {
             /* Process as a Capital event */
             processCapitalEvent(pEvent);
 
             /* Else handle the event normally */
         } else {
-            EventCategoryType myCat = pEvent.getCategoryType();
-            EventCategoryTypeList myTranList = theData.getEventCategoryTypes();
+            EventCategory myCat = pEvent.getCategory();
+            EventCategoryList myCatList = theData.getEventCategories();
             BucketList myBuckets = theAnalysis.getList();
 
             /* If the event is interest */
-            if (myCat.isInterest()) {
+            if (pEvent.isInterest()) {
                 /* If the account is tax free */
                 if (myDebit.isTaxFree()) {
                     /* The true transaction type is TaxFreeInterest */
-                    myCat = myTranList.findItemByClass(EventCategoryClass.TaxFreeInterest);
+                    myCat = myCatList.getSingularClass(EventCategoryClass.TaxFreeInterest);
                 }
 
                 /* True debit account is the parent */
@@ -905,13 +906,13 @@ public class EventAnalysis
      * @throws JDataException on error
      */
     private void processCapitalEvent(final Event pEvent) throws JDataException {
-        EventCategoryType myCat = pEvent.getCategoryType();
+        EventCategory myCat = pEvent.getCategory();
 
         /* Switch on the category */
-        switch (myCat.getCategoryClass()) {
+        switch (myCat.getCategoryTypeClass()) {
         /* Process a stock split */
             case StockSplit:
-            case AdminCharge:
+            case StockAdjust:
                 processStockSplit(pEvent);
                 break;
             /* Process a stock right taken */
@@ -926,10 +927,10 @@ public class EventAnalysis
             case StockDeMerger:
                 processStockDeMerger(pEvent);
                 break;
-            /* Process a Cash TakeOver */
-            case CashTakeOver:
-                processCashTakeover(pEvent);
-                break;
+            /* Process a Cash TakeOver TODO */
+            // case CashTakeOver:
+            // processCashTakeover(pEvent);
+            // break;
             /* Process a Cash TakeOver */
             case StockTakeOver:
                 processStockTakeover(pEvent);
@@ -947,8 +948,8 @@ public class EventAnalysis
             case Endowment:
             case Expense:
             case Inherited:
-            case TaxFreeIncome:
-                if (pEvent.getCredit().isPriced()) {
+            case OtherIncome:
+                if (pEvent.getCredit().hasUnits()) {
                     processTransferIn(pEvent);
                 } else {
                     processTransferOut(pEvent);
@@ -957,7 +958,7 @@ public class EventAnalysis
             /* Throw an Exception */
             default:
                 throw new JDataException(ExceptionClass.LOGIC, "Unexpected category type: "
-                                                               + myCat.getCategoryClass());
+                                                               + myCat.getCategoryTypeClass());
         }
     }
 
@@ -998,7 +999,7 @@ public class EventAnalysis
         Account myDebit = pEvent.getDebit();
         JUnits myUnits = pEvent.getCreditUnits();
         JMoney myAmount = pEvent.getAmount();
-        EventCategoryType myCat = pEvent.getCategoryType();
+        EventCategory myCat = pEvent.getCategory();
 
         /* Access the Asset Account Bucket */
         BucketList myBuckets = theAnalysis.getList();
@@ -1056,8 +1057,8 @@ public class EventAnalysis
         /* The main account that we are interested in is the debit account */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        EventCategoryType myCat = pEvent.getCategoryType();
-        EventCategoryTypeList myCatList = theData.getEventCategoryTypes();
+        EventCategory myCat = pEvent.getCategory();
+        EventCategoryList myCatList = theData.getEventCategories();
         JMoney myAmount = pEvent.getAmount();
         JMoney myTaxCredit = pEvent.getTaxCredit();
         JUnits myUnits = pEvent.getCreditUnits();
@@ -1066,12 +1067,12 @@ public class EventAnalysis
         /* If the account is tax free */
         if (myAccount.isTaxFree()) {
             /* The true category type is TaxFreeDividend */
-            myCat = myCatList.findItemByClass(EventCategoryClass.TaxFreeDividend);
+            myCat = myCatList.getSingularClass(EventCategoryClass.TaxFreeDividend);
 
             /* else if the account is a unit trust */
-        } else if (myAccount.isUnitTrust()) {
+        } else if (myAccount.isCategoryClass(AccountCategoryClass.UnitTrust)) {
             /* The true category type is UnitTrustDividend */
-            myCat = myCatList.findItemByClass(EventCategoryClass.UnitTrustDividend);
+            myCat = myCatList.getSingularClass(EventCategoryClass.UnitTrustDividend);
         }
 
         /* True debit account is the parent */
@@ -1173,7 +1174,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
         JUnits myUnits = pEvent.getDebitUnits();
-        EventCategoryType myCat = pEvent.getCategoryType();
+        EventCategory myCat = pEvent.getCategory();
         JMoney myReduction;
         JMoney myDeltaCost;
         JMoney myDeltaGains;
@@ -1275,7 +1276,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
         JUnits myUnits = pEvent.getDebitUnits();
-        EventCategoryType myCat = pEvent.getCategoryType();
+        EventCategory myCat = pEvent.getCategory();
         JMoney myReduction;
         JMoney myDeltaCost;
         JMoney myDeltaGains;
@@ -1393,7 +1394,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
         JMoney myAmount = pEvent.getAmount();
-        EventCategoryType myCat = pEvent.getCategoryType();
+        EventCategory myCat = pEvent.getCategory();
         AccountPrice myActPrice;
         JPrice myPrice;
         JMoney myValue;
@@ -1576,7 +1577,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
         JMoney myAmount = pEvent.getAmount();
-        EventCategoryType myCat = pEvent.getCategoryType();
+        EventCategory myCat = pEvent.getCategory();
         AccountPrice myActPrice;
         JPrice myPrice;
         JMoney myValue;
@@ -1686,7 +1687,7 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
         JUnits myUnits = pEvent.getCreditUnits();
-        EventCategoryType myCat = pEvent.getCategoryType();
+        EventCategory myCat = pEvent.getCategory();
         AccountPrice myActPrice;
         JPrice myPrice;
         JMoney myValue;

@@ -35,8 +35,9 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 
 /**
  * Account data type.
@@ -71,14 +72,19 @@ public abstract class AccountBase
     public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
 
     /**
-     * AccountType Field Id.
+     * AccountCategory Field Id.
      */
-    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareEqualityValueField("AccountType");
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField("AccountCategory");
 
     /**
      * isClosed Field Id.
      */
     public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField("isClosed");
+
+    /**
+     * isTaxFree Field Id.
+     */
+    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField("isTaxFree");
 
     @Override
     public String formatObject() {
@@ -139,33 +145,44 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain Account Type.
-     * @return the type
+     * Obtain Account Category.
+     * @return the category
      */
-    public AccountCategoryType getActType() {
-        return getAccountCategoryType(getValueSet());
+    public AccountCategory getAccountCategory() {
+        return getAccountCategory(getValueSet());
     }
 
     /**
-     * Obtain ActTypeId.
-     * @return the actTypeId
+     * Obtain AccountCategoryId.
+     * @return the actCategoryId
      */
-    public Integer getActTypeId() {
-        AccountCategoryType myType = getActType();
-        return (myType == null)
+    public Integer getAccountCategoryId() {
+        AccountCategory myCategory = getAccountCategory();
+        return (myCategory == null)
                 ? null
-                : myType.getId();
+                : myCategory.getId();
     }
 
     /**
-     * Obtain ActTypeName.
-     * @return the actTypeName
+     * Obtain AccountCategoryName.
+     * @return the actCategoryName
      */
-    public String getActTypeName() {
-        AccountCategoryType myType = getActType();
-        return (myType == null)
+    public String getAccountCategoryName() {
+        AccountCategory myCategory = getAccountCategory();
+        return (myCategory == null)
                 ? null
-                : myType.getName();
+                : myCategory.getName();
+    }
+
+    /**
+     * Obtain AccountCategoryClass.
+     * @return the actCategoryClass
+     */
+    public AccountCategoryClass getAccountCategoryClass() {
+        AccountCategory myCategory = getAccountCategory();
+        return (myCategory == null)
+                ? null
+                : myCategory.getCategoryTypeClass();
     }
 
     /**
@@ -182,6 +199,14 @@ public abstract class AccountBase
      */
     public Boolean isClosed() {
         return isClosed(getValueSet());
+    }
+
+    /**
+     * Is the account taxFree.
+     * @return true/false
+     */
+    public Boolean isTaxFree() {
+        return isTaxFree(getValueSet());
     }
 
     /**
@@ -239,12 +264,12 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain AccountCategoryType.
+     * Obtain AccountCategory.
      * @param pValueSet the valueSet
-     * @return the AccountCategoryType
+     * @return the AccountCategory
      */
-    public static AccountCategoryType getAccountCategoryType(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_TYPE, AccountCategoryType.class);
+    public static AccountCategory getAccountCategory(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CATEGORY, AccountCategory.class);
     }
 
     /**
@@ -253,9 +278,9 @@ public abstract class AccountBase
      * @return the Order
      */
     public static Integer getOrder(final ValueSet pValueSet) {
-        Object myType = pValueSet.getValue(FIELD_TYPE);
-        if (myType instanceof AccountCategoryType) {
-            return ((AccountCategoryType) myType).getOrder();
+        Object myCategory = pValueSet.getValue(FIELD_CATEGORY);
+        if (myCategory instanceof AccountCategoryType) {
+            return ((AccountCategory) myCategory).getCategoryType().getOrder();
         }
         return null;
     }
@@ -267,6 +292,15 @@ public abstract class AccountBase
      */
     public static Boolean isClosed(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CLOSED, Boolean.class);
+    }
+
+    /**
+     * Is the account taxFree.
+     * @param pValueSet the valueSet
+     * @return true/false
+     */
+    public static Boolean isTaxFree(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_TAXFREE, Boolean.class);
     }
 
     /**
@@ -322,19 +356,19 @@ public abstract class AccountBase
     }
 
     /**
-     * Set account type value.
+     * Set account category value.
      * @param pValue the value
      */
-    private void setValueType(final AccountCategoryType pValue) {
-        getValueSet().setValue(FIELD_TYPE, pValue);
+    private void setValueCategory(final AccountCategory pValue) {
+        getValueSet().setValue(FIELD_CATEGORY, pValue);
     }
 
     /**
      * Set account type id.
      * @param pValue the value
      */
-    private void setValueType(final Integer pValue) {
-        getValueSet().setValue(FIELD_TYPE, pValue);
+    private void setValueCategory(final Integer pValue) {
+        getValueSet().setValue(FIELD_CATEGORY, pValue);
     }
 
     /**
@@ -347,177 +381,19 @@ public abstract class AccountBase
                 : Boolean.FALSE);
     }
 
+    /**
+     * Set taxFree indication.
+     * @param pValue the value
+     */
+    private void setValueTaxFree(final Boolean pValue) {
+        getValueSet().setValue(FIELD_TAXFREE, (pValue != null)
+                ? pValue
+                : Boolean.FALSE);
+    }
+
     @Override
     public FinanceData getDataSet() {
         return (FinanceData) super.getDataSet();
-    }
-
-    /**
-     * Is the account priced?
-     * @return true/false
-     */
-    public boolean isPriced() {
-        return getActType().isPriced();
-    }
-
-    /**
-     * Is the account the market?
-     * @return true/false
-     */
-    protected boolean isMarket() {
-        return getActType().isMarket();
-    }
-
-    /**
-     * Is the account external?
-     * @return true/false
-     */
-    public boolean isExternal() {
-        return getActType().isExternal();
-    }
-
-    /**
-     * Is the account special?
-     * @return true/false
-     */
-    protected boolean isSpecial() {
-        return getActType().isSpecial();
-    }
-
-    /**
-     * Is the account internal?
-     * @return true/false
-     */
-    protected boolean isInternal() {
-        return getActType().isInternal();
-    }
-
-    /**
-     * Is the account inheritance?
-     * @return true/false
-     */
-    protected boolean isInheritance() {
-        return getActType().isInheritance();
-    }
-
-    /**
-     * Is the account the taxman?
-     * @return true/false
-     */
-    protected boolean isTaxMan() {
-        return getActType().isTaxMan();
-    }
-
-    /**
-     * Is the account money?
-     * @return true/false
-     */
-    public boolean isMoney() {
-        return getActType().isMoney();
-    }
-
-    /**
-     * Is the account cash?
-     * @return true/false
-     */
-    protected boolean isCash() {
-        return getActType().isCash();
-    }
-
-    /**
-     * Is the account writeOff?
-     * @return true/false
-     */
-    protected boolean isWriteOff() {
-        return getActType().isWriteOff();
-    }
-
-    /**
-     * Is the account and endowment?
-     * @return true/false
-     */
-    protected boolean isEndowment() {
-        return getActType().isEndowment();
-    }
-
-    /**
-     * Is the account an owner?
-     * @return true/false
-     */
-    public boolean isOwner() {
-        return getActType().isOwner();
-    }
-
-    /**
-     * Is the account taxFree?
-     * @return true/false
-     */
-    public boolean isTaxFree() {
-        return getActType().isTaxFree();
-    }
-
-    /**
-     * Is the account a UnitTrust?
-     * @return true/false
-     */
-    public boolean isUnitTrust() {
-        return getActType().isUnitTrust();
-    }
-
-    /**
-     * Is the account a debt?
-     * @return true/false
-     */
-    public boolean isDebt() {
-        return getActType().isDebt();
-    }
-
-    /**
-     * Is the account a child?
-     * @return true/false
-     */
-    public boolean isChild() {
-        return getActType().isChild();
-    }
-
-    /**
-     * Is the account a bond?
-     * @return true/false
-     */
-    public boolean isBond() {
-        return getActType().isBond();
-    }
-
-    /**
-     * Is the account benefit?
-     * @return true/false
-     */
-    public boolean isBenefit() {
-        return getActType().isBenefit();
-    }
-
-    /**
-     * Is the account a LifeBond?
-     * @return true/false
-     */
-    public boolean isLifeBond() {
-        return getActType().isLifeBond();
-    }
-
-    /**
-     * Is the account capital?
-     * @return true/false
-     */
-    public boolean isCapital() {
-        return getActType().isCapital();
-    }
-
-    /**
-     * Is the account capitalGains?
-     * @return true/false
-     */
-    public boolean isCapitalGains() {
-        return getActType().isCapitalGains();
     }
 
     /**
@@ -537,40 +413,43 @@ public abstract class AccountBase
      * @param uId the Account id
      * @param uControlId the control id
      * @param pName the Encrypted Name of the account
-     * @param uAcTypeId the Account type id
+     * @param uCategoryId the Account category id
      * @param pDesc the Encrypted Description of the account
      * @param isClosed is the account closed?
+     * @param isTaxFree is the account taxFree?
      * @throws JDataException on error
      */
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
                           final Integer uId,
                           final Integer uControlId,
                           final byte[] pName,
-                          final Integer uAcTypeId,
+                          final Integer uCategoryId,
                           final byte[] pDesc,
-                          final Boolean isClosed) throws JDataException {
+                          final Boolean isClosed,
+                          final Boolean isTaxFree) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
         /* Protect against exceptions */
         try {
             /* Store the IDs */
-            setValueType(uAcTypeId);
+            setValueCategory(uCategoryId);
 
             /* Set ControlId */
             setControlKey(uControlId);
 
-            /* Look up the Account Type */
+            /* Look up the Account Category */
             FinanceData myData = getDataSet();
-            AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
-            AccountCategoryType myActType = myTypes.findItemById(uAcTypeId);
-            if (myActType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
+            AccountCategoryList myCategories = myData.getAccountCategories();
+            AccountCategory myCategory = myCategories.findItemById(uCategoryId);
+            if (myCategory == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Category Id");
             }
-            setValueType(myActType);
+            setValueCategory(myCategory);
 
-            /* Set the closed indication */
+            /* Set the closed and tax free indications */
             setValueClosed(isClosed);
+            setValueTaxFree(isTaxFree);
 
             /* Record the encrypted values */
             setValueName(pName);
@@ -588,40 +467,34 @@ public abstract class AccountBase
      * @param pList the List to add to
      * @param uId the id
      * @param sName the Name of the account
-     * @param uAcTypeId the Account type id
+     * @param pCategory the Account category
      * @param pDesc the description
      * @param isClosed is the account closed?
+     * @param isTaxFree is the account taxFree?
      * @throws JDataException on error
      */
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
                           final Integer uId,
                           final String sName,
-                          final Integer uAcTypeId,
+                          final AccountCategory pCategory,
                           final String pDesc,
-                          final Boolean isClosed) throws JDataException {
+                          final Boolean isClosed,
+                          final Boolean isTaxFree) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
         /* Protect against exceptions */
         try {
-            /* Store the IDs */
-            setValueType(uAcTypeId);
+            /* Store the category */
+            setValueCategory(pCategory);
 
             /* Record the encrypted values */
             setValueName(sName);
             setValueDesc(pDesc);
 
-            /* Look up the Account Type */
-            FinanceData myData = getDataSet();
-            AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
-            AccountCategoryType myActType = myTypes.findItemById(uAcTypeId);
-            if (myActType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Type Id");
-            }
-            setValueType(myActType);
-
-            /* Set the closed indication */
+            /* Set the closed and tax free indications */
             setValueClosed(isClosed);
+            setValueTaxFree(isTaxFree);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -672,12 +545,66 @@ public abstract class AccountBase
 
         /* Access Account types */
         FinanceData myData = getDataSet();
-        AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
+        AccountCategoryList myCategories = myData.getAccountCategories();
 
-        /* Update to use the local copy of the AccountCategoryTypes */
-        AccountCategoryType myType = getActType();
-        AccountCategoryType myNewType = myTypes.findItemById(myType.getId());
-        setValueType(myNewType);
+        /* Update to use the local copy of the AccountCategories */
+        AccountCategory myCat = getAccountCategory();
+        AccountCategory myNewCat = myCategories.findItemById(myCat.getId());
+        setValueCategory(myNewCat);
+    }
+
+    /**
+     * Determines whether an account has units.
+     * @return priced true/false
+     */
+    public boolean hasUnits() {
+        /* Check for units */
+        AccountCategory myCat = getAccountCategory();
+        return (myCat != null)
+               && (myCat.getCategoryTypeClass().hasUnits());
+    }
+
+    /**
+     * Determines whether an account has value.
+     * @return money true/false
+     */
+    public boolean hasValue() {
+        /* Check for units */
+        AccountCategory myCat = getAccountCategory();
+        return (myCat != null)
+               && (myCat.getCategoryTypeClass().hasValue());
+    }
+
+    /**
+     * Determines whether an account is a loan.
+     * @return debt true/false
+     */
+    public boolean isLoan() {
+        /* Check for units */
+        AccountCategory myCat = getAccountCategory();
+        return (myCat != null)
+               && (myCat.getCategoryTypeClass().isLoan());
+    }
+
+    /**
+     * Determines whether an account is savings.
+     * @return savings true/false
+     */
+    public boolean isSavings() {
+        /* Check for units */
+        AccountCategory myCat = getAccountCategory();
+        return (myCat != null)
+               && (myCat.getCategoryTypeClass().isSavings());
+    }
+
+    /**
+     * Is this account category the required class.
+     * @param pClass the required category class.
+     * @return true/false
+     */
+    public boolean isCategoryClass(final AccountCategoryClass pClass) {
+        /* Check for match */
+        return (getAccountCategoryClass() == pClass);
     }
 
     /**
@@ -685,16 +612,14 @@ public abstract class AccountBase
      */
     @Override
     public void validate() {
-        AccountCategoryType myType = getActType();
+        AccountCategory myCategory = getAccountCategory();
         String myName = getName();
         String myDesc = getDesc();
         AccountBaseList<?> myList = (AccountBaseList<?>) getList();
 
         /* AccountCategoryType must be non-null */
-        if (myType == null) {
-            addError("AccountCategoryType must be non-null", FIELD_TYPE);
-        } else if (!myType.getEnabled()) {
-            addError("AccountCategoryType must be enabled", FIELD_TYPE);
+        if (myCategory == null) {
+            addError("AccountCategory must be non-null", FIELD_CATEGORY);
         }
 
         /* Name must be non-null */
@@ -730,11 +655,11 @@ public abstract class AccountBase
     }
 
     /**
-     * Set a new account type.
-     * @param pType the new type
+     * Set a new account category.
+     * @param pCategory the new category
      */
-    public void setActType(final AccountCategoryType pType) {
-        setValueType(pType);
+    public void setAccountCategory(final AccountCategory pCategory) {
+        setValueCategory(pCategory);
     }
 
     /**
@@ -755,11 +680,19 @@ public abstract class AccountBase
     }
 
     /**
+     * Set a new taxFree indication.
+     * @param isTaxFree the new taxFree indication
+     */
+    public void setTaxFree(final Boolean isTaxFree) {
+        setValueTaxFree(isTaxFree);
+    }
+
+    /**
      * Mark active items.
      */
     protected void markActiveItems() {
         /* mark the account type referred to */
-        getActType().touchItem(this);
+        getAccountCategory().touchItem(this);
     }
 
     /**
@@ -789,14 +722,19 @@ public abstract class AccountBase
             setValueDesc(myAccount.getDescField());
         }
 
-        /* Update the account type if required */
-        if (!Difference.isEqual(getActType(), myAccount.getActType())) {
-            setValueType(myAccount.getActType());
+        /* Update the account category if required */
+        if (!Difference.isEqual(getAccountCategory(), myAccount.getAccountCategory())) {
+            setValueCategory(myAccount.getAccountCategory());
         }
 
         /* Update the closed indication if required */
         if (!Difference.isEqual(isClosed(), myAccount.isClosed())) {
             setValueClosed(myAccount.isClosed());
+        }
+
+        /* Update the taxFree indication if required */
+        if (!Difference.isEqual(isTaxFree(), myAccount.isTaxFree())) {
+            setValueTaxFree(myAccount.isTaxFree());
         }
 
         /* Check for changes */
@@ -881,37 +819,18 @@ public abstract class AccountBase
         }
 
         /**
-         * Get the market account from the list.
-         * @return the Market account
+         * Obtain the first account for the specified class.
+         * @param pClass the account category class
+         * @return the account
          */
-        public T getMarket() {
+        public T getSingularClass(final AccountCategoryClass pClass) {
             /* Access the iterator */
             Iterator<T> myIterator = iterator();
 
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 T myCurr = myIterator.next();
-                if (myCurr.isMarket()) {
-                    return myCurr;
-                }
-            }
-
-            /* Return not found */
-            return null;
-        }
-
-        /**
-         * Get the TaxMan account from the list.
-         * @return the TaxMan account
-         */
-        public T getTaxMan() {
-            /* Access the iterator */
-            Iterator<T> myIterator = iterator();
-
-            /* Loop through the items to find the entry */
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-                if (myCurr.isTaxMan()) {
+                if (myCurr.getAccountCategoryClass() == pClass) {
                     return myCurr;
                 }
             }

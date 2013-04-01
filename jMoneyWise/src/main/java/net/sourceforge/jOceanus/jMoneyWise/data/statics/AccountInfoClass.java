@@ -47,24 +47,24 @@ public enum AccountInfoClass implements DataInfoClass {
     Alias(3, 2),
 
     /**
-     * PortFolio Id.
-     */
-    Portfolio(4, 3),
-
-    /**
      * Symbol.
      */
-    Symbol(5, 4, DataType.STRING),
+    Symbol(4, 3, DataType.STRING),
 
     /**
      * Opening Balance.
      */
-    OpeningBalance(6, 5, DataType.MONEY),
+    OpeningBalance(5, 4, DataType.MONEY),
 
     /**
      * AutoExpense Category.
      */
-    AutoExpense(7, 6),
+    AutoExpense(6, 5),
+
+    /**
+     * Currency Category.
+     */
+    Currency(7, 6, DataType.STRING),
 
     /**
      * WebSite.

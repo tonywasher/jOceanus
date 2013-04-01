@@ -30,14 +30,15 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.DebtAccountDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.LoanAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.MoneyAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
@@ -259,16 +260,16 @@ public class AnalysisReport {
             theReport.makeValueCell(myOutput, mySummary.getValue());
             theReport.endRow(myOutput);
 
-            /* Access the type */
-            AccountCategoryType myType = mySummary.getAccountType();
+            /* Access the category class */
+            AccountCategoryClass myCategory = mySummary.getAccountCategory().getCategoryTypeClass();
 
             /* Format the detail */
-            if (myType.isMoney()) {
-                myDetail.append(makeRatedReport(mySummary));
-            } else if (myType.isPriced()) {
+            if (myCategory.isLoan()) {
+                myDetail.append(makeLoanReport(mySummary));
+            } else if (myCategory.hasUnits()) {
                 myDetail.append(makePricedReport(mySummary));
             } else {
-                myDetail.append(makeDebtReport(mySummary));
+                myDetail.append(makeRatedReport(mySummary));
             }
 
             /* Flip row type */
@@ -332,11 +333,11 @@ public class AnalysisReport {
             /* Access the summary bucket */
             AssetAccountDetail myAsset = (AssetAccountDetail) myBucket;
 
-            /* Access the type */
-            AccountCategoryType myType = myAsset.getAccountType();
+            /* Access the category */
+            AccountCategoryClass myCategory = myAsset.getAccountCategory().getCategoryTypeClass();
 
             /* Ignore non-priced items */
-            if (!myType.isPriced()) {
+            if (!myCategory.hasUnits()) {
                 continue;
             }
 
@@ -348,8 +349,8 @@ public class AnalysisReport {
             theReport.makeValueCell(myOutput, myAsset.getProfit());
             theReport.endRow(myOutput);
 
-            /* If this is not an Endowment */
-            if (!myType.isEndowment()) {
+            /* If this is Capital */
+            if (myCategory.isCapital()) {
                 /* Format the detail */
                 myDetail.append(makeCapitalEventReport(myAsset));
             }
@@ -412,7 +413,7 @@ public class AnalysisReport {
         while (myIterator.hasNext()) {
             AnalysisBucket myBucket = myIterator.next();
 
-            /* Skip bucket if this is not an external account */
+            /* Skip bucket if this is not a payee account */
             if (myBucket.getBucketType() != BucketType.PAYEEDETAIL) {
                 continue;
             }
@@ -467,8 +468,8 @@ public class AnalysisReport {
         BucketList myList = theAnalysis.getList();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
-        /* Access the type */
-        AccountCategoryType myType = pSummary.getAccountType();
+        /* Access the category */
+        AccountCategory myCategory = pSummary.getAccountCategory();
 
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
@@ -496,8 +497,8 @@ public class AnalysisReport {
             /* Access the bucket */
             ValueBucket myValue = (ValueBucket) myBucket;
 
-            /* Skip record if incorrect type */
-            if (!Difference.isEqual(myValue.getAccountType(), myType)) {
+            /* Skip record if incorrect category */
+            if (!Difference.isEqual(myValue.getAccountCategory(), myCategory)) {
                 continue;
             }
 
@@ -532,8 +533,8 @@ public class AnalysisReport {
         BucketList myList = theAnalysis.getList();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
-        /* Access the type */
-        AccountCategoryType myType = pSummary.getAccountType();
+        /* Access the category */
+        AccountCategory myCategory = pSummary.getAccountCategory();
 
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
@@ -560,8 +561,8 @@ public class AnalysisReport {
             /* Access the bucket */
             MoneyAccountDetail myMoney = (MoneyAccountDetail) myBucket;
 
-            /* Skip record if incorrect type */
-            if (!Difference.isEqual(myMoney.getAccountType(), myType)) {
+            /* Skip record if incorrect category */
+            if (!Difference.isEqual(myMoney.getAccountCategory(), myCategory)) {
                 continue;
             }
 
@@ -589,17 +590,17 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a debt instant report element.
+     * Build a loan instant report element.
      * @param pSummary the class of element
      * @return Web output
      */
-    public StringBuilder makeDebtReport(final AssetSummary pSummary) {
+    public StringBuilder makeLoanReport(final AssetSummary pSummary) {
         /* Access the bucket lists */
         BucketList myList = theAnalysis.getList();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
-        /* Access the type */
-        AccountCategoryType myType = pSummary.getAccountType();
+        /* Access the category */
+        AccountCategory myCategory = pSummary.getAccountCategory();
 
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
@@ -617,21 +618,21 @@ public class AnalysisReport {
             AnalysisBucket myBucket = myIterator.next();
 
             /* Skip record if this is not debt detail */
-            if (myBucket.getBucketType() != BucketType.DEBTDETAIL) {
+            if (myBucket.getBucketType() != BucketType.LOANDETAIL) {
                 continue;
             }
 
             /* Access the bucket */
-            DebtAccountDetail myDebt = (DebtAccountDetail) myBucket;
+            LoanAccountDetail myLoan = (LoanAccountDetail) myBucket;
 
-            /* Skip record if incorrect type */
-            if (!Difference.isEqual(myDebt.getAccountType(), myType)) {
+            /* Skip record if incorrect category */
+            if (!Difference.isEqual(myLoan.getAccountCategory(), myCategory)) {
                 continue;
             }
 
             /* Format the detail */
-            theReport.startDataRow(myOutput, isOdd, myDebt.getName());
-            theReport.makeValueCell(myOutput, myDebt.getValue());
+            theReport.startDataRow(myOutput, isOdd, myLoan.getName());
+            theReport.makeValueCell(myOutput, myLoan.getValue());
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -658,8 +659,8 @@ public class AnalysisReport {
         BucketList myList = theAnalysis.getList();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
-        /* Access the type */
-        AccountCategoryType myType = pSummary.getAccountType();
+        /* Access the category */
+        AccountCategory myCategory = pSummary.getAccountCategory();
 
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
@@ -686,8 +687,8 @@ public class AnalysisReport {
             /* Access the bucket */
             AssetAccountDetail myAsset = (AssetAccountDetail) myBucket;
 
-            /* Skip record if incorrect type */
-            if (!Difference.isEqual(myAsset.getAccountType(), myType)) {
+            /* Skip record if incorrect category */
+            if (!Difference.isEqual(myAsset.getAccountCategory(), myCategory)) {
                 continue;
             }
 
@@ -1400,13 +1401,13 @@ public class AnalysisReport {
             theReport.makeValueCell(myOutput, myEvent.getDesc());
 
             /* Calculate Gross */
-            EventCategoryType myCat = myEvent.getCategoryType();
+            EventCategory myCategory = myEvent.getCategory();
             JMoney myGross = new JMoney(myEvent.getAmount());
             JMoney myNet = myEvent.getAmount();
 
             /* If we are NatInsurance/Benefit */
-            if ((myCat.getCategoryClass() == EventCategoryClass.NatInsurance)
-                || (myCat.getCategoryClass() == EventCategoryClass.Benefit)) {
+            if ((myCategory.getCategoryTypeClass() == EventCategoryClass.NatInsurance)
+                || (myCategory.getCategoryTypeClass() == EventCategoryClass.Benefit)) {
                 /* Just add to gross */
                 myNet = new JMoney();
             } else if (myEvent.getTaxCredit() != null) {

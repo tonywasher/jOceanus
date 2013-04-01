@@ -305,6 +305,10 @@ public class ReportTab
         theEditor.setCaretPosition(0);
         theEditor.requestFocusInWindow();
         thePrint.setText(myText);
+
+        /* Document myDoc = theEditor.getDocument(); */
+        /* Element myEl = myDoc.getDefaultRootElement(); */
+        /* myEl. */
     }
 
     /**

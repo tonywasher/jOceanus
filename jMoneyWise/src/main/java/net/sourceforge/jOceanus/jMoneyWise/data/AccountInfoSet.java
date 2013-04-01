@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jMoneyWise.data;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -83,5 +84,41 @@ public class AccountInfoSet
 
         /* Return the account */
         return myValue.getAccount();
+    }
+
+    /**
+     * Obtain the event category for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the event category
+     */
+    public EventCategory getEventCategory(final AccountInfoClass pInfoClass) {
+        /* Access existing entry */
+        AccountInfo myValue = getInfo(pInfoClass);
+
+        /* If we have no entry, return null */
+        if (myValue == null) {
+            return null;
+        }
+
+        /* Return the event category */
+        return myValue.getEventCategory();
+    }
+
+    /**
+     * Obtain the currency for the infoClass.
+     * @param pInfoClass the Info Class
+     * @return the account currency
+     */
+    public AccountCurrency getAccountCurrency(final AccountInfoClass pInfoClass) {
+        /* Access existing entry */
+        AccountInfo myValue = getInfo(pInfoClass);
+
+        /* If we have no entry, return null */
+        if (myValue == null) {
+            return null;
+        }
+
+        /* Return the account currency */
+        return myValue.getAccountCurrency();
     }
 }

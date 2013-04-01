@@ -40,7 +40,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
  * Statement type selection panel.
  * @author Tony Washer
  */
-public class StatementSelect extends JEventPanel {
+public class StatementSelect
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -54,8 +55,7 @@ public class StatementSelect extends JEventPanel {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
-            .getBundle(StatementSelect.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StatementSelect.class.getName());
 
     /**
      * Text for View Label.
@@ -119,7 +119,8 @@ public class StatementSelect extends JEventPanel {
     @Override
     public void setEnabled(final boolean bEnabled) {
         /* Lock/Unlock the selection */
-        theStateBox.setEnabled(bEnabled && (theType != StatementType.Null));
+        theStateBox.setEnabled(bEnabled
+                               && (theType != StatementType.Null));
     }
 
     /**
@@ -139,14 +140,14 @@ public class StatementSelect extends JEventPanel {
         /* If we have an account */
         if (pAccount != null) {
             /* Add Value if the account is Money/Debt */
-            if (pAccount.isMoney() || pAccount.isDebt()) {
+            if (pAccount.hasValue()) {
                 theStateBox.addItem(StatementType.Value);
             } else if (theType == StatementType.Value) {
                 theType = StatementType.Null;
             }
 
             /* Add Units if the account is Priced */
-            if (pAccount.isPriced()) {
+            if (pAccount.hasUnits()) {
                 theStateBox.addItem(StatementType.Units);
             } else if (theType == StatementType.Units) {
                 theType = StatementType.Null;
@@ -158,11 +159,9 @@ public class StatementSelect extends JEventPanel {
             /* If we have no type */
             if (theType == StatementType.Null) {
                 /* Select the default type for the account */
-                if (pAccount.isMoney()) {
+                if (pAccount.hasValue()) {
                     theType = StatementType.Value;
-                } else if (pAccount.isDebt()) {
-                    theType = StatementType.Value;
-                } else if (pAccount.isPriced()) {
+                } else if (pAccount.hasUnits()) {
                     theType = StatementType.Units;
                 } else {
                     theType = StatementType.Extract;
@@ -187,7 +186,8 @@ public class StatementSelect extends JEventPanel {
     /**
      * TaxYear Listener class.
      */
-    private final class StatementListener implements ItemListener {
+    private final class StatementListener
+            implements ItemListener {
         /* ItemStateChanged listener event */
         @Override
         public void itemStateChanged(final ItemEvent evt) {
@@ -197,7 +197,8 @@ public class StatementSelect extends JEventPanel {
             }
 
             /* If this event relates to the Statement box */
-            if ((evt.getSource() == theStateBox) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            if ((evt.getSource() == theStateBox)
+                && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* If the type has changed */
                 StatementType myType = (StatementType) evt.getItem();
                 if (!theType.equals(myType)) {

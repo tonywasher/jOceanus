@@ -79,7 +79,9 @@ public abstract class EncryptedItem
      */
     public Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
-        return (myKey == null) ? null : myKey.getId();
+        return (myKey == null)
+                ? null
+                : myKey.getId();
     }
 
     /**
@@ -113,11 +115,11 @@ public abstract class EncryptedItem
     /**
      * Standard Constructor. This creates a null encryption generator. This will be overridden when a ControlKey is assigned to the item.
      * @param pList the list that this item is associated with
-     * @param uId the Id of the new item (or 0 if not yet known)
+     * @param pId the Id of the new item (or 0 if not yet known)
      */
     public EncryptedItem(final EncryptedList<?> pList,
-                         final Integer uId) {
-        super(pList, uId);
+                         final Integer pId) {
+        super(pList, pId);
         theGenerator = new EncryptionGenerator(null);
     }
 
@@ -142,19 +144,19 @@ public abstract class EncryptedItem
 
     /**
      * Set ControlKey id.
-     * @param uControlId the Control Id
+     * @param pControlId the Control Id
      * @throws JDataException on error
      */
-    protected void setControlKey(final Integer uControlId) throws JDataException {
+    protected void setControlKey(final Integer pControlId) throws JDataException {
         /* Store the id */
-        setValueControlKey(uControlId);
+        setValueControlKey(pControlId);
 
         /* Look up the Control keys */
         DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 
         /* Look up the ControlKey */
-        ControlKey myControl = myKeys.findItemById(uControlId);
+        ControlKey myControl = myKeys.findItemById(pControlId);
         if (myControl == null) {
             throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
         }
@@ -217,7 +219,9 @@ public abstract class EncryptedItem
                                            final EncryptedField<?> pNew) {
         /* Handle case where current value is null */
         if (pCurr == null) {
-            return (pNew != null) ? Difference.Different : Difference.Identical;
+            return (pNew != null)
+                    ? Difference.Different
+                    : Difference.Identical;
         }
 
         /* Handle case where new value is null */
@@ -407,7 +411,9 @@ public abstract class EncryptedItem
                 EncryptedItem myBase = pBase.findItemById(myCurr.getId());
 
                 /* Cast the items correctly */
-                T mySource = (myBase == null) ? null : myClass.cast(myBase);
+                T mySource = (myBase == null)
+                        ? null
+                        : myClass.cast(myBase);
                 T myTarget = myClass.cast(myCurr);
 
                 /* Adopt/initialise the security */

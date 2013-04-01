@@ -30,7 +30,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
 /**
  * Preferences for a database.
  */
-public class DatabasePreferences extends PreferenceSet {
+public class DatabasePreferences
+        extends PreferenceSet {
     /**
      * Registry name for DataBase driver.
      */
@@ -119,7 +120,7 @@ public class DatabasePreferences extends PreferenceSet {
     /**
      * Default Database name.
      */
-    private static final String DEFAULT_DBNAME = "Finance";
+    private static final String DEFAULT_DBNAME = "NewFinance";
 
     /**
      * Default Database batch size.

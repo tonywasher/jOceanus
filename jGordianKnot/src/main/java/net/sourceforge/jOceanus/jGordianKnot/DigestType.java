@@ -60,7 +60,12 @@ public enum DigestType {
     /**
      * SHA512.
      */
-    SHA512(6, 512);
+    SHA512(6, 512),
+
+    /**
+     * SHA3.
+     */
+    SHA3(7, 256);
 
     /**
      * The external Id of the algorithm.
@@ -111,7 +116,8 @@ public enum DigestType {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid DigestType: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid DigestType: "
+                                                      + id);
     }
 
     /**
@@ -120,6 +126,8 @@ public enum DigestType {
      */
     public String getAlgorithm() {
         switch (this) {
+            case SHA3:
+                return "SHA3-256";
             case SHA256:
                 return "SHA-256";
             case SHA512:
@@ -143,8 +151,11 @@ public enum DigestType {
                 return "HMacRIPEMD320";
             case GOST:
                 return "HMacGOST3411";
+            case SHA3:
+                return "HMacSHA3-256";
             default:
-                return "HMac" + toString();
+                return "HMac"
+                       + toString();
         }
     }
 
@@ -163,8 +174,10 @@ public enum DigestType {
         int iIndex;
 
         /* Reject call if invalid number of types */
-        if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of digests: " + pNumTypes);
+        if ((pNumTypes < 1)
+            || (pNumTypes > iNumValues)) {
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of digests: "
+                                                           + pNumTypes);
         }
 
         /* Create the result set */

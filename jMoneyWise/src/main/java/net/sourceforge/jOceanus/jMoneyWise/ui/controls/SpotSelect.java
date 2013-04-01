@@ -48,9 +48,9 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
@@ -140,9 +140,9 @@ public class SpotSelect
     private final JButton thePrev;
 
     /**
-     * The accountTypes comboBox.
+     * The accountCategories comboBox.
      */
-    private final JComboBox<AccountCategoryType> theTypesBox;
+    private final JComboBox<AccountCategory> theCategoriesBox;
 
     /**
      * The current state.
@@ -173,11 +173,11 @@ public class SpotSelect
     }
 
     /**
-     * Get the selected account type.
-     * @return the account type
+     * Get the selected account category.
+     * @return the account category
      */
-    public final AccountCategoryType getAccountType() {
-        return theState.getAccountType();
+    public final AccountCategory getAccountCategory() {
+        return theState.getAccountCategory();
     }
 
     /**
@@ -214,9 +214,9 @@ public class SpotSelect
         theNext = new JButton(NLS_NEXT);
         thePrev = new JButton(NLS_PREV);
 
-        /* Create the Type box */
-        theTypesBox = new JComboBox<AccountCategoryType>();
-        theTypesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
+        /* Create the Category box */
+        theCategoriesBox = new JComboBox<AccountCategory>();
+        theCategoriesBox.setMaximumSize(new Dimension(FIELD_WIDTH, FIELD_HEIGHT));
 
         /* Create initial state */
         theState = new SpotState();
@@ -237,7 +237,7 @@ public class SpotSelect
         add(Box.createHorizontalGlue());
         add(myAct);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theTypesBox);
+        add(theCategoriesBox);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(theShowClosed);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
@@ -253,15 +253,15 @@ public class SpotSelect
         theShowClosed.addItemListener(myListener);
         theNext.addActionListener(myListener);
         thePrev.addActionListener(myListener);
-        theTypesBox.addItemListener(myListener);
+        theCategoriesBox.addItemListener(myListener);
     }
 
     /**
      * Refresh data.
      */
     public final void refreshData() {
-        AccountCategoryType myType = null;
-        AccountCategoryType myFirst = null;
+        AccountCategory myCategory = null;
+        AccountCategory myFirst = null;
 
         /* Access the data */
         JDateDayRange myRange = theView.getRange();
@@ -272,23 +272,23 @@ public class SpotSelect
         /* Access the data */
         FinanceData myData = theView.getData();
 
-        /* Access types and accounts */
-        AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
+        /* Access categories and accounts */
+        AccountCategoryList myCategories = myData.getAccountCategories();
         AccountList myAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
         refreshingData = true;
 
-        /* If we have types already populated */
-        if (theTypesBox.getItemCount() > 0) {
-            /* If we have a selected type */
-            if (getAccountType() != null) {
+        /* If we have categories already populated */
+        if (theCategoriesBox.getItemCount() > 0) {
+            /* If we have a selected category */
+            if (getAccountCategory() != null) {
                 /* Find it in the new list */
-                theState.setType(myTypes.findItemByName(getAccountType().getName()));
+                theState.setCategory(myCategories.findItemByName(getAccountCategory().getName()));
             }
 
-            /* Remove the types */
-            theTypesBox.removeAllItems();
+            /* Remove the categories */
+            theCategoriesBox.removeAllItems();
         }
 
         /* Access the iterator */
@@ -299,7 +299,7 @@ public class SpotSelect
             Account myAccount = myIterator.next();
 
             /* Skip non-priced, deleted and alias items */
-            if ((!myAccount.isPriced())
+            if ((!myAccount.hasUnits())
                 || (myAccount.isDeleted())
                 || (myAccount.isAlias())) {
                 continue;
@@ -311,29 +311,29 @@ public class SpotSelect
                 continue;
             }
 
-            /* If the type of this account is new */
-            if (!Difference.isEqual(myType, myAccount.getActType())) {
-                /* Note the type */
-                myType = myAccount.getActType();
+            /* If the category of this account is new */
+            if (!Difference.isEqual(myCategory, myAccount.getAccountCategory())) {
+                /* Note the category */
+                myCategory = myAccount.getAccountCategory();
                 if (myFirst == null) {
-                    myFirst = myType;
+                    myFirst = myCategory;
                 }
 
                 /* Add the item to the list */
-                theTypesBox.addItem(myType);
+                theCategoriesBox.addItem(myCategory);
             }
         }
 
         /* If we have a selected type */
-        if (getAccountType() != null) {
+        if (getAccountCategory() != null) {
             /* Select it in the new list */
-            theTypesBox.setSelectedItem(getAccountType());
+            theCategoriesBox.setSelectedItem(getAccountCategory());
 
             /* Else we have no type currently selected */
-        } else if (theTypesBox.getItemCount() > 0) {
-            /* Select the first account type */
-            theTypesBox.setSelectedIndex(0);
-            theState.setType(myFirst);
+        } else if (theCategoriesBox.getItemCount() > 0) {
+            /* Select the first account category */
+            theCategoriesBox.setSelectedIndex(0);
+            theState.setCategory(myFirst);
         }
 
         /* Note that we have finished refreshing data */
@@ -364,7 +364,7 @@ public class SpotSelect
         thePrev.setEnabled(bEnabled
                            && (theState.getPrevDate() != null));
         theDateButton.setEnabled(bEnabled);
-        theTypesBox.setEnabled(bEnabled);
+        theCategoriesBox.setEnabled(bEnabled);
     }
 
     /**
@@ -444,13 +444,13 @@ public class SpotSelect
                 doShowClosed = theShowClosed.isSelected();
                 fireStateChanged();
 
-                /* If this event relates to the Account Type box */
-            } else if ((theTypesBox.equals(o))
+                /* If this event relates to the Account Category box */
+            } else if ((theCategoriesBox.equals(o))
                        && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                AccountCategoryType myType = (AccountCategoryType) evt.getItem();
+                AccountCategory myCategory = (AccountCategory) evt.getItem();
 
-                /* Select the new type */
-                if (theState.setType(myType)) {
+                /* Select the new category */
+                if (theState.setCategory(myCategory)) {
                     fireStateChanged();
                 }
             }
@@ -462,9 +462,9 @@ public class SpotSelect
      */
     private final class SpotState {
         /**
-         * AccountType.
+         * AccountCategory.
          */
-        private AccountCategoryType theType = null;
+        private AccountCategory theCategory = null;
 
         /**
          * Selected date.
@@ -482,11 +482,11 @@ public class SpotSelect
         private JDateDay thePrevDate = null;
 
         /**
-         * Get the account type.
-         * @return the account type
+         * Get the account category.
+         * @return the account category
          */
-        private AccountCategoryType getAccountType() {
-            return theType;
+        private AccountCategory getAccountCategory() {
+            return theCategory;
         }
 
         /**
@@ -525,7 +525,7 @@ public class SpotSelect
          * @param pState state to copy from
          */
         private SpotState(final SpotState pState) {
-            theType = pState.getAccountType();
+            theCategory = pState.getAccountCategory();
             theDate = new JDateDay(pState.getDate());
             if (pState.getNextDate() != null) {
                 theNextDate = new JDateDay(pState.getNextDate());
@@ -536,14 +536,14 @@ public class SpotSelect
         }
 
         /**
-         * Set new Account Type.
-         * @param pType the AccountType
+         * Set new Account Category.
+         * @param pCategory the AccountCategory
          * @return true/false did a change occur
          */
-        private boolean setType(final AccountCategoryType pType) {
+        private boolean setCategory(final AccountCategory pCategory) {
             /* Adjust the selected account */
-            if (!Difference.isEqual(pType, theType)) {
-                theType = pType;
+            if (!Difference.isEqual(pCategory, theCategory)) {
+                theCategory = pCategory;
                 return true;
             }
             return false;
@@ -604,7 +604,7 @@ public class SpotSelect
             /* Adjust the lock-down */
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
-            theTypesBox.setSelectedItem(theType);
+            theCategoriesBox.setSelectedItem(theCategory);
         }
     }
 }

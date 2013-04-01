@@ -38,8 +38,8 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
@@ -237,11 +237,11 @@ public final class DilutionEvent
         /* Local variables */
         Account myAccount;
 
-        /* Access the category type */
-        EventCategoryType myType = pEvent.getCategoryType();
+        /* Access the category */
+        EventCategory myCategory = pEvent.getCategory();
 
         /* Switch on the category type */
-        switch (myType.getCategoryClass()) {
+        switch (myCategory.getCategoryTypeClass()) {
             case StockRightsTaken:
                 myAccount = pEvent.getCredit();
                 break;

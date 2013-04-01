@@ -39,7 +39,6 @@ import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
@@ -573,8 +572,8 @@ public final class CapitalEvent
 
             /* If the element is a cash takeover */
             if ((myEvent != null)
-                && (myEvent.getEvent() != null)
-                && (myEvent.getEvent().getCategoryType().getCategoryClass() == EventCategoryClass.CashTakeOver)) {
+                && (myEvent.getEvent() != null)) {
+                // && (myEvent.getEvent().getCategoryClass() == EventCategoryClass.CashTakeOver)) TODO {
                 return myEvent;
             }
 

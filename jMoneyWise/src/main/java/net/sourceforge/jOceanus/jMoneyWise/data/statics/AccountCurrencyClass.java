@@ -22,74 +22,70 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data.statics;
 
-import net.sourceforge.jOceanus.jDataManager.DataType;
+import java.util.Currency;
+
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataInfoClass;
+import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
 
 /**
- * Enumeration of EventInfo Classes..
+ * Enumeration of AccountCurrency Classes.
  */
-public enum EventInfoClass implements DataInfoClass {
+public enum AccountCurrencyClass implements StaticInterface {
     /**
-     * Tax Credit.
+     * British Pounds.
      */
-    TaxCredit(1, 0, DataType.MONEY),
+    GBP(1, 0),
 
     /**
-     * National Insurance.
+     * US Dollars.
      */
-    NatInsurance(2, 1, DataType.MONEY),
+    USD(2, 1),
 
     /**
-     * Benefit.
+     * Euro.
      */
-    Benefit(3, 2, DataType.MONEY),
+    EUR(3, 2),
 
     /**
-     * Pension.
+     * Canadian Dollars.
      */
-    Pension(4, 3, DataType.MONEY),
+    CND(4, 3),
 
     /**
-     * QualifyingYears.
+     * Australian Dollars.
      */
-    QualifyYears(5, 4, DataType.INTEGER),
+    AUD(5, 4),
 
     /**
-     * TransferDelay.
+     * NewZealand Dollars.
      */
-    XferDelay(6, 5, DataType.INTEGER),
+    NZD(6, 5),
 
     /**
-     * Credit Units.
+     * Chinese Yuan.
      */
-    CreditUnits(7, 6, DataType.UNITS),
+    CNY(7, 6),
 
     /**
-     * Debit Units.
+     * Japanese Yen.
      */
-    DebitUnits(8, 7, DataType.UNITS),
+    JPY(8, 7),
 
     /**
-     * Dilution.
+     * HongKong Dollars.
      */
-    Dilution(9, 8, DataType.DILUTION),
+    HKD(9, 8),
 
     /**
-     * Reference.
+     * Swedish Krona.
      */
-    Reference(10, 9, DataType.STRING),
+    SEK(10, 9),
 
     /**
-     * Charity Donation.
+     * Turkish Lira.
      */
-    CharityDonation(11, 10, DataType.MONEY),
-
-    /**
-     * ThirdParty.
-     */
-    ThirdParty(12, 11);
+    TRY(11, 10);
 
     /**
      * Class Id.
@@ -102,14 +98,9 @@ public enum EventInfoClass implements DataInfoClass {
     private final int theOrder;
 
     /**
-     * Data Type.
+     * Currency.
      */
-    private final DataType theDataType;
-
-    /**
-     * Is this a Link?.
-     */
-    private final boolean isLink;
+    private final Currency theCurrency;
 
     @Override
     public int getClassId() {
@@ -121,42 +112,24 @@ public enum EventInfoClass implements DataInfoClass {
         return theOrder;
     }
 
-    @Override
-    public DataType getDataType() {
-        return theDataType;
-    }
-
-    @Override
-    public boolean isLink() {
-        return isLink;
+    /**
+     * Obtain currency.
+     * @return the currency
+     */
+    public Currency getCurrency() {
+        return theCurrency;
     }
 
     /**
      * Constructor.
-     * @param uId the id
-     * @param uOrder the default order
-     * @param pDataType the data type
+     * @param uId the Id
+     * @param uOrder the default order.
      */
-    private EventInfoClass(final int uId,
-                           final int uOrder,
-                           final DataType pDataType) {
+    private AccountCurrencyClass(final int uId,
+                                 final int uOrder) {
         theId = uId;
         theOrder = uOrder;
-        theDataType = pDataType;
-        isLink = false;
-    }
-
-    /**
-     * Constructor.
-     * @param uId the id
-     * @param uOrder the default order
-     */
-    private EventInfoClass(final int uId,
-                           final int uOrder) {
-        theId = uId;
-        theOrder = uOrder;
-        theDataType = DataType.INTEGER;
-        isLink = true;
+        theCurrency = Currency.getInstance(name());
     }
 
     /**
@@ -165,13 +138,13 @@ public enum EventInfoClass implements DataInfoClass {
      * @return the corresponding enum object
      * @throws JDataException on error
      */
-    public static EventInfoClass fromId(final int id) throws JDataException {
-        for (EventInfoClass myClass : values()) {
+    public static AccountCurrencyClass fromId(final int id) throws JDataException {
+        for (AccountCurrencyClass myClass : values()) {
             if (myClass.getClassId() == id) {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid EventInfo Class Id: "
+        throw new JDataException(ExceptionClass.DATA, "Invalid Account Currency Class Id: "
                                                       + id);
     }
 }

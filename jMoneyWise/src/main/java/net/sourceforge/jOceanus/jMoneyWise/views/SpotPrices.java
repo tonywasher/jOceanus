@@ -37,10 +37,10 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
 
 /**
  * Extension of AccountPrice to cater for spot prices.
@@ -64,9 +64,9 @@ public class SpotPrices
     public static final JDataField FIELD_VIEW = FIELD_DEFS.declareLocalField("View");
 
     /**
-     * AccountType Field Id.
+     * AccountCategory Field Id.
      */
-    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField("AccountType");
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField("AccountCategory");
 
     /**
      * Date Field Id.
@@ -93,8 +93,8 @@ public class SpotPrices
         if (FIELD_VIEW.equals(pField)) {
             return theView;
         }
-        if (FIELD_TYPE.equals(pField)) {
-            return theType;
+        if (FIELD_CATEGORY.equals(pField)) {
+            return theCategory;
         }
         if (FIELD_DATE.equals(pField)) {
             return theDate;
@@ -122,9 +122,9 @@ public class SpotPrices
     private final View theView;
 
     /**
-     * The account type.
+     * The account category.
      */
-    private final AccountCategoryType theType;
+    private final AccountCategory theCategory;
 
     /**
      * The date.
@@ -137,11 +137,11 @@ public class SpotPrices
     private final SpotList thePrices;
 
     /**
-     * Obtain account type.
-     * @return the account type
+     * Obtain account category.
+     * @return the account category
      */
-    public AccountCategoryType getAccountType() {
-        return theType;
+    public AccountCategory getAccountCategory() {
+        return theCategory;
     }
 
     /**
@@ -204,16 +204,16 @@ public class SpotPrices
     /**
      * Constructor.
      * @param pView the view
-     * @param pType the account type
+     * @param pCategory the account category
      * @param pDate the date
      */
     public SpotPrices(final View pView,
-                      final AccountCategoryType pType,
+                      final AccountCategory pCategory,
                       final JDateDay pDate) {
         /* Create a copy of the date and initiate the list */
         theView = pView;
         theDate = pDate;
-        theType = pType;
+        theCategory = pCategory;
         thePrices = new SpotList(this);
     }
 
@@ -228,9 +228,9 @@ public class SpotPrices
         protected static final JDataFields FIELD_DEFS = new JDataFields(SpotList.class.getSimpleName(), DataList.FIELD_DEFS);
 
         /**
-         * The account type field Id.
+         * The account category field Id.
          */
-        public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField("AccountType");
+        public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField("AccountCategory");
 
         /**
          * The date field Id.
@@ -254,8 +254,8 @@ public class SpotPrices
 
         @Override
         public Object getFieldValue(final JDataField pField) {
-            if (FIELD_TYPE.equals(pField)) {
-                return theType;
+            if (FIELD_CATEGORY.equals(pField)) {
+                return theCategory;
             }
             if (FIELD_DATE.equals(pField)) {
                 return theDate;
@@ -290,9 +290,9 @@ public class SpotPrices
         private final View theView;
 
         /**
-         * The account type.
+         * The account category.
          */
-        private final AccountCategoryType theType;
+        private final AccountCategory theCategory;
 
         /**
          * The next date.
@@ -330,16 +330,16 @@ public class SpotPrices
             setStyle(ListStyle.EDIT);
             theDate = pPrices.getDate();
             theView = pPrices.getView();
-            theType = pPrices.getAccountType();
+            theCategory = pPrices.getAccountCategory();
 
             /* Loop through the Accounts */
             FinanceData myData = theView.getData();
             Iterator<Account> myActIterator = myData.getAccounts().listIterator();
             while (myActIterator.hasNext()) {
                 Account myAccount = myActIterator.next();
-                /* Ignore accounts that are wrong type, have no prices or are aliases */
-                if ((!Difference.isEqual(myAccount.getActType(), theType))
-                    || (!myAccount.isPriced())
+                /* Ignore accounts that are wrong category, have no prices or are aliases */
+                if ((!Difference.isEqual(myAccount.getAccountCategory(), theCategory))
+                    || (!myAccount.hasUnits())
                     || (myAccount.isAlias())) {
                     continue;
                 }
@@ -365,7 +365,7 @@ public class SpotPrices
             while (myIterator.hasNext()) {
                 AccountPrice myPrice = myIterator.next();
                 /* Ignore accounts that are wrong type */
-                if (!Difference.isEqual(myPrice.getAccount().getActType(), theType)) {
+                if (!Difference.isEqual(myPrice.getAccount().getAccountCategory(), theCategory)) {
                     continue;
                 }
 

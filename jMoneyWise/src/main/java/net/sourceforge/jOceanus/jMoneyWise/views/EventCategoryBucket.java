@@ -26,7 +26,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 
 /**
  * The CategoryType Bucket class.
@@ -39,49 +39,49 @@ public abstract class EventCategoryBucket
     protected static final JDataFields FIELD_DEFS = new JDataFields(EventCategoryBucket.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
     /**
-     * CategoryType Field Id.
+     * Category Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityField("CategoryType");
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityField("Category");
 
     @Override
     public Object getFieldValue(final JDataField pField) {
-        if (FIELD_CATTYPE.equals(pField)) {
-            return theCategoryType;
+        if (FIELD_CATEGORY.equals(pField)) {
+            return theCategory;
         }
         return super.getFieldValue(pField);
     }
 
     /**
-     * The Category Type.
+     * The Category.
      */
-    private final EventCategoryType theCategoryType;
+    private final EventCategory theCategory;
 
     /**
      * Obtain name.
      * @return the name
      */
     public String getName() {
-        return theCategoryType.getName();
+        return theCategory.getName();
     }
 
     /**
      * Obtain category type.
      * @return the type
      */
-    public EventCategoryType getCategoryType() {
-        return theCategoryType;
+    public EventCategory getCategory() {
+        return theCategory;
     }
 
     /**
      * Constructor.
-     * @param pCategoryType the type
+     * @param pCategory the category
      */
-    private EventCategoryBucket(final EventCategoryType pCategoryType) {
+    private EventCategoryBucket(final EventCategory pCategory) {
         /* Call super-constructor */
-        super(BucketType.CATDETAIL, pCategoryType.getId());
+        super(BucketType.CATDETAIL, pCategory.getId());
 
         /* Store the category type */
-        theCategoryType = pCategoryType;
+        theCategory = pCategory;
     }
 
     /**
@@ -92,8 +92,8 @@ public abstract class EventCategoryBucket
         /* Call super-constructor */
         super(pBase);
 
-        /* Store the transaction type */
-        theCategoryType = pBase.theCategoryType;
+        /* Store the category */
+        theCategory = pBase.theCategory;
     }
 
     @Override
@@ -115,8 +115,8 @@ public abstract class EventCategoryBucket
         /* Access the object as an CategoryType Bucket */
         EventCategoryBucket myThat = (EventCategoryBucket) pThat;
 
-        /* Compare the CategoryTypes */
-        return getCategoryType().compareTo(myThat.getCategoryType());
+        /* Compare the Categories */
+        return getCategory().compareTo(myThat.getCategory());
     }
 
     /**
@@ -208,11 +208,11 @@ public abstract class EventCategoryBucket
 
         /**
          * Constructor.
-         * @param pCategoryType the category type
+         * @param pCategory the category
          */
-        protected EventCategoryDetail(final EventCategoryType pCategoryType) {
+        protected EventCategoryDetail(final EventCategory pCategory) {
             /* Call super-constructor */
-            super(pCategoryType);
+            super(pCategory);
 
             /* Initialise the Money values */
             theAmount = new JMoney();
@@ -238,7 +238,7 @@ public abstract class EventCategoryBucket
          */
         private EventCategoryDetail cloneIt() {
             /* Create clone */
-            EventCategoryDetail myClone = new EventCategoryDetail(getCategoryType());
+            EventCategoryDetail myClone = new EventCategoryDetail(getCategory());
 
             /* Copy the External values */
             myClone.theAmount = new JMoney(theAmount);

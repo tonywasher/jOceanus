@@ -113,7 +113,9 @@ public class DataKey
      */
     public Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
-        return (myKey == null) ? null : myKey.getId();
+        return (myKey == null)
+                ? null
+                : myKey.getId();
     }
 
     /**
@@ -130,7 +132,9 @@ public class DataKey
      */
     public Integer getKeyTypeId() {
         SymKeyType myType = getKeyType();
-        return (myType == null) ? null : myType.getId();
+        return (myType == null)
+                ? null
+                : myType.getId();
     }
 
     /**
@@ -302,34 +306,34 @@ public class DataKey
     /**
      * Secure Constructor.
      * @param pList the list to add to
-     * @param uId the id of the DataKey
-     * @param uControlId the id of the ControlKey
-     * @param uKeyTypeId the id of the KeyType
+     * @param pId the id of the DataKey
+     * @param pControlId the id of the ControlKey
+     * @param pKeyTypeId the id of the KeyType
      * @param pSecurityKey the encrypted symmetric key
      * @throws JDataException on error
      */
     private DataKey(final DataKeyList pList,
-                    final Integer uId,
-                    final Integer uControlId,
-                    final Integer uKeyTypeId,
+                    final Integer pId,
+                    final Integer pControlId,
+                    final Integer pKeyTypeId,
                     final byte[] pSecurityKey) throws JDataException {
         /* Initialise the item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Protect against exceptions */
         try {
             /* Record the IDs */
-            setValueControlKey(uControlId);
-            setValueKeyType(uKeyTypeId);
+            setValueControlKey(pControlId);
+            setValueKeyType(pKeyTypeId);
             setValueSecuredKeyDef(pSecurityKey);
 
             /* Determine the SymKeyType */
-            setValueKeyType(SymKeyType.fromId(uKeyTypeId));
+            setValueKeyType(SymKeyType.fromId(pKeyTypeId));
 
             /* Look up the ControlKey */
             DataSet<?> myData = getDataSet();
             ControlKeyList myKeys = myData.getControlKeys();
-            ControlKey myControlKey = myKeys.findItemById(uControlId);
+            ControlKey myControlKey = myKeys.findItemById(pControlId);
             if (myControlKey == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
             }
@@ -558,24 +562,24 @@ public class DataKey
 
         /**
          * Add a DataKey from Database/Backup.
-         * @param uId the id of the DataKey
-         * @param uControlId the id of the ControlKey
-         * @param uKeyTypeId the id of the KeyType
+         * @param pId the id of the DataKey
+         * @param pControlId the id of the ControlKey
+         * @param pKeyTypeId the id of the KeyType
          * @param pSecurityKey the encrypted symmetric key
          * @return the new item
          * @throws JDataException on error
          */
-        public DataKey addSecureItem(final Integer uId,
-                                     final Integer uControlId,
-                                     final Integer uKeyTypeId,
+        public DataKey addSecureItem(final Integer pId,
+                                     final Integer pControlId,
+                                     final Integer pKeyTypeId,
                                      final byte[] pSecurityKey) throws JDataException {
             /* Create the DataKey */
-            DataKey myKey = new DataKey(this, uId, uControlId, uKeyTypeId, pSecurityKey);
+            DataKey myKey = new DataKey(this, pId, pControlId, pKeyTypeId, pSecurityKey);
 
             /* Check that this KeyId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate DataKeyId ("
-                                                                     + uId
+                                                                     + pId
                                                                      + ")");
             }
 

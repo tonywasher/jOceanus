@@ -31,14 +31,13 @@ import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
 
 /**
@@ -91,11 +90,11 @@ public abstract class AccountBucket
     }
 
     /**
-     * Obtain the account type.
-     * @return the account type
+     * Obtain the account category.
+     * @return the account category
      */
-    public AccountCategoryType getAccountType() {
-        return theAccount.getActType();
+    public AccountCategory getAccountCategory() {
+        return theAccount.getAccountCategory();
     }
 
     /**
@@ -463,14 +462,14 @@ public abstract class AccountBucket
     }
 
     /**
-     * The DebtAccountDetail Bucket class.
+     * The LoanAccountDetail Bucket class.
      */
-    public static final class DebtAccountDetail
+    public static final class LoanAccountDetail
             extends ValueBucket {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(DebtAccountDetail.class.getSimpleName(), ValueBucket.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(LoanAccountDetail.class.getSimpleName(), ValueBucket.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -498,11 +497,11 @@ public abstract class AccountBucket
         /**
          * The savePoint.
          */
-        private DebtAccountDetail theSavePoint = null;
+        private LoanAccountDetail theSavePoint = null;
 
         @Override
-        public DebtAccountDetail getBase() {
-            return (DebtAccountDetail) super.getBase();
+        public LoanAccountDetail getBase() {
+            return (LoanAccountDetail) super.getBase();
         }
 
         /**
@@ -517,9 +516,9 @@ public abstract class AccountBucket
          * Constructor.
          * @param pAccount the account
          */
-        protected DebtAccountDetail(final Account pAccount) {
+        protected LoanAccountDetail(final Account pAccount) {
             /* Call super-constructor */
-            super(BucketType.DEBTDETAIL, pAccount);
+            super(BucketType.LOANDETAIL, pAccount);
 
             /* Initialise the money values */
             theSpend = new JMoney();
@@ -529,7 +528,7 @@ public abstract class AccountBucket
          * Constructor.
          * @param pBase the underlying bucket
          */
-        protected DebtAccountDetail(final DebtAccountDetail pBase) {
+        protected LoanAccountDetail(final LoanAccountDetail pBase) {
             /* Call super-constructor */
             super(pBase.cloneIt());
 
@@ -552,12 +551,12 @@ public abstract class AccountBucket
         }
 
         /**
-         * Create a clone of the debt account.
-         * @return the cloned DebtAccount.
+         * Create a clone of the loan account.
+         * @return the cloned LoanAccount.
          */
-        private DebtAccountDetail cloneIt() {
+        private LoanAccountDetail cloneIt() {
             /* Call super-constructor */
-            DebtAccountDetail myClone = new DebtAccountDetail(getAccount());
+            LoanAccountDetail myClone = new LoanAccountDetail(getAccount());
 
             /* Copy the Debt values */
             myClone.setValue(new JMoney(getValue()));
@@ -573,7 +572,7 @@ public abstract class AccountBucket
         @Override
         protected void createSavePoint() {
             /* Create a save of the values */
-            theSavePoint = new DebtAccountDetail(this);
+            theSavePoint = new LoanAccountDetail(this);
         }
 
         /**
@@ -1175,26 +1174,26 @@ public abstract class AccountBucket
          */
         @Override
         protected void adjustForDebit(final Event pEvent) {
-            EventCategoryType myCategory = pEvent.getCategoryType();
+            // EventCategory myCategory = pEvent.getCategory();
             JMoney myAmount = pEvent.getAmount();
             JMoney myTaxCred = pEvent.getTaxCredit();
 
             /* If this is a recovered transaction */
-            if (myCategory.isRecovered()) {
-                /* This is a negative expense */
-                theExpense.subtractAmount(myAmount);
+            // if (myCategory.isRecovered()) {TODO
+            /* This is a negative expense */
+            // theExpense.subtractAmount(myAmount);
 
-                /* else this is a standard income */
-            } else {
-                /* Adjust for income */
-                theIncome.addAmount(myAmount);
+            /* else this is a standard income */
+            // } else {
+            /* Adjust for income */
+            theIncome.addAmount(myAmount);
 
-                /* If there is a TaxCredit */
-                if (myTaxCred != null) {
-                    /* Adjust for Tax Credit */
-                    theIncome.addAmount(myTaxCred);
-                }
+            /* If there is a TaxCredit */
+            if (myTaxCred != null) {
+                /* Adjust for Tax Credit */
+                theIncome.addAmount(myTaxCred);
             }
+            // }
         }
 
         /**

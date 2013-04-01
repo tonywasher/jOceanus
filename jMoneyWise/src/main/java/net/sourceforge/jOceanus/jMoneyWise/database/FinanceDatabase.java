@@ -54,11 +54,14 @@ public class FinanceDatabase
         addTable(new TableAccountCategoryType(this));
         addTable(new TableEventCategoryType(this));
         addTable(new TableTaxCategory(this));
+        addTable(new TableAccountCurrency(this));
         addTable(new TableTaxRegime(this));
         addTable(new TableFrequency(this));
         addTable(new TableTaxYearInfoType(this));
         addTable(new TableAccountInfoType(this));
         addTable(new TableEventInfoType(this));
+        addTable(new TableAccountCategory(this));
+        addTable(new TableEventCategory(this));
         addTable(new TableTaxYear(this));
         addTable(new TableTaxYearInfo(this));
         addTable(new TableAccount(this));

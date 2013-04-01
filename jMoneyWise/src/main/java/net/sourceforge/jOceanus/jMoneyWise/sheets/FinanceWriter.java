@@ -52,11 +52,14 @@ public class FinanceWriter
         addSheet(new SheetAccountCategoryType(this));
         addSheet(new SheetEventCategoryType(this));
         addSheet(new SheetTaxCategory(this));
+        addSheet(new SheetAccountCurrency(this));
         addSheet(new SheetTaxRegime(this));
         addSheet(new SheetFrequency(this));
         addSheet(new SheetTaxYearInfoType(this));
         addSheet(new SheetAccountInfoType(this));
         addSheet(new SheetEventInfoType(this));
+        addSheet(new SheetAccountCategory(this));
+        addSheet(new SheetEventCategory(this));
         addSheet(new SheetTaxYear(this));
         if (isBackup) {
             addSheet(new SheetTaxYearInfo(this));

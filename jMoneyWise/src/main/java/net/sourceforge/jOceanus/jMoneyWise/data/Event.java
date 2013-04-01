@@ -47,7 +47,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoTypeList;
 
@@ -199,7 +199,7 @@ public class Event
             return EventInfoClass.Reference;
         }
         if (FIELD_DONATION.equals(pField)) {
-            return EventInfoClass.Donation;
+            return EventInfoClass.CharityDonation;
         }
         if (FIELD_THIRDPARTY.equals(pField)) {
             return EventInfoClass.ThirdParty;
@@ -326,7 +326,7 @@ public class Event
      */
     public JMoney getDonation() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.Donation, JMoney.class)
+                ? theInfoSet.getValue(EventInfoClass.CharityDonation, JMoney.class)
                 : null;
     }
 
@@ -509,7 +509,7 @@ public class Event
         useInfoSet = true;
 
         /* If we need a tax Credit */
-        if (needsTaxCredit(getCategoryType(), getDebit())) {
+        if (needsTaxCredit(getCategory(), getDebit())) {
             /* Calculate the tax credit */
             setTaxCredit(calculateTaxCredit());
         }
@@ -538,7 +538,7 @@ public class Event
      * @param pDesc the description
      * @param uDebit the debit id
      * @param uCredit the credit id
-     * @param uCatType the categoryType id
+     * @param uCategory the category id
      * @param pAmount the amount
      * @throws JDataException on error
      */
@@ -549,10 +549,10 @@ public class Event
                     final byte[] pDesc,
                     final Integer uDebit,
                     final Integer uCredit,
-                    final Integer uCatType,
+                    final Integer uCategory,
                     final byte[] pAmount) throws JDataException {
         /* Initialise item */
-        super(pList, uId, uControlId, pDate, pDesc, uDebit, uCredit, uCatType, pAmount);
+        super(pList, uId, uControlId, pDate, pDesc, uDebit, uCredit, uCategory, pAmount);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -568,7 +568,7 @@ public class Event
      * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pCatType the category type
+     * @param pCategory the category
      * @param pAmount the amount
      * @throws JDataException on error
      */
@@ -578,10 +578,10 @@ public class Event
                     final String pDesc,
                     final Account pDebit,
                     final Account pCredit,
-                    final EventCategoryType pCatType,
+                    final EventCategory pCategory,
                     final String pAmount) throws JDataException {
         /* Initialise item */
-        super(pList, uId, pDate, pDesc, pDebit, pCredit, pCatType, pAmount);
+        super(pList, uId, pDate, pDesc, pDebit, pCredit, pCategory, pAmount);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -596,7 +596,7 @@ public class Event
     public void validate() {
         Account myDebit = getDebit();
         Account myCredit = getCredit();
-        EventCategoryType myTrans = getCategoryType();
+        EventCategory myCategory = getCategory();
         JUnits myDebitUnits = getDebitUnits();
         JUnits myCreditUnits = getCreditUnits();
         JMoney myTaxCred = getTaxCredit();
@@ -617,7 +617,7 @@ public class Event
 
         /* Check for valid priced credit account */
         if ((myCredit != null)
-            && (myCredit.isPriced())) {
+            && (myCredit.hasUnits())) {
             /* If the date of this event is prior to the first price */
             AccountPrice myPrice = myCredit.getInitPrice();
             if ((myPrice != null)
@@ -628,7 +628,7 @@ public class Event
 
         /* Check for valid priced debit account */
         if ((myDebit != null)
-            && (myDebit.isPriced())
+            && (myDebit.hasUnits())
             && (!Difference.isEqual(myCredit, myDebit))) {
             /* If the date of this event is prior to the first price */
             AccountPrice myPrice = myDebit.getInitPrice();
@@ -645,13 +645,13 @@ public class Event
             if ((myDebit != null)
                 && (myDebitUnits != null)) {
                 /* Debit Units are only allowed if debit is priced */
-                if (!myDebit.isPriced()) {
+                if (!myDebit.hasUnits()) {
                     addError("Units are only allowed involving assets", FIELD_DEBTUNITS);
                 }
 
-                /* TranType of dividend cannot debit units */
-                if ((myTrans != null)
-                    && (myTrans.isDividend())) {
+                /* Category of dividend cannot debit units */
+                if ((myCategory != null)
+                    && (isDividend())) {
                     addError("Units cannot be debited for a dividend", FIELD_DEBTUNITS);
                 }
 
@@ -666,14 +666,8 @@ public class Event
             if ((myCredit != null)
                 && (myCreditUnits != null)) {
                 /* Credit Units are only allowed if credit is priced */
-                if (!myCredit.isPriced()) {
+                if (!myCredit.hasUnits()) {
                     addError("Units are only allowed involving assets", FIELD_CREDUNITS);
-                }
-
-                /* TranType of admin charge cannot credit units */
-                if ((myTrans != null)
-                    && (myTrans.isAdminCharge())) {
-                    addError("Units cannot be credited for an AdminCharge", FIELD_CREDUNITS);
                 }
 
                 /* Units must be non-zero and positive */
@@ -685,23 +679,20 @@ public class Event
             /* If both credit/debit are both priced */
             if ((myCredit != null)
                 && (myDebit != null)
-                && (myCredit.isPriced())
-                && (myDebit.isPriced())) {
-                /* TranType must be stock split or dividend between same account */
-                if ((myTrans == null)
-                    || ((!myTrans.isDividend())
-                        && (!myTrans.isStockSplit())
-                        && (!myTrans.isAdminCharge())
-                        && (!myTrans.isStockDemerger()) && (!myTrans.isStockTakeover()))) {
+                && (myCredit.hasUnits())
+                && (myDebit.hasUnits())) {
+                /* Category must be stock split or dividend between same account */
+                if ((myCategory == null)
+                    || ((!isDividend()) && (!myCategory.getCategoryTypeClass().isStockAdjustment()))) {
                     addError("Units can only refer to a single priced asset unless "
-                             + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_CREDUNITS);
+                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", FIELD_CREDUNITS);
                     addError("Units can only refer to a single priced asset unless "
-                             + "transaction is StockSplit/AdminCharge/Demerger/Takeover or Dividend", FIELD_DEBTUNITS);
+                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", FIELD_DEBTUNITS);
                 }
 
                 /* Dividend between priced requires identical credit/debit */
-                if ((myTrans != null)
-                    && (myTrans.isDividend())
+                if ((myCategory != null)
+                    && (isDividend())
                     && (!Difference.isEqual(myCredit, myDebit))) {
                     addError("Unit Dividends between assets must be between same asset", FIELD_CREDUNITS);
                 }
@@ -716,18 +707,17 @@ public class Event
 
             /* Else check for required units */
         } else {
-            if (isStockSplit()) {
+            if (isCategoryClass(EventCategoryClass.StockSplit)) {
                 addError("Stock Split requires non-zero Units", FIELD_CREDUNITS);
-            } else if (isAdminCharge()) {
-                addError("Admin Charge requires non-zero Units", FIELD_DEBTUNITS);
+            } else if (isCategoryClass(EventCategoryClass.StockAdjust)) {
+                addError("Stock Adjustment requires non-zero Units", FIELD_DEBTUNITS);
             }
         }
 
         /* If we have a dilution */
         if (myDilution != null) {
             /* If the dilution is not allowed */
-            if ((!needsDilution(myTrans))
-                && (!myTrans.isStockSplit())) {
+            if (!needsDilution(myCategory)) {
                 addError("Dilution factor given where not allowed", FIELD_DILUTION);
             }
 
@@ -737,13 +727,13 @@ public class Event
             }
 
             /* else if we are missing a required dilution factor */
-        } else if (needsDilution(myTrans)) {
+        } else if (needsDilution(myCategory)) {
             addError("Dilution factor missing where required", FIELD_DILUTION);
         }
 
         /* If we are a taxable gain */
-        if ((myTrans != null)
-            && (myTrans.isTaxableGain())) {
+        if ((myCategory != null)
+            && (myCategory.getCategoryTypeClass() == EventCategoryClass.TaxableGain)) {
             /* Years must be positive */
             if ((myYears == null)
                 || (myYears <= 0)) {
@@ -757,8 +747,8 @@ public class Event
             }
 
             /* If we need a tax credit */
-        } else if ((myTrans != null)
-                   && (needsTaxCredit(myTrans, myDebit))) {
+        } else if ((myCategory != null)
+                   && (needsTaxCredit(myCategory, myDebit))) {
             /* Tax Credit must be non-null and positive */
             if ((myTaxCred == null)
                 || (!myTaxCred.isPositive())) {
@@ -771,7 +761,7 @@ public class Event
             }
 
             /* else we should not have a tax credit */
-        } else if (myTrans != null) {
+        } else if (myCategory != null) {
             /* Tax Credit must be null */
             if (myTaxCred != null) {
                 addError("TaxCredit must be null", FIELD_TAXCREDIT);
@@ -803,9 +793,9 @@ public class Event
             return getTaxCredit();
         }
 
-        /* Ignore unless category type is interest/dividend */
-        if ((getCategoryType() == null)
-            || ((!getCategoryType().isInterest()) && (!getCategoryType().isDividend()))) {
+        /* Ignore unless category is interest/dividend */
+        if ((getCategory() == null)
+            || ((!isInterest()) && (!isDividend()))) {
             return getTaxCredit();
         }
 
@@ -813,7 +803,7 @@ public class Event
         TaxYear myTax = myList.findTaxYearForDate(getDate());
 
         /* Determine the tax credit rate */
-        JRate myRate = (getCategoryType().isInterest())
+        JRate myRate = (isInterest())
                 ? myTax.getIntTaxRate()
                 : myTax.getDivTaxRate();
 
@@ -908,7 +898,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setDonation(final JMoney pDonation) throws JDataException {
-        setInfoSetValue(EventInfoClass.Donation, pDonation);
+        setInfoSetValue(EventInfoClass.CharityDonation, pDonation);
     }
 
     /**
@@ -1269,7 +1259,7 @@ public class Event
          * @param pAmount the amount
          * @param pDebit the debit account
          * @param pCredit the credit account
-         * @param pCatType the category type
+         * @param pCategory the category
          * @return the new event
          * @throws JDataException on error
          */
@@ -1279,19 +1269,19 @@ public class Event
                                  final String pAmount,
                                  final String pDebit,
                                  final String pCredit,
-                                 final String pCatType) throws JDataException {
+                                 final String pCategory) throws JDataException {
             /* Access the accounts */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
             AccountList myAccounts = myData.getAccounts();
 
-            /* Look up the Category Type */
-            EventCategoryType myCategory = myData.getEventCategoryTypes().findItemByName(pCatType);
+            /* Look up the Category */
+            EventCategory myCategory = myData.getEventCategories().findItemByName(pCategory);
             if (myCategory == null) {
                 throw new JDataException(ExceptionClass.DATA, "Event on ["
                                                               + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Category Type ["
-                                                              + pCatType
+                                                              + "] has invalid Category ["
+                                                              + pCategory
                                                               + "]");
             }
 

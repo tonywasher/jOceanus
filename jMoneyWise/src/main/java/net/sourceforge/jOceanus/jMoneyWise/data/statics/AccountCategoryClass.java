@@ -31,139 +31,152 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticInterface;
  */
 public enum AccountCategoryClass implements StaticInterface {
     /**
-     * Current Banking Account.
+     * Banking/Savings Account.
+     * <p>
+     * These are standard bank/building society accounts that hold money on behalf of the client. There is no distinction as to whether they are easy access or
+     * restricted access. Each such account must be owned by an {@link #Institution} account.
      */
-    Current(1, 0),
+    Savings(1, 0),
 
     /**
-     * Savings Account with instant access.
+     * Bond Account.
+     * <p>
+     * This a bond account which is a specialised form of an {@link #Savings} account. It has an associated maturity date for the account.
      */
-    Instant(2, 1),
+    Bond(2, 1),
 
     /**
-     * Savings Account with limited access.
+     * Cash Account.
+     * <p>
+     * This is a cash account and represents cash that is held by the client outside of any institution.
      */
-    Restricted(3, 2),
-
-    /**
-     * Fixed Rate Savings Bond.
-     */
-    Bond(4, 3),
-
-    /**
-     * Instant Access Cash ISA Account.
-     */
-    CashISA(5, 4),
-
-    /**
-     * Fixed Rate Cash ISA Bond.
-     */
-    ISABond(6, 5),
-
-    /**
-     * Index Linked Bond.
-     */
-    TaxFreeBond(7, 6),
-
-    /**
-     * Equity Bond.
-     */
-    EquityBond(8, 7),
+    Cash(3, 2),
 
     /**
      * Shares.
+     * <p>
+     * This is a share account and represents stock held in a company. It is a specialised form of an {@link #Asset} account. Each such account must be owned by
+     * a {@link #Portfolio} account.
      */
-    Shares(9, 8),
+    Shares(4, 3),
 
     /**
      * Unit Trust or OEIC.
+     * <p>
+     * This is a UnitTrust account and represents a mutual fund. It is a specialised form of an {@link #Asset} account. Each such account must be owned by a
+     * {@link #Portfolio} account.
      */
-    UnitTrust(10, 9),
+    UnitTrust(5, 4),
 
     /**
      * Life Bond.
+     * <p>
+     * This is a LifeBond account, which is a specialised form of an {@link #UnitTrust} account. It simply differs in tax treatment.
      */
-    LifeBond(11, 10),
-
-    /**
-     * Unit Trust or OEIC in ISA wrapper.
-     */
-    UnitISA(12, 11),
-
-    /**
-     * Car.
-     */
-    Car(13, 12),
-
-    /**
-     * House.
-     */
-    House(14, 13),
-
-    /**
-     * Debts.
-     */
-    Debts(15, 16),
-
-    /**
-     * CreditCard.
-     */
-    CreditCard(16, 15),
-
-    /**
-     * WriteOff.
-     */
-    WriteOff(17, 22),
-
-    /**
-     * External Account.
-     */
-    External(18, 24),
-
-    /**
-     * Employer Account.
-     */
-    Employer(19, 18),
-
-    /**
-     * Asset Owner Account.
-     */
-    Owner(20, 25),
-
-    /**
-     * Market.
-     */
-    Market(21, 26),
-
-    /**
-     * Inland Revenue.
-     */
-    TaxMan(22, 20),
-
-    /**
-     * Cash.
-     */
-    Cash(23, 19),
-
-    /**
-     * Inheritance.
-     */
-    Inheritance(24, 21),
+    LifeBond(6, 5),
 
     /**
      * Endowment.
+     * <p>
+     * This is a Endowment account, which is a specialised form of an {@link #UnitTrust} account. It simply differs in tax treatment.
      */
-    Endowment(25, 14),
+    Endowment(7, 6),
 
     /**
-     * Benefit.
+     * Generic Asset Account.
+     * <p>
+     * This is an Asset account and represents items whose value is determined by the product of the number units held and the most recent unit price.
      */
-    Benefit(26, 23),
+    Asset(8, 7),
 
     /**
-     * Deferred between tax years.
+     * CreditCard.
+     * <p>
+     * This is a Credit Card account, which is a specialised form of a {@link #Loan} account. It simply differs in reporting treatment in that overall spend is
+     * tracked.
      */
-    Deferred(27, 17);
+    CreditCard(9, 8),
+
+    /**
+     * PrivateLoan.
+     * <p>
+     * This is a PrivateLoan account, which is a specialised form of a {@link #Loan} account. It represents a loan to/from the client from/to an individual
+     * represented by a {@link #LoanHolder} account.
+     */
+    PrivateLoan(10, 9),
+
+    /**
+     * Generic Loan Account.
+     * <p>
+     * This is a Loan account which represents a loan to/from the client from/to an {@link #Institution} account.
+     */
+    Loan(11, 10),
+
+    /**
+     * Inland Revenue.
+     * <p>
+     * This is a singular account category representing the tax authority. All TaxCredits etc. are deemed to have been paid to the single account of this type.
+     */
+    TaxMan(12, 11),
+
+    /**
+     * Market pseudo account.
+     * <p>
+     * This is a singular account category representing the market. All increases/decreases in value of an asset that are due to fluctuations in unit prices are
+     * viewed as income/expense from the single account of this type.
+     */
+    Market(13, 12),
+
+    /**
+     * OpeningBalance pseudo account.
+     * <p>
+     * This is a singular account category representing the source of account opening balances. All accounts that are created with an opening balance are viewed
+     * as having received the opening balance from this account.
+     */
+    OpeningBalance(14, 13),
+
+    /**
+     * Institution Account.
+     * <p>
+     * This is an institution (e.g. a bank) that holds another account of behalf of the client. It is a specialised form of the {@link #Payee} account.
+     */
+    Institution(15, 14),
+
+    /**
+     * LoanHolder Account.
+     * <p>
+     * This is an individual who owns a {@link #PrivateLoan} account. It is a specialised form of the {@link #Payee} account.
+     */
+    LoanHolder(16, 15),
+
+    /**
+     * Portfolio Account.
+     * <p>
+     * This is an institution (e.g. a bank) that holds another priced asset of behalf of the client. It is a specialised form of the {@link #Institution}
+     * account, and is intended to ease management of priced assets.
+     */
+    Portfolio(17, 16),
+
+    /**
+     * Employer Account.
+     * <p>
+     * This is an employer account which is a specialised form of the {@link #Institution} account. It has the ability to pay dividends.
+     */
+    Employer(18, 17),
+
+    /**
+     * Generic Payee Account.
+     * <p>
+     * This is a simple account that represents an entity that monies are paid to.
+     */
+    Payee(19, 18),
+
+    /**
+     * Category Account.
+     * <p>
+     * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
+     */
+    Category(20, 19);
 
     /**
      * Class Id.
@@ -208,24 +221,25 @@ public enum AccountCategoryClass implements StaticInterface {
                 return myClass;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid Account Class Id: "
+        throw new JDataException(ExceptionClass.DATA, "Invalid Account Category Class Id: "
                                                       + id);
     }
 
     /**
-     * Determine whether the AccountType is external.
-     * @return <code>true</code> if the account is external, <code>false</code> otherwise.
+     * Determine whether the AccountCategory is nonAsset.
+     * @return <code>true</code> if the account is nonAsset, <code>false</code> otherwise.
      */
-    public boolean isExternal() {
+    public boolean isNonAsset() {
         switch (this) {
-            case External:
-            case Owner:
             case Employer:
-            case Inheritance:
-            case Cash:
-            case WriteOff:
+            case Portfolio:
+            case LoanHolder:
+            case Institution:
+            case Payee:
             case TaxMan:
             case Market:
+            case OpeningBalance:
+            case Category:
                 return true;
             default:
                 return false;
@@ -233,34 +247,15 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountType is special external.
-     * @return <code>true</code> if the account is special external, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType has units.
+     * @return <code>true</code> if the account category type has Units, <code>false</code> otherwise.
      */
-    public boolean isSpecial() {
+    public boolean hasUnits() {
         switch (this) {
-            case Inheritance:
-            case Cash:
-            case WriteOff:
-            case TaxMan:
-            case Market:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the AccountType is priced.
-     * @return <code>true</code> if the account is priced, <code>false</code> otherwise.
-     */
-    public boolean isPriced() {
-        switch (this) {
-            case House:
-            case Car:
+            case Asset:
             case Shares:
             case LifeBond:
             case UnitTrust:
-            case UnitISA:
             case Endowment:
                 return true;
             default:
@@ -269,15 +264,14 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountType is dividend provider.
-     * @return <code>true</code> if the account is a dividend provider, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType is a dividend provider.
+     * @return <code>true</code> if the account category type is a dividend provider, <code>false</code> otherwise.
      */
     public boolean isDividend() {
         switch (this) {
             case Shares:
+            case UnitTrust:
             case Employer:
-            case UnitTrust:
-            case UnitISA:
                 return true;
             default:
                 return false;
@@ -285,122 +279,61 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountType is unit dividend provider.
-     * @return <code>true</code> if the account is a unit dividend provider, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType has value.
+     * @return <code>true</code> if the category account type has value, <code>false</code> otherwise.
      */
-    public boolean isUnitTrust() {
+    public boolean hasValue() {
         switch (this) {
-            case UnitTrust:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the AccountType is tax-free provider.
-     * @return <code>true</code> if the account is a tax free dividend provider, <code>false</code> otherwise.
-     */
-    public boolean isTaxFree() {
-        switch (this) {
-            case UnitISA:
-            case CashISA:
-            case ISABond:
-            case TaxFreeBond:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the AccountType is savings.
-     * @return <code>true</code> if the account is savings, <code>false</code> otherwise.
-     */
-    public boolean isMoney() {
-        switch (this) {
-            case Current:
-            case Instant:
-            case Restricted:
+            case Savings:
             case Bond:
-            case CashISA:
-            case ISABond:
-            case TaxFreeBond:
-            case EquityBond:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the AccountType is a bond.
-     * @return <code>true</code> if the account is a bond, <code>false</code> otherwise.
-     */
-    public boolean isBond() {
-        switch (this) {
-            case Bond:
-            case ISABond:
-            case TaxFreeBond:
-            case EquityBond:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the AccountType is debt.
-     * @return <code>true</code> if the account is debt, <code>false</code> otherwise.
-     */
-    public boolean isDebt() {
-        switch (this) {
-            case Debts:
-            case CreditCard:
-            case Deferred:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the AccountType is child.
-     * @return <code>true</code> if the account is child, <code>false</code> otherwise.
-     */
-    public boolean isChild() {
-        switch (this) {
-            case Current:
-            case Instant:
-            case Restricted:
-            case CashISA:
-            case Bond:
-            case ISABond:
-            case TaxFreeBond:
-            case EquityBond:
-            case Shares:
-            case UnitTrust:
-            case LifeBond:
-            case UnitISA:
-            case CreditCard:
-            case Endowment:
-            case Debts:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the AccountType is reserved.
-     * @return <code>true</code> if the account is reserved, <code>false</code> otherwise.
-     */
-    public boolean isReserved() {
-        switch (this) {
-            case Deferred:
-            case TaxMan:
             case Cash:
-            case WriteOff:
+            case Loan:
+            case PrivateLoan:
+            case CreditCard:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the AccountCategoryType is a loan.
+     * @return <code>true</code> if the account category type is a loan, <code>false</code> otherwise.
+     */
+    public boolean isLoan() {
+        switch (this) {
+            case Loan:
+            case PrivateLoan:
+            case CreditCard:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the AccountCategoryType is savings.
+     * @return <code>true</code> if the account category type is savings, <code>false</code> otherwise.
+     */
+    public boolean isSavings() {
+        switch (this) {
+            case Savings:
+            case Bond:
+            case Cash:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the category type is singular.
+     * @return <code>true</code> if the account category type is singular, <code>false</code> otherwise.
+     */
+    public boolean isSingular() {
+        switch (this) {
+            case OpeningBalance:
+            case TaxMan:
             case Market:
                 return true;
             default:
@@ -409,12 +342,34 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountType can alias.
-     * @return <code>true</code> if the account can alias, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType is a child, and needs a parent.
+     * @return <code>true</code> if the account category type is a child, <code>false</code> otherwise.
+     */
+    public boolean isChild() {
+        switch (this) {
+            case Savings:
+            case Bond:
+            case Asset:
+            case Shares:
+            case UnitTrust:
+            case LifeBond:
+            case Endowment:
+            case Loan:
+            case PrivateLoan:
+            case CreditCard:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the AccountCategoryType can alias.
+     * @return <code>true</code> if the account category type can alias, <code>false</code> otherwise.
      */
     public boolean canAlias() {
         switch (this) {
-            case UnitISA:
+            case Shares:
             case UnitTrust:
                 return true;
             default:
@@ -423,8 +378,24 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountType is subject to Capital Gains.
-     * @return <code>true</code> if the account is subject to Capital Gains, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType can parent.
+     * @return <code>true</code> if the account category type can parent, <code>false</code> otherwise.
+     */
+    public boolean canParent() {
+        switch (this) {
+            case Institution:
+            case Employer:
+            case Portfolio:
+            case LoanHolder:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the AccountCategoryType is subject to Capital Gains.
+     * @return <code>true</code> if the account category type is subject to Capital Gains, <code>false</code> otherwise.
      */
     public boolean isCapitalGains() {
         switch (this) {
@@ -437,120 +408,17 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountType is Capital.
-     * @return <code>true</code> if the account is Capital, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType is Capital.
+     * @return <code>true</code> if the account category type is Capital, <code>false</code> otherwise.
      */
     public boolean isCapital() {
         switch (this) {
             case Shares:
             case LifeBond:
             case UnitTrust:
-            case UnitISA:
                 return true;
             default:
                 return false;
         }
-    }
-
-    /**
-     * Determine whether the AccountType is Owner.
-     * @return <code>true</code> if the account is Owner, <code>false</code> otherwise.
-     */
-    public boolean isOwner() {
-        switch (this) {
-            case Inheritance:
-            case Owner:
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    /**
-     * Determine whether the AccountType is cash.
-     * @return <code>true</code> if the account is cash, <code>false</code> otherwise.
-     */
-    public boolean isCash() {
-        return (this == Cash);
-    }
-
-    /**
-     * Determine whether the AccountType is inheritance.
-     * @return <code>true</code> if the account is inheritance, <code>false</code> otherwise.
-     */
-    public boolean isInheritance() {
-        return (this == Inheritance);
-    }
-
-    /**
-     * Determine whether the AccountType is WriteOff.
-     * @return <code>true</code> if the account is WriteOff, <code>false</code> otherwise.
-     */
-    public boolean isWriteOff() {
-        return (this == WriteOff);
-    }
-
-    /**
-     * Determine whether the AccountType is market.
-     * @return <code>true</code> if the account is market, <code>false</code> otherwise.
-     */
-    public boolean isMarket() {
-        return (this == Market);
-    }
-
-    /**
-     * Determine whether the AccountType is TaxMan.
-     * @return <code>true</code> if the account is TaxMan, <code>false</code> otherwise.
-     */
-    public boolean isTaxMan() {
-        return (this == TaxMan);
-    }
-
-    /**
-     * Determine whether the AccountType is Employer.
-     * @return <code>true</code> if the account is employer, <code>false</code> otherwise.
-     */
-    public boolean isEmployer() {
-        return (this == Employer);
-    }
-
-    /**
-     * Determine whether the AccountType is endowment.
-     * @return <code>true</code> if the account is endowment, <code>false</code> otherwise.
-     */
-    public boolean isEndowment() {
-        return (this == Endowment);
-    }
-
-    /**
-     * Determine whether the AccountType is deferred.
-     * @return <code>true</code> if the account is deferred, <code>false</code> otherwise.
-     */
-    public boolean isDeferred() {
-        return (this == Deferred);
-    }
-
-    /**
-     * Determine whether the AccountType is benefit.
-     * @return <code>true</code> if the account is benefit, <code>false</code> otherwise.
-     */
-    public boolean isBenefit() {
-        return (this == Benefit);
-    }
-
-    /**
-     * Determine whether the AccountType is a Share.
-     * @return <code>true</code> if the account is Share, <code>false</code> otherwise.
-     */
-    public boolean isShares() {
-        return (this == Shares);
-    }
-
-    /**
-     * Determine whether the AccountType is a LifeBond.
-     * @return <code>true</code> if the account is LifeBond, <code>false</code> otherwise.
-     */
-    public boolean isLifeBond() {
-        return (this == LifeBond);
     }
 }

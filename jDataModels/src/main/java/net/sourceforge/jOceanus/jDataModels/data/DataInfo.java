@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jDataModels.data;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
@@ -71,6 +72,24 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField("Value");
 
     /**
+     * Link Field Id.
+     */
+    public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField("Link");
+
+    @Override
+    public Object getFieldValue(final JDataField pField) {
+        if ((FIELD_LINK.equals(pField))
+            && !getInfoClass().isLink()) {
+            return JDataFieldValue.SkipField;
+        }
+        if ((FIELD_VALUE.equals(pField))
+            && getInfoClass().isLink()) {
+            return JDataFieldValue.SkipField;
+        }
+        return super.getFieldValue(pField);
+    }
+
+    /**
      * Obtain InfoType.
      * @return the InfoTypeId
      */
@@ -99,8 +118,18 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     }
 
     /**
-     * Obtain link name.
-     * @return the Link Name
+     * Obtain Link.
+     * @param <X> the link type
+     * @param pClass the class of the link
+     * @return the Account
+     */
+    public <X extends DataItem> X getLink(final Class<X> pClass) {
+        return getLink(getValueSet(), pClass);
+    }
+
+    /**
+     * Get Link name.
+     * @return the link name
      */
     public String getLinkName() {
         return null;
@@ -191,6 +220,20 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     }
 
     /**
+     * Obtain Associated Link.
+     * @param <X> the link type
+     * @param pValueSet the valueSet
+     * @param pClass the class of the link
+     * @return the Link
+     */
+    public static <X extends DataItem> X getLink(final ValueSet pValueSet,
+                                                 final Class<X> pClass) {
+        return pValueSet.isDeletion()
+                ? null
+                : pValueSet.getValue(FIELD_LINK, pClass);
+    }
+
+    /**
      * Set InfoType.
      * @param pValue the info Type
      */
@@ -252,6 +295,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     protected <X> void setValueBytes(final byte[] pBytes,
                                      final Class<X> pClass) throws JDataException {
         setEncryptedValue(FIELD_VALUE, pBytes, pClass);
+    }
+
+    /**
+     * Set link.
+     * @param pLink the link
+     */
+    protected void setValueLink(final DataItem pLink) {
+        ValueSet myValues = getValueSet();
+        myValues.setDeletion(false);
+        myValues.setValue(FIELD_LINK, pLink);
     }
 
     /**

@@ -195,7 +195,7 @@ public class ExcelWorkBook {
         if (myName == null) {
             throw new JDataException(ExceptionClass.EXCEL, "Name "
                                                            + pName
-                                                           + "not found in workbook");
+                                                           + " not found in workbook");
         }
 
         /* Parse the name reference */
@@ -212,7 +212,7 @@ public class ExcelWorkBook {
         if (mySheet == null) {
             throw new JDataException(ExceptionClass.EXCEL, "Sheet for "
                                                            + pName
-                                                           + "not found in workbook");
+                                                           + " not found in workbook");
         }
 
         /* Return the view */

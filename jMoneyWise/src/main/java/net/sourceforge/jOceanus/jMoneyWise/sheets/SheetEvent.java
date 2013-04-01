@@ -26,12 +26,9 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
-import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
@@ -83,7 +80,7 @@ public class SheetEvent
     private static final int COL_CREDIT = COL_DEBIT + 1;
 
     /**
-     * CategoryType column.
+     * Category column.
      */
     private static final int COL_CATEGORY = COL_CREDIT + 1;
 
@@ -189,7 +186,7 @@ public class SheetEvent
         writeDate(COL_DATE, pItem.getDate());
         writeInteger(COL_DEBIT, pItem.getDebitId());
         writeInteger(COL_CREDIT, pItem.getCreditId());
-        writeInteger(COL_CATEGORY, pItem.getCategoryTypeId());
+        writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
     }
@@ -202,7 +199,7 @@ public class SheetEvent
         writeDecimal(COL_AMOUNT, pItem.getAmount());
         writeString(COL_DEBIT, pItem.getDebitName());
         writeString(COL_CREDIT, pItem.getCreditName());
-        writeString(COL_CATEGORY, pItem.getCategoryTypeName());
+        writeString(COL_CATEGORY, pItem.getCategoryName());
 
         /* Write infoSet fields */
         theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
@@ -216,7 +213,7 @@ public class SheetEvent
         writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
         writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
-        writeHeader(COL_CATEGORY, EventBase.FIELD_CATTYP.getName());
+        writeHeader(COL_CATEGORY, EventBase.FIELD_CATEGORY.getName());
 
         /* prepare the info sheet */
         theInfoSheet.prepareSheet();
@@ -261,7 +258,7 @@ public class SheetEvent
     }
 
     /**
-     * Load the Accounts from an archive.
+     * Load the Events from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
@@ -284,8 +281,8 @@ public class SheetEvent
             EventInfoList myInfoList = pData.getEventInfo();
 
             /* Access the parser */
-            JDataFormatter myFormatter = pTask.getDataFormatter();
-            JDecimalParser myParser = myFormatter.getDecimalParser();
+            // JDataFormatter myFormatter = pTask.getDataFormatter();
+            // JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Loop through the columns of the table */
             for (Integer j = pRange.getMinYear(); j <= pRange.getMaxYear(); j++) {
@@ -336,13 +333,13 @@ public class SheetEvent
 
                     /* Handle Units which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    String myUnitsVal = null;
-                    if (myCell != null) {
-                        myUnitsVal = myCell.getStringValue();
-                    }
+                    // String myUnitsVal = null; TODO
+                    // if (myCell != null) {
+                    // myUnitsVal = myCell.getStringValue();
+                    // }
 
-                    /* Handle transaction type */
-                    String myTranType = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                    /* Handle category */
+                    String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
                     /* Handle Tax Credit which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
@@ -359,23 +356,23 @@ public class SheetEvent
                     }
 
                     /* Add the event */
-                    Event myEvent = myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myTranType);
+                    Event myEvent = myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myCategory);
 
                     /* If we have units */
-                    if (myUnitsVal != null) {
-                        JUnits myUnits = myParser.parseUnitsValue(myUnitsVal);
-                        JUnits myValue = myUnits;
-                        boolean isCredit = myEvent.getCredit().isPriced();
-                        if ((myEvent.isStockSplit() || myEvent.isAdminCharge())
-                            && (!myUnits.isPositive())) {
-                            myValue = new JUnits(myValue);
-                            myValue.negate();
-                            isCredit = false;
-                        }
-                        myInfoList.addOpenItem(0, myEvent, isCredit
-                                ? EventInfoClass.CreditUnits
-                                : EventInfoClass.DebitUnits, myValue);
-                    }
+                    // if (myUnitsVal != null) {
+                    // JUnits myUnits = myParser.parseUnitsValue(myUnitsVal);
+                    // JUnits myValue = myUnits;
+                    // boolean isCredit = myEvent.getCredit().getAccountCategoryClass().hasUnits();
+                    // if ((myEvent.isStockSplit() || myEvent.isAdminCharge())
+                    // && (!myUnits.isPositive())) {
+                    // myValue = new JUnits(myValue);
+                    // myValue.negate();
+                    // isCredit = false;
+                    // }
+                    // myInfoList.addOpenItem(0, myEvent, isCredit
+                    // ? EventInfoClass.CreditUnits
+                    // : EventInfoClass.DebitUnits, myValue);
+                    // } TODO
 
                     /* Add information relating to the account */
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);

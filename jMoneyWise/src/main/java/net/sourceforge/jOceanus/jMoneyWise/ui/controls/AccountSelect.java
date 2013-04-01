@@ -39,9 +39,9 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
@@ -76,9 +76,9 @@ public class AccountSelect
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountSelect.class.getName());
 
     /**
-     * Text for AccountType Label.
+     * Text for AccountCategory Label.
      */
-    private static final String NLS_TYPE = NLS_BUNDLE.getString("AccountType");
+    private static final String NLS_TYPE = NLS_BUNDLE.getString("AccountCategory");
 
     /**
      * Text for Account Label.
@@ -106,9 +106,9 @@ public class AccountSelect
     private final transient View theView;
 
     /**
-     * Account types comboBox.
+     * Account categories comboBox.
      */
-    private final JComboBox<AccountCategoryType> theTypesBox;
+    private final JComboBox<AccountCategory> theCategoriesBox;
 
     /**
      * Accounts comboBox.
@@ -154,11 +154,11 @@ public class AccountSelect
     }
 
     /**
-     * Get the account type.
-     * @return the account type
+     * Get the account category.
+     * @return the account category
      */
-    public final AccountCategoryType getType() {
-        return theState.getType();
+    public final AccountCategory getCategory() {
+        return theState.getCategory();
     }
 
     /**
@@ -190,11 +190,11 @@ public class AccountSelect
         theView = pView;
 
         /* Create the boxes */
-        theTypesBox = new JComboBox<AccountCategoryType>();
+        theCategoriesBox = new JComboBox<AccountCategory>();
         theAccountBox = new JComboBox<Account>();
         theShowClosed = new JCheckBox();
         theShowDeleted = new JCheckBox();
-        theTypesBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
+        theCategoriesBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
         theAccountBox.setMaximumSize(new Dimension(BOX_WIDTH, BOX_HEIGHT));
 
         /* Create initial state */
@@ -224,7 +224,7 @@ public class AccountSelect
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
         add(myTypeLabel);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
-        add(theTypesBox);
+        add(theCategoriesBox);
         add(Box.createHorizontalGlue());
         add(myAccountLabel);
         add(Box.createRigidArea(new Dimension(STRUT_WIDTH, 0)));
@@ -241,7 +241,7 @@ public class AccountSelect
         theState.applyState();
 
         /* Add the listener for item changes */
-        theTypesBox.addItemListener(myListener);
+        theCategoriesBox.addItemListener(myListener);
         theAccountBox.addItemListener(myListener);
         theShowClosed.addItemListener(myListener);
         theShowDeleted.addItemListener(myListener);
@@ -283,16 +283,16 @@ public class AccountSelect
      */
     private void buildAccountTypes() {
         FinanceData myData;
-        AccountCategoryType myType = null;
-        AccountCategoryType myFirst = null;
+        AccountCategory myCategory = null;
+        AccountCategory myFirst = null;
         boolean doShowDeleted;
         boolean doShowClosed;
 
         /* Access the data */
         myData = theView.getData();
 
-        /* Access types and accounts */
-        AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
+        /* Access categories and accounts */
+        AccountCategoryList myCategories = myData.getAccountCategories();
         theAccounts = myData.getAccounts();
 
         /* Access current values */
@@ -302,16 +302,16 @@ public class AccountSelect
         /* Note that we are refreshing data */
         refreshingData = true;
 
-        /* If we have types already populated */
-        if (theTypesBox.getItemCount() > 0) {
-            /* If we have a selected type */
-            if (getType() != null) {
+        /* If we have categories already populated */
+        if (theCategoriesBox.getItemCount() > 0) {
+            /* If we have a selected category */
+            if (getCategory() != null) {
                 /* Find it in the new list */
-                theState.setType(myTypes.findItemByName(getType().getName()));
+                theState.setCategory(myCategories.findItemByName(getCategory().getName()));
             }
 
-            /* Remove the types */
-            theTypesBox.removeAllItems();
+            /* Remove the categories */
+            theCategoriesBox.removeAllItems();
         }
 
         /* Access the iterator */
@@ -321,7 +321,7 @@ public class AccountSelect
         while (myIterator.hasNext()) {
             Account myAccount = myIterator.next();
             /* Skip owner items */
-            if (myAccount.isOwner()) {
+            if (myAccount.isParent()) {
                 continue;
             }
 
@@ -337,16 +337,16 @@ public class AccountSelect
                 continue;
             }
 
-            /* If the type of this account is new */
-            if (!Difference.isEqual(myType, myAccount.getActType())) {
-                /* Note the type */
-                myType = myAccount.getActType();
+            /* If the category of this account is new */
+            if (!Difference.isEqual(myCategory, myAccount.getAccountCategory())) {
+                /* Note the category */
+                myCategory = myAccount.getAccountCategory();
                 if (myFirst == null) {
-                    myFirst = myType;
+                    myFirst = myCategory;
                 }
 
                 /* Add the item to the list */
-                theTypesBox.addItem(myType);
+                theCategoriesBox.addItem(myCategory);
             }
         }
 
@@ -357,7 +357,7 @@ public class AccountSelect
         while (myIterator.hasNext()) {
             Account myAccount = myIterator.next();
             /* Skip child items */
-            if (!myAccount.isOwner()) {
+            if (!myAccount.isParent()) {
                 continue;
             }
 
@@ -374,28 +374,28 @@ public class AccountSelect
             }
 
             /* If the type of this account is new */
-            if (!Difference.isEqual(myType, myAccount.getActType())) {
-                /* Note the type */
-                myType = myAccount.getActType();
+            if (!Difference.isEqual(myCategory, myAccount.getAccountCategory())) {
+                /* Note the category */
+                myCategory = myAccount.getAccountCategory();
                 if (myFirst == null) {
-                    myFirst = myType;
+                    myFirst = myCategory;
                 }
 
                 /* Add the item to the list */
-                theTypesBox.addItem(myType);
+                theCategoriesBox.addItem(myCategory);
             }
         }
 
-        /* If we have a selected type */
-        if (getType() != null) {
+        /* If we have a selected category */
+        if (getCategory() != null) {
             /* Select it in the new list */
-            theTypesBox.setSelectedItem(getType());
+            theCategoriesBox.setSelectedItem(getCategory());
 
             /* Else we have no type currently selected */
-        } else if (theTypesBox.getItemCount() > 0) {
+        } else if (theCategoriesBox.getItemCount() > 0) {
             /* Select the first account type */
-            theTypesBox.setSelectedIndex(0);
-            theState.setType(myFirst);
+            theCategoriesBox.setSelectedIndex(0);
+            theState.setCategory(myFirst);
         }
 
         /* Note that we have finished refreshing data */
@@ -410,7 +410,7 @@ public class AccountSelect
         /* Access current values */
         boolean doShowDeleted = doShowDeleted();
         boolean doShowClosed = doShowClosed();
-        AccountCategoryType myType = getType();
+        AccountCategory myCategory = getCategory();
         Account mySelected = getSelected();
         Account myOld = mySelected;
 
@@ -435,7 +435,7 @@ public class AccountSelect
             /* Check its validity */
             boolean isInvalid = ((!doShowDeleted) && (mySelected.isDeleted()));
             isInvalid |= ((!doShowClosed) && (mySelected.isClosed()));
-            isInvalid |= (myType.compareTo(mySelected.getActType()) != 0);
+            isInvalid |= (myCategory.compareTo(mySelected.getAccountCategory()) != 0);
 
             /* If it is no longer valid */
             if (isInvalid) {
@@ -464,8 +464,8 @@ public class AccountSelect
                 continue;
             }
 
-            /* Skip items that are the wrong type */
-            if (myType.compareTo(myAcct.getActType()) != 0) {
+            /* Skip items that are the wrong category */
+            if (myCategory.compareTo(myAcct.getAccountCategory()) != 0) {
                 continue;
             }
 
@@ -510,9 +510,9 @@ public class AccountSelect
         /* Access the edit-able account */
         myAccount = theAccounts.findItemByName(pAccount.getName());
 
-        /* Select the correct account type */
-        theState.setType(pAccount.getActType());
-        theTypesBox.setSelectedItem(getType());
+        /* Select the correct account category */
+        theState.setCategory(pAccount.getAccountCategory());
+        theCategoriesBox.setSelectedItem(getCategory());
 
         /* If we need to show closed items */
         if ((!doShowClosed())
@@ -547,7 +547,7 @@ public class AccountSelect
         Account mySelected = getSelected();
 
         /* Lock/Unlock the selection */
-        theTypesBox.setEnabled(bEnable);
+        theCategoriesBox.setEnabled(bEnable);
         theAccountBox.setEnabled(bEnable);
 
         /* Can't switch off show closed if account is closed */
@@ -579,12 +579,12 @@ public class AccountSelect
                 return;
             }
 
-            /* If this event relates to the types box */
-            if ((theTypesBox.equals(o))
+            /* If this event relates to the categories box */
+            if ((theCategoriesBox.equals(o))
                 && (evt.getStateChange() == ItemEvent.SELECTED)) {
-                /* Select the new type and rebuild account list */
-                AccountCategoryType myType = (AccountCategoryType) evt.getItem();
-                if (theState.setType(myType)) {
+                /* Select the new category and rebuild account list */
+                AccountCategory myCategory = (AccountCategory) evt.getItem();
+                if (theState.setCategory(myCategory)) {
                     /* Rebuild accounts */
                     buildAccounts();
                     fireStateChanged();
@@ -621,9 +621,9 @@ public class AccountSelect
      */
     private final class AccountState {
         /**
-         * Account type.
+         * Account category.
          */
-        private AccountCategoryType theType = null;
+        private AccountCategory theCategory = null;
 
         /**
          * Selected account.
@@ -641,11 +641,11 @@ public class AccountSelect
         private boolean doShowDeleted = false;
 
         /**
-         * Get the account type.
-         * @return the account type
+         * Get the account category.
+         * @return the account category
          */
-        private AccountCategoryType getType() {
-            return theType;
+        private AccountCategory getCategory() {
+            return theCategory;
         }
 
         /**
@@ -683,18 +683,18 @@ public class AccountSelect
          * @param pState state to copy from
          */
         private AccountState(final AccountState pState) {
-            theType = pState.getType();
+            theCategory = pState.getCategory();
             theSelected = pState.getSelected();
         }
 
         /**
-         * Set new Account Type.
-         * @param pType the AccountType
+         * Set new Account Category.
+         * @param pCategory the AccountCategory
          * @return true/false did a change occur
          */
-        private boolean setType(final AccountCategoryType pType) {
-            if (!Difference.isEqual(pType, theType)) {
-                theType = pType;
+        private boolean setCategory(final AccountCategory pCategory) {
+            if (!Difference.isEqual(pCategory, theCategory)) {
+                theCategory = pCategory;
                 return true;
             }
             return false;
@@ -750,9 +750,9 @@ public class AccountSelect
             setEnabled(true);
             theShowClosed.setSelected(doShowClosed);
             theShowDeleted.setSelected(doShowDeleted);
-            theTypesBox.setSelectedItem((theType == null)
+            theCategoriesBox.setSelectedItem((theCategory == null)
                     ? null
-                    : theType.getName());
+                    : theCategory.getName());
             theAccountBox.setSelectedItem((theSelected == null)
                     ? null
                     : theSelected.getName());

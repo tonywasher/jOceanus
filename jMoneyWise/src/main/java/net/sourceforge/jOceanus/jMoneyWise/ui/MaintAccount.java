@@ -63,11 +63,12 @@ import net.sourceforge.jOceanus.jFieldSet.JFieldSet.FieldUpdate;
 import net.sourceforge.jOceanus.jLayoutManager.SpringUtilities;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.AccountSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
@@ -153,9 +154,9 @@ public class MaintAccount
     private final JTextField theStatus;
 
     /**
-     * The types comboBox.
+     * The categories comboBox.
      */
-    private final JComboBox<AccountCategoryType> theTypesBox;
+    private final JComboBox<AccountCategory> theCategoriesBox;
 
     /**
      * The parent comboBox.
@@ -273,7 +274,7 @@ public class MaintAccount
         theStatus = new JTextField();
 
         /* Create the combo boxes */
-        theTypesBox = new JComboBox<AccountCategoryType>();
+        theCategoriesBox = new JComboBox<AccountCategory>();
         theParentBox = new JComboBox<Account>();
         theAliasBox = new JComboBox<Account>();
 
@@ -385,14 +386,14 @@ public class MaintAccount
         myDesc.setMaximumSize(myDescDims);
         theParentBox.setMaximumSize(myActDims);
         theAliasBox.setMaximumSize(myActDims);
-        theTypesBox.setMaximumSize(myActDims);
+        theCategoriesBox.setMaximumSize(myActDims);
 
         /*
          * Dimension fields correctly /* Add the components to the field Set
          */
         theFieldSet.addFieldElement(Account.FIELD_NAME, DataType.STRING, myNameLabel, myName);
         theFieldSet.addFieldElement(Account.FIELD_DESC, DataType.STRING, myDescLabel, myDesc);
-        theFieldSet.addFieldElement(Account.FIELD_TYPE, AccountCategoryType.class, myTypeLabel, theTypesBox);
+        theFieldSet.addFieldElement(Account.FIELD_CATEGORY, AccountCategory.class, myTypeLabel, theCategoriesBox);
         theFieldSet.addFieldElement(Account.FIELD_PARENT, Account.class, myParLabel, theParentBox);
         theFieldSet.addFieldElement(Account.FIELD_ALIAS, Account.class, myAlsLabel, theAliasBox);
         theFieldSet.addFieldElement(Account.FIELD_MATURITY, DataType.DATEDAY, myMatLabel, myMaturity);
@@ -409,7 +410,7 @@ public class MaintAccount
         myPanel.add(myDescLabel);
         myPanel.add(myDesc);
         myPanel.add(myTypeLabel);
-        myPanel.add(theTypesBox);
+        myPanel.add(theCategoriesBox);
         myPanel.add(myParLabel);
         myPanel.add(theParentBox);
         myPanel.add(myAlsLabel);
@@ -586,8 +587,8 @@ public class MaintAccount
         /* Access the data */
         FinanceData myData = theView.getData();
 
-        /* Access type */
-        AccountCategoryTypeList myAcTypList = myData.getAccountCategoryTypes();
+        /* Access categories */
+        AccountCategoryList myCatList = myData.getAccountCategories();
         theAccounts = myData.getAccounts();
 
         /* Note that we are refreshing data */
@@ -596,26 +597,27 @@ public class MaintAccount
         /* Refresh the account selection */
         theSelect.refreshData();
 
-        /* If we have types already populated */
-        if (theTypesBox.getItemCount() > 0) {
-            /* Remove the types */
-            theTypesBox.removeAllItems();
+        /* If we have categories already populated */
+        if (theCategoriesBox.getItemCount() > 0) {
+            /* Remove the categories */
+            theCategoriesBox.removeAllItems();
         }
 
         /* Create an account type iterator */
-        Iterator<AccountCategoryType> myTypeIterator = myAcTypList.iterator();
+        Iterator<AccountCategory> myCatIterator = myCatList.iterator();
 
-        /* Add the AccountType values to the types box */
-        while (myTypeIterator.hasNext()) {
-            AccountCategoryType myType = myTypeIterator.next();
-            /* Ignore the type if it is reserved or not enabled */
-            if ((myType.isReserved())
-                || (!myType.getEnabled())) {
+        /* Add the AccountCategory values to the categories box */
+        while (myCatIterator.hasNext()) {
+            AccountCategory myCategory = myCatIterator.next();
+
+            /* Ignore the category if it is reserved or not enabled */
+            if ((myCategory.getCategoryTypeClass().isSingular())
+                || (!myCategory.getCategoryType().getEnabled())) {
                 continue;
             }
 
             /* Add the item to the list */
-            theTypesBox.addItem(myType);
+            theCategoriesBox.addItem(myCategory);
         }
 
         /* Note that we have finished refreshing data */
@@ -653,11 +655,11 @@ public class MaintAccount
         while (myActIterator.hasNext()) {
             Account myAcct = myActIterator.next();
 
-            /* Access the type */
-            AccountCategoryType myType = myAcct.getActType();
+            /* Access the category */
+            // AccountCategory myType = myAcct.getAccountCategory();
 
             /* Ignore the account if it is not an owner */
-            if (!myType.isOwner()) {
+            if (!myAcct.isParent()) {
                 continue;
             }
 
@@ -722,8 +724,8 @@ public class MaintAccount
      * Show the account.
      */
     private void showAccount() {
-        /* Access the type from the selection */
-        AccountCategoryType myType = theSelect.getType();
+        /* Access the category from the selection */
+        AccountCategory myCategory = theSelect.getCategory();
 
         /* If we have an active account */
         if (theAccount != null) {
@@ -733,16 +735,16 @@ public class MaintAccount
             /* Access details */
             boolean isClosed = theAccount.isClosed();
             boolean bActive = !theAccount.isDeleted();
-            myType = theAccount.getActType();
+            AccountCategoryClass myCatClass = theAccount.getAccountCategoryClass();
 
             /* Set the visibility */
-            theFieldSet.setVisibility(Account.FIELD_TYPE, theAccount.isDeletable()
-                                                          && (isNewAccount));
-            theFieldSet.setVisibility(Account.FIELD_MATURITY, myType.isBond());
-            theFieldSet.setVisibility(Account.FIELD_PARENT, theAccount.isChild());
+            theFieldSet.setVisibility(Account.FIELD_CATEGORY, theAccount.isDeletable()
+                                                              && (isNewAccount));
+            theFieldSet.setVisibility(Account.FIELD_MATURITY, (myCatClass == AccountCategoryClass.Bond));
+            theFieldSet.setVisibility(Account.FIELD_PARENT, myCatClass.isChild());
 
             /* Handle alias */
-            if (myType.canAlias()
+            if (myCategory.getCategoryTypeClass().canAlias()
                 && (!theAccount.isAliasedTo())) {
 
                 /* Set visible */
@@ -761,16 +763,16 @@ public class MaintAccount
                 while (myActIterator.hasNext()) {
                     Account myAcct = myActIterator.next();
 
-                    /* Access the type */
-                    myType = myAcct.getActType();
+                    /* Access the category */
+                    myCategory = myAcct.getAccountCategory();
 
                     /* Ignore the account if it cannot alias */
-                    if (!myType.canAlias()) {
+                    if (!myCategory.getCategoryTypeClass().canAlias()) {
                         continue;
                     }
 
-                    /* Ignore the account if it is same type */
-                    if (myType.equals(theAccount.getActType())) {
+                    /* Ignore the account if it is same category */
+                    if (myCategory.equals(theAccount.getAccountCategory())) {
                         continue;
                     }
 
@@ -826,7 +828,7 @@ public class MaintAccount
 
             /* Enable buttons */
             theInsButton.setEnabled(!theAccount.hasChanges()
-                                    && (!myType.isReserved()));
+                                    && (!myCatClass.isSingular()));
             theClsButton.setEnabled((isClosed)
                                     || (theAccount.isCloseable()));
 
@@ -843,12 +845,12 @@ public class MaintAccount
             /* Disable field entry */
             theClsButton.setVisible(false);
 
-            theInsButton.setEnabled(myType != null);
+            theInsButton.setEnabled(myCategory != null);
             theDelButton.setVisible(false);
             theDelButton.setText("Recover");
 
             /* Hide the optional fields */
-            theFieldSet.setVisibility(Account.FIELD_TYPE, false);
+            theFieldSet.setVisibility(Account.FIELD_CATEGORY, false);
             theFieldSet.setVisibility(Account.FIELD_MATURITY, false);
             theFieldSet.setVisibility(Account.FIELD_PARENT, false);
             theFieldSet.setVisibility(Account.FIELD_ALIAS, false);
@@ -871,7 +873,7 @@ public class MaintAccount
      */
     private void newAccount() {
         /* Create a account View for an empty account */
-        theActView = theAccounts.deriveEditList(theSelect.getType());
+        theActView = theAccounts.deriveEditList(theSelect.getCategory());
         AccountInfoList myInfo = theActView.getAccountInfo();
 
         /* Access the account */
@@ -1008,12 +1010,12 @@ public class MaintAccount
                     /* Update the Value */
                     theAccount.setDescription(pUpdate.getString());
                     /* If this is our Account type */
-                } else if (myField.equals(Account.FIELD_TYPE)) {
+                } else if (myField.equals(Account.FIELD_CATEGORY)) {
                     /* Update the Value */
-                    theAccount.setActType(pUpdate.getValue(AccountCategoryType.class));
+                    theAccount.setAccountCategory(pUpdate.getValue(AccountCategory.class));
 
                     /* If the account is now a bond */
-                    if (theAccount.isBond()) {
+                    if (theAccount.isCategoryClass(AccountCategoryClass.Bond)) {
                         /* If it doesn't have a maturity */
                         if (theAccount.getMaturity() == null) {
                             /* Create a default maturity */
@@ -1027,7 +1029,7 @@ public class MaintAccount
                     }
 
                     /* Set parent to null for non-child accounts */
-                    if (!theAccount.isChild()) {
+                    if (!theAccount.getAccountCategoryClass().isChild()) {
                         theAccount.setParent(null);
                     }
 

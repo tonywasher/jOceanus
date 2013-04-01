@@ -68,7 +68,7 @@ public class SheetPattern
     private static final int COL_CREDIT = COL_DEBIT + 1;
 
     /**
-     * CategoryType column.
+     * Category column.
      */
     private static final int COL_CATEGORY = COL_CREDIT + 1;
 
@@ -158,7 +158,7 @@ public class SheetPattern
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_DEBIT, pItem.getDebitId());
         writeInteger(COL_CREDIT, pItem.getCreditId());
-        writeInteger(COL_CATEGORY, pItem.getCategoryTypeId());
+        writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeInteger(COL_FREQ, pItem.getFrequencyId());
         writeDate(COL_DATE, pItem.getDate());
         writeBytes(COL_DESC, pItem.getDescBytes());
@@ -170,7 +170,7 @@ public class SheetPattern
         /* Set the fields */
         writeString(COL_DEBIT, pItem.getDebitName());
         writeString(COL_CREDIT, pItem.getCreditName());
-        writeString(COL_CATEGORY, pItem.getCategoryTypeName());
+        writeString(COL_CATEGORY, pItem.getCategoryName());
         writeString(COL_FREQ, pItem.getFrequencyName());
         writeDate(COL_DATE, pItem.getDate());
         writeString(COL_DESC, pItem.getDesc());
@@ -185,7 +185,7 @@ public class SheetPattern
         writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
         writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
-        writeHeader(COL_CATEGORY, EventBase.FIELD_CATTYP.getName());
+        writeHeader(COL_CATEGORY, EventBase.FIELD_CATEGORY.getName());
         writeHeader(COL_FREQ, Pattern.FIELD_FREQ.getName());
     }
 
@@ -261,7 +261,7 @@ public class SheetPattern
                 String myDesc = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myPartner = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                String myTransType = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 boolean isCredit = myView.getRowCellByIndex(myRow, iAdjust++).getBooleanValue();
                 String myFrequency = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
@@ -270,7 +270,7 @@ public class SheetPattern
                         ? myPartner
                         : myAccount, isCredit
                         ? myAccount
-                        : myPartner, myTransType, myAmount, myFrequency);
+                        : myPartner, myCategory, myAmount, myFrequency);
 
                 /* Report the progress */
                 myCount++;

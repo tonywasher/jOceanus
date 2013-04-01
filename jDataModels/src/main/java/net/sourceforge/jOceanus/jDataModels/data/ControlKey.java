@@ -195,8 +195,12 @@ public class ControlKey
      */
     private void setValuePasswordHash(final PasswordHash pValue) {
         getValueSet().setValue(FIELD_PASSHASH, pValue);
-        setValueHashMode((pValue == null) ? null : pValue.getHashMode());
-        setValueHashBytes((pValue == null) ? null : pValue.getHashBytes());
+        setValueHashMode((pValue == null)
+                ? null
+                : pValue.getHashMode());
+        setValueHashBytes((pValue == null)
+                ? null
+                : pValue.getHashBytes());
     }
 
     /**
@@ -246,15 +250,15 @@ public class ControlKey
     /**
      * Secure Constructor.
      * @param pList the list to which to add the key to
-     * @param uId the id of the ControlKey
+     * @param pId the id of the ControlKey
      * @param pHashBytes the hash bytes
      * @throws JDataException on error
      */
     private ControlKey(final ControlKeyList pList,
-                       final Integer uId,
+                       final Integer pId,
                        final byte[] pHashBytes) throws JDataException {
         /* Initialise the item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Protect against exceptions */
         try {
@@ -554,20 +558,20 @@ public class ControlKey
 
         /**
          * Add a ControlKey item from a secure store.
-         * @param uId the id of the ControlKey
+         * @param pId the id of the ControlKey
          * @param pHashBytes the HashBytes
          * @return the new item
          * @throws JDataException on error
          */
-        public ControlKey addSecureItem(final Integer uId,
+        public ControlKey addSecureItem(final Integer pId,
                                         final byte[] pHashBytes) throws JDataException {
             /* Create the ControlKey */
-            ControlKey myKey = new ControlKey(this, uId, pHashBytes);
+            ControlKey myKey = new ControlKey(this, pId, pHashBytes);
 
             /* Check that this KeyId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate ControlKeyId ("
-                                                                     + uId
+                                                                     + pId
                                                                      + ")");
             }
 

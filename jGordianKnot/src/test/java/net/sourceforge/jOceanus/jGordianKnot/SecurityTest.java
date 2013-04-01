@@ -66,6 +66,7 @@ public class SecurityTest {
      */
     public static void createAndShowGUI() {
         try {
+            listAlgorithms(SecurityProvider.BouncyCastle);
             /* Test zip file creation */
             File myZipFile = new File("c:\\Users\\Tony\\TestStdZip.zip");
             createZipFile(myZipFile, new File("c:\\Users\\Tony\\tester"), true);

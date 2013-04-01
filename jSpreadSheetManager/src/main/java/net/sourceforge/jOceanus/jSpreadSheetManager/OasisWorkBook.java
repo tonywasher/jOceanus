@@ -338,7 +338,7 @@ public class OasisWorkBook {
         if (myRange == null) {
             throw new JDataException(ExceptionClass.EXCEL, "Name "
                                                            + pName
-                                                           + "not found in workbook");
+                                                           + " not found in workbook");
         }
 
         /* Obtain the address */
@@ -352,7 +352,7 @@ public class OasisWorkBook {
         if (mySheet == null) {
             throw new JDataException(ExceptionClass.EXCEL, "Sheet for "
                                                            + pName
-                                                           + "not found in workbook");
+                                                           + " not found in workbook");
         }
 
         /* Return the view */

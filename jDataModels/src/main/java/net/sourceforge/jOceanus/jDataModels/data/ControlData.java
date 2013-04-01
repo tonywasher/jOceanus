@@ -94,7 +94,9 @@ public class ControlData
      */
     public Integer getControlKeyId() {
         ControlKey myKey = getControlKey();
-        return (myKey == null) ? null : myKey.getId();
+        return (myKey == null)
+                ? null
+                : myKey.getId();
     }
 
     /**
@@ -158,28 +160,28 @@ public class ControlData
     /**
      * Secure Constructor.
      * @param pList the owning list
-     * @param uId the id
-     * @param uVersion the data version
-     * @param uControlId the control key id
+     * @param pId the id
+     * @param pVersion the data version
+     * @param pControlId the control key id
      * @throws JDataException on error
      */
     private ControlData(final ControlDataList pList,
-                        final Integer uId,
-                        final Integer uVersion,
-                        final Integer uControlId) throws JDataException {
+                        final Integer pId,
+                        final Integer pVersion,
+                        final Integer pControlId) throws JDataException {
         /* Initialise the item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Protect against exceptions */
         try {
             /* Record the values */
-            setValueDataVersion(uVersion);
-            setValueControlKey(uControlId);
+            setValueDataVersion(pVersion);
+            setValueControlKey(pControlId);
 
             /* Look up the ControlKey */
             DataSet<?> myData = getDataSet();
             ControlKeyList myKeys = myData.getControlKeys();
-            ControlKey myControl = myKeys.findItemById(uControlId);
+            ControlKey myControl = myKeys.findItemById(pControlId);
             if (myControl == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
             }
@@ -195,17 +197,17 @@ public class ControlData
     /**
      * Open (no security) constructor.
      * @param pList the owning list
-     * @param uId the id
-     * @param uVersion the data version
+     * @param pId the id
+     * @param pVersion the data version
      */
     private ControlData(final ControlDataList pList,
-                        final Integer uId,
-                        final Integer uVersion) {
+                        final Integer pId,
+                        final Integer pVersion) {
         /* Initialise the item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Record the values */
-        setValueDataVersion(uVersion);
+        setValueDataVersion(pVersion);
     }
 
     @Override
@@ -365,21 +367,21 @@ public class ControlData
 
         /**
          * Add a ControlData item from secure store.
-         * @param uId the id
-         * @param uVersion the version
-         * @param uControlId the controlId
+         * @param pId the id
+         * @param pVersion the version
+         * @param pControlId the controlId
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uVersion,
-                                  final Integer uControlId) throws JDataException {
+        public void addSecureItem(final Integer pId,
+                                  final Integer pVersion,
+                                  final Integer pControlId) throws JDataException {
             /* Create the ControlData */
-            ControlData myControl = new ControlData(this, uId, uVersion, uControlId);
+            ControlData myControl = new ControlData(this, pId, pVersion, pControlId);
 
             /* Check that this ControlId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myControl, "Duplicate ControlId ("
-                                                                         + uId
+                                                                         + pId
                                                                          + ")");
             }
 
@@ -395,14 +397,14 @@ public class ControlData
 
         /**
          * Add a ControlData item from insecure store.
-         * @param uId the id
-         * @param uVersion the version
+         * @param pId the id
+         * @param pVersion the version
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
-                                final Integer uVersion) throws JDataException {
+        public void addOpenItem(final Integer pId,
+                                final Integer pVersion) throws JDataException {
             /* Create the ControlData */
-            ControlData myControl = new ControlData(this, uId, uVersion);
+            ControlData myControl = new ControlData(this, pId, pVersion);
 
             /* Only one static is allowed */
             if (theControl != null) {

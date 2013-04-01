@@ -42,9 +42,9 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedMoney;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 
 /**
  * Event data type.
@@ -74,9 +74,9 @@ public abstract class EventBase
     public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
 
     /**
-     * CategoryType Field Id.
+     * Category Field Id.
      */
-    public static final JDataField FIELD_CATTYP = FIELD_DEFS.declareEqualityValueField("CategoryType");
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField("Category");
 
     /**
      * Amount Field Id.
@@ -126,33 +126,44 @@ public abstract class EventBase
     }
 
     /**
-     * Obtain category Type.
-     * @return the categoryType
+     * Obtain category.
+     * @return the category
      */
-    public final EventCategoryType getCategoryType() {
-        return getCategoryType(getValueSet());
+    public final EventCategory getCategory() {
+        return getCategory(getValueSet());
     }
 
     /**
-     * Obtain CategoryTypeId.
-     * @return the categoryTypeId
+     * Obtain CategoryId.
+     * @return the categoryId
      */
-    public Integer getCategoryTypeId() {
-        EventCategoryType myType = getCategoryType();
-        return (myType == null)
+    public Integer getCategoryId() {
+        EventCategory myCategory = getCategory();
+        return (myCategory == null)
                 ? null
-                : myType.getId();
+                : myCategory.getId();
     }
 
     /**
-     * Obtain categoryTypeName.
-     * @return the categoryTypeName
+     * Obtain categoryName.
+     * @return the categoryName
      */
-    public String getCategoryTypeName() {
-        EventCategoryType myType = getCategoryType();
-        return (myType == null)
+    public String getCategoryName() {
+        EventCategory myCategory = getCategory();
+        return (myCategory == null)
                 ? null
-                : myType.getName();
+                : myCategory.getName();
+    }
+
+    /**
+     * Obtain EventCategoryClass.
+     * @return the eventCategoryClass
+     */
+    public EventCategoryClass getCategoryClass() {
+        EventCategory myCategory = getCategory();
+        return (myCategory == null)
+                ? null
+                : myCategory.getCategoryTypeClass();
     }
 
     /**
@@ -276,12 +287,12 @@ public abstract class EventBase
     }
 
     /**
-     * Obtain Category type.
+     * Obtain Category.
      * @param pValueSet the valueSet
-     * @return the categoryType
+     * @return the category
      */
-    public static EventCategoryType getCategoryType(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_CATTYP, EventCategoryType.class);
+    public static EventCategory getCategory(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CATEGORY, EventCategory.class);
     }
 
     /**
@@ -364,19 +375,19 @@ public abstract class EventBase
     }
 
     /**
-     * Set categoryType value.
+     * Set category value.
      * @param pValue the value
      */
-    private void setValueCategoryType(final EventCategoryType pValue) {
-        getValueSet().setValue(FIELD_CATTYP, pValue);
+    private void setValueCategory(final EventCategory pValue) {
+        getValueSet().setValue(FIELD_CATEGORY, pValue);
     }
 
     /**
-     * Set categoryType id.
+     * Set category id.
      * @param pId the id
      */
-    private void setValueCategoryType(final Integer pId) {
-        getValueSet().setValue(FIELD_CATTYP, pId);
+    private void setValueCategory(final Integer pId) {
+        getValueSet().setValue(FIELD_CATEGORY, pId);
     }
 
     /**
@@ -476,7 +487,7 @@ public abstract class EventBase
      * @param pDesc the description
      * @param uDebit the debit id
      * @param uCredit the credit id
-     * @param uCatType the categoryType id
+     * @param uCategory the category id
      * @param pAmount the amount
      * @throws JDataException on error
      */
@@ -487,7 +498,7 @@ public abstract class EventBase
                         final byte[] pDesc,
                         final Integer uDebit,
                         final Integer uCredit,
-                        final Integer uCatType,
+                        final Integer uCategory,
                         final byte[] pAmount) throws JDataException {
         /* Initialise item */
         super(pList, uId);
@@ -501,7 +512,7 @@ public abstract class EventBase
             /* Store the IDs that we will look up */
             setValueDebit(uDebit);
             setValueCredit(uCredit);
-            setValueCategoryType(uCatType);
+            setValueCategory(uCategory);
             setControlKey(uControlId);
 
             /* Create the date */
@@ -521,12 +532,12 @@ public abstract class EventBase
             }
             setValueCredit(myAccount);
 
-            /* Look up the Category Type */
-            EventCategoryType myCatType = myData.getEventCategoryTypes().findItemById(uCatType);
-            if (myCatType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Transaction Type Id");
+            /* Look up the Category */
+            EventCategory myCategory = myData.getEventCategories().findItemById(uCategory);
+            if (myCategory == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Id");
             }
-            setValueCategoryType(myCatType);
+            setValueCategory(myCategory);
 
             /* Record the encrypted values */
             setValueDesc(pDesc);
@@ -547,7 +558,7 @@ public abstract class EventBase
      * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pCatType the category type
+     * @param pCategory the category
      * @param pAmount the amount
      * @throws JDataException on error
      */
@@ -557,7 +568,7 @@ public abstract class EventBase
                         final String pDesc,
                         final Account pDebit,
                         final Account pCredit,
-                        final EventCategoryType pCatType,
+                        final EventCategory pCategory,
                         final String pAmount) throws JDataException {
         /* Initialise item */
         super(pList, uId);
@@ -573,7 +584,7 @@ public abstract class EventBase
             setValueDesc(pDesc);
             setValueDebit(pDebit);
             setValueCredit(pCredit);
-            setValueCategoryType(pCatType);
+            setValueCategory(pCategory);
             setValueDate(new JDateDay(pDate));
             setValueAmount(myParser.parseMoneyValue(pAmount));
 
@@ -617,8 +628,8 @@ public abstract class EventBase
             return iDiff;
         }
 
-        /* If the category types differ */
-        iDiff = Difference.compareObject(getCategoryType(), pThat.getCategoryType());
+        /* If the categories differ */
+        iDiff = Difference.compareObject(getCategory(), pThat.getCategory());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -641,7 +652,7 @@ public abstract class EventBase
         /* Access Lists */
         FinanceData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
-        EventCategoryTypeList myCatTypes = myData.getEventCategoryTypes();
+        EventCategoryList myCategories = myData.getEventCategories();
 
         /* Update credit to use the local copy of the Accounts */
         Account myAct = getCredit();
@@ -653,183 +664,147 @@ public abstract class EventBase
         myNewAct = myAccounts.findItemById(myAct.getId());
         setValueDebit(myNewAct);
 
-        /* Update categoryType to use the local copy */
-        EventCategoryType myCat = getCategoryType();
-        EventCategoryType myNewCat = myCatTypes.findItemById(myCat.getId());
-        setValueCategoryType(myNewCat);
+        /* Update category to use the local copy */
+        EventCategory myCat = getCategory();
+        EventCategory myNewCat = myCategories.findItemById(myCat.getId());
+        setValueCategory(myNewCat);
     }
 
     /**
      * Determines whether an event can be valid.
-     * @param pCategory The category type of the event
-     * @param pType The account type of the event
+     * @param pEventCategory The event category of the event
+     * @param pAccountCategory The account category of the event
      * @param pCredit is the account a credit or a debit
      * @return valid true/false
      */
-    public static boolean isValidEvent(final EventCategoryType pCategory,
-                                       final AccountCategoryType pType,
+    public static boolean isValidEvent(final EventCategory pEventCategory,
+                                       final AccountCategory pAccountCategory,
                                        final boolean pCredit) {
         boolean myResult = false;
         boolean isCredit = pCredit;
+        AccountCategoryClass myClass = pAccountCategory.getCategoryTypeClass();
 
         /* Market is always false */
-        if (pType.isMarket()) {
+        if (myClass == AccountCategoryClass.Market) {
             return false;
         }
 
         /* Switch on the CategoryType */
-        switch (pCategory.getCategoryClass()) {
-            case TaxFreeIncome:
-                if (!isCredit) {
-                    myResult = (pType.isExternal() && !pType.isCash());
-                } else {
-                    myResult = !pType.isExternal();
-                }
-                break;
+        switch (pEventCategory.getCategoryTypeClass()) {
             case TaxableGain:
                 if (!isCredit) {
-                    myResult = pType.isLifeBond();
+                    myResult = (myClass == AccountCategoryClass.LifeBond);
                 } else {
-                    myResult = pType.isMoney();
+                    myResult = myClass.hasValue();
                 }
                 break;
-            case AdminCharge:
-                myResult = pType.isLifeBond();
+            case StockAdjust:
+                myResult = (myClass == AccountCategoryClass.LifeBond);
                 break;
             case Dividend:
                 if (!isCredit) {
-                    myResult = pType.isDividend();
+                    myResult = myClass.isDividend();
                 } else {
-                    myResult = (pType.isMoney()
-                                || pType.isCapital() || pType.isDeferred());
+                    myResult = (myClass.hasValue() || myClass.isCapital());
                 }
                 break;
             case StockDeMerger:
             case StockSplit:
             case StockTakeOver:
-                myResult = pType.isShares();
+                myResult = (myClass == AccountCategoryClass.Shares);
                 break;
             case StockRightsWaived:
-            case CashTakeOver:
                 isCredit = !isCredit;
             case StockRightsTaken:
                 if (!isCredit) {
-                    myResult = (pType.isMoney() || pType.isDeferred());
+                    myResult = myClass.hasValue();
                 } else {
-                    myResult = pType.isShares();
+                    myResult = (myClass == AccountCategoryClass.Shares);
                 }
                 break;
             case Interest:
                 if (!isCredit) {
-                    myResult = pType.isMoney();
+                    myResult = myClass.hasValue();
                 } else {
-                    myResult = pType.isMoney();
+                    myResult = myClass.hasValue();
                 }
                 break;
             case TaxedIncome:
                 if (!isCredit) {
-                    myResult = pType.isEmployer();
+                    myResult = (myClass == AccountCategoryClass.Employer);
                 } else {
-                    myResult = ((pType.isMoney()) || (pType.isDeferred()));
+                    myResult = myClass.hasValue();
                 }
                 break;
             case NatInsurance:
                 if (!isCredit) {
-                    myResult = pType.isEmployer();
+                    myResult = (myClass == AccountCategoryClass.Employer);
                 } else {
-                    myResult = pType.isTaxMan();
+                    myResult = (myClass == AccountCategoryClass.TaxMan);
                 }
                 break;
             case Transfer:
-                myResult = !pType.isExternal();
+                myResult = !myClass.isNonAsset();
                 if (isCredit) {
-                    myResult &= !pType.isEndowment();
+                    myResult &= (myClass != AccountCategoryClass.Endowment);
                 }
                 break;
             case Endowment:
                 if (!isCredit) {
-                    myResult = (pType.isMoney() || pType.isDebt());
+                    myResult = (myClass.hasValue());
                 } else {
-                    myResult = pType.isEndowment();
-                }
-                break;
-            case CashPayment:
-                isCredit = !isCredit;
-            case CashRecovery:
-                if (!isCredit) {
-                    myResult = ((pType.isExternal()) && (!pType.isCash()));
-                } else {
-                    myResult = pType.isCash();
+                    myResult = (myClass == AccountCategoryClass.Endowment);
                 }
                 break;
             case Inherited:
-                if (!isCredit) {
-                    myResult = pType.isInheritance();
-                } else {
-                    myResult = !pType.isExternal();
-                }
+                // if (!isCredit) {
+                // myResult = myClass.isInheritance();
+                // } else {
+                myResult = !myClass.isNonAsset();
+                // }
                 break;
             case Benefit:
                 if (!isCredit) {
-                    myResult = pType.isEmployer();
-                } else {
-                    myResult = pType.isBenefit();
+                    myResult = (myClass == AccountCategoryClass.Employer);
+                    // } else {TODO
+                    // myResult = myClass.isBenefit();
                 }
                 break;
-            case Recovered:
-                isCredit = !isCredit;
             case Expense:
                 if (!isCredit) {
-                    myResult = !pType.isExternal();
+                    myResult = !myClass.isNonAsset();
                 } else {
-                    myResult = pType.isExternal();
+                    myResult = myClass.isNonAsset();
                 }
                 break;
-            case ExtraTax:
-            case Insurance:
+            case TaxSettlement:
                 if (!isCredit) {
-                    myResult = (pType.isMoney() || pType.isDebt());
+                    myResult = myClass.hasValue();
                 } else {
-                    myResult = (pType.isExternal() && !pType.isCash());
-                }
-                break;
-            case Mortgage:
-                if (!isCredit) {
-                    myResult = pType.isDebt();
-                } else {
-                    myResult = (pType.isExternal() && !pType.isCash());
-                }
-                break;
-            case TaxRefund:
-                isCredit = !isCredit;
-            case TaxOwed:
-                if (!isCredit) {
-                    myResult = (pType.isMoney() || pType.isDeferred());
-                } else {
-                    myResult = pType.isTaxMan();
+                    myResult = (myClass == AccountCategoryClass.TaxMan);
                 }
                 break;
             case TaxRelief:
                 if (!isCredit) {
-                    myResult = pType.isTaxMan();
+                    myResult = (myClass == AccountCategoryClass.TaxMan);
                 } else {
-                    myResult = pType.isDebt();
+                    myResult = myClass.isLoan();
                 }
                 break;
-            case DebtInterest:
+            case LoanInterest:
             case RentalIncome:
                 if (!isCredit) {
-                    myResult = (pType.isExternal() && !pType.isCash());
+                    myResult = myClass.hasValue();
                 } else {
-                    myResult = pType.isDebt();
+                    myResult = myClass.isLoan();
                 }
                 break;
             case WriteOff:
-                if (!isCredit) {
-                    myResult = pType.isDebt();
-                } else {
-                    myResult = pType.isWriteOff();
-                }
+                // if (!isCredit) {TODO
+                myResult = myClass.isLoan();
+                // } else {
+                // myResult = myClass.isWriteOff();
+                // }
                 break;
             default:
                 break;
@@ -841,29 +816,30 @@ public abstract class EventBase
 
     /**
      * Is an event allowed between these two accounts, used for more detailed analysis once the event is deemed valid based on the account types.
-     * @param pCategory The category type of the event
+     * @param pCategory The category of the event
      * @param pDebit the debit account
      * @param pCredit the credit account
      * @return true/false
      */
-    public static boolean isValidEvent(final EventCategoryType pCategory,
+    public static boolean isValidEvent(final EventCategory pCategory,
                                        final Account pDebit,
                                        final Account pCredit) {
         /* Generally we must not be recursive */
         boolean myResult = !Difference.isEqual(pDebit, pCredit);
+        AccountCategoryClass myCreditClass = pCredit.getAccountCategoryClass();
 
-        /* Switch on the CategoryType */
-        switch (pCategory.getCategoryClass()) {
+        /* Switch on the CategoryClass */
+        switch (pCategory.getCategoryTypeClass()) {
         /* Dividend */
             case Dividend:
                 /* If the credit account is capital */
-                if (pCredit.isCapital()) {
+                if (myCreditClass.isCapital()) {
                     /* Debit and credit accounts must be identical */
                     myResult = !myResult;
                 }
                 break;
-            /* AdminCharge/StockSplit */
-            case AdminCharge:
+            /* StockAdjust/StockSplit */
+            case StockAdjust:
             case StockSplit:
                 /* Debit and credit accounts must be identical */
                 myResult = !myResult;
@@ -872,14 +848,10 @@ public abstract class EventBase
             case Interest:
                 myResult = true;
                 break;
-            /* Debt Interest and Rental Income must come from the owner of the debt */
+            /* Loan Interest and Rental Income must come from the owner of the debt */
             case RentalIncome:
-            case DebtInterest:
+            case LoanInterest:
                 myResult = Difference.isEqual(pDebit, pCredit.getParent());
-                break;
-            /* Mortgage payment must be to the owner of the mortgage */
-            case Mortgage:
-                myResult = Difference.isEqual(pCredit, pDebit.getParent());
                 break;
             default:
                 break;
@@ -916,9 +888,9 @@ public abstract class EventBase
         boolean myResult = false;
 
         /* Check credit and debit accounts */
-        if (!getCredit().isExternal()) {
+        if (!getCredit().getAccountCategoryClass().isNonAsset()) {
             myResult = true;
-        } else if (!getDebit().isExternal()) {
+        } else if (!getDebit().getAccountCategoryClass().isNonAsset()) {
             myResult = true;
         }
 
@@ -940,16 +912,25 @@ public abstract class EventBase
     }
 
     /**
+     * Is this event category the required class.
+     * @param pClass the required category class.
+     * @return true/false
+     */
+    public boolean isCategoryClass(final EventCategoryClass pClass) {
+        /* Check for match */
+        return (getCategoryClass() == pClass);
+    }
+
+    /**
      * Determines whether an event is a dividend re-investment.
      * @return dividend re-investment true/false
      */
     public boolean isDividendReInvestment() {
         /* Check for dividend re-investment */
-        if ((getCategoryType() != null)
-            && (!getCategoryType().isDividend())) {
+        if (!isDividend()) {
             return false;
         }
-        return ((getCredit() != null) && (getCredit().isPriced()));
+        return ((getCredit() != null) && (Difference.isEqual(getDebit(), getCredit())));
     }
 
     /**
@@ -958,42 +939,33 @@ public abstract class EventBase
      */
     public boolean isInterest() {
         /* Check for interest */
-        return ((getCategoryType() != null) && (getCategoryType().isInterest()));
+        return ((getCategory() != null) && (getCategory().getCategoryTypeClass().isInterest()));
     }
 
     /**
-     * Determines whether an event is a stock split.
-     * @return stock split true/false
+     * Determines whether an event is a dividend payment.
+     * @return dividend true/false
      */
-    public final boolean isStockSplit() {
-        /* Check for stock split */
-        return ((getCategoryType() != null) && (getCategoryType().isStockSplit()));
-    }
-
-    /**
-     * Determines whether an event is an Admin Charge.
-     * @return admin charge true/false
-     */
-    public final boolean isAdminCharge() {
-        /* Check for Admin charge */
-        return ((getCategoryType() != null) && (getCategoryType().isAdminCharge()));
+    public boolean isDividend() {
+        /* Check for interest */
+        return ((getCategory() != null) && (getCategory().getCategoryTypeClass().isDividend()));
     }
 
     /**
      * Determines whether an event needs a tax credit.
-     * @param pCategory the category type
+     * @param pCategory the category
      * @param pDebit the debit account
      * @return needs tax credit true/false
      */
-    public static boolean needsTaxCredit(final EventCategoryType pCategory,
+    public static boolean needsTaxCredit(final EventCategory pCategory,
                                          final Account pDebit) {
-        /* Handle null categoryType */
+        /* Handle null category */
         if (pCategory == null) {
             return false;
         }
 
-        /* Switch on category type */
-        switch (pCategory.getCategoryClass()) {
+        /* Switch on category class */
+        switch (pCategory.getCategoryTypeClass()) {
         /* If this is a Taxable Gain/TaxedIncome we need a tax credit */
             case TaxableGain:
             case TaxedIncome:
@@ -1010,18 +982,19 @@ public abstract class EventBase
 
     /**
      * Determines whether an event needs a dilution factor.
-     * @param pCategory the category type
+     * @param pCategory the category
      * @return needs dilution factor true/false
      */
-    public static boolean needsDilution(final EventCategoryType pCategory) {
-        /* Handle null categoryType */
+    public static boolean needsDilution(final EventCategory pCategory) {
+        /* Handle null category */
         if (pCategory == null) {
             return false;
         }
 
         /* Switch on category type */
-        switch (pCategory.getCategoryClass()) {
+        switch (pCategory.getCategoryType().getCategoryClass()) {
         /* If this is a Stock Operation we need a dilution factor */
+            case StockSplit:
             case StockDeMerger:
             case StockRightsTaken:
             case StockRightsWaived:
@@ -1048,11 +1021,11 @@ public abstract class EventBase
     }
 
     /**
-     * Set a new categoryType.
-     * @param pCategory the categoryType
+     * Set a new category.
+     * @param pCategory the category
      */
-    public void setCategoryType(final EventCategoryType pCategory) {
-        setValueCategoryType(pCategory);
+    public void setCategory(final EventCategory pCategory) {
+        setValueCategory(pCategory);
     }
 
     /**
@@ -1088,7 +1061,7 @@ public abstract class EventBase
      */
     protected void markActiveItems() {
         /* mark the category type referred to */
-        getCategoryType().touchItem(this);
+        getCategory().touchItem(this);
 
         /* Mark the credit and debit accounts */
         getDebit().touchItem(this);
@@ -1105,7 +1078,7 @@ public abstract class EventBase
         Account myDebit = getDebit();
         Account myCredit = getCredit();
         JMoney myAmount = getAmount();
-        EventCategoryType myCategory = getCategoryType();
+        EventCategory myCategory = getCategory();
 
         /* Determine date range to check for */
         EventBaseList<?> myList = getList();
@@ -1120,15 +1093,15 @@ public abstract class EventBase
             addError("Date must be within range", FIELD_DATE);
         }
 
-        /* CategoryType must be non-null */
+        /* Category must be non-null */
         if (myCategory == null) {
-            addError("CategoryType must be non-null", FIELD_CATTYP);
+            addError("Category must be non-null", FIELD_CATEGORY);
             /* Must be enabled */
-        } else if (!myCategory.getEnabled()) {
-            addError("CategoryType must be enabled", FIELD_CATTYP);
+        } else if (!myCategory.getCategoryType().getEnabled()) {
+            addError("CategoryType must be enabled", FIELD_CATEGORY);
             /* Must not be hidden */
-        } else if (myCategory.isHiddenType()) {
-            addError("Hidden category types are not allowed", FIELD_CATTYP);
+        } else if (myCategory.getCategoryTypeClass().isHiddenType()) {
+            addError("Hidden category types are not allowed", FIELD_CATEGORY);
         }
 
         /* The description must be non-null */
@@ -1144,7 +1117,7 @@ public abstract class EventBase
             addError("Credit account must be non-null", FIELD_CREDIT);
             /* And valid for category type */
         } else if ((myCategory != null)
-                   && (!isValidEvent(myCategory, myCredit.getActType(), true))) {
+                   && (!isValidEvent(myCategory, myCredit.getAccountCategory(), true))) {
             addError("Invalid credit account for transaction", FIELD_CREDIT);
         }
 
@@ -1153,7 +1126,7 @@ public abstract class EventBase
             addError("Debit account must be non-null", FIELD_DEBIT);
             /* And valid for category type */
         } else if ((myCategory != null)
-                   && (!isValidEvent(myCategory, myDebit.getActType(), false))) {
+                   && (!isValidEvent(myCategory, myDebit.getAccountCategory(), false))) {
             addError("Invalid debit account for transaction", FIELD_DEBIT);
         }
 
@@ -1177,9 +1150,8 @@ public abstract class EventBase
         if ((myAmount != null)
             && (myAmount.isNonZero())
             && (myCategory != null)
-            && ((myCategory.isStockDemerger())
-                || (myCategory.isStockSplit()) || (myCategory.isStockTakeover()))) {
-            addError("Amount must be zero for Stock Split/Demerger/Takeover", FIELD_AMOUNT);
+            && (myCategory.getCategoryTypeClass().needsZeroAmount())) {
+            addError("Amount must be zero for Stock Split/Adjust/Demerger/Takeover", FIELD_AMOUNT);
         }
     }
 
@@ -1210,9 +1182,9 @@ public abstract class EventBase
             setValueDesc(myEvent.getDescField());
         }
 
-        /* Update the category type if required */
-        if (!Difference.isEqual(getCategoryType(), myEvent.getCategoryType())) {
-            setValueCategoryType(myEvent.getCategoryType());
+        /* Update the category if required */
+        if (!Difference.isEqual(getCategory(), myEvent.getCategory())) {
+            setValueCategory(myEvent.getCategory());
         }
 
         /* Update the debit account if required */
@@ -1301,6 +1273,5 @@ public abstract class EventBase
         protected EventBaseList(final EventBaseList<T> pSource) {
             super(pSource);
         }
-
     }
 }

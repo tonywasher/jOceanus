@@ -211,9 +211,9 @@ public abstract class AnalysisBucket
         ASSETDETAIL(1000),
 
         /**
-         * Debt Detail.
+         * Loan Detail.
          */
-        DEBTDETAIL(1000),
+        LOANDETAIL(1000),
 
         /**
          * Payee Detail.
@@ -298,15 +298,14 @@ public abstract class AnalysisBucket
          */
         protected static BucketType getAccountBucketType(final Account pAccount) {
             /* If this is a external/benefit */
-            if (pAccount.isExternal()
-                || pAccount.isBenefit()) {
-                return PAYEEDETAIL;
-            } else if (pAccount.isMoney()) {
-                return BANKDETAIL;
-            } else if (pAccount.isPriced()) {
+            if (pAccount.hasUnits()) {
                 return ASSETDETAIL;
+            } else if (pAccount.isLoan()) {
+                return LOANDETAIL;
+            } else if (pAccount.hasValue()) {
+                return BANKDETAIL;
             } else {
-                return DEBTDETAIL;
+                return PAYEEDETAIL;
             }
         }
 

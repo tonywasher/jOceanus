@@ -69,7 +69,7 @@ public class TableEvent
         myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_DEBIT, TableAccount.TABLE_NAME);
         myTableDef.addReferenceColumn(EventBase.FIELD_CREDIT, TableAccount.TABLE_NAME);
-        myTableDef.addReferenceColumn(EventBase.FIELD_CATTYP, TableEventCategoryType.TABLE_NAME);
+        myTableDef.addReferenceColumn(EventBase.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
 
         /* Declare the sort order */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -93,10 +93,10 @@ public class TableEvent
         byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
         Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
         Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
-        Integer myTranType = myTableDef.getIntegerValue(EventBase.FIELD_CATTYP);
+        Integer myCategoryId = myTableDef.getIntegerValue(EventBase.FIELD_CATEGORY);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myTranType);
+        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myCategoryId);
     }
 
     @Override
@@ -105,17 +105,17 @@ public class TableEvent
         /* Switch on field id */
         TableDefinition myTableDef = getTableDef();
         if (EventBase.FIELD_DATE.equals(iField)) {
-            myTableDef.setDateValue(EventBase.FIELD_DATE, pItem.getDate());
+            myTableDef.setDateValue(iField, pItem.getDate());
         } else if (EventBase.FIELD_DESC.equals(iField)) {
-            myTableDef.setBinaryValue(EventBase.FIELD_DESC, pItem.getDescBytes());
+            myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else if (EventBase.FIELD_AMOUNT.equals(iField)) {
-            myTableDef.setBinaryValue(EventBase.FIELD_AMOUNT, pItem.getAmountBytes());
+            myTableDef.setBinaryValue(iField, pItem.getAmountBytes());
         } else if (EventBase.FIELD_DEBIT.equals(iField)) {
-            myTableDef.setIntegerValue(EventBase.FIELD_DEBIT, pItem.getDebitId());
+            myTableDef.setIntegerValue(iField, pItem.getDebitId());
         } else if (EventBase.FIELD_CREDIT.equals(iField)) {
-            myTableDef.setIntegerValue(EventBase.FIELD_CREDIT, pItem.getCreditId());
-        } else if (EventBase.FIELD_CATTYP.equals(iField)) {
-            myTableDef.setIntegerValue(EventBase.FIELD_CATTYP, pItem.getCategoryTypeId());
+            myTableDef.setIntegerValue(iField, pItem.getCreditId());
+        } else if (EventBase.FIELD_CATEGORY.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else {
             super.setFieldValue(pItem, iField);
         }
