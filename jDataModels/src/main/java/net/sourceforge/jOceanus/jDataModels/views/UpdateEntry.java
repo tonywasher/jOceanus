@@ -118,8 +118,8 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
                     myCurr.setBase(myBase);
                     myCurr.setId(myBase.getId());
 
-                    /* Rebuild the links */
-                    myBase.relinkToDataSet();
+                    /* Resolve the links */
+                    myBase.resolveDataSetLinks();
                     break;
 
                 /* If this is a deleted or deleted-changed item */

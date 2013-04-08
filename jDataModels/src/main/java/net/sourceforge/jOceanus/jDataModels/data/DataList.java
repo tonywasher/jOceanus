@@ -132,7 +132,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             return theEdit;
         }
         if (FIELD_BASE.equals(pField)) {
-            return (theBase == null) ? JDataFieldValue.SkipField : theBase;
+            return (theBase == null)
+                    ? JDataFieldValue.SkipField
+                    : theBase;
         }
         if (FIELD_CLASS.equals(pField)) {
             return getBaseClass().getSimpleName();
@@ -429,13 +431,30 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             }
 
             /* Copy the item */
-            DataItem myItem = pList.addCopyItem(myCurr);
+            pList.addCopyItem(myCurr);
+        }
 
-            /* If this is a Clone list */
-            if (isClone) {
-                /* Rebuild the links */
-                myItem.relinkToDataSet();
-            }
+        /* If this is a Clone list */
+        if (isClone) {
+            /* Adjust the links */
+            resolveDataSetLinks();
+        }
+    }
+
+    /**
+     * Adjust links.
+     */
+    public void resolveDataSetLinks() {
+        /* Create an iterator for all items in the list */
+        Iterator<? extends DataItem> myIterator = iterator();
+
+        /* Loop through the list */
+        while (myIterator.hasNext()) {
+            /* Access the item */
+            DataItem myCurr = myIterator.next();
+
+            /* Adjust the links */
+            myCurr.resolveDataSetLinks();
         }
     }
 

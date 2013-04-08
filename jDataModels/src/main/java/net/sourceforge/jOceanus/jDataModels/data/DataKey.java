@@ -442,7 +442,7 @@ public class DataKey
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 

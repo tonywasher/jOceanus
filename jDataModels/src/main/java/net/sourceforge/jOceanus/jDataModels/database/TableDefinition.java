@@ -403,8 +403,9 @@ public class TableDefinition {
     public BinaryColumn addEncryptedColumn(final JDataField pId,
                                            final int pLength) {
         /* Create the new binary column */
-        BinaryColumn myColumn = new BinaryColumn(this, pId, SymmetricKey.IVSIZE + CipherSet.KEYIDLEN
-                + SymmetricKey.getEncryptionLength(2 * pLength));
+        BinaryColumn myColumn = new BinaryColumn(this, pId, SymmetricKey.IVSIZE
+                                                            + CipherSet.KEYIDLEN
+                                                            + SymmetricKey.getEncryptionLength(2 * pLength));
 
         /* Add it to the list and return it */
         theList.add(myColumn);
@@ -494,7 +495,10 @@ public class TableDefinition {
      * @return the error string
      */
     private String getColumnError(final ColumnDefinition pCol) {
-        return "Column " + pCol.getColumnName() + " in table " + theTableName;
+        return "Column "
+               + pCol.getColumnName()
+               + " in table "
+               + theTableName;
     }
 
     /**
@@ -518,7 +522,7 @@ public class TableDefinition {
             /* Reject if the value is not set */
             if (!myDef.isValueSet()) {
                 throw new JDataException(ExceptionClass.LOGIC, getColumnError(myDef)
-                        + " has no value for insert");
+                                                               + " has no value for insert");
             }
 
             myDef.storeValue(theStatement, myIndex++);
@@ -583,7 +587,8 @@ public class TableDefinition {
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Integer type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Integer type");
         }
 
         /* Return the value */
@@ -603,7 +608,8 @@ public class TableDefinition {
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Long type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Long type");
         }
 
         /* Return the value */
@@ -623,7 +629,8 @@ public class TableDefinition {
 
         /* Reject if this is not a date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Date type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Date type");
         }
 
         /* Return the value */
@@ -643,8 +650,9 @@ public class TableDefinition {
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Column " + getColumnError(myCol)
-                    + " is not Boolean type");
+            throw new JDataException(ExceptionClass.LOGIC, "Column "
+                                                           + getColumnError(myCol)
+                                                           + " is not Boolean type");
         }
 
         /* Return the value */
@@ -664,7 +672,8 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not String type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not String type");
         }
 
         /* Return the value */
@@ -684,7 +693,8 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Binary type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Binary type");
         }
 
         /* Return the value */
@@ -705,7 +715,8 @@ public class TableDefinition {
 
         /* Reject if this is not an integer column */
         if (!(myCol instanceof IntegerColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Integer type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Integer type");
         }
 
         /* Set the value */
@@ -726,7 +737,8 @@ public class TableDefinition {
 
         /* Reject if this is not a long column */
         if (!(myCol instanceof LongColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Long type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Long type");
         }
 
         /* Set the value */
@@ -747,7 +759,8 @@ public class TableDefinition {
 
         /* Reject if this is not a boolean column */
         if (!(myCol instanceof BooleanColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Boolean type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Boolean type");
         }
 
         /* Set the value */
@@ -768,7 +781,8 @@ public class TableDefinition {
 
         /* Reject if this is not a Date column */
         if (!(myCol instanceof DateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Date type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Date type");
         }
 
         /* Set the value */
@@ -789,7 +803,8 @@ public class TableDefinition {
 
         /* Reject if this is not a string column */
         if (!(myCol instanceof StringColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not String type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not String type");
         }
 
         /* Set the value */
@@ -810,7 +825,8 @@ public class TableDefinition {
 
         /* Reject if this is not a binary column */
         if (!(myCol instanceof BinaryColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Binary type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Binary type");
         }
 
         /* Set the value */
@@ -831,7 +847,8 @@ public class TableDefinition {
 
         /* Reject if this is not a money column */
         if (!(myCol instanceof MoneyColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Money type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Money type");
         }
 
         /* Set the value */
@@ -852,7 +869,8 @@ public class TableDefinition {
 
         /* Reject if this is not a rate column */
         if (!(myCol instanceof RateColumn)) {
-            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol) + " is not Rate type");
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Rate type");
         }
 
         /* Set the value */
@@ -872,8 +890,10 @@ public class TableDefinition {
 
         /* Check that the id is in range and present */
         if (myDef == null) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid Column Id: " + pId + " for "
-                    + theTableName);
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid Column Id: "
+                                                           + pId
+                                                           + " for "
+                                                           + theTableName);
         }
 
         /* Return the column definition */
@@ -990,7 +1010,7 @@ public class TableDefinition {
     protected String getLoadString() {
         StringBuilder myBuilder = new StringBuilder(BUFFER_LEN);
 
-        /* Build the initial insert */
+        /* Build the initial select */
         myBuilder.append("select ");
 
         /* Create the iterator */
@@ -1032,7 +1052,7 @@ public class TableDefinition {
             myBuilder.append(" order by ");
 
             /* Build the order string */
-            myBuilder.append(getOrderString('a', 1));
+            myBuilder.append(getOrderString('a', 0));
         }
 
         return myBuilder.toString();
@@ -1090,12 +1110,13 @@ public class TableDefinition {
             }
 
             /* If we are using prefixes */
-            if ((sortOnReference) || (pChar > 'a')) {
+            if ((sortOnReference)
+                || (pChar > 'a')) {
                 /* If this is a reference column */
                 if (myDef instanceof ReferenceColumn) {
                     /* Handle Reference column */
                     ReferenceColumn myCol = (ReferenceColumn) myDef;
-                    myCol.buildOrderString(myBuilder, pOffset);
+                    myCol.buildOrderString(myBuilder, pOffset + 1);
                 } else {
                     /* Handle standard column with prefix */
                     myBuilder.append(pChar);
@@ -1193,7 +1214,7 @@ public class TableDefinition {
                 /* Reject if the value is not set */
                 if (!myDef.isValueSet()) {
                     throw new JDataException(ExceptionClass.LOGIC, getColumnError(myDef)
-                            + " has no value for update");
+                                                                   + " has no value for update");
                 }
 
                 /* Remember the column */

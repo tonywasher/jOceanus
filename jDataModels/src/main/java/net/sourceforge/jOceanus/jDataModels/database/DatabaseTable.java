@@ -268,6 +268,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @throws JDataException on error
      */
     protected void postProcessOnLoad() throws JDataException {
+        /* Sort the list */
+        theList.reSort();
     }
 
     /**
@@ -318,7 +320,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -326,14 +329,12 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             /* Close the Statement */
             closeStmt();
 
-            /* Sort the list */
-            theList.reSort();
-
             /* Perform post process */
             postProcessOnLoad();
 
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to load " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to load "
+                                                               + getTableName(), e);
         }
 
         /* Return to caller */
@@ -379,7 +380,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
                                   final DataSet<?> pData,
                                   final BatchControl pBatch) throws JDataException {
         /* Declare the new stage */
-        if (!pTask.setNewStage("Inserting " + getTableName())) {
+        if (!pTask.setNewStage("Inserting "
+                               + getTableName())) {
             return false;
         }
 
@@ -445,7 +447,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -454,7 +457,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             closeStmt();
 
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to insert "
+                                                                       + getTableName(), e);
         }
 
         /* Return to caller */
@@ -471,7 +475,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
     protected boolean updateItems(final TaskControl<?> pTask,
                                   final BatchControl pBatch) throws JDataException {
         /* Declare the new stage */
-        if (!pTask.setNewStage("Updating " + getTableName())) {
+        if (!pTask.setNewStage("Updating "
+                               + getTableName())) {
             return false;
         }
 
@@ -531,13 +536,15 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0)
+                        && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }
             }
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to update " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to update "
+                                                                       + getTableName(), e);
         }
 
         /* Return to caller */
@@ -594,7 +601,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
     protected boolean deleteItems(final TaskControl<?> pTask,
                                   final BatchControl pBatch) throws JDataException {
         /* Declare the new stage */
-        if (!pTask.setNewStage("Deleting " + getTableName())) {
+        if (!pTask.setNewStage("Deleting "
+                               + getTableName())) {
             return false;
         }
 
@@ -654,7 +662,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -662,7 +671,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             /* Close the Statement */
             closeStmt();
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, myCurr, "Failed to delete "
+                                                                       + getTableName(), e);
         }
 
         /* Return to caller */
@@ -689,7 +699,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
                 executeStatement(myCreate);
             }
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to create " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to create "
+                                                               + getTableName(), e);
         }
     }
 
@@ -713,7 +724,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             myDrop = theTable.getDropTableString();
             executeStatement(myDrop);
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to drop " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to drop "
+                                                               + getTableName(), e);
         }
     }
 
@@ -728,7 +740,8 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             String myTrunc = theTable.getPurgeString();
             executeStatement(myTrunc);
         } catch (SQLException e) {
-            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to purge " + getTableName(), e);
+            throw new JDataException(ExceptionClass.SQLSERVER, "Failed to purge "
+                                                               + getTableName(), e);
         }
     }
 }

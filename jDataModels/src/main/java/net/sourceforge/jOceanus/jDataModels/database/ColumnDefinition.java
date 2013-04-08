@@ -246,7 +246,8 @@ public abstract class ColumnDefinition {
     /**
      * The integerColumn Class.
      */
-    protected static class IntegerColumn extends ColumnDefinition {
+    protected static class IntegerColumn
+            extends ColumnDefinition {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -284,7 +285,8 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             int myValue = pResults.getInt(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if ((myValue == 0)
+                && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -306,7 +308,8 @@ public abstract class ColumnDefinition {
     /**
      * The idColumn Class.
      */
-    protected static class IdColumn extends IntegerColumn {
+    protected static class IdColumn
+            extends IntegerColumn {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -326,7 +329,8 @@ public abstract class ColumnDefinition {
     /**
      * The referenceColumn Class.
      */
-    protected static class ReferenceColumn extends IntegerColumn {
+    protected static class ReferenceColumn
+            extends IntegerColumn {
         /**
          * The name of the referenced table.
          */
@@ -470,10 +474,9 @@ public abstract class ColumnDefinition {
                     /* Determine new char */
                     char myNewChar = (char) ('a' + myOffset);
 
-                    /* Add the join string for the underlying table. */
+                    /* Add the order string for the underlying table. */
                     /* Note that forced to implement in one line to avoid Sonar false positive. */
-                    pBuilder.append((((ReferenceColumn) myDef).theDefinition).getOrderString(myNewChar,
-                                                                                             myOffset));
+                    pBuilder.append((((ReferenceColumn) myDef).theDefinition).getOrderString(myNewChar, myOffset));
 
                     /* else standard column */
                 } else {
@@ -497,7 +500,8 @@ public abstract class ColumnDefinition {
     /**
      * The shortColumn Class.
      */
-    protected static class ShortColumn extends ColumnDefinition {
+    protected static class ShortColumn
+            extends ColumnDefinition {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -535,7 +539,8 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             short myValue = pResults.getShort(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if ((myValue == 0)
+                && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -557,7 +562,8 @@ public abstract class ColumnDefinition {
     /**
      * The longColumn Class.
      */
-    protected static class LongColumn extends ColumnDefinition {
+    protected static class LongColumn
+            extends ColumnDefinition {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -595,7 +601,8 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             long myValue = pResults.getLong(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if ((myValue == 0)
+                && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -617,7 +624,8 @@ public abstract class ColumnDefinition {
     /**
      * The floatColumn Class.
      */
-    protected static class FloatColumn extends ColumnDefinition {
+    protected static class FloatColumn
+            extends ColumnDefinition {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -655,7 +663,8 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             float myValue = pResults.getFloat(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if ((myValue == 0)
+                && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -677,7 +686,8 @@ public abstract class ColumnDefinition {
     /**
      * The doubleColumn Class.
      */
-    protected static class DoubleColumn extends ColumnDefinition {
+    protected static class DoubleColumn
+            extends ColumnDefinition {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -715,7 +725,8 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             double myValue = pResults.getDouble(pIndex);
-            if ((myValue == 0) && (pResults.wasNull())) {
+            if ((myValue == 0)
+                && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -737,7 +748,8 @@ public abstract class ColumnDefinition {
     /**
      * The dateColumn Class.
      */
-    protected static class DateColumn extends ColumnDefinition {
+    protected static class DateColumn
+            extends ColumnDefinition {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -768,7 +780,9 @@ public abstract class ColumnDefinition {
          * @param pValue the value
          */
         protected void setValue(final JDateDay pValue) {
-            super.setObject((pValue == null) ? null : pValue.getDate());
+            super.setObject((pValue == null)
+                    ? null
+                    : pValue.getDate());
         }
 
         /**
@@ -803,7 +817,8 @@ public abstract class ColumnDefinition {
     /**
      * The booleanColumn Class.
      */
-    protected static class BooleanColumn extends ColumnDefinition {
+    protected static class BooleanColumn
+            extends ColumnDefinition {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -841,7 +856,8 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             boolean myValue = pResults.getBoolean(pIndex);
-            if ((!myValue) && (pResults.wasNull())) {
+            if ((!myValue)
+                && (pResults.wasNull())) {
                 setValue(null);
             } else {
                 setValue(myValue);
@@ -863,7 +879,8 @@ public abstract class ColumnDefinition {
     /**
      * The stringColumn Class.
      */
-    protected static class StringColumn extends ColumnDefinition {
+    protected static class StringColumn
+            extends ColumnDefinition {
         /**
          * The length of the column.
          */
@@ -925,7 +942,8 @@ public abstract class ColumnDefinition {
     /**
      * The moneyColumn Class.
      */
-    protected static class MoneyColumn extends StringColumn {
+    protected static class MoneyColumn
+            extends StringColumn {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -970,7 +988,8 @@ public abstract class ColumnDefinition {
     /**
      * The rateColumn Class.
      */
-    protected static final class RateColumn extends StringColumn {
+    protected static final class RateColumn
+            extends StringColumn {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -1016,7 +1035,8 @@ public abstract class ColumnDefinition {
     /**
      * The priceColumn Class.
      */
-    protected static final class PriceColumn extends StringColumn {
+    protected static final class PriceColumn
+            extends StringColumn {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -1051,7 +1071,8 @@ public abstract class ColumnDefinition {
     /**
      * The unitsColumn Class.
      */
-    protected static final class UnitsColumn extends StringColumn {
+    protected static final class UnitsColumn
+            extends StringColumn {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -1086,7 +1107,8 @@ public abstract class ColumnDefinition {
     /**
      * The dilutionColumn Class.
      */
-    protected static final class DilutionColumn extends StringColumn {
+    protected static final class DilutionColumn
+            extends StringColumn {
         /**
          * Constructor.
          * @param pTable the table to which the column belongs
@@ -1121,7 +1143,8 @@ public abstract class ColumnDefinition {
     /**
      * The binaryColumn Class.
      */
-    protected static final class BinaryColumn extends ColumnDefinition {
+    protected static final class BinaryColumn
+            extends ColumnDefinition {
         /**
          * The length of the column.
          */

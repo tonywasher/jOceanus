@@ -261,9 +261,6 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
                 }
             }
 
-            /* Sort the list */
-            theList.reSort();
-
             /* Post process the load */
             postProcessOnLoad();
 
@@ -435,6 +432,8 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * @throws JDataException on error
      */
     protected void postProcessOnLoad() throws JDataException {
+        /* Sort the list */
+        theList.reSort();
     }
 
     /**

@@ -450,6 +450,32 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     }
 
     /**
+     * Basic Constructor.
+     * @param pList The list to associate the Static Data with
+     * @param pClass the class of the new item
+     * @throws JDataException on error
+     */
+    protected StaticData(final StaticList<T, E> pList,
+                         final E pClass) throws JDataException {
+        /* Call super constructor */
+        super(pList, 0);
+
+        /* Determine the class */
+        theEnumClass = pList.getEnumClass();
+
+        /* Store the class */
+        setValueClass(pClass);
+
+        /* Access classId and order */
+        setId(pClass.getClassId());
+        setValueOrder(pClass.getOrder());
+
+        /* Record the name */
+        setValueName(pClass.name());
+        setValueEnabled(Boolean.TRUE);
+    }
+
+    /**
      * Open constructor.
      * @param pList The list to associate the Static Data with
      * @param pId the id of the new item

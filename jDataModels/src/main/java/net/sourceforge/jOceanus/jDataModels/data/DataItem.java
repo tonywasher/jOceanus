@@ -666,9 +666,9 @@ public abstract class DataItem
     }
 
     /**
-     * Re-link all references to current DataSet.
+     * Resolve all references to current dataSet.
      */
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
     }
 
     /**

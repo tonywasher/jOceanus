@@ -49,8 +49,7 @@ public class ControlData
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME;
 
     /**
      * Report fields.
@@ -232,7 +231,7 @@ public class ControlData
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
 

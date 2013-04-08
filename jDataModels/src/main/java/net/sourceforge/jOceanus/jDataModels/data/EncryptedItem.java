@@ -29,6 +29,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.ControlKey.ControlKeyList;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
@@ -234,14 +235,19 @@ public abstract class EncryptedItem
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
+        ValueSet myValues = getValueSet();
 
-        /* Update to use the local copy of the ControlKeys */
-        ControlKey myKey = getControlKey();
-        ControlKey myNewKey = myKeys.findItemById(myKey.getId());
-        setValueControlKey(myNewKey);
+        /* Adjust ControlKey */
+        Object myKey = myValues.getValue(FIELD_CONTROL);
+        if (myKey instanceof ControlKey) {
+            myKey = ((ControlKey) myKey).getId();
+        }
+        if (myKey instanceof Integer) {
+            setValueControlKey(myKeys.findItemById((Integer) myKey));
+        }
     }
 
     /**
