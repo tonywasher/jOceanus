@@ -539,9 +539,9 @@ public abstract class AccountBase
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         /* Update the Encryption details */
-        super.relinkToDataSet();
+        super.resolveDataSetLinks();
 
         /* Access Account types */
         FinanceData myData = getDataSet();

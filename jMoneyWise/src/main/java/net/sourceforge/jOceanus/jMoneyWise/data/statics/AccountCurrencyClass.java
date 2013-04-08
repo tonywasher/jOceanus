@@ -50,7 +50,7 @@ public enum AccountCurrencyClass implements StaticInterface {
     /**
      * Canadian Dollars.
      */
-    CND(4, 3),
+    CAD(4, 3),
 
     /**
      * Australian Dollars.
@@ -129,7 +129,8 @@ public enum AccountCurrencyClass implements StaticInterface {
                                  final int uOrder) {
         theId = uId;
         theOrder = uOrder;
-        theCurrency = Currency.getInstance(name());
+        String myName = name();
+        theCurrency = Currency.getInstance(myName);
     }
 
     /**

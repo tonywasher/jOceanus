@@ -87,9 +87,14 @@ public enum EventInfoClass implements DataInfoClass {
     CharityDonation(11, 10, DataType.MONEY),
 
     /**
+     * Credit Amount.
+     */
+    CreditAmount(12, 11, DataType.MONEY),
+
+    /**
      * ThirdParty.
      */
-    ThirdParty(12, 11);
+    ThirdParty(13, 12);
 
     /**
      * Class Id.

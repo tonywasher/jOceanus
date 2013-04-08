@@ -199,7 +199,14 @@ public enum EventCategoryClass implements StaticInterface {
      * <p>
      * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
      */
-    Category(33, 32);
+    Category(33, 32),
+
+    /**
+     * Totals.
+     * <p>
+     * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
+     */
+    Totals(34, 33);
 
     /**
      * Class Id.
@@ -267,6 +274,8 @@ public enum EventCategoryClass implements StaticInterface {
             case TaxableGain:
             case Endowment:
             case OpeningBalance:
+            case Category:
+            case Totals:
                 return true;
             default:
                 return false;
@@ -293,6 +302,7 @@ public enum EventCategoryClass implements StaticInterface {
             case CapitalLoss:
             case TaxableGain:
             case Endowment:
+            case Totals:
                 return true;
             default:
                 return false;
@@ -411,4 +421,39 @@ public enum EventCategoryClass implements StaticInterface {
                 return false;
         }
     }
+
+    /**
+     * Determine whether the EventCategoryType can be parent categories.
+     * @return <code>true</code> if the event category type can parent categories, <code>false</code> otherwise.
+     */
+    public boolean canParentCategory() {
+        switch (this) {
+            case Category:
+            case Totals:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Is this event category a transfer?
+     * @return true/false
+     */
+    public boolean isTransfer() {
+        switch (this) {
+            case Transfer:
+            case Endowment:
+            case StockAdjust:
+            case StockSplit:
+            case StockDeMerger:
+            case StockTakeOver:
+            case StockRightsWaived:
+            case StockRightsTaken:
+                return true;
+            default:
+                return false;
+        }
+    }
+
 }

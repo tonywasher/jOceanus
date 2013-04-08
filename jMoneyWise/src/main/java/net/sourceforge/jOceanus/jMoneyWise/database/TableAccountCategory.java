@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jMoneyWise.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition;
@@ -61,7 +62,7 @@ public class TableAccountCategory
 
         /* Declare the columns */
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(AccountCategory.FIELD_CATTYPE, TableAccountCategoryType.TABLE_NAME);
-        ColumnDefinition myParentCol = myTableDef.addNullReferenceColumn(AccountCategory.FIELD_PARENT, TABLE_NAME);
+        ColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(AccountCategory.FIELD_PARENT);
         myTableDef.addEncryptedColumn(AccountCategory.FIELD_NAME, AccountCategory.NAMELEN);
         myTableDef.addNullEncryptedColumn(AccountCategory.FIELD_DESC, AccountCategory.DESCLEN);
 
@@ -106,6 +107,19 @@ public class TableAccountCategory
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else {
             super.setFieldValue(pItem, iField);
+        }
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and sort the data */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+
+        /* Validate the account categories */
+        theList.validate();
+        if (theList.hasErrors()) {
+            throw new JDataException(ExceptionClass.VALIDATE, theList, "Validation error");
         }
     }
 }

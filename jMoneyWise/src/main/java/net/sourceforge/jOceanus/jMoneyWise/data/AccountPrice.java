@@ -428,9 +428,9 @@ public class AccountPrice
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         /* Update the Encryption details */
-        super.relinkToDataSet();
+        super.resolveDataSetLinks();
 
         /* Access Accounts */
         FinanceData myData = getDataSet();

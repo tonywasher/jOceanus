@@ -92,6 +92,17 @@ public class AccountCategoryType
     }
 
     /**
+     * Basic constructor.
+     * @param pList The list to associate the Account Category Type with
+     * @param pClass Class of Account Category Type
+     * @throws JDataException on error
+     */
+    private AccountCategoryType(final AccountCategoryTypeList pList,
+                                final AccountCategoryClass pClass) throws JDataException {
+        super(pList, pClass);
+    }
+
+    /**
      * Open Constructor.
      * @param pList The list to associate the Account Category Type with
      * @param pId the id
@@ -318,6 +329,32 @@ public class AccountCategoryType
             if (myActType.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myActType, "Failed validation");
             }
+        }
+
+        /**
+         * Populate default values
+         * @throws JDataException on error
+         */
+        public void populateDefaults() throws JDataException {
+            /* Loop through all elements */
+            for (AccountCategoryClass myClass : AccountCategoryClass.values()) {
+                /* Create new element */
+                AccountCategoryType myActType = new AccountCategoryType(this, myClass);
+
+                /* Add the AccountCategoryType to the list */
+                append(myActType);
+
+                /* Validate the AccountCategoryType */
+                myActType.validate();
+
+                /* Handle validation failure */
+                if (myActType.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myActType, "Failed validation");
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jMoneyWise.database;
 import javax.swing.SortOrder;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
@@ -62,10 +63,12 @@ public class TableEventCategory
 
         /* Declare the columns */
         ColumnDefinition myCatCol = myTableDef.addReferenceColumn(EventCategory.FIELD_CATTYPE, TableEventCategoryType.TABLE_NAME);
+        ColumnDefinition myParentCol = myTableDef.addNullIntegerColumn(EventCategory.FIELD_PARENT);
         myTableDef.addEncryptedColumn(EventCategory.FIELD_NAME, StaticData.NAMELEN);
         myTableDef.addNullEncryptedColumn(EventCategory.FIELD_DESC, StaticData.DESCLEN);
 
         /* Declare Sort Columns */
+        myParentCol.setSortOrder(SortOrder.DESCENDING);
         myCatCol.setSortOrder(SortOrder.ASCENDING);
     }
 
@@ -82,11 +85,12 @@ public class TableEventCategory
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Integer myCategoryId = myTableDef.getIntegerValue(EventCategory.FIELD_CATTYPE);
+        Integer myParentId = myTableDef.getIntegerValue(EventCategory.FIELD_PARENT);
         byte[] myName = myTableDef.getBinaryValue(EventCategory.FIELD_NAME);
         byte[] myDesc = myTableDef.getBinaryValue(EventCategory.FIELD_DESC);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myDesc, myCategoryId);
+        theList.addSecureItem(pId, pControlId, myName, myDesc, myCategoryId, myParentId);
     }
 
     @Override
@@ -96,12 +100,27 @@ public class TableEventCategory
         TableDefinition myTableDef = getTableDef();
         if (EventCategory.FIELD_CATTYPE.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryTypeId());
+        } else if (EventCategory.FIELD_PARENT.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getParentCategoryId());
         } else if (EventCategory.FIELD_NAME.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (EventCategory.FIELD_DESC.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else {
             super.setFieldValue(pItem, iField);
+        }
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and sort the data */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+
+        /* Validate the account categories */
+        theList.validate();
+        if (theList.hasErrors()) {
+            throw new JDataException(ExceptionClass.VALIDATE, theList, "Validation error");
         }
     }
 }

@@ -43,7 +43,12 @@ public class SheetEventCategory
     /**
      * NamedArea for Rates.
      */
-    private static final String AREA_EVTCATEGORIES = EventCategory.LIST_NAME;
+    private static final String AREA_EVTCATEGORIES = "EventCategoryInfo";
+
+    /**
+     * NameList for EventCategories.
+     */
+    protected static final String AREA_EVTCATNAMES = "EventCategoryNames";
 
     /**
      * Name column.
@@ -56,9 +61,14 @@ public class SheetEventCategory
     private static final int COL_TYPE = COL_NAME + 1;
 
     /**
+     * Parent column.
+     */
+    private static final int COL_PARENT = COL_TYPE + 1;
+
+    /**
      * Description column.
      */
-    private static final int COL_DESC = COL_TYPE + 1;
+    private static final int COL_DESC = COL_PARENT + 1;
 
     /**
      * Category data list.
@@ -96,26 +106,28 @@ public class SheetEventCategory
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myCatId = loadInteger(COL_TYPE);
+        Integer myParentId = loadInteger(COL_PARENT);
 
         /* Access the Name and description */
         byte[] myNameBytes = loadBytes(COL_NAME);
         byte[] myDescBytes = loadBytes(COL_DESC);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myCatId);
+        theList.addSecureItem(pId, myControlId, myNameBytes, myDescBytes, myCatId, myParentId);
     }
 
     @Override
     protected void loadOpenItem(final Integer pId) throws JDataException {
         /* Access the name */
         String myType = loadString(COL_TYPE);
+        String myParent = loadString(COL_PARENT);
 
         /* Access the name and description bytes */
         String myName = loadString(COL_NAME);
         String myDesc = loadString(COL_DESC);
 
         /* Load the item */
-        theList.addOpenItem(pId, myName, myDesc, myType);
+        theList.addOpenItem(pId, myName, myDesc, myType, myParent);
     }
 
     @Override
@@ -123,6 +135,7 @@ public class SheetEventCategory
         /* Set the fields */
         writeInteger(COL_CONTROLID, pItem.getControlKeyId());
         writeInteger(COL_TYPE, pItem.getCategoryTypeId());
+        writeInteger(COL_PARENT, pItem.getParentCategoryId());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeBytes(COL_DESC, pItem.getDescBytes());
     }
@@ -131,6 +144,7 @@ public class SheetEventCategory
     protected void insertOpenItem(final EventCategory pItem) throws JDataException {
         /* Set the fields */
         writeString(COL_TYPE, pItem.getCategoryTypeName());
+        writeString(COL_PARENT, pItem.getParentCategoryName());
         writeString(COL_NAME, pItem.getName());
         writeString(COL_DESC, pItem.getDesc());
     }
@@ -139,6 +153,7 @@ public class SheetEventCategory
     protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_TYPE, EventCategory.FIELD_CATTYPE.getName());
+        writeHeader(COL_PARENT, EventCategory.FIELD_PARENT.getName());
         writeHeader(COL_NAME, EventCategory.FIELD_NAME.getName());
         writeHeader(COL_DESC, EventCategory.FIELD_DESC.getName());
     }
@@ -149,15 +164,33 @@ public class SheetEventCategory
         setStringColumn(COL_NAME);
         setStringColumn(COL_DESC);
         setStringColumn(COL_TYPE);
+        setStringColumn(COL_PARENT);
+
+        /* Set the name column range */
+        nameColumnRange(COL_NAME, AREA_EVTCATNAMES);
 
         /* Set validation */
         applyDataValidation(COL_TYPE, SheetEventCategoryType.AREA_CATTYPENAMES);
+        applyDataValidation(COL_PARENT, AREA_EVTCATNAMES);
     }
 
     @Override
     protected int getLastColumn() {
         /* Return the last column */
         return COL_DESC;
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and reSort */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+
+        /* Validate the categories */
+        theList.validate();
+        if (theList.hasErrors()) {
+            throw new JDataException(ExceptionClass.VALIDATE, theList, "Validation error");
+        }
     }
 
     /**
@@ -181,7 +214,7 @@ public class SheetEventCategory
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_EVTCATEGORIES)) {
+            if (!pTask.setNewStage(EventCategory.LIST_NAME)) {
                 return false;
             }
 
@@ -210,8 +243,15 @@ public class SheetEventCategory
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myType = myCell.getStringValue();
 
+                /* Access Parent */
+                String myParent = null;
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                if (myCell != null) {
+                    myParent = myCell.getStringValue();
+                }
+
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, null, myType);
+                myList.addOpenItem(0, myName, null, myType, myParent);
 
                 /* Report the progress */
                 myCount++;
@@ -221,8 +261,15 @@ public class SheetEventCategory
                 }
             }
 
-            /* Sort the list */
+            /* Resolve links and reSort */
+            myList.resolveDataSetLinks();
             myList.reSort();
+
+            /* Validate the categories */
+            myList.validate();
+            if (myList.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
+            }
 
             /* Handle exceptions */
         } catch (JDataException e) {

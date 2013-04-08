@@ -298,9 +298,9 @@ public class Pattern
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         /* Update the Event details */
-        super.relinkToDataSet();
+        super.resolveDataSetLinks();
 
         /* Access Lists */
         FinanceData myData = getDataSet();

@@ -79,22 +79,33 @@ public class EventCategoryType
     /**
      * Copy Constructor.
      * @param pList The list to associate the Category Type with
-     * @param pTransType The Category Type to copy
+     * @param pCatType The Category Type to copy
      */
     protected EventCategoryType(final EventCategoryTypeList pList,
-                                final EventCategoryType pTransType) {
-        super(pList, pTransType);
+                                final EventCategoryType pCatType) {
+        super(pList, pCatType);
     }
 
     /**
      * Basic Constructor.
      * @param pList The list to associate the Category Type with
-     * @param sName Name of Category Type
+     * @param pName Name of Category Type
      * @throws JDataException on error
      */
     private EventCategoryType(final EventCategoryTypeList pList,
-                              final String sName) throws JDataException {
-        super(pList, sName);
+                              final String pName) throws JDataException {
+        super(pList, pName);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Event Category Type with
+     * @param pClass Class of Event Category Type
+     * @throws JDataException on error
+     */
+    private EventCategoryType(final EventCategoryTypeList pList,
+                              final EventCategoryClass pClass) throws JDataException {
+        super(pList, pClass);
     }
 
     /**
@@ -267,23 +278,23 @@ public class EventCategoryType
 
         /**
          * Add a EventCategoryType to the list.
-         * @param uId ID of Category Type
+         * @param pId ID of Category Type
          * @param isEnabled is the EventCategoryType enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pCatType the Name of the category type
          * @param pDesc the Description of the category type
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
+                                final Integer pOrder,
                                 final String pCatType,
                                 final String pDesc) throws JDataException {
             /* Create a new Category Type */
-            EventCategoryType myCatType = new EventCategoryType(this, uId, isEnabled, uOrder, pCatType, pDesc);
+            EventCategoryType myCatType = new EventCategoryType(this, pId, isEnabled, pOrder, pCatType, pDesc);
 
             /* Check that this EventCategoryTypeId has not been previously added */
-            if (!isIdUnique(myCatType.getId())) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate EventCategoryTypeId");
             }
 
@@ -301,25 +312,25 @@ public class EventCategoryType
 
         /**
          * Add a EventCategoryType.
-         * @param uId the Id of the category type
-         * @param uControlId the control id of the new item
+         * @param pId the Id of the category type
+         * @param pControlId the control id of the new item
          * @param isEnabled is the EventCategoryType enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pCatType the Encrypted Name of the category type
          * @param pDesc the Encrypted Description of the category type
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Boolean isEnabled,
-                                  final Integer uOrder,
+                                  final Integer pOrder,
                                   final byte[] pCatType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Category Type */
-            EventCategoryType myCatType = new EventCategoryType(this, uId, uControlId, isEnabled, uOrder, pCatType, pDesc);
+            EventCategoryType myCatType = new EventCategoryType(this, pId, pControlId, isEnabled, pOrder, pCatType, pDesc);
 
             /* Check that this EventCategoryTypeId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate EventCategoryTypeId");
             }
 
@@ -333,6 +344,32 @@ public class EventCategoryType
             if (myCatType.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myCatType, "Failed validation");
             }
+        }
+
+        /**
+         * Populate default values
+         * @throws JDataException on error
+         */
+        public void populateDefaults() throws JDataException {
+            /* Loop through all elements */
+            for (EventCategoryClass myClass : EventCategoryClass.values()) {
+                /* Create new element */
+                EventCategoryType myType = new EventCategoryType(this, myClass);
+
+                /* Add the EventCategory to the list */
+                append(myType);
+
+                /* Validate the EventCategoryType */
+                myType.validate();
+
+                /* Handle validation failure */
+                if (myType.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

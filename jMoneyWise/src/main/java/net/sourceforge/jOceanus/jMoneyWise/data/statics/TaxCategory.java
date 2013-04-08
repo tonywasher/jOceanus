@@ -44,8 +44,7 @@ public class TaxCategory
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = "TaxCategories";
 
     /**
      * Report fields.
@@ -88,52 +87,63 @@ public class TaxCategory
     /**
      * Basic Constructor.
      * @param pList The list to associate the Tax Category with
-     * @param sName Name of Tax Type
+     * @param pName Name of Tax Category
      * @throws JDataException on error
      */
     private TaxCategory(final TaxCategoryList pList,
-                        final String sName) throws JDataException {
-        super(pList, sName);
+                        final String pName) throws JDataException {
+        super(pList, pName);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Tax Category with
+     * @param pClass Class of Tax Category
+     * @throws JDataException on error
+     */
+    private TaxCategory(final TaxCategoryList pList,
+                        final TaxCategoryClass pClass) throws JDataException {
+        super(pList, pClass);
     }
 
     /**
      * Open Constructor.
      * @param pList The list to associate the Tax Category with
-     * @param uId ID of TaxCategory
+     * @param pId ID of TaxCategory
      * @param isEnabled is the TaxCategory enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Name of Tax Category
      * @param pDesc Description of Tax Category
      * @throws JDataException on error
      */
     private TaxCategory(final TaxCategoryList pList,
-                        final Integer uId,
+                        final Integer pId,
                         final Boolean isEnabled,
-                        final Integer uOrder,
+                        final Integer pOrder,
                         final String pName,
                         final String pDesc) throws JDataException {
-        super(pList, uId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
      * Secure Constructor.
      * @param pList The list to associate the TaxCategory with
-     * @param uId ID of TaxCategory
-     * @param uControlId the control id of the new item
+     * @param pId ID of TaxCategory
+     * @param pControlId the control id of the new item
      * @param isEnabled is the TaxCategory enabled
-     * @param uOrder the sort order
-     * @param sName Encrypted Name of TaxCategory
+     * @param pOrder the sort order
+     * @param pName Encrypted Name of TaxCategory
      * @param pDesc Encrypted Description of TaxCategory
      * @throws JDataException on error
      */
     private TaxCategory(final TaxCategoryList pList,
-                        final Integer uId,
-                        final Integer uControlId,
+                        final Integer pId,
+                        final Integer pControlId,
                         final Boolean isEnabled,
-                        final Integer uOrder,
-                        final byte[] sName,
+                        final Integer pOrder,
+                        final byte[] pName,
                         final byte[] pDesc) throws JDataException {
-        super(pList, uId, uControlId, isEnabled, uOrder, sName, pDesc);
+        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
@@ -296,23 +306,23 @@ public class TaxCategory
 
         /**
          * Add a TaxCategory to the list.
-         * @param uId ID of TaxCategory
+         * @param pId ID of TaxCategory
          * @param isEnabled is the TaxCategory enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pTaxCategory the Name of the tax bucket
          * @param pDesc the Description of the tax bucket
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
+                                final Integer pOrder,
                                 final String pTaxCategory,
                                 final String pDesc) throws JDataException {
             /* Create a new Tax Category */
-            TaxCategory myCategory = new TaxCategory(this, uId, isEnabled, uOrder, pTaxCategory, pDesc);
+            TaxCategory myCategory = new TaxCategory(this, pId, isEnabled, pOrder, pTaxCategory, pDesc);
 
             /* Check that this TaxCategoryId has not been previously added */
-            if (!isIdUnique(myCategory.getId())) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate TaxCategoryId");
             }
 
@@ -330,25 +340,25 @@ public class TaxCategory
 
         /**
          * Add a TaxCategory.
-         * @param uId the Id of the tax bucket
-         * @param uControlId the control id of the new item
+         * @param pId the Id of the tax bucket
+         * @param pControlId the control id of the new item
          * @param isEnabled is the TaxCategory enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pTaxCategory the Encrypted Name of the tax bucket
          * @param pDesc the Encrypted Description of the tax bucket
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Boolean isEnabled,
-                                  final Integer uOrder,
+                                  final Integer pOrder,
                                   final byte[] pTaxCategory,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Tax Category */
-            TaxCategory myCategory = new TaxCategory(this, uId, uControlId, isEnabled, uOrder, pTaxCategory, pDesc);
+            TaxCategory myCategory = new TaxCategory(this, pId, pControlId, isEnabled, pOrder, pTaxCategory, pDesc);
 
             /* Check that this TaxCategoryId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate TaxCategoryId");
             }
 
@@ -362,6 +372,32 @@ public class TaxCategory
             if (myCategory.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
             }
+        }
+
+        /**
+         * Populate default values
+         * @throws JDataException on error
+         */
+        public void populateDefaults() throws JDataException {
+            /* Loop through all elements */
+            for (TaxCategoryClass myClass : TaxCategoryClass.values()) {
+                /* Create new element */
+                TaxCategory myCategory = new TaxCategory(this, myClass);
+
+                /* Add the TaxCategory to the list */
+                append(myCategory);
+
+                /* Validate the TaxCategory */
+                myCategory.validate();
+
+                /* Handle validation failure */
+                if (myCategory.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

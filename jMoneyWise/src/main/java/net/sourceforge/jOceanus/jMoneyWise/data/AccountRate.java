@@ -170,7 +170,9 @@ public class AccountRate
      */
     public Integer getAccountId() {
         Account myAccount = getAccount();
-        return (myAccount == null) ? null : myAccount.getId();
+        return (myAccount == null)
+                ? null
+                : myAccount.getId();
     }
 
     /**
@@ -179,7 +181,9 @@ public class AccountRate
      */
     public String getAccountName() {
         Account myAccount = getAccount();
-        return (myAccount == null) ? null : myAccount.getName();
+        return (myAccount == null)
+                ? null
+                : myAccount.getName();
     }
 
     /**
@@ -504,9 +508,9 @@ public class AccountRate
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         /* Update the Encryption details */
-        super.relinkToDataSet();
+        super.resolveDataSetLinks();
 
         /* Access Accounts */
         FinanceData myData = getDataSet();
@@ -655,7 +659,9 @@ public class AccountRate
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_ACCOUNT.equals(pField)) {
-                return (theAccount == null) ? JDataFieldValue.SkipField : theAccount;
+                return (theAccount == null)
+                        ? JDataFieldValue.SkipField
+                        : theAccount;
             }
             return super.getFieldValue(pField);
         }

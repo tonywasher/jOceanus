@@ -43,13 +43,12 @@ public class SheetAccountCategory
     /**
      * NamedArea for Categories.
      */
-    protected static final String AREA_ACTCATEGORIES = AccountCategory.LIST_NAME;
+    protected static final String AREA_ACTCATEGORIES = "AccountCategoryInfo";
 
     /**
      * NameList for AccountCategories.
      */
-    protected static final String AREA_ACTCATNAMES = AccountCategory.OBJECT_NAME
-                                                     + "Names";
+    protected static final String AREA_ACTCATNAMES = "AccountCategoryNames";
 
     /**
      * Name column.
@@ -181,6 +180,19 @@ public class SheetAccountCategory
         return COL_DESC;
     }
 
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and reSort */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+
+        /* Validate the categories */
+        theList.validate();
+        if (theList.hasErrors()) {
+            throw new JDataException(ExceptionClass.VALIDATE, theList, "Validation error");
+        }
+    }
+
     /**
      * Load the AccountCategories from an archive.
      * @param pTask the task control
@@ -202,7 +214,7 @@ public class SheetAccountCategory
             int myCount = 0;
 
             /* Declare the new stage */
-            if (!pTask.setNewStage(AREA_ACTCATEGORIES)) {
+            if (!pTask.setNewStage(AccountCategory.LIST_NAME)) {
                 return false;
             }
 
@@ -232,8 +244,11 @@ public class SheetAccountCategory
                 String myType = myCell.getStringValue();
 
                 /* Access Parent */
+                String myParent = null;
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                String myParent = myCell.getStringValue();
+                if (myCell != null) {
+                    myParent = myCell.getStringValue();
+                }
 
                 /* Add the value into the finance tables */
                 myList.addOpenItem(0, myName, null, myType, myParent);
@@ -246,9 +261,15 @@ public class SheetAccountCategory
                 }
             }
 
-            /* Sort the list */
+            /* Resolve links and reSort */
+            myList.resolveDataSetLinks();
             myList.reSort();
 
+            /* Validate the categories */
+            myList.validate();
+            if (myList.hasErrors()) {
+                throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
+            }
             /* Handle exceptions */
         } catch (JDataException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to Load AccountCategories", e);

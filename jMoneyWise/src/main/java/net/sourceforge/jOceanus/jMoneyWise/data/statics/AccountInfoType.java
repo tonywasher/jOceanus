@@ -100,52 +100,63 @@ public class AccountInfoType
     /**
      * Basic Constructor.
      * @param pList The list to associate the Account Info Type with
-     * @param sName Name of Account Info Type
+     * @param pName Name of Account Info Type
      * @throws JDataException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final String sName) throws JDataException {
-        super(pList, sName);
+                            final String pName) throws JDataException {
+        super(pList, pName);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Account Info Type with
+     * @param pClass Class of Account Info Type
+     * @throws JDataException on error
+     */
+    private AccountInfoType(final AccountInfoTypeList pList,
+                            final AccountInfoClass pClass) throws JDataException {
+        super(pList, pClass);
     }
 
     /**
      * Open Constructor.
      * @param pList The list to associate the Account Info Type with
-     * @param uId the id
+     * @param pId the id
      * @param isEnabled is the account info type enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Name of Account Info Type
      * @param pDesc Description of Account Info Type
      * @throws JDataException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final Integer uId,
+                            final Integer pId,
                             final Boolean isEnabled,
-                            final Integer uOrder,
+                            final Integer pOrder,
                             final String pName,
                             final String pDesc) throws JDataException {
-        super(pList, uId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
      * Secure Constructor.
      * @param pList The list to associate the Account Info Type with
-     * @param uId ID of Account Info Type
-     * @param uControlId the control id of the new item
+     * @param pId ID of Account Info Type
+     * @param pControlId the control id of the new item
      * @param isEnabled is the account info type enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Encrypted Name of Account Info Type
      * @param pDesc Encrypted Description of Account Info Type
      * @throws JDataException on error
      */
     private AccountInfoType(final AccountInfoTypeList pList,
-                            final Integer uId,
-                            final Integer uControlId,
+                            final Integer pId,
+                            final Integer pControlId,
                             final Boolean isEnabled,
-                            final Integer uOrder,
+                            final Integer pOrder,
                             final byte[] pName,
                             final byte[] pDesc) throws JDataException {
-        super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
@@ -269,20 +280,20 @@ public class AccountInfoType
 
         /**
          * Add an Open AccountInfoType to the list.
-         * @param uId the Id of the account info type
+         * @param pId the Id of the account info type
          * @param isEnabled is the account info type enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pInfoType the Name of the account info type
          * @param pDesc the Description of the account info type
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
+                                final Integer pOrder,
                                 final String pInfoType,
                                 final String pDesc) throws JDataException {
             /* Create a new Account Info Type */
-            AccountInfoType myInfoType = new AccountInfoType(this, uId, isEnabled, uOrder, pInfoType, pDesc);
+            AccountInfoType myInfoType = new AccountInfoType(this, pId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfoType.getId())) {
@@ -303,25 +314,25 @@ public class AccountInfoType
 
         /**
          * Add a Secure AccountInfoType to the list.
-         * @param uId the Id of the account info type
-         * @param uControlId the control id of the new item
+         * @param pId the Id of the account info type
+         * @param pControlId the control id of the new item
          * @param isEnabled is the account info type enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pInfoType the encrypted Name of the account info type
          * @param pDesc the Encrypted Description of the account info type
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Boolean isEnabled,
-                                  final Integer uOrder,
+                                  final Integer pOrder,
                                   final byte[] pInfoType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Account Info Type */
-            AccountInfoType myInfoType = new AccountInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType, pDesc);
+            AccountInfoType myInfoType = new AccountInfoType(this, pId, pControlId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate AccountInfoTypeId");
             }
 
@@ -335,6 +346,32 @@ public class AccountInfoType
             if (myInfoType.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myInfoType, "Failed validation");
             }
+        }
+
+        /**
+         * Populate default values
+         * @throws JDataException on error
+         */
+        public void populateDefaults() throws JDataException {
+            /* Loop through all elements */
+            for (AccountInfoClass myClass : AccountInfoClass.values()) {
+                /* Create new element */
+                AccountInfoType myType = new AccountInfoType(this, myClass);
+
+                /* Add the AccountInfoType to the list */
+                append(myType);
+
+                /* Validate the AccountInfoType */
+                myType.validate();
+
+                /* Handle validation failure */
+                if (myType.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

@@ -82,52 +82,63 @@ public class Frequency
     /**
      * Basic Constructor.
      * @param pList The list to associate the Frequency with
-     * @param sName Name of Frequency
+     * @param pName Name of Frequency
      * @throws JDataException on error
      */
     private Frequency(final FrequencyList pList,
-                      final String sName) throws JDataException {
-        super(pList, sName);
+                      final String pName) throws JDataException {
+        super(pList, pName);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Frequency with
+     * @param pClass Class of Frequency
+     * @throws JDataException on error
+     */
+    private Frequency(final FrequencyList pList,
+                      final FrequencyClass pClass) throws JDataException {
+        super(pList, pClass);
     }
 
     /**
      * Open Constructor.
      * @param pList The list to associate the Frequency with
-     * @param uId ID of Frequency
+     * @param pId ID of Frequency
      * @param isEnabled is the frequency enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Name of Frequency
      * @param pDesc Description of Frequency
      * @throws JDataException on error
      */
     private Frequency(final FrequencyList pList,
-                      final Integer uId,
+                      final Integer pId,
                       final Boolean isEnabled,
-                      final Integer uOrder,
+                      final Integer pOrder,
                       final String pName,
                       final String pDesc) throws JDataException {
-        super(pList, uId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
      * Secure Constructor.
      * @param pList The list to associate the Frequency with
-     * @param uId ID of Frequency
-     * @param uControlId the control id of the new item
+     * @param pId ID of Frequency
+     * @param pControlId the control id of the new item
      * @param isEnabled is the frequency enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Encrypted Name of Frequency
      * @param pDesc Encrypted Description of TaxRegime
      * @throws JDataException on error
      */
     private Frequency(final FrequencyList pList,
-                      final Integer uId,
-                      final Integer uControlId,
+                      final Integer pId,
+                      final Integer pControlId,
                       final Boolean isEnabled,
-                      final Integer uOrder,
+                      final Integer pOrder,
                       final byte[] pName,
                       final byte[] pDesc) throws JDataException {
-        super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
@@ -260,23 +271,23 @@ public class Frequency
 
         /**
          * Add a Frequency to the list.
-         * @param uId ID of Frequency
+         * @param pId ID of Frequency
          * @param isEnabled is the frequency enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pFrequency the Name of the frequency
          * @param pDesc the Description of the frequency
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
+                                final Integer pOrder,
                                 final String pFrequency,
                                 final String pDesc) throws JDataException {
             /* Create a new Frequency */
-            Frequency myFreq = new Frequency(this, uId, isEnabled, uOrder, pFrequency, pDesc);
+            Frequency myFreq = new Frequency(this, pId, isEnabled, pOrder, pFrequency, pDesc);
 
             /* Check that this FrequencyId has not been previously added */
-            if (!isIdUnique(myFreq.getId())) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myFreq, "Duplicate FrequencyId");
             }
 
@@ -294,25 +305,25 @@ public class Frequency
 
         /**
          * Add a Frequency.
-         * @param uId the Id of the frequency
-         * @param uControlId the control id of the new item
+         * @param pId the Id of the frequency
+         * @param pControlId the control id of the new item
          * @param isEnabled is the frequency enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pFrequency the Encrypted Name of the frequency
          * @param pDesc the Encrypted Description of the frequency
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Boolean isEnabled,
-                                  final Integer uOrder,
+                                  final Integer pOrder,
                                   final byte[] pFrequency,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new Frequency */
-            Frequency myFreq = new Frequency(this, uId, uControlId, isEnabled, uOrder, pFrequency, pDesc);
+            Frequency myFreq = new Frequency(this, pId, pControlId, isEnabled, pOrder, pFrequency, pDesc);
 
             /* Check that this FrequencyId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myFreq, "Duplicate FrequencyId");
             }
 
@@ -326,6 +337,32 @@ public class Frequency
             if (myFreq.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myFreq, "Failed validation");
             }
+        }
+
+        /**
+         * Populate default values
+         * @throws JDataException on error
+         */
+        public void populateDefaults() throws JDataException {
+            /* Loop through all elements */
+            for (FrequencyClass myClass : FrequencyClass.values()) {
+                /* Create new element */
+                Frequency myFreq = new Frequency(this, myClass);
+
+                /* Add the Frequency to the list */
+                append(myFreq);
+
+                /* Validate the Frequency */
+                myFreq.validate();
+
+                /* Handle validation failure */
+                if (myFreq.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myFreq, "Failed validation");
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

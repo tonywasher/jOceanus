@@ -28,7 +28,6 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
@@ -104,7 +103,9 @@ public abstract class TaxYearBase
      */
     public Integer getTaxRegimeId() {
         TaxRegime myRegime = getTaxRegime();
-        return (myRegime == null) ? null : myRegime.getId();
+        return (myRegime == null)
+                ? null
+                : myRegime.getId();
     }
 
     /**
@@ -113,7 +114,9 @@ public abstract class TaxYearBase
      */
     public String getTaxRegimeName() {
         TaxRegime myRegime = getTaxRegime();
-        return (myRegime == null) ? null : myRegime.getName();
+        return (myRegime == null)
+                ? null
+                : myRegime.getName();
     }
 
     /**
@@ -182,6 +185,14 @@ public abstract class TaxYearBase
         getValueSet().setValue(FIELD_REGIME, pId);
     }
 
+    /**
+     * Set Tax Regime.
+     * @param pName the name
+     */
+    private void setValueTaxRegime(final String pName) {
+        getValueSet().setValue(FIELD_REGIME, pName);
+    }
+
     @Override
     public FinanceData getDataSet() {
         return (FinanceData) super.getDataSet();
@@ -212,28 +223,9 @@ public abstract class TaxYearBase
         /* Initialise item */
         super(pList, uId);
 
-        /* Protect against exceptions */
-        try {
-            /* Record the Id */
-            setValueTaxRegime(uRegimeId);
-            setValueTaxYear(new JDateDay(pDate));
-
-            /* Look up the Regime */
-            FinanceData myDataSet = getDataSet();
-
-            /* Look up the Regime */
-            TaxRegimeList myRegimes = myDataSet.getTaxRegimes();
-            TaxRegime myRegime = myRegimes.findItemById(uRegimeId);
-            if (myRegime == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Tax Regime Id");
-            }
-            setValueTaxRegime(myRegime);
-
-            /* Catch Exceptions */
-        } catch (JDataException e) {
-            /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
-        }
+        /* Record the Id */
+        setValueTaxRegime(uRegimeId);
+        setValueTaxYear(new JDateDay(pDate));
     }
 
     /**
@@ -246,7 +238,7 @@ public abstract class TaxYearBase
      */
     protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
                           final int uId,
-                          final TaxRegime pRegime,
+                          final String pRegime,
                           final Date pDate) throws JDataException {
         /* Initialise item */
         super(pList, uId);
@@ -285,14 +277,22 @@ public abstract class TaxYearBase
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
+        /* Access Relevant lists */
         FinanceData myData = getDataSet();
         TaxRegimeList myRegimes = myData.getTaxRegimes();
+        ValueSet myValues = getValueSet();
 
-        /* Update to use the local copy of the TaxRegimes */
-        TaxRegime myRegime = getTaxRegime();
-        TaxRegime myNewReg = myRegimes.findItemById(myRegime.getId());
-        setValueTaxRegime(myNewReg);
+        /* Adjust Tax Regime */
+        Object myRegime = myValues.getValue(FIELD_REGIME);
+        if (myRegime instanceof TaxRegime) {
+            myRegime = ((TaxRegime) myRegime).getId();
+        }
+        if (myRegime instanceof Integer) {
+            setValueTaxRegime(myRegimes.findItemById((Integer) myRegime));
+        } else if (myRegime instanceof String) {
+            setValueTaxRegime(myRegimes.findItemByName((String) myRegime));
+        }
     }
 
     /**

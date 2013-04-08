@@ -46,8 +46,7 @@ public class AccountCurrency
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = "AccountCurrencies";
 
     /**
      * Report fields.
@@ -99,6 +98,17 @@ public class AccountCurrency
     private AccountCurrency(final AccountCurrencyList pList,
                             final String pName) throws JDataException {
         super(pList, pName);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Account Currency with
+     * @param pClass Class of Account Currency
+     * @throws JDataException on error
+     */
+    private AccountCurrency(final AccountCurrencyList pList,
+                            final AccountCurrencyClass pClass) throws JDataException {
+        super(pList, pClass);
     }
 
     /**
@@ -328,6 +338,32 @@ public class AccountCurrency
             if (myCurr.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
             }
+        }
+
+        /**
+         * Populate default values
+         * @throws JDataException on error
+         */
+        public void populateDefaults() throws JDataException {
+            /* Loop through all elements */
+            for (AccountCurrencyClass myClass : AccountCurrencyClass.values()) {
+                /* Create new element */
+                AccountCurrency myCurr = new AccountCurrency(this, myClass);
+
+                /* Add the AccountCurrency to the list */
+                append(myCurr);
+
+                /* Validate the AccountCurrency */
+                myCurr.validate();
+
+                /* Handle validation failure */
+                if (myCurr.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

@@ -31,7 +31,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
@@ -41,7 +40,6 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
 import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
@@ -187,7 +185,9 @@ public class TaxYear
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
         if (FIELD_INFOSET.equals(pField)) {
-            return hasInfoSet ? theInfoSet : JDataFieldValue.SkipField;
+            return hasInfoSet
+                    ? theInfoSet
+                    : JDataFieldValue.SkipField;
         }
 
         /* Handle InfoSet fields */
@@ -297,7 +297,9 @@ public class TaxYear
      * @return the allowance
      */
     public JMoney getAllowance() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.Allowance, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.Allowance, JMoney.class)
+                : null;
     }
 
     /**
@@ -305,7 +307,9 @@ public class TaxYear
      * @return the rental allowance
      */
     public JMoney getRentalAllowance() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.RentalAllow, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.RentalAllow, JMoney.class)
+                : null;
     }
 
     /**
@@ -313,7 +317,9 @@ public class TaxYear
      * @return the tax band
      */
     public JMoney getLoBand() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.LoTaxBand, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.LoTaxBand, JMoney.class)
+                : null;
     }
 
     /**
@@ -321,7 +327,9 @@ public class TaxYear
      * @return the tax band
      */
     public JMoney getBasicBand() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.BasicTaxBand, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.BasicTaxBand, JMoney.class)
+                : null;
     }
 
     /**
@@ -329,7 +337,9 @@ public class TaxYear
      * @return the allowance
      */
     public JMoney getCapitalAllow() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.CapitalAllow, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.CapitalAllow, JMoney.class)
+                : null;
     }
 
     /**
@@ -337,7 +347,9 @@ public class TaxYear
      * @return the allowance
      */
     public JMoney getLoAgeAllow() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.LoAgeAllow, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.LoAgeAllow, JMoney.class)
+                : null;
     }
 
     /**
@@ -345,7 +357,9 @@ public class TaxYear
      * @return the allowance
      */
     public JMoney getHiAgeAllow() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.HiAgeAllow, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.HiAgeAllow, JMoney.class)
+                : null;
     }
 
     /**
@@ -353,7 +367,9 @@ public class TaxYear
      * @return the limit
      */
     public JMoney getAgeAllowLimit() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.AgeAllowLimit, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.AgeAllowLimit, JMoney.class)
+                : null;
     }
 
     /**
@@ -361,7 +377,9 @@ public class TaxYear
      * @return the limit
      */
     public JMoney getAddAllowLimit() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.AddAllowLimit, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.AddAllowLimit, JMoney.class)
+                : null;
     }
 
     /**
@@ -369,7 +387,9 @@ public class TaxYear
      * @return the boundary
      */
     public JMoney getAddIncBound() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.AddIncomeThold, JMoney.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.AddIncomeThold, JMoney.class)
+                : null;
     }
 
     /**
@@ -377,7 +397,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getLoTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.LoTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.LoTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -385,7 +407,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getBasicTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.BasicTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.BasicTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -393,7 +417,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getHiTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.HiTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.HiTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -401,7 +427,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getIntTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.IntTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.IntTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -409,7 +437,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getDivTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.DivTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.DivTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -417,7 +447,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getHiDivTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.HiDivTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.HiDivTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -425,7 +457,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getAddTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.AddTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.AddTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -433,7 +467,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getAddDivTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.AddDivTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.AddDivTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -441,7 +477,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getCapTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.CapTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.CapTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -449,7 +487,9 @@ public class TaxYear
      * @return the rate
      */
     public JRate getHiCapTaxRate() {
-        return hasInfoSet ? theInfoSet.getValue(TaxYearInfoClass.HiCapTaxRate, JRate.class) : null;
+        return hasInfoSet
+                ? theInfoSet.getValue(TaxYearInfoClass.HiCapTaxRate, JRate.class)
+                : null;
     }
 
     /**
@@ -682,10 +722,14 @@ public class TaxYear
      */
     private Object getInfoSetValue(final TaxYearInfoClass pInfoClass) {
         /* Access value of object */
-        Object myValue = hasInfoSet ? theInfoSet.getField(pInfoClass) : null;
+        Object myValue = hasInfoSet
+                ? theInfoSet.getField(pInfoClass)
+                : null;
 
         /* Return the value */
-        return (myValue != null) ? myValue : JDataFieldValue.SkipField;
+        return (myValue != null)
+                ? myValue
+                : JDataFieldValue.SkipField;
     }
 
     @Override
@@ -780,7 +824,9 @@ public class TaxYear
         /* Handle InfoSet fields */
         TaxYearInfoClass myClass = getFieldClass(pField);
         if (myClass != null) {
-            return (useInfoSet) ? theInfoSet.fieldChanged(myClass) : Difference.Identical;
+            return (useInfoSet)
+                    ? theInfoSet.fieldChanged(myClass)
+                    : Difference.Identical;
         }
 
         /* Check super fields */
@@ -866,7 +912,7 @@ public class TaxYear
      */
     public TaxYear(final TaxYearList pList,
                    final Integer uId,
-                   final TaxRegime pRegime,
+                   final String pRegime,
                    final Date pDate) throws JDataException {
         /* Initialise item */
         super(pList, uId, pRegime, pDate);
@@ -1285,21 +1331,8 @@ public class TaxYear
         public TaxYear addOpenItem(final Integer uId,
                                    final String pRegime,
                                    final Date pDate) throws JDataException {
-            /* Look up the Tax Regime */
-            FinanceData myData = getDataSet();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-            TaxRegimeList myList = myData.getTaxRegimes();
-            TaxRegime myTaxRegime = myList.findItemByName(pRegime);
-            if (myTaxRegime == null) {
-                throw new JDataException(ExceptionClass.DATA, "TaxYear on <"
-                                                              + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "> has invalid TaxRegime <"
-                                                              + pRegime
-                                                              + ">");
-            }
-
             /* Create the tax year */
-            TaxYear myTaxYear = new TaxYear(this, uId, myTaxRegime, pDate);
+            TaxYear myTaxYear = new TaxYear(this, uId, pRegime, pDate);
 
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {

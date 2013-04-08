@@ -1295,7 +1295,7 @@ public class Account
             /* if we have a parent */
             if (myParent != null) {
                 /* check that any parent is owner */
-                if (!myClass.canParent()) {
+                if (!myClass.canParentAccount()) {
                     addError("Parent account cannot have children", FIELD_PARENT);
                 }
 

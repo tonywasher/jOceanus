@@ -27,7 +27,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
@@ -148,11 +147,11 @@ public class SheetAccountCurrency
             int mySteps = pTask.getReportingSteps();
             int myCount = 0;
 
-            /* Count the number of AccountCategoryTypes */
+            /* Count the number of AccountCurrencies */
             int myTotal = myView.getRowCount();
 
-            /* Access the list of account types */
-            AccountCategoryTypeList myList = pData.getAccountCategoryTypes();
+            /* Access the list of account currencies */
+            AccountCurrencyList myList = pData.getAccountCurrencies();
 
             /* Declare the number of steps */
             if (!pTask.setNumSteps(myTotal)) {

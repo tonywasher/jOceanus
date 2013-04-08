@@ -101,4 +101,11 @@ public class TableTaxYear
             super.setFieldValue(pItem, iField);
         }
     }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and sort the data */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+    }
 }

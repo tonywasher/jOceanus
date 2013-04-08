@@ -645,9 +645,9 @@ public abstract class EventBase
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         /* Update the Encryption details */
-        super.relinkToDataSet();
+        super.resolveDataSetLinks();
 
         /* Access Lists */
         FinanceData myData = getDataSet();

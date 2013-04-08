@@ -83,52 +83,63 @@ public class TaxRegime
     /**
      * Basic Constructor.
      * @param pList The list to associate the TaxRegime with
-     * @param sName Name of TaxRegime
+     * @param pName Name of TaxRegime
      * @throws JDataException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final String sName) throws JDataException {
-        super(pList, sName);
+                      final String pName) throws JDataException {
+        super(pList, pName);
+    }
+
+    /**
+     * Basic constructor.
+     * @param pList The list to associate the Tax Regime with
+     * @param pClass Class of Tax Regime
+     * @throws JDataException on error
+     */
+    private TaxRegime(final TaxRegimeList pList,
+                      final TaxRegimeClass pClass) throws JDataException {
+        super(pList, pClass);
     }
 
     /**
      * Open Constructor.
      * @param pList The list to associate the TaxRegime with
-     * @param uId the id of the new item
+     * @param pId the id of the new item
      * @param isEnabled is the regime enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Name of Tax Regime
      * @param pDesc Description of Tax Regime
      * @throws JDataException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final Integer uId,
+                      final Integer pId,
                       final Boolean isEnabled,
-                      final Integer uOrder,
+                      final Integer pOrder,
                       final String pName,
                       final String pDesc) throws JDataException {
-        super(pList, uId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
      * Secure Constructor.
      * @param pList The list to associate the TaxRegime with
-     * @param uId ID of TaxRegime
-     * @param uControlId the control id of the new item
+     * @param pId ID of TaxRegime
+     * @param pControlId the control id of the new item
      * @param isEnabled is the regime enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Encrypted Name of TaxRegime
      * @param pDesc Encrypted Description of TaxRegime
      * @throws JDataException on error
      */
     private TaxRegime(final TaxRegimeList pList,
-                      final Integer uId,
-                      final Integer uControlId,
+                      final Integer pId,
+                      final Integer pControlId,
                       final Boolean isEnabled,
-                      final Integer uOrder,
+                      final Integer pOrder,
                       final byte[] pName,
                       final byte[] pDesc) throws JDataException {
-        super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
@@ -285,20 +296,20 @@ public class TaxRegime
 
         /**
          * Add a TaxRegime to the list.
-         * @param uId the id of the new item
+         * @param pId the id of the new item
          * @param isEnabled is the regime enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pTaxRegime the Name of the tax regime
          * @param pDesc the Description of the tax regime
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
+                                final Integer pOrder,
                                 final String pTaxRegime,
                                 final String pDesc) throws JDataException {
             /* Create a new Tax Regime */
-            TaxRegime myTaxReg = new TaxRegime(this, uId, isEnabled, uOrder, pTaxRegime, pDesc);
+            TaxRegime myTaxReg = new TaxRegime(this, pId, isEnabled, pOrder, pTaxRegime, pDesc);
 
             /* Check that this TaxRegimeId has not been previously added */
             if (!isIdUnique(myTaxReg.getId())) {
@@ -319,25 +330,25 @@ public class TaxRegime
 
         /**
          * Add a TaxRegime.
-         * @param uId the Id of the tax regime
-         * @param uControlId the control id of the new item
+         * @param pId the Id of the tax regime
+         * @param pControlId the control id of the new item
          * @param isEnabled is the regime enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pTaxRegime the Encrypted Name of the tax regime
          * @param pDesc the Encrypted Description of the tax regime
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Boolean isEnabled,
-                                  final Integer uOrder,
+                                  final Integer pOrder,
                                   final byte[] pTaxRegime,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new tax regime */
-            TaxRegime myTaxReg = new TaxRegime(this, uId, uControlId, isEnabled, uOrder, pTaxRegime, pDesc);
+            TaxRegime myTaxReg = new TaxRegime(this, pId, pControlId, isEnabled, pOrder, pTaxRegime, pDesc);
 
             /* Check that this TaxRegimeId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myTaxReg, "Duplicate TaxRegimeId");
             }
 
@@ -351,6 +362,32 @@ public class TaxRegime
             if (myTaxReg.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myTaxReg, "Failed validation");
             }
+        }
+
+        /**
+         * Populate default values
+         * @throws JDataException on error
+         */
+        public void populateDefaults() throws JDataException {
+            /* Loop through all elements */
+            for (TaxRegimeClass myClass : TaxRegimeClass.values()) {
+                /* Create new element */
+                TaxRegime myRegime = new TaxRegime(this, myClass);
+
+                /* Add the Regime to the list */
+                append(myRegime);
+
+                /* Validate the Regime */
+                myRegime.validate();
+
+                /* Handle validation failure */
+                if (myRegime.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myRegime, "Failed validation");
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

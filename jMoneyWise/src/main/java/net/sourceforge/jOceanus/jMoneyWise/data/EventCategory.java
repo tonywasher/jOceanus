@@ -49,13 +49,27 @@ public class EventCategory
     /**
      * Object name.
      */
-    public static final String OBJECT_NAME = AccountCategory.class.getSimpleName();
+    public static final String OBJECT_NAME = EventCategory.class.getSimpleName();
 
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = "EventCategories";
+
+    /**
+     * Separator.
+     */
+    public static final String STR_SEP = ":";
+
+    /**
+     * EventCategory Name length.
+     */
+    public static final int NAMELEN = 30;
+
+    /**
+     * EventCategory Description length.
+     */
+    public static final int DESCLEN = 50;
 
     /**
      * Report fields.
@@ -76,6 +90,16 @@ public class EventCategory
      * Category Type Field Id.
      */
     public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField("CategoryType");
+
+    /**
+     * Parent Category Field Id.
+     */
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField("Parent");
+
+    /**
+     * SubCategory Field Id.
+     */
+    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField("SubCategory");
 
     @Override
     public JDataFields declareFields() {
@@ -182,6 +206,44 @@ public class EventCategory
     }
 
     /**
+     * Obtain Event Category Parent.
+     * @return the parent
+     */
+    public EventCategory getParentCategory() {
+        return getParentCategory(getValueSet());
+    }
+
+    /**
+     * Obtain parentId.
+     * @return the parentId
+     */
+    public Integer getParentCategoryId() {
+        EventCategory myParent = getParentCategory();
+        return (myParent == null)
+                ? null
+                : myParent.getId();
+    }
+
+    /**
+     * Obtain parentName.
+     * @return the parentName
+     */
+    public String getParentCategoryName() {
+        EventCategory myParent = getParentCategory();
+        return (myParent == null)
+                ? null
+                : myParent.getName();
+    }
+
+    /**
+     * Obtain subCategory.
+     * @return the subCategory
+     */
+    public String getSubCategory() {
+        return getSubCategory(getValueSet());
+    }
+
+    /**
      * Obtain Name.
      * @param pValueSet the valueSet
      * @return the Name
@@ -245,6 +307,24 @@ public class EventCategory
     }
 
     /**
+     * Obtain Parent EventCategory.
+     * @param pValueSet the valueSet
+     * @return the Parent AccountCategory
+     */
+    public static EventCategory getParentCategory(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PARENT, EventCategory.class);
+    }
+
+    /**
+     * Obtain SubCategory.
+     * @param pValueSet the valueSet
+     * @return the subCategory
+     */
+    public static String getSubCategory(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_SUBCAT, String.class);
+    }
+
+    /**
      * Set name value.
      * @param pValue the value
      * @throws JDataException on error
@@ -297,7 +377,7 @@ public class EventCategory
     }
 
     /**
-     * Set account type value.
+     * Set category type value.
      * @param pValue the value
      */
     private void setValueType(final EventCategoryType pValue) {
@@ -305,16 +385,78 @@ public class EventCategory
     }
 
     /**
-     * Set account type id.
+     * Set category type id.
      * @param pValue the value
      */
     private void setValueType(final Integer pValue) {
         getValueSet().setValue(FIELD_CATTYPE, pValue);
     }
 
+    /**
+     * Set category type name
+     * @param pValue the value
+     */
+    private void setValueType(final String pValue) {
+        getValueSet().setValue(FIELD_CATTYPE, pValue);
+    }
+
+    /**
+     * Set parent value.
+     * @param pValue the value
+     */
+    private void setValueParent(final EventCategory pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set parent id.
+     * @param pValue the value
+     */
+    private void setValueParent(final Integer pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set parent name
+     * @param pValue the value
+     */
+    private void setValueParent(final String pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set subCategory name
+     * @param pValue the value
+     */
+    private void setValueSubCategory(final String pValue) {
+        getValueSet().setValue(FIELD_SUBCAT, pValue);
+    }
+
     @Override
     public FinanceData getDataSet() {
         return (FinanceData) super.getDataSet();
+    }
+
+    /**
+     * Is this event category the required class.
+     * @param pClass the required category class.
+     * @return true/false
+     */
+    public boolean isCategoryClass(final EventCategoryClass pClass) {
+        /* Check for match */
+        return (getCategoryTypeClass() == pClass);
+    }
+
+    /**
+     * Is this event category a transfer?
+     * @return true/false
+     */
+    public boolean isTransfer() {
+        /* Check for match */
+        EventCategoryClass myClass = getCategoryTypeClass();
+        return (myClass == null)
+                ? false
+                : myClass.isTransfer();
     }
 
     /**
@@ -336,6 +478,7 @@ public class EventCategory
      * @param pName the Encrypted Name of the event category
      * @param pDesc the Encrypted Description of the category
      * @param pCatTypeId the id of the category type
+     * @param pParentId the id of the parent category
      * @throws JDataException on error
      */
     protected EventCategory(final EventCategoryList pList,
@@ -343,7 +486,8 @@ public class EventCategory
                             final Integer pControlId,
                             final byte[] pName,
                             final byte[] pDesc,
-                            final Integer pCatTypeId) throws JDataException {
+                            final Integer pCatTypeId,
+                            final Integer pParentId) throws JDataException {
         /* Initialise the item */
         super(pList, pId);
 
@@ -351,22 +495,17 @@ public class EventCategory
         try {
             /* Store the IDs */
             setValueType(pCatTypeId);
+            setValueParent(pParentId);
 
             /* Set ControlId */
             setControlKey(pControlId);
 
-            /* Look up the Category Type */
-            FinanceData myData = getDataSet();
-            EventCategoryTypeList myTypes = myData.getEventCategoryTypes();
-            EventCategoryType myCatType = myTypes.findItemById(pCatTypeId);
-            if (myCatType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Category Type Id");
-            }
-            setValueType(myCatType);
-
             /* Record the encrypted values */
             setValueName(pName);
             setValueDesc(pDesc);
+
+            /* Resolve the subCategory */
+            resolveSubCategory();
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -382,22 +521,30 @@ public class EventCategory
      * @param pName the Name of the event category
      * @param pDesc the description of the category
      * @param pCategory the Category type
+     * @param pParent the Parent Category
      * @throws JDataException on error
      */
     protected EventCategory(final EventCategoryList pList,
                             final Integer pId,
                             final String pName,
                             final String pDesc,
-                            final EventCategoryType pCategory) throws JDataException {
+                            final String pCategory,
+                            final String pParent) throws JDataException {
         /* Initialise the item */
         super(pList, pId);
 
         /* Protect against exceptions */
         try {
-            /* Record the encrypted values */
+            /* Store the links */
+            setValueType(pCategory);
+            setValueParent(pParent);
+
+            /* Record the string values */
             setValueName(pName);
             setValueDesc(pDesc);
-            setValueType(pCategory);
+
+            /* Resolve the subCategory */
+            resolveSubCategory();
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -425,6 +572,14 @@ public class EventCategory
             return -1;
         }
 
+        /* Compare the hidden attribute */
+        boolean isHidden = isHidden();
+        if (isHidden != pThat.isHidden()) {
+            return (isHidden)
+                    ? 1
+                    : -1;
+        }
+
         /* Check the category type */
         int iDiff = Difference.compareObject(getCategoryType(), pThat.getCategoryType());
         if (iDiff != 0) {
@@ -442,18 +597,54 @@ public class EventCategory
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         /* Update the Encryption details */
-        super.relinkToDataSet();
+        super.resolveDataSetLinks();
 
-        /* Access Account types */
+        /* Access Relevant lists */
         FinanceData myData = getDataSet();
         EventCategoryTypeList myTypes = myData.getEventCategoryTypes();
+        EventCategoryList myList = myData.getEventCategories();
+        ValueSet myValues = getValueSet();
 
-        /* Update to use the local copy of the EventCategoryTypes */
-        EventCategoryType myType = getCategoryType();
-        EventCategoryType myNewType = myTypes.findItemById(myType.getId());
-        setValueType(myNewType);
+        /* Adjust Category type */
+        Object myCatType = myValues.getValue(FIELD_CATTYPE);
+        if (myCatType instanceof EventCategoryType) {
+            myCatType = ((EventCategoryType) myCatType).getId();
+        }
+        if (myCatType instanceof Integer) {
+            setValueType(myTypes.findItemById((Integer) myCatType));
+        } else if (myCatType instanceof String) {
+            setValueType(myTypes.findItemByName((String) myCatType));
+        }
+
+        /* Adjust Parent */
+        Object myParent = myValues.getValue(FIELD_PARENT);
+        if (myParent instanceof EventCategory) {
+            myParent = ((EventCategory) myParent).getId();
+        }
+        if (myParent instanceof Integer) {
+            setValueParent(myList.findItemById((Integer) myParent));
+        } else if (myParent instanceof String) {
+            setValueParent(myList.findItemByName((String) myParent));
+        }
+    }
+
+    /**
+     * Resolve subCategory name.
+     */
+    private void resolveSubCategory() {
+        /* Obtain the name */
+        String myName = getName();
+        if (myName != null) {
+            /* Look for separator */
+            int iIndex = myName.indexOf(STR_SEP);
+            if (iIndex != -1) {
+                /* Access and set subCategory */
+                String mySub = myName.substring(iIndex + 1);
+                setValueSubCategory(mySub);
+            }
+        }
     }
 
     /**
@@ -463,6 +654,9 @@ public class EventCategory
      */
     public void setCategoryName(final String pName) throws JDataException {
         setValueName(pName);
+
+        /* Resolve the subCategory */
+        resolveSubCategory();
     }
 
     /**
@@ -483,11 +677,121 @@ public class EventCategory
     }
 
     /**
+     * Set a new parent category.
+     * @param pParent the new parent
+     */
+    public void setParentCategory(final EventCategory pParent) {
+        setValueParent(pParent);
+    }
+
+    /**
      * Mark active items.
      */
     protected void markActiveItems() {
         /* mark the category type referred to */
         getCategoryType().touchItem(this);
+    }
+
+    @Override
+    public void validate() {
+        EventCategoryList myList = (EventCategoryList) getList();
+        EventCategoryType myCatType = getCategoryType();
+        EventCategory myParent = getParentCategory();
+        String myName = getName();
+        String myDesc = getDesc();
+
+        /* Name must be non-null */
+        if (myName == null) {
+            addError("Name must be non-null", FIELD_NAME);
+
+            /* Check that the name is valid */
+        } else {
+            /* The name must not be too long */
+            if (myName.length() > NAMELEN) {
+                addError("Name is too long", FIELD_NAME);
+            }
+
+            /* The name must be unique */
+            if (myList.countInstances(myName) > 1) {
+                addError("Name must be unique", FIELD_NAME);
+            }
+        }
+
+        /* Check description length */
+        if ((myDesc != null)
+            && (myDesc.length() > DESCLEN)) {
+            addError("Description is too long", FIELD_NAME);
+        }
+
+        /* EventCategoryType must be non-null */
+        if (myCatType == null) {
+            addError("EventCategoryType must be non-null", FIELD_CATTYPE);
+        } else {
+            /* Access the class */
+            EventCategoryClass myClass = myCatType.getCategoryClass();
+
+            /* EventCategoryType must be enabled */
+            if (!myCatType.getEnabled()) {
+                addError("EventCategoryType must be enabled", FIELD_CATTYPE);
+            }
+
+            /* If the CategoryType is singular */
+            if (myClass.isSingular()) {
+                /* Count the elements of this class */
+                int myCount = myList.countInstances(myClass);
+                if (myCount > 1) {
+                    addError("Multiple instances of singular class", FIELD_CATTYPE);
+                }
+            }
+
+            /* Switch on the category class */
+            switch (myClass) {
+                case Totals:
+                    /* If parent exists */
+                    if (myParent != null) {
+                        addError("Totals EventCategory cannot have parent", FIELD_PARENT);
+                    }
+                    break;
+                case Category:
+                    /* Check parent */
+                    if (myParent == null) {
+                        addError("EventCategory must have parent", FIELD_PARENT);
+                    } else if (!myParent.isCategoryClass(EventCategoryClass.Totals)) {
+                        addError("Category EventCategory must have Totals parent", FIELD_PARENT);
+                    }
+                    break;
+                default:
+                    /* Check parent requirement */
+                    boolean isTransfer = isTransfer();
+                    boolean hasParent = (myParent != null);
+                    if (hasParent == isTransfer) {
+                        if (isTransfer) {
+                            addError("Transfer EventCategory cannot have parent", FIELD_PARENT);
+                        } else {
+                            addError("Non-Transfer EventCategory must have parent", FIELD_PARENT);
+                        }
+                    } else if (hasParent) {
+                        /* Check validity of parent */
+                        if (!myParent.getCategoryTypeClass().canParentCategory()) {
+                            addError("EventCategory must have valid parent", FIELD_PARENT);
+                        }
+
+                        /* Check that name reflects parent */
+                        if ((myName != null)
+                            && !myName.startsWith(myParent.getName()
+                                                  + STR_SEP)) {
+                            addError("EventCategory name must reflect parent", FIELD_PARENT);
+                        }
+                    }
+                    break;
+            }
+
+        }
+
+        /* Set validation flag */
+        if (!hasErrors()) {
+            setValidEdit();
+        }
     }
 
     /**
@@ -522,8 +826,24 @@ public class EventCategory
             setValueType(myCategory.getCategoryType());
         }
 
+        /* Update the parent category if required */
+        if (!Difference.isEqual(getParentCategory(), myCategory.getParentCategory())) {
+            setValueParent(myCategory.getParentCategory());
+        }
+
         /* Check for changes */
         return checkForHistory();
+    }
+
+    /**
+     * Is the category hidden?
+     * @return true/false
+     */
+    public boolean isHidden() {
+        EventCategoryClass myClass = this.getCategoryTypeClass();
+        return (myClass == null)
+                ? false
+                : myClass.isHiddenType();
     }
 
     /**
@@ -640,6 +960,28 @@ public class EventCategory
         }
 
         /**
+         * Count the instances of a class.
+         * @param pClass the event category class
+         * @return The # of instances of the name
+         */
+        protected int countInstances(final EventCategoryClass pClass) {
+            /* Access the iterator */
+            Iterator<EventCategory> myIterator = iterator();
+            int iCount = 0;
+
+            /* Loop through the items to find the entry */
+            while (myIterator.hasNext()) {
+                EventCategory myCurr = myIterator.next();
+                if (pClass == myCurr.getCategoryTypeClass()) {
+                    iCount++;
+                }
+            }
+
+            /* Return to caller */
+            return iCount;
+        }
+
+        /**
          * Search for a particular item by Name.
          * @param pName Name of item
          * @return The Item if present (or null)
@@ -686,41 +1028,21 @@ public class EventCategory
          * @param pId the id
          * @param pName the name
          * @param pDesc the description
-         * @param pCategory the category
+         * @param pCategoryType the category type
+         * @param pParent the parent category
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer pId,
                                 final String pName,
                                 final String pDesc,
-                                final String pCategory) throws JDataException {
-            /* Access the Accounts */
-            FinanceData myData = getDataSet();
-            EventCategoryTypeList myCategories = myData.getEventCategoryTypes();
-
-            /* Look up the Category */
-            EventCategoryType myCategoryType = myCategories.findItemByName(pCategory);
-            if (myCategoryType == null) {
-                throw new JDataException(ExceptionClass.DATA, "Category ["
-                                                              + pName
-                                                              + "] has invalid Event Category ["
-                                                              + pCategory
-                                                              + "]");
-            }
-
+                                final String pCategoryType,
+                                final String pParent) throws JDataException {
             /* Create the category */
-            EventCategory myCategory = new EventCategory(this, pId, pName, pDesc, myCategoryType);
+            EventCategory myCategory = new EventCategory(this, pId, pName, pDesc, pCategoryType, pParent);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate CategoryId");
-            }
-
-            /* Validate the category */
-            myCategory.validate();
-
-            /* Handle validation failure */
-            if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
             }
 
             /* Add to the list */
@@ -734,27 +1056,21 @@ public class EventCategory
          * @param pName the encrypted name
          * @param pDesc the encrypted description
          * @param pCategoryId the category id
+         * @param pParentId the parent id
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
                                   final byte[] pName,
                                   final byte[] pDesc,
-                                  final Integer pCategoryId) throws JDataException {
+                                  final Integer pCategoryId,
+                                  final Integer pParentId) throws JDataException {
             /* Create the category */
-            EventCategory myCategory = new EventCategory(this, pId, pControlId, pName, pDesc, pCategoryId);
+            EventCategory myCategory = new EventCategory(this, pId, pControlId, pName, pDesc, pCategoryId, pParentId);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate CategoryId");
-            }
-
-            /* Validate the category */
-            myCategory.validate();
-
-            /* Handle validation failure */
-            if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
             }
 
             /* Add to the list */

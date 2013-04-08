@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import java.util.Date;
+import java.util.ListIterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -37,6 +38,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
+import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.ArchiveYear;
 import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.YearRange;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
@@ -280,21 +282,20 @@ public class SheetEvent
             EventList myList = pData.getEvents();
             EventInfoList myInfoList = pData.getEventInfo();
 
-            /* Access the parser */
-            // JDataFormatter myFormatter = pTask.getDataFormatter();
-            // JDecimalParser myParser = myFormatter.getDecimalParser();
+            /* Obtain the range iterator */
+            ListIterator<ArchiveYear> myIterator = pRange.getIterator();
 
-            /* Loop through the columns of the table */
-            for (Integer j = pRange.getMinYear(); j <= pRange.getMaxYear(); j++) {
+            /* Loop through the individual year ranges in reverse order */
+            while (myIterator.hasPrevious()) {
+                /* Access year */
+                ArchiveYear myYear = myIterator.previous();
+
                 /* Find the range of cells */
-                String myRangeName = j.toString();
-                myRangeName = "Finance"
-                              + myRangeName.substring(2);
-                DataView myView = pWorkBook.getRangeView(myRangeName);
+                DataView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
                 if (!pTask.setNewStage("Events from "
-                                       + j)) {
+                                       + myYear.getDate().getYear())) {
                     return false;
                 }
 

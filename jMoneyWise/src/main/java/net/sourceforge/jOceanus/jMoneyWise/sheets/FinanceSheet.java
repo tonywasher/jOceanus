@@ -27,6 +27,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.ListIterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -36,9 +40,10 @@ import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetReader;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetWriter;
 import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
-import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
@@ -79,52 +84,101 @@ public class FinanceSheet
     /**
      * NamedRange for Static.
      */
-    private static final String AREA_YEARRANGE = "YearRange";
+    private static final String AREA_YEARRANGE = "AssetsYears";
+
+    /**
+     * Simple class to define an archive year.
+     */
+    protected static final class ArchiveYear {
+        /**
+         * The date.
+         */
+        private final JDateDay theDate;
+
+        /**
+         * The range name.
+         */
+        private final String theRangeName;
+
+        /**
+         * Get the date.
+         * @return the date
+         */
+        protected JDateDay getDate() {
+            return theDate;
+        }
+
+        /**
+         * Get the range name.
+         * @return the name
+         */
+        protected String getRangeName() {
+            return theRangeName;
+        }
+
+        /**
+         * Constructor.
+         * @param pName the range name
+         */
+        private ArchiveYear(final String pName) {
+            /* Store parameters */
+            theRangeName = pName;
+
+            /* Isolate the year part */
+            int myLen = pName.length();
+            int myYear = Integer.parseInt(pName.substring(myLen - 2));
+
+            /* Calculate the actual year */
+            if (myYear < 50) {
+                myYear += 2000;
+            } else {
+                myYear += 1900;
+            }
+
+            /* Create the date */
+            theDate = new JDateDay(myYear, Calendar.APRIL, TaxYear.END_OF_MONTH_DAY);
+        }
+    }
 
     /**
      * Simple class to hold YearRange.
      */
     protected static final class YearRange {
         /**
-         * The minimum Year.
+         * The list of years.
          */
-        private int theMinYear = 0;
+        private final List<ArchiveYear> theYears;
 
         /**
-         * The maximum Year.
+         * Constructor
          */
-        private int theMaxYear = 0;
-
-        /**
-         * Get the minimum Year.
-         * @return the year
-         */
-        protected int getMinYear() {
-            return theMinYear;
+        private YearRange() {
+            theYears = new ArrayList<ArchiveYear>();
         }
 
         /**
-         * Get the maximum Year.
-         * @return the year
+         * Get the iterator.
+         * @return the iterator
          */
-        protected int getMaxYear() {
-            return theMaxYear;
+        protected ListIterator<ArchiveYear> getIterator() {
+            return theYears.listIterator();
         }
 
         /**
-         * Set the minimum Year.
-         * @param pYear the year
+         * Get the number of years.
+         * @return the number of years
          */
-        protected void setMinYear(final int pYear) {
-            theMinYear = pYear;
+        protected int getNumYears() {
+            return theYears.size();
         }
 
         /**
-         * Set the maximum Year.
-         * @param pYear the year
+         * Add a year.
+         * @param pName the range name
          */
-        protected void setMaxYear(final int pYear) {
-            theMaxYear = pYear;
+        private void addYear(final String pName) {
+            ArchiveYear myYear = new ArchiveYear(pName);
+            theYears.add(myYear);
         }
     }
 
@@ -144,12 +198,12 @@ public class FinanceSheet
         /* Find the range of cells */
         DataView myView = pWorkBook.getRangeView(AREA_YEARRANGE);
 
-        /* Access the Year Range */
-        DataRow myRow = myView.getRowByIndex(0);
-        DataCell myCell = myView.getRowCellByIndex(myRow, 0);
-        pRange.setMinYear(myCell.getIntegerValue());
-        myCell = myView.getRowCellByIndex(myRow, 1);
-        pRange.setMaxYear(myCell.getIntegerValue());
+        /* Loop through the cells */
+        for (int myIndex = 0; myIndex < myView.getColumnCount(); myIndex++) {
+            /* Access the cell and add year to the list */
+            DataCell myCell = myView.getCellByPosition(myIndex, 0);
+            pRange.addYear(myCell.getStringValue());
+        }
 
         /* Access the static */
         ControlDataList myStatic = pData.getControlData();
@@ -159,8 +213,7 @@ public class FinanceSheet
 
         /* Calculate the number of stages */
         int myStages = NUM_ARCHIVE_AREAS
-                       + pRange.getMaxYear()
-                       - pRange.getMinYear();
+                       + pRange.getNumYears();
 
         /* Declare the number of stages */
         return pTask.setNumStages(myStages);
@@ -239,7 +292,7 @@ public class FinanceSheet
             YearRange myRange = new YearRange();
 
             /* Determine Year Range */
-            boolean bContinue = true; // loadArchive(pTask, myWorkbook, myData, myRange);
+            boolean bContinue = loadArchive(pTask, myWorkbook, myData, myRange);
 
             /* Load Tables */
             if (bContinue) {
@@ -284,25 +337,25 @@ public class FinanceSheet
                 myData.calculateDateRange();
             }
 
-            if (bContinue) {
-                bContinue = SheetAccount.loadArchive(pTask, myWorkbook, myData);
-            }
-            if (bContinue) {
-                bContinue = SheetAccountRate.loadArchive(pTask, myWorkbook, myData);
-            }
-            if (bContinue) {
-                bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData);
-            }
-            if (bContinue) {
-                bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);
-            }
-            if (bContinue) {
-                myData.getAccounts().markActiveItems();
-            }
+            // if (bContinue) {
+            // bContinue = SheetAccount.loadArchive(pTask, myWorkbook, myData);
+            // }
+            // if (bContinue) {
+            // bContinue = SheetAccountRate.loadArchive(pTask, myWorkbook, myData);
+            // }
+            // if (bContinue) {
+            // bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData);
+            // }
+            // if (bContinue) {
+            // bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);
+            // }
+            // if (bContinue) {
+            // myData.getAccounts().markActiveItems();
+            // }
 
-            if (bContinue) {
-                bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, myRange);
-            }
+            // if (bContinue) {
+            // bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, myRange);
+            // }
 
             /* Close the stream */
             pStream.close();

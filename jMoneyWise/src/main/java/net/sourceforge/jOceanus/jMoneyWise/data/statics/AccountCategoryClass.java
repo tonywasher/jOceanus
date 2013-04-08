@@ -176,7 +176,14 @@ public enum AccountCategoryClass implements StaticInterface {
      * <p>
      * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
      */
-    Category(20, 19);
+    Category(20, 19),
+
+    /**
+     * Total Account.
+     * <p>
+     * This is used for the total of all categories and is used purely for reporting purposes.
+     */
+    Totals(21, 20);
 
     /**
      * Class Id.
@@ -240,6 +247,7 @@ public enum AccountCategoryClass implements StaticInterface {
             case Market:
             case OpeningBalance:
             case Category:
+            case Totals:
                 return true;
             default:
                 return false;
@@ -335,6 +343,7 @@ public enum AccountCategoryClass implements StaticInterface {
             case OpeningBalance:
             case TaxMan:
             case Market:
+            case Totals:
                 return true;
             default:
                 return false;
@@ -378,10 +387,10 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountCategoryType can parent.
-     * @return <code>true</code> if the account category type can parent, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType can parent accounts.
+     * @return <code>true</code> if the account category type can parent accounts, <code>false</code> otherwise.
      */
-    public boolean canParent() {
+    public boolean canParentAccount() {
         switch (this) {
             case Institution:
             case Employer:
@@ -416,6 +425,20 @@ public enum AccountCategoryClass implements StaticInterface {
             case Shares:
             case LifeBond:
             case UnitTrust:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the AccountCategoryType can be parent categories.
+     * @return <code>true</code> if the account category type can parent categories, <code>false</code> otherwise.
+     */
+    public boolean canParentCategory() {
+        switch (this) {
+            case Category:
+            case Totals:
                 return true;
             default:
                 return false;

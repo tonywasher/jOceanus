@@ -58,8 +58,7 @@ public class EventInfo
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = OBJECT_NAME;
 
     /**
      * Report fields.
@@ -344,9 +343,9 @@ public class EventInfo
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         /* Update the Encryption details */
-        super.relinkToDataSet();
+        super.resolveDataSetLinks();
 
         /* Access Events and InfoTypes */
         FinanceData myData = getDataSet();

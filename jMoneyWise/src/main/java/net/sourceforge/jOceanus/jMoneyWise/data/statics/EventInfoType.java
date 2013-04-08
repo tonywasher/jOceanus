@@ -100,52 +100,63 @@ public class EventInfoType
     /**
      * Basic Constructor.
      * @param pList The list to associate the EventInfoType with
-     * @param sName Name of InfoType
+     * @param pName Name of InfoType
      * @throws JDataException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
-                          final String sName) throws JDataException {
-        super(pList, sName);
+                          final String pName) throws JDataException {
+        super(pList, pName);
+    }
+
+    /**
+     * Basic Constructor.
+     * @param pList The list to associate the Event Info Type with
+     * @param pClass Class of Event Info Type
+     * @throws JDataException on error
+     */
+    private EventInfoType(final EventInfoTypeList pList,
+                          final EventInfoClass pClass) throws JDataException {
+        super(pList, pClass);
     }
 
     /**
      * Open Constructor.
      * @param pList The list to associate the InfoType with
-     * @param uId the id of the new item
+     * @param pId the id of the new item
      * @param isEnabled is the type enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Name of InfoType
      * @param pDesc Description of InfoType
      * @throws JDataException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
-                          final Integer uId,
+                          final Integer pId,
                           final Boolean isEnabled,
-                          final Integer uOrder,
+                          final Integer pOrder,
                           final String pName,
                           final String pDesc) throws JDataException {
-        super(pList, uId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
      * Secure Constructor.
      * @param pList The list to associate the InfoType with
-     * @param uId ID of InfoType
-     * @param uControlId the control id of the new item
+     * @param pId ID of InfoType
+     * @param pControlId the control id of the new item
      * @param isEnabled is the InfoType enabled
-     * @param uOrder the sort order
+     * @param pOrder the sort order
      * @param pName Encrypted Name of InfoType
      * @param pDesc Encrypted Description of InfoType
      * @throws JDataException on error
      */
     private EventInfoType(final EventInfoTypeList pList,
-                          final Integer uId,
-                          final Integer uControlId,
+                          final Integer pId,
+                          final Integer pControlId,
                           final Boolean isEnabled,
-                          final Integer uOrder,
+                          final Integer pOrder,
                           final byte[] pName,
                           final byte[] pDesc) throws JDataException {
-        super(pList, uId, uControlId, isEnabled, uOrder, pName, pDesc);
+        super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
     }
 
     /**
@@ -269,23 +280,23 @@ public class EventInfoType
 
         /**
          * Add an InfoType to the list.
-         * @param uId the id of the new item
+         * @param pId the id of the new item
          * @param isEnabled is the type enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pInfoType the Name of the InfoType
          * @param pDesc the Description of the InfoType
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
-                                final Integer uOrder,
+                                final Integer pOrder,
                                 final String pInfoType,
                                 final String pDesc) throws JDataException {
             /* Create a new InfoType */
-            EventInfoType myType = new EventInfoType(this, uId, isEnabled, uOrder, pInfoType, pDesc);
+            EventInfoType myType = new EventInfoType(this, pId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoId has not been previously added */
-            if (!isIdUnique(myType.getId())) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoTypeId");
             }
 
@@ -303,25 +314,25 @@ public class EventInfoType
 
         /**
          * Add an InfoType.
-         * @param uId the Id of the InfoType
-         * @param uControlId the control id of the new item
+         * @param pId the Id of the InfoType
+         * @param pControlId the control id of the new item
          * @param isEnabled is the regime enabled
-         * @param uOrder the sort order
+         * @param pOrder the sort order
          * @param pInfoType the Encrypted Name of the InfoType
          * @param pDesc the Encrypted Description of the InfoType
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Boolean isEnabled,
-                                  final Integer uOrder,
+                                  final Integer pOrder,
                                   final byte[] pInfoType,
                                   final byte[] pDesc) throws JDataException {
             /* Create a new InfoType */
-            EventInfoType myType = new EventInfoType(this, uId, uControlId, isEnabled, uOrder, pInfoType, pDesc);
+            EventInfoType myType = new EventInfoType(this, pId, pControlId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoTypeId");
             }
 
@@ -335,6 +346,32 @@ public class EventInfoType
             if (myType.hasErrors()) {
                 throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
             }
+        }
+
+        /**
+         * Populate default values
+         * @throws JDataException on error
+         */
+        public void populateDefaults() throws JDataException {
+            /* Loop through all elements */
+            for (EventInfoClass myClass : EventInfoClass.values()) {
+                /* Create new element */
+                EventInfoType myType = new EventInfoType(this, myClass);
+
+                /* Add the EventInfoType to the list */
+                append(myType);
+
+                /* Validate the EventInfoType */
+                myType.validate();
+
+                /* Handle validation failure */
+                if (myType.hasErrors()) {
+                    throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                }
+            }
+
+            /* Ensure that the list is sorted */
+            reSort();
         }
     }
 }

@@ -54,8 +54,7 @@ public class AccountCategory
     /**
      * List name.
      */
-    public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+    public static final String LIST_NAME = "AccountCategories";
 
     /**
      * AccountCategory Name length.
@@ -186,6 +185,17 @@ public class AccountCategory
     }
 
     /**
+     * Obtain CategoryTypeClass.
+     * @return the categoryTypeClass
+     */
+    public AccountCategoryClass getCategoryTypeClass() {
+        AccountCategoryType myType = getCategoryType();
+        return (myType == null)
+                ? null
+                : myType.getAccountClass();
+    }
+
+    /**
      * Obtain Account Category Parent.
      * @return the parent
      */
@@ -213,17 +223,6 @@ public class AccountCategory
         return (myParent == null)
                 ? null
                 : myParent.getName();
-    }
-
-    /**
-     * Obtain CategoryTypeClass.
-     * @return the categoryTypeClass
-     */
-    public AccountCategoryClass getCategoryTypeClass() {
-        AccountCategoryType myType = getCategoryType();
-        return (myType == null)
-                ? null
-                : myType.getAccountClass();
     }
 
     /**
@@ -367,6 +366,14 @@ public class AccountCategory
     }
 
     /**
+     * Set account type name
+     * @param pValue the value
+     */
+    private void setValueType(final String pValue) {
+        getValueSet().setValue(FIELD_CATTYPE, pValue);
+    }
+
+    /**
      * Set parent value.
      * @param pValue the value
      */
@@ -379,6 +386,14 @@ public class AccountCategory
      * @param pValue the value
      */
     private void setValueParent(final Integer pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set parent name
+     * @param pValue the value
+     */
+    private void setValueParent(final String pValue) {
         getValueSet().setValue(FIELD_PARENT, pValue);
     }
 
@@ -438,25 +453,6 @@ public class AccountCategory
             /* Set ControlId */
             setControlKey(pControlId);
 
-            /* Look up the Account Category Type */
-            FinanceData myData = getDataSet();
-            AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
-            AccountCategoryType myCatType = myTypes.findItemById(pCatTypeId);
-            if (myCatType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Category Type Id");
-            }
-            setValueType(myCatType);
-
-            /* If we have a parent */
-            if (pParentId != null) {
-                /* Look up parent */
-                AccountCategory myParent = pList.findItemById(pParentId);
-                if (myParent == null) {
-                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Account Category");
-                }
-                setValueParent(myParent);
-            }
-
             /* Record the encrypted values */
             setValueName(pName);
             setValueDesc(pDesc);
@@ -474,23 +470,24 @@ public class AccountCategory
      * @param pId the id
      * @param pName the Name of the account category
      * @param pDesc the description of the category
-     * @param pCatType the Category type
-     * @param pParent the Parent Category
+     * @param pCatType the Category type name
+     * @param pParent the Parent Category name
      * @throws JDataException on error
      */
     protected AccountCategory(final AccountCategoryList pList,
                               final Integer pId,
                               final String pName,
                               final String pDesc,
-                              final AccountCategoryType pCatType,
-                              final AccountCategory pParent) throws JDataException {
+                              final String pCatType,
+                              final String pParent) throws JDataException {
         /* Initialise the item */
         super(pList, pId);
 
         /* Protect against exceptions */
         try {
-            /* Store the IDs */
+            /* Store the links */
             setValueType(pCatType);
+            setValueParent(pParent);
 
             /* Record the encrypted values */
             setValueName(pName);
@@ -522,14 +519,8 @@ public class AccountCategory
             return -1;
         }
 
-        /* Check the parent category type, putting null at start of list */
-        int iDiff = Difference.compareObject(getParentCategory(), pThat.getParentCategory(), false);
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
         /* Check the category type */
-        iDiff = Difference.compareObject(getCategoryType(), pThat.getCategoryType());
+        int iDiff = Difference.compareObject(getCategoryType(), pThat.getCategoryType());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -545,25 +536,36 @@ public class AccountCategory
     }
 
     @Override
-    public void relinkToDataSet() {
+    public void resolveDataSetLinks() {
         /* Update the Encryption details */
-        super.relinkToDataSet();
+        super.resolveDataSetLinks();
 
-        /* Access Account types */
+        /* Access Relevant lists */
         FinanceData myData = getDataSet();
         AccountCategoryTypeList myTypes = myData.getAccountCategoryTypes();
+        AccountCategoryList myList = myData.getAccountCategories();
+        ValueSet myValues = getValueSet();
 
-        /* Update to use the local copy of the AccountCategoryTypes */
-        AccountCategoryType myType = getCategoryType();
-        AccountCategoryType myNewType = myTypes.findItemById(myType.getId());
-        setValueType(myNewType);
+        /* Adjust Category type */
+        Object myCatType = myValues.getValue(FIELD_CATTYPE);
+        if (myCatType instanceof AccountCategoryType) {
+            myCatType = ((AccountCategoryType) myCatType).getId();
+        }
+        if (myCatType instanceof Integer) {
+            setValueType(myTypes.findItemById((Integer) myCatType));
+        } else if (myCatType instanceof String) {
+            setValueType(myTypes.findItemByName((String) myCatType));
+        }
 
-        /* Update to use the local copy of the AccountCategories */
-        AccountCategory myParent = getParentCategory();
-        if (myParent != null) {
-            AccountCategoryList myList = myData.getAccountCategories();
-            AccountCategory myNewParent = myList.findItemById(myParent.getId());
-            setValueParent(myNewParent);
+        /* Adjust Parent */
+        Object myParent = myValues.getValue(FIELD_PARENT);
+        if (myParent instanceof AccountCategory) {
+            myParent = ((AccountCategory) myParent).getId();
+        }
+        if (myParent instanceof Integer) {
+            setValueParent(myList.findItemById((Integer) myParent));
+        } else if (myParent instanceof String) {
+            setValueParent(myList.findItemByName((String) myParent));
         }
     }
 
@@ -643,20 +645,50 @@ public class AccountCategory
         /* AccountCategoryType must be non-null */
         if (myCatType == null) {
             addError("AccountCategoryType must be non-null", FIELD_CATTYPE);
-            /* AccountCategoryType must be enabled */
-        } else if (!myCatType.getEnabled()) {
-            addError("AccountCategoryType must be enabled", FIELD_CATTYPE);
-        }
+        } else {
+            /* Access the class */
+            AccountCategoryClass myClass = myCatType.getAccountClass();
 
-        /* If parent exists */
-        if (myParent != null) {
-            /* Category type must be asset */
-            if (myCatType.getAccountClass().isNonAsset()) {
-                addError("AccountCategory cannot have parent", FIELD_PARENT);
-                /* Parent must be category */
-            } else if (!myParent.isCategoryClass(AccountCategoryClass.Category)) {
-                addError("AccountCategory parent is invalid type", FIELD_PARENT);
+            /* AccountCategoryType must be enabled */
+            if (!myCatType.getEnabled()) {
+                addError("AccountCategoryType must be enabled", FIELD_CATTYPE);
             }
+
+            /* If the CategoryType is singular */
+            if (myClass.isSingular()) {
+                /* Count the elements of this class */
+                int myCount = myList.countInstances(myClass);
+                if (myCount > 1) {
+                    addError("Multiple instances of singular class", FIELD_CATTYPE);
+                }
+            }
+
+            /* Switch on the account class */
+            switch (myClass) {
+                case Totals:
+                    /* If parent exists */
+                    if (myParent != null) {
+                        addError("Totals AccountCategory cannot have parent", FIELD_PARENT);
+                    }
+                    break;
+                case Category:
+                    /* Check parent */
+                    if (myParent == null) {
+                        addError("AccountCategory must have parent", FIELD_PARENT);
+                    } else if (!myParent.isCategoryClass(AccountCategoryClass.Totals)) {
+                        addError("Category AccountCategory must have Totals parent", FIELD_PARENT);
+                    }
+                    break;
+                default:
+                    /* Check parent */
+                    if (myParent == null) {
+                        addError("AccountCategory must have parent", FIELD_PARENT);
+                    } else if (!myParent.getCategoryTypeClass().canParentCategory()) {
+                        addError("AccountCategory must have valid parent", FIELD_PARENT);
+                    }
+                    break;
+            }
+
         }
 
         /* Set validation flag */
@@ -676,7 +708,6 @@ public class AccountCategory
         if (!(pCategory instanceof AccountCategory)) {
             return false;
         }
-
         AccountCategory myCategory = (AccountCategory) pCategory;
 
         /* Store the current detail into history */
@@ -820,6 +851,28 @@ public class AccountCategory
         }
 
         /**
+         * Count the instances of a class.
+         * @param pClass the event category class
+         * @return The # of instances of the name
+         */
+        protected int countInstances(final AccountCategoryClass pClass) {
+            /* Access the iterator */
+            Iterator<AccountCategory> myIterator = iterator();
+            int iCount = 0;
+
+            /* Loop through the items to find the entry */
+            while (myIterator.hasNext()) {
+                AccountCategory myCurr = myIterator.next();
+                if (pClass == myCurr.getCategoryTypeClass()) {
+                    iCount++;
+                }
+            }
+
+            /* Return to caller */
+            return iCount;
+        }
+
+        /**
          * Search for a particular item by Name.
          * @param pName Name of item
          * @return The Item if present (or null)
@@ -866,57 +919,21 @@ public class AccountCategory
          * @param pId the id
          * @param pName the name
          * @param pDesc the description
-         * @param pCategory the category
+         * @param pCategoryType the category type
          * @param pParent the parent category
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer pId,
                                 final String pName,
                                 final String pDesc,
-                                final String pCategory,
+                                final String pCategoryType,
                                 final String pParent) throws JDataException {
-            /* Access the Accounts */
-            FinanceData myData = getDataSet();
-            AccountCategoryTypeList myCategories = myData.getAccountCategoryTypes();
-            AccountCategory myParent = null;
-
-            /* Look up the CategoryType */
-            AccountCategoryType myCategoryType = myCategories.findItemByName(pCategory);
-            if (myCategoryType == null) {
-                throw new JDataException(ExceptionClass.DATA, "Category ["
-                                                              + pName
-                                                              + "] has invalid Account Category ["
-                                                              + pCategory
-                                                              + "]");
-            }
-
-            /* If we have a parent */
-            if (pParent != null) {
-                /* Look up the ParentCategory */
-                myParent = findItemByName(pParent);
-                if (myParent == null) {
-                    throw new JDataException(ExceptionClass.DATA, "Category ["
-                                                                  + pName
-                                                                  + "] has invalid Parent Category ["
-                                                                  + pParent
-                                                                  + "]");
-                }
-            }
-
             /* Create the category */
-            AccountCategory myCategory = new AccountCategory(this, pId, pName, pDesc, myCategoryType, myParent);
+            AccountCategory myCategory = new AccountCategory(this, pId, pName, pDesc, pCategoryType, pParent);
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(myCategory.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate CategoryId");
-            }
-
-            /* Validate the category */
-            myCategory.validate();
-
-            /* Handle validation failure */
-            if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
             }
 
             /* Add to the list */
@@ -945,14 +962,6 @@ public class AccountCategory
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate CategoryId");
-            }
-
-            /* Validate the category */
-            myCategory.validate();
-
-            /* Handle validation failure */
-            if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
             }
 
             /* Add to the list */

@@ -22,14 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
-import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -38,6 +39,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
+import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.ArchiveYear;
 import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet.YearRange;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
@@ -52,7 +54,7 @@ public class SheetTaxYear
     /**
      * NamedArea for TaxYears.
      */
-    private static final String AREA_TAXYEARS = "TaxParameters";
+    private static final String AREA_TAXYEARS = "TaxParams";
 
     /**
      * TaxYear column.
@@ -251,80 +253,84 @@ public class SheetTaxYear
                 return false;
             }
 
-            /* Create the calendar instance */
-            Calendar myYear = Calendar.getInstance();
-            myYear.set(pRange.getMaxYear(), Calendar.APRIL, TaxYear.END_OF_MONTH_DAY, 0, 0, 0);
+            /* Obtain the range iterator */
+            Iterator<ArchiveYear> myIterator = pRange.getIterator();
+            int iRow = 0;
 
-            /* Loop through the columns of the table */
-            for (int i = 0; i < myTotal; i++, myYear.add(Calendar.YEAR, -1)) {
+            /* Loop through the required years */
+            while (myIterator.hasNext()) {
                 /* Row Adjust value */
-                int iAdjust = 0;
+                int iAdjust = 1;
+
+                /* Access Year */
+                ArchiveYear myYear = myIterator.next();
+                JDateDay myDate = myYear.getDate();
 
                 /* Access the values */
-                String myAllowance = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myLoTaxBand = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myBasicTaxBand = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myRentalAllow = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myLoTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myBasicTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myIntTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myDivTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myHiTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myHiDivTaxRate = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myTaxRegime = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myTaxRegime = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myAllowance = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myLoTaxBand = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myBasicTaxBand = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myRentalAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myLoTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myBasicTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myIntTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myDivTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myHiTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myHiDivTaxRate = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
 
                 /* Handle AddTaxRate which may be missing */
-                DataCell myCell = myView.getCellByPosition(i, iAdjust++);
+                DataCell myCell = myView.getCellByPosition(iAdjust++, iRow);
                 String myAddTaxRate = null;
                 if (myCell != null) {
                     myAddTaxRate = myCell.getStringValue();
                 }
 
                 /* Handle AddDivTaxRate which may be missing */
-                myCell = myView.getCellByPosition(i, iAdjust++);
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
                 String myAddDivTaxRate = null;
                 if (myCell != null) {
                     myAddDivTaxRate = myCell.getStringValue();
                 }
 
                 /* Access the values */
-                String myLoAgeAllow = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myHiAgeAllow = myView.getCellByPosition(i, iAdjust++).getStringValue();
-                String myAgeAllowLimit = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myLoAgeAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myHiAgeAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
+                String myAgeAllowLimit = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
 
                 /* Handle AddAllowLimit which may be missing */
-                myCell = myView.getCellByPosition(i, iAdjust++);
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
                 String myAddAllowLimit = null;
                 if (myCell != null) {
                     myAddAllowLimit = myCell.getStringValue();
                 }
 
                 /* Handle AddIncomeBoundary which may be missing */
-                myCell = myView.getCellByPosition(i, iAdjust++);
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
                 String myAddIncBound = null;
                 if (myCell != null) {
                     myAddIncBound = myCell.getStringValue();
                 }
 
                 /* Access the values */
-                String myCapitalAllow = myView.getCellByPosition(i, iAdjust++).getStringValue();
+                String myCapitalAllow = myView.getCellByPosition(iAdjust++, iRow).getStringValue();
 
                 /* Handle CapTaxRate which may be missing */
-                myCell = myView.getCellByPosition(i, iAdjust++);
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
                 String myCapTaxRate = null;
                 if (myCell != null) {
                     myCapTaxRate = myCell.getStringValue();
                 }
 
                 /* Handle HiCapTaxRate which may be missing */
-                myCell = myView.getCellByPosition(i, iAdjust++);
+                myCell = myView.getCellByPosition(iAdjust++, iRow);
                 String myHiCapTaxRate = null;
                 if (myCell != null) {
                     myHiCapTaxRate = myCell.getStringValue();
                 }
 
                 /* Add the Tax Year */
-                TaxYear myTaxYear = myList.addOpenItem(0, myTaxRegime, myYear.getTime());
+                TaxYear myTaxYear = myList.addOpenItem(0, myTaxRegime, myDate.getDate());
 
                 /* Add information relating to the tax year */
                 myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.Allowance, myAllowance);
@@ -350,6 +356,7 @@ public class SheetTaxYear
 
                 /* Report the progress */
                 myCount++;
+                iRow++;
 
                 if (((myCount % mySteps) == 0)
                     && (!pTask.setStepsDone(myCount))) {
@@ -358,6 +365,7 @@ public class SheetTaxYear
             }
 
             /* Sort the list */
+            myList.resolveDataSetLinks();
             myList.reSort();
             myInfoList.reSort();
 
