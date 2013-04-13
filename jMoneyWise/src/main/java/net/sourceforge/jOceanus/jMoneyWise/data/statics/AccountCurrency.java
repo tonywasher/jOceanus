@@ -200,12 +200,12 @@ public class AccountCurrency
         }
 
         @Override
-        public AccountCurrencyList cloneList(final DataSet<?> pDataSet) {
+        public AccountCurrencyList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (AccountCurrencyList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountCurrencyList deriveList(final ListStyle pStyle) {
+        public AccountCurrencyList deriveList(final ListStyle pStyle) throws JDataException {
             return (AccountCurrencyList) super.deriveList(pStyle);
         }
 
@@ -341,7 +341,7 @@ public class AccountCurrency
         }
 
         /**
-         * Populate default values
+         * Populate default values.
          * @throws JDataException on error
          */
         public void populateDefaults() throws JDataException {

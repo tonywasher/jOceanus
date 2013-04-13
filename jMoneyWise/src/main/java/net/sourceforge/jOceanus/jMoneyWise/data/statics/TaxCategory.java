@@ -225,12 +225,12 @@ public class TaxCategory
         }
 
         @Override
-        public TaxCategoryList cloneList(final DataSet<?> pDataSet) {
+        public TaxCategoryList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (TaxCategoryList) super.cloneList(pDataSet);
         }
 
         @Override
-        public TaxCategoryList deriveList(final ListStyle pStyle) {
+        public TaxCategoryList deriveList(final ListStyle pStyle) throws JDataException {
             return (TaxCategoryList) super.deriveList(pStyle);
         }
 
@@ -375,7 +375,7 @@ public class TaxCategory
         }
 
         /**
-         * Populate default values
+         * Populate default values.
          * @throws JDataException on error
          */
         public void populateDefaults() throws JDataException {

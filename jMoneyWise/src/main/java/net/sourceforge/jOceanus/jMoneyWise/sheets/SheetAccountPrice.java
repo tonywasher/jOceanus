@@ -48,11 +48,6 @@ public class SheetAccountPrice
     private static final String AREA_PRICES = AccountPrice.LIST_NAME;
 
     /**
-     * Alternate NamedArea for Prices.
-     */
-    private static final String AREA_SPOTPRICES = "SpotPricesData";
-
-    /**
      * Account column.
      */
     private static final int COL_ACCOUNT = COL_CONTROLID + 1;
@@ -181,7 +176,7 @@ public class SheetAccountPrice
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_SPOTPRICES);
+            DataView myView = pWorkBook.getRangeView(AREA_PRICES);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();

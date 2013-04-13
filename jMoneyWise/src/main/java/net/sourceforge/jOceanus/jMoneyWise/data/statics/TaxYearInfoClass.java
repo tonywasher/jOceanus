@@ -49,37 +49,37 @@ public enum TaxYearInfoClass implements DataInfoClass {
     /**
      * Rental Allowance.
      */
-    RentalAllow(4, 3, DataType.MONEY),
+    RentalAllowance(4, 3, DataType.MONEY),
 
     /**
      * Capital Allowance.
      */
-    CapitalAllow(5, 4, DataType.MONEY),
+    CapitalAllowance(5, 4, DataType.MONEY),
 
     /**
      * Low Age Allowance.
      */
-    LoAgeAllow(6, 5, DataType.MONEY),
+    LoAgeAllowance(6, 5, DataType.MONEY),
 
     /**
      * High Age Allowance.
      */
-    HiAgeAllow(7, 6, DataType.MONEY),
+    HiAgeAllowance(7, 6, DataType.MONEY),
 
     /**
      * Age Allowance Limit.
      */
-    AgeAllowLimit(8, 7, DataType.MONEY),
+    AgeAllowanceLimit(8, 7, DataType.MONEY),
 
     /**
      * Additional Allowance Limit.
      */
-    AddAllowLimit(9, 8, DataType.MONEY),
+    AdditionalAllowanceLimit(9, 8, DataType.MONEY),
 
     /**
      * Additional Income Threshold.
      */
-    AddIncomeThold(10, 9, DataType.MONEY),
+    AdditionalIncomeThreshold(10, 9, DataType.MONEY),
 
     /**
      * Low Tax Rate.
@@ -99,37 +99,37 @@ public enum TaxYearInfoClass implements DataInfoClass {
     /**
      * Interest Tax Rate.
      */
-    IntTaxRate(14, 13, DataType.RATE),
+    InterestTaxRate(14, 13, DataType.RATE),
 
     /**
      * Dividend Tax Rate.
      */
-    DivTaxRate(15, 14, DataType.RATE),
+    DividendTaxRate(15, 14, DataType.RATE),
 
     /**
      * High Dividend Tax Rate.
      */
-    HiDivTaxRate(16, 15, DataType.RATE),
+    HiDividendTaxRate(16, 15, DataType.RATE),
 
     /**
      * Additional Tax Rate.
      */
-    AddTaxRate(17, 16, DataType.RATE),
+    AdditionalTaxRate(17, 16, DataType.RATE),
 
     /**
      * Additional Dividend Tax Rate.
      */
-    AddDivTaxRate(18, 17, DataType.RATE),
+    AdditionalDividendTaxRate(18, 17, DataType.RATE),
 
     /**
      * Capital Tax Rate.
      */
-    CapTaxRate(19, 18, DataType.RATE),
+    CapitalTaxRate(19, 18, DataType.RATE),
 
     /**
      * High Capital Tax Rate.
      */
-    HiCapTaxRate(20, 19, DataType.RATE);
+    HiCapitalTaxRate(20, 19, DataType.RATE);
 
     /**
      * Class Id.

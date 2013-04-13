@@ -235,7 +235,7 @@ public abstract class EncryptedItem
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         DataSet<?> myData = getDataSet();
         ControlKeyList myKeys = myData.getControlKeys();
         ValueSet myValues = getValueSet();

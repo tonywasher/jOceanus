@@ -46,7 +46,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
+public abstract class DataSet<T extends DataSet<T>>
+        implements JDataContents {
     /**
      * The Hash prime.
      */
@@ -112,13 +113,19 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
             return theSecurity;
         }
         if (FIELD_CONTROLKEYS.equals(pField)) {
-            return (theControlKeys.size() > 0) ? theControlKeys : JDataFieldValue.SkipField;
+            return (theControlKeys.size() > 0)
+                    ? theControlKeys
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_DATAKEYS.equals(pField)) {
-            return (theDataKeys.size() > 0) ? theDataKeys : JDataFieldValue.SkipField;
+            return (theDataKeys.size() > 0)
+                    ? theDataKeys
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_CONTROLDATA.equals(pField)) {
-            return (theControlData.size() > 0) ? theControlData : JDataFieldValue.SkipField;
+            return (theControlData.size() > 0)
+                    ? theControlData
+                    : JDataFieldValue.SkipField;
         }
         return JDataFieldValue.UnknownField;
     }
@@ -270,14 +277,16 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     /**
      * Construct a Clone for a DataSet.
      * @return the extract
+     * @throws JDataException on error
      */
-    public abstract T deriveCloneSet();
+    public abstract T deriveCloneSet() throws JDataException;
 
     /**
      * Construct a Clone for a DataSet.
      * @param pSource the source DataSet
+     * @throws JDataException on error
      */
-    protected void deriveCloneSet(final DataSet<T> pSource) {
+    protected void deriveCloneSet(final DataSet<T> pSource) throws JDataException {
         /* Clone the Security items */
         theControlKeys = pSource.getControlKeys().cloneList(this);
         theDataKeys = pSource.getDataKeys().cloneList(this);
@@ -287,14 +296,16 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     /**
      * Construct an update extract for a FinanceData Set.
      * @return the extract
+     * @throws JDataException on error
      */
-    public abstract T deriveUpdateSet();
+    public abstract T deriveUpdateSet() throws JDataException;
 
     /**
      * Construct an update extract for a DataSet.
      * @param pSource the source of the extract
+     * @throws JDataException on error
      */
-    protected void deriveUpdateSet(final T pSource) {
+    protected void deriveUpdateSet(final T pSource) throws JDataException {
         /* Build the static differences */
         theControlKeys = pSource.getControlKeys().deriveList(ListStyle.UPDATE);
         theDataKeys = pSource.getDataKeys().deriveList(ListStyle.UPDATE);
@@ -302,9 +313,8 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     }
 
     /**
-     * Construct a difference extract between two DataSets. The difference extract will only contain items
-     * that differ between the two DataSets. Items that are in the new list, but not in the old list will be
-     * viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted.
+     * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
+     * in the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted.
      * Items that are in both list but differ will be viewed as changed
      * @param pOld The old list to extract from
      * @return the difference set
@@ -313,9 +323,8 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
     public abstract T getDifferenceSet(final T pOld) throws JDataException;
 
     /**
-     * Construct a difference extract between two DataSets. The difference extract will only contain items
-     * that differ between the two DataSets. Items that are in the new list, but not in the old list will be
-     * viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted.
+     * Construct a difference extract between two DataSets. The difference extract will only contain items that differ between the two DataSets. Items that are
+     * in the new list, but not in the old list will be viewed as inserted. Items that are in the old list but not in the new list will be viewed as deleted.
      * Items that are in both list but differ will be viewed as changed
      * @param pNew The new list to compare
      * @param pOld The old list to compare
@@ -367,7 +376,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         DataList<?> myList = getDataListForClass(pItemType);
 
         /* Cast correctly */
-        return (myList == null) ? null : pItemType.cast(myList);
+        return (myList == null)
+                ? null
+                : pItemType.cast(myList);
     }
 
     /**
@@ -527,7 +538,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      */
     public boolean isEmpty() {
         /* Determine whether the security data is empty */
-        if (!theControlKeys.isEmpty() || !theDataKeys.isEmpty() || !theControlData.isEmpty()) {
+        if (!theControlKeys.isEmpty()
+            || !theDataKeys.isEmpty()
+            || !theControlData.isEmpty()) {
             return false;
         }
 
@@ -549,7 +562,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
      */
     public boolean hasUpdates() {
         /* Determine whether we have updates */
-        if ((theControlKeys.hasUpdates()) || (theDataKeys.hasUpdates()) || (theControlData.hasUpdates())) {
+        if ((theControlKeys.hasUpdates())
+            || (theDataKeys.hasUpdates())
+            || (theControlData.hasUpdates())) {
             return true;
         }
 
@@ -712,7 +727,9 @@ public abstract class DataSet<T extends DataSet<T>> implements JDataContents {
         ControlKey myKey = getControlKey();
 
         /* Set the control */
-        return (myKey == null) ? null : myKey.getPasswordHash();
+        return (myKey == null)
+                ? null
+                : myKey.getPasswordHash();
     }
 
     /**

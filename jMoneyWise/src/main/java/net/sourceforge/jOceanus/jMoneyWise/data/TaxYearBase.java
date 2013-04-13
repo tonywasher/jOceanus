@@ -28,6 +28,7 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
@@ -211,37 +212,37 @@ public abstract class TaxYearBase
     /**
      * Secure constructor.
      * @param pList the list
-     * @param uId the id
-     * @param uRegimeId the regime id
+     * @param pId the id
+     * @param pRegimeId the regime id
      * @param pDate the date
      * @throws JDataException on error
      */
     protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
-                          final int uId,
-                          final int uRegimeId,
+                          final int pId,
+                          final int pRegimeId,
                           final Date pDate) throws JDataException {
         /* Initialise item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Record the Id */
-        setValueTaxRegime(uRegimeId);
+        setValueTaxRegime(pRegimeId);
         setValueTaxYear(new JDateDay(pDate));
     }
 
     /**
      * Open constructor.
      * @param pList the list
-     * @param uId the id
+     * @param pId the id
      * @param pRegime the tax regime
      * @param pDate the date
      * @throws JDataException on error
      */
     protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
-                          final int uId,
+                          final int pId,
                           final String pRegime,
                           final Date pDate) throws JDataException {
         /* Initialise item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Record the details */
         setValueTaxRegime(pRegime);
@@ -277,7 +278,7 @@ public abstract class TaxYearBase
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Access Relevant lists */
         FinanceData myData = getDataSet();
         TaxRegimeList myRegimes = myData.getTaxRegimes();
@@ -289,9 +290,17 @@ public abstract class TaxYearBase
             myRegime = ((TaxRegime) myRegime).getId();
         }
         if (myRegime instanceof Integer) {
-            setValueTaxRegime(myRegimes.findItemById((Integer) myRegime));
+            TaxRegime myReg = myRegimes.findItemById((Integer) myRegime);
+            if (myReg == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Tax Regime id");
+            }
+            setValueTaxRegime(myReg);
         } else if (myRegime instanceof String) {
-            setValueTaxRegime(myRegimes.findItemByName((String) myRegime));
+            TaxRegime myReg = myRegimes.findItemByName((String) myRegime);
+            if (myReg == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Tax Regime name");
+            }
+            setValueTaxRegime(myReg);
         }
     }
 

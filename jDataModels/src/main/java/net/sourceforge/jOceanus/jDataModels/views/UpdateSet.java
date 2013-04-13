@@ -42,7 +42,9 @@ import net.sourceforge.jOceanus.jEventManager.JEventObject;
 /**
  * Provides control of a set of update-able DataLists.
  */
-public class UpdateSet extends JEventObject implements JDataContents {
+public class UpdateSet
+        extends JEventObject
+        implements JDataContents {
     /**
      * Rewind action.
      */
@@ -65,7 +67,10 @@ public class UpdateSet extends JEventObject implements JDataContents {
 
     @Override
     public String formatObject() {
-        return getDataFields().getName() + "(" + theList.size() + ")";
+        return getDataFields().getName()
+               + "("
+               + theList.size()
+               + ")";
     }
 
     /**
@@ -172,7 +177,9 @@ public class UpdateSet extends JEventObject implements JDataContents {
             if (pName.equals(myEntry.getName())) {
                 /* Return the value */
                 DataList<?> myList = myEntry.getDataList();
-                return (myList == null) ? JDataFieldValue.SkipField : myList;
+                return (myList == null)
+                        ? JDataFieldValue.SkipField
+                        : myList;
             }
         }
 
@@ -292,10 +299,12 @@ public class UpdateSet extends JEventObject implements JDataContents {
         }
 
         /* Apply the changes */
-        prepareChanges();
+        boolean bSuccess = prepareChanges();
 
         /* analyse the data */
-        boolean bSuccess = theControl.analyseData(false);
+        if (bSuccess) {
+            bSuccess = theControl.analyseData(false);
+        }
 
         /* If we were successful */
         if (bSuccess) {
@@ -317,14 +326,21 @@ public class UpdateSet extends JEventObject implements JDataContents {
 
     /**
      * Prepare changes in a ViewSet back into the core data.
+     * @return success true/false
      */
-    private void prepareChanges() {
-        /* Loop through the items in the list */
-        Iterator<UpdateEntry<?>> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
-            /* Prepare changes for the entry */
-            UpdateEntry<?> myEntry = myIterator.next();
-            myEntry.prepareChanges();
+    private boolean prepareChanges() {
+        /* Protect against exceptions */
+        try {
+            /* Loop through the items in the list */
+            Iterator<UpdateEntry<?>> myIterator = theList.iterator();
+            while (myIterator.hasNext()) {
+                /* Prepare changes for the entry */
+                UpdateEntry<?> myEntry = myIterator.next();
+                myEntry.prepareChanges();
+            }
+            return true;
+        } catch (JDataException e) {
+            return false;
         }
     }
 
@@ -370,7 +386,8 @@ public class UpdateSet extends JEventObject implements JDataContents {
             DataList<?> myDataList = myEntry.getDataList();
 
             /* Determine whether there are updates */
-            if ((myDataList != null) && (myDataList.hasUpdates())) {
+            if ((myDataList != null)
+                && (myDataList.hasUpdates())) {
                 return true;
             }
         }
@@ -392,7 +409,8 @@ public class UpdateSet extends JEventObject implements JDataContents {
             DataList<?> myDataList = myEntry.getDataList();
 
             /* Determine whether there are errors */
-            if ((myDataList != null) && (myDataList.hasErrors())) {
+            if ((myDataList != null)
+                && (myDataList.hasErrors())) {
                 return true;
             }
         }

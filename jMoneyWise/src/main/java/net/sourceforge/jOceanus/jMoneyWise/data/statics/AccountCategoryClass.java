@@ -392,6 +392,7 @@ public enum AccountCategoryClass implements StaticInterface {
      */
     public boolean canParentAccount() {
         switch (this) {
+            case TaxMan:
             case Institution:
             case Employer:
             case Portfolio:

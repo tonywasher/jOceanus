@@ -214,8 +214,9 @@ public abstract class DataControl<T extends DataSet<T>>
 
     /**
      * Derive update list.
+     * @throws JDataException on error
      */
-    public void deriveUpdates() {
+    public void deriveUpdates() throws JDataException {
         /* Store the updates */
         theUpdates = theData.deriveUpdateSet();
 

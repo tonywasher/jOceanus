@@ -69,21 +69,6 @@ public abstract class EventBase
     public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField("Date");
 
     /**
-     * Description Field Id.
-     */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
-
-    /**
-     * Category Field Id.
-     */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField("Category");
-
-    /**
-     * Amount Field Id.
-     */
-    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField("Amount");
-
-    /**
      * Debit Field Id.
      */
     public static final JDataField FIELD_DEBIT = FIELD_DEFS.declareEqualityValueField("Debit");
@@ -92,6 +77,26 @@ public abstract class EventBase
      * Credit Field Id.
      */
     public static final JDataField FIELD_CREDIT = FIELD_DEFS.declareEqualityValueField("Credit");
+
+    /**
+     * Amount Field Id.
+     */
+    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField("Amount");
+
+    /**
+     * Category Field Id.
+     */
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField("Category");
+
+    /**
+     * Reconciled Field Id.
+     */
+    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField("Reconciled");
+
+    /**
+     * Description Field Id.
+     */
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
 
     /**
      * Obtain Date.
@@ -251,12 +256,29 @@ public abstract class EventBase
     }
 
     /**
+     * Obtain Reconciled State.
+     * @return the reconciled state
+     */
+    public Boolean getReconciled() {
+        return getReconciled(getValueSet());
+    }
+
+    /**
      * Obtain Date.
      * @param pValueSet the valueSet
      * @return the Date
      */
     public static JDateDay getDate(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_DATE, JDateDay.class);
+    }
+
+    /**
+     * Obtain Reconciled State.
+     * @param pValueSet the valueSet
+     * @return the Reconciled State
+     */
+    public static Boolean getReconciled(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_RECONCILED, Boolean.class);
     }
 
     /**
@@ -346,6 +368,14 @@ public abstract class EventBase
      */
     private void setValueDate(final JDateDay pValue) {
         getValueSet().setValue(FIELD_DATE, pValue);
+    }
+
+    /**
+     * Set reconciled state.
+     * @param pValue the value
+     */
+    private void setValueReconciled(final Boolean pValue) {
+        getValueSet().setValue(FIELD_RECONCILED, pValue);
     }
 
     /**
@@ -481,27 +511,29 @@ public abstract class EventBase
     /**
      * Secure constructor.
      * @param pList the list
-     * @param uId the id
-     * @param uControlId the controlId
+     * @param pId the id
+     * @param pControlId the controlId
      * @param pDate the date
-     * @param pDesc the description
-     * @param uDebit the debit id
-     * @param uCredit the credit id
-     * @param uCategory the category id
+     * @param pDebit the debit id
+     * @param pCredit the credit id
      * @param pAmount the amount
+     * @param pCategory the category id
+     * @param pReconciled is the event reconciled
+     * @param pDesc the description
      * @throws JDataException on error
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
-                        final Integer uId,
-                        final Integer uControlId,
+                        final Integer pId,
+                        final Integer pControlId,
                         final Date pDate,
-                        final byte[] pDesc,
-                        final Integer uDebit,
-                        final Integer uCredit,
-                        final Integer uCategory,
-                        final byte[] pAmount) throws JDataException {
+                        final Integer pDebit,
+                        final Integer pCredit,
+                        final byte[] pAmount,
+                        final Integer pCategory,
+                        final Boolean pReconciled,
+                        final byte[] pDesc) throws JDataException {
         /* Initialise item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Protect against exceptions */
         try {
@@ -510,30 +542,31 @@ public abstract class EventBase
             AccountList myAccounts = myData.getAccounts();
 
             /* Store the IDs that we will look up */
-            setValueDebit(uDebit);
-            setValueCredit(uCredit);
-            setValueCategory(uCategory);
-            setControlKey(uControlId);
+            setValueDebit(pDebit);
+            setValueCredit(pCredit);
+            setValueCategory(pCategory);
+            setControlKey(pControlId);
+            setValueReconciled(pReconciled);
 
             /* Create the date */
             setValueDate(new JDateDay(pDate));
 
             /* Look up the Debit Account */
-            Account myAccount = myAccounts.findItemById(uDebit);
+            Account myAccount = myAccounts.findItemById(pDebit);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Debit Account Id");
             }
             setValueDebit(myAccount);
 
             /* Look up the Debit Account */
-            myAccount = myAccounts.findItemById(uCredit);
+            myAccount = myAccounts.findItemById(pCredit);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Credit Account Id");
             }
             setValueCredit(myAccount);
 
             /* Look up the Category */
-            EventCategory myCategory = myData.getEventCategories().findItemById(uCategory);
+            EventCategory myCategory = myData.getEventCategories().findItemById(pCategory);
             if (myCategory == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Id");
             }
@@ -555,21 +588,23 @@ public abstract class EventBase
      * @param pList the list
      * @param uId the id
      * @param pDate the date
-     * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pCategory the category
      * @param pAmount the amount
+     * @param pCategory the category
+     * @param pReconciled is the event reconciled
+     * @param pDesc the description
      * @throws JDataException on error
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
                         final Integer uId,
                         final Date pDate,
-                        final String pDesc,
                         final Account pDebit,
                         final Account pCredit,
+                        final String pAmount,
                         final EventCategory pCategory,
-                        final String pAmount) throws JDataException {
+                        final Boolean pReconciled,
+                        final String pDesc) throws JDataException {
         /* Initialise item */
         super(pList, uId);
 
@@ -585,6 +620,7 @@ public abstract class EventBase
             setValueDebit(pDebit);
             setValueCredit(pCredit);
             setValueCategory(pCategory);
+            setValueReconciled(pReconciled);
             setValueDate(new JDateDay(pDate));
             setValueAmount(myParser.parseMoneyValue(pAmount));
 
@@ -645,7 +681,7 @@ public abstract class EventBase
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -1029,6 +1065,14 @@ public abstract class EventBase
     }
 
     /**
+     * Set a reconciled indication.
+     * @param pReconciled the reconciled state
+     */
+    public void setReconciled(final Boolean pReconciled) {
+        setValueReconciled(pReconciled);
+    }
+
+    /**
      * Set a new description.
      * @param pDesc the description
      * @throws JDataException on error
@@ -1200,6 +1244,11 @@ public abstract class EventBase
         /* Update the amount if required */
         if (!Difference.isEqual(getAmount(), myEvent.getAmount())) {
             setValueAmount(myEvent.getAmountField());
+        }
+
+        /* Update the reconciled state if required */
+        if (!Difference.isEqual(getReconciled(), myEvent.getReconciled())) {
+            setValueReconciled(myEvent.getReconciled());
         }
 
         /* Check for changes */

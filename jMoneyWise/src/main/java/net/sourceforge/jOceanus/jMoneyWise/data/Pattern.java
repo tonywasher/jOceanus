@@ -231,37 +231,37 @@ public class Pattern
     /**
      * Secure Constructor.
      * @param pList the list
-     * @param uId the id
-     * @param uControlId the control Id
+     * @param pId the id
+     * @param pControlId the control Id
      * @param pDate the date
      * @param pDesc the description
-     * @param uDebitId the debit Id
-     * @param uCreditId the credit id
-     * @param uTransId the transaction id
+     * @param pDebitId the debit Id
+     * @param pCreditId the credit id
+     * @param pCatId the category id
      * @param pAmount the amount
-     * @param uFreqId the frequency id
+     * @param pFreqId the frequency id
      * @throws JDataException on error
      */
     private Pattern(final PatternList pList,
-                    final Integer uId,
-                    final Integer uControlId,
+                    final Integer pId,
+                    final Integer pControlId,
                     final Date pDate,
                     final byte[] pDesc,
-                    final Integer uDebitId,
-                    final Integer uCreditId,
-                    final Integer uTransId,
+                    final Integer pDebitId,
+                    final Integer pCreditId,
+                    final Integer pCatId,
                     final byte[] pAmount,
-                    final Integer uFreqId) throws JDataException {
+                    final Integer pFreqId) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId, pAmount);
+        super(pList, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, Boolean.FALSE, pDesc);
 
         /* Record the IDs */
-        setValueFrequency(uFreqId);
+        setValueFrequency(pFreqId);
 
         /* Access the Frequencies */
         FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
-        Frequency myFreq = myFrequencies.findItemById(uFreqId);
+        Frequency myFreq = myFrequencies.findItemById(pFreqId);
         if (myFreq == null) {
             throw new JDataException(ExceptionClass.DATA, this, "Invalid Frequency Id");
         }
@@ -271,7 +271,7 @@ public class Pattern
     /**
      * Open constructor.
      * @param pList the list
-     * @param uId the id
+     * @param pId the id
      * @param pDate the date
      * @param pDesc the description
      * @param pDebit the debit account
@@ -282,7 +282,7 @@ public class Pattern
      * @throws JDataException on error
      */
     private Pattern(final PatternList pList,
-                    final Integer uId,
+                    final Integer pId,
                     final Date pDate,
                     final String pDesc,
                     final Account pDebit,
@@ -291,14 +291,14 @@ public class Pattern
                     final String pAmount,
                     final Frequency pFrequency) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, uId, pDate, pDesc, pDebit, pCredit, pCategory, pAmount);
+        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, Boolean.FALSE, pDesc);
 
         /* Record the values */
         setValueFrequency(pFrequency);
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Event details */
         super.resolveDataSetLinks();
 
@@ -610,12 +610,12 @@ public class Pattern
         }
 
         @Override
-        public PatternList cloneList(final DataSet<?> pDataSet) {
+        public PatternList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (PatternList) super.cloneList(pDataSet);
         }
 
         @Override
-        public PatternList deriveList(final ListStyle pStyle) {
+        public PatternList deriveList(final ListStyle pStyle) throws JDataException {
             return (PatternList) super.deriveList(pStyle);
         }
 
@@ -713,24 +713,24 @@ public class Pattern
 
         /**
          * Allow a pattern to be added.
-         * @param uId the id
+         * @param pId the id
          * @param pDate the date
-         * @param pDesc the description
          * @param pDebit the debit account
          * @param pCredit the credit account
-         * @param pCategory the category type
          * @param pAmount the amount
+         * @param pCategory the category type
          * @param pFrequency the frequency
+         * @param pDesc the description
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Date pDate,
-                                final String pDesc,
                                 final String pDebit,
                                 final String pCredit,
-                                final String pCategory,
                                 final String pAmount,
-                                final String pFrequency) throws JDataException {
+                                final String pCategory,
+                                final String pFrequency,
+                                final String pDesc) throws JDataException {
             /* Access the Lists */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
@@ -779,7 +779,7 @@ public class Pattern
             }
 
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, uId, pDate, pDesc, myDebit, myCredit, myCategory, pAmount, myFrequency);
+            Pattern myPattern = new Pattern(this, pId, pDate, pDesc, myDebit, myCredit, myCategory, pAmount, myFrequency);
 
             /* Validate the pattern */
             myPattern.validate();
@@ -795,33 +795,33 @@ public class Pattern
 
         /**
          * Allow a pattern to be added.
-         * @param uId the id
-         * @param uControlId the control id
+         * @param pId the id
+         * @param pControlId the control id
          * @param pDate the date
          * @param pDesc the description
-         * @param uDebitId the account id
-         * @param uCreditId the partner id
-         * @param uTransId the transaction type id
-         * @param uFreqId the frequency id
+         * @param pDebitId the account id
+         * @param pCreditId the partner id
+         * @param pCatId the category type id
+         * @param pFreqId the frequency id
          * @param pAmount the amount
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Date pDate,
-                                  final byte[] pDesc,
-                                  final Integer uDebitId,
-                                  final Integer uCreditId,
-                                  final Integer uTransId,
+                                  final Integer pDebitId,
+                                  final Integer pCreditId,
                                   final byte[] pAmount,
-                                  final Integer uFreqId) throws JDataException {
+                                  final Integer pCatId,
+                                  final Integer pFreqId,
+                                  final byte[] pDesc) throws JDataException {
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uTransId, pAmount, uFreqId);
+            Pattern myPattern = new Pattern(this, pId, pControlId, pDate, pDesc, pDebitId, pCreditId, pCatId, pAmount, pFreqId);
 
             /* Check that this PatternId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, "Duplicate PatternId <"
-                                                              + uId
+                                                              + pId
                                                               + ">");
             }
 

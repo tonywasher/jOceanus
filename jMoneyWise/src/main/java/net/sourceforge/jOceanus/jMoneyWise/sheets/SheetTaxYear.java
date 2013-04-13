@@ -195,6 +195,10 @@ public class SheetTaxYear
 
     @Override
     protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and reSort */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+
         /* Calculate the date range */
         theData.calculateDateRange();
     }
@@ -334,25 +338,25 @@ public class SheetTaxYear
 
                 /* Add information relating to the tax year */
                 myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.Allowance, myAllowance);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.RentalAllow, myRentalAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.RentalAllowance, myRentalAllow);
                 myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoTaxBand, myLoTaxBand);
                 myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BasicTaxBand, myBasicTaxBand);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapitalAllow, myCapitalAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoAgeAllow, myLoAgeAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiAgeAllow, myHiAgeAllow);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AgeAllowLimit, myAgeAllowLimit);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddAllowLimit, myAddAllowLimit);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddIncomeThold, myAddIncBound);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapitalAllowance, myCapitalAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoAgeAllowance, myLoAgeAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiAgeAllowance, myHiAgeAllow);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AgeAllowanceLimit, myAgeAllowLimit);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AdditionalAllowanceLimit, myAddAllowLimit);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AdditionalIncomeThreshold, myAddIncBound);
                 myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.LoTaxRate, myLoTaxRate);
                 myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.BasicTaxRate, myBasicTaxRate);
                 myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiTaxRate, myHiTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddTaxRate, myAddTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.IntTaxRate, myIntTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.DivTaxRate, myDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiDivTaxRate, myHiDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AddDivTaxRate, myAddDivTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapTaxRate, myCapTaxRate);
-                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiCapTaxRate, myHiCapTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AdditionalTaxRate, myAddTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.InterestTaxRate, myIntTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.DividendTaxRate, myDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiDividendTaxRate, myHiDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.AdditionalDividendTaxRate, myAddDivTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.CapitalTaxRate, myCapTaxRate);
+                myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.HiCapitalTaxRate, myHiCapTaxRate);
 
                 /* Report the progress */
                 myCount++;

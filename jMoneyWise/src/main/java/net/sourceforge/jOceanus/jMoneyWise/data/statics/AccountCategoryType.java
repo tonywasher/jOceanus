@@ -191,12 +191,12 @@ public class AccountCategoryType
         }
 
         @Override
-        public AccountCategoryTypeList cloneList(final DataSet<?> pDataSet) {
+        public AccountCategoryTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (AccountCategoryTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountCategoryTypeList deriveList(final ListStyle pStyle) {
+        public AccountCategoryTypeList deriveList(final ListStyle pStyle) throws JDataException {
             return (AccountCategoryTypeList) super.deriveList(pStyle);
         }
 
@@ -332,7 +332,7 @@ public class AccountCategoryType
         }
 
         /**
-         * Populate default values
+         * Populate default values.
          * @throws JDataException on error
          */
         public void populateDefaults() throws JDataException {

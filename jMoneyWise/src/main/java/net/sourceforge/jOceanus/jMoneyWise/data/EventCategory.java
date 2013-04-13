@@ -393,7 +393,7 @@ public class EventCategory
     }
 
     /**
-     * Set category type name
+     * Set category type name.
      * @param pValue the value
      */
     private void setValueType(final String pValue) {
@@ -417,7 +417,7 @@ public class EventCategory
     }
 
     /**
-     * Set parent name
+     * Set parent name.
      * @param pValue the value
      */
     private void setValueParent(final String pValue) {
@@ -425,7 +425,7 @@ public class EventCategory
     }
 
     /**
-     * Set subCategory name
+     * Set subCategory name.
      * @param pValue the value
      */
     private void setValueSubCategory(final String pValue) {
@@ -597,7 +597,7 @@ public class EventCategory
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -613,9 +613,17 @@ public class EventCategory
             myCatType = ((EventCategoryType) myCatType).getId();
         }
         if (myCatType instanceof Integer) {
-            setValueType(myTypes.findItemById((Integer) myCatType));
+            EventCategoryType myType = myTypes.findItemById((Integer) myCatType);
+            if (myType == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Type id");
+            }
+            setValueType(myType);
         } else if (myCatType instanceof String) {
-            setValueType(myTypes.findItemByName((String) myCatType));
+            EventCategoryType myType = myTypes.findItemByName((String) myCatType);
+            if (myType == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Type name");
+            }
+            setValueType(myType);
         }
 
         /* Adjust Parent */
@@ -624,9 +632,17 @@ public class EventCategory
             myParent = ((EventCategory) myParent).getId();
         }
         if (myParent instanceof Integer) {
-            setValueParent(myList.findItemById((Integer) myParent));
+            EventCategory myCat = myList.findItemById((Integer) myParent);
+            if (myCat == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Category id");
+            }
+            setValueParent(myCat);
         } else if (myParent instanceof String) {
-            setValueParent(myList.findItemByName((String) myParent));
+            EventCategory myCat = myList.findItemByName((String) myParent);
+            if (myCat == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Category name");
+            }
+            setValueParent(myCat);
         }
     }
 
@@ -887,7 +903,7 @@ public class EventCategory
         }
 
         @Override
-        public EventCategoryList cloneList(final DataSet<?> pDataSet) {
+        public EventCategoryList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (EventCategoryList) super.cloneList(pDataSet);
         }
 
@@ -900,7 +916,7 @@ public class EventCategory
         }
 
         @Override
-        public EventCategoryList deriveList(final ListStyle pStyle) {
+        public EventCategoryList deriveList(final ListStyle pStyle) throws JDataException {
             return (EventCategoryList) super.deriveList(pStyle);
         }
 

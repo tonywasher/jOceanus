@@ -203,28 +203,28 @@ public class EventInfo
     /**
      * Secure constructor.
      * @param pList the list
-     * @param uId the id
-     * @param uControlId the control id
-     * @param uInfoTypeId the info id
-     * @param uEventId the Event id
+     * @param pId the id
+     * @param pControlId the control id
+     * @param pInfoTypeId the info id
+     * @param pEventId the Event id
      * @param pValue the value
      * @throws JDataException on error
      */
     private EventInfo(final EventInfoList pList,
-                      final Integer uId,
-                      final Integer uControlId,
-                      final Integer uInfoTypeId,
-                      final Integer uEventId,
+                      final Integer pId,
+                      final Integer pControlId,
+                      final Integer pInfoTypeId,
+                      final Integer pEventId,
                       final byte[] pValue) throws JDataException {
         /* Initialise the item */
-        super(pList, uId, uControlId, uInfoTypeId, uEventId);
+        super(pList, pId, pControlId, pInfoTypeId, pEventId);
 
         /* Protect against exceptions */
         try {
             /* Look up the EventType */
             FinanceData myData = getDataSet();
             EventInfoTypeList myTypes = myData.getEventInfoTypes();
-            EventInfoType myType = myTypes.findItemById(uInfoTypeId);
+            EventInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
             }
@@ -232,7 +232,7 @@ public class EventInfo
 
             /* Look up the Event */
             EventList myEvents = myData.getEvents();
-            Event myOwner = myEvents.findItemById(uEventId);
+            Event myOwner = myEvents.findItemById(pEventId);
             if (myOwner == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
             }
@@ -276,19 +276,19 @@ public class EventInfo
     /**
      * Open constructor.
      * @param pList the list
-     * @param uId the id
+     * @param pId the id
      * @param pInfoType the info type
      * @param pEvent the Event
      * @param pValue the value
      * @throws JDataException on error
      */
     private EventInfo(final EventInfoList pList,
-                      final Integer uId,
+                      final Integer pId,
                       final EventInfoType pInfoType,
                       final Event pEvent,
                       final Object pValue) throws JDataException {
         /* Initialise the item */
-        super(pList, uId, pInfoType, pEvent);
+        super(pList, pId, pInfoType, pEvent);
 
         /* Protect against exceptions */
         try {
@@ -343,7 +343,7 @@ public class EventInfo
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -567,12 +567,12 @@ public class EventInfo
         }
 
         @Override
-        public EventInfoList cloneList(final DataSet<?> pDataSet) {
+        public EventInfoList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (EventInfoList) super.cloneList(pDataSet);
         }
 
         @Override
-        public EventInfoList deriveList(final ListStyle pStyle) {
+        public EventInfoList deriveList(final ListStyle pStyle) throws JDataException {
             return (EventInfoList) super.deriveList(pStyle);
         }
 
@@ -611,23 +611,23 @@ public class EventInfo
 
         /**
          * Allow an EventInfo to be added.
-         * @param uId the id
-         * @param uControlId the control id
-         * @param uInfoTypeId the info type id
-         * @param uEventId the event id
+         * @param pId the id
+         * @param pControlId the control id
+         * @param pInfoTypeId the info type id
+         * @param pEventId the event id
          * @param pValue the data
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
-                                  final Integer uInfoTypeId,
-                                  final Integer uEventId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
+                                  final Integer pInfoTypeId,
+                                  final Integer pEventId,
                                   final byte[] pValue) throws JDataException {
             /* Create the info */
-            EventInfo myInfo = new EventInfo(this, uId, uControlId, uInfoTypeId, uEventId, pValue);
+            EventInfo myInfo = new EventInfo(this, pId, pControlId, pInfoTypeId, pEventId, pValue);
 
             /* Check that this DataId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate DataId");
             }
 
@@ -644,7 +644,7 @@ public class EventInfo
         }
 
         @Override
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Event pEvent,
                                 final EventInfoClass pInfoClass,
                                 final Object pValue) throws JDataException {
@@ -665,7 +665,7 @@ public class EventInfo
             }
 
             /* Create a new Event Info */
-            EventInfo myInfo = new EventInfo(this, uId, myInfoType, pEvent, pValue);
+            EventInfo myInfo = new EventInfo(this, pId, myInfoType, pEvent, pValue);
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
@@ -683,6 +683,5 @@ public class EventInfo
                 throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
             }
         }
-
     }
 }

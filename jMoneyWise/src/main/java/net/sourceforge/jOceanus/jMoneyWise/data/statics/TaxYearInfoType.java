@@ -200,12 +200,12 @@ public class TaxYearInfoType
         }
 
         @Override
-        public TaxYearInfoTypeList cloneList(final DataSet<?> pDataSet) {
+        public TaxYearInfoTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (TaxYearInfoTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public TaxYearInfoTypeList deriveList(final ListStyle pStyle) {
+        public TaxYearInfoTypeList deriveList(final ListStyle pStyle) throws JDataException {
             return (TaxYearInfoTypeList) super.deriveList(pStyle);
         }
 
@@ -341,7 +341,7 @@ public class TaxYearInfoType
         }
 
         /**
-         * Populate default values
+         * Populate default values.
          * @throws JDataException on error
          */
         public void populateDefaults() throws JDataException {

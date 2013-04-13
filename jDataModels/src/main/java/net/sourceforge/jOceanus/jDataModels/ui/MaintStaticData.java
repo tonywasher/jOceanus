@@ -309,8 +309,9 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
 
     /**
      * Refresh views/controls after a load/update of underlying data.
+     * @throws JDataException on error
      */
-    protected void refreshData() {
+    protected void refreshData() throws JDataException {
         /* Access data */
         DataSet<?> myData = theControl.getData();
 
@@ -371,7 +372,9 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
          */
         @Override
         public int getColumnCount() {
-            return (theColumns == null) ? 0 : theColumns.getColumnCount();
+            return (theColumns == null)
+                    ? 0
+                    : theColumns.getColumnCount();
         }
 
         /**
@@ -380,7 +383,9 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
          */
         @Override
         public int getRowCount() {
-            return (theStatic == null) ? 0 : theStatic.size();
+            return (theStatic == null)
+                    ? 0
+                    : theStatic.size();
         }
 
         @Override

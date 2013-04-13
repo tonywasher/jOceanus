@@ -208,12 +208,12 @@ public class AccountInfoType
         }
 
         @Override
-        public AccountInfoTypeList cloneList(final DataSet<?> pDataSet) {
+        public AccountInfoTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (AccountInfoTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountInfoTypeList deriveList(final ListStyle pStyle) {
+        public AccountInfoTypeList deriveList(final ListStyle pStyle) throws JDataException {
             return (AccountInfoTypeList) super.deriveList(pStyle);
         }
 
@@ -349,7 +349,7 @@ public class AccountInfoType
         }
 
         /**
-         * Populate default values
+         * Populate default values.
          * @throws JDataException on error
          */
         public void populateDefaults() throws JDataException {

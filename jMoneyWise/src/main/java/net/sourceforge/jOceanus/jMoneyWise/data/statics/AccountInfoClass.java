@@ -64,7 +64,7 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * Currency Category.
      */
-    Currency(7, 6, DataType.STRING),
+    Currency(7, 6),
 
     /**
      * WebSite.
@@ -74,7 +74,7 @@ public enum AccountInfoClass implements DataInfoClass {
     /**
      * Customer #.
      */
-    CustNo(9, 8, DataType.CHARARRAY),
+    CustomerNo(9, 8, DataType.CHARARRAY),
 
     /**
      * User Id.

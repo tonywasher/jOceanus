@@ -37,7 +37,6 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
 
 /**
  * Account data type.
@@ -186,14 +185,6 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain Order.
-     * @return the order
-     */
-    public int getOrder() {
-        return getOrder(getValueSet());
-    }
-
-    /**
      * Is the account closed.
      * @return true/false
      */
@@ -270,19 +261,6 @@ public abstract class AccountBase
      */
     public static AccountCategory getAccountCategory(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_CATEGORY, AccountCategory.class);
-    }
-
-    /**
-     * Obtain Order.
-     * @param pValueSet the valueSet
-     * @return the Order
-     */
-    public static Integer getOrder(final ValueSet pValueSet) {
-        Object myCategory = pValueSet.getValue(FIELD_CATEGORY);
-        if (myCategory instanceof AccountCategoryType) {
-            return ((AccountCategory) myCategory).getCategoryType().getOrder();
-        }
-        return null;
     }
 
     /**
@@ -372,6 +350,14 @@ public abstract class AccountBase
     }
 
     /**
+     * Set account type name.
+     * @param pValue the value
+     */
+    private void setValueCategory(final String pValue) {
+        getValueSet().setValue(FIELD_CATEGORY, pValue);
+    }
+
+    /**
      * Set close indication.
      * @param pValue the value
      */
@@ -438,15 +424,6 @@ public abstract class AccountBase
             /* Set ControlId */
             setControlKey(uControlId);
 
-            /* Look up the Account Category */
-            FinanceData myData = getDataSet();
-            AccountCategoryList myCategories = myData.getAccountCategories();
-            AccountCategory myCategory = myCategories.findItemById(uCategoryId);
-            if (myCategory == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Category Id");
-            }
-            setValueCategory(myCategory);
-
             /* Set the closed and tax free indications */
             setValueClosed(isClosed);
             setValueTaxFree(isTaxFree);
@@ -476,7 +453,7 @@ public abstract class AccountBase
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
                           final Integer uId,
                           final String sName,
-                          final AccountCategory pCategory,
+                          final String pCategory,
                           final String pDesc,
                           final Boolean isClosed,
                           final Boolean isTaxFree) throws JDataException {
@@ -522,8 +499,8 @@ public abstract class AccountBase
             return -1;
         }
 
-        /* Check the order */
-        int iDiff = (getOrder() - pThat.getOrder());
+        /* Check the categories */
+        int iDiff = Difference.compareObject(getAccountCategory(), pThat.getAccountCategory());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -539,18 +516,33 @@ public abstract class AccountBase
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Account types */
+        /* Access Relevant lists */
         FinanceData myData = getDataSet();
         AccountCategoryList myCategories = myData.getAccountCategories();
+        ValueSet myValues = getValueSet();
 
-        /* Update to use the local copy of the AccountCategories */
-        AccountCategory myCat = getAccountCategory();
-        AccountCategory myNewCat = myCategories.findItemById(myCat.getId());
-        setValueCategory(myNewCat);
+        /* Adjust Tax Regime */
+        Object myCategory = myValues.getValue(FIELD_CATEGORY);
+        if (myCategory instanceof AccountCategory) {
+            myCategory = ((AccountCategory) myCategory).getId();
+        }
+        if (myCategory instanceof Integer) {
+            AccountCategory myCat = myCategories.findItemById((Integer) myCategory);
+            if (myCat == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category id");
+            }
+            setValueCategory(myCat);
+        } else if (myCategory instanceof String) {
+            AccountCategory myCat = myCategories.findItemByName((String) myCategory);
+            if (myCat == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category name");
+            }
+            setValueCategory(myCat);
+        }
     }
 
     /**

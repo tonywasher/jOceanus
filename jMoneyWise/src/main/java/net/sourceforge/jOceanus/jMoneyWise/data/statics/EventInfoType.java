@@ -208,12 +208,12 @@ public class EventInfoType
         }
 
         @Override
-        public EventInfoTypeList cloneList(final DataSet<?> pDataSet) {
+        public EventInfoTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (EventInfoTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public EventInfoTypeList deriveList(final ListStyle pStyle) {
+        public EventInfoTypeList deriveList(final ListStyle pStyle) throws JDataException {
             return (EventInfoTypeList) super.deriveList(pStyle);
         }
 
@@ -349,7 +349,7 @@ public class EventInfoType
         }
 
         /**
-         * Populate default values
+         * Populate default values.
          * @throws JDataException on error
          */
         public void populateDefaults() throws JDataException {

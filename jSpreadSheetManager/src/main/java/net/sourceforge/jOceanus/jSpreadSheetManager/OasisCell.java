@@ -181,7 +181,8 @@ public class OasisCell
         String myType = theOasisCell.getOfficeValueTypeAttribute();
         if ((myType != null)
             && ((OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.STRING)
-                || (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.PERCENTAGE) || (OfficeValueTypeAttribute.Value
+                || (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.PERCENTAGE)
+                || (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.CURRENCY) || (OfficeValueTypeAttribute.Value
                     .enumValueOf(myType) == OfficeValueTypeAttribute.Value.FLOAT))) {
             return theOasisCell.getTextContent();
         }

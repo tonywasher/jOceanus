@@ -197,12 +197,12 @@ public class EventCategoryType
         }
 
         @Override
-        public EventCategoryTypeList cloneList(final DataSet<?> pDataSet) {
+        public EventCategoryTypeList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (EventCategoryTypeList) super.cloneList(pDataSet);
         }
 
         @Override
-        public EventCategoryTypeList deriveList(final ListStyle pStyle) {
+        public EventCategoryTypeList deriveList(final ListStyle pStyle) throws JDataException {
             return (EventCategoryTypeList) super.deriveList(pStyle);
         }
 
@@ -347,7 +347,7 @@ public class EventCategoryType
         }
 
         /**
-         * Populate default values
+         * Populate default values.
          * @throws JDataException on error
          */
         public void populateDefaults() throws JDataException {

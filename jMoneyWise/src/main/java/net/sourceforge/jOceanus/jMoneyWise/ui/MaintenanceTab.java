@@ -30,6 +30,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
 import net.sourceforge.jOceanus.jDataModels.preferences.DatabasePreferences;
@@ -235,14 +236,17 @@ public class MaintenanceTab
      * Refresh data.
      */
     protected void refreshData() {
-        /* Refresh sub-panels */
-        theAccountTab.refreshData();
-        theTaxYearTab.refreshData();
-        thePatternYear.refreshData();
-        theStatic.refreshData();
+        try {
+            /* Refresh sub-panels */
+            theAccountTab.refreshData();
+            theTaxYearTab.refreshData();
+            thePatternYear.refreshData();
+            theStatic.refreshData();
 
-        /* Determine visibility */
-        setVisibility();
+            /* Determine visibility */
+            setVisibility();
+        } catch (JDataException e) {
+        }
     }
 
     /**

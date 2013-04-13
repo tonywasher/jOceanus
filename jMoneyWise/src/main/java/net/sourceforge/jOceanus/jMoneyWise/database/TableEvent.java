@@ -65,11 +65,12 @@ public class TableEvent
 
         /* Define the columns */
         ColumnDefinition myDateCol = myTableDef.addDateColumn(EventBase.FIELD_DATE);
-        myTableDef.addEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
-        myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_DEBIT, TableAccount.TABLE_NAME);
         myTableDef.addReferenceColumn(EventBase.FIELD_CREDIT, TableAccount.TABLE_NAME);
+        myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
+        myTableDef.addBooleanColumn(EventBase.FIELD_RECONCILED);
+        myTableDef.addNullEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
 
         /* Declare the sort order */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -94,9 +95,10 @@ public class TableEvent
         Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
         Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
         Integer myCategoryId = myTableDef.getIntegerValue(EventBase.FIELD_CATEGORY);
+        Boolean myReconciled = myTableDef.getBooleanValue(EventBase.FIELD_RECONCILED);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myCategoryId);
+        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myReconciled, myDesc);
     }
 
     @Override
@@ -116,6 +118,8 @@ public class TableEvent
             myTableDef.setIntegerValue(iField, pItem.getCreditId());
         } else if (EventBase.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
+        } else if (EventBase.FIELD_RECONCILED.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.getReconciled());
         } else {
             super.setFieldValue(pItem, iField);
         }

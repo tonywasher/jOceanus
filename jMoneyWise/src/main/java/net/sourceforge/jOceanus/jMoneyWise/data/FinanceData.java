@@ -625,7 +625,7 @@ public class FinanceData
     }
 
     @Override
-    public FinanceData deriveUpdateSet() {
+    public FinanceData deriveUpdateSet() throws JDataException {
         /* Build an empty DataSet */
         FinanceData myExtract = new FinanceData(this);
 
@@ -664,7 +664,7 @@ public class FinanceData
     }
 
     @Override
-    public FinanceData deriveCloneSet() {
+    public FinanceData deriveCloneSet() throws JDataException {
         /* Build an empty DataSet */
         FinanceData myExtract = new FinanceData(this);
 

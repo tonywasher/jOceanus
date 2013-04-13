@@ -67,6 +67,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfoSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.AccountSelect;
@@ -394,9 +395,9 @@ public class MaintAccount
         theFieldSet.addFieldElement(Account.FIELD_NAME, DataType.STRING, myNameLabel, myName);
         theFieldSet.addFieldElement(Account.FIELD_DESC, DataType.STRING, myDescLabel, myDesc);
         theFieldSet.addFieldElement(Account.FIELD_CATEGORY, AccountCategory.class, myTypeLabel, theCategoriesBox);
-        theFieldSet.addFieldElement(Account.FIELD_PARENT, Account.class, myParLabel, theParentBox);
-        theFieldSet.addFieldElement(Account.FIELD_ALIAS, Account.class, myAlsLabel, theAliasBox);
-        theFieldSet.addFieldElement(Account.FIELD_MATURITY, DataType.DATEDAY, myMatLabel, myMaturity);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_PARENT, Account.class, myParLabel, theParentBox);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_ALIAS, Account.class, myAlsLabel, theAliasBox);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_MATURITY, DataType.DATEDAY, myMatLabel, myMaturity);
 
         /* Create the limits panel */
         JPanel myPanel = new JPanel();
@@ -496,12 +497,12 @@ public class MaintAccount
         myNotes.setColumns(Account.WSITELEN);
 
         /* Add the components to the field Set */
-        theFieldSet.addFieldElement(Account.FIELD_WEBSITE, DataType.CHARARRAY, myWebSiteLabel, myWebSite);
-        theFieldSet.addFieldElement(Account.FIELD_CUSTNO, DataType.CHARARRAY, myCustNoLabel, myCustNo);
-        theFieldSet.addFieldElement(Account.FIELD_USERID, DataType.CHARARRAY, myUserIdLabel, myUserId);
-        theFieldSet.addFieldElement(Account.FIELD_PASSWORD, DataType.CHARARRAY, myPasswordLabel, myPassword);
-        theFieldSet.addFieldElement(Account.FIELD_ACCOUNT, DataType.CHARARRAY, myAccountLabel, myAccount);
-        theFieldSet.addFieldElement(Account.FIELD_NOTES, DataType.CHARARRAY, myNotesLabel, myNotes);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_WEBSITE, DataType.CHARARRAY, myWebSiteLabel, myWebSite);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_CUSTNO, DataType.CHARARRAY, myCustNoLabel, myCustNo);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_USERID, DataType.CHARARRAY, myUserIdLabel, myUserId);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_PASSWORD, DataType.CHARARRAY, myPasswordLabel, myPassword);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_ACCOUNT, DataType.CHARARRAY, myAccountLabel, myAccount);
+        theFieldSet.addFieldElement(AccountInfoSet.FIELD_NOTES, DataType.CHARARRAY, myNotesLabel, myNotes);
 
         /* Create the limits panel */
         JPanel myPanel = new JPanel();
@@ -694,30 +695,34 @@ public class MaintAccount
      * @param pAccount the account
      */
     public void setSelection(final Account pAccount) {
-        /* Reset controls */
-        theActView = null;
-        theAccount = null;
-        AccountInfoList myInfo = null;
+        /* Protect against exceptions */
+        try {
+            /* Reset controls */
+            theActView = null;
+            theAccount = null;
+            AccountInfoList myInfo = null;
 
-        /* If we have a selected account */
-        if (pAccount != null) {
-            /* Create the view of the account */
-            theActView = theAccounts.deriveEditList(pAccount);
-            myInfo = theActView.getAccountInfo();
+            /* If we have a selected account */
+            if (pAccount != null) {
+                /* Create the view of the account */
+                theActView = theAccounts.deriveEditList(pAccount);
+                myInfo = theActView.getAccountInfo();
 
-            /* Access the account */
-            theAccount = theActView.findItemByName(pAccount.getName());
+                /* Access the account */
+                theAccount = theActView.findItemByName(pAccount.getName());
+            }
+
+            /* Set List */
+            theAccountEntry.setDataList(theActView);
+            theInfoEntry.setDataList(myInfo);
+
+            /* Clear new account flag */
+            isNewAccount = false;
+
+            /* notify changes */
+            notifyChanges();
+        } catch (JDataException e) {
         }
-
-        /* Set List */
-        theAccountEntry.setDataList(theActView);
-        theInfoEntry.setDataList(myInfo);
-
-        /* Clear new account flag */
-        isNewAccount = false;
-
-        /* notify changes */
-        notifyChanges();
     }
 
     /**
@@ -740,15 +745,15 @@ public class MaintAccount
             /* Set the visibility */
             theFieldSet.setVisibility(Account.FIELD_CATEGORY, theAccount.isDeletable()
                                                               && (isNewAccount));
-            theFieldSet.setVisibility(Account.FIELD_MATURITY, (myCatClass == AccountCategoryClass.Bond));
-            theFieldSet.setVisibility(Account.FIELD_PARENT, myCatClass.isChild());
+            theFieldSet.setVisibility(AccountInfoSet.FIELD_MATURITY, (myCatClass == AccountCategoryClass.Bond));
+            theFieldSet.setVisibility(AccountInfoSet.FIELD_PARENT, myCatClass.isChild());
 
             /* Handle alias */
             if (myCategory.getCategoryTypeClass().canAlias()
                 && (!theAccount.isAliasedTo())) {
 
                 /* Set visible */
-                theFieldSet.setVisibility(Account.FIELD_ALIAS, true);
+                theFieldSet.setVisibility(AccountInfoSet.FIELD_ALIAS, true);
 
                 /* If we have alias already populated */
                 if (theAliasBox.getItemCount() > 0) {
@@ -791,7 +796,7 @@ public class MaintAccount
                 }
             } else {
                 /* Set visible */
-                theFieldSet.setVisibility(Account.FIELD_ALIAS, false);
+                theFieldSet.setVisibility(AccountInfoSet.FIELD_ALIAS, false);
             }
 
             /* Render the FieldSet */
@@ -851,9 +856,9 @@ public class MaintAccount
 
             /* Hide the optional fields */
             theFieldSet.setVisibility(Account.FIELD_CATEGORY, false);
-            theFieldSet.setVisibility(Account.FIELD_MATURITY, false);
-            theFieldSet.setVisibility(Account.FIELD_PARENT, false);
-            theFieldSet.setVisibility(Account.FIELD_ALIAS, false);
+            theFieldSet.setVisibility(AccountInfoSet.FIELD_MATURITY, false);
+            theFieldSet.setVisibility(AccountInfoSet.FIELD_PARENT, false);
+            theFieldSet.setVisibility(AccountInfoSet.FIELD_ALIAS, false);
 
             /* Render the Null Field Set */
             theFieldSet.renderNullSet();
@@ -872,23 +877,27 @@ public class MaintAccount
      * New Account.
      */
     private void newAccount() {
-        /* Create a account View for an empty account */
-        theActView = theAccounts.deriveEditList(theSelect.getCategory());
-        AccountInfoList myInfo = theActView.getAccountInfo();
+        /* Protect against exceptions */
+        try {
+            /* Create a account View for an empty account */
+            theActView = theAccounts.deriveEditList(theSelect.getCategory());
+            AccountInfoList myInfo = theActView.getAccountInfo();
 
-        /* Access the account */
-        theAccount = theActView.getAccount();
+            /* Access the account */
+            theAccount = theActView.getAccount();
 
-        /* Set List */
-        theAccountEntry.setDataList(theActView);
-        theInfoEntry.setDataList(myInfo);
-        theUpdateSet.incrementVersion();
+            /* Set List */
+            theAccountEntry.setDataList(theActView);
+            theInfoEntry.setDataList(myInfo);
+            theUpdateSet.incrementVersion();
 
-        /* Set new account flag */
-        isNewAccount = true;
+            /* Set new account flag */
+            isNewAccount = true;
 
-        /* Notify changes */
-        notifyChanges();
+            /* Notify changes */
+            notifyChanges();
+        } catch (JDataException e) {
+        }
     }
 
     /**
@@ -1034,39 +1043,39 @@ public class MaintAccount
                     }
 
                     /* If this is our Parent */
-                } else if (myField.equals(Account.FIELD_PARENT)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_PARENT)) {
                     /* Update the Value */
                     theAccount.setParent(pUpdate.getValue(Account.class));
                     /* If this is our Account type */
-                } else if (myField.equals(Account.FIELD_ALIAS)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_ALIAS)) {
                     /* Update the Value */
                     theAccount.setAlias(pUpdate.getValue(Account.class));
                     /* If this is our Maturity */
-                } else if (myField.equals(Account.FIELD_MATURITY)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_MATURITY)) {
                     /* Update the Value */
                     theAccount.setMaturity(pUpdate.getDateDay());
                     /* If this is our WebSite */
-                } else if (myField.equals(Account.FIELD_WEBSITE)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_WEBSITE)) {
                     /* Update the Value */
                     theAccount.setWebSite(pUpdate.getCharArray());
                     /* If this is our CustomerNo. */
-                } else if (myField.equals(Account.FIELD_CUSTNO)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_CUSTNO)) {
                     /* Update the Value */
                     theAccount.setCustNo(pUpdate.getCharArray());
                     /* If this is our UserId */
-                } else if (myField.equals(Account.FIELD_USERID)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_USERID)) {
                     /* Update the Value */
                     theAccount.setUserId(pUpdate.getCharArray());
                     /* If this is our Password */
-                } else if (myField.equals(Account.FIELD_PASSWORD)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_PASSWORD)) {
                     /* Update the Value */
                     theAccount.setPassword(pUpdate.getCharArray());
                     /* If this is our Account */
-                } else if (myField.equals(Account.FIELD_ACCOUNT)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_ACCOUNT)) {
                     /* Update the Value */
                     theAccount.setAccount(pUpdate.getCharArray());
                     /* If this is our Notes */
-                } else if (myField.equals(Account.FIELD_NOTES)) {
+                } else if (myField.equals(AccountInfoSet.FIELD_NOTES)) {
                     /* Update the Value */
                     theAccount.setNotes(pUpdate.getCharArray());
                 }

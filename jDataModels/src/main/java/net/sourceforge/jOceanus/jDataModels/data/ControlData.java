@@ -331,12 +331,12 @@ public class ControlData
         }
 
         @Override
-        public ControlDataList cloneList(final DataSet<?> pDataSet) {
+        public ControlDataList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (ControlDataList) super.cloneList(pDataSet);
         }
 
         @Override
-        public ControlDataList deriveList(final ListStyle pStyle) {
+        public ControlDataList deriveList(final ListStyle pStyle) throws JDataException {
             return (ControlDataList) super.deriveList(pStyle);
         }
 

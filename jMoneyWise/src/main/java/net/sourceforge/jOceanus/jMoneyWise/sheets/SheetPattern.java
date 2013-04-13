@@ -53,14 +53,9 @@ public class SheetPattern
     private static final int COL_DATE = COL_CONTROLID + 1;
 
     /**
-     * Description column.
-     */
-    private static final int COL_DESC = COL_DATE + 1;
-
-    /**
      * Debit column.
      */
-    private static final int COL_DEBIT = COL_DESC + 1;
+    private static final int COL_DEBIT = COL_DATE + 1;
 
     /**
      * Credit column.
@@ -68,19 +63,24 @@ public class SheetPattern
     private static final int COL_CREDIT = COL_DEBIT + 1;
 
     /**
-     * Category column.
-     */
-    private static final int COL_CATEGORY = COL_CREDIT + 1;
-
-    /**
      * Amount column.
      */
-    private static final int COL_AMOUNT = COL_CATEGORY + 1;
+    private static final int COL_AMOUNT = COL_CREDIT + 1;
+
+    /**
+     * Category column.
+     */
+    private static final int COL_CATEGORY = COL_AMOUNT + 1;
 
     /**
      * Frequency column.
      */
-    private static final int COL_FREQ = COL_AMOUNT + 1;
+    private static final int COL_FREQ = COL_CATEGORY + 1;
+
+    /**
+     * Description column.
+     */
+    private static final int COL_DESC = COL_FREQ + 1;
 
     /**
      * Patterns data list.
@@ -130,7 +130,7 @@ public class SheetPattern
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDesc, myDebitId, myCreditId, myCatId, myAmount, myFreqId);
+        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myFreqId, myDesc);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class SheetPattern
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        theList.addOpenItem(pId, myDate, myDesc, myDebit, myCredit, myCategory, myAmount, myFrequency);
+        theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, myDesc);
     }
 
     @Override
@@ -210,7 +210,7 @@ public class SheetPattern
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_FREQ;
+        return COL_DESC;
     }
 
     /**

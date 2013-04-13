@@ -508,7 +508,7 @@ public class AccountRate
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -713,12 +713,12 @@ public class AccountRate
         }
 
         @Override
-        public AccountRateList cloneList(final DataSet<?> pDataSet) {
+        public AccountRateList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (AccountRateList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountRateList deriveList(final ListStyle pStyle) {
+        public AccountRateList deriveList(final ListStyle pStyle) throws JDataException {
             return (AccountRateList) super.deriveList(pStyle);
         }
 

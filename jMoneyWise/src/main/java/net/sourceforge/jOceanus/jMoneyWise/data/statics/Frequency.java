@@ -190,12 +190,12 @@ public class Frequency
         }
 
         @Override
-        public FrequencyList cloneList(final DataSet<?> pDataSet) {
+        public FrequencyList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (FrequencyList) super.cloneList(pDataSet);
         }
 
         @Override
-        public FrequencyList deriveList(final ListStyle pStyle) {
+        public FrequencyList deriveList(final ListStyle pStyle) throws JDataException {
             return (FrequencyList) super.deriveList(pStyle);
         }
 
@@ -340,7 +340,7 @@ public class Frequency
         }
 
         /**
-         * Populate default values
+         * Populate default values.
          * @throws JDataException on error
          */
         public void populateDefaults() throws JDataException {

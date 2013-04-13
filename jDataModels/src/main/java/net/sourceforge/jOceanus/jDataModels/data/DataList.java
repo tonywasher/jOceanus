@@ -27,6 +27,7 @@ import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.EditState;
+import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
@@ -103,6 +104,11 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      */
     public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
 
+    /**
+     * Errors Field Id.
+     */
+    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField("Errors");
+
     @Override
     public String formatObject() {
         return getDataFields().getName()
@@ -135,6 +141,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
             return (theBase == null)
                     ? JDataFieldValue.SkipField
                     : theBase;
+        }
+        if (FIELD_ERRORS.equals(pField)) {
+            return JDataFieldValue.SkipField;
         }
         if (FIELD_CLASS.equals(pField)) {
             return getBaseClass().getSimpleName();
@@ -372,8 +381,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Derive an cloned extract of this list.
      * @param pDataSet the new DataSet
      * @return the cloned list
+     * @throws JDataException on error
      */
-    public DataList<T> cloneList(final DataSet<?> pDataSet) {
+    public DataList<T> cloneList(final DataSet<?> pDataSet) throws JDataException {
         /* Obtain an empty list of the correct style */
         DataList<T> myList = getEmptyList(ListStyle.CLONE);
         myList.theDataSet = pDataSet;
@@ -393,8 +403,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
      * Derive an extract of this list.
      * @param pStyle the Style of the extract
      * @return the derived list
+     * @throws JDataException on error
      */
-    public DataList<T> deriveList(final ListStyle pStyle) {
+    public DataList<T> deriveList(final ListStyle pStyle) throws JDataException {
         /* Obtain an empty list of the correct style */
         DataList<T> myList = getEmptyList(pStyle);
 
@@ -408,8 +419,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     /**
      * Populate a list extract.
      * @param pList the list to populate
+     * @throws JDataException on error
      */
-    protected void populateList(final DataList<T> pList) {
+    protected void populateList(final DataList<T> pList) throws JDataException {
         /* Determine special styles */
         ListStyle myStyle = pList.getStyle();
         boolean isUpdate = (myStyle == ListStyle.UPDATE);
@@ -443,8 +455,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
     /**
      * Adjust links.
+     * @throws JDataException on error
      */
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Create an iterator for all items in the list */
         Iterator<? extends DataItem> myIterator = iterator();
 

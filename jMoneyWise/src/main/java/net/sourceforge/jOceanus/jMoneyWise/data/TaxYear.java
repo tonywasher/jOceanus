@@ -81,106 +81,6 @@ public class TaxYear
      */
     public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
 
-    /**
-     * Allowance field Id.
-     */
-    public static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField("Allowance");
-
-    /**
-     * Rental field Id.
-     */
-    public static final JDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField("RentalAllowance");
-
-    /**
-     * LoAgeAllowance field Id.
-     */
-    public static final JDataField FIELD_LOAGAL = FIELD_DEFS.declareLocalField("LoAgeAllowance");
-
-    /**
-     * HiAgeAllowance field Id.
-     */
-    public static final JDataField FIELD_HIAGAL = FIELD_DEFS.declareLocalField("HiAgeAllowance");
-
-    /**
-     * LoTaxBand field Id.
-     */
-    public static final JDataField FIELD_LOBAND = FIELD_DEFS.declareLocalField("LoTaxBand");
-
-    /**
-     * BaseTaxBand field Id.
-     */
-    public static final JDataField FIELD_BSBAND = FIELD_DEFS.declareLocalField("BasicTaxBand");
-
-    /**
-     * CapitalAllowance field Id.
-     */
-    public static final JDataField FIELD_CAPALW = FIELD_DEFS.declareLocalField("CapitalAllowance");
-
-    /**
-     * AgeAllowanceLimit field Id.
-     */
-    public static final JDataField FIELD_AGELMT = FIELD_DEFS.declareLocalField("AgeAllowanceLimit");
-
-    /**
-     * Additional Allowance Limit field Id.
-     */
-    public static final JDataField FIELD_ADDLMT = FIELD_DEFS.declareLocalField("AdditionalAllowanceLimit");
-
-    /**
-     * Additional Income Boundary field Id.
-     */
-    public static final JDataField FIELD_ADDBDY = FIELD_DEFS.declareLocalField("AdditionalIncomeBoundary");
-
-    /**
-     * LoTaxRate field Id.
-     */
-    public static final JDataField FIELD_LOTAX = FIELD_DEFS.declareLocalField("LoTaxRate");
-
-    /**
-     * BasicTaxRate field Id.
-     */
-    public static final JDataField FIELD_BASTAX = FIELD_DEFS.declareLocalField("BasicTaxRate");
-
-    /**
-     * HiTaxRate field Id.
-     */
-    public static final JDataField FIELD_HITAX = FIELD_DEFS.declareLocalField("HiTaxRate");
-
-    /**
-     * InterestTaxRate field Id.
-     */
-    public static final JDataField FIELD_INTTAX = FIELD_DEFS.declareLocalField("InterestTaxRate");
-
-    /**
-     * DividendTaxRate field Id.
-     */
-    public static final JDataField FIELD_DIVTAX = FIELD_DEFS.declareLocalField("DividendTaxRate");
-
-    /**
-     * HiDividendTaxRate field Id.
-     */
-    public static final JDataField FIELD_HDVTAX = FIELD_DEFS.declareLocalField("HiDividendTaxRate");
-
-    /**
-     * AdditionalTaxRate field Id.
-     */
-    public static final JDataField FIELD_ADDTAX = FIELD_DEFS.declareLocalField("AdditionalTaxRate");
-
-    /**
-     * AddDividendTaxRate field Id.
-     */
-    public static final JDataField FIELD_ADVTAX = FIELD_DEFS.declareLocalField("AdditionalDivTaxRate");
-
-    /**
-     * CapitalTaxRate field Id.
-     */
-    public static final JDataField FIELD_CAPTAX = FIELD_DEFS.declareLocalField("CapitalTaxRate");
-
-    /**
-     * HiCapitalTaxRate field Id.
-     */
-    public static final JDataField FIELD_HCPTAX = FIELD_DEFS.declareLocalField("HiCapitalTaxRate");
-
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
@@ -190,83 +90,8 @@ public class TaxYear
                     : JDataFieldValue.SkipField;
         }
 
-        /* Handle InfoSet fields */
-        TaxYearInfoClass myClass = getFieldClass(pField);
-        if (myClass != null) {
-            return getInfoSetValue(myClass);
-        }
-
         /* Pass onwards */
         return super.getFieldValue(pField);
-    }
-
-    /**
-     * Obtain the class of the field if it is an infoSet field.
-     * @param pField the field
-     * @return the class
-     */
-    private static TaxYearInfoClass getFieldClass(final JDataField pField) {
-        if (FIELD_ALLOW.equals(pField)) {
-            return TaxYearInfoClass.Allowance;
-        }
-        if (FIELD_RENTAL.equals(pField)) {
-            return TaxYearInfoClass.RentalAllow;
-        }
-        if (FIELD_LOAGAL.equals(pField)) {
-            return TaxYearInfoClass.LoAgeAllow;
-        }
-        if (FIELD_HIAGAL.equals(pField)) {
-            return TaxYearInfoClass.HiAgeAllow;
-        }
-        if (FIELD_LOBAND.equals(pField)) {
-            return TaxYearInfoClass.LoTaxBand;
-        }
-        if (FIELD_BSBAND.equals(pField)) {
-            return TaxYearInfoClass.BasicTaxBand;
-        }
-        if (FIELD_CAPALW.equals(pField)) {
-            return TaxYearInfoClass.CapitalAllow;
-        }
-        if (FIELD_AGELMT.equals(pField)) {
-            return TaxYearInfoClass.AgeAllowLimit;
-        }
-        if (FIELD_ADDLMT.equals(pField)) {
-            return TaxYearInfoClass.AddAllowLimit;
-        }
-        if (FIELD_ADDBDY.equals(pField)) {
-            return TaxYearInfoClass.AddIncomeThold;
-        }
-        if (FIELD_LOTAX.equals(pField)) {
-            return TaxYearInfoClass.LoTaxRate;
-        }
-        if (FIELD_BASTAX.equals(pField)) {
-            return TaxYearInfoClass.BasicTaxRate;
-        }
-        if (FIELD_HITAX.equals(pField)) {
-            return TaxYearInfoClass.HiTaxRate;
-        }
-        if (FIELD_INTTAX.equals(pField)) {
-            return TaxYearInfoClass.IntTaxRate;
-        }
-        if (FIELD_DIVTAX.equals(pField)) {
-            return TaxYearInfoClass.DivTaxRate;
-        }
-        if (FIELD_HDVTAX.equals(pField)) {
-            return TaxYearInfoClass.HiDivTaxRate;
-        }
-        if (FIELD_ADDTAX.equals(pField)) {
-            return TaxYearInfoClass.AddTaxRate;
-        }
-        if (FIELD_ADVTAX.equals(pField)) {
-            return TaxYearInfoClass.AddDivTaxRate;
-        }
-        if (FIELD_CAPTAX.equals(pField)) {
-            return TaxYearInfoClass.CapTaxRate;
-        }
-        if (FIELD_HCPTAX.equals(pField)) {
-            return TaxYearInfoClass.HiCapTaxRate;
-        }
-        return null;
     }
 
     /**
@@ -308,7 +133,7 @@ public class TaxYear
      */
     public JMoney getRentalAllowance() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.RentalAllow, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.RentalAllowance, JMoney.class)
                 : null;
     }
 
@@ -338,7 +163,7 @@ public class TaxYear
      */
     public JMoney getCapitalAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.CapitalAllow, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.CapitalAllowance, JMoney.class)
                 : null;
     }
 
@@ -348,7 +173,7 @@ public class TaxYear
      */
     public JMoney getLoAgeAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.LoAgeAllow, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.LoAgeAllowance, JMoney.class)
                 : null;
     }
 
@@ -358,7 +183,7 @@ public class TaxYear
      */
     public JMoney getHiAgeAllow() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HiAgeAllow, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.HiAgeAllowance, JMoney.class)
                 : null;
     }
 
@@ -368,7 +193,7 @@ public class TaxYear
      */
     public JMoney getAgeAllowLimit() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AgeAllowLimit, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.AgeAllowanceLimit, JMoney.class)
                 : null;
     }
 
@@ -378,7 +203,7 @@ public class TaxYear
      */
     public JMoney getAddAllowLimit() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AddAllowLimit, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.AdditionalAllowanceLimit, JMoney.class)
                 : null;
     }
 
@@ -388,7 +213,7 @@ public class TaxYear
      */
     public JMoney getAddIncBound() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AddIncomeThold, JMoney.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.AdditionalIncomeThreshold, JMoney.class)
                 : null;
     }
 
@@ -428,7 +253,7 @@ public class TaxYear
      */
     public JRate getIntTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.IntTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.InterestTaxRate, JRate.class)
                 : null;
     }
 
@@ -438,7 +263,7 @@ public class TaxYear
      */
     public JRate getDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.DivTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.DividendTaxRate, JRate.class)
                 : null;
     }
 
@@ -448,7 +273,7 @@ public class TaxYear
      */
     public JRate getHiDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HiDivTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.HiDividendTaxRate, JRate.class)
                 : null;
     }
 
@@ -458,7 +283,7 @@ public class TaxYear
      */
     public JRate getAddTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AddTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.AdditionalTaxRate, JRate.class)
                 : null;
     }
 
@@ -468,7 +293,7 @@ public class TaxYear
      */
     public JRate getAddDivTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.AddDivTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.AdditionalDividendTaxRate, JRate.class)
                 : null;
     }
 
@@ -478,7 +303,7 @@ public class TaxYear
      */
     public JRate getCapTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.CapTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.CapitalTaxRate, JRate.class)
                 : null;
     }
 
@@ -488,7 +313,7 @@ public class TaxYear
      */
     public JRate getHiCapTaxRate() {
         return hasInfoSet
-                ? theInfoSet.getValue(TaxYearInfoClass.HiCapTaxRate, JRate.class)
+                ? theInfoSet.getValue(TaxYearInfoClass.HiCapitalTaxRate, JRate.class)
                 : null;
     }
 
@@ -533,7 +358,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setRentalAllowance(final JMoney pAllowance) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.RentalAllow, pAllowance);
+        setInfoSetValue(TaxYearInfoClass.RentalAllowance, pAllowance);
     }
 
     /**
@@ -542,7 +367,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setCapitalAllow(final JMoney pAllowance) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.CapitalAllow, pAllowance);
+        setInfoSetValue(TaxYearInfoClass.CapitalAllowance, pAllowance);
     }
 
     /**
@@ -569,7 +394,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setLoAgeAllow(final JMoney pLoAgeAllow) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.LoAgeAllow, pLoAgeAllow);
+        setInfoSetValue(TaxYearInfoClass.LoAgeAllowance, pLoAgeAllow);
     }
 
     /**
@@ -578,7 +403,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setHiAgeAllow(final JMoney pHiAgeAllow) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.HiAgeAllow, pHiAgeAllow);
+        setInfoSetValue(TaxYearInfoClass.HiAgeAllowance, pHiAgeAllow);
     }
 
     /**
@@ -587,7 +412,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAgeAllowLimit(final JMoney pAgeAllowLimit) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AgeAllowLimit, pAgeAllowLimit);
+        setInfoSetValue(TaxYearInfoClass.AgeAllowanceLimit, pAgeAllowLimit);
     }
 
     /**
@@ -596,7 +421,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAddAllowLimit(final JMoney pAddAllowLimit) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AddAllowLimit, pAddAllowLimit);
+        setInfoSetValue(TaxYearInfoClass.AdditionalAllowanceLimit, pAddAllowLimit);
     }
 
     /**
@@ -605,7 +430,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAddIncBound(final JMoney pAddIncBound) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AddIncomeThold, pAddIncBound);
+        setInfoSetValue(TaxYearInfoClass.AdditionalIncomeThreshold, pAddIncBound);
     }
 
     /**
@@ -641,7 +466,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setIntTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.IntTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.InterestTaxRate, pRate);
     }
 
     /**
@@ -650,7 +475,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setDivTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.DivTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.DividendTaxRate, pRate);
     }
 
     /**
@@ -659,7 +484,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setHiDivTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.HiDivTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.HiDividendTaxRate, pRate);
     }
 
     /**
@@ -668,7 +493,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAddTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AddTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.AdditionalTaxRate, pRate);
     }
 
     /**
@@ -677,7 +502,7 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setAddDivTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.AddDivTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.AdditionalDividendTaxRate, pRate);
     }
 
     /**
@@ -686,16 +511,16 @@ public class TaxYear
      * @throws JDataException on error
      */
     public void setCapTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.CapTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.CapitalTaxRate, pRate);
     }
 
     /**
      * Set a high capital tax rate.
-     * @param pRate the additional dividend tax rate
+     * @param pRate the high capital tax rate
      * @throws JDataException on error
      */
     public void setHiCapTaxRate(final JRate pRate) throws JDataException {
-        setInfoSetValue(TaxYearInfoClass.HiCapTaxRate, pRate);
+        setInfoSetValue(TaxYearInfoClass.HiCapitalTaxRate, pRate);
     }
 
     /**
@@ -713,23 +538,6 @@ public class TaxYear
 
         /* Set the value */
         theInfoSet.setValue(pInfoClass, pValue);
-    }
-
-    /**
-     * Get an infoSet value.
-     * @param pInfoClass the class of info to get
-     * @return the value to set
-     */
-    private Object getInfoSetValue(final TaxYearInfoClass pInfoClass) {
-        /* Access value of object */
-        Object myValue = hasInfoSet
-                ? theInfoSet.getField(pInfoClass)
-                : null;
-
-        /* Return the value */
-        return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SkipField;
     }
 
     @Override
@@ -822,7 +630,7 @@ public class TaxYear
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        TaxYearInfoClass myClass = getFieldClass(pField);
+        TaxYearInfoClass myClass = TaxInfoSet.getFieldClass(pField);
         if (myClass != null) {
             return (useInfoSet)
                     ? theInfoSet.fieldChanged(myClass)
@@ -884,17 +692,17 @@ public class TaxYear
     /**
      * Secure constructor.
      * @param pList the list
-     * @param uId the id
-     * @param uRegimeId the regime id
+     * @param pId the id
+     * @param pRegimeId the regime id
      * @param pDate the date
      * @throws JDataException on error
      */
     public TaxYear(final TaxYearList pList,
-                   final Integer uId,
-                   final Integer uRegimeId,
+                   final Integer pId,
+                   final Integer pRegimeId,
                    final Date pDate) throws JDataException {
         /* Initialise item */
-        super(pList, uId, uRegimeId, pDate);
+        super(pList, pId, pRegimeId, pDate);
 
         /* Create the InfoSet */
         theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
@@ -905,17 +713,17 @@ public class TaxYear
     /**
      * Open constructor.
      * @param pList the list
-     * @param uId the id
+     * @param pId the id
      * @param pRegime the tax regime
      * @param pDate the date
      * @throws JDataException on error
      */
     public TaxYear(final TaxYearList pList,
-                   final Integer uId,
+                   final Integer pId,
                    final String pRegime,
                    final Date pDate) throws JDataException {
         /* Initialise item */
-        super(pList, uId, pRegime, pDate);
+        super(pList, pId, pRegime, pDate);
 
         /* Create the InfoSet */
         theInfoSet = new TaxInfoSet(this, pList.getTaxInfoTypes(), pList.getTaxInfo());
@@ -949,99 +757,99 @@ public class TaxYear
         /* The allowance must be non-null */
         if ((getAllowance() == null)
             || (!getAllowance().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_ALLOW);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ALLOW);
         }
 
         /* The rental allowance must be non-null */
         if ((getRentalAllowance() == null)
             || (!getRentalAllowance().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_RENTAL);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_RENTAL);
         }
 
         /* The loAgeAllow must be non-null */
         if ((getLoAgeAllow() == null)
             || (!getLoAgeAllow().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_LOAGAL);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_LOAGAL);
         }
 
         /* The loAgeAllow must be greater than Allowance */
         if ((getLoAgeAllow() != null)
             && (getAllowance() != null)
             && (getLoAgeAllow().compareTo(getAllowance()) < 0)) {
-            addError("Value must be greater than allowance", FIELD_LOAGAL);
+            addError("Value must be greater than allowance", TaxInfoSet.FIELD_LOAGAL);
         }
 
         /* The hiAgeAllow must be non-null */
         if ((getHiAgeAllow() == null)
             || (!getHiAgeAllow().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_HIAGAL);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_HIAGAL);
         }
 
         /* The hiAgeAllow must be greater than loAgeAllowance */
         if ((getHiAgeAllow() != null)
             && (getLoAgeAllow() != null)
             && (getHiAgeAllow().compareTo(getLoAgeAllow()) < 0)) {
-            addError("Value must be greater than low age allowance", FIELD_HIAGAL);
+            addError("Value must be greater than low age allowance", TaxInfoSet.FIELD_HIAGAL);
         }
 
         /* The ageAllowLimit must be non-null */
         if ((getAgeAllowLimit() == null)
             || (!getAgeAllowLimit().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_AGELMT);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_AGELMT);
         }
 
         /* The capitalAllow must be non-null */
         if ((getCapitalAllow() == null)
             || (!getCapitalAllow().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_CAPALW);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_CAPALW);
         }
 
         /* The loBand must be non-null */
         if ((getLoBand() == null)
             || (!getLoBand().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_LOBAND);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_LOBAND);
         }
 
         /* The basicBand must be non-null */
         if ((getBasicBand() == null)
             || (!getBasicBand().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_BSBAND);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_BSBAND);
         }
 
         /* The loRate must be non-null */
         if ((getLoTaxRate() == null)
             || (!getLoTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_LOTAX);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_LOTAX);
         }
 
         /* The basicRate must be non-null */
         if ((getBasicTaxRate() == null)
             || (!getBasicTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_BASTAX);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_BASTAX);
         }
 
         /* The hiRate must be non-null */
         if ((getHiTaxRate() == null)
             || (!getHiTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_HITAX);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_HITAX);
         }
 
         /* The intRate must be non-null */
         if ((getIntTaxRate() == null)
             || (!getIntTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_INTTAX);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_INTTAX);
         }
 
         /* The divRate must be non-null */
         if ((getDivTaxRate() == null)
             || (!getDivTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_DIVTAX);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_DIVTAX);
         }
 
         /* The hiDivRate must be non-null */
         if ((getHiDivTaxRate() == null)
             || (!getHiDivTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_HDVTAX);
+            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_HDVTAX);
         }
 
         /* If the tax regime is additional */
@@ -1050,25 +858,25 @@ public class TaxYear
             /* The addAllowLimit must be non-null */
             if ((getAddAllowLimit() == null)
                 || (!getAddAllowLimit().isPositive())) {
-                addError(ERROR_POSITIVE, FIELD_ADDLMT);
+                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ADDLMT);
             }
 
             /* The addIncBound must be non-null */
             if ((getAddIncBound() == null)
                 || (!getAddIncBound().isPositive())) {
-                addError(ERROR_POSITIVE, FIELD_ADDBDY);
+                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ADDBDY);
             }
 
             /* The addRate must be non-null */
             if ((getAddTaxRate() == null)
                 || (!getAddTaxRate().isPositive())) {
-                addError(ERROR_POSITIVE, FIELD_ADDTAX);
+                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ADDTAX);
             }
 
             /* The addDivRate must be non-null */
             if ((getAddDivTaxRate() == null)
                 || (!getAddDivTaxRate().isPositive())) {
-                addError(ERROR_POSITIVE, FIELD_ADVTAX);
+                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ADVTAX);
             }
         }
 
@@ -1078,13 +886,13 @@ public class TaxYear
             /* The capitalRate must be non-null */
             if ((getCapTaxRate() == null)
                 || (!getCapTaxRate().isPositive())) {
-                addError(ERROR_POSITIVE, FIELD_CAPTAX);
+                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_CAPTAX);
             }
 
             /* The hiCapTaxRate if it exists must be positive */
             if ((getHiCapTaxRate() != null)
                 && (!getHiCapTaxRate().isPositive())) {
-                addError(ERROR_POSITIVE, FIELD_HCPTAX);
+                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_HCPTAX);
             }
         }
 
@@ -1192,13 +1000,13 @@ public class TaxYear
         }
 
         @Override
-        public TaxYearList cloneList(final DataSet<?> pDataSet) {
+        public TaxYearList cloneList(final DataSet<?> pDataSet) throws JDataException {
             /* Clone the list */
             return (TaxYearList) super.cloneList(pDataSet);
         }
 
         @Override
-        public TaxYearList deriveList(final ListStyle pStyle) {
+        public TaxYearList deriveList(final ListStyle pStyle) throws JDataException {
             return (TaxYearList) super.deriveList(pStyle);
         }
 
@@ -1295,19 +1103,19 @@ public class TaxYear
 
         /**
          * Allow a tax parameter to be added.
-         * @param uId the id
-         * @param uRegimeId the regime id
+         * @param pId the id
+         * @param pRegimeId the regime id
          * @param pDate the date
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uRegimeId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pRegimeId,
                                   final Date pDate) throws JDataException {
             /* Create the tax year */
-            TaxYear myTaxYear = new TaxYear(this, uId, uRegimeId, pDate);
+            TaxYear myTaxYear = new TaxYear(this, pId, pRegimeId, pDate);
 
             /* Check that this TaxYearId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myTaxYear, "Duplicate TaxYearId");
             }
 
@@ -1322,17 +1130,17 @@ public class TaxYear
 
         /**
          * Allow a tax parameter to be added.
-         * @param uId the id
+         * @param pId the id
          * @param pRegime the regime
          * @param pDate the date
          * @return the taxYear
          * @throws JDataException on error
          */
-        public TaxYear addOpenItem(final Integer uId,
+        public TaxYear addOpenItem(final Integer pId,
                                    final String pRegime,
                                    final Date pDate) throws JDataException {
             /* Create the tax year */
-            TaxYear myTaxYear = new TaxYear(this, uId, pRegime, pDate);
+            TaxYear myTaxYear = new TaxYear(this, pId, pRegime, pDate);
 
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {

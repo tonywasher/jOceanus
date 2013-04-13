@@ -291,19 +291,19 @@ public class AccountPrice
     /**
      * Open Constructor.
      * @param pList the list
-     * @param uId the id
+     * @param pId the id
      * @param pAccount the account
      * @param pDate the date
      * @param pPrice the price
      * @throws JDataException on error
      */
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                         final Integer uId,
+                         final Integer pId,
                          final Account pAccount,
                          final Date pDate,
                          final String pPrice) throws JDataException {
         /* Initialise the item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Protect against exceptions */
         try {
@@ -332,36 +332,36 @@ public class AccountPrice
     /**
      * Secure Constructor.
      * @param pList the list
-     * @param uId the id
-     * @param uControlId the control id
-     * @param uAccountId the account id
+     * @param pId the id
+     * @param pControlId the control id
+     * @param pAccountId the account id
      * @param pDate the date
      * @param pPrice the price
      * @throws JDataException on error
      */
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                         final Integer uId,
-                         final Integer uControlId,
-                         final Integer uAccountId,
+                         final Integer pId,
+                         final Integer pControlId,
+                         final Integer pAccountId,
                          final Date pDate,
                          final byte[] pPrice) throws JDataException {
         /* Initialise the item */
-        super(pList, uId);
+        super(pList, pId);
 
         /* Protect against exceptions */
         try {
             /* Record the Id */
-            setValueAccount(uAccountId);
+            setValueAccount(pAccountId);
 
             /* Store the controlId */
-            setControlKey(uControlId);
+            setControlKey(pControlId);
 
             /* Access the DataSet */
             FinanceData myData = getDataSet();
 
             /* Look up the Account */
             AccountList myAccounts = myData.getAccounts();
-            Account myAccount = myAccounts.findItemById(uAccountId);
+            Account myAccount = myAccounts.findItemById(pAccountId);
             if (myAccount == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
             }
@@ -428,7 +428,7 @@ public class AccountPrice
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -614,12 +614,12 @@ public class AccountPrice
         }
 
         @Override
-        public AccountPriceList cloneList(final DataSet<?> pDataSet) {
+        public AccountPriceList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (AccountPriceList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountPriceList deriveList(final ListStyle pStyle) {
+        public AccountPriceList deriveList(final ListStyle pStyle) throws JDataException {
             return (AccountPriceList) super.deriveList(pStyle);
         }
 
@@ -785,13 +785,13 @@ public class AccountPrice
 
         /**
          * Add a Price.
-         * @param uId the id
+         * @param pId the id
          * @param pDate the date
          * @param pAccount the account
          * @param pPrice the price
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Date pDate,
                                 final String pAccount,
                                 final String pPrice) throws JDataException {
@@ -810,7 +810,7 @@ public class AccountPrice
             }
 
             /* Create the PricePoint */
-            AccountPrice myPrice = new AccountPrice(this, uId, myAccount, pDate, pPrice);
+            AccountPrice myPrice = new AccountPrice(this, pId, myAccount, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
@@ -833,25 +833,25 @@ public class AccountPrice
 
         /**
          * Load an Encrypted price.
-         * @param uId the id
-         * @param uControlId the control id
+         * @param pId the id
+         * @param pControlId the control id
          * @param pDate the date
-         * @param uAccountId the account id
+         * @param pAccountId the account id
          * @param pPrice the price
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Date pDate,
-                                  final Integer uAccountId,
+                                  final Integer pAccountId,
                                   final byte[] pPrice) throws JDataException {
             /* Create the price and PricePoint */
-            AccountPrice myPrice = new AccountPrice(this, uId, uControlId, uAccountId, pDate, pPrice);
+            AccountPrice myPrice = new AccountPrice(this, pId, pControlId, pAccountId, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
-                                                                       + uId
+                                                                       + pId
                                                                        + ">");
             }
 

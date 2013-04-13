@@ -35,6 +35,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
@@ -209,28 +210,28 @@ public class AccountInfo
     /**
      * Secure constructor.
      * @param pList the list
-     * @param uId the id
-     * @param uControlId the control id
-     * @param uInfoTypeId the info id
-     * @param uAccountId the Account id
+     * @param pId the id
+     * @param pControlId the control id
+     * @param pInfoTypeId the info id
+     * @param pAccountId the Account id
      * @param pValue the value
      * @throws JDataException on error
      */
     private AccountInfo(final AccountInfoList pList,
-                        final Integer uId,
-                        final Integer uControlId,
-                        final Integer uInfoTypeId,
-                        final Integer uAccountId,
+                        final Integer pId,
+                        final Integer pControlId,
+                        final Integer pInfoTypeId,
+                        final Integer pAccountId,
                         final byte[] pValue) throws JDataException {
         /* Initialise the item */
-        super(pList, uId, uControlId, uInfoTypeId, uAccountId);
+        super(pList, pId, pControlId, pInfoTypeId, pAccountId);
 
         /* Protect against exceptions */
         try {
             /* Look up the EventType */
             FinanceData myData = getDataSet();
             AccountInfoTypeList myTypes = myData.getActInfoTypes();
-            AccountInfoType myType = myTypes.findItemById(uInfoTypeId);
+            AccountInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid AccountInfoType Id");
             }
@@ -238,7 +239,7 @@ public class AccountInfo
 
             /* Look up the Account */
             AccountList myAccounts = myData.getAccounts();
-            Account myOwner = myAccounts.findItemById(uAccountId);
+            Account myOwner = myAccounts.findItemById(pAccountId);
             if (myOwner == null) {
                 throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
             }
@@ -276,6 +277,12 @@ public class AccountInfo
                 case CHARARRAY:
                     setValueBytes(pValue, char[].class);
                     break;
+                case STRING:
+                    setValueBytes(pValue, String.class);
+                    break;
+                case MONEY:
+                    setValueBytes(pValue, JMoney.class);
+                    break;
                 default:
                     throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
             }
@@ -292,19 +299,19 @@ public class AccountInfo
     /**
      * Open constructor.
      * @param pList the list
-     * @param uId the id
+     * @param pId the id
      * @param pInfoType the info type
      * @param pAccount the Account
      * @param pValue the value
      * @throws JDataException on error
      */
     private AccountInfo(final AccountInfoList pList,
-                        final Integer uId,
+                        final Integer pId,
                         final AccountInfoType pInfoType,
                         final Account pAccount,
                         final Object pValue) throws JDataException {
         /* Initialise the item */
-        super(pList, uId, pInfoType, pAccount);
+        super(pList, pId, pInfoType, pAccount);
 
         try {
             /* Set the value */
@@ -358,7 +365,7 @@ public class AccountInfo
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -416,6 +423,10 @@ public class AccountInfo
                 return myFormatter.formatObject(getLink(DataItem.class));
             case DATEDAY:
                 return myFormatter.formatObject(getValue(JDateDay.class));
+            case STRING:
+                return myFormatter.formatObject(getValue(String.class));
+            case MONEY:
+                return myFormatter.formatObject(getValue(JMoney.class));
             case CHARARRAY:
                 return myFormatter.formatObject(getValue(char[].class));
             default:
@@ -433,6 +444,9 @@ public class AccountInfo
         /* Access the info Type */
         AccountInfoType myType = getInfoType();
 
+        /* Access formatter */
+        JDataFormatter myFormatter = getDataSet().getDataFormatter();
+
         /* Switch on Info Class */
         boolean bValueOK = false;
         switch (myType.getDataType()) {
@@ -440,17 +454,18 @@ public class AccountInfo
                 if (myType.isLink()) {
                     if (pValue instanceof String) {
                         DataItem myLink = null;
+                        String myName = (String) pValue;
                         FinanceData myData = getDataSet();
                         switch (myType.getInfoClass()) {
                             case Alias:
                             case Parent:
-                                myLink = myData.getAccounts().findItemById(getValue(Integer.class));
+                                myLink = myData.getAccounts().findItemByName(myName);
                                 break;
                             case AutoExpense:
-                                myLink = myData.getEventCategories().findItemById(getValue(Integer.class));
+                                myLink = myData.getEventCategories().findItemByName(myName);
                                 break;
                             case Currency:
-                                myLink = myData.getAccountCurrencies().findItemById(getValue(Integer.class));
+                                myLink = myData.getAccountCurrencies().findItemByName(myName);
                                 break;
                             default:
                                 break;
@@ -483,6 +498,23 @@ public class AccountInfo
                 break;
             case CHARARRAY:
                 if (pValue instanceof char[]) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                }
+                break;
+            case STRING:
+                if (pValue instanceof String) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                }
+                break;
+            case MONEY:
+                if (pValue instanceof String) {
+                    JMoney myValue = myFormatter.parseValue((String) pValue, JMoney.class);
+                    setValueValue(myValue);
+                    bValueOK = true;
+                }
+                if (pValue instanceof JMoney) {
                     setValueValue(pValue);
                     bValueOK = true;
                 }
@@ -586,12 +618,12 @@ public class AccountInfo
         }
 
         @Override
-        public AccountInfoList cloneList(final DataSet<?> pDataSet) {
+        public AccountInfoList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (AccountInfoList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountInfoList deriveList(final ListStyle pStyle) {
+        public AccountInfoList deriveList(final ListStyle pStyle) throws JDataException {
             return (AccountInfoList) super.deriveList(pStyle);
         }
 
@@ -630,23 +662,23 @@ public class AccountInfo
 
         /**
          * Allow an AccountInfo to be added.
-         * @param uId the id
-         * @param uControlId the control id
-         * @param uInfoTypeId the info type id
-         * @param uAccountId the account id
+         * @param pId the id
+         * @param pControlId the control id
+         * @param pInfoTypeId the info type id
+         * @param pAccountId the account id
          * @param pValue the data
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
-                                  final Integer uInfoTypeId,
-                                  final Integer uAccountId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
+                                  final Integer pInfoTypeId,
+                                  final Integer pAccountId,
                                   final byte[] pValue) throws JDataException {
             /* Create the info */
-            AccountInfo myInfo = new AccountInfo(this, uId, uControlId, uInfoTypeId, uAccountId, pValue);
+            AccountInfo myInfo = new AccountInfo(this, pId, pControlId, pInfoTypeId, pAccountId, pValue);
 
             /* Check that this DataId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate DataId");
             }
 
@@ -663,7 +695,7 @@ public class AccountInfo
         }
 
         @Override
-        public void addOpenItem(final Integer uId,
+        public void addOpenItem(final Integer pId,
                                 final Account pAccount,
                                 final AccountInfoClass pInfoClass,
                                 final Object pValue) throws JDataException {
@@ -684,10 +716,10 @@ public class AccountInfo
             }
 
             /* Create a new Account Info Type */
-            AccountInfo myInfo = new AccountInfo(this, uId, myInfoType, pAccount, pValue);
+            AccountInfo myInfo = new AccountInfo(this, pId, myInfoType, pAccount, pValue);
 
             /* Check that this InfoTypeId has not been previously added */
-            if (!isIdUnique(myInfo.getId())) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate AccountInfoId");
             }
 
@@ -702,6 +734,5 @@ public class AccountInfo
                 throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
             }
         }
-
     }
 }

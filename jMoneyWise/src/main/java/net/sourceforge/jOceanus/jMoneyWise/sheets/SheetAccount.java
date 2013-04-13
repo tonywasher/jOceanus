@@ -259,6 +259,13 @@ public class SheetAccount
         return myLastCol;
     }
 
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and reSort */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+    }
+
     /**
      * Load the Accounts from an archive.
      * @param pTask the task control
@@ -273,7 +280,7 @@ public class SheetAccount
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView("AccountsTable");
+            DataView myView = pWorkBook.getRangeView("AccountInfo");
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();
@@ -306,11 +313,18 @@ public class SheetAccount
                 String myName = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myAcType = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
-                /* Handle maturity which may be missing */
+                /* Handle taxFree which may be missing */
                 DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Date myMaturity = null;
+                Boolean isTaxFree = Boolean.FALSE;
                 if (myCell != null) {
-                    myMaturity = myCell.getDateValue();
+                    isTaxFree = myCell.getBooleanValue();
+                }
+
+                /* Handle closed which may be missing */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                Boolean isClosed = Boolean.FALSE;
+                if (myCell != null) {
+                    isClosed = myCell.getBooleanValue();
                 }
 
                 /* Handle parent which may be missing */
@@ -327,20 +341,44 @@ public class SheetAccount
                     myAlias = myCell.getStringValue();
                 }
 
-                /* Handle closed which may be missing */
+                /* Handle maturity which may be missing */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isClosed = Boolean.FALSE;
+                Date myMaturity = null;
                 if (myCell != null) {
-                    isClosed = Boolean.TRUE;
+                    myMaturity = myCell.getDateValue();
+                }
+
+                /* Handle opening balance which may be missing */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                String myBalance = null;
+                if (myCell != null) {
+                    myBalance = myCell.getStringValue();
+                }
+
+                /* Handle symbol which may be missing */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                String mySymbol = null;
+                if (myCell != null) {
+                    mySymbol = myCell.getStringValue();
+                }
+
+                /* Handle autoExpense which may be missing */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                String myAutoExpense = null;
+                if (myCell != null) {
+                    myAutoExpense = myCell.getStringValue();
                 }
 
                 /* Add the value into the finance tables */
-                Account myAccount = myList.addOpenItem(0, myName, myAcType, null, isClosed, false);
+                Account myAccount = myList.addOpenItem(0, myName, myAcType, null, isClosed, isTaxFree);
 
                 /* Add information relating to the account */
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Parent, myParent);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Alias, myAlias);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Symbol, mySymbol);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.OpeningBalance, myBalance);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.AutoExpense, myAutoExpense);
 
                 /* Report the progress */
                 myCount++;
@@ -351,6 +389,7 @@ public class SheetAccount
             }
 
             /* Sort the lists */
+            myList.resolveDataSetLinks();
             myList.reSort();
             myInfoList.reSort();
 

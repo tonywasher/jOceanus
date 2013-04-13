@@ -38,7 +38,6 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
@@ -103,129 +102,14 @@ public class Account
     }
 
     /**
-     * CloseDate Field Id.
-     */
-    public static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField("CloseDate");
-
-    /**
      * AccountInfoSet field Id.
      */
     public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
 
     /**
-     * Maturity Field Id.
+     * AccountStatus field Id.
      */
-    public static final JDataField FIELD_MATURITY = FIELD_DEFS.declareLocalField("Maturity");
-
-    /**
-     * Parent Field Id.
-     */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField("Parent");
-
-    /**
-     * Alias Field Id.
-     */
-    public static final JDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField("Alias");
-
-    /**
-     * Currency Field Id.
-     */
-    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField("Currency");
-
-    /**
-     * AutoExpense Field Id.
-     */
-    public static final JDataField FIELD_AUTOEXP = FIELD_DEFS.declareLocalField("AutoExpense");
-
-    /**
-     * Symbol Field Id.
-     */
-    public static final JDataField FIELD_SYMBOL = FIELD_DEFS.declareLocalField("Symbol");
-
-    /**
-     * OpeningBalance Field Id.
-     */
-    public static final JDataField FIELD_OPENBAL = FIELD_DEFS.declareLocalField("OpeningBalance");
-
-    /**
-     * WebSite Field Id.
-     */
-    public static final JDataField FIELD_WEBSITE = FIELD_DEFS.declareLocalField("WebSite");
-
-    /**
-     * CustNo Field Id.
-     */
-    public static final JDataField FIELD_CUSTNO = FIELD_DEFS.declareLocalField("CustomerNo");
-
-    /**
-     * UserId Field Id.
-     */
-    public static final JDataField FIELD_USERID = FIELD_DEFS.declareLocalField("UserId");
-
-    /**
-     * Password Field Id.
-     */
-    public static final JDataField FIELD_PASSWORD = FIELD_DEFS.declareLocalField("Password");
-
-    /**
-     * Account Details Field Id.
-     */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
-
-    /**
-     * Notes Field Id.
-     */
-    public static final JDataField FIELD_NOTES = FIELD_DEFS.declareLocalField("Notes");
-
-    /**
-     * firstEvent Field Id.
-     */
-    public static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField("FirstEvent");
-
-    /**
-     * lastEvent Field Id.
-     */
-    public static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField("LastEvent");
-
-    /**
-     * initialPrice Field Id.
-     */
-    public static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField("InitialPrice");
-
-    /**
-     * hasLoans Field Id.
-     */
-    public static final JDataField FIELD_HASLOANS = FIELD_DEFS.declareLocalField("hasLoans");
-
-    /**
-     * hasRates Field Id.
-     */
-    public static final JDataField FIELD_HASRATES = FIELD_DEFS.declareLocalField("hasRates");
-
-    /**
-     * hasPrice Field Id.
-     */
-    public static final JDataField FIELD_HASPRICE = FIELD_DEFS.declareLocalField("hasPrices");
-
-    /**
-     * hasPatterns Field Id.
-     */
-    public static final JDataField FIELD_HASPATT = FIELD_DEFS.declareLocalField("hasPatterns");
-
-    /**
-     * isParent Field Id.
-     */
-    public static final JDataField FIELD_ISPARENT = FIELD_DEFS.declareLocalField("isParent");
-
-    /**
-     * isAliased Field Id.
-     */
-    public static final JDataField FIELD_ISALIASD = FIELD_DEFS.declareLocalField("isAliasedTo");
-
-    /**
-     * isCloseable Field Id.
-     */
-    public static final JDataField FIELD_ISCLSABL = FIELD_DEFS.declareLocalField("isCloseable");
+    public static final JDataField FIELD_STATUS = FIELD_DEFS.declareLocalField("AccountStatus");
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -236,117 +120,13 @@ public class Account
                     : JDataFieldValue.SkipField;
         }
 
-        /* Handle InfoSet fields */
-        AccountInfoClass myClass = getFieldClass(pField);
-        if (myClass != null) {
-            return getInfoSetValue(myClass);
-        }
-
-        /* Handle flags */
-        if (FIELD_EVTFIRST.equals(pField)) {
-            return (theEarliest != null)
-                    ? theEarliest
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_EVTLAST.equals(pField)) {
-            return (theLatest != null)
-                    ? theLatest
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_INITPRC.equals(pField)) {
-            return (theInitPrice != null)
-                    ? theInitPrice
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_CLOSEDATE.equals(pField)) {
-            return (theCloseDate != null)
-                    ? theCloseDate
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_HASLOANS.equals(pField)) {
-            return hasLoans
-                    ? hasLoans
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_HASRATES.equals(pField)) {
-            return hasRates
-                    ? hasRates
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_HASPRICE.equals(pField)) {
-            return hasPrices
-                    ? hasPrices
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_HASPATT.equals(pField)) {
-            return hasPatterns
-                    ? hasPatterns
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_ISPARENT.equals(pField)) {
-            return isParent
-                    ? isParent
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_ISALIASD.equals(pField)) {
-            return isAliasedTo
-                    ? isAliasedTo
-                    : JDataFieldValue.SkipField;
-        }
-        if (FIELD_ISCLSABL.equals(pField)) {
-            return isCloseable;
+        /* Handle status */
+        if (FIELD_STATUS.equals(pField)) {
+            return theStatus;
         }
 
         /* Pass onwards */
         return super.getFieldValue(pField);
-    }
-
-    /**
-     * Obtain the class of the field if it is an infoSet field.
-     * @param pField the field
-     * @return the class
-     */
-    private static AccountInfoClass getFieldClass(final JDataField pField) {
-        if (FIELD_MATURITY.equals(pField)) {
-            return AccountInfoClass.Maturity;
-        }
-        if (FIELD_PARENT.equals(pField)) {
-            return AccountInfoClass.Parent;
-        }
-        if (FIELD_ALIAS.equals(pField)) {
-            return AccountInfoClass.Alias;
-        }
-        if (FIELD_CURRENCY.equals(pField)) {
-            return AccountInfoClass.Currency;
-        }
-        if (FIELD_AUTOEXP.equals(pField)) {
-            return AccountInfoClass.AutoExpense;
-        }
-        if (FIELD_SYMBOL.equals(pField)) {
-            return AccountInfoClass.Symbol;
-        }
-        if (FIELD_OPENBAL.equals(pField)) {
-            return AccountInfoClass.OpeningBalance;
-        }
-        if (FIELD_WEBSITE.equals(pField)) {
-            return AccountInfoClass.WebSite;
-        }
-        if (FIELD_CUSTNO.equals(pField)) {
-            return AccountInfoClass.CustNo;
-        }
-        if (FIELD_USERID.equals(pField)) {
-            return AccountInfoClass.UserId;
-        }
-        if (FIELD_PASSWORD.equals(pField)) {
-            return AccountInfoClass.Password;
-        }
-        if (FIELD_ACCOUNT.equals(pField)) {
-            return AccountInfoClass.Account;
-        }
-        if (FIELD_NOTES.equals(pField)) {
-            return AccountInfoClass.Notes;
-        }
-        return null;
     }
 
     /**
@@ -365,67 +145,17 @@ public class Account
     private final AccountInfoSet theInfoSet;
 
     /**
+     * AccountStatus.
+     */
+    private AccountStatus theStatus = new AccountStatus();
+
+    /**
      * Obtain InfoSet.
      * @return the infoSet
      */
     public AccountInfoSet getInfoSet() {
         return theInfoSet;
     }
-
-    /**
-     * Close Date.
-     */
-    private JDateDay theCloseDate = null;
-
-    /**
-     * Earliest Event.
-     */
-    private Event theEarliest = null;
-
-    /**
-     * Latest Event.
-     */
-    private Event theLatest = null;
-
-    /**
-     * Initial Price.
-     */
-    private AccountPrice theInitPrice = null;
-
-    /**
-     * Is this closeable?
-     */
-    private boolean isCloseable = true;
-
-    /**
-     * Does this have loans?
-     */
-    private boolean hasLoans = false;
-
-    /**
-     * Does this have rates?
-     */
-    private boolean hasRates = false;
-
-    /**
-     * Does this have prices?
-     */
-    private boolean hasPrices = false;
-
-    /**
-     * Does this have patterns?
-     */
-    private boolean hasPatterns = false;
-
-    /**
-     * is this a Parent?.
-     */
-    private boolean isParent = false;
-
-    /**
-     * is this Aliased to?
-     */
-    private boolean isAliasedTo = false;
 
     @Override
     public boolean isEditable() {
@@ -519,7 +249,7 @@ public class Account
      */
     public char[] getCustNo() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.CustNo, char[].class)
+                ? theInfoSet.getValue(AccountInfoClass.CustomerNo, char[].class)
                 : null;
     }
 
@@ -568,7 +298,7 @@ public class Account
      * @return the event
      */
     public Event getEarliest() {
-        return theEarliest;
+        return theStatus.getEarliest();
     }
 
     /**
@@ -576,7 +306,7 @@ public class Account
      * @return the event
      */
     public Event getLatest() {
-        return theLatest;
+        return theStatus.getLatest();
     }
 
     /**
@@ -584,7 +314,7 @@ public class Account
      * @return the price
      */
     public AccountPrice getInitPrice() {
-        return theInitPrice;
+        return theStatus.getInitPrice();
     }
 
     /**
@@ -592,7 +322,7 @@ public class Account
      * @return true/false
      */
     public boolean isCloseable() {
-        return isCloseable;
+        return theStatus.isCloseable();
     }
 
     /**
@@ -600,7 +330,7 @@ public class Account
      * @return true/false
      */
     public boolean hasLoans() {
-        return hasLoans;
+        return theStatus.hasLoans();
     }
 
     /**
@@ -608,7 +338,7 @@ public class Account
      * @return true/false
      */
     public boolean isParent() {
-        return isParent;
+        return theStatus.isParent();
     }
 
     /**
@@ -616,7 +346,7 @@ public class Account
      * @return the closeDate
      */
     public JDateDay getCloseDate() {
-        return theCloseDate;
+        return theStatus.getCloseDate();
     }
 
     /**
@@ -632,7 +362,7 @@ public class Account
      * @return true/false
      */
     public boolean isAliasedTo() {
-        return isAliasedTo;
+        return theStatus.isAliasedTo();
     }
 
     /**
@@ -640,13 +370,8 @@ public class Account
      * @return true/false
      */
     public boolean isDeletable() {
-        return ((theLatest == null)
-                && (!isDeleted())
-                && (!isParent)
-                && (!hasRates)
-                && ((!hasPrices) || (getState() == DataState.NEW))
-                && (!hasPatterns)
-                && (!isAliasedTo) && (!getAccountCategoryClass().isSingular()));
+        return (theStatus.isDeletable(getState())
+                && (!isDeleted()) && (!getAccountCategoryClass().isSingular()));
     }
 
     @Override
@@ -739,7 +464,7 @@ public class Account
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = getFieldClass(pField);
+        AccountInfoClass myClass = AccountInfoSet.getFieldClass(pField);
         if (myClass != null) {
             return (useInfoSet)
                     ? theInfoSet.fieldChanged(myClass)
@@ -769,24 +494,6 @@ public class Account
     @Override
     public boolean isLocked() {
         return isClosed();
-    }
-
-    /**
-     * Copy flags.
-     * @param pItem the original item
-     */
-    private void copyFlags(final Account pItem) {
-        theEarliest = pItem.theEarliest;
-        theLatest = pItem.theLatest;
-        theCloseDate = pItem.theCloseDate;
-        theInitPrice = pItem.theInitPrice;
-        isCloseable = pItem.isCloseable();
-        isAliasedTo = pItem.isAliasedTo();
-        isParent = pItem.isParent();
-        hasPatterns = pItem.hasPatterns;
-        hasRates = pItem.hasRates;
-        hasPrices = pItem.hasPrices;
-        hasLoans = pItem.hasLoans;
     }
 
     /**
@@ -824,7 +531,7 @@ public class Account
         if ((getStyle() == ListStyle.EDIT)
             && (pAccount.getStyle() == ListStyle.CORE)) {
             /* Copy the flags */
-            copyFlags(pAccount);
+            theStatus = new AccountStatus(pAccount.theStatus);
         }
     }
 
@@ -871,7 +578,7 @@ public class Account
     private Account(final AccountList pList,
                     final Integer pId,
                     final String pName,
-                    final AccountCategory pCategory,
+                    final String pCategory,
                     final String pDesc,
                     final Boolean isClosed,
                     final Boolean isTaxFree) throws JDataException {
@@ -899,31 +606,18 @@ public class Account
     }
 
     /**
-     * Set non-closeable.
-     */
-    public void setNonCloseable() {
-        /* Record the status */
-        isCloseable = false;
-    }
-
-    /**
      * Adjust closed/maturity dates.
      * @throws JDataException on error
      */
     public void adjustDates() throws JDataException {
-        /* Access latest activity date */
-        JDateDay myCloseDate = (theLatest == null)
-                ? null
-                : theLatest.getDate();
-
-        /* Store the close date */
-        theCloseDate = myCloseDate;
+        /* Adjust closed date */
+        theStatus.adjustClosed();
 
         /* If the maturity is null for a bond set it to close date */
         if (isCategoryClass(AccountCategoryClass.Bond)
             && getMaturity() == null) {
             /* Record a date for maturity */
-            setMaturity(theCloseDate);
+            setMaturity(getCloseDate());
         }
     }
 
@@ -950,17 +644,8 @@ public class Account
     public void clearActive() {
         super.clearActive();
 
-        /* Reset flags */
-        isCloseable = true;
-        theEarliest = null;
-        theLatest = null;
-        theInitPrice = null;
-        hasLoans = false;
-        hasRates = false;
-        hasPrices = false;
-        hasPatterns = false;
-        isParent = false;
-        isAliasedTo = false;
+        /* Reset status */
+        theStatus.resetStatus();
     }
 
     /**
@@ -972,56 +657,8 @@ public class Account
         /* Note that the account is Active */
         super.touchItem(pObject);
 
-        /* If we are being touched by a rate */
-        if (pObject instanceof AccountRate) {
-            /* Note flags */
-            hasRates = true;
-
-            /* If we are being touched by a price */
-        } else if (pObject instanceof AccountPrice) {
-            /* Note flags */
-            hasPrices = true;
-            if (theInitPrice == null) {
-                theInitPrice = (AccountPrice) pObject;
-            }
-
-            /* If we are being touched by a pattern */
-        } else if (pObject instanceof Pattern) {
-            /* Note flags */
-            hasPatterns = true;
-
-            /* If we are being touched by an event */
-        } else if (pObject instanceof Event) {
-            /* Access as event */
-            Event myEvent = (Event) pObject;
-
-            /* Record the event */
-            if (theEarliest == null) {
-                theEarliest = myEvent;
-            }
-            theLatest = myEvent;
-
-            /* If we have a parent, touch it */
-            if (getParent() != null) {
-                getParent().touchItem(pObject);
-            }
-
-            /* If we are being touched by another account */
-        } else if (pObject instanceof Account) {
-            /* Access as account */
-            Account myAccount = (Account) pObject;
-
-            /* Note flags */
-            if (Difference.isEqual(myAccount.getAlias(), this)) {
-                isAliasedTo = true;
-            }
-            if (Difference.isEqual(myAccount.getParent(), this)) {
-                isParent = true;
-                if (myAccount.isLoan()) {
-                    hasLoans = true;
-                }
-            }
-        }
+        /* Adjust status */
+        theStatus.touchItem(this, pObject);
     }
 
     /**
@@ -1102,7 +739,7 @@ public class Account
      * @throws JDataException on error
      */
     public void setCustNo(final char[] pCustNo) throws JDataException {
-        setInfoSetValue(AccountInfoClass.CustNo, pCustNo);
+        setInfoSetValue(AccountInfoClass.CustomerNo, pCustNo);
     }
 
     /**
@@ -1142,6 +779,14 @@ public class Account
     }
 
     /**
+     * Set non-closeable.
+     */
+    public void setNonCloseable() {
+        /* Record the status */
+        theStatus.setNonCloseable();
+    }
+
+    /**
      * Set an infoSet value.
      * @param pInfoClass the class of info to set
      * @param pValue the value to set
@@ -1156,48 +801,6 @@ public class Account
 
         /* Set the value */
         theInfoSet.setValue(pInfoClass, pValue);
-    }
-
-    /**
-     * Get an infoSet value.
-     * @param pInfoClass the class of info to get
-     * @return the value to set
-     */
-    private Object getInfoSetValue(final AccountInfoClass pInfoClass) {
-        Object myValue;
-
-        switch (pInfoClass) {
-            case Parent:
-            case Alias:
-                /* Access account of object */
-                myValue = hasInfoSet
-                        ? theInfoSet.getAccount(pInfoClass)
-                        : null;
-                break;
-            case AutoExpense:
-                /* Access event category of object */
-                myValue = hasInfoSet
-                        ? theInfoSet.getEventCategory(pInfoClass)
-                        : null;
-                break;
-            case Currency:
-                /* Access currency of object */
-                myValue = hasInfoSet
-                        ? theInfoSet.getAccountCurrency(pInfoClass)
-                        : null;
-                break;
-            default:
-                /* Access value of object */
-                myValue = hasInfoSet
-                        ? theInfoSet.getField(pInfoClass)
-                        : null;
-                break;
-
-        }
-        /* Return the value */
-        return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SkipField;
     }
 
     @Override
@@ -1227,7 +830,7 @@ public class Account
         }
 
         /* If we have patterns, then we are not close-able */
-        if (hasPatterns) {
+        if (theStatus.hasPatterns()) {
             setNonCloseable();
         }
 
@@ -1252,21 +855,22 @@ public class Account
             /* If this account has an alias */
             if (myAlias != null) {
                 /* Must not have prices */
-                if (hasPrices) {
+                if (theStatus.hasPrices()) {
                     addError("Aliased account has prices", FIELD_CATEGORY);
                 }
 
                 /* Alias account must have prices */
-                if ((!myAlias.hasPrices)
-                    && (myAlias.theEarliest != null)) {
+                AccountStatus myAliasStatus = myAlias.theStatus;
+                if ((!myAliasStatus.hasPrices())
+                    && (myAliasStatus.hasEvents())) {
                     addError("Alias account has no prices", FIELD_CATEGORY);
                 }
 
                 /* else this is a standard account */
             } else {
                 /* Must have prices */
-                if ((!hasPrices)
-                    && (theEarliest != null)) {
+                if ((!theStatus.hasPrices())
+                    && (theStatus.hasEvents())) {
                     addError("Priced account has no prices", FIELD_CATEGORY);
                 }
             }
@@ -1274,7 +878,7 @@ public class Account
             /* else the account is not priced */
         } else {
             /* Prices cannot exist */
-            if (hasPrices) {
+            if (theStatus.hasPrices()) {
                 addError("non-Priced account has prices", FIELD_CATEGORY);
             }
         }
@@ -1282,27 +886,27 @@ public class Account
         /* If the account is not a child then parent cannot exist */
         if (!myClass.isChild()) {
             if (myParent != null) {
-                addError("Non-child account has parent", FIELD_PARENT);
+                addError("Non-child account has parent", AccountInfoSet.FIELD_PARENT);
             }
 
             /* else we should have a parent */
         } else {
             /* If data has been fully loaded we have no parent */
             if (myParent == null) {
-                addError("Child Account must have parent", FIELD_PARENT);
+                addError("Child Account must have parent", AccountInfoSet.FIELD_PARENT);
             }
 
             /* if we have a parent */
             if (myParent != null) {
                 /* check that any parent is owner */
-                if (!myClass.canParentAccount()) {
-                    addError("Parent account cannot have children", FIELD_PARENT);
+                if (!myParent.getAccountCategoryClass().canParentAccount()) {
+                    addError("Parent account cannot have children", AccountInfoSet.FIELD_PARENT);
                 }
 
                 /* If we are open then parent must be open */
                 if (!isClosed()
                     && myParent.isClosed()) {
-                    addError("Parent account must not be closed", FIELD_PARENT);
+                    addError("Parent account must not be closed", AccountInfoSet.FIELD_PARENT);
                 }
             }
         }
@@ -1314,36 +918,40 @@ public class Account
 
             /* Cannot alias to self */
             if (Difference.isEqual(this, myAlias)) {
-                addError("Cannot alias to self", FIELD_ALIAS);
+                addError("Cannot alias to self", AccountInfoSet.FIELD_ALIAS);
 
-                /* Cannot alias to same type */
-            } else if (Difference.isEqual(myClass, myAliasClass)) {
-                addError("Cannot alias to same account type", FIELD_ALIAS);
+                /* Must alias to same type */
+            } else if (!Difference.isEqual(myClass, myAliasClass)) {
+                addError("Must alias to same account type", AccountInfoSet.FIELD_ALIAS);
+
+                /* Must alias to different TaxFree type */
+            } else if (isTaxFree() == myAlias.isTaxFree()) {
+                addError("Must alias to different TaxFree account type", AccountInfoSet.FIELD_ALIAS);
             }
 
             /* Must be alias type */
             if (!myClass.canAlias()) {
-                addError("This account type cannot alias", FIELD_ALIAS);
+                addError("This account type cannot alias", AccountInfoSet.FIELD_ALIAS);
             }
 
             /* Must not be aliased to */
-            if (isAliasedTo) {
-                addError("This account is already aliased to", FIELD_ALIAS);
+            if (theStatus.isAliasedTo()) {
+                addError("This account is already aliased to", AccountInfoSet.FIELD_ALIAS);
             }
 
             /* Alias must be alias type */
             if (!myAliasClass.canAlias()) {
-                addError("The alias account type is invalid", FIELD_ALIAS);
+                addError("The alias account type is invalid", AccountInfoSet.FIELD_ALIAS);
             }
 
             /* Alias cannot be aliased */
             if (myAlias.isAlias()) {
-                addError("The alias account is already aliased", FIELD_ALIAS);
+                addError("The alias account is already aliased", AccountInfoSet.FIELD_ALIAS);
             }
         }
 
         /* If the account has rates then it must be money-based */
-        if ((hasRates)
+        if ((theStatus.hasRates())
             && (!myClass.hasValue())) {
             addError("non-Money account has rates", FIELD_CATEGORY);
         }
@@ -1351,14 +959,14 @@ public class Account
         /* If the account has a maturity rate then it must be a bond */
         if ((getMaturity() != null)
             && (myClass != AccountCategoryClass.Bond)) {
-            addError("non-Bond has maturity date", FIELD_MATURITY);
+            addError("non-Bond has maturity date", AccountInfoSet.FIELD_MATURITY);
         }
 
         /* Open Bond accounts must have maturity */
         if ((myClass == AccountCategoryClass.Bond)
             && !isClosed()
             && (getMaturity() == null)) {
-            addError("Open Bond must have maturity date", FIELD_MATURITY);
+            addError("Open Bond must have maturity date", AccountInfoSet.FIELD_MATURITY);
         }
 
         /* If data has been fully loaded and the account is closed it must be closeable */
@@ -1370,37 +978,37 @@ public class Account
         /* The WebSite must not be too long */
         if ((getWebSite() != null)
             && (getWebSite().length > WSITELEN)) {
-            addError("WebSite is too long", FIELD_WEBSITE);
+            addError("WebSite is too long", AccountInfoSet.FIELD_WEBSITE);
         }
 
         /* The CustNo must not be too long */
         if ((getCustNo() != null)
             && (getCustNo().length > CUSTLEN)) {
-            addError("Customer No. is too long", FIELD_CUSTNO);
+            addError("Customer No. is too long", AccountInfoSet.FIELD_CUSTNO);
         }
 
         /* The UserId must not be too long */
         if ((getUserId() != null)
             && (getUserId().length > UIDLEN)) {
-            addError("UserId is too long", FIELD_USERID);
+            addError("UserId is too long", AccountInfoSet.FIELD_USERID);
         }
 
         /* The Password must not be too long */
         if ((getPassword() != null)
             && (getPassword().length > PWDLEN)) {
-            addError("Password is too long", FIELD_PASSWORD);
+            addError("Password is too long", AccountInfoSet.FIELD_PASSWORD);
         }
 
         /* The Account must not be too long */
         if ((getAccount() != null)
             && (getAccount().length > ACTLEN)) {
-            addError("Account is too long", FIELD_ACCOUNT);
+            addError("Account is too long", AccountInfoSet.FIELD_ACCOUNT);
         }
 
         /* The Notes must not be too long */
         if ((getNotes() != null)
             && (getNotes().length > NOTELEN)) {
-            addError("WebSite is too long", FIELD_NOTES);
+            addError("WebSite is too long", AccountInfoSet.FIELD_NOTES);
         }
 
         /* Set validation flag */
@@ -1514,12 +1122,12 @@ public class Account
         }
 
         @Override
-        public AccountList cloneList(final DataSet<?> pDataSet) {
+        public AccountList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (AccountList) super.cloneList(pDataSet);
         }
 
         @Override
-        public AccountList deriveList(final ListStyle pStyle) {
+        public AccountList deriveList(final ListStyle pStyle) throws JDataException {
             return (AccountList) super.deriveList(pStyle);
         }
 
@@ -1532,8 +1140,9 @@ public class Account
          * Construct an edit extract for an Account.
          * @param pAccount the relevant account
          * @return the edit Extract
+         * @throws JDataException on error
          */
-        public AccountList deriveEditList(final Account pAccount) {
+        public AccountList deriveEditList(final Account pAccount) throws JDataException {
             /* Build an empty Extract List */
             AccountList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1556,8 +1165,9 @@ public class Account
          * Construct an edit extract for an Account.
          * @param pCategory the account category
          * @return the edit Extract
+         * @throws JDataException on error
          */
-        public AccountList deriveEditList(final AccountCategory pCategory) {
+        public AccountList deriveEditList(final AccountCategory pCategory) throws JDataException {
             /* Build an empty Extract List */
             AccountList myList = getEmptyList(ListStyle.EDIT);
 
@@ -1676,22 +1286,8 @@ public class Account
                                    final String pDesc,
                                    final Boolean isClosed,
                                    final Boolean isTaxFree) throws JDataException {
-            /* Access the account types and accounts */
-            FinanceData myData = getDataSet();
-            AccountCategoryList myCategories = myData.getAccountCategories();
-
-            /* Look up the Account Category */
-            AccountCategory myCategory = myCategories.findItemByName(pCategory);
-            if (myCategory == null) {
-                throw new JDataException(ExceptionClass.DATA, "Account ["
-                                                              + pName
-                                                              + "] has invalid Account Category ["
-                                                              + pCategory
-                                                              + "]");
-            }
-
             /* Create the new account */
-            Account myAccount = new Account(this, uId, pName, myCategory, pDesc, isClosed, isTaxFree);
+            Account myAccount = new Account(this, uId, pName, pCategory, pDesc, isClosed, isTaxFree);
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {

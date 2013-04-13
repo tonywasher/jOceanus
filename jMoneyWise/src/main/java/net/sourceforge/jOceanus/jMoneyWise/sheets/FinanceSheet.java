@@ -60,6 +60,21 @@ public class FinanceSheet
     private static final int NUM_ARCHIVE_AREAS = 18;
 
     /**
+     * Year boundary.
+     */
+    private static final int YEAR_BDY = 50;
+
+    /**
+     * Year constant.
+     */
+    private static final int YEAR_1900 = 1900;
+
+    /**
+     * Year constant.
+     */
+    private static final int YEAR_2000 = 2000;
+
+    /**
      * Obtain a sheet reader.
      * @param pTask Thread Control for task
      * @return the sheet reader
@@ -129,10 +144,10 @@ public class FinanceSheet
             int myYear = Integer.parseInt(pName.substring(myLen - 2));
 
             /* Calculate the actual year */
-            if (myYear < 50) {
-                myYear += 2000;
+            if (myYear < YEAR_BDY) {
+                myYear += YEAR_2000;
             } else {
-                myYear += 1900;
+                myYear += YEAR_1900;
             }
 
             /* Create the date */
@@ -150,7 +165,7 @@ public class FinanceSheet
         private final List<ArchiveYear> theYears;
 
         /**
-         * Constructor
+         * Constructor.
          */
         private YearRange() {
             theYears = new ArrayList<ArchiveYear>();
@@ -337,21 +352,21 @@ public class FinanceSheet
                 myData.calculateDateRange();
             }
 
-            // if (bContinue) {
-            // bContinue = SheetAccount.loadArchive(pTask, myWorkbook, myData);
-            // }
-            // if (bContinue) {
-            // bContinue = SheetAccountRate.loadArchive(pTask, myWorkbook, myData);
-            // }
-            // if (bContinue) {
-            // bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData);
-            // }
+            if (bContinue) {
+                bContinue = SheetAccount.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountRate.loadArchive(pTask, myWorkbook, myData);
+            }
+            if (bContinue) {
+                bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData);
+            }
             // if (bContinue) {
             // bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);
             // }
-            // if (bContinue) {
-            // myData.getAccounts().markActiveItems();
-            // }
+            if (bContinue) {
+                myData.getAccounts().markActiveItems();
+            }
 
             // if (bContinue) {
             // bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, myRange);

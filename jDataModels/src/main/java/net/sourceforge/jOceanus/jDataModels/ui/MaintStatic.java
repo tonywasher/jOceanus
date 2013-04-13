@@ -39,6 +39,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
@@ -267,8 +268,9 @@ public class MaintStatic
 
     /**
      * Refresh views/controls after a load/update of underlying data.
+     * @throws JDataException on error
      */
-    public void refreshData() {
+    public void refreshData() throws JDataException {
         /* Loop through the map */
         for (MaintStaticData<?, ?> myPanel : theMap.values()) {
             /* Refresh the panel */

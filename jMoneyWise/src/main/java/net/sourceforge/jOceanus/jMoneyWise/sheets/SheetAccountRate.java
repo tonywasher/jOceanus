@@ -48,11 +48,6 @@ public class SheetAccountRate
     private static final String AREA_RATES = AccountRate.LIST_NAME;
 
     /**
-     * NamedArea for Archive Rates.
-     */
-    private static final String AREA_RATES1 = "Rates";
-
-    /**
      * Account column.
      */
     private static final int COL_ACCOUNT = COL_CONTROLID + 1;
@@ -192,7 +187,7 @@ public class SheetAccountRate
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
-            DataView myView = pWorkBook.getRangeView(AREA_RATES1);
+            DataView myView = pWorkBook.getRangeView(AREA_RATES);
 
             /* Access the number of reporting steps */
             int mySteps = pTask.getReportingSteps();

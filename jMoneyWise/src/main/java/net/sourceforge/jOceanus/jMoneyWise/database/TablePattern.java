@@ -65,12 +65,12 @@ public class TablePattern
 
         /* Declare the columns */
         ColumnDefinition myDateCol = myTableDef.addDateColumn(EventBase.FIELD_DATE);
-        myTableDef.addEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_DEBIT, TableAccount.TABLE_NAME);
         myTableDef.addReferenceColumn(EventBase.FIELD_CREDIT, TableAccount.TABLE_NAME);
-        myTableDef.addReferenceColumn(EventBase.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
         myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
+        myTableDef.addReferenceColumn(EventBase.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Pattern.FIELD_FREQ, TableFrequency.TABLE_NAME);
+        myTableDef.addNullEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -97,7 +97,7 @@ public class TablePattern
         Integer myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDesc, myDebitId, myCreditId, myCategoryId, myAmount, myFreq);
+        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myFreq, myDesc);
     }
 
     @Override

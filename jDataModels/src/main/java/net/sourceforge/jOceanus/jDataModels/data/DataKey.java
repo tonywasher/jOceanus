@@ -528,12 +528,12 @@ public class DataKey
         }
 
         @Override
-        public DataKeyList cloneList(final DataSet<?> pDataSet) {
+        public DataKeyList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (DataKeyList) super.cloneList(pDataSet);
         }
 
         @Override
-        public DataKeyList deriveList(final ListStyle pStyle) {
+        public DataKeyList deriveList(final ListStyle pStyle) throws JDataException {
             return (DataKeyList) super.deriveList(pStyle);
         }
 

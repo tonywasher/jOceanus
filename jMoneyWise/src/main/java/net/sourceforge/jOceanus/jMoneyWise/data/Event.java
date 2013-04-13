@@ -83,66 +83,6 @@ public class Event
      */
     public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
 
-    /**
-     * DebitUnits Field Id.
-     */
-    public static final JDataField FIELD_DEBTUNITS = FIELD_DEFS.declareLocalField("DebitUnits");
-
-    /**
-     * CreditUnits Field Id.
-     */
-    public static final JDataField FIELD_CREDUNITS = FIELD_DEFS.declareLocalField("CreditUnits");
-
-    /**
-     * TaxCredit Field Id.
-     */
-    public static final JDataField FIELD_TAXCREDIT = FIELD_DEFS.declareLocalField("TaxCredit");
-
-    /**
-     * Dilution Field Id.
-     */
-    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareLocalField("Dilution");
-
-    /**
-     * Years Field Id.
-     */
-    public static final JDataField FIELD_YEARS = FIELD_DEFS.declareLocalField("Years");
-
-    /**
-     * NatInsurance Field Id.
-     */
-    public static final JDataField FIELD_NATINS = FIELD_DEFS.declareLocalField("NatInsurance");
-
-    /**
-     * Benefit Field Id.
-     */
-    public static final JDataField FIELD_BENEFIT = FIELD_DEFS.declareLocalField("Benefit");
-
-    /**
-     * Pension Field Id.
-     */
-    public static final JDataField FIELD_PENSION = FIELD_DEFS.declareLocalField("Pension");
-
-    /**
-     * XferDelay Field Id.
-     */
-    public static final JDataField FIELD_XFERDELAY = FIELD_DEFS.declareLocalField("XferDelay");
-
-    /**
-     * Reference Field Id.
-     */
-    public static final JDataField FIELD_REFERENCE = FIELD_DEFS.declareLocalField("Reference");
-
-    /**
-     * Donation Field Id.
-     */
-    public static final JDataField FIELD_DONATION = FIELD_DEFS.declareLocalField("Donation");
-
-    /**
-     * ThirdParty Field Id.
-     */
-    public static final JDataField FIELD_THIRDPARTY = FIELD_DEFS.declareLocalField("ThirdParty");
-
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
@@ -152,59 +92,8 @@ public class Event
                     : JDataFieldValue.SkipField;
         }
 
-        /* Handle InfoSet fields */
-        EventInfoClass myClass = getFieldClass(pField);
-        if (myClass != null) {
-            return getInfoSetValue(myClass);
-        }
-
         /* Pass onwards */
         return super.getFieldValue(pField);
-    }
-
-    /**
-     * Obtain the class of the field if it is an infoSet field.
-     * @param pField the field
-     * @return the class
-     */
-    private static EventInfoClass getFieldClass(final JDataField pField) {
-        if (FIELD_DEBTUNITS.equals(pField)) {
-            return EventInfoClass.DebitUnits;
-        }
-        if (FIELD_CREDUNITS.equals(pField)) {
-            return EventInfoClass.CreditUnits;
-        }
-        if (FIELD_TAXCREDIT.equals(pField)) {
-            return EventInfoClass.TaxCredit;
-        }
-        if (FIELD_DILUTION.equals(pField)) {
-            return EventInfoClass.Dilution;
-        }
-        if (FIELD_YEARS.equals(pField)) {
-            return EventInfoClass.QualifyYears;
-        }
-        if (FIELD_NATINS.equals(pField)) {
-            return EventInfoClass.NatInsurance;
-        }
-        if (FIELD_BENEFIT.equals(pField)) {
-            return EventInfoClass.Benefit;
-        }
-        if (FIELD_PENSION.equals(pField)) {
-            return EventInfoClass.Pension;
-        }
-        if (FIELD_XFERDELAY.equals(pField)) {
-            return EventInfoClass.XferDelay;
-        }
-        if (FIELD_REFERENCE.equals(pField)) {
-            return EventInfoClass.Reference;
-        }
-        if (FIELD_DONATION.equals(pField)) {
-            return EventInfoClass.CharityDonation;
-        }
-        if (FIELD_THIRDPARTY.equals(pField)) {
-            return EventInfoClass.ThirdParty;
-        }
-        return null;
     }
 
     /**
@@ -350,6 +239,16 @@ public class Event
                 : null;
     }
 
+    /**
+     * Obtain Credit Amount.
+     * @return the Credit Amount
+     */
+    public JMoney getCreditAmount() {
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.CreditAmount, JMoney.class)
+                : null;
+    }
+
     @Override
     public DataState getState() {
         /* Pop history for self */
@@ -440,7 +339,7 @@ public class Event
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        EventInfoClass myClass = getFieldClass(pField);
+        EventInfoClass myClass = EventInfoSet.getFieldClass(pField);
         if (myClass != null) {
             return (useInfoSet)
                     ? theInfoSet.fieldChanged(myClass)
@@ -532,27 +431,29 @@ public class Event
     /**
      * Secure constructor.
      * @param pList the list
-     * @param uId the id
-     * @param uControlId the controlId
+     * @param pId the id
+     * @param pControlId the controlId
      * @param pDate the date
-     * @param pDesc the description
-     * @param uDebit the debit id
-     * @param uCredit the credit id
-     * @param uCategory the category id
+     * @param pDebit the debit id
+     * @param pCredit the credit id
      * @param pAmount the amount
+     * @param pCategory the category id
+     * @param pReconciled is the event reconciled
+     * @param pDesc the description
      * @throws JDataException on error
      */
     protected Event(final EventList pList,
-                    final Integer uId,
-                    final Integer uControlId,
+                    final Integer pId,
+                    final Integer pControlId,
                     final Date pDate,
-                    final byte[] pDesc,
-                    final Integer uDebit,
-                    final Integer uCredit,
-                    final Integer uCategory,
-                    final byte[] pAmount) throws JDataException {
+                    final Integer pDebit,
+                    final Integer pCredit,
+                    final byte[] pAmount,
+                    final Integer pCategory,
+                    final Boolean pReconciled,
+                    final byte[] pDesc) throws JDataException {
         /* Initialise item */
-        super(pList, uId, uControlId, pDate, pDesc, uDebit, uCredit, uCategory, pAmount);
+        super(pList, pId, pControlId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pDesc);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -563,25 +464,27 @@ public class Event
     /**
      * Open constructor.
      * @param pList the list
-     * @param uId the id
+     * @param pId the id
      * @param pDate the date
-     * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
-     * @param pCategory the category
      * @param pAmount the amount
+     * @param pCategory the category
+     * @param pReconciled is the event reconciled
+     * @param pDesc the description
      * @throws JDataException on error
      */
     protected Event(final EventList pList,
-                    final Integer uId,
+                    final Integer pId,
                     final Date pDate,
-                    final String pDesc,
                     final Account pDebit,
                     final Account pCredit,
+                    final String pAmount,
                     final EventCategory pCategory,
-                    final String pAmount) throws JDataException {
+                    final Boolean pReconciled,
+                    final String pDesc) throws JDataException {
         /* Initialise item */
-        super(pList, uId, pDate, pDesc, pDebit, pCredit, pCategory, pAmount);
+        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pDesc);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -646,19 +549,19 @@ public class Event
                 && (myDebitUnits != null)) {
                 /* Debit Units are only allowed if debit is priced */
                 if (!myDebit.hasUnits()) {
-                    addError("Units are only allowed involving assets", FIELD_DEBTUNITS);
+                    addError("Units are only allowed involving assets", EventInfoSet.FIELD_DEBITUNITS);
                 }
 
                 /* Category of dividend cannot debit units */
                 if ((myCategory != null)
                     && (isDividend())) {
-                    addError("Units cannot be debited for a dividend", FIELD_DEBTUNITS);
+                    addError("Units cannot be debited for a dividend", EventInfoSet.FIELD_DEBITUNITS);
                 }
 
                 /* Units must be non-zero and positive */
                 if ((!myDebitUnits.isNonZero())
                     || (!myDebitUnits.isPositive())) {
-                    addError("Units must be non-Zero and positive", FIELD_DEBTUNITS);
+                    addError("Units must be non-Zero and positive", EventInfoSet.FIELD_DEBITUNITS);
                 }
             }
 
@@ -667,13 +570,13 @@ public class Event
                 && (myCreditUnits != null)) {
                 /* Credit Units are only allowed if credit is priced */
                 if (!myCredit.hasUnits()) {
-                    addError("Units are only allowed involving assets", FIELD_CREDUNITS);
+                    addError("Units are only allowed involving assets", EventInfoSet.FIELD_CREDITUNITS);
                 }
 
                 /* Units must be non-zero and positive */
                 if ((!myCreditUnits.isNonZero())
                     || (!myCreditUnits.isPositive())) {
-                    addError("Units must be non-Zero and positive", FIELD_CREDUNITS);
+                    addError("Units must be non-Zero and positive", EventInfoSet.FIELD_CREDITUNITS);
                 }
             }
             /* If both credit/debit are both priced */
@@ -685,32 +588,32 @@ public class Event
                 if ((myCategory == null)
                     || ((!isDividend()) && (!myCategory.getCategoryTypeClass().isStockAdjustment()))) {
                     addError("Units can only refer to a single priced asset unless "
-                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", FIELD_CREDUNITS);
+                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", EventInfoSet.FIELD_CREDITUNITS);
                     addError("Units can only refer to a single priced asset unless "
-                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", FIELD_DEBTUNITS);
+                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", EventInfoSet.FIELD_DEBITUNITS);
                 }
 
                 /* Dividend between priced requires identical credit/debit */
                 if ((myCategory != null)
                     && (isDividend())
                     && (!Difference.isEqual(myCredit, myDebit))) {
-                    addError("Unit Dividends between assets must be between same asset", FIELD_CREDUNITS);
+                    addError("Unit Dividends between assets must be between same asset", EventInfoSet.FIELD_CREDITUNITS);
                 }
 
                 /* Cannot have Credit and Debit if accounts are identical */
                 if ((myCreditUnits != null)
                     && (myDebitUnits != null)
                     && (Difference.isEqual(myCredit, myDebit))) {
-                    addError("Cannot credit and debit same account", FIELD_CREDUNITS);
+                    addError("Cannot credit and debit same account", EventInfoSet.FIELD_CREDITUNITS);
                 }
             }
 
             /* Else check for required units */
         } else {
             if (isCategoryClass(EventCategoryClass.StockSplit)) {
-                addError("Stock Split requires non-zero Units", FIELD_CREDUNITS);
+                addError("Stock Split requires non-zero Units", EventInfoSet.FIELD_CREDITUNITS);
             } else if (isCategoryClass(EventCategoryClass.StockAdjust)) {
-                addError("Stock Adjustment requires non-zero Units", FIELD_DEBTUNITS);
+                addError("Stock Adjustment requires non-zero Units", EventInfoSet.FIELD_DEBITUNITS);
             }
         }
 
@@ -718,17 +621,17 @@ public class Event
         if (myDilution != null) {
             /* If the dilution is not allowed */
             if (!needsDilution(myCategory)) {
-                addError("Dilution factor given where not allowed", FIELD_DILUTION);
+                addError("Dilution factor given where not allowed", EventInfoSet.FIELD_DILUTION);
             }
 
             /* If the dilution is out of range */
             if (myDilution.outOfRange()) {
-                addError("Dilution factor value is outside allowed range (0-1)", FIELD_DILUTION);
+                addError("Dilution factor value is outside allowed range (0-1)", EventInfoSet.FIELD_DILUTION);
             }
 
             /* else if we are missing a required dilution factor */
         } else if (needsDilution(myCategory)) {
-            addError("Dilution factor missing where required", FIELD_DILUTION);
+            addError("Dilution factor missing where required", EventInfoSet.FIELD_DILUTION);
         }
 
         /* If we are a taxable gain */
@@ -737,13 +640,13 @@ public class Event
             /* Years must be positive */
             if ((myYears == null)
                 || (myYears <= 0)) {
-                addError("Years must be non-zero and positive", FIELD_YEARS);
+                addError("Years must be non-zero and positive", EventInfoSet.FIELD_YEARS);
             }
 
             /* Tax Credit must be non-null and positive */
             if ((myTaxCred == null)
                 || (!myTaxCred.isPositive())) {
-                addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
+                addError("TaxCredit must be non-null", EventInfoSet.FIELD_TAXCREDIT);
             }
 
             /* If we need a tax credit */
@@ -752,24 +655,24 @@ public class Event
             /* Tax Credit must be non-null and positive */
             if ((myTaxCred == null)
                 || (!myTaxCred.isPositive())) {
-                addError("TaxCredit must be non-null", FIELD_TAXCREDIT);
+                addError("TaxCredit must be non-null", EventInfoSet.FIELD_TAXCREDIT);
             }
 
             /* Years must be null */
             if (myYears != null) {
-                addError("Years must be null", FIELD_YEARS);
+                addError("Years must be null", EventInfoSet.FIELD_YEARS);
             }
 
             /* else we should not have a tax credit */
         } else if (myCategory != null) {
             /* Tax Credit must be null */
             if (myTaxCred != null) {
-                addError("TaxCredit must be null", FIELD_TAXCREDIT);
+                addError("TaxCredit must be null", EventInfoSet.FIELD_TAXCREDIT);
             }
 
             /* Years must be null */
             if (myYears != null) {
-                addError("Years must be null", FIELD_YEARS);
+                addError("Years must be null", EventInfoSet.FIELD_YEARS);
             }
         }
 
@@ -902,6 +805,15 @@ public class Event
     }
 
     /**
+     * Set a new Credit Amount.
+     * @param pValue the new credit amount
+     * @throws JDataException on error
+     */
+    public void setCreditAmount(final JMoney pValue) throws JDataException {
+        setInfoSetValue(EventInfoClass.CreditAmount, pValue);
+    }
+
+    /**
      * Set a new Reference.
      * @param pReference the new reference
      * @throws JDataException on error
@@ -934,23 +846,6 @@ public class Event
 
         /* Set the value */
         theInfoSet.setValue(pInfoClass, pValue);
-    }
-
-    /**
-     * Get an infoSet value.
-     * @param pInfoClass the class of info to get
-     * @return the value to set
-     */
-    private Object getInfoSetValue(final EventInfoClass pInfoClass) {
-        /* Access value of object */
-        Object myValue = hasInfoSet
-                ? theInfoSet.getField(pInfoClass)
-                : null;
-
-        /* Return the value */
-        return (myValue != null)
-                ? myValue
-                : JDataFieldValue.SkipField;
     }
 
     @Override
@@ -1087,12 +982,12 @@ public class Event
         }
 
         @Override
-        public EventList cloneList(final DataSet<?> pDataSet) {
+        public EventList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (EventList) super.cloneList(pDataSet);
         }
 
         @Override
-        public EventList deriveList(final ListStyle pStyle) {
+        public EventList deriveList(final ListStyle pStyle) throws JDataException {
             return (EventList) super.deriveList(pStyle);
         }
 
@@ -1253,23 +1148,25 @@ public class Event
 
         /**
          * Allow an event to be added.
-         * @param uId the id
+         * @param pId the id
          * @param pDate the date
-         * @param pDesc the description
-         * @param pAmount the amount
          * @param pDebit the debit account
          * @param pCredit the credit account
+         * @param pAmount the amount
          * @param pCategory the category
+         * @param pReconciled is the event reconciled
+         * @param pDesc the description
          * @return the new event
          * @throws JDataException on error
          */
-        public Event addOpenItem(final Integer uId,
+        public Event addOpenItem(final Integer pId,
                                  final Date pDate,
-                                 final String pDesc,
-                                 final String pAmount,
                                  final String pDebit,
                                  final String pCredit,
-                                 final String pCategory) throws JDataException {
+                                 final String pAmount,
+                                 final String pCategory,
+                                 final Boolean pReconciled,
+                                 final String pDesc) throws JDataException {
             /* Access the accounts */
             FinanceData myData = getDataSet();
             JDataFormatter myFormatter = myData.getDataFormatter();
@@ -1306,7 +1203,7 @@ public class Event
             }
 
             /* Create the new Event */
-            Event myEvent = new Event(this, uId, pDate, pDesc, myDebit, myCredit, myCategory, pAmount);
+            Event myEvent = new Event(this, pId, pDate, myDebit, myCredit, pAmount, myCategory, pReconciled, pDesc);
 
             /* Add the Event to the list */
             append(myEvent);
@@ -1315,29 +1212,31 @@ public class Event
 
         /**
          * Allow an event to be added.
-         * @param uId the id
-         * @param uControlId the control Id
+         * @param pId the id
+         * @param pControlId the control Id
          * @param pDate the date
-         * @param pDesc the description
+         * @param pDebitId the debit id
+         * @param pCreditId the credit id
          * @param pAmount the amount
-         * @param uDebitId the debit id
-         * @param uCreditId the credit id
-         * @param uCatId the category id
+         * @param pCatId the category id
+         * @param pReconciled is the event reconciled
+         * @param pDesc the description
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final Date pDate,
-                                  final byte[] pDesc,
+                                  final Integer pDebitId,
+                                  final Integer pCreditId,
                                   final byte[] pAmount,
-                                  final Integer uDebitId,
-                                  final Integer uCreditId,
-                                  final Integer uCatId) throws JDataException {
+                                  final Integer pCatId,
+                                  final Boolean pReconciled,
+                                  final byte[] pDesc) throws JDataException {
             /* Create the new Event */
-            Event myEvent = new Event(this, uId, uControlId, pDate, pDesc, uDebitId, uCreditId, uCatId, pAmount);
+            Event myEvent = new Event(this, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, pReconciled, pDesc);
 
             /* Check that this EventId has not been previously added */
-            if (!isIdUnique(uId)) {
+            if (!isIdUnique(pId)) {
                 throw new JDataException(ExceptionClass.DATA, myEvent, "Duplicate EventId");
             }
 

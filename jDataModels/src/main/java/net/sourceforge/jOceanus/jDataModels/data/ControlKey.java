@@ -524,12 +524,12 @@ public class ControlKey
         }
 
         @Override
-        public ControlKeyList cloneList(final DataSet<?> pDataSet) {
+        public ControlKeyList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (ControlKeyList) super.cloneList(pDataSet);
         }
 
         @Override
-        public ControlKeyList deriveList(final ListStyle pStyle) {
+        public ControlKeyList deriveList(final ListStyle pStyle) throws JDataException {
             return (ControlKeyList) super.deriveList(pStyle);
         }
 

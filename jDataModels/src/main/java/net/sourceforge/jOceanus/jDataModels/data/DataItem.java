@@ -29,6 +29,7 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.ItemValidation;
 import net.sourceforge.jOceanus.jDataManager.ItemValidation.ErrorElement;
+import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
@@ -667,8 +668,9 @@ public abstract class DataItem
 
     /**
      * Resolve all references to current dataSet.
+     * @throws JDataException on error
      */
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
     }
 
     /**

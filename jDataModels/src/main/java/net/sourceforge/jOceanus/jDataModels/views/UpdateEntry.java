@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jDataModels.views;
 
 import java.util.Iterator;
 
+import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 
@@ -87,8 +88,9 @@ public final class UpdateEntry<T extends DataItem & Comparable<? super T>> {
 
     /**
      * Prepare changes in an edit view back into the core data.
+     * @throws JDataException on error
      */
-    public void prepareChanges() {
+    public void prepareChanges() throws JDataException {
         /* Ignore if we have no list */
         if (theDataList == null) {
             return;

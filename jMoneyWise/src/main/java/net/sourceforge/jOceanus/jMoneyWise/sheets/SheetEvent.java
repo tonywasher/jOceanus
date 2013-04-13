@@ -62,19 +62,9 @@ public class SheetEvent
     private static final int COL_DATE = COL_CONTROLID + 1;
 
     /**
-     * Description column.
-     */
-    private static final int COL_DESC = COL_DATE + 1;
-
-    /**
-     * Amount column.
-     */
-    private static final int COL_AMOUNT = COL_DESC + 1;
-
-    /**
      * Debit column.
      */
-    private static final int COL_DEBIT = COL_AMOUNT + 1;
+    private static final int COL_DEBIT = COL_DATE + 1;
 
     /**
      * Credit column.
@@ -82,9 +72,24 @@ public class SheetEvent
     private static final int COL_CREDIT = COL_DEBIT + 1;
 
     /**
+     * Amount column.
+     */
+    private static final int COL_AMOUNT = COL_CREDIT + 1;
+
+    /**
      * Category column.
      */
-    private static final int COL_CATEGORY = COL_CREDIT + 1;
+    private static final int COL_CATEGORY = COL_AMOUNT + 1;
+
+    /**
+     * Reconciled column.
+     */
+    private static final int COL_RECONCILED = COL_CATEGORY + 1;
+
+    /**
+     * Description column.
+     */
+    private static final int COL_DESC = COL_RECONCILED + 1;
 
     /**
      * Events data list.
@@ -118,7 +123,7 @@ public class SheetEvent
         /* Set up info Sheet */
         theInfoSheet = isBackup()
                 ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_CATEGORY);
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_DESC);
     }
 
     /**
@@ -138,7 +143,7 @@ public class SheetEvent
         /* Set up info Sheet */
         theInfoSheet = isBackup()
                 ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_CATEGORY);
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_DESC);
     }
 
     @Override
@@ -149,6 +154,9 @@ public class SheetEvent
         Integer myCreditId = loadInteger(COL_CREDIT);
         Integer myCatId = loadInteger(COL_CATEGORY);
 
+        /* Load flags */
+        Boolean myReconciled = loadBoolean(COL_RECONCILED);
+
         /* Access the date and years */
         Date myDate = loadDate(COL_DATE);
 
@@ -157,7 +165,7 @@ public class SheetEvent
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDesc, myAmount, myDebitId, myCreditId, myCatId);
+        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myReconciled, myDesc);
     }
 
     @Override
@@ -170,12 +178,15 @@ public class SheetEvent
         /* Access the date and name and description bytes */
         Date myDate = loadDate(COL_DATE);
 
+        /* Load flags */
+        Boolean myReconciled = loadBoolean(COL_RECONCILED);
+
         /* Access the binary values */
         String myDesc = loadString(COL_DESC);
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        Event myEvent = theList.addOpenItem(pId, myDate, myDesc, myAmount, myDebit, myCredit, myCategory);
+        Event myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, myDesc);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myEvent);
@@ -189,6 +200,7 @@ public class SheetEvent
         writeInteger(COL_DEBIT, pItem.getDebitId());
         writeInteger(COL_CREDIT, pItem.getCreditId());
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
+        writeBoolean(COL_RECONCILED, pItem.getReconciled());
         writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
     }
@@ -199,6 +211,7 @@ public class SheetEvent
         writeDate(COL_DATE, pItem.getDate());
         writeString(COL_DESC, pItem.getDesc());
         writeDecimal(COL_AMOUNT, pItem.getAmount());
+        writeBoolean(COL_RECONCILED, pItem.getReconciled());
         writeString(COL_DEBIT, pItem.getDebitName());
         writeString(COL_CREDIT, pItem.getCreditName());
         writeString(COL_CATEGORY, pItem.getCategoryName());
@@ -216,6 +229,7 @@ public class SheetEvent
         writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
         writeHeader(COL_CATEGORY, EventBase.FIELD_CATEGORY.getName());
+        writeHeader(COL_RECONCILED, EventBase.FIELD_RECONCILED.getName());
 
         /* prepare the info sheet */
         theInfoSheet.prepareSheet();
@@ -232,6 +246,7 @@ public class SheetEvent
         /* Set Number columns */
         setDateColumn(COL_DATE);
         setMoneyColumn(COL_AMOUNT);
+        setBooleanColumn(COL_RECONCILED);
 
         /* Apply validation */
         applyDataValidation(COL_DEBIT, SheetAccount.AREA_ACCOUNTNAMES);
@@ -247,7 +262,7 @@ public class SheetEvent
     @Override
     protected int getLastColumn() {
         /* Set default */
-        int myLastCol = COL_CATEGORY;
+        int myLastCol = COL_DESC;
 
         /* If we are not creating a backup */
         if (!isBackup()) {
@@ -317,13 +332,62 @@ public class SheetEvent
                     Date myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
 
                     /* Access the values */
-                    String myDesc = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                    String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                     String myDebit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                     String myCredit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                    String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                    String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+
+                    /* Handle Reconciled which may be missing */
+                    DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    Boolean myReconciled = Boolean.FALSE;
+                    if (myCell != null) {
+                        myReconciled = Boolean.TRUE;
+                    }
+
+                    /* Handle Description which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myDesc = null;
+                    if (myCell != null) {
+                        myDesc = myCell.getStringValue();
+                    }
+
+                    /* Handle NatInsurance which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myNatInsurance = null;
+                    if (myCell != null) {
+                        myNatInsurance = myCell.getStringValue();
+                    }
+
+                    /* Handle Benefit which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myBenefit = null;
+                    if (myCell != null) {
+                        myBenefit = myCell.getStringValue();
+                    }
+
+                    /* Handle Tax Credit which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myTaxCredit = null;
+                    if (myCell != null) {
+                        myTaxCredit = myCell.getStringValue();
+                    }
+
+                    /* Handle DebitUnits which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myDebitUnits = null;
+                    if (myCell != null) {
+                        myDebitUnits = myCell.getStringValue();
+                    }
+
+                    /* Handle CreditUnits which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myCreditUnits = null;
+                    if (myCell != null) {
+                        myCreditUnits = myCell.getStringValue();
+                    }
 
                     /* Handle Dilution which may be missing */
-                    DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     String myDilution = null;
                     if (myCell != null) {
                         myDilution = myCell.getStringValue();
@@ -332,21 +396,11 @@ public class SheetEvent
                         }
                     }
 
-                    /* Handle Units which may be missing */
+                    /* Handle Reference which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    // String myUnitsVal = null; TODO
-                    // if (myCell != null) {
-                    // myUnitsVal = myCell.getStringValue();
-                    // }
-
-                    /* Handle category */
-                    String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-
-                    /* Handle Tax Credit which may be missing */
-                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    String myTaxCredit = null;
+                    String myReference = null;
                     if (myCell != null) {
-                        myTaxCredit = myCell.getStringValue();
+                        myReference = myCell.getStringValue();
                     }
 
                     /* Handle Years which may be missing */
@@ -356,29 +410,42 @@ public class SheetEvent
                         myYears = myCell.getIntegerValue();
                     }
 
-                    /* Add the event */
-                    Event myEvent = myList.addOpenItem(0, myDate, myDesc, myAmount, myDebit, myCredit, myCategory);
+                    /* Handle Donation which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myDonation = null;
+                    if (myCell != null) {
+                        myDonation = myCell.getStringValue();
+                    }
 
-                    /* If we have units */
-                    // if (myUnitsVal != null) {
-                    // JUnits myUnits = myParser.parseUnitsValue(myUnitsVal);
-                    // JUnits myValue = myUnits;
-                    // boolean isCredit = myEvent.getCredit().getAccountCategoryClass().hasUnits();
-                    // if ((myEvent.isStockSplit() || myEvent.isAdminCharge())
-                    // && (!myUnits.isPositive())) {
-                    // myValue = new JUnits(myValue);
-                    // myValue.negate();
-                    // isCredit = false;
-                    // }
-                    // myInfoList.addOpenItem(0, myEvent, isCredit
-                    // ? EventInfoClass.CreditUnits
-                    // : EventInfoClass.DebitUnits, myValue);
-                    // } TODO
+                    /* Handle ThirdParty which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myThirdParty = null;
+                    if (myCell != null) {
+                        myThirdParty = myCell.getStringValue();
+                    }
+
+                    /* Handle CreditAmount which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myCreditAmount = null;
+                    if (myCell != null) {
+                        myCreditAmount = myCell.getStringValue();
+                    }
+
+                    /* Add the event */
+                    Event myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, myDesc);
 
                     /* Add information relating to the account */
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.NatInsurance, myNatInsurance);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.Benefit, myBenefit);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DebitUnits, myDebitUnits);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditUnits, myCreditUnits);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.Dilution, myDilution);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.Reference, myReference);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.QualifyYears, myYears);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CharityDonation, myDonation);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.ThirdParty, myThirdParty);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditAmount, myCreditAmount);
 
                     /* Validate the event */
                     myEvent.validate();

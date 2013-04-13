@@ -366,7 +366,7 @@ public class AccountCategory
     }
 
     /**
-     * Set account type name
+     * Set account type name.
      * @param pValue the value
      */
     private void setValueType(final String pValue) {
@@ -390,7 +390,7 @@ public class AccountCategory
     }
 
     /**
-     * Set parent name
+     * Set parent name.
      * @param pValue the value
      */
     private void setValueParent(final String pValue) {
@@ -536,7 +536,7 @@ public class AccountCategory
     }
 
     @Override
-    public void resolveDataSetLinks() {
+    public void resolveDataSetLinks() throws JDataException {
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
@@ -552,9 +552,17 @@ public class AccountCategory
             myCatType = ((AccountCategoryType) myCatType).getId();
         }
         if (myCatType instanceof Integer) {
-            setValueType(myTypes.findItemById((Integer) myCatType));
+            AccountCategoryType myType = myTypes.findItemById((Integer) myCatType);
+            if (myType == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Type id");
+            }
+            setValueType(myType);
         } else if (myCatType instanceof String) {
-            setValueType(myTypes.findItemByName((String) myCatType));
+            AccountCategoryType myType = myTypes.findItemByName((String) myCatType);
+            if (myType == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Type name");
+            }
+            setValueType(myType);
         }
 
         /* Adjust Parent */
@@ -563,9 +571,17 @@ public class AccountCategory
             myParent = ((AccountCategory) myParent).getId();
         }
         if (myParent instanceof Integer) {
-            setValueParent(myList.findItemById((Integer) myParent));
+            AccountCategory myCat = myList.findItemById((Integer) myParent);
+            if (myCat == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Category id");
+            }
+            setValueParent(myCat);
         } else if (myParent instanceof String) {
-            setValueParent(myList.findItemByName((String) myParent));
+            AccountCategory myCat = myList.findItemByName((String) myParent);
+            if (myCat == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Category name");
+            }
+            setValueParent(myCat);
         }
     }
 
@@ -778,7 +794,7 @@ public class AccountCategory
         }
 
         @Override
-        public AccountCategoryList cloneList(final DataSet<?> pDataSet) {
+        public AccountCategoryList cloneList(final DataSet<?> pDataSet) throws JDataException {
             return (AccountCategoryList) super.cloneList(pDataSet);
         }
 
@@ -791,7 +807,7 @@ public class AccountCategory
         }
 
         @Override
-        public AccountCategoryList deriveList(final ListStyle pStyle) {
+        public AccountCategoryList deriveList(final ListStyle pStyle) throws JDataException {
             return (AccountCategoryList) super.deriveList(pStyle);
         }
 
