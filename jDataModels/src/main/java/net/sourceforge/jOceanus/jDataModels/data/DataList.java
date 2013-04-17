@@ -612,6 +612,23 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     }
 
     /**
+     * Touch underlying items that are referenced by items in this list.
+     */
+    public void touchUnderlyingItems() {
+        /* Loop through items in the list */
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            T myItem = myIterator.next();
+
+            /* If the item is not deleted */
+            if (!myItem.isDeleted()) {
+                /* Touch underlying items */
+                myItem.touchUnderlyingItems();
+            }
+        }
+    }
+
+    /**
      * Set the EditState for the list (forcible on error/change).
      * @param pState the new {@link EditState} (only ERROR/DIRTY)
      */
@@ -685,8 +702,12 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
     /**
      * Validate the data items.
+     * @return the error list (or null if no errors)
      */
-    public void validate() {
+    public DataErrorList<DataItem> validate() {
+        /* Allocate error list */
+        DataErrorList<DataItem> myErrors = null;
+
         /* Clear the errors */
         clearErrors();
 
@@ -705,10 +726,25 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
             /* Validate the item */
             myCurr.validate();
+
+            /* If the item is in error */
+            if (myCurr.hasErrors()) {
+                /* If this is the first error */
+                if (myErrors == null) {
+                    /* Allocate error list */
+                    myErrors = new DataErrorList<DataItem>();
+                }
+
+                /* Add to the error list */
+                myErrors.add(myCurr);
+            }
         }
 
         /* Determine the Edit State */
         findEditState();
+
+        /* Return the errors */
+        return myErrors;
     }
 
     /**

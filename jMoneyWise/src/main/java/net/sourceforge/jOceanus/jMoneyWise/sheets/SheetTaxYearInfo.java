@@ -24,6 +24,8 @@ package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -97,13 +99,13 @@ public class SheetTaxYearInfo
 
     @Override
     protected void postProcessOnLoad() throws JDataException {
-        /* Mark active items */
-        theTaxYears.markActiveItems();
+        /* Touch underlying items */
+        theTaxYears.touchUnderlyingItems();
 
         /* Validate the tax years */
-        theTaxYears.validate();
-        if (theTaxYears.hasErrors()) {
-            throw new JDataException(ExceptionClass.VALIDATE, theTaxYears, "Validation error");
+        DataErrorList<DataItem> myErrors = theTaxYears.validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
         }
     }
 }

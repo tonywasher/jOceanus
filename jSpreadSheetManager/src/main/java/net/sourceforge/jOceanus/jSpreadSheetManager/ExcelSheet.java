@@ -283,6 +283,9 @@ public class ExcelSheet
             case Dilution:
                 return DataWorkBook.WIDTH_DILUTION
                        * WIDTH_CHAR;
+            case Ratio:
+                return DataWorkBook.WIDTH_RATIO
+                       * WIDTH_CHAR;
             case String:
             default:
                 return DataWorkBook.WIDTH_STRING

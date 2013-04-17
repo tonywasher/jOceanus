@@ -849,20 +849,12 @@ public class Event
     }
 
     @Override
-    protected void markActiveItems() {
-        /* mark underlying items */
-        super.markActiveItems();
+    public void touchUnderlyingItems() {
+        /* touch underlying items */
+        super.touchUnderlyingItems();
 
-        /* Access values */
-        Account myParty = getThirdParty();
-
-        /* If we have a parent, mark the thirdParty */
-        if (myParty != null) {
-            myParty.touchItem(this);
-        }
-
-        /* Mark infoSet items */
-        theInfoSet.markActiveItems();
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
     }
 
     /**
@@ -1092,26 +1084,6 @@ public class Event
 
             /* Return the List */
             return myList;
-        }
-
-        /**
-         * Validate an extract.
-         */
-        @Override
-        public void validate() {
-            /* Clear the errors */
-            clearErrors();
-
-            /* Access the underlying data */
-            Iterator<Event> myIterator = listIterator();
-
-            /* Loop through the lines */
-            while (myIterator.hasNext()) {
-                Event myCurr = myIterator.next();
-
-                /* Validate it */
-                myCurr.validate();
-            }
         }
 
         /**

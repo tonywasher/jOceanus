@@ -80,7 +80,7 @@ public class TableAccountInfo
 
     @Override
     protected void postProcessOnLoad() throws JDataException {
-        /* Validate the loaded accounts */
-        theAccounts.markActiveItems();
+        /* Touch underlying items of accounts */
+        theAccounts.touchUnderlyingItems();
     }
 }

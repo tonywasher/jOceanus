@@ -91,7 +91,7 @@ public class SheetAccountInfo
 
     @Override
     protected void postProcessOnLoad() throws JDataException {
-        /* Mark active items and validate */
-        theAccounts.markActiveItems();
+        /* Touch underlying items of accounts */
+        theAccounts.touchUnderlyingItems();
     }
 }

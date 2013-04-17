@@ -338,6 +338,13 @@ public class ExcelWorkBook {
         myStyle.setFont(myNumberFont);
         theMap.put(CellStyleType.Dilution, myStyle);
 
+        /* Create the Ratio Cell Style */
+        myStyle = theBook.createCellStyle();
+        myStyle.setDataFormat(myFormat.getFormat("0.000000"));
+        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
+        myStyle.setFont(myNumberFont);
+        theMap.put(CellStyleType.Ratio, myStyle);
+
         /* Create the Integer Cell Style */
         myStyle = theBook.createCellStyle();
         myStyle.setDataFormat(myFormat.getFormat("0"));

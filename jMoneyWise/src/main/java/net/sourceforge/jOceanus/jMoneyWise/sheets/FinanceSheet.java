@@ -365,7 +365,7 @@ public class FinanceSheet
             // bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);
             // }
             if (bContinue) {
-                myData.getAccounts().markActiveItems();
+                myData.getAccounts().validateOnLoad();
             }
 
             // if (bContinue) {

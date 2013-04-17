@@ -40,6 +40,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 
 /**
@@ -300,6 +301,10 @@ public class JDataFormatter {
         if (pClass == JDilution.class) {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.parseDilutionValue(pSource));
+        }
+        if (pClass == JRatio.class) {
+            /* Parse the dilution */
+            return pClass.cast(theDecimalParser.parseRatioValue(pSource));
         }
         return null;
     }

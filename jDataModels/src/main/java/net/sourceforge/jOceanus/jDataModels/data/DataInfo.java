@@ -367,6 +367,15 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
         getValueSet().setDeletion(true);
     }
 
+    @Override
+    public void touchUnderlyingItems() {
+        /* Pass call on */
+        super.touchUnderlyingItems();
+
+        /* Touch the info type */
+        getInfoType().touchItem(this);
+    }
+
     /**
      * Basic constructor.
      * @param pList the list

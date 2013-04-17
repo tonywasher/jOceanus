@@ -23,10 +23,11 @@
 package net.sourceforge.jOceanus.jDecimal;
 
 /**
- * Represents a Dilution object. Many shares are quoted with a diluted price which must be rectified by a
- * dilution factor to obtain the correct price. This object represents such a dilution factor
+ * Represents a Dilution object. Many shares are quoted with a diluted price which must be rectified by a dilution factor to obtain the correct price. This
+ * object represents such a dilution factor
  */
-public class JDilution extends JDecimal {
+public class JDilution
+        extends JDecimal {
     /**
      * Standard number of decimals for Dilution.
      */
@@ -66,7 +67,7 @@ public class JDilution extends JDecimal {
     }
 
     /**
-     * Constructor for money from a decimal string.
+     * Constructor for dilution from a decimal string.
      * @param pSource The source decimal string
      */
     public JDilution(final String pSource) {
@@ -91,7 +92,8 @@ public class JDilution extends JDecimal {
      * @return true/false
      */
     public final boolean outOfRange() {
-        return (compareTo(MIN_DILUTION) < 0) || (compareTo(MAX_DILUTION) > 0);
+        return (compareTo(MIN_DILUTION) < 0)
+               || (compareTo(MAX_DILUTION) > 0);
     }
 
     @Override

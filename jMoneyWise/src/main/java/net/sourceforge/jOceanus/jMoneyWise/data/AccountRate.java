@@ -283,6 +283,14 @@ public class AccountRate
     }
 
     /**
+     * Set the account name.
+     * @param pName the account name
+     */
+    private void setValueAccount(final String pName) {
+        getValueSet().setValue(FIELD_ACCOUNT, pName);
+    }
+
+    /**
      * Set the rate.
      * @param pValue the rate
      * @throws JDataException on error
@@ -376,7 +384,7 @@ public class AccountRate
      * Open Constructor.
      * @param pList the list
      * @param uId the id
-     * @param pAccount the account
+     * @param pAccount the account name
      * @param pEndDate the end date
      * @param pRate the rate
      * @param pBonus the bonus
@@ -384,7 +392,7 @@ public class AccountRate
      */
     private AccountRate(final AccountRateList pList,
                         final Integer uId,
-                        final Account pAccount,
+                        final String pAccount,
                         final Date pEndDate,
                         final String pRate,
                         final String pBonus) throws JDataException {
@@ -451,15 +459,6 @@ public class AccountRate
             /* Store the controlId */
             setControlKey(uControlId);
 
-            /* Look up the Account */
-            FinanceData myData = getDataSet();
-            AccountList myAccounts = myData.getAccounts();
-            Account myAccount = myAccounts.findItemById(uAccountId);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
-            }
-            setValueAccount(myAccount);
-
             /* Record the date */
             if (pEndDate != null) {
                 setValueEndDate(new JDateDay(pEndDate));
@@ -512,14 +511,29 @@ public class AccountRate
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Accounts */
+        /* Access Relevant lists */
         FinanceData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
+        ValueSet myValues = getValueSet();
 
-        /* Update to use the local copy of the Accounts */
-        Account myAct = getAccount();
-        Account myNewAct = myAccounts.findItemById(myAct.getId());
-        setValueAccount(myNewAct);
+        /* Adjust Account */
+        Object myAccount = myValues.getValue(FIELD_ACCOUNT);
+        if (myAccount instanceof Account) {
+            myAccount = ((Account) myAccount).getId();
+        }
+        if (myAccount instanceof Integer) {
+            Account myAct = myAccounts.findItemById((Integer) myAccount);
+            if (myAct == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account id");
+            }
+            setValueAccount(myAct);
+        } else if (myAccount instanceof String) {
+            Account myAct = myAccounts.findItemByName((String) myAccount);
+            if (myAct == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account name");
+            }
+            setValueAccount(myAct);
+        }
     }
 
     /**
@@ -527,9 +541,11 @@ public class AccountRate
      */
     @Override
     public void validate() {
-        JDateDay myDate = getEndDate();
         AccountRateList myList = (AccountRateList) getList();
         FinanceData mySet = getDataSet();
+        JDateDay myDate = getEndDate();
+        JRate myRate = getRate();
+        JRate myBonus = getBonus();
 
         /* If the date is null then we must be the last element for the account */
         if (myDate == null) {
@@ -557,14 +573,14 @@ public class AccountRate
         }
 
         /* The rate must be non-zero */
-        if ((getRate() == null)
-            || (!getRate().isPositive())) {
+        if ((myRate == null)
+            || (!myRate.isPositive())) {
             addError("Rate must be positive", FIELD_RATE);
         }
 
         /* The bonus rate must be non-zero if it exists */
-        if ((getBonus() != null)
-            && ((!getBonus().isNonZero()) || (!getBonus().isPositive()))) {
+        if ((myBonus != null)
+            && ((!myBonus.isNonZero()) || (!myBonus.isPositive()))) {
             addError("Bonus Rate must be non-Zero and positive", FIELD_BONUS);
         }
 
@@ -598,6 +614,12 @@ public class AccountRate
      */
     public void setEndDate(final JDateDay pDate) {
         setValueEndDate(new JDateDay(pDate));
+    }
+
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch the underlying account */
+        getAccount().touchItem(this);
     }
 
     /**
@@ -824,22 +846,6 @@ public class AccountRate
         }
 
         /**
-         * Mark active rates.
-         */
-        protected void markActiveItems() {
-            /* Access the list iterator */
-            Iterator<AccountRate> myIterator = listIterator();
-
-            /* Loop through the Rates */
-            while (myIterator.hasNext()) {
-                AccountRate myCurr = myIterator.next();
-
-                /* mark the account referred to */
-                myCurr.getAccount().touchItem(myCurr);
-            }
-        }
-
-        /**
          * Obtain the most relevant rate for an Account and a Date.
          * @param pAccount the Account for which to get the rate
          * @param pDate the date from which a rate is required
@@ -886,34 +892,12 @@ public class AccountRate
                                 final String pRate,
                                 final Date pDate,
                                 final String pBonus) throws JDataException {
-            /* Access the Accounts */
-            FinanceData myData = getDataSet();
-            AccountList myAccounts = myData.getAccounts();
-
-            /* Look up the Account */
-            Account myAccount = myAccounts.findItemByName(pAccount);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Rate on ["
-                                                              + myData.getDataFormatter().formatObject(pDate)
-                                                              + "] has invalid Account ["
-                                                              + pAccount
-                                                              + "]");
-            }
-
             /* Create the ratePeriod */
-            AccountRate myRate = new AccountRate(this, uId, myAccount, pDate, pRate, pBonus);
+            AccountRate myRate = new AccountRate(this, uId, pAccount, pDate, pRate, pBonus);
 
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(myRate.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myRate, "Duplicate RateId");
-            }
-
-            /* Validate the rate */
-            myRate.validate();
-
-            /* Handle validation failure */
-            if (myRate.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myRate, "Failed validation");
             }
 
             /* Add to the list */
@@ -942,14 +926,6 @@ public class AccountRate
             /* Check that this RateId has not been previously added */
             if (!isIdUnique(uId)) {
                 throw new JDataException(ExceptionClass.DATA, myRate, "Duplicate RateId");
-            }
-
-            /* Validate the rate */
-            myRate.validate();
-
-            /* Handle validation failure */
-            if (myRate.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myRate, "Failed validation");
             }
 
             /* Add to the list */

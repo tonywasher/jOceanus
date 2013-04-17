@@ -222,6 +222,14 @@ public class AccountPrice
     }
 
     /**
+     * Set the account name.
+     * @param pName the account name
+     */
+    private void setValueAccount(final String pName) {
+        getValueSet().setValue(FIELD_ACCOUNT, pName);
+    }
+
+    /**
      * Set the price.
      * @param pValue the price
      * @throws JDataException on error
@@ -292,14 +300,14 @@ public class AccountPrice
      * Open Constructor.
      * @param pList the list
      * @param pId the id
-     * @param pAccount the account
+     * @param pAccount the account name
      * @param pDate the date
      * @param pPrice the price
      * @throws JDataException on error
      */
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final Integer pId,
-                         final Account pAccount,
+                         final String pAccount,
                          final Date pDate,
                          final String pPrice) throws JDataException {
         /* Initialise the item */
@@ -356,17 +364,6 @@ public class AccountPrice
             /* Store the controlId */
             setControlKey(pControlId);
 
-            /* Access the DataSet */
-            FinanceData myData = getDataSet();
-
-            /* Look up the Account */
-            AccountList myAccounts = myData.getAccounts();
-            Account myAccount = myAccounts.findItemById(pAccountId);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
-            }
-            setValueAccount(myAccount);
-
             /* Record the date and price */
             setValueDate(new JDateDay(pDate));
             setValuePrice(pPrice);
@@ -376,29 +373,6 @@ public class AccountPrice
             /* Pass on exception */
             throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
         }
-    }
-
-    /**
-     * Special price constructor for diluted prices.
-     * @param pList the list
-     * @param pAccount the account
-     * @param pDate the date
-     * @param pPrice the price
-     * @throws JDataException on error
-     */
-    private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
-                         final Account pAccount,
-                         final JDateDay pDate,
-                         final JPrice pPrice) throws JDataException {
-        /* Initialise the item */
-        super(pList, 0);
-
-        /* Set the passed details */
-        setValueAccount(pAccount);
-        setValueDate(pDate);
-
-        /* Create the pair for the values */
-        setValuePrice(pPrice);
     }
 
     @Override
@@ -432,14 +406,29 @@ public class AccountPrice
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Accounts */
+        /* Access Relevant lists */
         FinanceData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
+        ValueSet myValues = getValueSet();
 
-        /* Update to use the local copy of the Accounts (use name rather than id) */
-        Account myAct = getAccount();
-        Account myNewAct = myAccounts.findItemByName(myAct.getName());
-        setValueAccount(myNewAct);
+        /* Adjust Account */
+        Object myAccount = myValues.getValue(FIELD_ACCOUNT);
+        if (myAccount instanceof Account) {
+            myAccount = ((Account) myAccount).getId();
+        }
+        if (myAccount instanceof Integer) {
+            Account myAct = myAccounts.findItemById((Integer) myAccount);
+            if (myAct == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account id");
+            }
+            setValueAccount(myAct);
+        } else if (myAccount instanceof String) {
+            Account myAct = myAccounts.findItemByName((String) myAccount);
+            if (myAct == null) {
+                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account name");
+            }
+            setValueAccount(myAct);
+        }
     }
 
     /**
@@ -496,6 +485,12 @@ public class AccountPrice
      */
     public void setDate(final JDateDay pDate) {
         setValueDate(pDate);
+    }
+
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch the underlying account */
+        getAccount().touchItem(this);
     }
 
     /**
@@ -721,22 +716,6 @@ public class AccountPrice
         }
 
         /**
-         * Mark active prices.
-         */
-        protected void markActiveItems() {
-            /* Access the list iterator */
-            Iterator<AccountPrice> myIterator = listIterator();
-
-            /* Loop through the Prices */
-            while (myIterator.hasNext()) {
-                AccountPrice myCurr = myIterator.next();
-
-                /* mark the account referred to */
-                myCurr.getAccount().touchItem(myCurr);
-            }
-        }
-
-        /**
          * Apply changes from a Spot Price list.
          * @param pPrices the spot prices
          */
@@ -795,36 +774,14 @@ public class AccountPrice
                                 final Date pDate,
                                 final String pAccount,
                                 final String pPrice) throws JDataException {
-            /* Access the Accounts */
-            FinanceData myData = getDataSet();
-            AccountList myAccounts = myData.getAccounts();
-
-            /* Look up the Account */
-            Account myAccount = myAccounts.findItemByName(pAccount);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Price on ["
-                                                              + myData.getDataFormatter().formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Account ["
-                                                              + pAccount
-                                                              + "]");
-            }
-
             /* Create the PricePoint */
-            AccountPrice myPrice = new AccountPrice(this, pId, myAccount, pDate, pPrice);
+            AccountPrice myPrice = new AccountPrice(this, pId, pAccount, pDate, pPrice);
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
                 throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
                                                                        + myPrice.getId()
                                                                        + ">");
-            }
-
-            /* Validate the price */
-            myPrice.validate();
-
-            /* Handle validation failure */
-            if (myPrice.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myPrice, "Failed validation");
             }
 
             /* Add to the list */
@@ -853,14 +810,6 @@ public class AccountPrice
                 throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
                                                                        + pId
                                                                        + ">");
-            }
-
-            /* Validate the price */
-            myPrice.validate();
-
-            /* Handle validation failure */
-            if (myPrice.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myPrice, "Failed validation");
             }
 
             /* Add to the list */

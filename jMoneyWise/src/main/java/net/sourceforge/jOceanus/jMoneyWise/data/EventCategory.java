@@ -700,12 +700,16 @@ public class EventCategory
         setValueParent(pParent);
     }
 
-    /**
-     * Mark active items.
-     */
-    protected void markActiveItems() {
-        /* mark the category type referred to */
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch the category type referred to */
         getCategoryType().touchItem(this);
+
+        /* Touch parent if it exists */
+        EventCategory myParent = getParentCategory();
+        if (myParent != null) {
+            myParent.touchItem(this);
+        }
     }
 
     @Override

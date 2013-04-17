@@ -31,6 +31,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 
 /**
@@ -341,6 +342,9 @@ public abstract class DataCell {
         }
         if (pValue instanceof JDilution) {
             return CellStyleType.Dilution;
+        }
+        if (pValue instanceof JRatio) {
+            return CellStyleType.Ratio;
         }
         return null;
     }

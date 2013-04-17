@@ -34,6 +34,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
 
@@ -228,6 +229,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
                 case PRICE:
                 case UNITS:
                 case DILUTION:
+                case RATIO:
                 case SHORT:
                 case INTEGER:
                 case LONG:
@@ -254,7 +256,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
          * @return the edit string
          */
         protected String getEditString() {
-            return (isError) ? theError : theEdit;
+            return (isError)
+                    ? theError
+                    : theEdit;
         }
 
         /**
@@ -275,6 +279,7 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
                 case PRICE:
                 case UNITS:
                 case DILUTION:
+                case RATIO:
                 case SHORT:
                 case INTEGER:
                 case LONG:
@@ -356,6 +361,12 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
                 JDilution myDilution = (JDilution) myValue;
                 theEdit = myDilution.toString();
                 theDisplay = theFormatter.formatDilution(myDilution);
+                /* If this is a JDilution */
+            } else if (myValue instanceof JRatio) {
+                /* Set edit/display values */
+                JRatio myRatio = (JRatio) myValue;
+                theEdit = myRatio.toString();
+                theDisplay = theFormatter.formatRatio(myRatio);
             }
         }
 
@@ -421,6 +432,9 @@ public abstract class JFieldModel<T extends JFieldSetItem> {
                             break;
                         case DILUTION:
                             myValue = theParser.parseDilutionValue(pValue);
+                            break;
+                        case RATIO:
+                            myValue = theParser.parseRatioValue(pValue);
                             break;
 
                         /* Other types are invalid */

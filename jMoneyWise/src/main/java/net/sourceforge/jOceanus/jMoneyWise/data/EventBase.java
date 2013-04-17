@@ -1100,14 +1100,12 @@ public abstract class EventBase
                 : new JDateDay(pDate));
     }
 
-    /**
-     * Mark active items.
-     */
-    protected void markActiveItems() {
-        /* mark the category type referred to */
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch the event category referred to */
         getCategory().touchItem(this);
 
-        /* Mark the credit and debit accounts */
+        /* Touch the credit and debit accounts */
         getDebit().touchItem(this);
         getCredit().touchItem(this);
     }

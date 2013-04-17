@@ -25,7 +25,8 @@ package net.sourceforge.jOceanus.jDecimal;
 /**
  * Represents a Ratio object.
  */
-public class JRatio extends JDecimal {
+public class JRatio
+        extends JDecimal {
     /**
      * Standard number of decimals for Ratio.
      */
@@ -43,6 +44,16 @@ public class JRatio extends JDecimal {
      */
     public JRatio(final JRatio pRatio) {
         super(pRatio.unscaledValue(), pRatio.scale());
+    }
+
+    /**
+     * Constructor for ratio from a decimal string.
+     * @param pSource The source decimal string
+     */
+    public JRatio(final String pSource) {
+        /* Parse the string and correct the scale */
+        JDecimalParser.parseDecimalValue(pSource, this);
+        adjustToScale(NUM_DECIMALS);
     }
 
     /**

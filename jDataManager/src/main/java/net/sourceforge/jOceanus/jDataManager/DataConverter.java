@@ -38,6 +38,46 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
  */
 public final class DataConverter {
     /**
+     * Base64 Encoding array.
+     */
+    private static final char[] BASE64_ENCODE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".toCharArray();
+
+    /**
+     * Base64 Decoding array.
+     */
+    private static final int[] BASE64_DECODE = new int[BASE64_ENCODE.length << 1];
+    static {
+        for (int i = 0; i < BASE64_ENCODE.length; i++) {
+            BASE64_DECODE[BASE64_ENCODE[i]] = i;
+        }
+    }
+
+    /**
+     * Base64 triplet size.
+     */
+    private static final int BASE64_TRIPLE = 3;
+
+    /**
+     * Base64 padding character.
+     */
+    private static final char BASE64_PAD = '=';
+
+    /**
+     * Base64 shift 1.
+     */
+    private static final int BASE64_SHIFT1 = 2;
+
+    /**
+     * Base64 shift 2.
+     */
+    private static final int BASE64_SHIFT2 = 4;
+
+    /**
+     * Base64 shift 3.
+     */
+    private static final int BASE64_SHIFT3 = 6;
+
+    /**
      * Byte encoding.
      */
     private static final String ENCODING = "UTF-8";
@@ -66,6 +106,11 @@ public final class DataConverter {
      * Byte mask.
      */
     public static final int BYTE_MASK = 0xFF;
+
+    /**
+     * Base64 mask.
+     */
+    public static final int BASE64_MASK = 0x3F;
 
     /**
      * Color mask.
@@ -118,7 +163,8 @@ public final class DataConverter {
             myValue.append(myChar);
 
             /* Access the low digit */
-            myDigit = myInt & NYBBLE_MASK;
+            myDigit = myInt
+                      & NYBBLE_MASK;
             myChar = Character.forDigit(myDigit, HEX_RADIX);
 
             /* Add it to the value string */
@@ -223,7 +269,8 @@ public final class DataConverter {
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid HexString Length: " + pHexString);
+            throw new JDataException(ExceptionClass.DATA, "Invalid HexString Length: "
+                                                          + pHexString);
         }
 
         /* Allocate the new bytes array */
@@ -237,7 +284,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: " + pHexString);
+                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: "
+                                                              + pHexString);
             }
 
             /* Initialise result */
@@ -249,7 +297,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: " + pHexString);
+                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: "
+                                                              + pHexString);
             }
 
             /* Add into result */
@@ -287,7 +336,8 @@ public final class DataConverter {
 
         /* Check that it has an even length */
         if ((myLen % 2) != 0) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid HexString Length: " + pHexString);
+            throw new JDataException(ExceptionClass.DATA, "Invalid HexString Length: "
+                                                          + pHexString);
         }
 
         /* Loop through the string */
@@ -298,7 +348,8 @@ public final class DataConverter {
 
             /* Check that the char is a valid hex digit */
             if (myDigit < 0) {
-                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: " + pHexString);
+                throw new JDataException(ExceptionClass.DATA, "Non Hexadecimal Value: "
+                                                              + pHexString);
             }
 
             /* Add into the value */
@@ -327,9 +378,7 @@ public final class DataConverter {
             /* Transform the character array to a byte array */
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             OutputStreamWriter out = new OutputStreamWriter(baos, ENCODING);
-            for (int ch : pChars) {
-                out.write(ch);
-            }
+            out.write(pChars, 0, pChars.length);
             out.flush();
             return baos.toByteArray();
         } catch (IOException e) {
@@ -527,10 +576,112 @@ public final class DataConverter {
         /* Loop through the array bytes */
         for (i = 0; i < myTarget.length; i++) {
             /* Combine the bytes */
-            myTarget[i] ^= mySource[i % myLen];
+            myTarget[i] ^= mySource[i
+                                    % myLen];
         }
 
         /* return the array */
         return myTarget;
+    }
+
+    /**
+     * Convert a byte array to a Base64 string.
+     * @param pBytes the byte array (not null)
+     * @return the translated Base64 string (not null)
+     */
+    public static String byteArrayToBase64(final byte[] pBytes) {
+        /* Determine input length and allocate output buffer */
+        int myLen = pBytes.length;
+        StringBuffer myBuilder = new StringBuffer(myLen << 1);
+        byte[] myTriplet = new byte[BASE64_TRIPLE];
+
+        /* Loop through the input bytes */
+        int myIn = 0;
+        while (myIn < myLen) {
+            /* Access input triplet */
+            myTriplet[0] = pBytes[myIn++];
+            myTriplet[1] = (myIn < myLen)
+                    ? pBytes[myIn++]
+                    : 0;
+            myTriplet[2] = (myIn < myLen)
+                    ? pBytes[myIn++]
+                    : 0;
+
+            /* Convert to base64 */
+            myBuilder.append(BASE64_ENCODE[(myTriplet[0] >> BASE64_SHIFT1)
+                                           & BASE64_MASK]);
+            myBuilder.append(BASE64_ENCODE[((myTriplet[0] << BASE64_SHIFT2) | ((myTriplet[1] & BYTE_MASK) >> BASE64_SHIFT2))
+                                           & BASE64_MASK]);
+            myBuilder.append(BASE64_ENCODE[((myTriplet[1] << BASE64_SHIFT1) | ((myTriplet[2] & BYTE_MASK) >> BASE64_SHIFT3))
+                                           & BASE64_MASK]);
+            myBuilder.append(BASE64_ENCODE[myTriplet[2]
+                                           & BASE64_MASK]);
+        }
+
+        /* Handle short input */
+        int myXtra = (myLen % myTriplet.length);
+        if (myXtra > 0) {
+            /* Remove redundant characters */
+            myBuilder.setLength(myBuilder.length()
+                                - myXtra);
+
+            /* Replace with padding character */
+            while (myXtra-- > 0) {
+                myBuilder.append(BASE64_PAD);
+            }
+        }
+
+        /* Convert chars to string */
+        return myBuilder.toString();
+    }
+
+    /**
+     * Convert a Base64 string into a byte array.
+     * @param pBase64 the Base64 string (not null)
+     * @return the byte array (not null)
+     */
+    public static byte[] base64ToByteArray(final String pBase64) {
+        /* Access input as chars */
+        char[] myBase64 = pBase64.toCharArray();
+        int myLen = myBase64.length;
+
+        /* Determine number of padding bytes */
+        int myNumPadding = 0;
+        if (myBase64[myLen - 1] == BASE64_PAD) {
+            myNumPadding++;
+            if (myBase64[myLen - 2] == BASE64_PAD) {
+                myNumPadding++;
+            }
+        }
+
+        /* Allocate the output buffer and index */
+        int myOutLen = ((myLen * BASE64_TRIPLE) >> 2)
+                       - myNumPadding;
+        byte[] myOutput = new byte[myOutLen];
+
+        /* Loop through the base64 input */
+        int myIn = 0;
+        int myOut = 0;
+        while (myOut < myOutLen) {
+            /* Build first byte */
+            int c0 = BASE64_DECODE[myBase64[myIn++]];
+            int c1 = BASE64_DECODE[myBase64[myIn++]];
+            myOutput[myOut++] = (byte) (((c0 << BASE64_SHIFT1) | (c1 >> BASE64_SHIFT2)) & BYTE_MASK);
+            if (myOut >= myOutLen) {
+                break;
+            }
+
+            /* Build second byte */
+            int c2 = BASE64_DECODE[myBase64[myIn++]];
+            myOutput[myOut++] = (byte) (((c1 << BASE64_SHIFT2) | (c2 >> BASE64_SHIFT1)) & BYTE_MASK);
+            if (myOut >= myOutLen) {
+                break;
+            }
+
+            /* Build third byte */
+            int c3 = BASE64_DECODE[myBase64[myIn++]];
+            myOutput[myOut++] = (byte) (((c2 << BASE64_SHIFT3) | c3) & BYTE_MASK);
+        }
+        return myOutput;
     }
 }

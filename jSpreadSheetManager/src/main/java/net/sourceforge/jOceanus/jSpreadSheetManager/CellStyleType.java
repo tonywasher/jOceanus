@@ -48,6 +48,11 @@ public enum CellStyleType {
     Dilution,
 
     /**
+     * Ratio.
+     */
+    Ratio,
+
+    /**
      * Price.
      */
     Price,

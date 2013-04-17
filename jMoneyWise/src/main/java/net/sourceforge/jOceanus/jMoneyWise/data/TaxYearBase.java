@@ -375,10 +375,8 @@ public abstract class TaxYearBase
         setValueTaxRegime(pTaxRegime);
     }
 
-    /**
-     * Mark active items.
-     */
-    protected void markActiveItems() {
+    @Override
+    public void touchUnderlyingItems() {
         /* mark the tax regime referred to */
         getTaxRegime().touchItem(this);
     }
@@ -522,22 +520,6 @@ public abstract class TaxYearBase
 
             /* Create the range */
             return new JDateDayRange(myStart, myEnd);
-        }
-
-        /**
-         * Mark active items.
-         */
-        public void markActiveItems() {
-            /* Access the list iterator */
-            Iterator<T> myIterator = listIterator();
-
-            /* Loop through the Years */
-            while (myIterator.hasNext()) {
-                T myCurr = myIterator.next();
-
-                /* mark the items referred to */
-                myCurr.markActiveItems();
-            }
         }
     }
 }

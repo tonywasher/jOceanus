@@ -525,7 +525,7 @@ public abstract class AccountBase
         AccountCategoryList myCategories = myData.getAccountCategories();
         ValueSet myValues = getValueSet();
 
-        /* Adjust Tax Regime */
+        /* Adjust Category */
         Object myCategory = myValues.getValue(FIELD_CATEGORY);
         if (myCategory instanceof AccountCategory) {
             myCategory = ((AccountCategory) myCategory).getId();
@@ -679,11 +679,9 @@ public abstract class AccountBase
         setValueTaxFree(isTaxFree);
     }
 
-    /**
-     * Mark active items.
-     */
-    protected void markActiveItems() {
-        /* mark the account type referred to */
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch the underlying account category */
         getAccountCategory().touchItem(this);
     }
 

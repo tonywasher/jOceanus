@@ -24,6 +24,8 @@ package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
@@ -186,10 +188,13 @@ public class SheetEventCategory
         theList.resolveDataSetLinks();
         theList.reSort();
 
-        /* Validate the categories */
-        theList.validate();
-        if (theList.hasErrors()) {
-            throw new JDataException(ExceptionClass.VALIDATE, theList, "Validation error");
+        /* Touch underlying items */
+        theList.touchUnderlyingItems();
+
+        /* Validate the event categories */
+        DataErrorList<DataItem> myErrors = theList.validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
         }
     }
 
@@ -265,10 +270,13 @@ public class SheetEventCategory
             myList.resolveDataSetLinks();
             myList.reSort();
 
-            /* Validate the categories */
-            myList.validate();
-            if (myList.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
+            /* Touch underlying items */
+            myList.touchUnderlyingItems();
+
+            /* Validate the event categories */
+            DataErrorList<DataItem> myErrors = myList.validate();
+            if (myErrors != null) {
+                throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
             }
 
             /* Handle exceptions */

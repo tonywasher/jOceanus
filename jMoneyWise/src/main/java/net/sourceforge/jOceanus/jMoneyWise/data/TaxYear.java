@@ -903,12 +903,12 @@ public class TaxYear
     }
 
     @Override
-    protected void markActiveItems() {
+    public void touchUnderlyingItems() {
         /* mark underlying items */
-        super.markActiveItems();
+        super.touchUnderlyingItems();
 
-        /* Mark infoSet items */
-        theInfoSet.markActiveItems();
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
     }
 
     /**

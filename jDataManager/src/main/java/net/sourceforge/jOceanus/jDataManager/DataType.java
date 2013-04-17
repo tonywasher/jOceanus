@@ -110,5 +110,10 @@ public enum DataType {
     /**
      * Dilution.
      */
-    DILUTION;
+    DILUTION,
+
+    /**
+     * Ratio.
+     */
+    RATIO;
 }

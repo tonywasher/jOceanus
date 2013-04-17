@@ -23,7 +23,6 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
-import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -419,6 +418,7 @@ public class AccountStatus
         } else if (pObject instanceof Pattern) {
             /* Note flags */
             hasPatterns = true;
+            isCloseable = false;
 
             /* If we are being touched by an event */
         } else if (pObject instanceof Event) {
@@ -438,19 +438,33 @@ public class AccountStatus
             }
 
             /* If we are being touched by another account */
-        } else if (pObject instanceof Account) {
+        } else if (pObject instanceof AccountInfo) {
             /* Access as account */
-            Account myAccount = (Account) pObject;
+            AccountInfo myInfo = (AccountInfo) pObject;
+            Account myAccount = myInfo.getOwnerAccount();
+            Boolean isClosed = myAccount.isClosed();
 
-            /* Note flags */
-            if (Difference.isEqual(myAccount.getAlias(), pAccount)) {
-                isAliasedTo = true;
-            }
-            if (Difference.isEqual(myAccount.getParent(), pAccount)) {
-                isParent = true;
-                if (myAccount.isLoan()) {
-                    hasLoans = true;
-                }
+            /* If we are being aliased to */
+            switch (myInfo.getInfoClass()) {
+                case Alias:
+                    /* Set flags */
+                    isAliasedTo = true;
+                    if (!isClosed) {
+                        isCloseable = false;
+                    }
+                    break;
+                case Parent:
+                    /* Set flags */
+                    isParent = true;
+                    if (!isClosed) {
+                        isCloseable = false;
+                    }
+                    if (myAccount.isLoan()) {
+                        hasLoans = true;
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }

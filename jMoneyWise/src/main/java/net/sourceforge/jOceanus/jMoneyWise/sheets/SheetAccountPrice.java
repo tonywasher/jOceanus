@@ -26,6 +26,8 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
@@ -162,6 +164,22 @@ public class SheetAccountPrice
         return COL_PRICE;
     }
 
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and reSort */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+
+        /* Touch underlying items */
+        theList.touchUnderlyingItems();
+
+        /* Validate the prices */
+        DataErrorList<DataItem> myErrors = theList.validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
+        }
+    }
+
     /**
      * Load the Prices from an archive.
      * @param pTask the task control
@@ -242,8 +260,18 @@ public class SheetAccountPrice
                 }
             }
 
-            /* Sort the list */
+            /* Resolve links and reSort */
+            myList.resolveDataSetLinks();
             myList.reSort();
+
+            /* Touch underlying items */
+            myList.touchUnderlyingItems();
+
+            /* Validate the prices */
+            DataErrorList<DataItem> myErrors = myList.validate();
+            if (myErrors != null) {
+                throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
+            }
 
             /* Handle exceptions */
         } catch (JDataException e) {

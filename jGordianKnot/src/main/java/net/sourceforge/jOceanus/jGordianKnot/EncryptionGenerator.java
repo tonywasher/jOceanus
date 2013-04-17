@@ -35,6 +35,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedBigDecimal;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedBigInteger;
@@ -51,6 +52,7 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedLong;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedMoney;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedPrice;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedRate;
+import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedRatio;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedShort;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedUnits;
@@ -99,12 +101,13 @@ public class EncryptionGenerator {
 
         /* If we have no cipher or else a different cipher, ignore the current value */
         if ((myCurrent != null)
-                && ((theCipherSet == null) || (!theCipherSet.equals(myCurrent.getCipherSet())))) {
+            && ((theCipherSet == null) || (!theCipherSet.equals(myCurrent.getCipherSet())))) {
             myCurrent = null;
         }
 
         /* If the value is not changed return the current value */
-        if ((myCurrent != null) && (Difference.isEqual(myCurrent.getValue(), pValue))) {
+        if ((myCurrent != null)
+            && (Difference.isEqual(myCurrent.getValue(), pValue))) {
             return pCurrent;
         }
 
@@ -164,10 +167,13 @@ public class EncryptionGenerator {
         if (JDilution.class.isInstance(pValue)) {
             return new EncryptedDilution(theCipherSet, theFormatter, (JDilution) pValue);
         }
+        if (JRatio.class.isInstance(pValue)) {
+            return new EncryptedRatio(theCipherSet, theFormatter, (JRatio) pValue);
+        }
 
         /* Unsupported so reject */
         throw new JDataException(ExceptionClass.LOGIC, "Invalid Object Class for Encryption"
-                + pValue.getClass().getCanonicalName());
+                                                       + pValue.getClass().getCanonicalName());
     }
 
     /**
@@ -240,10 +246,13 @@ public class EncryptionGenerator {
         if (JDilution.class == pClass) {
             return new EncryptedDilution(theCipherSet, theFormatter, pEncrypted);
         }
+        if (JRatio.class == pClass) {
+            return new EncryptedRatio(theCipherSet, theFormatter, pEncrypted);
+        }
 
         /* Unsupported so reject */
         throw new JDataException(ExceptionClass.LOGIC, "Invalid Object Class for Encryption"
-                + pClass.getCanonicalName());
+                                                       + pClass.getCanonicalName());
     }
 
     /**

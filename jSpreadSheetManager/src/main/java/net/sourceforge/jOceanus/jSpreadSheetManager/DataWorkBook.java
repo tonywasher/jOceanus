@@ -69,6 +69,11 @@ public class DataWorkBook {
     protected static final int WIDTH_DILUTION = 13;
 
     /**
+     * Ratio width.
+     */
+    protected static final int WIDTH_RATIO = 13;
+
+    /**
      * Price width.
      */
     protected static final int WIDTH_PRICE = 15;

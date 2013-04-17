@@ -804,38 +804,12 @@ public class Account
     }
 
     @Override
-    protected void markActiveItems() {
-        /* mark underlying items */
-        super.markActiveItems();
+    public void touchUnderlyingItems() {
+        /* touch underlying items */
+        super.touchUnderlyingItems();
 
-        /* Access values */
-        Account myParent = getParent();
-        Account myAlias = getAlias();
-        Boolean isClosed = isClosed();
-
-        /* If we have a parent, mark the parent */
-        if (myParent != null) {
-            myParent.touchItem(this);
-            if (!isClosed) {
-                myParent.setNonCloseable();
-            }
-        }
-
-        /* If we have an alias, mark the alias */
-        if (myAlias != null) {
-            myAlias.touchItem(this);
-            if (!isClosed) {
-                myAlias.setNonCloseable();
-            }
-        }
-
-        /* If we have patterns, then we are not close-able */
-        if (theStatus.hasPatterns()) {
-            setNonCloseable();
-        }
-
-        /* Mark infoSet items */
-        theInfoSet.markActiveItems();
+        /* touch infoSet items */
+        theInfoSet.touchUnderlyingItems();
     }
 
     /**
@@ -1224,38 +1198,9 @@ public class Account
          * Update account details after data update.
          * @throws JDataException on error
          */
-        public void markActiveItems() throws JDataException {
-            /* Access dataSet */
-            FinanceData myData = getDataSet();
-
-            /* Mark active items referenced by rates */
-            myData.getRates().markActiveItems();
-
-            /* Mark active items referenced by prices */
-            myData.getPrices().markActiveItems();
-
-            /* Mark active items referenced by patterns */
-            myData.getPatterns().markActiveItems();
-
-            /* Access the iterator */
-            Iterator<Account> myIterator = iterator();
-
-            /* Loop through the accounts */
-            while (myIterator.hasNext()) {
-                Account myCurr = myIterator.next();
-
-                /* mark active items */
-                myCurr.markActiveItems();
-
-                /* If we are closed adjust dates */
-                if (myCurr.isClosed()) {
-                    /* Ensure that we have correct closed/maturity dates */
-                    myCurr.adjustDates();
-                }
-            }
-
+        public void validateOnLoad() throws JDataException {
             /* Access a new iterator */
-            myIterator = listIterator();
+            Iterator<Account> myIterator = listIterator();
 
             /* Loop through the accounts */
             while (myIterator.hasNext()) {

@@ -213,7 +213,9 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
 
         /* Return change details */
         return (myInfo != null)
-               && myInfo.hasHistory() ? Difference.Different : Difference.Identical;
+               && myInfo.hasHistory()
+                ? Difference.Different
+                : Difference.Identical;
     }
 
     /**
@@ -290,13 +292,16 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     }
 
     /**
-     * Mark active items.
+     * touch underlying items.
      */
-    public void markActiveItems() {
+    public void touchUnderlyingItems() {
         /* Loop through each existing value */
         for (T myValue : theMap.values()) {
-            /* Touch the infoType */
-            myValue.getInfoType().touchItem(theOwner);
+            /* Touch the item */
+            myValue.touchItem(theOwner);
+
+            /* Touch the underlying items */
+            myValue.touchUnderlyingItems();
         }
     }
 
@@ -413,7 +418,9 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
         /* For each existing value */
         for (T myValue : theMap.values()) {
             /* Access version of value */
-            int myValueVersion = (bEditRestore) ? myValue.getValueSetVersion() : myValue.getBase().getValueSetVersion();
+            int myValueVersion = (bEditRestore)
+                    ? myValue.getValueSetVersion()
+                    : myValue.getBase().getValueSetVersion();
 
             /* If the value was deleted at same time as owner */
             if (myValueVersion == myVersion) {

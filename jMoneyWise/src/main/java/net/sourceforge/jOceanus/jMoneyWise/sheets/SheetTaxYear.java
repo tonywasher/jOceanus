@@ -27,6 +27,8 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
@@ -198,6 +200,9 @@ public class SheetTaxYear
         /* Resolve links and reSort */
         theList.resolveDataSetLinks();
         theList.reSort();
+
+        /* Touch underlying items */
+        theList.touchUnderlyingItems();
 
         /* Calculate the date range */
         theData.calculateDateRange();
@@ -371,15 +376,14 @@ public class SheetTaxYear
             /* Sort the list */
             myList.resolveDataSetLinks();
             myList.reSort();
-            myInfoList.reSort();
 
-            /* Mark active items */
-            myList.markActiveItems();
+            /* Touch underlying items */
+            myList.touchUnderlyingItems();
 
             /* Validate the tax years */
-            myList.validate();
-            if (myList.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myList, "Validation error");
+            DataErrorList<DataItem> myErrors = myList.validate();
+            if (myErrors != null) {
+                throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
             }
 
             /* Handle exceptions */

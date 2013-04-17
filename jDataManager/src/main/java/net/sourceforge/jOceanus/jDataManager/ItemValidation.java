@@ -31,10 +31,10 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 
 /**
- * Provides the implementation of a error buffer for a DataItem. Each element represents an error that relates
- * to a field.
+ * Provides the implementation of a error buffer for an object that implements JDataContents. Each element represents an error that relates to a field.
  */
-public class ItemValidation implements JDataContents {
+public class ItemValidation
+        implements JDataContents {
     /**
      * The local fields.
      */
@@ -54,14 +54,21 @@ public class ItemValidation implements JDataContents {
 
     @Override
     public String formatObject() {
-        return theErrors.size() + " Errors";
+        int mySize = theErrors.size();
+        if (mySize != 1) {
+            return mySize
+                   + " Errors";
+        }
+        ErrorElement myError = theErrors.get(0);
+        return myError.formatError();
     }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle out of range */
         int iIndex = pField.getIndex();
-        if ((iIndex < 0) || iIndex >= theErrors.size()) {
+        if ((iIndex < 0)
+            || iIndex >= theErrors.size()) {
             return JDataFieldValue.UnknownField;
         }
 
@@ -89,7 +96,9 @@ public class ItemValidation implements JDataContents {
      * @return the first error or <code>null</code>
      */
     public ErrorElement getFirst() {
-        return (theErrors.size() > 0) ? theErrors.get(0) : null;
+        return (theErrors.size() > 0)
+                ? theErrors.get(0)
+                : null;
     }
 
     /**
@@ -133,7 +142,7 @@ public class ItemValidation implements JDataContents {
      * @return the error text
      */
     public String getFieldErrors(final JDataField pField) {
-        String myErrors = null;
+        StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
         Iterator<ErrorElement> myIterator = theErrors.iterator();
@@ -144,12 +153,19 @@ public class ItemValidation implements JDataContents {
             /* If the field matches */
             if (myCurr.getField() == pField) {
                 /* Add the error */
-                myErrors = addErrorText(myErrors, myCurr.getError());
+                addErrorText(myErrors, myCurr.getError());
             }
         }
 
-        /* Return the details */
-        return (myErrors == null) ? null : myErrors + "</html>";
+        /* If we have errors */
+        if (myErrors.length() > 0) {
+            /* Complete the format and return it */
+            myErrors.append("</html");
+            return myErrors.toString();
+        }
+
+        /* Return null */
+        return null;
     }
 
     /**
@@ -158,7 +174,7 @@ public class ItemValidation implements JDataContents {
      * @return the error text
      */
     public String getFieldErrors(final JDataField[] aFields) {
-        String myErrors = null;
+        StringBuilder myErrors = new StringBuilder();
 
         /* Loop through the elements */
         Iterator<ErrorElement> myIterator = theErrors.iterator();
@@ -183,28 +199,34 @@ public class ItemValidation implements JDataContents {
             }
 
             /* Add the error */
-            myErrors = addErrorText(myErrors, myCurr.getError());
+            addErrorText(myErrors, myCurr.getError());
         }
 
-        /* Return errors */
-        return (myErrors == null) ? null : myErrors + "</html>";
+        /* If we have errors */
+        if (myErrors.length() > 0) {
+            /* Complete the format and return it */
+            myErrors.append("</html");
+            return myErrors.toString();
+        }
+
+        /* Return null */
+        return null;
     }
 
     /**
      * Add error text.
-     * @param pCurrent existing error text
+     * @param pBuilder the string builder
      * @param pError new error text
-     * @return the text
      */
-    private static String addErrorText(final String pCurrent,
-                                       final String pError) {
-        /* Return text if current is null */
-        if (pCurrent == null) {
-            return "<html>" + pError;
-        }
+    private static void addErrorText(final StringBuilder pBuilder,
+                                     final String pError) {
+        /* Add relevant prefix */
+        pBuilder.append((pBuilder.length() == 0)
+                ? "<html>"
+                : "<br>");
 
-        /* return with error appended */
-        return pCurrent + "<br>" + pError;
+        /* Add error text */
+        pBuilder.append(pError);
     }
 
     /**
@@ -255,6 +277,16 @@ public class ItemValidation implements JDataContents {
                              final JDataField pField) {
             theError = pError;
             theField = pField;
+        }
+
+        /**
+         * Format the error
+         * @return the formatted error
+         */
+        private String formatError() {
+            return theField.getName()
+                   + ": "
+                   + theError;
         }
     }
 }

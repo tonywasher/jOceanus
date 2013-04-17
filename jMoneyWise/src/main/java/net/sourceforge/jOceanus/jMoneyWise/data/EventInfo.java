@@ -508,6 +508,21 @@ public class EventInfo
         return checkForHistory();
     }
 
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch info class */
+        super.touchUnderlyingItems();
+
+        /* Switch on info class */
+        switch (getInfoClass()) {
+            case ThirdParty:
+                getAccount().touchItem(this);
+                break;
+            default:
+                break;
+        }
+    }
+
     /**
      * EventInfoList.
      */

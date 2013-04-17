@@ -24,6 +24,8 @@ package net.sourceforge.jOceanus.jMoneyWise.database;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
@@ -90,13 +92,13 @@ public class TableTaxYearInfo
         /* Calculate the date range */
         theData.calculateDateRange();
 
-        /* Mark active items */
-        theTaxYears.markActiveItems();
+        /* touch underlying items */
+        theTaxYears.touchUnderlyingItems();
 
         /* Validate the tax years */
-        theTaxYears.validate();
-        if (theTaxYears.hasErrors()) {
-            throw new JDataException(ExceptionClass.VALIDATE, theTaxYears, "Validation error");
+        DataErrorList<DataItem> myErrors = theTaxYears.validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
         }
     }
 }

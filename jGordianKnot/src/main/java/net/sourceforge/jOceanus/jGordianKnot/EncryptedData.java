@@ -41,6 +41,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 
 /**
@@ -111,6 +112,11 @@ public final class EncryptedData {
      * Encrypted Dilution length.
      */
     public static final int DILUTELEN = 10;
+
+    /**
+     * Encrypted Ratio length.
+     */
+    public static final int RATIOLEN = 10;
 
     /**
      * The generic encrypted object class.
@@ -248,6 +254,11 @@ public final class EncryptedData {
         public String formatObject() {
             /* Format the unencrypted field */
             return theFormatter.formatObject(theDecrypted);
+        }
+
+        @Override
+        public String toString() {
+            return formatObject();
         }
 
         /**
@@ -470,6 +481,8 @@ public final class EncryptedData {
                 /* Catch Exceptions */
             } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            } catch (NumberFormatException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -527,6 +540,8 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            } catch (NumberFormatException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -586,6 +601,8 @@ public final class EncryptedData {
                 /* Catch Exceptions */
             } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            } catch (NumberFormatException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -644,6 +661,8 @@ public final class EncryptedData {
                 /* Catch Exceptions */
             } catch (JDataException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            } catch (NumberFormatException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
 
@@ -701,6 +720,8 @@ public final class EncryptedData {
 
                 /* Catch Exceptions */
             } catch (JDataException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            } catch (NumberFormatException e) {
                 throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
             }
         }
@@ -1312,6 +1333,43 @@ public final class EncryptedData {
         @Override
         protected JDilution parseValue(final String pValue) throws JDataException {
             return new JDilution(pValue);
+        }
+    }
+
+    /**
+     * The encrypted Ratio class.
+     */
+    public static final class EncryptedRatio
+            extends EncryptedDecimal<JRatio> {
+        /**
+         * Constructor.
+         * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
+         * @param pEncrypted the encrypted value of the field
+         * @throws JDataException on error
+         */
+        protected EncryptedRatio(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
+                                 final byte[] pEncrypted) throws JDataException {
+            super(pCipherSet, pFormatter, pEncrypted);
+        }
+
+        /**
+         * Constructor.
+         * @param pCipherSet the cipherSet
+         * @param pFormatter the data formatter
+         * @param pUnencrypted the unencrypted value of the field
+         * @throws JDataException on error
+         */
+        protected EncryptedRatio(final CipherSet pCipherSet,
+                                 final JDataFormatter pFormatter,
+                                 final JRatio pUnencrypted) throws JDataException {
+            super(pCipherSet, pFormatter, pUnencrypted);
+        }
+
+        @Override
+        protected JRatio parseValue(final String pValue) throws JDataException {
+            return new JRatio(pValue);
         }
     }
 }

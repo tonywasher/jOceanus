@@ -430,6 +430,12 @@ public abstract class DataItem
     }
 
     /**
+     * Touch underlying items that are referenced by this item.
+     */
+    public void touchUnderlyingItems() {
+    }
+
+    /**
      * Obtain properly cast reference to self.
      * @return self reference
      */

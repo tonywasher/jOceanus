@@ -40,7 +40,6 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.LoanAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.MoneyAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
@@ -608,55 +607,52 @@ public class MetaAnalysis {
 
     /**
      * Mark active accounts.
+     * @throws JDataException on error
      */
-    public void markActiveAccounts() {
+    public void markActiveAccounts() throws JDataException {
         /* Access the iterator */
         Iterator<AnalysisBucket> myIterator = theList.listIterator();
-        Account myAccount;
 
         /* Loop through the items to find the match */
         while (myIterator.hasNext()) {
             AnalysisBucket myCurr = myIterator.next();
 
-            /* Switch on bucket type */
-            switch (myCurr.getBucketType()) {
-                case ASSETDETAIL:
-                    /* Access the Asset */
-                    AssetAccountDetail myAsset = (AssetAccountDetail) myCurr;
+            /* Ignore non account buckets */
+            if (!(myCurr instanceof AccountBucket)) {
+                continue;
+            }
 
-                    /* If we have non-zero units */
-                    if (myAsset.getUnits().isNonZero()) {
-                        /* Set the account as non-closeable */
-                        myAccount = myAsset.getAccount();
-                        myAccount.setNonCloseable();
-                    }
-                    break;
+            /* Access account */
+            AccountBucket myBucket = (AccountBucket) myCurr;
+            Account myAccount = myBucket.getAccount();
 
-                case BANKDETAIL:
-                    /* Access the Account */
-                    MoneyAccountDetail myMoney = (MoneyAccountDetail) myCurr;
+            /* If we are closed */
+            if (myAccount.isClosed()) {
+                /* Ensure that we have correct closed/maturity dates */
+                myAccount.adjustDates();
+            }
 
-                    /* If we have non-zero value */
-                    if (myMoney.getValue().isNonZero()) {
-                        /* Set the account as non-close-able */
-                        myAccount = myMoney.getAccount();
-                        myAccount.setNonCloseable();
-                    }
-                    break;
+            /* If this is an asset bucket */
+            if (myCurr instanceof AssetAccountDetail) {
+                /* Access the Asset */
+                AssetAccountDetail myAsset = (AssetAccountDetail) myCurr;
 
-                case LOANDETAIL:
-                    /* Access the Account */
-                    LoanAccountDetail myLoan = (LoanAccountDetail) myCurr;
+                /* If we have non-zero units */
+                if (myAsset.getUnits().isNonZero()) {
+                    /* Set the account as non-closeable */
+                    myAccount.setNonCloseable();
+                }
 
-                    /* If we have non-zero value */
-                    if (myLoan.getValue().isNonZero()) {
-                        /* Set the account as non-close-able */
-                        myAccount = myLoan.getAccount();
-                        myAccount.setNonCloseable();
-                    }
-                    break;
-                default:
-                    break;
+                /* else if this is a value bucket */
+            } else if (myCurr instanceof ValueBucket) {
+                /* Access the Account */
+                ValueBucket myValue = (ValueBucket) myCurr;
+
+                /* If we have non-zero value */
+                if (myValue.getValue().isNonZero()) {
+                    /* Set the account as non-close-able */
+                    myAccount.setNonCloseable();
+                }
             }
         }
     }

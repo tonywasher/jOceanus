@@ -559,6 +559,28 @@ public class AccountInfo
         return checkForHistory();
     }
 
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch info class */
+        super.touchUnderlyingItems();
+
+        /* Switch on info class */
+        switch (getInfoClass()) {
+            case Parent:
+            case Alias:
+                getAccount().touchItem(this);
+                break;
+            case AutoExpense:
+                getEventCategory().touchItem(this);
+                break;
+            case Currency:
+                getAccountCurrency().touchItem(this);
+                break;
+            default:
+                break;
+        }
+    }
+
     /**
      * AccountInfoList.
      */

@@ -573,6 +573,8 @@ public class OasisWorkBook {
                 return OasisStyle.RateColumn;
             case DilutionCell:
                 return OasisStyle.DilutionColumn;
+            case RatioCell:
+                return OasisStyle.RatioColumn;
             case StringCell:
             default:
                 return OasisStyle.StringColumn;
@@ -602,6 +604,8 @@ public class OasisWorkBook {
                 return DataWorkBook.WIDTH_RATE << 1;
             case DilutionCell:
                 return DataWorkBook.WIDTH_DILUTION << 1;
+            case RatioCell:
+                return DataWorkBook.WIDTH_RATIO << 1;
             case StringCell:
             default:
                 return DataWorkBook.WIDTH_STRING << 1;
@@ -729,6 +733,24 @@ public class OasisWorkBook {
         myStyle.setStyleNameAttribute(getStyleName(OasisStyle.DilutionColumn));
         myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_DILUTION));
         theStyleMap.put(OasisStyle.DilutionColumn, myStyle);
+
+        /* Create the Ratio Cell Style */
+        myNumberStyle = new OdfNumberStyle(theContentDom, "0.000000", getDataStyleName(OasisStyle.RatioCell));
+        myStyles.appendChild(myNumberStyle);
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableCell);
+        myStyle.setStyleDataStyleNameAttribute(getDataStyleName(OasisStyle.RatioCell));
+        myStyle.setStyleParentStyleNameAttribute("Default");
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.RatioCell));
+        myStyle.setProperty(OdfTextProperties.FontName, DataWorkBook.FONT_NUMERIC);
+        myStyle.setProperty(OdfTextProperties.FontSize, FONT_SIZE);
+        myStyle.setProperty(OdfParagraphProperties.TextAlign, ALIGN_RIGHT);
+        theStyleMap.put(OasisStyle.RatioCell, myStyle);
+
+        /* Create the Ratio Column Style */
+        myStyle = myStyles.newStyle(OdfStyleFamily.TableColumn);
+        myStyle.setStyleNameAttribute(getStyleName(OasisStyle.RatioColumn));
+        myStyle.setProperty(OdfTableColumnProperties.ColumnWidth, getStyleWidth(DataWorkBook.WIDTH_RATIO));
+        theStyleMap.put(OasisStyle.RatioColumn, myStyle);
 
         /* Create the Integer Cell Style */
         myNumberStyle = new OdfNumberStyle(theContentDom, "0", getDataStyleName(OasisStyle.IntegerCell));
@@ -1001,6 +1023,16 @@ public class OasisWorkBook {
          * Dilution Column.
          */
         DilutionColumn,
+
+        /**
+         * Ratio Cell.
+         */
+        RatioCell,
+
+        /**
+         * Ratio Column.
+         */
+        RatioColumn,
 
         /**
          * String Cell.

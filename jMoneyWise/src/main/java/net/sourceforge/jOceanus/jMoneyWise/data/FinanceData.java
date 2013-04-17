@@ -834,16 +834,22 @@ public class FinanceData
         theActInfoTypes.clearActive();
         theEventInfoTypes.clearActive();
 
-        /* Reset the flags on the categories */
+        /* Reset the flags on the categories, taxYears and accounts */
         theActCategories.clearActive();
         theEvtCategories.clearActive();
-
-        /* Reset the flags on the accounts and tax years */
-        theAccounts.clearActive();
         theTaxYears.clearActive();
+        theAccounts.clearActive();
 
-        /* Note active items referenced by tax years */
-        theTaxYears.markActiveItems();
+        /* Touch items that are referenced by categories and taxYears */
+        theTaxYears.touchUnderlyingItems();
+        theActCategories.touchUnderlyingItems();
+        theEvtCategories.touchUnderlyingItems();
+
+        /* Touch items that are referenced by rates/prices/patterns */
+        theAccounts.touchUnderlyingItems();
+        theRates.touchUnderlyingItems();
+        thePrices.touchUnderlyingItems();
+        thePatterns.touchUnderlyingItems();
     }
 
     /**
@@ -852,6 +858,6 @@ public class FinanceData
      */
     public void completeAnalysis() throws JDataException {
         /* Note active accounts */
-        theAccounts.markActiveItems();
+        theAccounts.validateOnLoad();
     }
 }

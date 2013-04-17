@@ -41,6 +41,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 
 /**
@@ -1132,6 +1133,42 @@ public abstract class ColumnDefinition {
          * @param pValue the value
          */
         protected void setValue(final JDilution pValue) {
+            String myString = null;
+            if (pValue != null) {
+                myString = pValue.toString();
+            }
+            super.setObject(myString);
+        }
+    }
+
+    /**
+     * The ratioColumn Class.
+     */
+    protected static final class RatioColumn
+            extends StringColumn {
+        /**
+         * Constructor.
+         * @param pTable the table to which the column belongs
+         * @param pId the column id
+         */
+        protected RatioColumn(final TableDefinition pTable,
+                              final JDataField pId) {
+            /* Record the column type */
+            super(pTable, pId, 0);
+        }
+
+        @Override
+        protected void buildColumnType(final StringBuilder pBuilder) {
+            /* Add the column type */
+            pBuilder.append(getDriver().getDatabaseType(ColumnType.Decimal));
+            pBuilder.append("(18,6)");
+        }
+
+        /**
+         * Set the value.
+         * @param pValue the value
+         */
+        protected void setValue(final JRatio pValue) {
             String myString = null;
             if (pValue != null) {
                 myString = pValue.toString();

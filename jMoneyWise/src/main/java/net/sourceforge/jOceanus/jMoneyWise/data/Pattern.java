@@ -517,12 +517,10 @@ public class Pattern
         return checkForHistory();
     }
 
-    /**
-     * Mark active items.
-     */
-    protected void markActiveItems() {
-        /* Pass call on */
-        super.markActiveItems();
+    @Override
+    public void touchUnderlyingItems() {
+        /* touch underlying items */
+        super.touchUnderlyingItems();
 
         /* mark the frequency referred to */
         getFrequency().touchItem(this);
@@ -693,22 +691,6 @@ public class Pattern
             myPattern.setDate(RANGE_PATTERN.getStart());
             add(myPattern);
             return myPattern;
-        }
-
-        /**
-         * Mark Active items.
-         */
-        public void markActiveItems() {
-            /* Access the list iterator */
-            Iterator<Pattern> myIterator = listIterator();
-
-            /* Loop through the Patterns */
-            while (myIterator.hasNext()) {
-                Pattern myCurr = myIterator.next();
-
-                /* Touch affected items */
-                myCurr.markActiveItems();
-            }
         }
 
         /**

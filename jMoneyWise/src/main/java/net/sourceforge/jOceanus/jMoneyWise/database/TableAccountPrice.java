@@ -27,7 +27,10 @@ import java.util.Date;
 import javax.swing.SortOrder;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
@@ -105,6 +108,22 @@ public class TableAccountPrice
             myTableDef.setBinaryValue(iField, pItem.getPriceBytes());
         } else {
             super.setFieldValue(pItem, iField);
+        }
+    }
+
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and sort the data */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+
+        /* Touch underlying items */
+        theList.touchUnderlyingItems();
+
+        /* Validate the account prices */
+        DataErrorList<DataItem> myErrors = theList.validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
         }
     }
 }

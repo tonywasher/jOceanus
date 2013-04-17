@@ -27,6 +27,8 @@ import javax.swing.SortOrder;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
@@ -116,10 +118,13 @@ public class TableAccountCategory
         theList.resolveDataSetLinks();
         theList.reSort();
 
+        /* Touch underlying items */
+        theList.touchUnderlyingItems();
+
         /* Validate the account categories */
-        theList.validate();
-        if (theList.hasErrors()) {
-            throw new JDataException(ExceptionClass.VALIDATE, theList, "Validation error");
+        DataErrorList<DataItem> myErrors = theList.validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
         }
     }
 }
