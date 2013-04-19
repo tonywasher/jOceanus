@@ -55,6 +55,56 @@ public abstract class DataItem
     protected static final JDataFields FIELD_DEFS = new JDataFields(DataItem.class.getSimpleName());
 
     /**
+     * Validation error.
+     */
+    public static final String ERROR_VALIDATION = "Failed Validation";
+
+    /**
+     * Resolution error.
+     */
+    public static final String ERROR_RESOLUTION = "Failed Resolution";
+
+    /**
+     * Duplicate Id error.
+     */
+    public static final String ERROR_DUPLICATE = "Duplicate Value";
+
+    /**
+     * Unknown Id error.
+     */
+    public static final String ERROR_UNKNOWN = "Unknown Value";
+
+    /**
+     * Existing value error.
+     */
+    public static final String ERROR_EXIST = "Value must be null";
+
+    /**
+     * Missing value error.
+     */
+    public static final String ERROR_MISSING = "Missing Value";
+
+    /**
+     * Value too long error.
+     */
+    public static final String ERROR_LENGTH = "Value too long";
+
+    /**
+     * Value negative error.
+     */
+    public static final String ERROR_NEGATIVE = "Value is negative";
+
+    /**
+     * Value must be positive error.
+     */
+    public static final String ERROR_POSITIVE = "Value must be positive";
+
+    /**
+     * Value disabled error.
+     */
+    public static final String ERROR_DISABLED = "Value is disabled";
+
+    /**
      * Instance ReportFields.
      */
     private final JDataFields theFields;
@@ -634,8 +684,8 @@ public abstract class DataItem
      * @param pError the error text
      * @param pField the associated field
      */
-    protected void addError(final String pError,
-                            final JDataField pField) {
+    public void addError(final String pError,
+                         final JDataField pField) {
         /* Set edit state and add the error */
         theEdit = EditState.ERROR;
         theErrors.addError(pError, pField);

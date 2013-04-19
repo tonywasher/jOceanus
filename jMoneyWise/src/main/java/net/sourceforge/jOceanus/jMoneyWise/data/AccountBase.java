@@ -533,13 +533,15 @@ public abstract class AccountBase
         if (myCategory instanceof Integer) {
             AccountCategory myCat = myCategories.findItemById((Integer) myCategory);
             if (myCat == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category id");
+                addError(ERROR_UNKNOWN, FIELD_CATEGORY);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
             }
             setValueCategory(myCat);
         } else if (myCategory instanceof String) {
             AccountCategory myCat = myCategories.findItemByName((String) myCategory);
             if (myCat == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category name");
+                addError(ERROR_UNKNOWN, FIELD_CATEGORY);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
             }
             setValueCategory(myCat);
         }
@@ -611,29 +613,29 @@ public abstract class AccountBase
 
         /* AccountCategoryType must be non-null */
         if (myCategory == null) {
-            addError("AccountCategory must be non-null", FIELD_CATEGORY);
+            addError(ERROR_MISSING, FIELD_CATEGORY);
         }
 
         /* Name must be non-null */
         if (myName == null) {
-            addError("Name must be non-null", FIELD_NAME);
+            addError(ERROR_MISSING, FIELD_NAME);
 
             /* Check that the name is unique */
         } else {
             /* The name must not be too long */
             if (myName.length() > NAMELEN) {
-                addError("Name is too long", FIELD_NAME);
+                addError(ERROR_LENGTH, FIELD_NAME);
             }
 
             if (myList.countInstances(myName) > 1) {
-                addError("Name must be unique", FIELD_NAME);
+                addError(ERROR_DUPLICATE, FIELD_NAME);
             }
         }
 
         /* The description must not be too long */
         if ((myDesc != null)
             && (myDesc.length() > DESCLEN)) {
-            addError("Description is too long", FIELD_DESC);
+            addError(ERROR_LENGTH, FIELD_DESC);
         }
     }
 

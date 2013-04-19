@@ -48,6 +48,21 @@ public class AccountCategoryType
                                            + "s";
 
     /**
+     * WebSite length.
+     */
+    protected static final int WEBSITE_LEN = 50;
+
+    /**
+     * Data length.
+     */
+    protected static final int DATA_LEN = 20;
+
+    /**
+     * Notes length.
+     */
+    protected static final int NOTES_LEN = 500;
+
+    /**
      * Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
@@ -241,12 +256,14 @@ public class AccountCategoryType
 
             /* Check that this AccountCategoryType has not been previously added */
             if (findItemByName(pActCatType) != null) {
-                throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate Account Category Type");
+                myActType.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myActType, ERROR_VALIDATION);
             }
 
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(myActType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate AccountCategoryTypeId");
+                myActType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myActType, ERROR_VALIDATION);
             }
 
             /* Add the Account Category to the list */
@@ -257,7 +274,7 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myActType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myActType, ERROR_VALIDATION);
             }
         }
 
@@ -279,8 +296,9 @@ public class AccountCategoryType
             AccountCategoryType myActType = new AccountCategoryType(this, pId, isEnabled, pOrder, pActCatType, pDesc);
 
             /* Check that this AccountCategoryTypeId has not been previously added */
-            if (!isIdUnique(myActType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate AccountCategoryTypeId");
+            if (!isIdUnique(pId)) {
+                myActType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myActType, ERROR_VALIDATION);
             }
 
             /* Add the Account Category Type to the list */
@@ -291,7 +309,7 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myActType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myActType, ERROR_VALIDATION);
             }
         }
 
@@ -316,7 +334,8 @@ public class AccountCategoryType
 
             /* Check that this AccountCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myActType, "Duplicate AccountCategoryTypeId");
+                myActType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myActType, ERROR_VALIDATION);
             }
 
             /* Add the AccountCategoryType to the list */
@@ -327,7 +346,7 @@ public class AccountCategoryType
 
             /* Handle validation failure */
             if (myActType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myActType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myActType, ERROR_VALIDATION);
             }
         }
 
@@ -349,7 +368,7 @@ public class AccountCategoryType
 
                 /* Handle validation failure */
                 if (myActType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myActType, "Failed validation");
+                    throw new JDataException(ExceptionClass.VALIDATE, myActType, ERROR_VALIDATION);
                 }
             }
 

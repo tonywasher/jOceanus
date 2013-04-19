@@ -71,7 +71,7 @@
     <appLibDir>lib/</appLibDir>
     <svnComponent>jMoneyWise</svnComponent>
     <packageName>${project.groupId}.${svnComponent}</packageName>
-    <packageMain>${packageName}.core.Control</packageMain>
+    <packageMain>${packageName}.Control</packageMain>
   </properties>
   <build>
     <plugins>

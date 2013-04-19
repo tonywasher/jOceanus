@@ -98,7 +98,7 @@ public class TableTaxYearInfo
         /* Validate the tax years */
         DataErrorList<DataItem> myErrors = theTaxYears.validate();
         if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

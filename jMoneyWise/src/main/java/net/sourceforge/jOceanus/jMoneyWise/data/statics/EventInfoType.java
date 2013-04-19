@@ -256,14 +256,16 @@ public class EventInfoType
             /* Create a new InfoType */
             EventInfoType myType = new EventInfoType(this, pType);
 
-            /* Check that this InfoId has not been previously added */
-            if (!isIdUnique(myType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoTypeId");
-            }
-
             /* Check that this InfoType has not been previously added */
             if (findItemByName(pType) != null) {
-                throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoType");
+                myType.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myType, ERROR_VALIDATION);
+            }
+
+            /* Check that this InfoId has not been previously added */
+            if (!isIdUnique(myType.getId())) {
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myType, ERROR_VALIDATION);
             }
 
             /* Add the Type to the list */
@@ -274,7 +276,7 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
             }
         }
 
@@ -297,7 +299,8 @@ public class EventInfoType
 
             /* Check that this InfoId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoTypeId");
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myType, ERROR_VALIDATION);
             }
 
             /* Add the InfoType to the list */
@@ -308,7 +311,7 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
             }
         }
 
@@ -333,7 +336,8 @@ public class EventInfoType
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myType, "Duplicate EventInfoTypeId");
+                myType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myType, ERROR_VALIDATION);
             }
 
             /* Add the InfoType to the list */
@@ -344,7 +348,7 @@ public class EventInfoType
 
             /* Handle validation failure */
             if (myType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
             }
         }
 
@@ -366,7 +370,7 @@ public class EventInfoType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                    throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
                 }
             }
 

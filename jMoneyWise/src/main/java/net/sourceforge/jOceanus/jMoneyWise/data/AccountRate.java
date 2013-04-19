@@ -75,7 +75,7 @@ public class AccountRate
     /**
      * Account Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField("Account");
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(Account.class.getSimpleName());
 
     /**
      * Rate Field Id.
@@ -524,13 +524,15 @@ public class AccountRate
         if (myAccount instanceof Integer) {
             Account myAct = myAccounts.findItemById((Integer) myAccount);
             if (myAct == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account id");
+                addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         } else if (myAccount instanceof String) {
             Account myAct = myAccounts.findItemByName((String) myAccount);
             if (myAct == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account name");
+                addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         }
@@ -547,14 +549,17 @@ public class AccountRate
         JRate myRate = getRate();
         JRate myBonus = getBonus();
 
+        /* Access the next element (if any) */
+        AccountRate myNext = myList.peekNext(this);
+
+        /* Determine whether this is the last entry for the account */
+        boolean isLast = (myNext == null)
+                         || !Difference.isEqual(myNext.getAccount(), getAccount());
+
         /* If the date is null then we must be the last element for the account */
         if (myDate == null) {
-            /* Access the next element (if any) */
-            AccountRate myCurr = myList.peekNext(this);
-
             /* Can only have null date on last entry for account */
-            if ((myCurr != null)
-                && (Difference.isEqual(myCurr.getAccount(), getAccount()))) {
+            if (!isLast) {
                 addError("Null date is only allowed on last date", FIELD_ENDDATE);
             }
 
@@ -562,11 +567,11 @@ public class AccountRate
         } else {
             /* The date must be unique for this account */
             if (myList.countInstances(myDate, getAccount()) > 1) {
-                addError("Rate Date must be unique", FIELD_ENDDATE);
+                addError(ERROR_DUPLICATE, FIELD_ENDDATE);
             }
 
             /* The date must be in-range (unless it is the last one) */
-            if ((myList.peekNext(this) != null)
+            if ((!isLast)
                 && (mySet.getDateRange().compareTo(myDate) != 0)) {
                 addError("Date must be within range", FIELD_ENDDATE);
             }
@@ -575,13 +580,13 @@ public class AccountRate
         /* The rate must be non-zero */
         if ((myRate == null)
             || (!myRate.isPositive())) {
-            addError("Rate must be positive", FIELD_RATE);
+            addError(ERROR_POSITIVE, FIELD_RATE);
         }
 
         /* The bonus rate must be non-zero if it exists */
         if ((myBonus != null)
             && ((!myBonus.isNonZero()) || (!myBonus.isPositive()))) {
-            addError("Bonus Rate must be non-Zero and positive", FIELD_BONUS);
+            addError(ERROR_POSITIVE, FIELD_BONUS);
         }
 
         /* Set validation flag */

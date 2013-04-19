@@ -30,7 +30,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 
 /**
- * Report-able object list
+ * Report-able object list.
  * @param <T> the object type
  */
 public class DataErrorList<T extends JDataContents>
@@ -65,7 +65,7 @@ public class DataErrorList<T extends JDataContents>
     }
 
     @Override
-    public Object getFieldValue(JDataField pField) {
+    public Object getFieldValue(final JDataField pField) {
         if (FIELD_SIZE.equals(pField)) {
             return size();
         }

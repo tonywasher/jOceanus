@@ -228,12 +228,13 @@ public class AccountInfo
 
         /* Protect against exceptions */
         try {
-            /* Look up the EventType */
+            /* Look up the InfoType */
             FinanceData myData = getDataSet();
             AccountInfoTypeList myTypes = myData.getActInfoTypes();
             AccountInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid AccountInfoType Id");
+                addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
             }
             setValueInfoType(myType);
 
@@ -241,7 +242,8 @@ public class AccountInfo
             AccountList myAccounts = myData.getAccounts();
             Account myOwner = myAccounts.findItemById(pAccountId);
             if (myOwner == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
+                addError(ERROR_UNKNOWN, FIELD_OWNER);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
             }
             setValueOwner(myOwner);
 
@@ -266,7 +268,8 @@ public class AccountInfo
                                 break;
                         }
                         if (myLink == null) {
-                            throw new JDataException(ExceptionClass.DATA, this, "Invalid Link Id");
+                            addError(ERROR_UNKNOWN, FIELD_LINK);
+                            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
                         }
                         setValueLink(myLink);
                     }
@@ -377,11 +380,19 @@ public class AccountInfo
         /* Update to use the local copy of the Types */
         AccountInfoType myType = getInfoType();
         AccountInfoType myNewType = myTypes.findItemById(myType.getId());
+        if (myNewType == null) {
+            addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+        }
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the Accounts */
         Account myAccount = getOwnerAccount();
         Account myOwner = myAccounts.findItemById(myAccount.getId());
+        if (myOwner == null) {
+            addError(ERROR_UNKNOWN, FIELD_OWNER);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+        }
         setValueOwner(myOwner);
 
         /* If the value is a link */
@@ -401,6 +412,12 @@ public class AccountInfo
                     break;
                 default:
                     break;
+            }
+
+            /* Check link is valid */
+            if (myNewLink == null) {
+                addError(ERROR_UNKNOWN, FIELD_LINK);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
 
             /* Update link value */
@@ -471,9 +488,10 @@ public class AccountInfo
                                 break;
                         }
                         if (myLink == null) {
-                            throw new JDataException(ExceptionClass.DATA, this, "Invalid LinkName ["
-                                                                                + pValue
-                                                                                + "]");
+                            addError(ERROR_UNKNOWN, FIELD_LINK);
+                            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION
+                                                                                + " "
+                                                                                + myName);
                         }
                         setValueValue(myLink.getId());
                         setValueLink(myLink);

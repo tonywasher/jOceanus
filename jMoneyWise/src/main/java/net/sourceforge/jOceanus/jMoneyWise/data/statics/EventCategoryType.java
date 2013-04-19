@@ -254,14 +254,16 @@ public class EventCategoryType
             /* Create a new Category Type */
             EventCategoryType myCatType = new EventCategoryType(this, pEventCategoryType);
 
-            /* Check that this EventCategoryTypeId has not been previously added */
-            if (!isIdUnique(myCatType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate EventCategoryTypeId");
-            }
-
             /* Check that this EventCategoryType has not been previously added */
             if (findItemByName(pEventCategoryType) != null) {
-                throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate Category Type");
+                myCatType.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myCatType, ERROR_VALIDATION);
+            }
+
+            /* Check that this EventCategoryTypeId has not been previously added */
+            if (!isIdUnique(myCatType.getId())) {
+                myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -272,7 +274,7 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCatType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCatType, ERROR_VALIDATION);
             }
         }
 
@@ -295,7 +297,8 @@ public class EventCategoryType
 
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate EventCategoryTypeId");
+                myCatType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -306,7 +309,7 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCatType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCatType, ERROR_VALIDATION);
             }
         }
 
@@ -331,7 +334,8 @@ public class EventCategoryType
 
             /* Check that this EventCategoryTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myCatType, "Duplicate EventCategoryTypeId");
+                myCatType.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myCatType, ERROR_VALIDATION);
             }
 
             /* Add the Category Type to the list */
@@ -342,7 +346,7 @@ public class EventCategoryType
 
             /* Handle validation failure */
             if (myCatType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCatType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCatType, ERROR_VALIDATION);
             }
         }
 
@@ -364,7 +368,7 @@ public class EventCategoryType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                    throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
                 }
             }
 

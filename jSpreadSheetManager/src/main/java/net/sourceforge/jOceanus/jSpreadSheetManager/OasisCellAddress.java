@@ -141,8 +141,9 @@ public class OasisCellAddress {
         /* Store parameters */
         int iPos = pAddress.indexOf(CHAR_PERIOD);
         thePosition = parsePosition(pAddress.substring(iPos + 1));
-        String myName = pAddress.substring((pAddress.charAt(0) == CHAR_DOLLAR) ? 1 : 0, iPos);
-        iPos = myName.length();
+        String myName = pAddress.substring((pAddress.charAt(0) == CHAR_DOLLAR)
+                ? 1
+                : 0, iPos);
         theSheetName = new OasisSheetName(myName, true);
     }
 

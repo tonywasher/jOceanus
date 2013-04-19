@@ -725,8 +725,8 @@ public class Statement
          * @param iField the associated field
          */
         @Override
-        protected void addError(final String pError,
-                                final JDataField iField) {
+        public void addError(final String pError,
+                             final JDataField iField) {
             JDataField myField = iField;
             /* Re-Map Credit/Debit field errors */
             if (iField == FIELD_CREDIT) {

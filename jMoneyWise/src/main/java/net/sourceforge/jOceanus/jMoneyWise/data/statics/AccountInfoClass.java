@@ -179,4 +179,24 @@ public enum AccountInfoClass implements DataInfoClass {
         throw new JDataException(ExceptionClass.DATA, "Invalid Account Info Class Id: "
                                                       + id);
     }
+
+    /**
+     * Obtain maximum length for infoType.
+     * @return the maximum length
+     */
+    public int getMaximumLength() {
+        switch (this) {
+            case WebSite:
+                return AccountCategoryType.WEBSITE_LEN;
+            case CustomerNo:
+            case UserId:
+            case Password:
+            case Account:
+                return AccountCategoryType.DATA_LEN;
+            case Notes:
+                return AccountCategoryType.NOTES_LEN;
+            default:
+                return 0;
+        }
+    }
 }

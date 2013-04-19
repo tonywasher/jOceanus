@@ -78,7 +78,7 @@ public class AccountPrice
     /**
      * Account Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField("Account");
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(Account.class.getSimpleName());
 
     /**
      * Date Field Id.
@@ -419,13 +419,15 @@ public class AccountPrice
         if (myAccount instanceof Integer) {
             Account myAct = myAccounts.findItemById((Integer) myAccount);
             if (myAct == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account id");
+                addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         } else if (myAccount instanceof String) {
             Account myAct = myAccounts.findItemByName((String) myAccount);
             if (myAct == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Account name");
+                addError(ERROR_UNKNOWN, FIELD_ACCOUNT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueAccount(myAct);
         }
@@ -442,13 +444,13 @@ public class AccountPrice
 
         /* The date must be non-null */
         if (myDate == null) {
-            addError("Null Date is not allowed", FIELD_DATE);
+            addError(ERROR_MISSING, FIELD_DATE);
 
             /* else date is non-null */
         } else {
             /* Date must be unique for this account */
             if (myList.countInstances(myDate, getAccount()) > 1) {
-                addError("Date must be unique", FIELD_DATE);
+                addError(ERROR_DUPLICATE, FIELD_DATE);
             }
 
             /* The date must be in-range */
@@ -461,7 +463,7 @@ public class AccountPrice
         if ((getPrice() == null)
             || (!getPrice().isNonZero())
             || (!getPrice().isPositive())) {
-            addError("Price must be non-Zero and positive", FIELD_PRICE);
+            addError(ERROR_POSITIVE, FIELD_PRICE);
         }
 
         /* Set validation flag */
@@ -779,9 +781,8 @@ public class AccountPrice
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(myPrice.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
-                                                                       + myPrice.getId()
-                                                                       + ">");
+                myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myPrice, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -807,9 +808,8 @@ public class AccountPrice
 
             /* Check that this PriceId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myPrice, "Duplicate PriceId <"
-                                                                       + pId
-                                                                       + ">");
+                myPrice.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myPrice, ERROR_VALIDATION);
             }
 
             /* Add to the list */

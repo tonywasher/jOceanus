@@ -62,36 +62,6 @@ public class Account
                                            + "s";
 
     /**
-     * Account WebSite length.
-     */
-    public static final int WSITELEN = 50;
-
-    /**
-     * Account CustNo length.
-     */
-    public static final int CUSTLEN = 20;
-
-    /**
-     * Account UserId length.
-     */
-    public static final int UIDLEN = 20;
-
-    /**
-     * Account PassWord length.
-     */
-    public static final int PWDLEN = 20;
-
-    /**
-     * Account details length.
-     */
-    public static final int ACTLEN = 20;
-
-    /**
-     * Account Notes length.
-     */
-    public static final int NOTELEN = 500;
-
-    /**
      * Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountBase.FIELD_DEFS);
@@ -123,6 +93,13 @@ public class Account
         /* Handle status */
         if (FIELD_STATUS.equals(pField)) {
             return theStatus;
+        }
+
+        /* Handle infoSet fields */
+        AccountInfoClass myClass = AccountInfoSet.getFieldClass(pField);
+        if ((theInfoSet != null)
+            && (myClass != null)) {
+            return theInfoSet.getFieldValue(pField);
         }
 
         /* Pass onwards */
@@ -291,6 +268,14 @@ public class Account
         return hasInfoSet
                 ? theInfoSet.getValue(AccountInfoClass.Notes, char[].class)
                 : null;
+    }
+
+    /**
+     * Obtain Status.
+     * @return the status
+     */
+    protected AccountStatus getStatus() {
+        return theStatus;
     }
 
     /**
@@ -818,171 +803,50 @@ public class Account
     @Override
     public void validate() {
         AccountCategoryClass myClass = getAccountCategoryClass();
-        Account myParent = getParent();
         Account myAlias = getAlias();
 
         /* Validate base components */
         super.validate();
 
-        /* If the account has units */
-        if (myClass.hasUnits()) {
-            /* If this account has an alias */
-            if (myAlias != null) {
-                /* Must not have prices */
-                if (theStatus.hasPrices()) {
-                    addError("Aliased account has prices", FIELD_CATEGORY);
-                }
+        /* If we have a class */
+        if (myClass != null) {
+            /* If the account has rates then it must be money-based */
+            if ((theStatus.hasRates())
+                && (!myClass.hasValue())) {
+                addError("non-Money account has rates", FIELD_CATEGORY);
+            }
 
-                /* Alias account must have prices */
-                AccountStatus myAliasStatus = myAlias.theStatus;
-                if ((!myAliasStatus.hasPrices())
-                    && (myAliasStatus.hasEvents())) {
-                    addError("Alias account has no prices", FIELD_CATEGORY);
-                }
+            /* If the account is closed it must be closeable */
+            if ((isClosed())
+                && (!isCloseable())) {
+                addError("Non-closeable account is closed", FIELD_CLOSED);
+            }
 
-                /* else this is a standard account */
-            } else {
-                /* Must have prices */
+            /* If the account has units */
+            if (myClass.hasUnits()) {
+                /* Account must have prices unless it is idle or alias */
                 if ((!theStatus.hasPrices())
-                    && (theStatus.hasEvents())) {
+                    && (theStatus.hasEvents())
+                    && (myAlias == null)) {
                     addError("Priced account has no prices", FIELD_CATEGORY);
                 }
-            }
 
-            /* else the account is not priced */
-        } else {
-            /* Prices cannot exist */
-            if (theStatus.hasPrices()) {
+                /* else the account is not priced */
+            } else if (theStatus.hasPrices()) {
                 addError("non-Priced account has prices", FIELD_CATEGORY);
             }
-        }
 
-        /* If the account is not a child then parent cannot exist */
-        if (!myClass.isChild()) {
-            if (myParent != null) {
-                addError("Non-child account has parent", AccountInfoSet.FIELD_PARENT);
+            /* If the account is tax free, check that it is allowed */
+            if ((isTaxFree())
+                && (!myClass.canTaxFree())) {
+                addError("cannot be taxFree account", FIELD_TAXFREE);
             }
 
-            /* else we should have a parent */
-        } else {
-            /* If data has been fully loaded we have no parent */
-            if (myParent == null) {
-                addError("Child Account must have parent", AccountInfoSet.FIELD_PARENT);
+            /* If we have a category and an infoSet */
+            if (theInfoSet != null) {
+                /* Validate the InfoSet */
+                theInfoSet.validate();
             }
-
-            /* if we have a parent */
-            if (myParent != null) {
-                /* check that any parent is owner */
-                if (!myParent.getAccountCategoryClass().canParentAccount()) {
-                    addError("Parent account cannot have children", AccountInfoSet.FIELD_PARENT);
-                }
-
-                /* If we are open then parent must be open */
-                if (!isClosed()
-                    && myParent.isClosed()) {
-                    addError("Parent account must not be closed", AccountInfoSet.FIELD_PARENT);
-                }
-            }
-        }
-
-        /* If we have an alias */
-        if (myAlias != null) {
-            /* Access the alias type */
-            AccountCategoryClass myAliasClass = myAlias.getAccountCategoryClass();
-
-            /* Cannot alias to self */
-            if (Difference.isEqual(this, myAlias)) {
-                addError("Cannot alias to self", AccountInfoSet.FIELD_ALIAS);
-
-                /* Must alias to same type */
-            } else if (!Difference.isEqual(myClass, myAliasClass)) {
-                addError("Must alias to same account type", AccountInfoSet.FIELD_ALIAS);
-
-                /* Must alias to different TaxFree type */
-            } else if (isTaxFree() == myAlias.isTaxFree()) {
-                addError("Must alias to different TaxFree account type", AccountInfoSet.FIELD_ALIAS);
-            }
-
-            /* Must be alias type */
-            if (!myClass.canAlias()) {
-                addError("This account type cannot alias", AccountInfoSet.FIELD_ALIAS);
-            }
-
-            /* Must not be aliased to */
-            if (theStatus.isAliasedTo()) {
-                addError("This account is already aliased to", AccountInfoSet.FIELD_ALIAS);
-            }
-
-            /* Alias must be alias type */
-            if (!myAliasClass.canAlias()) {
-                addError("The alias account type is invalid", AccountInfoSet.FIELD_ALIAS);
-            }
-
-            /* Alias cannot be aliased */
-            if (myAlias.isAlias()) {
-                addError("The alias account is already aliased", AccountInfoSet.FIELD_ALIAS);
-            }
-        }
-
-        /* If the account has rates then it must be money-based */
-        if ((theStatus.hasRates())
-            && (!myClass.hasValue())) {
-            addError("non-Money account has rates", FIELD_CATEGORY);
-        }
-
-        /* If the account has a maturity rate then it must be a bond */
-        if ((getMaturity() != null)
-            && (myClass != AccountCategoryClass.Bond)) {
-            addError("non-Bond has maturity date", AccountInfoSet.FIELD_MATURITY);
-        }
-
-        /* Open Bond accounts must have maturity */
-        if ((myClass == AccountCategoryClass.Bond)
-            && !isClosed()
-            && (getMaturity() == null)) {
-            addError("Open Bond must have maturity date", AccountInfoSet.FIELD_MATURITY);
-        }
-
-        /* If data has been fully loaded and the account is closed it must be closeable */
-        if ((isClosed())
-            && (!isCloseable())) {
-            addError("Non-closeable account is closed", FIELD_CLOSED);
-        }
-
-        /* The WebSite must not be too long */
-        if ((getWebSite() != null)
-            && (getWebSite().length > WSITELEN)) {
-            addError("WebSite is too long", AccountInfoSet.FIELD_WEBSITE);
-        }
-
-        /* The CustNo must not be too long */
-        if ((getCustNo() != null)
-            && (getCustNo().length > CUSTLEN)) {
-            addError("Customer No. is too long", AccountInfoSet.FIELD_CUSTNO);
-        }
-
-        /* The UserId must not be too long */
-        if ((getUserId() != null)
-            && (getUserId().length > UIDLEN)) {
-            addError("UserId is too long", AccountInfoSet.FIELD_USERID);
-        }
-
-        /* The Password must not be too long */
-        if ((getPassword() != null)
-            && (getPassword().length > PWDLEN)) {
-            addError("Password is too long", AccountInfoSet.FIELD_PASSWORD);
-        }
-
-        /* The Account must not be too long */
-        if ((getAccount() != null)
-            && (getAccount().length > ACTLEN)) {
-            addError("Account is too long", AccountInfoSet.FIELD_ACCOUNT);
-        }
-
-        /* The Notes must not be too long */
-        if ((getNotes() != null)
-            && (getNotes().length > NOTELEN)) {
-            addError("WebSite is too long", AccountInfoSet.FIELD_NOTES);
         }
 
         /* Set validation flag */
@@ -1216,7 +1080,7 @@ public class Account
 
         /**
          * Add an Account.
-         * @param uId the is
+         * @param pId the is
          * @param pName the Name of the account
          * @param pCategory the Name of the account category
          * @param pDesc the description of the account
@@ -1225,17 +1089,24 @@ public class Account
          * @return the new account
          * @throws JDataException on error
          */
-        public Account addOpenItem(final Integer uId,
+        public Account addOpenItem(final Integer pId,
                                    final String pName,
                                    final String pCategory,
                                    final String pDesc,
                                    final Boolean isClosed,
                                    final Boolean isTaxFree) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, uId, pName, pCategory, pDesc, isClosed, isTaxFree);
+            Account myAccount = new Account(this, pId, pName, pCategory, pDesc, isClosed, isTaxFree);
+
+            /* Check that this AccountId has not been previously added */
+            if (!isIdUnique(pId)) {
+                myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myAccount, ERROR_VALIDATION);
+            }
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
+                myAccount.addError(ERROR_DUPLICATE, FIELD_NAME);
                 throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
             }
 
@@ -1246,33 +1117,35 @@ public class Account
 
         /**
          * Add an Account.
-         * @param uId the Id of the account
-         * @param uControlId the control id
+         * @param pId the Id of the account
+         * @param pControlId the control id
          * @param pName the Encrypted Name of the account
-         * @param uActCatId the Id of the account category
+         * @param pActCatId the Id of the account category
          * @param pDesc the Encrypted Description of the account (or null)
          * @param isClosed is the account closed?
          * @param isTaxFree is the account taxFree?
          * @throws JDataException on error
          */
-        public void addSecureItem(final Integer uId,
-                                  final Integer uControlId,
+        public void addSecureItem(final Integer pId,
+                                  final Integer pControlId,
                                   final byte[] pName,
-                                  final Integer uActCatId,
+                                  final Integer pActCatId,
                                   final byte[] pDesc,
                                   final Boolean isClosed,
                                   final Boolean isTaxFree) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, uId, uControlId, pName, uActCatId, pDesc, isClosed, isTaxFree);
+            Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, pDesc, isClosed, isTaxFree);
 
             /* Check that this AccountId has not been previously added */
-            if (!isIdUnique(uId)) {
-                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate AccountId");
+            if (!isIdUnique(pId)) {
+                myAccount.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myAccount, ERROR_VALIDATION);
             }
 
             /* Check that this Account has not been previously added */
             if (findItemByName(myAccount.getName()) != null) {
-                throw new JDataException(ExceptionClass.DATA, myAccount, "Duplicate Account");
+                myAccount.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myAccount, ERROR_VALIDATION);
             }
 
             /* Add the Account to the list */

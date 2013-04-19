@@ -139,7 +139,7 @@ public abstract class DataCell {
         String myValue = getStringValue();
         return (myValue == null)
                 ? null
-                : DataConverter.hexStringToBytes(myValue);
+                : DataConverter.base64ToByteArray(myValue);
     }
 
     /**
@@ -303,7 +303,7 @@ public abstract class DataCell {
             setNullValue();
         } else {
             /* Convert value to string */
-            setStringValue(DataConverter.bytesToHexString(pValue));
+            setStringValue(DataConverter.byteArrayToBase64(pValue));
         }
     }
 

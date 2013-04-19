@@ -247,14 +247,16 @@ public class Frequency
             /* Create a new Frequency */
             Frequency myFrequency = new Frequency(this, pFrequency);
 
-            /* Check that this FrequencyId has not been previously added */
-            if (!isIdUnique(myFrequency.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myFrequency, "Duplicate FrequencyId");
-            }
-
             /* Check that this Frequency has not been previously added */
             if (findItemByName(pFrequency) != null) {
-                throw new JDataException(ExceptionClass.DATA, myFrequency, "Duplicate Frequency");
+                myFrequency.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myFrequency, ERROR_VALIDATION);
+            }
+
+            /* Check that this FrequencyId has not been previously added */
+            if (!isIdUnique(myFrequency.getId())) {
+                myFrequency.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myFrequency, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -265,7 +267,7 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFrequency.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myFrequency, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myFrequency, ERROR_VALIDATION);
             }
         }
 
@@ -288,7 +290,8 @@ public class Frequency
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myFreq, "Duplicate FrequencyId");
+                myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myFreq, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -299,7 +302,7 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFreq.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myFreq, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myFreq, ERROR_VALIDATION);
             }
         }
 
@@ -324,7 +327,8 @@ public class Frequency
 
             /* Check that this FrequencyId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myFreq, "Duplicate FrequencyId");
+                myFreq.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myFreq, ERROR_VALIDATION);
             }
 
             /* Add the Frequency to the list */
@@ -335,7 +339,7 @@ public class Frequency
 
             /* Handle validation failure */
             if (myFreq.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myFreq, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myFreq, ERROR_VALIDATION);
             }
         }
 
@@ -357,7 +361,7 @@ public class Frequency
 
                 /* Handle validation failure */
                 if (myFreq.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myFreq, "Failed validation");
+                    throw new JDataException(ExceptionClass.VALIDATE, myFreq, ERROR_VALIDATION);
                 }
             }
 

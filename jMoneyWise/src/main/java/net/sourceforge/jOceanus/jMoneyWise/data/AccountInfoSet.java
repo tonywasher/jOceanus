@@ -22,11 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataFieldRequired;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
@@ -209,6 +213,44 @@ public class AccountInfoSet
     }
 
     /**
+     * Obtain the field for the infoSet class.
+     * @param pClass the class
+     * @return the field
+     */
+    protected static JDataField getClassField(final AccountInfoClass pClass) {
+        switch (pClass) {
+            case Maturity:
+                return FIELD_MATURITY;
+            case Parent:
+                return FIELD_PARENT;
+            case Alias:
+                return FIELD_ALIAS;
+            case Currency:
+                return FIELD_CURRENCY;
+            case AutoExpense:
+                return FIELD_AUTOEXP;
+            case Symbol:
+                return FIELD_SYMBOL;
+            case OpeningBalance:
+                return FIELD_OPENBAL;
+            case WebSite:
+                return FIELD_WEBSITE;
+            case CustomerNo:
+                return FIELD_CUSTNO;
+            case UserId:
+                return FIELD_USERID;
+            case Password:
+                return FIELD_PASSWORD;
+            case Account:
+                return FIELD_ACCOUNT;
+            case Notes:
+                return FIELD_NOTES;
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
@@ -282,5 +324,205 @@ public class AccountInfoSet
 
         /* Return the account currency */
         return myValue.getAccountCurrency();
+    }
+
+    /**
+     * Determine if a field is required.
+     * @param pField the infoSet field
+     * @return the status
+     */
+    public JDataFieldRequired isFieldRequired(final JDataField pField) {
+        AccountInfoClass myClass = getFieldClass(pField);
+        return myClass == null
+                ? JDataFieldRequired.NotAllowed
+                : isClassRequired(myClass);
+    }
+
+    /**
+     * Determine if an infoSet class is required.
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    protected JDataFieldRequired isClassRequired(final AccountInfoClass pClass) {
+        /* Access details about the Account */
+        Account myAccount = getOwner();
+        AccountCategory myCategory = myAccount.getAccountCategory();
+
+        /* If we have no Category, no class is allowed */
+        if (myCategory == null) {
+            return JDataFieldRequired.NotAllowed;
+        }
+        AccountCategoryClass myClass = myCategory.getCategoryTypeClass();
+
+        /* Switch on class */
+        switch (pClass) {
+        /* Notes/Account are always available */
+            case Notes:
+            case Account:
+                return JDataFieldRequired.CanExist;
+
+                /* Handle Institution Details */
+            case WebSite:
+            case CustomerNo:
+            case UserId:
+            case Password:
+                return myClass.isNonAsset()
+                        ? JDataFieldRequired.CanExist
+                        : JDataFieldRequired.NotAllowed;
+
+                /* Currency */
+            case Currency:
+                return myClass.isNonAsset()
+                        ? JDataFieldRequired.NotAllowed
+                        : JDataFieldRequired.CanExist;
+
+                /* Parent */
+            case Parent:
+                return myClass.isChild()
+                        ? JDataFieldRequired.MustExist
+                        : JDataFieldRequired.NotAllowed;
+
+                /* Handle Alias */
+            case Alias:
+                return myClass.canAlias()
+                        ? JDataFieldRequired.CanExist
+                        : JDataFieldRequired.NotAllowed;
+
+                /* Handle Maturity */
+            case Maturity:
+                return (myClass == AccountCategoryClass.Bond)
+                        ? JDataFieldRequired.MustExist
+                        : JDataFieldRequired.NotAllowed;
+
+                /* Handle Symbol */
+            case Symbol:
+                return (myClass.isCapital() && (myAccount.getAlias() == null))
+                        ? JDataFieldRequired.MustExist
+                        : JDataFieldRequired.NotAllowed;
+
+                /* Handle OpeningBalance */
+            case OpeningBalance:
+                return myClass.isSavings()
+                        ? JDataFieldRequired.CanExist
+                        : JDataFieldRequired.NotAllowed;
+
+                /* Handle AutoExpense */
+            case AutoExpense:
+                return (myClass == AccountCategoryClass.Cash)
+                        ? JDataFieldRequired.CanExist
+                        : JDataFieldRequired.NotAllowed;
+
+                /* Handle all other fields */
+            default:
+                return JDataFieldRequired.MustExist;
+        }
+    }
+
+    /**
+     * Validate the infoSet.
+     */
+    protected void validate() {
+        /* Access details about the Account */
+        Account myAccount = getOwner();
+
+        /* Loop through the classes */
+        for (AccountInfoClass myClass : AccountInfoClass.values()) {
+            /* Access info for class */
+            AccountInfo myInfo = getInfo(myClass);
+            boolean isExisting = (myInfo != null)
+                                 && !myInfo.isDeleted();
+
+            /* Determine requirements for class */
+            JDataFieldRequired myState = isClassRequired(myClass);
+
+            /* If the field is missing */
+            if (!isExisting) {
+                /* Handle required field missing */
+                if (myState == JDataFieldRequired.MustExist) {
+                    myAccount.addError(DataItem.ERROR_MISSING, getClassField(myClass));
+                }
+                continue;
+            }
+
+            /* If field is not allowed */
+            if (myState == JDataFieldRequired.NotAllowed) {
+                myAccount.addError(DataItem.ERROR_EXIST, getClassField(myClass));
+                continue;
+            }
+
+            /* Switch on class */
+            switch (myClass) {
+                case WebSite:
+                case CustomerNo:
+                case UserId:
+                case Password:
+                case Account:
+                case Notes:
+                    /* Access data */
+                    char[] myValue = myInfo.getValue(char[].class);
+                    if (myValue.length > myClass.getMaximumLength()) {
+                        myAccount.addError(DataItem.ERROR_LENGTH, getClassField(myClass));
+                    }
+                    break;
+                case Parent:
+                    /* Access parent */
+                    Account myParent = myInfo.getAccount();
+
+                    /* check that any parent is owner */
+                    if (!myParent.getAccountCategoryClass().canParentAccount()) {
+                        myAccount.addError("Parent account cannot have children", FIELD_PARENT);
+                    }
+
+                    /* If we are open then parent must be open */
+                    if (!myAccount.isClosed()
+                        && myParent.isClosed()) {
+                        myAccount.addError("Parent account must not be closed", FIELD_PARENT);
+                    }
+                    break;
+                case Alias:
+                    /* Access Alias account */
+                    Account myAlias = myInfo.getAccount();
+                    AccountCategoryClass myAliasClass = myAlias.getAccountCategoryClass();
+
+                    /* Cannot alias to self */
+                    if (Difference.isEqual(myAccount, myAlias)) {
+                        myAccount.addError("Cannot alias to self", FIELD_ALIAS);
+
+                        /* Must alias to same type */
+                    } else if (!Difference.isEqual(myAccount.getAccountCategoryClass(), myAliasClass)) {
+                        myAccount.addError("Must alias to same account category", FIELD_ALIAS);
+
+                        /* Must alias to different TaxFree type */
+                    } else if (myAccount.isTaxFree().equals(myAlias.isTaxFree())) {
+                        myAccount.addError("Must alias to different TaxFree account type", FIELD_ALIAS);
+                    }
+
+                    /* Must not be aliased to */
+                    if (myAccount.isAliasedTo()) {
+                        myAccount.addError("This account is already aliased to", FIELD_ALIAS);
+                    }
+
+                    /* Alias cannot be aliased */
+                    if (myAlias.isAlias()) {
+                        myAccount.addError("The alias account is already aliased", FIELD_ALIAS);
+                    }
+
+                    /* Must not have prices */
+                    AccountStatus myStatus = myAccount.getStatus();
+                    if (myStatus.hasPrices()) {
+                        myAccount.addError("Aliased account has prices", FIELD_ALIAS);
+                    }
+
+                    /* Alias account must have prices */
+                    AccountStatus myAliasStatus = myAlias.getStatus();
+                    if ((!myAliasStatus.hasPrices())
+                        && (myAliasStatus.hasEvents())) {
+                        myAccount.addError("Alias account has no prices", FIELD_ALIAS);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 }

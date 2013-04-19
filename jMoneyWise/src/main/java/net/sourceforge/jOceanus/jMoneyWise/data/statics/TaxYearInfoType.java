@@ -250,12 +250,14 @@ public class TaxYearInfoType
 
             /* Check that this InfoType has not been previously added */
             if (findItemByName(pInfoType) != null) {
-                throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate TaxYear Info Type");
+                myInfoType.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
             }
 
             /* Check that this TaxYearTypeId has not been previously added */
             if (!isIdUnique(myInfoType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate TaxYearInfoTypeId");
+                myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear Info Type to the list */
@@ -266,7 +268,7 @@ public class TaxYearInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -289,7 +291,8 @@ public class TaxYearInfoType
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate TaxYearTypeId");
+                myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear Info Type to the list */
@@ -300,7 +303,7 @@ public class TaxYearInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -325,7 +328,8 @@ public class TaxYearInfoType
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate TaxYearInfoTypeId");
+                myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the Info Type to the list */
@@ -336,7 +340,7 @@ public class TaxYearInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -358,7 +362,7 @@ public class TaxYearInfoType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                    throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
                 }
             }
 

@@ -82,7 +82,7 @@ public class MaintStatic
     /**
      * The data control.
      */
-    private final DataControl<?> theControl;
+    private final transient DataControl<?> theControl;
 
     /**
      * The card panel.
@@ -132,7 +132,7 @@ public class MaintStatic
     /**
      * The selection listener.
      */
-    private final StaticListener theListener = new StaticListener();
+    private final transient StaticListener theListener = new StaticListener();
 
     /**
      * Obtain the updateList.

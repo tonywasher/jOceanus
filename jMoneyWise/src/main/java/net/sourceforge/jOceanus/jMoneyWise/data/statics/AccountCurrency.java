@@ -250,12 +250,14 @@ public class AccountCurrency
 
             /* Check that this AccountCurrency has not been previously added */
             if (findItemByName(pCurrency) != null) {
-                throw new JDataException(ExceptionClass.DATA, myCurr, "Duplicate Account Currency");
+                myCurr.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myCurr, ERROR_VALIDATION);
             }
 
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(myCurr.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myCurr, "Duplicate AccountCategoryTypeId");
+                myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCurr, ERROR_VALIDATION);
             }
 
             /* Add the Account Currency to the list */
@@ -266,7 +268,7 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCurr, ERROR_VALIDATION);
             }
         }
 
@@ -288,8 +290,9 @@ public class AccountCurrency
             AccountCurrency myCurr = new AccountCurrency(this, pId, isEnabled, pOrder, pCurrency, pDesc);
 
             /* Check that this AccountCurrencyTypeId has not been previously added */
-            if (!isIdUnique(myCurr.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myCurr, "Duplicate AccountCurrencyId");
+            if (!isIdUnique(pId)) {
+                myCurr.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myCurr, ERROR_VALIDATION);
             }
 
             /* Add the Account Currency to the list */
@@ -300,7 +303,7 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCurr, ERROR_VALIDATION);
             }
         }
 
@@ -325,7 +328,8 @@ public class AccountCurrency
 
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myCurr, "Duplicate AccountCurrencyId");
+                myCurr.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCurr, ERROR_VALIDATION);
             }
 
             /* Add the AccountCurrency to the list */
@@ -336,7 +340,7 @@ public class AccountCurrency
 
             /* Handle validation failure */
             if (myCurr.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCurr, ERROR_VALIDATION);
             }
         }
 
@@ -358,7 +362,7 @@ public class AccountCurrency
 
                 /* Handle validation failure */
                 if (myCurr.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
+                    throw new JDataException(ExceptionClass.VALIDATE, myCurr, ERROR_VALIDATION);
                 }
             }
 

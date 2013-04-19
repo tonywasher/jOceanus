@@ -62,11 +62,6 @@ public class TaxYear
                                            + "s";
 
     /**
-     * Value must be positive error text.
-     */
-    private static final String ERROR_POSITIVE = "Value must be positive";
-
-    /**
      * Report fields.
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(TaxYear.class.getSimpleName(), TaxYearBase.FIELD_DEFS);
@@ -88,6 +83,13 @@ public class TaxYear
             return hasInfoSet
                     ? theInfoSet
                     : JDataFieldValue.SkipField;
+        }
+
+        /* Handle infoSet fields */
+        TaxYearInfoClass myClass = TaxInfoSet.getFieldClass(pField);
+        if ((theInfoSet != null)
+            && (myClass != null)) {
+            return theInfoSet.getFieldValue(pField);
         }
 
         /* Pass onwards */
@@ -754,146 +756,11 @@ public class TaxYear
             }
         }
 
-        /* The allowance must be non-null */
-        if ((getAllowance() == null)
-            || (!getAllowance().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ALLOW);
-        }
-
-        /* The rental allowance must be non-null */
-        if ((getRentalAllowance() == null)
-            || (!getRentalAllowance().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_RENTAL);
-        }
-
-        /* The loAgeAllow must be non-null */
-        if ((getLoAgeAllow() == null)
-            || (!getLoAgeAllow().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_LOAGAL);
-        }
-
-        /* The loAgeAllow must be greater than Allowance */
-        if ((getLoAgeAllow() != null)
-            && (getAllowance() != null)
-            && (getLoAgeAllow().compareTo(getAllowance()) < 0)) {
-            addError("Value must be greater than allowance", TaxInfoSet.FIELD_LOAGAL);
-        }
-
-        /* The hiAgeAllow must be non-null */
-        if ((getHiAgeAllow() == null)
-            || (!getHiAgeAllow().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_HIAGAL);
-        }
-
-        /* The hiAgeAllow must be greater than loAgeAllowance */
-        if ((getHiAgeAllow() != null)
-            && (getLoAgeAllow() != null)
-            && (getHiAgeAllow().compareTo(getLoAgeAllow()) < 0)) {
-            addError("Value must be greater than low age allowance", TaxInfoSet.FIELD_HIAGAL);
-        }
-
-        /* The ageAllowLimit must be non-null */
-        if ((getAgeAllowLimit() == null)
-            || (!getAgeAllowLimit().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_AGELMT);
-        }
-
-        /* The capitalAllow must be non-null */
-        if ((getCapitalAllow() == null)
-            || (!getCapitalAllow().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_CAPALW);
-        }
-
-        /* The loBand must be non-null */
-        if ((getLoBand() == null)
-            || (!getLoBand().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_LOBAND);
-        }
-
-        /* The basicBand must be non-null */
-        if ((getBasicBand() == null)
-            || (!getBasicBand().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_BSBAND);
-        }
-
-        /* The loRate must be non-null */
-        if ((getLoTaxRate() == null)
-            || (!getLoTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_LOTAX);
-        }
-
-        /* The basicRate must be non-null */
-        if ((getBasicTaxRate() == null)
-            || (!getBasicTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_BASTAX);
-        }
-
-        /* The hiRate must be non-null */
-        if ((getHiTaxRate() == null)
-            || (!getHiTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_HITAX);
-        }
-
-        /* The intRate must be non-null */
-        if ((getIntTaxRate() == null)
-            || (!getIntTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_INTTAX);
-        }
-
-        /* The divRate must be non-null */
-        if ((getDivTaxRate() == null)
-            || (!getDivTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_DIVTAX);
-        }
-
-        /* The hiDivRate must be non-null */
-        if ((getHiDivTaxRate() == null)
-            || (!getHiDivTaxRate().isPositive())) {
-            addError(ERROR_POSITIVE, TaxInfoSet.FIELD_HDVTAX);
-        }
-
-        /* If the tax regime is additional */
+        /* If we have a tax regime and an infoSet */
         if ((myTaxRegime != null)
-            && (myTaxRegime.hasAdditionalTaxBand())) {
-            /* The addAllowLimit must be non-null */
-            if ((getAddAllowLimit() == null)
-                || (!getAddAllowLimit().isPositive())) {
-                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ADDLMT);
-            }
-
-            /* The addIncBound must be non-null */
-            if ((getAddIncBound() == null)
-                || (!getAddIncBound().isPositive())) {
-                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ADDBDY);
-            }
-
-            /* The addRate must be non-null */
-            if ((getAddTaxRate() == null)
-                || (!getAddTaxRate().isPositive())) {
-                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ADDTAX);
-            }
-
-            /* The addDivRate must be non-null */
-            if ((getAddDivTaxRate() == null)
-                || (!getAddDivTaxRate().isPositive())) {
-                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_ADVTAX);
-            }
-        }
-
-        /* If the tax regime does not have capital gains as income */
-        if ((myTaxRegime != null)
-            && (!myTaxRegime.hasCapitalGainsAsIncome())) {
-            /* The capitalRate must be non-null */
-            if ((getCapTaxRate() == null)
-                || (!getCapTaxRate().isPositive())) {
-                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_CAPTAX);
-            }
-
-            /* The hiCapTaxRate if it exists must be positive */
-            if ((getHiCapTaxRate() != null)
-                && (!getHiCapTaxRate().isPositive())) {
-                addError(ERROR_POSITIVE, TaxInfoSet.FIELD_HCPTAX);
-            }
+            && (theInfoSet != null)) {
+            /* Validate the InfoSet */
+            theInfoSet.validate();
         }
 
         /* Set validation flag */
@@ -1116,12 +983,14 @@ public class TaxYear
 
             /* Check that this TaxYearId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myTaxYear, "Duplicate TaxYearId");
+                myTaxYear.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myTaxYear, ERROR_VALIDATION);
             }
 
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {
-                throw new JDataException(ExceptionClass.DATA, myTaxYear, "Duplicate TaxYear");
+                myTaxYear.addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
+                throw new JDataException(ExceptionClass.DATA, myTaxYear, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear to the end of the list */
@@ -1144,7 +1013,8 @@ public class TaxYear
 
             /* Check that this TaxYear has not been previously added */
             if (findTaxYearForDate(new JDateDay(pDate)) != null) {
-                throw new JDataException(ExceptionClass.DATA, myTaxYear, "Duplicate TaxYear");
+                myTaxYear.addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
+                throw new JDataException(ExceptionClass.DATA, myTaxYear, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear to the end of the list */

@@ -404,6 +404,22 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
+     * Determine whether the AccountCategoryType can be tax free.
+     * @return <code>true</code> if the account category type can be tax free, <code>false</code> otherwise.
+     */
+    public boolean canTaxFree() {
+        switch (this) {
+            case Savings:
+            case Bond:
+            case Shares:
+            case UnitTrust:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Determine whether the AccountCategoryType is subject to Capital Gains.
      * @return <code>true</code> if the account category type is subject to Capital Gains, <code>false</code> otherwise.
      */

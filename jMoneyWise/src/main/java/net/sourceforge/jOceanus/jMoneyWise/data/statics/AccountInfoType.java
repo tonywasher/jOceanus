@@ -258,12 +258,14 @@ public class AccountInfoType
 
             /* Check that this InfoType has not been previously added */
             if (findItemByName(pInfoType) != null) {
-                throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate Account Info Type");
+                myInfoType.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
             }
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfoType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate AccountInfoTypeId");
+                myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the Account Info Type to the list */
@@ -274,7 +276,7 @@ public class AccountInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -296,8 +298,9 @@ public class AccountInfoType
             AccountInfoType myInfoType = new AccountInfoType(this, pId, isEnabled, pOrder, pInfoType, pDesc);
 
             /* Check that this InfoTypeId has not been previously added */
-            if (!isIdUnique(myInfoType.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate AccountTypeId");
+            if (!isIdUnique(pId)) {
+                myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the Account Info Type to the list */
@@ -308,7 +311,7 @@ public class AccountInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -333,7 +336,8 @@ public class AccountInfoType
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myInfoType, "Duplicate AccountInfoTypeId");
+                myInfoType.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfoType, ERROR_VALIDATION);
             }
 
             /* Add the Info Type to the list */
@@ -344,7 +348,7 @@ public class AccountInfoType
 
             /* Handle validation failure */
             if (myInfoType.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfoType, ERROR_VALIDATION);
             }
         }
 
@@ -366,7 +370,7 @@ public class AccountInfoType
 
                 /* Handle validation failure */
                 if (myType.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myType, "Failed validation");
+                    throw new JDataException(ExceptionClass.VALIDATE, myType, ERROR_VALIDATION);
                 }
             }
 

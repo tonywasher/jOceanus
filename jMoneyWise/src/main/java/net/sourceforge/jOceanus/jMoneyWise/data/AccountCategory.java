@@ -84,7 +84,7 @@ public class AccountCategory
     /**
      * Category Type Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField("CategoryType");
+    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(AccountCategoryType.class.getSimpleName());
 
     /**
      * Parent Category Field Id.
@@ -554,13 +554,15 @@ public class AccountCategory
         if (myCatType instanceof Integer) {
             AccountCategoryType myType = myTypes.findItemById((Integer) myCatType);
             if (myType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Type id");
+                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         } else if (myCatType instanceof String) {
             AccountCategoryType myType = myTypes.findItemByName((String) myCatType);
             if (myType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Type name");
+                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         }
@@ -573,13 +575,15 @@ public class AccountCategory
         if (myParent instanceof Integer) {
             AccountCategory myCat = myList.findItemById((Integer) myParent);
             if (myCat == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Category id");
+                addError(ERROR_UNKNOWN, FIELD_PARENT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         } else if (myParent instanceof String) {
             AccountCategory myCat = myList.findItemByName((String) myParent);
             if (myCat == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Category name");
+                addError(ERROR_UNKNOWN, FIELD_PARENT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         }
@@ -952,8 +956,9 @@ public class AccountCategory
             AccountCategory myCategory = new AccountCategory(this, pId, pName, pDesc, pCategoryType, pParent);
 
             /* Check that this CategoryId has not been previously added */
-            if (!isIdUnique(myCategory.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate CategoryId");
+            if (!isIdUnique(pId)) {
+                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -981,7 +986,8 @@ public class AccountCategory
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate CategoryId");
+                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */

@@ -70,6 +70,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfoSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.AccountSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
@@ -489,12 +490,12 @@ public class MaintAccount
         JTextField myNotes = new JTextField();
 
         /* Set the column widths */
-        myWebSite.setColumns(Account.WSITELEN);
-        myCustNo.setColumns(Account.CUSTLEN);
-        myUserId.setColumns(Account.UIDLEN);
-        myPassword.setColumns(Account.PWDLEN);
-        myAccount.setColumns(Account.ACTLEN);
-        myNotes.setColumns(Account.WSITELEN);
+        myWebSite.setColumns(AccountInfoClass.WebSite.getMaximumLength());
+        myCustNo.setColumns(AccountInfoClass.CustomerNo.getMaximumLength());
+        myUserId.setColumns(AccountInfoClass.UserId.getMaximumLength());
+        myPassword.setColumns(AccountInfoClass.Password.getMaximumLength());
+        myAccount.setColumns(AccountInfoClass.Account.getMaximumLength());
+        myNotes.setColumns(AccountInfoClass.WebSite.getMaximumLength());
 
         /* Add the components to the field Set */
         theFieldSet.addFieldElement(AccountInfoSet.FIELD_WEBSITE, DataType.CHARARRAY, myWebSiteLabel, myWebSite);
@@ -1028,8 +1029,9 @@ public class MaintAccount
                         /* If it doesn't have a maturity */
                         if (theAccount.getMaturity() == null) {
                             /* Create a default maturity */
-                            theAccount.setMaturity(new JDateDay());
-                            theAccount.getMaturity().adjustYear(1);
+                            JDateDay myMaturity = new JDateDay();
+                            myMaturity.adjustYear(1);
+                            theAccount.setMaturity(myMaturity);
                         }
 
                         /* Else set maturity to null for non-bonds */

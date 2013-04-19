@@ -86,7 +86,9 @@ public class JDataFields {
         /* Initialise the list */
         theName = pName;
         theUnderlying = pUnderlying;
-        theNextValue = (theUnderlying == null) ? 0 : theUnderlying.getNumValues();
+        theNextValue = (theUnderlying == null)
+                ? 0
+                : theUnderlying.getNumValues();
         theFields = new ArrayList<JDataField>();
     }
 
@@ -220,7 +222,9 @@ public class JDataFields {
 
             /* Allocate preceding iterator */
             JDataFields myUnderlying = pFields.theUnderlying;
-            thePreceding = (myUnderlying == null) ? null : myUnderlying.fieldIterator();
+            thePreceding = (myUnderlying == null)
+                    ? null
+                    : myUnderlying.fieldIterator();
         }
 
         @Override
@@ -332,7 +336,9 @@ public class JDataFields {
             isValueSetField = isValueSet;
 
             /* Allocate value index if required */
-            theIndex = isValueSetField ? theNextValue++ : -1;
+            theIndex = isValueSetField
+                    ? theNextValue++
+                    : -1;
         }
 
         /**
@@ -392,5 +398,25 @@ public class JDataFields {
         public int hashCode() {
             return theName.hashCode();
         }
+    }
+
+    /**
+     * Field presence status.
+     */
+    public enum JDataFieldRequired {
+        /**
+         * Must exist.
+         */
+        MustExist,
+
+        /**
+         * Can exist.
+         */
+        CanExist,
+
+        /**
+         * Not Allowed.
+         */
+        NotAllowed;
     }
 }

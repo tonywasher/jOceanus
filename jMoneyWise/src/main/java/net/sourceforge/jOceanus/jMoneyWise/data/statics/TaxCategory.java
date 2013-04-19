@@ -282,14 +282,16 @@ public class TaxCategory
             /* Create a new Tax Category */
             TaxCategory myCategory = new TaxCategory(this, pTaxCategory);
 
-            /* Check that this TaxCategoryId has not been previously added */
-            if (!isIdUnique(myCategory.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate TaxCategoryId");
-            }
-
             /* Check that this TaxCategory has not been previously added */
             if (findItemByName(pTaxCategory) != null) {
-                throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate Tax Category");
+                myCategory.addError(ERROR_DUPLICATE, FIELD_NAME);
+                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
+            }
+
+            /* Check that this TaxCategoryId has not been previously added */
+            if (!isIdUnique(myCategory.getId())) {
+                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -300,7 +302,7 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCategory, ERROR_VALIDATION);
             }
         }
 
@@ -323,7 +325,8 @@ public class TaxCategory
 
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate TaxCategoryId");
+                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -334,7 +337,7 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCategory, ERROR_VALIDATION);
             }
         }
 
@@ -359,7 +362,8 @@ public class TaxCategory
 
             /* Check that this TaxCategoryId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate TaxCategoryId");
+                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
             }
 
             /* Add the Tax Category to the list */
@@ -370,7 +374,7 @@ public class TaxCategory
 
             /* Handle validation failure */
             if (myCategory.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myCategory, ERROR_VALIDATION);
             }
         }
 
@@ -392,7 +396,7 @@ public class TaxCategory
 
                 /* Handle validation failure */
                 if (myCategory.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myCategory, "Failed validation");
+                    throw new JDataException(ExceptionClass.VALIDATE, myCategory, ERROR_VALIDATION);
                 }
             }
 

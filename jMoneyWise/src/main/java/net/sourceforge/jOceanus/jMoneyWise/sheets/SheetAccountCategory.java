@@ -194,7 +194,7 @@ public class SheetAccountCategory
         /* Validate the account categories */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 
@@ -276,7 +276,7 @@ public class SheetAccountCategory
             /* Validate the account categories */
             DataErrorList<DataItem> myErrors = myList.validate();
             if (myErrors != null) {
-                throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
+                throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
             }
 
             /* Handle exceptions */

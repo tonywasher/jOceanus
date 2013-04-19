@@ -280,7 +280,7 @@ public class ItemValidation
         }
 
         /**
-         * Format the error
+         * Format the error.
          * @return the formatted error
          */
         private String formatError() {

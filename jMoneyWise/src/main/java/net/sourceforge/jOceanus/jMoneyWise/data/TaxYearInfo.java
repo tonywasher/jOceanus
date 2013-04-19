@@ -161,25 +161,27 @@ public class TaxYearInfo
         /* Initialise the item */
         super(pList, pId, pControlId, pInfoTypeId, pTaxYearId);
 
+        /* Look up the EventType */
+        FinanceData myData = getDataSet();
+        TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
+        TaxYearInfoType myType = myTypes.findItemById(pInfoTypeId);
+        if (myType == null) {
+            addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+        }
+        setValueInfoType(myType);
+
+        /* Look up the TaxYear */
+        TaxYearList myTaxYears = myData.getTaxYears();
+        TaxYear myOwner = myTaxYears.findItemById(pTaxYearId);
+        if (myOwner == null) {
+            addError(ERROR_UNKNOWN, FIELD_OWNER);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+        }
+        setValueOwner(myOwner);
+
         /* Protect against exceptions */
         try {
-            /* Look up the EventType */
-            FinanceData myData = getDataSet();
-            TaxYearInfoTypeList myTypes = myData.getTaxInfoTypes();
-            TaxYearInfoType myType = myTypes.findItemById(pInfoTypeId);
-            if (myType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid TaxInfoType Id");
-            }
-            setValueInfoType(myType);
-
-            /* Look up the TaxYear */
-            TaxYearList myTaxYears = myData.getTaxYears();
-            TaxYear myOwner = myTaxYears.findItemById(pTaxYearId);
-            if (myOwner == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid TaxYear Id");
-            }
-            setValueOwner(myOwner);
-
             /* Switch on Info Class */
             switch (myType.getDataType()) {
                 case MONEY:
@@ -283,11 +285,19 @@ public class TaxYearInfo
         /* Update to use the local copy of the Types */
         TaxYearInfoType myType = getInfoType();
         TaxYearInfoType myNewType = myTypes.findItemById(myType.getId());
+        if (myNewType == null) {
+            addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+        }
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the TaxYears */
         TaxYear myTaxYear = getTaxYear();
         TaxYear myNewYear = myTaxYears.findItemById(myTaxYear.getId());
+        if (myNewYear == null) {
+            addError(ERROR_UNKNOWN, FIELD_OWNER);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+        }
         setValueOwner(myNewYear);
 
         /* Access the TaxInfoSet and register this data */
@@ -504,7 +514,8 @@ public class TaxYearInfo
 
             /* Check that this DataId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate DataId");
+                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfo, ERROR_VALIDATION);
             }
 
             /* Validate the information */
@@ -512,7 +523,7 @@ public class TaxYearInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -545,7 +556,8 @@ public class TaxYearInfo
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myTaxInfo, "Duplicate TaxYearInfoId");
+                myTaxInfo.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myTaxInfo, ERROR_VALIDATION);
             }
 
             /* Add the TaxYear Info to the list */
@@ -556,7 +568,7 @@ public class TaxYearInfo
 
             /* Handle validation failure */
             if (myTaxInfo.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myTaxInfo, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myTaxInfo, ERROR_VALIDATION);
             }
         }
     }

@@ -24,9 +24,13 @@ package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataFieldRequired;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
+import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
@@ -244,6 +248,58 @@ public class TaxInfoSet
     }
 
     /**
+     * Obtain the field for the infoSet class.
+     * @param pClass the class
+     * @return the field
+     */
+    protected static JDataField getClassField(final TaxYearInfoClass pClass) {
+        switch (pClass) {
+            case Allowance:
+                return FIELD_ALLOW;
+            case LoTaxBand:
+                return FIELD_LOBAND;
+            case BasicTaxBand:
+                return FIELD_BSBAND;
+            case LoAgeAllowance:
+                return FIELD_LOAGAL;
+            case HiAgeAllowance:
+                return FIELD_HIAGAL;
+            case RentalAllowance:
+                return FIELD_RENTAL;
+            case CapitalAllowance:
+                return FIELD_CAPALW;
+            case AgeAllowanceLimit:
+                return FIELD_AGELMT;
+            case AdditionalAllowanceLimit:
+                return FIELD_ADDLMT;
+            case AdditionalIncomeThreshold:
+                return FIELD_ADDBDY;
+            case LoTaxRate:
+                return FIELD_LOTAX;
+            case BasicTaxRate:
+                return FIELD_BASTAX;
+            case HiTaxRate:
+                return FIELD_HITAX;
+            case AdditionalTaxRate:
+                return FIELD_ADDTAX;
+            case InterestTaxRate:
+                return FIELD_INTTAX;
+            case DividendTaxRate:
+                return FIELD_DIVTAX;
+            case HiDividendTaxRate:
+                return FIELD_HDVTAX;
+            case AdditionalDividendTaxRate:
+                return FIELD_ADVTAX;
+            case CapitalTaxRate:
+                return FIELD_CAPTAX;
+            case HiCapitalTaxRate:
+                return FIELD_HCPTAX;
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set
@@ -263,5 +319,130 @@ public class TaxInfoSet
     protected void cloneDataInfoSet(final TaxInfoSet pSource) {
         /* Clone the dataInfoSet */
         super.cloneDataInfoSet(pSource);
+    }
+
+    /**
+     * Determine if a field is required.
+     * @param pField the infoSet field
+     * @return the status
+     */
+    public JDataFieldRequired isFieldRequired(final JDataField pField) {
+        TaxYearInfoClass myClass = getFieldClass(pField);
+        return myClass == null
+                ? JDataFieldRequired.NotAllowed
+                : isClassRequired(myClass);
+    }
+
+    /**
+     * Determine if an infoSet class is required.
+     * @param pClass the infoSet class
+     * @return the status
+     */
+    protected JDataFieldRequired isClassRequired(final TaxYearInfoClass pClass) {
+        /* Access details about the Tax Year */
+        TaxYear myTaxYear = getOwner();
+        TaxRegime myRegime = myTaxYear.getTaxRegime();
+
+        /* If we have no TaxRegime, no class is allowed */
+        if (myRegime == null) {
+            return JDataFieldRequired.NotAllowed;
+        }
+
+        /* Switch on class */
+        switch (pClass) {
+
+        /* Handle Additional Tax Details */
+            case AdditionalAllowanceLimit:
+            case AdditionalIncomeThreshold:
+            case AdditionalTaxRate:
+            case AdditionalDividendTaxRate:
+                return myRegime.hasAdditionalTaxBand()
+                        ? JDataFieldRequired.MustExist
+                        : JDataFieldRequired.NotAllowed;
+
+                /* Handle CapitalIncome Tax Details */
+            case CapitalTaxRate:
+                return myRegime.hasCapitalGainsAsIncome()
+                        ? JDataFieldRequired.NotAllowed
+                        : JDataFieldRequired.MustExist;
+
+                /* Handle CapitalIncome Tax Details */
+            case HiCapitalTaxRate:
+                return myRegime.hasCapitalGainsAsIncome()
+                        ? JDataFieldRequired.NotAllowed
+                        : JDataFieldRequired.CanExist;
+
+                /* Handle all other fields */
+            default:
+                return JDataFieldRequired.MustExist;
+        }
+    }
+
+    /**
+     * Validate the infoSet.
+     */
+    protected void validate() {
+        /* Access details about the Tax Year */
+        TaxYear myTaxYear = getOwner();
+
+        /* Loop through the classes */
+        for (TaxYearInfoClass myClass : TaxYearInfoClass.values()) {
+            /* Access info for class */
+            TaxYearInfo myInfo = getInfo(myClass);
+            boolean isExisting = (myInfo != null)
+                                 && !myInfo.isDeleted();
+
+            /* Determine requirements for class */
+            JDataFieldRequired myState = isClassRequired(myClass);
+
+            /* If the field is missing */
+            if (!isExisting) {
+                /* Handle required field missing */
+                if (myState == JDataFieldRequired.MustExist) {
+                    myTaxYear.addError(DataItem.ERROR_MISSING, getClassField(myClass));
+                }
+                continue;
+            }
+
+            /* If field is not allowed */
+            if (myState == JDataFieldRequired.NotAllowed) {
+                myTaxYear.addError(DataItem.ERROR_EXIST, getClassField(myClass));
+                continue;
+            }
+
+            /* All values are decimal so just obtain as decimal */
+            JDecimal myValue = myInfo.getValue(JDecimal.class);
+
+            /* Values must be positive */
+            if (!myValue.isPositive()) {
+                myTaxYear.addError(DataItem.ERROR_POSITIVE, getClassField(myClass));
+            }
+
+            /* If this is LoAgeAllowance */
+            if (myClass == TaxYearInfoClass.LoAgeAllowance) {
+                /* Obtain Allowance value */
+                TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.Allowance);
+                JDecimal myAllowance = (myAllowInfo != null)
+                        ? myInfo.getValue(JDecimal.class)
+                        : null;
+                if ((myAllowance != null)
+                    && (myValue.compareTo(myAllowance) < 0)) {
+                    myTaxYear.addError("Value must be greater than allowance", FIELD_LOAGAL);
+                }
+            }
+
+            /* If this is HiAgeAllowance */
+            if (myClass == TaxYearInfoClass.HiAgeAllowance) {
+                /* Obtain LoAgeAllowance value */
+                TaxYearInfo myAllowInfo = getInfo(TaxYearInfoClass.LoAgeAllowance);
+                JDecimal myAllowance = (myAllowInfo != null)
+                        ? myInfo.getValue(JDecimal.class)
+                        : null;
+                if ((myAllowance != null)
+                    && (myValue.compareTo(myAllowance) < 0)) {
+                    myTaxYear.addError("Value must be greater than LoAgeAllowance", FIELD_HIAGAL);
+                }
+            }
+        }
     }
 }

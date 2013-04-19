@@ -120,6 +120,14 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     private final Map<E, T> theMap;
 
     /**
+     * Obtain owner.
+     * @return the owner
+     */
+    public O getOwner() {
+        return theOwner;
+    }
+
+    /**
      * Constructor.
      * @param pOwner the Owner to which this Set belongs
      * @param pTypeList the infoTypeList for the set

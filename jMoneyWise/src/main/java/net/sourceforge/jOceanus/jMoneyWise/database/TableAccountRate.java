@@ -127,7 +127,7 @@ public class TableAccountRate
         /* Validate the account rates */
         DataErrorList<DataItem> myErrors = theList.validate();
         if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, "Validation error");
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

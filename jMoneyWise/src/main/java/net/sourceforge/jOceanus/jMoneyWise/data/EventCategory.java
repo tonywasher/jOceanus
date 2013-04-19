@@ -43,7 +43,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventC
 /**
  * Event Category class.
  */
-public class EventCategory
+public final class EventCategory
         extends EncryptedItem
         implements Comparable<EventCategory> {
     /**
@@ -89,7 +89,7 @@ public class EventCategory
     /**
      * Category Type Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField("CategoryType");
+    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(EventCategoryType.class.getSimpleName());
 
     /**
      * Parent Category Field Id.
@@ -615,13 +615,15 @@ public class EventCategory
         if (myCatType instanceof Integer) {
             EventCategoryType myType = myTypes.findItemById((Integer) myCatType);
             if (myType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Type id");
+                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         } else if (myCatType instanceof String) {
             EventCategoryType myType = myTypes.findItemByName((String) myCatType);
             if (myType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Type name");
+                addError(ERROR_UNKNOWN, FIELD_CATTYPE);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueType(myType);
         }
@@ -634,13 +636,15 @@ public class EventCategory
         if (myParent instanceof Integer) {
             EventCategory myCat = myList.findItemById((Integer) myParent);
             if (myCat == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Category id");
+                addError(ERROR_UNKNOWN, FIELD_PARENT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         } else if (myParent instanceof String) {
             EventCategory myCat = myList.findItemByName((String) myParent);
             if (myCat == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Parent Category name");
+                addError(ERROR_UNKNOWN, FIELD_PARENT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueParent(myCat);
         }
@@ -1062,7 +1066,8 @@ public class EventCategory
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate CategoryId");
+                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -1090,7 +1095,8 @@ public class EventCategory
 
             /* Check that this CategoryId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myCategory, "Duplicate CategoryId");
+                myCategory.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myCategory, ERROR_VALIDATION);
             }
 
             /* Add to the list */

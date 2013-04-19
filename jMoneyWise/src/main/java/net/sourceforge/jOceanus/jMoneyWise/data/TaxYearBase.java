@@ -70,7 +70,7 @@ public abstract class TaxYearBase
     /**
      * TaxRegime field Id.
      */
-    public static final JDataField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField("Regime");
+    public static final JDataField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField(TaxRegime.class.getSimpleName());
 
     @Override
     public String formatObject() {
@@ -292,13 +292,15 @@ public abstract class TaxYearBase
         if (myRegime instanceof Integer) {
             TaxRegime myReg = myRegimes.findItemById((Integer) myRegime);
             if (myReg == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Tax Regime id");
+                addError(ERROR_UNKNOWN, FIELD_REGIME);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueTaxRegime(myReg);
         } else if (myRegime instanceof String) {
             TaxRegime myReg = myRegimes.findItemByName((String) myRegime);
             if (myReg == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Tax Regime name");
+                addError(ERROR_UNKNOWN, FIELD_REGIME);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueTaxRegime(myReg);
         }
@@ -316,13 +318,13 @@ public abstract class TaxYearBase
 
         /* The date must not be null */
         if (myDate == null) {
-            addError("Null date is not allowed", FIELD_TAXYEAR);
+            addError(ERROR_MISSING, FIELD_TAXYEAR);
 
             /* else we have a date */
         } else {
             /* The date must be unique */
             if (myList.countInstances(myDate) > 1) {
-                addError("Date must be unique", FIELD_TAXYEAR);
+                addError(ERROR_DUPLICATE, FIELD_TAXYEAR);
             }
 
             /* The day and month must be 5th April */
@@ -334,9 +336,9 @@ public abstract class TaxYearBase
 
         /* TaxRegime must be non-null */
         if (myTaxRegime == null) {
-            addError("TaxRegime must be non-null", FIELD_REGIME);
+            addError(ERROR_MISSING, FIELD_REGIME);
         } else if (!myTaxRegime.getEnabled()) {
-            addError("TaxRegime must be enabled", FIELD_REGIME);
+            addError(ERROR_DISABLED, FIELD_REGIME);
         }
     }
 

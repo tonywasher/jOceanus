@@ -383,33 +383,33 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Name must be non-null */
         if (myName == null) {
-            addError("Name must be non-null", FIELD_NAME);
+            addError(ERROR_MISSING, FIELD_NAME);
 
             /* Check that the name is unique */
         } else {
             /* The description must not be too long */
             if (myName.length() > NAMELEN) {
-                addError("Name is too long", FIELD_NAME);
+                addError(ERROR_LENGTH, FIELD_NAME);
             }
 
             if (myList.countInstances(myName) > 1) {
-                addError("Name must be unique", FIELD_NAME);
+                addError(ERROR_DUPLICATE, FIELD_NAME);
             }
         }
 
         /* Check description length */
         if ((myDesc != null)
             && (myDesc.length() > DESCLEN)) {
-            addError("Description is too long", FIELD_NAME);
+            addError(ERROR_LENGTH, FIELD_NAME);
         }
 
         /* The order must not be negative */
         if (getOrder() < 0) {
-            addError("Order is negative", FIELD_ORDER);
+            addError(ERROR_NEGATIVE, FIELD_ORDER);
         }
 
         if (myList.countInstances(getOrder()) > 1) {
-            addError("Order must be unique", FIELD_ORDER);
+            addError(ERROR_DUPLICATE, FIELD_ORDER);
         }
 
         /* Set validation flag */
