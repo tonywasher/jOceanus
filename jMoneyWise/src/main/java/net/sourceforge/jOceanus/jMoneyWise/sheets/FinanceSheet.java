@@ -361,15 +361,15 @@ public class FinanceSheet
             if (bContinue) {
                 bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData);
             }
-            // if (bContinue) {
-            // bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);
-            // }
             if (bContinue) {
                 myData.getAccounts().validateOnLoad();
             }
 
             // if (bContinue) {
             // bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, myRange);
+            // }
+            // if (bContinue) {
+            // bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);
             // }
 
             /* Close the stream */

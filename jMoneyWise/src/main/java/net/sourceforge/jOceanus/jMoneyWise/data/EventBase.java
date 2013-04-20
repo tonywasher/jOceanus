@@ -421,6 +421,14 @@ public abstract class EventBase
     }
 
     /**
+     * Set category name.
+     * @param pName the name
+     */
+    private void setValueCategory(final String pName) {
+        getValueSet().setValue(FIELD_CATEGORY, pName);
+    }
+
+    /**
      * Set description value.
      * @param pValue the value
      * @throws JDataException on error
@@ -463,6 +471,14 @@ public abstract class EventBase
     }
 
     /**
+     * Set debit name.
+     * @param pName the name
+     */
+    private void setValueDebit(final String pName) {
+        getValueSet().setValue(FIELD_DEBIT, pName);
+    }
+
+    /**
      * Set credit value.
      * @param pValue the value
      */
@@ -476,6 +492,14 @@ public abstract class EventBase
      */
     private void setValueCredit(final Integer pId) {
         getValueSet().setValue(FIELD_CREDIT, pId);
+    }
+
+    /**
+     * Set credit name.
+     * @param pName the name
+     */
+    private void setValueCredit(final String pName) {
+        getValueSet().setValue(FIELD_CREDIT, pName);
     }
 
     @Override
@@ -537,10 +561,6 @@ public abstract class EventBase
 
         /* Protect against exceptions */
         try {
-            /* Access account list */
-            FinanceData myData = getDataSet();
-            AccountList myAccounts = myData.getAccounts();
-
             /* Store the IDs that we will look up */
             setValueDebit(pDebit);
             setValueCredit(pCredit);
@@ -550,27 +570,6 @@ public abstract class EventBase
 
             /* Create the date */
             setValueDate(new JDateDay(pDate));
-
-            /* Look up the Debit Account */
-            Account myAccount = myAccounts.findItemById(pDebit);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Debit Account Id");
-            }
-            setValueDebit(myAccount);
-
-            /* Look up the Debit Account */
-            myAccount = myAccounts.findItemById(pCredit);
-            if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Credit Account Id");
-            }
-            setValueCredit(myAccount);
-
-            /* Look up the Category */
-            EventCategory myCategory = myData.getEventCategories().findItemById(pCategory);
-            if (myCategory == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Category Id");
-            }
-            setValueCategory(myCategory);
 
             /* Record the encrypted values */
             setValueDesc(pDesc);
@@ -599,10 +598,10 @@ public abstract class EventBase
     protected EventBase(final EventBaseList<? extends EventBase> pList,
                         final Integer uId,
                         final Date pDate,
-                        final Account pDebit,
-                        final Account pCredit,
+                        final String pDebit,
+                        final String pCredit,
                         final String pAmount,
-                        final EventCategory pCategory,
+                        final String pCategory,
                         final Boolean pReconciled,
                         final String pDesc) throws JDataException {
         /* Initialise item */
@@ -685,25 +684,74 @@ public abstract class EventBase
         /* Update the Encryption details */
         super.resolveDataSetLinks();
 
-        /* Access Lists */
+        /* Access Relevant lists */
         FinanceData myData = getDataSet();
         AccountList myAccounts = myData.getAccounts();
         EventCategoryList myCategories = myData.getEventCategories();
+        ValueSet myValues = getValueSet();
 
-        /* Update credit to use the local copy of the Accounts */
-        Account myAct = getCredit();
-        Account myNewAct = myAccounts.findItemById(myAct.getId());
-        setValueCredit(myNewAct);
+        /* Adjust Debit */
+        Object myDebit = myValues.getValue(FIELD_DEBIT);
+        if (myDebit instanceof Account) {
+            myDebit = ((Account) myDebit).getId();
+        }
+        if (myDebit instanceof Integer) {
+            Account myAccount = myAccounts.findItemById((Integer) myDebit);
+            if (myAccount == null) {
+                addError(ERROR_UNKNOWN, FIELD_DEBIT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueDebit(myAccount);
+        } else if (myDebit instanceof String) {
+            Account myAccount = myAccounts.findItemByName((String) myDebit);
+            if (myAccount == null) {
+                addError(ERROR_UNKNOWN, FIELD_DEBIT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueDebit(myAccount);
+        }
 
-        /* Update debit to use the local copy of the Accounts */
-        myAct = getDebit();
-        myNewAct = myAccounts.findItemById(myAct.getId());
-        setValueDebit(myNewAct);
+        /* Adjust Credit */
+        Object myCredit = myValues.getValue(FIELD_CREDIT);
+        if (myCredit instanceof Account) {
+            myCredit = ((Account) myCredit).getId();
+        }
+        if (myCredit instanceof Integer) {
+            Account myAccount = myAccounts.findItemById((Integer) myCredit);
+            if (myAccount == null) {
+                addError(ERROR_UNKNOWN, FIELD_CREDIT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueCredit(myAccount);
+        } else if (myCredit instanceof String) {
+            Account myAccount = myAccounts.findItemByName((String) myCredit);
+            if (myAccount == null) {
+                addError(ERROR_UNKNOWN, FIELD_CREDIT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueCredit(myAccount);
+        }
 
-        /* Update category to use the local copy */
-        EventCategory myCat = getCategory();
-        EventCategory myNewCat = myCategories.findItemById(myCat.getId());
-        setValueCategory(myNewCat);
+        /* Adjust Category */
+        Object myCategory = myValues.getValue(FIELD_CATEGORY);
+        if (myCategory instanceof EventCategory) {
+            myCategory = ((EventCategory) myCategory).getId();
+        }
+        if (myCategory instanceof Integer) {
+            EventCategory myCat = myCategories.findItemById((Integer) myCategory);
+            if (myCat == null) {
+                addError(ERROR_UNKNOWN, FIELD_CATEGORY);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueCategory(myCat);
+        } else if (myCategory instanceof String) {
+            EventCategory myCat = myCategories.findItemByName((String) myCategory);
+            if (myCat == null) {
+                addError(ERROR_UNKNOWN, FIELD_CATEGORY);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueCategory(myCat);
+        }
     }
 
     /**
@@ -1128,7 +1176,7 @@ public abstract class EventBase
 
         /* The date must be non-null */
         if (myDate == null) {
-            addError("Null date is not allowed", FIELD_DATE);
+            addError(ERROR_MISSING, FIELD_DATE);
 
             /* The date must be in-range */
         } else if (myRange.compareTo(myDate) != 0) {
@@ -1137,7 +1185,7 @@ public abstract class EventBase
 
         /* Category must be non-null */
         if (myCategory == null) {
-            addError("Category must be non-null", FIELD_CATEGORY);
+            addError(ERROR_MISSING, FIELD_CATEGORY);
             /* Must be enabled */
         } else if (!myCategory.getCategoryType().getEnabled()) {
             addError("CategoryType must be enabled", FIELD_CATEGORY);
@@ -1148,15 +1196,15 @@ public abstract class EventBase
 
         /* The description must be non-null */
         if (myDesc == null) {
-            addError("Description must be non-null", FIELD_DESC);
+            addError(ERROR_MISSING, FIELD_DESC);
             /* and not too long */
         } else if (myDesc.length() > DESCLEN) {
-            addError("Description is too long", FIELD_DESC);
+            addError(ERROR_LENGTH, FIELD_DESC);
         }
 
         /* Credit account must be non-null */
         if (myCredit == null) {
-            addError("Credit account must be non-null", FIELD_CREDIT);
+            addError(ERROR_MISSING, FIELD_CREDIT);
             /* And valid for category type */
         } else if ((myCategory != null)
                    && (!isValidEvent(myCategory, myCredit.getAccountCategory(), true))) {
@@ -1165,7 +1213,7 @@ public abstract class EventBase
 
         /* Debit account must be non-null */
         if (myDebit == null) {
-            addError("Debit account must be non-null", FIELD_DEBIT);
+            addError(ERROR_MISSING, FIELD_DEBIT);
             /* And valid for category type */
         } else if ((myCategory != null)
                    && (!isValidEvent(myCategory, myDebit.getAccountCategory(), false))) {
@@ -1183,9 +1231,9 @@ public abstract class EventBase
 
         /* Money must not be null/negative */
         if (myAmount == null) {
-            addError("Amount must be non-null", FIELD_AMOUNT);
+            addError(ERROR_MISSING, FIELD_AMOUNT);
         } else if (!myAmount.isPositive()) {
-            addError("Amount cannot be negative", FIELD_AMOUNT);
+            addError(ERROR_NEGATIVE, FIELD_AMOUNT);
         }
 
         /* Money must be zero for stock split/demerger */

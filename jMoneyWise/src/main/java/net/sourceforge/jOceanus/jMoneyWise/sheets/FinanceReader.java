@@ -75,7 +75,6 @@ public class FinanceReader
         addSheet(new SheetAccount(this));
         addSheet(new SheetAccountRate(this));
         addSheet(new SheetAccountPrice(this));
-        addSheet(new SheetPattern(this));
         if (isBackup) {
             addSheet(new SheetAccountInfo(this));
         }
@@ -83,6 +82,7 @@ public class FinanceReader
         if (isBackup) {
             addSheet(new SheetEventInfo(this));
         }
+        addSheet(new SheetPattern(this));
     }
 
     @Override

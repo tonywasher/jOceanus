@@ -26,8 +26,6 @@ import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
@@ -174,10 +172,7 @@ public class SheetAccountPrice
         theList.touchUnderlyingItems();
 
         /* Validate the prices */
-        DataErrorList<DataItem> myErrors = theList.validate();
-        if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
-        }
+        theList.validateOnLoad();
     }
 
     /**
@@ -268,10 +263,7 @@ public class SheetAccountPrice
             myList.touchUnderlyingItems();
 
             /* Validate the prices */
-            DataErrorList<DataItem> myErrors = myList.validate();
-            if (myErrors != null) {
-                throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
-            }
+            myList.validateOnLoad();
 
             /* Handle exceptions */
         } catch (JDataException e) {

@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
-import java.util.Iterator;
-
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.EditState;
@@ -1056,26 +1054,6 @@ public class Account
         @Override
         public Account addNewItem() {
             return null;
-        }
-
-        /**
-         * Update account details after data update.
-         * @throws JDataException on error
-         */
-        public void validateOnLoad() throws JDataException {
-            /* Access a new iterator */
-            Iterator<Account> myIterator = listIterator();
-
-            /* Loop through the accounts */
-            while (myIterator.hasNext()) {
-                Account myCurr = myIterator.next();
-
-                /* Validate the account */
-                myCurr.validate();
-                if (myCurr.hasErrors()) {
-                    throw new JDataException(ExceptionClass.VALIDATE, myCurr, "Failed validation");
-                }
-            }
         }
 
         /**

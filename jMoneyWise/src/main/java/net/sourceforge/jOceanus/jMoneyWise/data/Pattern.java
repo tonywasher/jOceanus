@@ -31,7 +31,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
@@ -39,9 +38,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
@@ -68,11 +65,6 @@ public class Pattern
      * Interesting TaxYear.
      */
     public static final int BASE_TAXYEAR = 2000;
-
-    /**
-     * TenMonths maximum adjustment.
-     */
-    private static final int MAX_TENMONTHS = 9;
 
     /**
      * The interesting date range.
@@ -148,6 +140,14 @@ public class Pattern
      */
     private void setValueFrequency(final Integer pId) {
         getValueSet().setValue(FIELD_FREQ, pId);
+    }
+
+    /**
+     * Set frequency name.
+     * @param pName the frequency name
+     */
+    private void setValueFrequency(final String pName) {
+        getValueSet().setValue(FIELD_FREQ, pName);
     }
 
     /**
@@ -257,15 +257,6 @@ public class Pattern
 
         /* Record the IDs */
         setValueFrequency(pFreqId);
-
-        /* Access the Frequencies */
-        FinanceData myData = getDataSet();
-        FrequencyList myFrequencies = myData.getFrequencys();
-        Frequency myFreq = myFrequencies.findItemById(pFreqId);
-        if (myFreq == null) {
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid Frequency Id");
-        }
-        setValueFrequency(myFreq);
     }
 
     /**
@@ -285,11 +276,11 @@ public class Pattern
                     final Integer pId,
                     final Date pDate,
                     final String pDesc,
-                    final Account pDebit,
-                    final Account pCredit,
-                    final EventCategory pCategory,
+                    final String pDebit,
+                    final String pCredit,
+                    final String pCategory,
                     final String pAmount,
-                    final Frequency pFrequency) throws JDataException {
+                    final String pFrequency) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
         super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, Boolean.FALSE, pDesc);
 
@@ -302,14 +293,31 @@ public class Pattern
         /* Update the Event details */
         super.resolveDataSetLinks();
 
-        /* Access Lists */
+        /* Access Relevant lists */
         FinanceData myData = getDataSet();
-        FrequencyList myFrequencys = myData.getFrequencys();
+        FrequencyList myFrequencies = myData.getFrequencys();
+        ValueSet myValues = getValueSet();
 
-        /* Update frequency to use the local copy */
-        Frequency myFreq = getFrequency();
-        Frequency myNewFreq = myFrequencys.findItemById(myFreq.getId());
-        setValueFrequency(myNewFreq);
+        /* Adjust Frequency */
+        Object myFrequency = myValues.getValue(FIELD_FREQ);
+        if (myFrequency instanceof Frequency) {
+            myFrequency = ((Frequency) myFrequency).getId();
+        }
+        if (myFrequency instanceof Integer) {
+            Frequency myFreq = myFrequencies.findItemById((Integer) myFrequency);
+            if (myFreq == null) {
+                addError(ERROR_UNKNOWN, FIELD_FREQ);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueFrequency(myFreq);
+        } else if (myFrequency instanceof String) {
+            Frequency myFreq = myFrequencies.findItemByName((String) myFrequency);
+            if (myFreq == null) {
+                addError(ERROR_UNKNOWN, FIELD_FREQ);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueFrequency(myFreq);
+        }
     }
 
     /**
@@ -319,7 +327,7 @@ public class Pattern
     public void validate() {
         /* Check that frequency is non-null */
         if (getFrequency() == null) {
-            addError("Frequency must be non-null", FIELD_FREQ);
+            addError(ERROR_MISSING, FIELD_FREQ);
         } else if (!getFrequency().getEnabled()) {
             addError("Frequency must be enabled", FIELD_FREQ);
         }
@@ -386,7 +394,6 @@ public class Pattern
 
                 /* Monthly etc add relevant months */
                 case Monthly:
-                case TenMonths:
                 case Quarterly:
                 case HalfYearly:
                     pDate.adjustMonth(myFreq.getAdjustment());
@@ -406,27 +413,6 @@ public class Pattern
             /* If we are beyond the end of the year we have finished */
             if (pDate.compareTo(pTaxYear.getTaxYear()) > 0) {
                 return null;
-            }
-
-            /* If this is a ten month repeat */
-            if (myFreq == FrequencyClass.TenMonths) {
-                myDate = new JDateDay(getDate());
-
-                /* Calculate the difference in years */
-                iAdjust = pTaxYear.getTaxYear().getYear()
-                          - RANGE_PATTERN.getEnd().getYear();
-
-                /* Adjust the date to fall into the tax year */
-                myDate.copyDate(getDate());
-                myDate.adjustYear(iAdjust);
-
-                /* Add 9 months to get to last date */
-                myDate.adjustMonth(MAX_TENMONTHS);
-
-                /* If we are beyond this date then we have finished */
-                if (pDate.compareTo(myDate) > 0) {
-                    return null;
-                }
             }
         }
 
@@ -713,62 +699,13 @@ public class Pattern
                                 final String pCategory,
                                 final String pFrequency,
                                 final String pDesc) throws JDataException {
-            /* Access the Lists */
-            FinanceData myData = getDataSet();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-            AccountList myAccounts = myData.getAccounts();
-            EventCategoryList myCategories = myData.getEventCategories();
-            FrequencyList myFrequencies = myData.getFrequencys();
-
-            /* Look up the Debit */
-            Account myDebit = myAccounts.findItemByName(pDebit);
-            if (myDebit == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                                                              + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Debit ["
-                                                              + pDebit
-                                                              + "]");
-            }
-
-            /* Look up the Credit */
-            Account myCredit = myAccounts.findItemByName(pCredit);
-            if (myCredit == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                                                              + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Credit ["
-                                                              + pCredit
-                                                              + "]");
-            }
-
-            /* Look up the Category */
-            EventCategory myCategory = myCategories.findItemByName(pCategory);
-            if (myCategory == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                                                              + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Category ["
-                                                              + pCategory
-                                                              + "]");
-            }
-
-            /* Look up the Frequency */
-            Frequency myFrequency = myFrequencies.findItemByName(pFrequency);
-            if (myFrequency == null) {
-                throw new JDataException(ExceptionClass.DATA, "Pattern on ["
-                                                              + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Frequency ["
-                                                              + pFrequency
-                                                              + "]");
-            }
-
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, pId, pDate, pDesc, myDebit, myCredit, myCategory, pAmount, myFrequency);
+            Pattern myPattern = new Pattern(this, pId, pDate, pDesc, pDebit, pCredit, pCategory, pAmount, pFrequency);
 
-            /* Validate the pattern */
-            myPattern.validate();
-
-            /* Handle validation failure */
-            if (myPattern.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myPattern, "Failed validation");
+            /* Check that this PatternId has not been previously added */
+            if (!isIdUnique(pId)) {
+                myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myPattern, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -802,17 +739,8 @@ public class Pattern
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, "Duplicate PatternId <"
-                                                              + pId
-                                                              + ">");
-            }
-
-            /* Validate the pattern */
-            myPattern.validate();
-
-            /* Handle validation failure */
-            if (myPattern.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myPattern, "Failed validation");
+                myPattern.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myPattern, ERROR_VALIDATION);
             }
 
             /* Add to the list */

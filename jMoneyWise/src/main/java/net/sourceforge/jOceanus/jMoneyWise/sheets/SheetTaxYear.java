@@ -27,8 +27,6 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
@@ -381,10 +379,7 @@ public class SheetTaxYear
             myList.touchUnderlyingItems();
 
             /* Validate the tax years */
-            DataErrorList<DataItem> myErrors = myList.validate();
-            if (myErrors != null) {
-                throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
-            }
+            myList.validateOnLoad();
 
             /* Handle exceptions */
         } catch (JDataException e) {

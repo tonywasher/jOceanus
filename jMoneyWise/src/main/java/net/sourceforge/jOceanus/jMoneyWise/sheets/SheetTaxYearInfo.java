@@ -23,9 +23,6 @@
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
-import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -103,9 +100,6 @@ public class SheetTaxYearInfo
         theTaxYears.touchUnderlyingItems();
 
         /* Validate the tax years */
-        DataErrorList<DataItem> myErrors = theTaxYears.validate();
-        if (myErrors != null) {
-            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
-        }
+        theTaxYears.validateOnLoad();
     }
 }

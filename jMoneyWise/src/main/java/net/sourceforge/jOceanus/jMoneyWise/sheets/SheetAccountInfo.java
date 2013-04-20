@@ -93,5 +93,8 @@ public class SheetAccountInfo
     protected void postProcessOnLoad() throws JDataException {
         /* Touch underlying items of accounts */
         theAccounts.touchUnderlyingItems();
+
+        /* Validate the accounts */
+        theAccounts.validateOnLoad();
     }
 }

@@ -391,7 +391,9 @@ public class SheetAccount
             /* Sort the lists */
             myList.resolveDataSetLinks();
             myList.reSort();
-            myInfoList.reSort();
+
+            /* Touch underlying items */
+            myList.touchUnderlyingItems();
 
             /* Handle exceptions */
         } catch (JDataException e) {

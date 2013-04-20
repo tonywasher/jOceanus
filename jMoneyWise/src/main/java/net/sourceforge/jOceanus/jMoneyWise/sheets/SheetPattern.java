@@ -213,6 +213,19 @@ public class SheetPattern
         return COL_DESC;
     }
 
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and reSort */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+
+        /* Touch underlying items */
+        theList.touchUnderlyingItems();
+
+        /* Validate the patterns */
+        theList.validateOnLoad();
+    }
+
     /**
      * Load the Patterns from an archive.
      * @param pTask the task control
@@ -256,21 +269,16 @@ public class SheetPattern
                 int iAdjust = 0;
 
                 /* Access strings */
-                String myAccount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                String myDebit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                String myCredit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 Date myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
-                String myDesc = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                String myPartner = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                boolean isCredit = myView.getRowCellByIndex(myRow, iAdjust++).getBooleanValue();
                 String myFrequency = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                String myDesc = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myDate, myDesc, isCredit
-                        ? myPartner
-                        : myAccount, isCredit
-                        ? myAccount
-                        : myPartner, myCategory, myAmount, myFrequency);
+                myList.addOpenItem(0, myDate, myDesc, myDebit, myCredit, myCategory, myAmount, myFrequency);
 
                 /* Report the progress */
                 myCount++;
@@ -280,8 +288,15 @@ public class SheetPattern
                 }
             }
 
-            /* Sort the list */
+            /* Resolve links and reSort */
+            myList.resolveDataSetLinks();
             myList.reSort();
+
+            /* Touch underlying items */
+            myList.touchUnderlyingItems();
+
+            /* Validate the patterns */
+            myList.validateOnLoad();
 
             /* Handle exceptions */
         } catch (JDataException e) {

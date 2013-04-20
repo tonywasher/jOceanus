@@ -32,7 +32,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
@@ -43,7 +42,6 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -477,10 +475,10 @@ public class Event
     protected Event(final EventList pList,
                     final Integer pId,
                     final Date pDate,
-                    final Account pDebit,
-                    final Account pCredit,
+                    final String pDebit,
+                    final String pCredit,
                     final String pAmount,
-                    final EventCategory pCategory,
+                    final String pCategory,
                     final Boolean pReconciled,
                     final String pDesc) throws JDataException {
         /* Initialise item */
@@ -1139,43 +1137,14 @@ public class Event
                                  final String pCategory,
                                  final Boolean pReconciled,
                                  final String pDesc) throws JDataException {
-            /* Access the accounts */
-            FinanceData myData = getDataSet();
-            JDataFormatter myFormatter = myData.getDataFormatter();
-            AccountList myAccounts = myData.getAccounts();
-
-            /* Look up the Category */
-            EventCategory myCategory = myData.getEventCategories().findItemByName(pCategory);
-            if (myCategory == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on ["
-                                                              + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Category ["
-                                                              + pCategory
-                                                              + "]");
-            }
-
-            /* Look up the Credit Account */
-            Account myCredit = myAccounts.findItemByName(pCredit);
-            if (myCredit == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on ["
-                                                              + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Credit account ["
-                                                              + pCredit
-                                                              + "]");
-            }
-
-            /* Look up the Debit Account */
-            Account myDebit = myAccounts.findItemByName(pDebit);
-            if (myDebit == null) {
-                throw new JDataException(ExceptionClass.DATA, "Event on ["
-                                                              + myFormatter.formatObject(new JDateDay(pDate))
-                                                              + "] has invalid Debit account ["
-                                                              + pDebit
-                                                              + "]");
-            }
-
             /* Create the new Event */
-            Event myEvent = new Event(this, pId, pDate, myDebit, myCredit, pAmount, myCategory, pReconciled, pDesc);
+            Event myEvent = new Event(this, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pDesc);
+
+            /* Check that this EventId has not been previously added */
+            if (!isIdUnique(pId)) {
+                myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myEvent, ERROR_VALIDATION);
+            }
 
             /* Add the Event to the list */
             append(myEvent);
@@ -1209,7 +1178,8 @@ public class Event
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myEvent, "Duplicate EventId");
+                myEvent.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myEvent, ERROR_VALIDATION);
             }
 
             /* Add the Event to the list */

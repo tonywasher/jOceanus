@@ -24,6 +24,8 @@ package net.sourceforge.jOceanus.jMoneyWise.database;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
@@ -82,9 +84,9 @@ public class TableEventInfo
     @Override
     protected void postProcessOnLoad() throws JDataException {
         /* Validate the events */
-        theEvents.validate();
-        if (theEvents.hasErrors()) {
-            throw new JDataException(ExceptionClass.VALIDATE, theEvents, "Validation error");
+        DataErrorList<DataItem> myErrors = theEvents.validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
         }
     }
 }

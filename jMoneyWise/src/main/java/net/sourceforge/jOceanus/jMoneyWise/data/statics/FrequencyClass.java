@@ -68,12 +68,7 @@ public enum FrequencyClass implements StaticInterface {
     /**
      * Only on Maturity.
      */
-    Maturity(8, 7, 0),
-
-    /**
-     * Monthly for up to ten-months.
-     */
-    TenMonths(9, 8, 1);
+    Maturity(8, 7, 0);
 
     /**
      * Class Id.

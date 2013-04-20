@@ -28,6 +28,7 @@ import java.util.Map;
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
@@ -745,6 +746,18 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
 
         /* Return the errors */
         return myErrors;
+    }
+
+    /**
+     * Perform a validation on data load
+     * @throws JDataException on error
+     */
+    public void validateOnLoad() throws JDataException {
+        /* Validate the list */
+        DataErrorList<DataItem> myErrors = validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
+        }
     }
 
     /**

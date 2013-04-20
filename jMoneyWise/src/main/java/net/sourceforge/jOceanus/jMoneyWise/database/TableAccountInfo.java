@@ -23,6 +23,9 @@
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
+import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDataInfo;
@@ -82,5 +85,11 @@ public class TableAccountInfo
     protected void postProcessOnLoad() throws JDataException {
         /* Touch underlying items of accounts */
         theAccounts.touchUnderlyingItems();
+
+        /* Validate the events */
+        DataErrorList<DataItem> myErrors = theAccounts.validate();
+        if (myErrors != null) {
+            throw new JDataException(ExceptionClass.VALIDATE, myErrors, DataItem.ERROR_VALIDATION);
+        }
     }
 }

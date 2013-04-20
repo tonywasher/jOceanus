@@ -274,6 +274,13 @@ public class SheetEvent
         return myLastCol;
     }
 
+    @Override
+    protected void postProcessOnLoad() throws JDataException {
+        /* Resolve links and reSort */
+        theList.resolveDataSetLinks();
+        theList.reSort();
+    }
+
     /**
      * Load the Events from an archive.
      * @param pTask the task control
@@ -462,8 +469,11 @@ public class SheetEvent
                 }
 
                 /* Sort the list */
+                myList.resolveDataSetLinks();
                 myList.reSort();
-                myInfoList.reSort();
+
+                /* Validate the list */
+                myList.validateOnLoad();
             }
 
             /* Handle Exceptions */

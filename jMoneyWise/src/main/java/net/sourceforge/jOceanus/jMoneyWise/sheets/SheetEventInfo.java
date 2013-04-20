@@ -23,7 +23,6 @@
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
-import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
@@ -93,9 +92,6 @@ public class SheetEventInfo
     @Override
     protected void postProcessOnLoad() throws JDataException {
         /* Validate the events */
-        theEvents.validate();
-        if (theEvents.hasErrors()) {
-            throw new JDataException(ExceptionClass.VALIDATE, theEvents, "Validation error");
-        }
+        theEvents.validateOnLoad();
     }
 }
