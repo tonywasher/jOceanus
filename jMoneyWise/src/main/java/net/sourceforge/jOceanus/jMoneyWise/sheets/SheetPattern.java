@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
-import java.util.Date;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
@@ -123,7 +122,7 @@ public class SheetPattern
         Integer myFreqId = loadInteger(COL_FREQ);
 
         /* Access the date */
-        Date myDate = loadDate(COL_DATE);
+        JDateDay myDate = loadDate(COL_DATE);
 
         /* Access the binary values */
         byte[] myDesc = loadBytes(COL_DESC);
@@ -142,7 +141,7 @@ public class SheetPattern
         String myFrequency = loadString(COL_FREQ);
 
         /* Access the date */
-        Date myDate = loadDate(COL_DATE);
+        JDateDay myDate = loadDate(COL_DATE);
 
         /* Access the string values */
         String myDesc = loadString(COL_DESC);
@@ -271,7 +270,7 @@ public class SheetPattern
                 /* Access strings */
                 String myDebit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myCredit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                Date myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
+                JDateDay myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
                 String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myFrequency = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();

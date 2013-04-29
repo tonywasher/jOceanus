@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDecimal: Decimals represented by long values
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import java.util.Currency;
 /**
  * Represents a Money object.
  */
-public class JMoney extends JDecimal {
+public class JMoney
+        extends JDecimal {
     /**
      * Currency for money.
      */
@@ -98,8 +99,10 @@ public class JMoney extends JDecimal {
     /**
      * Constructor for money from a decimal string.
      * @param pSource The source decimal string
+     * @throws IllegalArgumentException on invalidly formatted argument
+     * @throws NullPointerException on null argument
      */
-    public JMoney(final String pSource) {
+    public JMoney(final String pSource) throws IllegalArgumentException, NullPointerException {
         /* Use default constructor */
         this();
 
@@ -231,8 +234,7 @@ public class JMoney extends JDecimal {
     }
 
     /**
-     * calculate the gross value of this money at a given rate used to convert from net to gross values form
-     * interest and dividends.
+     * calculate the gross value of this money at a given rate used to convert from net to gross values form interest and dividends.
      * @param pRate the rate to calculate at
      * @return the calculated value
      */
@@ -243,8 +245,7 @@ public class JMoney extends JDecimal {
     }
 
     /**
-     * calculate the TaxCredit value of this money at a given rate used to convert from net to gross. values
-     * form interest and dividends
+     * calculate the TaxCredit value of this money at a given rate used to convert from net to gross. values form interest and dividends
      * @param pRate the rate to calculate at
      * @return the calculated value
      */
@@ -319,6 +320,7 @@ public class JMoney extends JDecimal {
 
     @Override
     public int hashCode() {
-        return theCurrency.hashCode() ^ super.hashCode();
+        return theCurrency.hashCode()
+               ^ super.hashCode();
     }
 }

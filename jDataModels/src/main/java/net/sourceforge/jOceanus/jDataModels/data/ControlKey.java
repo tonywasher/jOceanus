@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataKey.DataKeyList;
 import net.sourceforge.jOceanus.jGordianKnot.CipherSet;
@@ -240,7 +241,7 @@ public class ControlKey
                 theSecurityGenerator = pSource.theSecurityGenerator;
                 theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
                 theCipherSet = new CipherSet(theSecurityGenerator, getHashMode());
-                theFieldGenerator = new EncryptionGenerator(theCipherSet);
+                theFieldGenerator = new EncryptionGenerator(theCipherSet, getDataSet().getDataFormatter());
                 break;
             default:
                 break;
@@ -268,6 +269,7 @@ public class ControlKey
             /* Access the Security manager */
             DataSet<?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
+            JDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security generator */
             theSecurityGenerator = mySecure.getSecurityGenerator();
@@ -281,9 +283,9 @@ public class ControlKey
             /* Create the DataKey Map */
             theMap = new EnumMap<SymKeyType, DataKey>(SymKeyType.class);
 
-            /* Create the CipherSet */
+            /* Create the CipherSet and security generator */
             theCipherSet = new CipherSet(theSecurityGenerator, getHashMode());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet);
+            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -306,6 +308,7 @@ public class ControlKey
             /* Access the Security manager */
             DataSet<?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
+            JDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security generator */
             theSecurityGenerator = mySecure.getSecurityGenerator();
@@ -321,7 +324,7 @@ public class ControlKey
 
             /* Create the CipherSet */
             theCipherSet = new CipherSet(theSecurityGenerator, getHashMode());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet);
+            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
 
             /* Allocate the DataKeys */
             allocateDataKeys(myData);
@@ -347,6 +350,7 @@ public class ControlKey
             /* Access the Security manager */
             DataSet<?> myData = getDataSet();
             SecureManager mySecure = myData.getSecurity();
+            JDataFormatter myFormatter = myData.getDataFormatter();
 
             /* Record the security generator */
             theSecurityGenerator = mySecure.getSecurityGenerator();
@@ -362,7 +366,7 @@ public class ControlKey
 
             /* Create the CipherSet */
             theCipherSet = new CipherSet(theSecurityGenerator, getHashMode());
-            theFieldGenerator = new EncryptionGenerator(theCipherSet);
+            theFieldGenerator = new EncryptionGenerator(theCipherSet, myFormatter);
 
             /* Allocate the DataKeys */
             allocateDataKeys(myData);

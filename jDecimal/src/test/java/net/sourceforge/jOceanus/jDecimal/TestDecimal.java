@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDecimal: Decimals represented by long values
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDecimal;
 
+import java.util.Currency;
+
 /**
  * JDecimal test class.
  */
@@ -40,6 +42,16 @@ public final class TestDecimal {
         /* Create the required presentation formatter and parser */
         JDecimalParser myParser = new JDecimalParser();
         JDecimalFormatter myFormatter = new JDecimalFormatter();
+
+        /* Create a USD value */
+        JMoney myUSD = new JMoney(Currency.getInstance("GBP"));
+        myUSD.setValue(-1000, myUSD.scale());
+        String myX = myUSD.toString();
+        myX = myFormatter.toCurrencyString(myUSD);
+        JMoney myRes = myParser.parseMoneyValue(myX);
+        if (!myRes.equals(myUSD)) {
+            myRes = null;
+        }
 
         /* Parse a rate and money */
         JRate myRate = myParser.parseRateValue("15%");

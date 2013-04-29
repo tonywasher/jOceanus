@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.util.List;
 import javax.swing.SwingWorker;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.ui.StatusBar;
 import net.sourceforge.jOceanus.jDataModels.ui.StatusBar.StatusData;
 
@@ -35,7 +36,8 @@ import net.sourceforge.jOceanus.jDataModels.ui.StatusBar.StatusData;
  * @author Tony Washer
  * @param <T> the result type of the thread
  */
-public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
+public abstract class WorkerThread<T>
+        extends SwingWorker<T, StatusData> {
     /**
      * The Status Bar.
      */
@@ -84,7 +86,8 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
      */
     protected void completeStatusBar() {
         /* If we are not cancelled and have no error */
-        if ((!isCancelled()) && (theError == null)) {
+        if ((!isCancelled())
+            && (theError == null)) {
             /* Set success */
             theStatusBar.setSuccess(theTask);
 
@@ -112,9 +115,9 @@ public abstract class WorkerThread<T> extends SwingWorker<T, StatusData> {
             /* Return result */
             return myResult;
 
-            /* Catch any exceptions */
-        } catch (JDataException e) {
-            setError(e);
+            /* Catch any exception to keep thread interface clean */
+        } catch (Exception e) {
+            setError(new JDataException(ExceptionClass.DATA, "Failed to perform background task", e));
             return null;
         }
     }

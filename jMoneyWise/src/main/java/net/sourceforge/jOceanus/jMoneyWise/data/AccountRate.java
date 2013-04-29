@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -393,7 +392,7 @@ public class AccountRate
     private AccountRate(final AccountRateList pList,
                         final Integer uId,
                         final String pAccount,
-                        final Date pEndDate,
+                        final JDateDay pEndDate,
                         final String pRate,
                         final String pBonus) throws JDataException {
         /* Initialise the item */
@@ -410,9 +409,7 @@ public class AccountRate
             setValueAccount(pAccount);
 
             /* Record the date */
-            if (pEndDate != null) {
-                setValueEndDate(new JDateDay(pEndDate));
-            }
+            setValueEndDate(pEndDate);
 
             /* Set the encrypted objects */
             setValueRate(myParser.parseRateValue(pRate));
@@ -445,7 +442,7 @@ public class AccountRate
                         final Integer uId,
                         final Integer uControlId,
                         final Integer uAccountId,
-                        final Date pEndDate,
+                        final JDateDay pEndDate,
                         final byte[] pRate,
                         final byte[] pBonus) throws JDataException {
         /* Initialise the item */
@@ -460,9 +457,7 @@ public class AccountRate
             setControlKey(uControlId);
 
             /* Record the date */
-            if (pEndDate != null) {
-                setValueEndDate(new JDateDay(pEndDate));
-            }
+            setValueEndDate(pEndDate);
 
             /* Set the encrypted objects */
             setValueRate(pRate);
@@ -895,7 +890,7 @@ public class AccountRate
         public void addOpenItem(final Integer uId,
                                 final String pAccount,
                                 final String pRate,
-                                final Date pDate,
+                                final JDateDay pDate,
                                 final String pBonus) throws JDataException {
             /* Create the ratePeriod */
             AccountRate myRate = new AccountRate(this, uId, pAccount, pDate, pRate, pBonus);
@@ -923,7 +918,7 @@ public class AccountRate
                                   final Integer uControlId,
                                   final Integer uAccountId,
                                   final byte[] pRate,
-                                  final Date pDate,
+                                  final JDateDay pDate,
                                   final byte[] pBonus) throws JDataException {
             /* Create the period */
             AccountRate myRate = new AccountRate(this, uId, uControlId, uAccountId, pDate, pRate, pBonus);

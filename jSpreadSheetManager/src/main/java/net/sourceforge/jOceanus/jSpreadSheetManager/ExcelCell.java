@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import java.util.Date;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
+import net.sourceforge.jOceanus.jDecimal.JDilution;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JPrice;
+import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -69,31 +75,81 @@ public class ExcelCell
         isReadOnly = pReadOnly;
     }
 
-    @Override
-    public Boolean getBooleanValue() {
-        return theExcelCell.getBooleanCellValue();
+    /**
+     * Parse a value.
+     * @param <T> the value type to parse
+     * @param pSource the string to parse.
+     * @param pClass the value type class.
+     * @return the parsed value
+     * @throws JDataException on error
+     */
+    private <T> T parseValue(final String pSource,
+                             final Class<T> pClass) throws JDataException {
+        try {
+            return theExcelRow.parseValue(pSource, pClass);
+        } catch (IllegalArgumentException e) {
+            OasisCellAddress myAddress = new OasisCellAddress(theExcelRow.getSheet().getName(), getPosition());
+            throw new JDataException(ExceptionClass.DATA, pSource, "Bad Value at Cell "
+                                                                   + myAddress, e);
+        }
     }
 
     @Override
-    public Date getDateValue() {
-        return theExcelCell.getDateCellValue();
+    public Boolean getBooleanValue() {
+        switch (theExcelCell.getCellType()) {
+            case HSSFCell.CELL_TYPE_BOOLEAN:
+                return theExcelCell.getBooleanCellValue();
+            case HSSFCell.CELL_TYPE_FORMULA:
+                CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
+                switch (myValue.getCellType()) {
+                    case HSSFCell.CELL_TYPE_BOOLEAN:
+                        return myValue.getBooleanValue();
+                    default:
+                        return null;
+                }
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public JDateDay getDateValue() {
+        switch (theExcelCell.getCellType()) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                return new JDateDay(theExcelCell.getDateCellValue());
+            default:
+                return null;
+        }
     }
 
     @Override
     public Integer getIntegerValue() {
-        Double myValue = theExcelCell.getNumericCellValue();
-        return (myValue == null)
-                ? null
-                : myValue.intValue();
+        switch (theExcelCell.getCellType()) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                Double myValue = theExcelCell.getNumericCellValue();
+                return (myValue == null)
+                        ? null
+                        : myValue.intValue();
+            case HSSFCell.CELL_TYPE_FORMULA:
+                CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
+                switch (myCellValue.getCellType()) {
+                    case HSSFCell.CELL_TYPE_NUMERIC:
+                        Double myDouble = myCellValue.getNumberValue();
+                        return (myDouble == null)
+                                ? null
+                                : myDouble.intValue();
+                    default:
+                        return null;
+                }
+            default:
+                return null;
+        }
     }
 
     @Override
     public String getStringValue() {
         switch (theExcelCell.getCellType()) {
             case HSSFCell.CELL_TYPE_NUMERIC:
-                /* Pick up the formatted value */
-                return Double.toString(theExcelCell.getNumericCellValue());
-
             case HSSFCell.CELL_TYPE_BOOLEAN:
                 /* Pick up the formatted value */
                 return theExcelRow.formatCellValue(theExcelCell);
@@ -101,12 +157,49 @@ public class ExcelCell
             case HSSFCell.CELL_TYPE_FORMULA:
                 /* Pick up the formatted value */
                 CellValue myValue = theExcelRow.evaluateFormula(theExcelCell);
-                return myValue.formatAsString();
+                switch (myValue.getCellType()) {
+                    case HSSFCell.CELL_TYPE_STRING:
+                    case HSSFCell.CELL_TYPE_NUMERIC:
+                    case HSSFCell.CELL_TYPE_BOOLEAN:
+                        return myValue.formatAsString();
+                    default:
+                        return null;
+                }
 
             case HSSFCell.CELL_TYPE_STRING:
             default:
                 return theExcelCell.getStringCellValue();
         }
+    }
+
+    @Override
+    public JMoney getMoneyValue() throws JDataException {
+        return parseValue(getStringValue(), JMoney.class);
+    }
+
+    @Override
+    public JPrice getPriceValue() throws JDataException {
+        return parseValue(getStringValue(), JPrice.class);
+    }
+
+    @Override
+    public JRate getRateValue() throws JDataException {
+        return parseValue(getStringValue(), JRate.class);
+    }
+
+    @Override
+    public JUnits getUnitsValue() throws JDataException {
+        return parseValue(getStringValue(), JUnits.class);
+    }
+
+    @Override
+    public JDilution getDilutionValue() throws JDataException {
+        return parseValue(getStringValue(), JDilution.class);
+    }
+
+    @Override
+    public JRatio getRatioValue() throws JDataException {
+        return parseValue(getStringValue(), JRatio.class);
     }
 
     @Override
@@ -123,18 +216,18 @@ public class ExcelCell
             theExcelCell.setCellValue(pValue);
 
             /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, CellStyleType.Boolean);
+            theExcelRow.setCellStyle(this, pValue);
         }
     }
 
     @Override
-    protected void setDate(final Date pValue) throws JDataException {
+    protected void setDate(final JDateDay pValue) throws JDataException {
         if (!isReadOnly) {
             /* Set the value */
-            theExcelCell.setCellValue(pValue);
+            theExcelCell.setCellValue(pValue.getDate());
 
             /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, CellStyleType.Date);
+            theExcelRow.setCellStyle(this, pValue);
         }
     }
 
@@ -142,12 +235,10 @@ public class ExcelCell
     protected void setInteger(final Integer pValue) throws JDataException {
         if (!isReadOnly) {
             /* Set the value */
-            theExcelCell.setCellValue((pValue == null)
-                    ? null
-                    : pValue.doubleValue());
+            theExcelCell.setCellValue(pValue.doubleValue());
 
             /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, CellStyleType.Integer);
+            theExcelRow.setCellStyle(this, pValue);
         }
     }
 
@@ -158,7 +249,7 @@ public class ExcelCell
             theExcelCell.setCellValue(pValue);
 
             /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, CellStyleType.String);
+            theExcelRow.setCellStyle(this, pValue);
         }
     }
 
@@ -169,7 +260,7 @@ public class ExcelCell
             theExcelCell.setCellValue(pValue);
 
             /* Adjust the style for the cell */
-            theExcelRow.setCellStyle(this, CellStyleType.Header);
+            theExcelRow.setAlternateCellStyle(this, pValue);
         }
     }
 
@@ -180,8 +271,14 @@ public class ExcelCell
             theExcelCell.setCellValue(pValue.doubleValue());
 
             /* Set the style for the cell */
-            theExcelRow.setCellStyle(this, getCellStyle(pValue));
+            theExcelRow.setCellStyle(this, pValue);
         }
+    }
+
+    @Override
+    protected void setMonetary(final JMoney pValue) throws JDataException {
+        /* Pass through as decimal */
+        setDecimal(pValue);
     }
 
     /**

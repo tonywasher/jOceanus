@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
-
-import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -702,7 +700,7 @@ public class TaxYear
     public TaxYear(final TaxYearList pList,
                    final Integer pId,
                    final Integer pRegimeId,
-                   final Date pDate) throws JDataException {
+                   final JDateDay pDate) throws JDataException {
         /* Initialise item */
         super(pList, pId, pRegimeId, pDate);
 
@@ -723,7 +721,7 @@ public class TaxYear
     public TaxYear(final TaxYearList pList,
                    final Integer pId,
                    final String pRegime,
-                   final Date pDate) throws JDataException {
+                   final JDateDay pDate) throws JDataException {
         /* Initialise item */
         super(pList, pId, pRegime, pDate);
 
@@ -977,7 +975,7 @@ public class TaxYear
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pRegimeId,
-                                  final Date pDate) throws JDataException {
+                                  final JDateDay pDate) throws JDataException {
             /* Create the tax year */
             TaxYear myTaxYear = new TaxYear(this, pId, pRegimeId, pDate);
 
@@ -1007,7 +1005,7 @@ public class TaxYear
          */
         public TaxYear addOpenItem(final Integer pId,
                                    final String pRegime,
-                                   final Date pDate) throws JDataException {
+                                   final JDateDay pDate) throws JDataException {
             /* Create the tax year */
             TaxYear myTaxYear = new TaxYear(this, pId, pRegime, pDate);
 

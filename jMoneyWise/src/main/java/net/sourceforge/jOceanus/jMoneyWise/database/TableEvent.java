@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
-import java.util.Date;
-
 import javax.swing.SortOrder;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -33,6 +31,7 @@ import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
@@ -89,7 +88,7 @@ public class TableEvent
                             final Integer pControlId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        Date myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
+        JDateDay myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
         byte[] myDesc = myTableDef.getBinaryValue(EventBase.FIELD_DESC);
         byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
         Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);

@@ -1,6 +1,6 @@
 /*******************************************************************************
 [] * jPreferenceSet: PreferenceSet Management
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
@@ -132,6 +133,11 @@ public class PreferenceSetPanel
     private final transient JFieldManager theFieldMgr;
 
     /**
+     * General formatter.
+     */
+    private final transient JDataFormatter theFormatter;
+
+    /**
      * The Set name.
      */
     private String theName = null;
@@ -155,6 +161,7 @@ public class PreferenceSetPanel
         /* Record the set and manager */
         thePreferences = pSet;
         theFieldMgr = pFieldMgr;
+        theFormatter = pFieldMgr.getDataFormatter();
 
         /* Record the name of the set */
         theName = pSet.getClass().getSimpleName();
@@ -434,7 +441,9 @@ public class PreferenceSetPanel
 
             @Override
             protected JComponent getLabel() {
-                return (theType == PreferenceType.String) ? super.getLabel() : theButton;
+                return (theType == PreferenceType.String)
+                        ? super.getLabel()
+                        : theButton;
             }
 
             /**
@@ -444,7 +453,7 @@ public class PreferenceSetPanel
             private StringField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theString = (StringPreference) pPreference;
-                theField = new ValueField();
+                theField = new ValueField(ValueClass.String, theFormatter);
                 theField.setColumns(WIDTH_STRING);
 
                 /* Add property change listener */
@@ -569,7 +578,7 @@ public class PreferenceSetPanel
             private IntegerField(final PreferenceItem pPreference) {
                 /* Access the preference and create the underlying field */
                 theInteger = (IntegerPreference) pPreference;
-                theField = new ValueField(ValueClass.Integer);
+                theField = new ValueField(ValueClass.Integer, theFormatter);
                 theField.setColumns(WIDTH_INTEGER);
 
                 /* Add property change listener */

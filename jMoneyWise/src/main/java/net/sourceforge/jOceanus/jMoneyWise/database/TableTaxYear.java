@@ -1,6 +1,6 @@
 /*******************************************************************************
 - * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
-import java.util.Date;
-
 import javax.swing.SortOrder;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -33,6 +31,7 @@ import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.DatabaseTable;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -81,7 +80,7 @@ public class TableTaxYear
     public void loadItem(final Integer pId) throws JDataException {
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
-        Date myYear = myTableDef.getDateValue(TaxYearBase.FIELD_TAXYEAR);
+        JDateDay myYear = myTableDef.getDateValue(TaxYearBase.FIELD_TAXYEAR);
         Integer myRegime = myTableDef.getIntegerValue(TaxYearBase.FIELD_REGIME);
 
         /* Add into the list */

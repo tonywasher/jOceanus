@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDecimal: Decimals represented by long values
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,9 @@ package net.sourceforge.jOceanus.jDecimal;
 
 import java.text.DecimalFormatSymbols;
 import java.util.Currency;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * Parsing methods for decimals in a particular locale.
@@ -39,17 +41,22 @@ public class JDecimalParser {
     /**
      * PerCent adjustment.
      */
-    protected static final int ADJUST_PERCENT = 2;
+    public static final int ADJUST_PERCENT = 2;
 
     /**
      * PerMille adjustment.
      */
-    protected static final int ADJUST_PERMILLE = 3;
+    public static final int ADJUST_PERMILLE = 3;
 
     /**
      * The locale.
      */
     private Locale theLocale;
+
+    /**
+     * The currencies map.
+     */
+    private final Map<String, Currency> theMap;
 
     /**
      * The grouping separator.
@@ -104,6 +111,9 @@ public class JDecimalParser {
      * @param pLocale the locale
      */
     public JDecimalParser(final Locale pLocale) {
+        /* Create currency map */
+        theMap = new HashMap<String, Currency>();
+
         /* Store locale */
         setLocale(pLocale);
     }
@@ -125,6 +135,9 @@ public class JDecimalParser {
         /* Store the locale */
         theLocale = pLocale;
 
+        /* Clear the currency map */
+        theMap.clear();
+
         /* Access decimal formats */
         DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(theLocale);
 
@@ -138,6 +151,7 @@ public class JDecimalParser {
 
         /* Access the default currency */
         theCurrency = mySymbols.getCurrency();
+        theMap.put(theCurrency.getSymbol(theLocale), theCurrency);
     }
 
     /**
@@ -145,17 +159,18 @@ public class JDecimalParser {
      * @param pValue The value to parse.
      * @param pDecSeparator the decimal separator
      * @param pResult the decimal to hold the result in
+     * @throws IllegalArgumentException on invalid decimal
      */
     private void parseDecimalValue(final String pValue,
                                    final String pDecSeparator,
-                                   final JDecimal pResult) {
+                                   final JDecimal pResult) throws IllegalArgumentException {
         /* Create a working copy */
         StringBuilder myWork = new StringBuilder(pValue.trim());
         int myPos;
         long myValue;
 
         /* If the value is negative, strip the leading minus sign */
-        boolean isNegative = (myWork.charAt(0) == theMinusSign);
+        boolean isNegative = ((myWork.length() > 0) && (myWork.charAt(0) == theMinusSign));
         if (isNegative) {
             myWork.deleteCharAt(0);
         }
@@ -193,7 +208,8 @@ public class JDecimalParser {
         try {
             myValue = Long.parseLong(myWork.toString());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(ERROR_PARSE + pValue, e);
+            throw new IllegalArgumentException(ERROR_PARSE
+                                               + pValue, e);
         }
 
         /* If we have a decimal part */
@@ -215,7 +231,8 @@ public class JDecimalParser {
             try {
                 myValue += Long.parseLong(myDecimals.toString());
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(ERROR_PARSE + pValue, e);
+                throw new IllegalArgumentException(ERROR_PARSE
+                                                   + pValue, e);
             }
 
             /* Round value according to most significant discarded decimal digit */
@@ -237,16 +254,23 @@ public class JDecimalParser {
      * Parse a string into a decimal without reference to a locale.
      * @param pValue The value to parse.
      * @param pResult the decimal to hold the result in
+     * @throws IllegalArgumentException on invalid decimal
+     * @throws NullPointerException on null value
      */
     protected static void parseDecimalValue(final String pValue,
-                                            final JDecimal pResult) {
+                                            final JDecimal pResult) throws IllegalArgumentException, NullPointerException {
+        /* Handle null value */
+        if (pValue == null) {
+            throw new NullPointerException();
+        }
+
         /* Create a working copy */
         StringBuilder myWork = new StringBuilder(pValue.trim());
         int myPos;
         long myValue;
 
         /* If the value is negative, strip the leading minus sign */
-        boolean isNegative = (myWork.charAt(0) == JDecimalFormatter.CHAR_MINUS);
+        boolean isNegative = ((myWork.length() > 0) && (myWork.charAt(0) == JDecimalFormatter.CHAR_MINUS));
         if (isNegative) {
             myWork.deleteCharAt(0);
         }
@@ -276,7 +300,8 @@ public class JDecimalParser {
         try {
             myValue = Long.parseLong(myWork.toString());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException(ERROR_PARSE + pValue, e);
+            throw new IllegalArgumentException(ERROR_PARSE
+                                               + pValue, e);
         }
 
         /* If we have a decimal part */
@@ -298,7 +323,8 @@ public class JDecimalParser {
             try {
                 myValue += Long.parseLong(myDecimals.toString());
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(ERROR_PARSE + pValue, e);
+                throw new IllegalArgumentException(ERROR_PARSE
+                                                   + pValue, e);
             }
 
             /* Round value according to most significant discarded decimal digit */
@@ -331,7 +357,8 @@ public class JDecimalParser {
             /* else we should honour what we can */
         } else {
             /* Calculate the standard correction */
-            int myAdjust = pDecimals - pValue.scale();
+            int myAdjust = pDecimals
+                           - pValue.scale();
 
             /* If we have too few decimals */
             if (myAdjust > 0) {
@@ -347,25 +374,89 @@ public class JDecimalParser {
     }
 
     /**
-     * Parse a currency string.
+     * Parse a string to extract currency information.
      * @param pWork the buffer to parse
      * @return the parsed currency
+     * @throws IllegalArgumentException on invalid currency
      */
-    private static Currency parseCurrency(final StringBuilder pWork) {
-        /* Find the currency separator */
+    private Currency parseCurrency(final StringBuilder pWork) throws IllegalArgumentException {
+        /* Look for a currency separator */
         int iPos = pWork.indexOf(JDecimalFormatter.STR_CURRSEP);
         if (iPos > -1) {
-            String myCurr = pWork.substring(0, iPos - 1);
-            pWork.delete(0, iPos);
+            /* Extract currency detail and determine currency */
+            String myCurr = pWork.substring(0, iPos);
+            pWork.delete(0, iPos + 1);
             return Currency.getInstance(myCurr);
         }
 
-        /* Return the default */
-        return null;
+        /* Set default currency */
+        Currency myCurrency = theCurrency;
+
+        /* If we have a leading minus sign */
+        int iNumChars = pWork.length();
+        boolean isNegative = false;
+        if ((iNumChars > 0)
+            && (pWork.charAt(0) == theMinusSign)) {
+            /* Delete it and note the presence */
+            pWork.deleteCharAt(0);
+            iNumChars--;
+            isNegative = true;
+        }
+
+        /* Look for currency symbol as leading non-digits and non-whitespace */
+        int iNumSymbols = 0;
+        while (iNumSymbols < iNumChars) {
+            char c = pWork.charAt(iNumSymbols);
+            if (Character.isDigit(c)
+                || Character.isWhitespace(c)) {
+                break;
+            }
+            iNumSymbols++;
+        }
+
+        /* If we have a symbol */
+        if (iNumSymbols > 0) {
+            /* Extract Symbol from buffer */
+            String mySymbol = pWork.substring(0, iNumSymbols);
+            pWork.delete(0, iNumSymbols);
+
+            /* Look for the currency in the map */
+            myCurrency = theMap.get(mySymbol);
+
+            /* If this is a new currency */
+            if (myCurrency == null) {
+                /* Loop through all the currencies */
+                for (Currency myCurr : Currency.getAvailableCurrencies()) {
+                    /* If the symbol matches */
+                    if (mySymbol.equals(myCurr.getSymbol(theLocale))) {
+                        /* Record currency and break the loop */
+                        myCurrency = myCurr;
+                        theMap.put(mySymbol, myCurrency);
+                        break;
+                    }
+                }
+
+                /* If we did not find a currency */
+                if (myCurrency == null) {
+                    /* Reject the currency */
+                    throw new IllegalArgumentException("Invalid currency: "
+                                                       + mySymbol);
+                }
+            }
+        }
+
+        /* If we were negative */
+        if (isNegative) {
+            /* Reinsert the minus sign */
+            pWork.insert(0, theMinusSign);
+        }
+
+        /* Return the currency */
+        return myCurrency;
     }
 
     /**
-     * Obtain a new zero money value.
+     * Obtain a new zero money value for the default currency.
      * @return the new money
      */
     public JMoney zeroMoney() {
@@ -373,23 +464,21 @@ public class JDecimalParser {
     }
 
     /**
-     * Parse Money value.
-     * @param pValue the string value to parse.
-     * @return the parsed money
+     * Obtain a new zero money value for the currency.
+     * @param pCurrency the currency
+     * @return the new money
      */
-    public JMoney parseMoneyValue(final String pValue) {
-        /* Use default currency */
-        return parseMoneyValue(pValue, theCurrency);
+    public JMoney zeroMoney(final Currency pCurrency) {
+        return new JMoney(pCurrency);
     }
 
     /**
      * Parse Money value.
      * @param pValue the string value to parse.
-     * @param pCurrency the currency
      * @return the parsed money
+     * @throws IllegalArgumentException on invalid money value
      */
-    public JMoney parseMoneyValue(final String pValue,
-                                  final Currency pCurrency) {
+    public JMoney parseMoneyValue(final String pValue) throws IllegalArgumentException {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -397,22 +486,9 @@ public class JDecimalParser {
 
         /* Create a working trimmed copy */
         StringBuilder myWork = new StringBuilder(pValue.trim());
-        String myDec = JDecimalFormatter.STR_DEC;
-        int myPos;
 
-        /* Look for explicit currency */
+        /* Determine currency */
         Currency myCurrency = parseCurrency(myWork);
-        if (myCurrency == null) {
-            myCurrency = pCurrency;
-            myDec = theMoneyDecimal;
-        }
-
-        /* While there are instances of the Currency symbol */
-        String mySymbol = myCurrency.getSymbol(theLocale);
-        while ((myPos = myWork.indexOf(mySymbol)) != -1) {
-            /* Remove it */
-            myWork.delete(myPos, myPos + mySymbol.length());
-        }
 
         /* If we have a leading minus sign */
         if (myWork.charAt(0) == theMinusSign) {
@@ -426,7 +502,7 @@ public class JDecimalParser {
         JMoney myMoney = new JMoney(myCurrency);
 
         /* Parse the remaining string */
-        parseDecimalValue(myWork.toString(), myDec, myMoney);
+        parseDecimalValue(myWork.toString(), theMoneyDecimal, myMoney);
 
         /* Correct the scale */
         adjustDecimals(myMoney, myCurrency.getDefaultFractionDigits());
@@ -436,31 +512,29 @@ public class JDecimalParser {
     }
 
     /**
-     * Obtain a new zero price value.
-     * @return the new money
+     * Obtain a new zero price value for the default currency.
+     * @return the new price
      */
     public JPrice zeroPrice() {
         return new JPrice(theCurrency);
     }
 
     /**
-     * Parse Price value.
-     * @param pValue the string value to parse.
-     * @return the parsed price
+     * Obtain a new zero price value for the currency.
+     * @param pCurrency the currency
+     * @return the new price
      */
-    public JPrice parsePriceValue(final String pValue) {
-        /* Use default currency */
-        return parsePriceValue(pValue, theCurrency);
+    public JPrice zeroPrice(final Currency pCurrency) {
+        return new JPrice(pCurrency);
     }
 
     /**
      * Parse Price value.
      * @param pValue the string value to parse.
-     * @param pCurrency the currency
      * @return the parsed price
+     * @throws IllegalArgumentException on invalid price value
      */
-    public JPrice parsePriceValue(final String pValue,
-                                  final Currency pCurrency) {
+    public JPrice parsePriceValue(final String pValue) throws IllegalArgumentException {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -468,22 +542,9 @@ public class JDecimalParser {
 
         /* Create a working trimmed copy */
         StringBuilder myWork = new StringBuilder(pValue.trim());
-        String myDec = JDecimalFormatter.STR_DEC;
-        int myPos;
 
         /* Look for explicit currency */
         Currency myCurrency = parseCurrency(myWork);
-        if (myCurrency == null) {
-            myCurrency = pCurrency;
-            myDec = theMoneyDecimal;
-        }
-
-        /* While there are instances of the Currency symbol */
-        String mySymbol = myCurrency.getSymbol(theLocale);
-        while ((myPos = myWork.indexOf(mySymbol)) != -1) {
-            /* Remove it */
-            myWork.delete(myPos, myPos + mySymbol.length());
-        }
 
         /* If we have a leading minus sign */
         if (myWork.charAt(0) == theMinusSign) {
@@ -497,10 +558,11 @@ public class JDecimalParser {
         JPrice myPrice = new JPrice(myCurrency);
 
         /* Parse the remaining string */
-        parseDecimalValue(myWork.toString(), myDec, myPrice);
+        parseDecimalValue(myWork.toString(), theMoneyDecimal, myPrice);
 
         /* Correct the scale */
-        adjustDecimals(myPrice, myCurrency.getDefaultFractionDigits() + JPrice.XTRA_DECIMALS);
+        adjustDecimals(myPrice, myCurrency.getDefaultFractionDigits()
+                                + JPrice.XTRA_DECIMALS);
 
         /* return the parsed price object */
         return myPrice;
@@ -510,20 +572,9 @@ public class JDecimalParser {
      * Parse DilutedPrice value.
      * @param pValue the string value to parse.
      * @return the parsed DilutedPrice
+     * @throws IllegalArgumentException on invalid diluted price value
      */
-    public JDilutedPrice parseDilutedPriceValue(final String pValue) {
-        /* Use default currency */
-        return parseDilutedPriceValue(pValue, theCurrency);
-    }
-
-    /**
-     * Parse Diluted Price value.
-     * @param pValue the string value to parse.
-     * @param pCurrency the currency
-     * @return the parsed diluted price
-     */
-    public JDilutedPrice parseDilutedPriceValue(final String pValue,
-                                                final Currency pCurrency) {
+    public JDilutedPrice parseDilutedPriceValue(final String pValue) throws IllegalArgumentException {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -531,22 +582,9 @@ public class JDecimalParser {
 
         /* Create a working trimmed copy */
         StringBuilder myWork = new StringBuilder(pValue.trim());
-        String myDec = JDecimalFormatter.STR_DEC;
-        int myPos;
 
-        /* Look for explicit currency */
+        /* Determine currency */
         Currency myCurrency = parseCurrency(myWork);
-        if (myCurrency == null) {
-            myCurrency = pCurrency;
-            myDec = theMoneyDecimal;
-        }
-
-        /* While there are instances of the Currency symbol */
-        String mySymbol = myCurrency.getSymbol(theLocale);
-        while ((myPos = myWork.indexOf(mySymbol)) != -1) {
-            /* Remove it */
-            myWork.delete(myPos, myPos + mySymbol.length());
-        }
 
         /* If we have a leading minus sign */
         if (myWork.charAt(0) == theMinusSign) {
@@ -560,10 +598,11 @@ public class JDecimalParser {
         JDilutedPrice myDilutedPrice = new JDilutedPrice(myCurrency);
 
         /* Parse the remaining string */
-        parseDecimalValue(myWork.toString(), myDec, myDilutedPrice);
+        parseDecimalValue(myWork.toString(), theMoneyDecimal, myDilutedPrice);
 
         /* Correct the scale */
-        adjustDecimals(myDilutedPrice, myCurrency.getDefaultFractionDigits() + JDilutedPrice.XTRA_DECIMALS);
+        adjustDecimals(myDilutedPrice, myCurrency.getDefaultFractionDigits()
+                                       + JDilutedPrice.XTRA_DECIMALS);
 
         /* return the parsed diluted price object */
         return myDilutedPrice;
@@ -573,8 +612,9 @@ public class JDecimalParser {
      * Parse Rate value.
      * @param pValue the string value to parse.
      * @return the parsed rate
+     * @throws IllegalArgumentException on invalid rate value
      */
-    public JRate parseRateValue(final String pValue) {
+    public JRate parseRateValue(final String pValue) throws IllegalArgumentException {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -605,7 +645,8 @@ public class JDecimalParser {
         /* If we have extra Decimals to add */
         if (myXtraDecimals > 0) {
             /* Adjust the value appropriately */
-            myRate.recordScale(myXtraDecimals + myRate.scale());
+            myRate.recordScale(myXtraDecimals
+                               + myRate.scale());
         }
 
         /* Correct the scale */
@@ -619,8 +660,9 @@ public class JDecimalParser {
      * Parse Units value.
      * @param pValue the string value to parse.
      * @return the parsed units
+     * @throws IllegalArgumentException on invalid units value
      */
-    public JUnits parseUnitsValue(final String pValue) {
+    public JUnits parseUnitsValue(final String pValue) throws IllegalArgumentException {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -643,8 +685,9 @@ public class JDecimalParser {
      * Parse Dilution value.
      * @param pValue the string value to parse.
      * @return the parsed dilution
+     * @throws IllegalArgumentException on invalid dilution value
      */
-    public JDilution parseDilutionValue(final String pValue) {
+    public JDilution parseDilutionValue(final String pValue) throws IllegalArgumentException {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -667,8 +710,9 @@ public class JDecimalParser {
      * Parse Ratio value.
      * @param pValue the string value to parse.
      * @return the parsed ratio
+     * @throws IllegalArgumentException on invalid ratio value
      */
-    public JRatio parseRatioValue(final String pValue) {
+    public JRatio parseRatioValue(final String pValue) throws IllegalArgumentException {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -691,8 +735,9 @@ public class JDecimalParser {
      * Parse Decimal value.
      * @param pValue the string value to parse.
      * @return the parsed decimal
+     * @throws IllegalArgumentException on invalid decimal value
      */
-    public JDecimal parseDecimalValue(final String pValue) {
+    public JDecimal parseDecimalValue(final String pValue) throws IllegalArgumentException {
         /* Handle null value */
         if (pValue == null) {
             return null;
@@ -707,7 +752,7 @@ public class JDecimalParser {
         /* remove redundant decimal places */
         myDecimal.reduceScale(0);
 
-        /* return the parsed ratio object */
+        /* return the parsed decimal object */
         return myDecimal;
     }
 
@@ -717,7 +762,8 @@ public class JDecimalParser {
      */
     private static void trimBuffer(final StringBuilder pBuffer) {
         /* Remove leading blanks */
-        while ((pBuffer.length() > 0) && (Character.isWhitespace(pBuffer.charAt(0)))) {
+        while ((pBuffer.length() > 0)
+               && (Character.isWhitespace(pBuffer.charAt(0)))) {
             pBuffer.deleteCharAt(0);
         }
 
@@ -729,5 +775,198 @@ public class JDecimalParser {
             }
             pBuffer.deleteCharAt(myLen);
         }
+    }
+
+    /**
+     * create Money from double.
+     * @param pValue the double value.
+     * @return the parsed money
+     * @throws IllegalArgumentException on invalid money value
+     */
+    public JMoney createMoneyFromDouble(final Double pValue) throws IllegalArgumentException {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Use default currency */
+        return createMoneyFromDouble(pValue, theCurrency.getCurrencyCode());
+    }
+
+    /**
+     * create Money from double.
+     * @param pValue the double value.
+     * @param pCurrCode the currency code
+     * @return the parsed money
+     * @throws IllegalArgumentException on invalid money value
+     */
+    public JMoney createMoneyFromDouble(final Double pValue,
+                                        final String pCurrCode) throws IllegalArgumentException {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Determine currency */
+        Currency myCurrency = Currency.getInstance(pCurrCode);
+
+        /* Create the new Money object */
+        JMoney myMoney = new JMoney(myCurrency);
+
+        /* Parse the remaining string */
+        parseDecimalValue(pValue.toString(), theMoneyDecimal, myMoney);
+
+        /* Correct the scale */
+        adjustDecimals(myMoney, myCurrency.getDefaultFractionDigits());
+
+        /* return the parsed money object */
+        return myMoney;
+    }
+
+    /**
+     * create Price from double.
+     * @param pValue the double value.
+     * @return the parsed price
+     * @throws IllegalArgumentException on invalid price value
+     */
+    public JPrice createPriceFromDouble(final Double pValue) throws IllegalArgumentException {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Use default currency */
+        return createPriceFromDouble(pValue, theCurrency.getCurrencyCode());
+    }
+
+    /**
+     * create Price from double.
+     * @param pValue the double value.
+     * @param pCurrCode the currency code
+     * @return the parsed price
+     * @throws IllegalArgumentException on invalid price value
+     */
+    public JPrice createPriceFromDouble(final Double pValue,
+                                        final String pCurrCode) throws IllegalArgumentException {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Determine currency */
+        Currency myCurrency = Currency.getInstance(pCurrCode);
+
+        /* Create the new Price object */
+        JPrice myPrice = new JPrice(myCurrency);
+
+        /* Parse the remaining string */
+        parseDecimalValue(pValue.toString(), theMoneyDecimal, myPrice);
+
+        /* Correct the scale */
+        adjustDecimals(myPrice, myCurrency.getDefaultFractionDigits()
+                                + JPrice.XTRA_DECIMALS);
+
+        /* return the parsed price object */
+        return myPrice;
+    }
+
+    /**
+     * create Rate from double.
+     * @param pValue the double value.
+     * @return the parsed rate
+     * @throws IllegalArgumentException on invalid rate value
+     */
+    public JRate createRateFromDouble(final Double pValue) throws IllegalArgumentException {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Create the new Rate object */
+        JRate myRate = new JRate();
+
+        /* Parse the remaining string */
+        parseDecimalValue(pValue.toString(), theDecimal, myRate);
+
+        /* Correct the scale */
+        adjustDecimals(myRate, JRate.NUM_DECIMALS);
+
+        /* return the parsed rate object */
+        return myRate;
+    }
+
+    /**
+     * create Units from double.
+     * @param pValue the double value.
+     * @return the parsed units
+     * @throws IllegalArgumentException on invalid units value
+     */
+    public JUnits createUnitsFromDouble(final Double pValue) throws IllegalArgumentException {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Create the new Units object */
+        JUnits myUnits = new JUnits();
+
+        /* Parse the remaining string */
+        parseDecimalValue(pValue.toString(), theDecimal, myUnits);
+
+        /* Correct the scale */
+        adjustDecimals(myUnits, JUnits.NUM_DECIMALS);
+
+        /* return the parsed units object */
+        return myUnits;
+    }
+
+    /**
+     * create Dilution from double.
+     * @param pValue the double value.
+     * @return the parsed rate
+     * @throws IllegalArgumentException on invalid price value
+     */
+    public JDilution createDilutionFromDouble(final Double pValue) throws IllegalArgumentException {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Create the new Dilution object */
+        JDilution myDilution = new JDilution();
+
+        /* Parse the remaining string */
+        parseDecimalValue(pValue.toString(), theDecimal, myDilution);
+
+        /* Correct the scale */
+        adjustDecimals(myDilution, JDilution.NUM_DECIMALS);
+
+        /* return the parsed dilution object */
+        return myDilution;
+    }
+
+    /**
+     * create Rate from double.
+     * @param pValue the double value.
+     * @return the parsed ratio
+     * @throws IllegalArgumentException on invalid ratio value
+     */
+    public JRatio createRatioFromDouble(final Double pValue) throws IllegalArgumentException {
+        /* Handle null value */
+        if (pValue == null) {
+            return null;
+        }
+
+        /* Create the new Ratio object */
+        JRatio myRatio = new JRatio();
+
+        /* Parse the remaining string */
+        parseDecimalValue(pValue.toString(), theDecimal, myRatio);
+
+        /* Correct the scale */
+        adjustDecimals(myRatio, JRatio.NUM_DECIMALS);
+
+        /* return the parsed ratio object */
+        return myRatio;
     }
 }

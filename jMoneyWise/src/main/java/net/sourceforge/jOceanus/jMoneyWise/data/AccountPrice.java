@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
@@ -308,7 +307,7 @@ public class AccountPrice
     private AccountPrice(final EncryptedList<? extends AccountPrice> pList,
                          final Integer pId,
                          final String pAccount,
-                         final Date pDate,
+                         final JDateDay pDate,
                          final String pPrice) throws JDataException {
         /* Initialise the item */
         super(pList, pId);
@@ -322,7 +321,7 @@ public class AccountPrice
 
             /* Record account, date and price */
             setValueAccount(pAccount);
-            setValueDate(new JDateDay(pDate));
+            setValueDate(pDate);
             setValuePrice(myParser.parsePriceValue(pPrice));
 
             /* Catch Exceptions */
@@ -351,7 +350,7 @@ public class AccountPrice
                          final Integer pId,
                          final Integer pControlId,
                          final Integer pAccountId,
-                         final Date pDate,
+                         final JDateDay pDate,
                          final byte[] pPrice) throws JDataException {
         /* Initialise the item */
         super(pList, pId);
@@ -365,7 +364,7 @@ public class AccountPrice
             setControlKey(pControlId);
 
             /* Record the date and price */
-            setValueDate(new JDateDay(pDate));
+            setValueDate(pDate);
             setValuePrice(pPrice);
 
             /* Catch Exceptions */
@@ -773,7 +772,7 @@ public class AccountPrice
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer pId,
-                                final Date pDate,
+                                final JDateDay pDate,
                                 final String pAccount,
                                 final String pPrice) throws JDataException {
             /* Create the PricePoint */
@@ -800,7 +799,7 @@ public class AccountPrice
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
-                                  final Date pDate,
+                                  final JDateDay pDate,
                                   final Integer pAccountId,
                                   final byte[] pPrice) throws JDataException {
             /* Create the price and PricePoint */

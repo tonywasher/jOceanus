@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
-
-import net.sourceforge.jOceanus.jSpreadSheetManager.OasisWorkBook.OasisStyle;
 
 import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
@@ -97,10 +95,9 @@ public class OasisColumn
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Set the default cell style and the column style */
-            OasisStyle myStyle = OasisWorkBook.getOasisCellStyle(pStyle);
-            OasisStyle myColStyle = OasisWorkBook.getOasisColumnStyle(myStyle);
-            theOasisColumn.setTableDefaultCellStyleNameAttribute(OasisWorkBook.getStyleName(myStyle));
-            theOasisColumn.setTableStyleNameAttribute(OasisWorkBook.getStyleName(myColStyle));
+            OasisSheet mySheet = theColumnMap.getSheet();
+            mySheet.setColumnStyle(theOasisColumn, pStyle);
+            mySheet.setDefaultCellStyle(theOasisColumn, pStyle);
         }
     }
 

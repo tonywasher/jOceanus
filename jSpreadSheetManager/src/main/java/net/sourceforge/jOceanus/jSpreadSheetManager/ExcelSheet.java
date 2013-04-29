@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -78,6 +79,14 @@ public class ExcelSheet
      */
     protected String formatCellValue(final HSSFCell pCell) {
         return theExcelBook.formatCellValue(pCell);
+    }
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    protected JDataFormatter getDataFormatter() {
+        return theExcelBook.getDataFormatter();
     }
 
     /**
@@ -245,11 +254,21 @@ public class ExcelSheet
     /**
      * Set cell style.
      * @param pCell the cell to style
-     * @param pStyle the style type to use
+     * @param pValue the cell value
      */
     protected void setCellStyle(final ExcelCell pCell,
-                                final CellStyleType pStyle) {
-        pCell.setCellStyle(theExcelBook.getCellStyle(pStyle));
+                                final Object pValue) {
+        pCell.setCellStyle(theExcelBook.getCellStyle(pValue));
+    }
+
+    /**
+     * Set alternate cell style.
+     * @param pCell the cell to style
+     * @param pValue the cell value
+     */
+    protected void setAlternateCellStyle(final ExcelCell pCell,
+                                         final Object pValue) {
+        pCell.setCellStyle(theExcelBook.getAlternateCellStyle(pValue));
     }
 
     /**

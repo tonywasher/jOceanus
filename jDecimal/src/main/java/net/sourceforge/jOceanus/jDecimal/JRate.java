@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDecimal: Decimals represented by long values
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,8 @@ package net.sourceforge.jOceanus.jDecimal;
 /**
  * Represents a Rate object.
  */
-public class JRate extends JDecimal {
+public class JRate
+        extends JDecimal {
     /**
      * Standard number of decimals for Rate.
      */
@@ -53,8 +54,10 @@ public class JRate extends JDecimal {
     /**
      * Constructor for rate from a decimal string.
      * @param pSource The source decimal string
+     * @throws IllegalArgumentException on invalidly formatted argument
+     * @throws NullPointerException on null argument
      */
-    public JRate(final String pSource) {
+    public JRate(final String pSource) throws IllegalArgumentException, NullPointerException {
         /* Parse the string and correct the scale */
         JDecimalParser.parseDecimalValue(pSource, this);
         adjustToScale(NUM_DECIMALS);
@@ -67,7 +70,8 @@ public class JRate extends JDecimal {
      */
     public static JRate getWholePercentage(final long pValue) {
         JRate myRate = new JRate();
-        myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS - JDecimalParser.ADJUST_PERCENT), NUM_DECIMALS);
+        myRate.setValue(adjustDecimals(pValue, NUM_DECIMALS
+                                               - JDecimalParser.ADJUST_PERCENT), NUM_DECIMALS);
         return myRate;
     }
 

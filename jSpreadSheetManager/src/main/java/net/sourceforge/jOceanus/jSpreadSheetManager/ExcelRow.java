@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
+
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -142,11 +144,63 @@ public class ExcelRow
     /**
      * Set cell style.
      * @param pCell the cell to style
-     * @param pStyle the style type to use
+     * @param pValue the cell value
      */
     protected void setCellStyle(final ExcelCell pCell,
-                                final CellStyleType pStyle) {
+                                final Object pValue) {
         /* Pass through to the sheet */
-        theExcelSheet.setCellStyle(pCell, pStyle);
+        theExcelSheet.setCellStyle(pCell, pValue);
+    }
+
+    /**
+     * Set alternate cell style.
+     * @param pCell the cell to style
+     * @param pValue the cell value
+     */
+    protected void setAlternateCellStyle(final ExcelCell pCell,
+                                         final Object pValue) {
+        /* Pass through to the sheet */
+        theExcelSheet.setAlternateCellStyle(pCell, pValue);
+    }
+
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pClass the value type class
+     * @return the formatted value
+     */
+    protected <T> T parseValue(final String pSource,
+                               final Class<T> pClass) {
+        JDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        return myFormatter.parseValue(pSource, pClass);
+    }
+
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pClass the value type class
+     * @return the formatted value
+     */
+    protected <T> T parseValue(final Double pSource,
+                               final Class<T> pClass) {
+        JDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        return myFormatter.parseValue(pSource, pClass);
+    }
+
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pCurrCode the currency code
+     * @param pClass the value type class
+     * @return the formatted value
+     */
+    protected <T> T parseValue(final Double pSource,
+                               final String pCurrCode,
+                               final Class<T> pClass) {
+        JDataFormatter myFormatter = theExcelSheet.getDataFormatter();
+        return myFormatter.parseValue(pSource, pCurrCode, pClass);
     }
 }

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jGordianKnot: Security Suite
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class ZipFileContents {
     /**
      * The Header file name.
      */
-    protected static final String NAME_HEADER = "JGordianKnotHeader";
+    protected static final String NAME_HEADER = "jGordianKnotHeader";
 
     /**
      * The Buffer length.
@@ -174,7 +174,8 @@ public class ZipFileContents {
 
             /* Reject attempt to add duplicate name */
             if (iDiff == 0) {
-                throw new IllegalArgumentException("Duplicate filename - " + myName);
+                throw new IllegalArgumentException("Duplicate filename - "
+                                                   + myName);
             }
 
             /* Increment index */

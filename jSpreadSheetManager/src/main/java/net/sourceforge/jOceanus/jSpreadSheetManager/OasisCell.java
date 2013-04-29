@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,19 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import java.util.Date;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
+import net.sourceforge.jOceanus.jDecimal.JDilution;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jSpreadSheetManager.OasisWorkBook.OasisStyle;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
 
 import org.odftoolkit.odfdom.dom.attribute.office.OfficeValueTypeAttribute;
+import org.odftoolkit.odfdom.dom.attribute.office.OfficeValueTypeAttribute.Value;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.text.TextPElement;
 import org.w3c.dom.Node;
@@ -137,54 +142,181 @@ public class OasisCell
      * @param pSource the string to parse.
      * @param pClass the value type class.
      * @return the parsed value
+     * @throws JDataException on error
      */
     private <T> T parseValue(final String pSource,
-                             final Class<T> pClass) {
+                             final Class<T> pClass) throws JDataException {
         OasisRow myRow = theCellMap.getRow();
-        return myRow.parseValue(pSource, pClass);
+        try {
+            return myRow.parseValue(pSource, pClass);
+        } catch (IllegalArgumentException e) {
+            OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
+            throw new JDataException(ExceptionClass.DATA, pSource, "Bad Value at Cell "
+                                                                   + myAddress, e);
+        }
+    }
+
+    /**
+     * Parse a value.
+     * @param <T> the value type to parse
+     * @param pSource the double value.
+     * @param pClass the value type class.
+     * @return the parsed value
+     * @throws JDataException on error
+     */
+    private <T> T parseValue(final Double pSource,
+                             final Class<T> pClass) throws JDataException {
+        OasisRow myRow = theCellMap.getRow();
+        try {
+            return myRow.parseValue(pSource, pClass);
+        } catch (IllegalArgumentException e) {
+            OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
+            throw new JDataException(ExceptionClass.DATA, pSource, "Bad Value at Cell "
+                                                                   + myAddress, e);
+        }
+    }
+
+    /**
+     * Parse a value.
+     * @param <T> the value type to parse
+     * @param pSource the double value.
+     * @param pCurrCode the currency code.
+     * @param pClass the value type class.
+     * @return the parsed value
+     * @throws JDataException on error
+     */
+    private <T> T parseValue(final Double pSource,
+                             final String pCurrCode,
+                             final Class<T> pClass) throws JDataException {
+        OasisRow myRow = theCellMap.getRow();
+        try {
+            return myRow.parseValue(pSource, pCurrCode, pClass);
+        } catch (IllegalArgumentException e) {
+            OasisCellAddress myAddress = new OasisCellAddress(myRow.getSheet().getName(), getPosition());
+            throw new JDataException(ExceptionClass.DATA, pSource, "Bad Value at Cell "
+                                                                   + myAddress, e);
+        }
+    }
+
+    /**
+     * Obtain value attribute type.
+     * @return the value attribute type
+     */
+    private Value getValueType() {
+        String myType = theOasisCell.getOfficeValueTypeAttribute();
+        return (myType != null)
+                ? OfficeValueTypeAttribute.Value.enumValueOf(myType)
+                : null;
     }
 
     @Override
     public Boolean getBooleanValue() {
-        String myType = theOasisCell.getOfficeValueTypeAttribute();
-        if ((myType != null)
-            && (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.BOOLEAN)) {
-            return theOasisCell.getOfficeBooleanValueAttribute();
+        switch (getValueType()) {
+            case BOOLEAN:
+                return theOasisCell.getOfficeBooleanValueAttribute();
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
-    public Date getDateValue() {
-        String myType = theOasisCell.getOfficeValueTypeAttribute();
-        if ((myType != null)
-            && (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.DATE)) {
-            String myDate = theOasisCell.getOfficeDateValueAttribute();
-            return parseValue(myDate, Date.class);
+    public JDateDay getDateValue() throws JDataException {
+        switch (getValueType()) {
+            case DATE:
+                return parseValue(theOasisCell.getOfficeDateValueAttribute(), JDateDay.class);
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
-    public Integer getIntegerValue() {
-        String myType = theOasisCell.getOfficeValueTypeAttribute();
-        if ((myType != null)
-            && (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.FLOAT)) {
-            Double myValue = theOasisCell.getOfficeValueAttribute();
-            return myValue.intValue();
+    public Integer getIntegerValue() throws JDataException {
+        switch (getValueType()) {
+            case FLOAT:
+                return theOasisCell.getOfficeValueAttribute().intValue();
+            default:
+                return null;
         }
-        return null;
+    }
+
+    @Override
+    public JMoney getMoneyValue() throws JDataException {
+        switch (getValueType()) {
+            case CURRENCY:
+                return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), JMoney.class);
+            case FLOAT:
+                return parseValue(theOasisCell.getTextContent(), JMoney.class);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public JPrice getPriceValue() throws JDataException {
+        switch (getValueType()) {
+            case CURRENCY:
+                return parseValue(theOasisCell.getOfficeValueAttribute(), theOasisCell.getOfficeCurrencyAttribute(), JPrice.class);
+            case FLOAT:
+                return parseValue(theOasisCell.getTextContent(), JPrice.class);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public JRate getRateValue() throws JDataException {
+        switch (getValueType()) {
+            case PERCENTAGE:
+            case FLOAT:
+                return parseValue(theOasisCell.getOfficeValueAttribute(), JRate.class);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public JUnits getUnitsValue() throws JDataException {
+        switch (getValueType()) {
+            case FLOAT:
+                return parseValue(theOasisCell.getOfficeValueAttribute(), JUnits.class);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public JDilution getDilutionValue() throws JDataException {
+        switch (getValueType()) {
+            case FLOAT:
+                return parseValue(theOasisCell.getOfficeValueAttribute(), JDilution.class);
+            default:
+                return null;
+        }
+    }
+
+    @Override
+    public JRatio getRatioValue() throws JDataException {
+        switch (getValueType()) {
+            case FLOAT:
+                return parseValue(theOasisCell.getOfficeValueAttribute(), JRatio.class);
+            default:
+                return null;
+        }
     }
 
     @Override
     public String getStringValue() {
-        String myType = theOasisCell.getOfficeValueTypeAttribute();
-        if ((myType != null)
-            && ((OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.STRING)
-                || (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.PERCENTAGE)
-                || (OfficeValueTypeAttribute.Value.enumValueOf(myType) == OfficeValueTypeAttribute.Value.CURRENCY) || (OfficeValueTypeAttribute.Value
-                    .enumValueOf(myType) == OfficeValueTypeAttribute.Value.FLOAT))) {
-            return theOasisCell.getTextContent();
+        Value myType = getValueType();
+        if (myType != null) {
+            switch (myType) {
+                case STRING:
+                case PERCENTAGE:
+                case FLOAT:
+                case CURRENCY:
+                    return theOasisCell.getTextContent();
+                default:
+                    break;
+            }
         }
         return null;
     }
@@ -230,12 +362,12 @@ public class OasisCell
             /* Set value type and value */
             theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.BOOLEAN.toString());
             theOasisCell.setOfficeBooleanValueAttribute(pValue);
-            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.BooleanCell));
+            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
         }
     }
 
     @Override
-    protected void setDate(final Date pValue) throws JDataException {
+    protected void setDate(final JDateDay pValue) throws JDataException {
         /* Ignore if readOnly */
         if (!isReadOnly) {
             /* Remove existing content */
@@ -244,7 +376,7 @@ public class OasisCell
             /* Set value type and value */
             theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.DATE.toString());
             theOasisCell.setOfficeDateValueAttribute(formatValue(pValue));
-            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.DateCell));
+            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
         }
     }
 
@@ -258,7 +390,7 @@ public class OasisCell
             /* Set value type and value */
             theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.FLOAT.toString());
             theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
-            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.IntegerCell));
+            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
         }
     }
 
@@ -272,7 +404,7 @@ public class OasisCell
             /* Set value type and value */
             theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.STRING.toString());
             setTextContent(pValue);
-            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.StringCell));
+            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
         }
     }
 
@@ -291,9 +423,25 @@ public class OasisCell
             setTextContent(formatValue(pValue));
 
             /* Set the style for the cell */
-            CellStyleType myStyleType = getCellStyle(pValue);
-            OasisStyle myStyle = OasisWorkBook.getOasisCellStyle(myStyleType);
-            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(myStyle));
+            theCellMap.getRow().setCellStyle(theOasisCell, pValue);
+        }
+    }
+
+    @Override
+    protected void setMonetary(final JMoney pValue) throws JDataException {
+        /* Ignore if readOnly */
+        if (!isReadOnly) {
+            /* Remove existing content */
+            removeCellContent();
+
+            /* Set value type and value */
+            theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.CURRENCY.toString());
+            theOasisCell.setOfficeValueAttribute(pValue.doubleValue());
+            theOasisCell.setOfficeCurrencyAttribute(pValue.getCurrency().getCurrencyCode());
+            setTextContent(formatValue(pValue));
+
+            /* Set the style for the cell */
+            theCellMap.getRow().setAlternateCellStyle(theOasisCell, pValue);
         }
     }
 
@@ -307,7 +455,7 @@ public class OasisCell
             /* Set value type and value */
             theOasisCell.setOfficeValueTypeAttribute(OfficeValueTypeAttribute.Value.STRING.toString());
             setTextContent(pValue);
-            theOasisCell.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.HeaderCell));
+            theCellMap.getRow().setAlternateCellStyle(theOasisCell, pValue);
         }
     }
 }

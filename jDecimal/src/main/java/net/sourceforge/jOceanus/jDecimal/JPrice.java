@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDecimal: Decimals represented by long values
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,8 @@ import java.util.Currency;
 /**
  * Represents a Price object.
  */
-public class JPrice extends JMoney {
+public class JPrice
+        extends JMoney {
     /**
      * Additional number of decimals for Price.
      */
@@ -42,12 +43,13 @@ public class JPrice extends JMoney {
     }
 
     /**
-     * Constructor for money of value zero.
+     * Constructor for money of value zero in specified currency.
      * @param pCurrency the currency
      */
     public JPrice(final Currency pCurrency) {
         super(pCurrency);
-        recordScale(pCurrency.getDefaultFractionDigits() + XTRA_DECIMALS);
+        recordScale(pCurrency.getDefaultFractionDigits()
+                    + XTRA_DECIMALS);
     }
 
     /**
@@ -62,14 +64,17 @@ public class JPrice extends JMoney {
     /**
      * Constructor for price from a decimal string.
      * @param pSource The source decimal string
+     * @throws IllegalArgumentException on invalidly formatted argument
+     * @throws NullPointerException on null argument
      */
-    public JPrice(final String pSource) {
+    public JPrice(final String pSource) throws IllegalArgumentException, NullPointerException {
         /* Use default constructor */
         this();
 
         /* Parse the string and correct the scale */
         JDecimalParser.parseDecimalValue(pSource, this);
-        adjustToScale(getCurrency().getDefaultFractionDigits() + XTRA_DECIMALS);
+        adjustToScale(getCurrency().getDefaultFractionDigits()
+                      + XTRA_DECIMALS);
     }
 
     /**

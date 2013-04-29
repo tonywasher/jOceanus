@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataManager: Java Data Manager
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,9 @@ import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
  * Data Window display class.
  * @author Tony Washer
  */
-public class JDataWindow extends JFrame implements TreeSelectionListener {
+public class JDataWindow
+        extends JFrame
+        implements TreeSelectionListener {
     /**
      * Serial Id.
      */
@@ -106,7 +108,7 @@ public class JDataWindow extends JFrame implements TreeSelectionListener {
         myTreeScroll = new JScrollPane(theTree);
 
         /* Create the item panel */
-        theItemPane = new JDataItem(pManager.getFormatter());
+        theItemPane = new JDataItem(pManager.getHTMLFormatter());
 
         /* Create the split pane */
         mySplit = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, myTreeScroll, theItemPane.getPanel());

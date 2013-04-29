@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDataModels.sheets;
-
-import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfo;
@@ -231,7 +229,7 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
             /* Switch on data type */
             switch (myClass.getDataType()) {
                 case DATEDAY:
-                    Date myDate = theOwner.loadDate(iData);
+                    JDateDay myDate = theOwner.loadDate(iData);
                     if (myDate != null) {
                         Integer myId = theOwner.loadInteger(iCol);
                         pInfoList.addOpenItem(myId, pOwner, myClass, myDate);

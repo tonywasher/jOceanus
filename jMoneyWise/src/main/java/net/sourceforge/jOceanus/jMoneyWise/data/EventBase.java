@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@
  * $Date$
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
-
-import java.util.Date;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -549,7 +547,7 @@ public abstract class EventBase
     protected EventBase(final EventBaseList<? extends EventBase> pList,
                         final Integer pId,
                         final Integer pControlId,
-                        final Date pDate,
+                        final JDateDay pDate,
                         final Integer pDebit,
                         final Integer pCredit,
                         final byte[] pAmount,
@@ -569,7 +567,7 @@ public abstract class EventBase
             setValueReconciled(pReconciled);
 
             /* Create the date */
-            setValueDate(new JDateDay(pDate));
+            setValueDate(pDate);
 
             /* Record the encrypted values */
             setValueDesc(pDesc);
@@ -597,7 +595,7 @@ public abstract class EventBase
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
                         final Integer uId,
-                        final Date pDate,
+                        final JDateDay pDate,
                         final String pDebit,
                         final String pCredit,
                         final String pAmount,
@@ -620,7 +618,7 @@ public abstract class EventBase
             setValueCredit(pCredit);
             setValueCategory(pCategory);
             setValueReconciled(pReconciled);
-            setValueDate(new JDateDay(pDate));
+            setValueDate(pDate);
             setValueAmount(myParser.parseMoneyValue(pAmount));
 
             /* Catch Exceptions */

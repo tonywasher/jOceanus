@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDataModels.threads;
 
-import java.util.concurrent.ExecutionException;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
@@ -34,7 +32,8 @@ import net.sourceforge.jOceanus.jDataModels.views.DataControl;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T> {
+public abstract class LoaderThread<T extends DataSet<T>>
+        extends WorkerThread<T> {
     /**
      * Data Control.
      */
@@ -69,10 +68,9 @@ public abstract class LoaderThread<T extends DataSet<T>> extends WorkerThread<T>
             }
 
             completeStatusBar();
-        } catch (InterruptedException e) {
-            /* Report the failure */
-            setError(new JDataException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
-        } catch (ExecutionException e) {
+
+            /* Catch any exception to keep thread interface clean */
+        } catch (Exception e) {
             /* Report the failure */
             setError(new JDataException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
         }

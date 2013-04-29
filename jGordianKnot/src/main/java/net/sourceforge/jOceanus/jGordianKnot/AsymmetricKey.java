@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jGordianKnot: Security Suite
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Signature;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -99,6 +100,11 @@ public class AsymmetricKey {
      * The Encoded Private Key.
      */
     private final byte[] thePrivateKeyDef;
+
+    /**
+     * The SaltBytes.
+     */
+    private final byte[] theSaltBytes;
 
     /**
      * The CipherSet.
@@ -179,12 +185,17 @@ public class AsymmetricKey {
         /* Generate the new KeyPair */
         theKeyPair = theGenerator.generateKeyPair(theKeyType);
 
+        /* Generate the salt bytes */
+        SecureRandom myRandom = theGenerator.getRandom();
+        theSaltBytes = new byte[PasswordHash.SALTLENGTH];
+        myRandom.nextBytes(theSaltBytes);
+
         /* Access the encoded formats */
         thePrivateKeyDef = getPrivateKey().getEncoded();
         thePublicKeyDef = getPublicKey().getEncoded();
 
         /* Determine the external definition */
-        AsymModeNeedle myNeedle = new AsymModeNeedle(theKeyMode, thePublicKeyDef);
+        AsymModeNeedle myNeedle = new AsymModeNeedle(theKeyMode, theSaltBytes, thePublicKeyDef);
         theExternalKeyDef = myNeedle.getExternal();
 
         /* Create the map for elliptic keys */
@@ -227,6 +238,7 @@ public class AsymmetricKey {
         /* Access the encoded formats */
         thePublicKeyDef = getPublicKey().getEncoded();
         thePrivateKeyDef = null;
+        theSaltBytes = myNeedle.getSalt();
 
         /* Create the map for elliptic keys */
         if (theKeyType.isElliptic()) {
@@ -264,6 +276,7 @@ public class AsymmetricKey {
         /* Access the encoded formats */
         thePrivateKeyDef = getPrivateKey().getEncoded();
         thePublicKeyDef = getPublicKey().getEncoded();
+        theSaltBytes = myNeedle.getSalt();
 
         /* Create the map for elliptic keys */
         if (theKeyType.isElliptic()) {
@@ -323,10 +336,12 @@ public class AsymmetricKey {
     /**
      * Get CipherSet for partner Elliptic Curve.
      * @param pPartner partner asymmetric key
+     * @param pSaltBytes the salt bytes
      * @return the new CipherSet
      * @throws JDataException on error
      */
-    public CipherSet getCipherSet(final AsymmetricKey pPartner) throws JDataException {
+    public CipherSet getCipherSet(final AsymmetricKey pPartner,
+                                  final byte[] pSaltBytes) throws JDataException {
         /* Both keys must be elliptic */
         if ((!theKeyType.isElliptic())
             || (pPartner.getKeyType() != theKeyType)) {
@@ -345,7 +360,7 @@ public class AsymmetricKey {
         byte[] mySecret = getSharedSecret(pPartner);
 
         /* Build the CipherSet */
-        mySet = new CipherSet(theGenerator, theKeyMode);
+        mySet = new CipherSet(theGenerator, pSaltBytes, theKeyMode);
 
         /* Apply the Secret */
         mySet.buildCiphers(mySecret);
@@ -369,7 +384,7 @@ public class AsymmetricKey {
         }
 
         /* Build the internal CipherSet */
-        theCipherSet = getCipherSet(this);
+        theCipherSet = getCipherSet(this, theSaltBytes);
 
         /* Return the Cipher Set */
         return theCipherSet;
@@ -556,11 +571,13 @@ public class AsymmetricKey {
     /**
      * Encrypt string.
      * @param pString string to encrypt
+     * @param pSaltBytes the salt bytes
      * @param pTarget target partner of encryption
      * @return Encrypted bytes
      * @throws JDataException on error
      */
     public byte[] encryptString(final String pString,
+                                final byte[] pSaltBytes,
                                 final AsymmetricKey pTarget) throws JDataException {
         /* Target must be identical key type */
         if (!theKeyMode.equals(pTarget.getKeyMode())) {
@@ -570,7 +587,7 @@ public class AsymmetricKey {
         /* If we are elliptic */
         if (theKeyType.isElliptic()) {
             /* Access the target CipherSet */
-            CipherSet mySet = getCipherSet(pTarget);
+            CipherSet mySet = getCipherSet(pTarget, pSaltBytes);
 
             /* Encrypt the string */
             return mySet.encryptString(pString);
@@ -657,11 +674,13 @@ public class AsymmetricKey {
     /**
      * Decrypt string.
      * @param pBytes encrypted string to decrypt
+     * @param pSaltBytes the salt bytes
      * @param pSource source partner of encryption
      * @return Decrypted string
      * @throws JDataException on error
      */
     public String decryptString(final byte[] pBytes,
+                                final byte[] pSaltBytes,
                                 final AsymmetricKey pSource) throws JDataException {
         /* Cannot decrypt unless we have the private key */
         if (isPublicOnly()) {
@@ -676,7 +695,7 @@ public class AsymmetricKey {
         /* If we are elliptic */
         if (theKeyType.isElliptic()) {
             /* Access the required CipherSet */
-            CipherSet mySet = getCipherSet(pSource);
+            CipherSet mySet = getCipherSet(pSource, pSaltBytes);
 
             /* Decrypt the string */
             return mySet.decryptString(pBytes);

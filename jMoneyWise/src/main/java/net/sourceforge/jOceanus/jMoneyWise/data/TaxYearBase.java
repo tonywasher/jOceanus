@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -220,13 +219,13 @@ public abstract class TaxYearBase
     protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
                           final int pId,
                           final int pRegimeId,
-                          final Date pDate) throws JDataException {
+                          final JDateDay pDate) throws JDataException {
         /* Initialise item */
         super(pList, pId);
 
         /* Record the Id */
         setValueTaxRegime(pRegimeId);
-        setValueTaxYear(new JDateDay(pDate));
+        setValueTaxYear(pDate);
     }
 
     /**
@@ -240,13 +239,13 @@ public abstract class TaxYearBase
     protected TaxYearBase(final TaxYearBaseList<? extends TaxYearBase> pList,
                           final int pId,
                           final String pRegime,
-                          final Date pDate) throws JDataException {
+                          final JDateDay pDate) throws JDataException {
         /* Initialise item */
         super(pList, pId);
 
         /* Record the details */
         setValueTaxRegime(pRegime);
-        setValueTaxYear(new JDateDay(pDate));
+        setValueTaxYear(pDate);
     }
 
     /**

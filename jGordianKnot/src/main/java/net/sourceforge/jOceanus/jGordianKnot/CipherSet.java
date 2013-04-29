@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jGordianKnot: Security Suite
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,6 +79,11 @@ public class CipherSet {
     private final SecureRandom theRandom;
 
     /**
+     * The Salt bytes.
+     */
+    private final byte[] theSaltBytes;
+
+    /**
      * The DataKey Map.
      */
     private final Map<SymKeyType, DataCipher> theMap;
@@ -91,15 +96,41 @@ public class CipherSet {
     /**
      * Constructor.
      * @param pGenerator the security generator
+     * @param pSaltBytes the salt bytes
      * @param pKeyMode the Asymmetric Key Mode
      */
     public CipherSet(final SecurityGenerator pGenerator,
+                     final byte[] pSaltBytes,
                      final AsymKeyMode pKeyMode) {
         /* Store parameters */
         theGenerator = pGenerator;
+        theSaltBytes = pSaltBytes;
         theRandom = theGenerator.getRandom();
         useRestricted = pKeyMode.useRestricted();
         theDigest = pKeyMode.getCipherDigest();
+
+        /* Determine the number of cipher steps */
+        theNumSteps = pGenerator.getNumCipherSteps();
+
+        /* Build the Map */
+        theMap = new EnumMap<SymKeyType, DataCipher>(SymKeyType.class);
+    }
+
+    /**
+     * Constructor.
+     * @param pGenerator the security generator
+     * @param pSaltBytes the salt bytes
+     * @param pHashMode the Hash Mode
+     */
+    public CipherSet(final SecurityGenerator pGenerator,
+                     final byte[] pSaltBytes,
+                     final HashMode pHashMode) {
+        /* Store parameters */
+        theGenerator = pGenerator;
+        theSaltBytes = pSaltBytes;
+        theRandom = theGenerator.getRandom();
+        useRestricted = pHashMode.useRestricted();
+        theDigest = pHashMode.getCipherDigest();
 
         /* Determine the number of cipher steps */
         theNumSteps = pGenerator.getNumCipherSteps();
@@ -117,6 +148,7 @@ public class CipherSet {
                      final HashMode pHashMode) {
         /* Store parameters */
         theGenerator = pGenerator;
+        theSaltBytes = null;
         theRandom = theGenerator.getRandom();
         useRestricted = pHashMode.useRestricted();
         theDigest = pHashMode.getCipherDigest();
@@ -188,7 +220,7 @@ public class CipherSet {
     /**
      * Build Secret Cipher for a Key Type.
      * @param pKeyType the Key type
-     * @param pSecret the Secret Key
+     * @param pSecret the derived Secret
      * @throws JDataException on error
      */
     private void buildCipher(final SymKeyType pKeyType,
@@ -248,31 +280,28 @@ public class CipherSet {
                                       final SymKeyType pKeyType) throws JDataException {
         /* Declare initial value */
         byte[] myResult = null;
+        byte[] myHash = theSaltBytes;
 
         /* Access number of iterations */
         int iIterations = theGenerator.getNumHashIterations() >>> 1;
 
         /* Create the standard data */
-        IterationCounter myCount = new IterationCounter();
         byte[] myAlgo = DataConverter.stringToByteArray(pKeyType.getAlgorithm());
         byte[] mySeed = theGenerator.getSecurityBytes();
 
+        /* Update with security bytes, algorithm and section */
+        pMac.update(mySeed);
+        pMac.update(myAlgo);
+        pMac.update(pSection);
+
         /* Loop through the iterations */
         for (int i = 0; i < iIterations; i++) {
-            /* Add section number to hash */
-            pMac.update(pSection);
-
-            /* Update with algorithm */
-            pMac.update(myAlgo);
-
-            /* Increment count and add to hash */
-            pMac.update(myCount.iterate());
-
-            /* Update with security bytes */
-            pMac.update(mySeed);
+            /* Add the existing result to hash */
+            pMac.update(myHash);
 
             /* Calculate Mac */
-            myResult = DataConverter.combineHashes(pMac.doFinal(), myResult);
+            myHash = pMac.doFinal();
+            myResult = DataConverter.combineHashes(myHash, myResult);
         }
 
         /* Return the result */

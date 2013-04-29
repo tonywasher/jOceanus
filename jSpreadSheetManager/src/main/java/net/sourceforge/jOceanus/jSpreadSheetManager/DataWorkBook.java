@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,18 @@ import java.io.OutputStream;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 
 /**
  * WorkBook class.
  * @author Tony Washer
  */
 public class DataWorkBook {
+    /**
+     * Money accounting format width.
+     */
+    private static final int ACCOUNTING_WIDTH = 10;
+
     /**
      * Date width.
      */
@@ -97,11 +103,6 @@ public class DataWorkBook {
      * Numeric Font.
      */
     protected static final String FONT_NUMERIC = "Courier";
-
-    /**
-     * Internal date format.
-     */
-    protected static final String FORMAT_DATE = "yyyy-MM-dd";
 
     /**
      * ReadOnly.
@@ -319,6 +320,20 @@ public class DataWorkBook {
             default:
                 return null;
         }
+    }
+
+    /**
+     * Create data formatter.
+     * @return the new formatter
+     */
+    protected static JDataFormatter createFormatter() {
+        /* Allocate the formatter and set date format */
+        JDataFormatter myFormatter = new JDataFormatter();
+        myFormatter.setFormat(DataFormats.OASIS_DATE);
+        myFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
+
+        /* return the formatter */
+        return myFormatter;
     }
 
     /**

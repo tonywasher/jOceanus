@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDecimal: Decimals represented by long values
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,22 +41,27 @@ public class JDecimalFormatter {
     /**
      * The Blank character.
      */
-    protected static final char CHAR_BLANK = ' ';
+    public static final char CHAR_BLANK = ' ';
 
     /**
      * The Zero character.
      */
-    protected static final char CHAR_ZERO = '0';
+    public static final char CHAR_ZERO = '0';
 
     /**
      * The Minus character.
      */
-    protected static final char CHAR_MINUS = '-';
+    public static final char CHAR_MINUS = '-';
+
+    /**
+     * The Group character.
+     */
+    public static final char CHAR_GROUP = ',';
 
     /**
      * The Decimal character.
      */
-    protected static final String STR_DEC = ".";
+    public static final String STR_DEC = ".";
 
     /**
      * The Currency separator.
@@ -199,7 +204,8 @@ public class JDecimalFormatter {
 
         /* Insert the decimal into correct position if needed */
         if (myScale > 0) {
-            myString.insert(myLen - myScale, STR_DEC);
+            myString.insert(myLen
+                            - myScale, STR_DEC);
         }
 
         /* Add minus sign if required */
@@ -212,7 +218,7 @@ public class JDecimalFormatter {
     }
 
     /**
-     * Format a money value with currency code.
+     * Format a money value with currency code, into a locale independent format.
      * @param pValue the value to format
      * @return the formatted value
      */
@@ -267,14 +273,16 @@ public class JDecimalFormatter {
         /* If we have decimals */
         if (pScale > 0) {
             /* Insert decimal point and remove decimals from length */
-            myString.insert(myLen - pScale, pDecSeparator);
+            myString.insert(myLen
+                            - pScale, pDecSeparator);
             myLen -= pScale;
         }
 
         /* Loop while we need to add grouping */
         while (myLen > theGroupingSize) {
             /* Insert grouping character and remove grouping size from length */
-            myString.insert(myLen - theGroupingSize, theGrouping);
+            myString.insert(myLen
+                            - theGroupingSize, theGrouping);
             myLen -= theGroupingSize;
         }
 
@@ -294,7 +302,8 @@ public class JDecimalFormatter {
      */
     public String formatMoney(final JMoney pMoney) {
         /* If we are using accounting and have zero */
-        if ((useAccounting) && (pMoney.isZero())) {
+        if ((useAccounting)
+            && (pMoney.isZero())) {
             /* Format the zero */
             return formatZeroAccounting(pMoney.getCurrency());
         }
@@ -356,7 +365,7 @@ public class JDecimalFormatter {
     public String formatRate(final JRate pRate) {
         /* Format the basic value */
         StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
-                - JDecimalParser.ADJUST_PERCENT, theDecimal);
+                                                                    - JDecimalParser.ADJUST_PERCENT, theDecimal);
 
         /* Append the perCent sign */
         myWork.append(thePerCent);
@@ -373,7 +382,7 @@ public class JDecimalFormatter {
     public String formatRatePerMille(final JRate pRate) {
         /* Format the basic value */
         StringBuilder myWork = formatDecimal(pRate.unscaledValue(), pRate.scale()
-                - JDecimalParser.ADJUST_PERMILLE, theDecimal);
+                                                                    - JDecimalParser.ADJUST_PERMILLE, theDecimal);
 
         /* Append the perMille sign */
         myWork.append(thePerMille);
@@ -469,14 +478,9 @@ public class JDecimalFormatter {
         StringBuilder myWork = new StringBuilder(Character.toString(CHAR_MINUS));
 
         /* If we have decimals */
-        if (myScale > 0) {
-            /* Add a blank in place of the decimal point */
+        for (int i = 0; i < myScale; i++) {
+            /* Add a blank in place of the decimal digit */
             myWork.append(CHAR_BLANK);
-
-            for (int i = 0; i < myScale; i++) {
-                /* Add a blank in place of the decimal digit */
-                myWork.append(CHAR_BLANK);
-            }
         }
 
         /* If we are short of the width */

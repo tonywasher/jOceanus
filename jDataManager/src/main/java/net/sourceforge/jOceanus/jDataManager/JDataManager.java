@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataManager: Java Data Manager
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,12 @@ public class JDataManager {
     /**
      * HTML formatter.
      */
-    private JDataHTML theFormatter = null;
+    private JDataHTML theHTMLFormatter = null;
+
+    /**
+     * Data formatter.
+     */
+    private final JDataFormatter theDataFormatter;
 
     /**
      * Tree Model.
@@ -105,11 +110,19 @@ public class JDataManager {
     }
 
     /**
-     * Get formatter.
+     * Get HTML formatter.
      * @return the formatter
      */
-    protected JDataHTML getFormatter() {
-        return theFormatter;
+    protected JDataHTML getHTMLFormatter() {
+        return theHTMLFormatter;
+    }
+
+    /**
+     * Get Data formatter.
+     * @return the formatter
+     */
+    public JDataFormatter getDataFormatter() {
+        return theDataFormatter;
     }
 
     /**
@@ -122,8 +135,9 @@ public class JDataManager {
         /* Create the tree model */
         theModel = new DefaultTreeModel(theRoot.getNode());
 
-        /* Create the formatter */
-        theFormatter = new JDataHTML();
+        /* Create the formatters */
+        theDataFormatter = new JDataFormatter();
+        theHTMLFormatter = new JDataHTML(theDataFormatter);
     }
 
     /**
@@ -138,12 +152,12 @@ public class JDataManager {
                              final Color pLink,
                              final Color pChgLink) {
         /* Set the colours */
-        theFormatter = new JDataHTML(pStandard, pChanged, pLink, pChgLink);
+        theHTMLFormatter.setColors(pStandard, pChanged, pLink, pChgLink);
 
         /* If we have a data window */
         if (theWindow != null) {
             /* Set the new formatter */
-            theWindow.setFormatter(theFormatter);
+            theWindow.setFormatter(theHTMLFormatter);
         }
     }
 
@@ -452,14 +466,16 @@ public class JDataManager {
                     JDataField myField = myIterator.next();
 
                     /* Access the value */
-                    if ((myField.isValueSetField()) && (myValues != null)) {
+                    if ((myField.isValueSetField())
+                        && (myValues != null)) {
                         myValue = myValues.getValue(myField);
                     } else {
                         myValue = myContent.getFieldValue(myField);
                     }
 
                     /* If the field is a List that has contents */
-                    if ((myValue instanceof List) && (myValue instanceof JDataContents)) {
+                    if ((myValue instanceof List)
+                        && (myValue instanceof JDataContents)) {
                         /* Access as list */
                         List<?> myList = (List<?>) myValue;
 

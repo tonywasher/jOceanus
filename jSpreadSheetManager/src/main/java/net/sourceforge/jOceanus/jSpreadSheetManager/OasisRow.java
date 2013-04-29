@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jSpreadSheetManager;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 
 import org.odftoolkit.odfdom.dom.attribute.table.TableVisibilityAttribute;
+import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
 
 /**
@@ -189,5 +190,55 @@ public class OasisRow
                                final Class<T> pClass) {
         JDataFormatter myFormatter = theRowMap.getFormatter();
         return myFormatter.parseValue(pSource, pClass);
+    }
+
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pClass the value type class
+     * @return the formatted value
+     */
+    protected <T> T parseValue(final Double pSource,
+                               final Class<T> pClass) {
+        JDataFormatter myFormatter = theRowMap.getFormatter();
+        return myFormatter.parseValue(pSource, pClass);
+    }
+
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pCurrCode the currency code
+     * @param pClass the value type class
+     * @return the formatted value
+     */
+    protected <T> T parseValue(final Double pSource,
+                               final String pCurrCode,
+                               final Class<T> pClass) {
+        JDataFormatter myFormatter = theRowMap.getFormatter();
+        return myFormatter.parseValue(pSource, pCurrCode, pClass);
+    }
+
+    /**
+     * Ensure and determine the cell style.
+     * @param pCell the cell to style
+     * @param pValue the cell value
+     */
+    protected void setCellStyle(final TableTableCellElement pCell,
+                                final Object pValue) {
+        /* Pass through to the sheet */
+        getSheet().setCellStyle(pCell, pValue);
+    }
+
+    /**
+     * Ensure and determine the alternate cell style.
+     * @param pCell the cell to style
+     * @param pValue the cell value
+     */
+    protected void setAlternateCellStyle(final TableTableCellElement pCell,
+                                         final Object pValue) {
+        /* Pass through to the sheet */
+        getSheet().setAlternateCellStyle(pCell, pValue);
     }
 }

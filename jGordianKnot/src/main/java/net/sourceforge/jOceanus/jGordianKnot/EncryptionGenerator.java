@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jGordianKnot: Security Suite
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,9 +77,20 @@ public class EncryptionGenerator {
      * @param pCipherSet the CipherSet
      */
     public EncryptionGenerator(final CipherSet pCipherSet) {
+        /* Use new formatter */
+        this(pCipherSet, new JDataFormatter());
+    }
+
+    /**
+     * Constructor.
+     * @param pCipherSet the CipherSet
+     * @param pFormatter the formatter
+     */
+    public EncryptionGenerator(final CipherSet pCipherSet,
+                               final JDataFormatter pFormatter) {
         /* Store Parameter */
         theCipherSet = pCipherSet;
-        theFormatter = new JDataFormatter();
+        theFormatter = pFormatter;
     }
 
     /**
@@ -264,6 +275,6 @@ public class EncryptionGenerator {
     public void adoptEncryption(final EncryptedField<?> pTarget,
                                 final EncryptedField<?> pSource) throws JDataException {
         /* Adopt the encryption */
-        pTarget.adoptEncryption(theCipherSet, pSource);
+        pTarget.adoptEncryption(theCipherSet, theFormatter, pSource);
     }
 }

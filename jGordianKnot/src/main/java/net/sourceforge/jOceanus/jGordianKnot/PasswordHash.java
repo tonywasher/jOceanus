@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jGordianKnot: Security Suite
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class PasswordHash {
     /**
      * Salt length for passwords.
      */
-    private static final int SALTLENGTH = 32;
+    protected static final int SALTLENGTH = 32;
 
     /**
      * Hash size for password hash.
@@ -285,7 +285,7 @@ public class PasswordHash {
         theHashBytes = generateHashBytes(pPassword);
 
         /* Create the Cipher Set */
-        theCipherSet = new CipherSet(theGenerator, theHashMode);
+        theCipherSet = new CipherSet(theGenerator, theSaltBytes, theHashMode);
         theCipherSet.buildCiphers(theSecretHash);
 
         /* Encrypt the password */
@@ -312,7 +312,7 @@ public class PasswordHash {
         }
 
         /* Create the Cipher Set */
-        theCipherSet = new CipherSet(theGenerator, theHashMode);
+        theCipherSet = new CipherSet(theGenerator, theSaltBytes, theHashMode);
         theCipherSet.buildCiphers(theSecretHash);
 
         /* Encrypt the password */
@@ -337,7 +337,6 @@ public class PasswordHash {
             byte[] myPrimeBytes = null;
             byte[] myAlternateBytes = null;
             byte[] mySecretBytes = null;
-            IterationCounter myCounter = new IterationCounter();
 
             /* Obtain configuration details */
             byte[] mySeed = theGenerator.getSecurityBytes();
@@ -358,18 +357,18 @@ public class PasswordHash {
             byte[] myAlternateHash = theSaltBytes;
             byte[] mySecretHash = theSaltBytes;
 
+            /* Update each Hash with the seed */
+            myPrimeMac.update(mySeed);
+            myAlternateMac.update(mySeed);
+            mySecretMac.update(mySeed);
+
             /* Loop through the iterations */
             for (int i = 0; i < iFinal; i++) {
                 /* Note the final pass */
                 int iPass = i + 1;
 
-                /* Iterate the counter */
-                byte[] myCountBuffer = myCounter.iterate();
-
                 /* Update the prime Mac */
                 myPrimeMac.update(myPrimeHash);
-                myPrimeMac.update(myCountBuffer);
-                myPrimeMac.update(mySeed);
 
                 /* Add in Alternate Hash every so often */
                 if ((iPass % SAMPLE_PRIME) == 0) {
@@ -379,8 +378,6 @@ public class PasswordHash {
 
                 /* Update the alternate Mac */
                 myAlternateMac.update(myAlternateHash);
-                myAlternateMac.update(myCountBuffer);
-                myAlternateMac.update(mySeed);
 
                 /* Add in prime hash every so often */
                 if ((iPass % SAMPLE_ALT) == 0) {
@@ -390,8 +387,6 @@ public class PasswordHash {
 
                 /* Update the secret Mac */
                 mySecretMac.update(mySecretHash);
-                mySecretMac.update(myCountBuffer);
-                mySecretMac.update(mySeed);
 
                 /* Add in prime/alternate hashes every so often */
                 if ((iPass % SAMPLE_SECRET) == 0) {

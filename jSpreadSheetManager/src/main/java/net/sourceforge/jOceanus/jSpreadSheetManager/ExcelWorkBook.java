@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,12 @@ package net.sourceforge.jOceanus.jSpreadSheetManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -61,9 +62,14 @@ public class ExcelWorkBook {
     private final HSSFWorkbook theBook;
 
     /**
-     * DataFormatter.
+     * ExcelDataFormatter.
      */
-    private final DataFormatter theFormatter;
+    private final DataFormatter theExcelFormatter;
+
+    /**
+     * JDataFormatter.
+     */
+    private final JDataFormatter theDataFormatter;
 
     /**
      * FormulaEvaluator.
@@ -73,7 +79,27 @@ public class ExcelWorkBook {
     /**
      * Map of Allocated styles.
      */
-    private final Map<CellStyleType, HSSFCellStyle> theMap;
+    private final Map<String, HSSFCellStyle> theMap;
+
+    /**
+     * Style engine.
+     */
+    private final DataFormat theStyleEngine;
+
+    /**
+     * The Value font.
+     */
+    private final Font theValueFont;
+
+    /**
+     * The Number font.
+     */
+    private final Font theNumberFont;
+
+    /**
+     * The Header font.
+     */
+    private final Font theHeaderFont;
 
     /**
      * evaluate the formula for a cell.
@@ -90,7 +116,15 @@ public class ExcelWorkBook {
      * @return the formatted value
      */
     protected String formatCellValue(final HSSFCell pCell) {
-        return theFormatter.formatCellValue(pCell);
+        return theExcelFormatter.formatCellValue(pCell);
+    }
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    protected JDataFormatter getDataFormatter() {
+        return theDataFormatter;
     }
 
     /**
@@ -103,10 +137,17 @@ public class ExcelWorkBook {
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
             theMap = null;
+            theStyleEngine = null;
+            theNumberFont = null;
+            theValueFont = null;
+            theHeaderFont = null;
+
+            /* Allocate the formatter */
+            theDataFormatter = DataWorkBook.createFormatter();
 
             /* Create evaluator and formatter */
             theEvaluator = new HSSFFormulaEvaluator(theBook);
-            theFormatter = new DataFormatter();
+            theExcelFormatter = new DataFormatter();
 
         } catch (IOException e) {
             throw new JDataException(ExceptionClass.EXCEL, "Failed to load workbook", e);
@@ -119,14 +160,29 @@ public class ExcelWorkBook {
     public ExcelWorkBook() {
         /* Create new book and map */
         theBook = new HSSFWorkbook();
-        theMap = new EnumMap<CellStyleType, HSSFCellStyle>(CellStyleType.class);
+        theMap = new HashMap<String, HSSFCellStyle>();
+
+        /* Allocate the formatter */
+        theDataFormatter = DataWorkBook.createFormatter();
 
         /* Create evaluator and formatter */
         theEvaluator = new HSSFFormulaEvaluator(theBook);
-        theFormatter = new DataFormatter();
+        theExcelFormatter = new DataFormatter();
 
-        /* Create standard cell styles */
-        createCellStyles();
+        /* Ensure that we can create data formats */
+        theStyleEngine = theBook.createDataFormat();
+
+        /* Create the Standard fonts */
+        theValueFont = theBook.createFont();
+        theValueFont.setFontName(DataWorkBook.FONT_VALUE);
+        theValueFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
+        theNumberFont = theBook.createFont();
+        theNumberFont.setFontName(DataWorkBook.FONT_NUMERIC);
+        theNumberFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
+        theHeaderFont = theBook.createFont();
+        theHeaderFont.setFontName(DataWorkBook.FONT_VALUE);
+        theHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        theHeaderFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
     }
 
     /**
@@ -278,98 +334,38 @@ public class ExcelWorkBook {
     }
 
     /**
-     * Create the standard CellStyles.
+     * Obtain alignment for a cell.
+     * @param pType the cell type
+     * @return the alignment
      */
-    private void createCellStyles() {
-        /* Ensure that we can create data formats */
-        DataFormat myFormat = theBook.createDataFormat();
+    private short getStyleAlignment(final CellStyleType pType) {
+        switch (pType) {
+            case Header:
+            case Boolean:
+                return CellStyle.ALIGN_CENTER;
+            case Date:
+            case String:
+                return CellStyle.ALIGN_LEFT;
+            default:
+                return CellStyle.ALIGN_RIGHT;
+        }
+    }
 
-        /* Create the Standard fonts */
-        Font myValueFont = theBook.createFont();
-        myValueFont.setFontName(DataWorkBook.FONT_VALUE);
-        myValueFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
-        Font myNumberFont = theBook.createFont();
-        myNumberFont.setFontName(DataWorkBook.FONT_NUMERIC);
-        myNumberFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
-        Font myHeaderFont = theBook.createFont();
-        myHeaderFont.setFontName(DataWorkBook.FONT_VALUE);
-        myHeaderFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        myHeaderFont.setFontHeightInPoints((short) DataWorkBook.FONT_HEIGHT);
-
-        /* Create the Date Cell Style */
-        HSSFCellStyle myStyle = theBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("dd-MMM-yy"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        theMap.put(CellStyleType.Date, myStyle);
-
-        /* Create the Money Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("£#,##0.00"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Money, myStyle);
-
-        /* Create the Price Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("£#,##0.0000"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Price, myStyle);
-
-        /* Create the Units Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("#,##0.0000"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Units, myStyle);
-
-        /* Create the Rate Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("0.00%"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Rate, myStyle);
-
-        /* Create the Dilution Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("0.000000"));
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        myStyle.setFont(myNumberFont);
-        theMap.put(CellStyleType.Dilution, myStyle);
-
-        /* Create the Ratio Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("0.000000"));
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        myStyle.setFont(myNumberFont);
-        theMap.put(CellStyleType.Ratio, myStyle);
-
-        /* Create the Integer Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setDataFormat(myFormat.getFormat("0"));
-        myStyle.setFont(myNumberFont);
-        myStyle.setAlignment(CellStyle.ALIGN_RIGHT);
-        theMap.put(CellStyleType.Integer, myStyle);
-
-        /* Create the Boolean Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setFont(myValueFont);
-        myStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        theMap.put(CellStyleType.Boolean, myStyle);
-
-        /* Create the String Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setFont(myValueFont);
-        myStyle.setAlignment(CellStyle.ALIGN_LEFT);
-        theMap.put(CellStyleType.String, myStyle);
-
-        /* Create the Header Cell Style */
-        myStyle = theBook.createCellStyle();
-        myStyle.setFont(myHeaderFont);
-        myStyle.setAlignment(CellStyle.ALIGN_CENTER);
-        myStyle.setLocked(true);
-        theMap.put(CellStyleType.Header, myStyle);
+    /**
+     * Obtain font for a cell.
+     * @param pType the cell type
+     * @return the font
+     */
+    private Font getStyleFont(final CellStyleType pType) {
+        switch (pType) {
+            case Header:
+                return theHeaderFont;
+            case Boolean:
+            case String:
+                return theValueFont;
+            default:
+                return theNumberFont;
+        }
     }
 
     /**
@@ -378,6 +374,109 @@ public class ExcelWorkBook {
      * @return the required CellStyle
      */
     protected HSSFCellStyle getCellStyle(final CellStyleType pType) {
-        return theMap.get(pType);
+        /* Determine the correct format */
+        String myStyleName = DataFormats.getFormatName(pType);
+
+        /* Look for existing format */
+        HSSFCellStyle myStyle = theMap.get(myStyleName);
+        if (myStyle != null) {
+            return myStyle;
+        }
+
+        /* Create the New Cell Style */
+        myStyle = theBook.createCellStyle();
+        myStyle.setFont(getStyleFont(pType));
+        myStyle.setAlignment(getStyleAlignment(pType));
+
+        /* If we have a data format */
+        if (DataFormats.hasDataFormat(pType)) {
+            /* Determine the format */
+            String myFormat = DataFormats.getDataFormatString(pType);
+            myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));
+        }
+
+        /* Add to the map and return new style */
+        theMap.put(myStyleName, myStyle);
+        return myStyle;
+    }
+
+    /**
+     * Obtain the required CellStyle.
+     * @param pValue the Cell Value
+     * @return the required CellStyle
+     */
+    protected HSSFCellStyle getCellStyle(final Object pValue) {
+        /* Determine the correct format */
+        String myStyleName = DataFormats.getFormatName(pValue);
+
+        /* Look for existing format */
+        HSSFCellStyle myStyle = theMap.get(myStyleName);
+        if (myStyle != null) {
+            return myStyle;
+        }
+
+        /* Determine the CellStyleType */
+        CellStyleType myType = DataFormats.getCellStyleType(pValue);
+
+        /* Create the New Cell Style */
+        myStyle = theBook.createCellStyle();
+        myStyle.setFont(getStyleFont(myType));
+        myStyle.setAlignment(getStyleAlignment(myType));
+
+        /* If we have a data format */
+        if ((myType != CellStyleType.Boolean)
+            && (DataFormats.hasDataFormat(myType))) {
+            /* Determine the format */
+            String myFormat = DataFormats.getDataFormatString(pValue);
+            myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));
+        }
+
+        /* Add to the map and return new style */
+        theMap.put(myStyleName, myStyle);
+        return myStyle;
+    }
+
+    /**
+     * Obtain the required alternate CellStyle.
+     * @param pValue the Cell Value
+     * @return the required CellStyle
+     */
+    protected HSSFCellStyle getAlternateCellStyle(final Object pValue) {
+        /* Determine the correct format */
+        String myStyleName = DataFormats.getAlternateFormatName(pValue);
+
+        /* Look for existing format */
+        HSSFCellStyle myStyle = theMap.get(myStyleName);
+        if (myStyle != null) {
+            return myStyle;
+        }
+
+        /* Create the New Cell Style */
+        myStyle = theBook.createCellStyle();
+
+        /* Determine the CellStyleType */
+        CellStyleType myType = DataFormats.getCellStyleType(pValue);
+
+        /* Handle the header style */
+        if (myType == CellStyleType.String) {
+            myType = CellStyleType.Header;
+            myStyle.setLocked(true);
+        }
+
+        /* Set font and style */
+        myStyle.setFont(getStyleFont(myType));
+        myStyle.setAlignment(getStyleAlignment(myType));
+
+        /* If we have a data format */
+        if ((myType != CellStyleType.Boolean)
+            && (DataFormats.hasDataFormat(myType))) {
+            /* Determine the format */
+            String myFormat = DataFormats.getAlternateFormatString(pValue);
+            myStyle.setDataFormat(theStyleEngine.getFormat(myFormat));
+        }
+
+        /* Add to the map and return new style */
+        theMap.put(myStyleName, myStyle);
+        return myStyle;
     }
 }

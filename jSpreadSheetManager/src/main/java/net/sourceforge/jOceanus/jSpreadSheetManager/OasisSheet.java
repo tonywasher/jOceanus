@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@ package net.sourceforge.jOceanus.jSpreadSheetManager;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRange;
-import net.sourceforge.jOceanus.jSpreadSheetManager.OasisWorkBook.OasisStyle;
 
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.element.table.TableTableCellElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableColumnElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableElement;
 import org.odftoolkit.odfdom.dom.element.table.TableTableRowElement;
+import org.odftoolkit.odfdom.incubator.doc.style.OdfStyle;
 
 /**
  * Class representing an Oasis sheet within a workBook.
@@ -162,9 +162,52 @@ public class OasisSheet
     public void setHidden(final boolean isHidden) {
         if (!isReadOnly) {
             theOasisTable.setTableStyleNameAttribute(isHidden
-                    ? OasisWorkBook.getStyleName(OasisStyle.HiddenTable)
-                    : OasisWorkBook.getStyleName(OasisStyle.Table));
+                    ? OasisWorkBook.STYLE_HIDDENTABLE
+                    : OasisWorkBook.STYLE_TABLE);
         }
+    }
+
+    /**
+     * Set the column style for the column.
+     * @param pColumn the column
+     * @param pStyle the style
+     */
+    protected void setColumnStyle(final TableTableColumnElement pColumn,
+                                  final CellStyleType pStyle) {
+        pColumn.setTableStyleNameAttribute(OasisWorkBook.getColumnStyleName(pStyle));
+    }
+
+    /**
+     * Set the default style for the column.
+     * @param pColumn the column index
+     * @param pStyle the style
+     */
+    protected void setDefaultCellStyle(final TableTableColumnElement pColumn,
+                                       final CellStyleType pStyle) {
+        OdfStyle myStyle = theOasisBook.getCellStyle(pStyle);
+        pColumn.setTableDefaultCellStyleNameAttribute(myStyle.getStyleNameAttribute());
+    }
+
+    /**
+     * Set cell style.
+     * @param pCell the cell to style
+     * @param pValue the cell value
+     */
+    protected void setCellStyle(final TableTableCellElement pCell,
+                                final Object pValue) {
+        OdfStyle myStyle = theOasisBook.getCellStyle(pValue);
+        pCell.setTableStyleNameAttribute(myStyle.getStyleNameAttribute());
+    }
+
+    /**
+     * Set alternate cell style.
+     * @param pCell the cell to style
+     * @param pValue the cell value
+     */
+    protected void setAlternateCellStyle(final TableTableCellElement pCell,
+                                         final Object pValue) {
+        OdfStyle myStyle = theOasisBook.getAlternateCellStyle(pValue);
+        pCell.setTableStyleNameAttribute(myStyle.getStyleNameAttribute());
     }
 
     @Override
@@ -232,7 +275,7 @@ public class OasisSheet
     protected TableTableRowElement newRowElement(final int pNumCols) {
         /* Allocate the row */
         TableTableRowElement myRow = new TableTableRowElement(theContentDom);
-        myRow.setTableStyleNameAttribute(OasisWorkBook.getStyleName(OasisStyle.Row));
+        myRow.setTableStyleNameAttribute(OasisWorkBook.STYLE_ROW);
 
         /* Allocate a cell for the row */
         TableTableCellElement myCell = new TableTableCellElement(theContentDom);

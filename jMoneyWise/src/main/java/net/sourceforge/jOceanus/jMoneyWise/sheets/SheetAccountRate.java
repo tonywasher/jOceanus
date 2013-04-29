@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
-import java.util.Date;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -107,7 +106,7 @@ public class SheetAccountRate
         /* Access the rates and end-date */
         byte[] myRateBytes = loadBytes(COL_RATE);
         byte[] myBonusBytes = loadBytes(COL_BONUS);
-        Date myEndDate = loadDate(COL_ENDDATE);
+        JDateDay myEndDate = loadDate(COL_ENDDATE);
 
         /* Load the item */
         theList.addSecureItem(pId, myControlId, myActId, myRateBytes, myEndDate, myBonusBytes);
@@ -121,7 +120,7 @@ public class SheetAccountRate
         /* Access the name and description bytes */
         String myRate = loadString(COL_RATE);
         String myBonus = loadString(COL_BONUS);
-        Date myEndDate = loadDate(COL_ENDDATE);
+        JDateDay myEndDate = loadDate(COL_ENDDATE);
 
         /* Load the item */
         theList.addOpenItem(pId, myAccount, myRate, myEndDate, myBonus);
@@ -245,7 +244,7 @@ public class SheetAccountRate
 
                 /* Handle expiration which may be missing */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Date myExpiry = null;
+                JDateDay myExpiry = null;
                 if (myCell != null) {
                     myExpiry = myCell.getDateValue();
                 }

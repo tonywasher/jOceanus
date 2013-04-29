@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jGordianKnot: Security Suite
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFormat;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
+import net.sourceforge.jOceanus.jDecimal.JDecimalFormatter;
+import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
@@ -142,7 +144,7 @@ public final class EncryptedData {
         /**
          * Data formatter.
          */
-        private final JDataFormatter theFormatter;
+        private JDataFormatter theFormatter;
 
         /**
          * Obtain the formatter.
@@ -292,13 +294,16 @@ public final class EncryptedData {
         /**
          * Adopt Encryption.
          * @param pCipherSet the cipherSet
+         * @param pFormatter the formatter
          * @param pField field to adopt encryption from
          * @throws JDataException on error
          */
         protected void adoptEncryption(final CipherSet pCipherSet,
+                                       final JDataFormatter pFormatter,
                                        final EncryptedField<?> pField) throws JDataException {
-            /* Store the CipherSet */
+            /* Store the CipherSet and formatter */
             theCipherSet = pCipherSet;
+            theFormatter = pFormatter;
 
             /* If we need to renew the encryption */
             if ((pField == null)
@@ -1029,7 +1034,12 @@ public final class EncryptedData {
 
         @Override
         protected BigInteger parseBytes(final byte[] pBytes) throws JDataException {
-            return new BigInteger(pBytes);
+            try {
+                return new BigInteger(pBytes);
+                /* Catch Exceptions */
+            } catch (NumberFormatException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            }
         }
 
         @Override
@@ -1071,7 +1081,14 @@ public final class EncryptedData {
 
         @Override
         protected BigDecimal parseBytes(final byte[] pBytes) throws JDataException {
-            return new BigDecimal(DataConverter.byteArrayToString(pBytes));
+            try {
+                return new BigDecimal(DataConverter.byteArrayToString(pBytes));
+                /* Catch Exceptions */
+            } catch (JDataException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            } catch (NumberFormatException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            }
         }
 
         @Override
@@ -1086,6 +1103,38 @@ public final class EncryptedData {
      */
     public abstract static class EncryptedDecimal<X extends JDecimal>
             extends EncryptedField<X> {
+        /**
+         * Decimal Formatter.
+         */
+        private JDecimalFormatter theDecimalFormatter = null;
+
+        /**
+         * Decimal Parser.
+         */
+        private JDecimalParser theDecimalParser = null;
+
+        /**
+         * Obtain the formatter.
+         * @return the formatter
+         */
+        protected JDecimalFormatter getDecimalFormatter() {
+            if (theDecimalFormatter == null) {
+                theDecimalFormatter = getFormatter().getDecimalFormatter();
+            }
+            return theDecimalFormatter;
+        }
+
+        /**
+         * Obtain the parser.
+         * @return the parser
+         */
+        protected JDecimalParser getDecimalParser() {
+            if (theDecimalParser == null) {
+                theDecimalParser = getFormatter().getDecimalParser();
+            }
+            return theDecimalParser;
+        }
+
         /**
          * Constructor.
          * @param pCipherSet the cipherSet
@@ -1183,8 +1232,28 @@ public final class EncryptedData {
         }
 
         @Override
+        protected byte[] getBytesForEncryption() throws JDataException {
+            /* Protect against exceptions */
+            try {
+                /* Format the value */
+                String myValue = getDecimalFormatter().toCurrencyString(getValue());
+
+                /* Convert the string to a byte array */
+                return DataConverter.stringToByteArray(myValue);
+
+                /* Catch Exceptions */
+            } catch (JDataException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+            }
+        }
+
+        @Override
         protected JMoney parseValue(final String pValue) throws JDataException {
-            return new JMoney(pValue);
+            try {
+                return getDecimalParser().parseMoneyValue(pValue);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            }
         }
     }
 
@@ -1221,7 +1290,11 @@ public final class EncryptedData {
 
         @Override
         protected JUnits parseValue(final String pValue) throws JDataException {
-            return new JUnits(pValue);
+            try {
+                return new JUnits(pValue);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            }
         }
     }
 
@@ -1258,7 +1331,12 @@ public final class EncryptedData {
 
         @Override
         protected JRate parseValue(final String pValue) throws JDataException {
-            return new JRate(pValue);
+            try {
+                return new JRate(pValue);
+                /* Catch Exceptions */
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            }
         }
     }
 
@@ -1294,8 +1372,28 @@ public final class EncryptedData {
         }
 
         @Override
+        protected byte[] getBytesForEncryption() throws JDataException {
+            /* Protect against exceptions */
+            try {
+                /* Format the value */
+                String myValue = getDecimalFormatter().toCurrencyString(getValue());
+
+                /* Convert the string to a byte array */
+                return DataConverter.stringToByteArray(myValue);
+
+                /* Catch Exceptions */
+            } catch (JDataException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_VALUE_CONVERT, e);
+            }
+        }
+
+        @Override
         protected JPrice parseValue(final String pValue) throws JDataException {
-            return new JPrice(pValue);
+            try {
+                return getDecimalParser().parsePriceValue(pValue);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            }
         }
     }
 
@@ -1332,7 +1430,11 @@ public final class EncryptedData {
 
         @Override
         protected JDilution parseValue(final String pValue) throws JDataException {
-            return new JDilution(pValue);
+            try {
+                return new JDilution(pValue);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            }
         }
     }
 
@@ -1369,7 +1471,11 @@ public final class EncryptedData {
 
         @Override
         protected JRatio parseValue(final String pValue) throws JDataException {
-            return new JRatio(pValue);
+            try {
+                return new JRatio(pValue);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.CRYPTO, MSG_BYTES_CONVERT, e);
+            }
         }
     }
 }

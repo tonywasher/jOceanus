@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -132,7 +131,7 @@ public class SheetTaxYear
         Integer myRegimeId = loadInteger(COL_REGIME);
 
         /* Access the dates */
-        Date myYear = loadDate(COL_TAXYEAR);
+        JDateDay myYear = loadDate(COL_TAXYEAR);
 
         /* Add the Tax Year */
         theList.addSecureItem(pId, myRegimeId, myYear);
@@ -144,7 +143,7 @@ public class SheetTaxYear
         String myTaxRegime = loadString(COL_REGIME);
 
         /* Access the year */
-        Date myYear = loadDate(COL_TAXYEAR);
+        JDateDay myYear = loadDate(COL_TAXYEAR);
 
         /* Add the Tax Year */
         TaxYear myTaxYear = theList.addOpenItem(pId, myTaxRegime, myYear);
@@ -337,7 +336,7 @@ public class SheetTaxYear
                 }
 
                 /* Add the Tax Year */
-                TaxYear myTaxYear = myList.addOpenItem(0, myTaxRegime, myDate.getDate());
+                TaxYear myTaxYear = myList.addOpenItem(0, myTaxRegime, myDate);
 
                 /* Add information relating to the tax year */
                 myInfoList.addOpenItem(0, myTaxYear, TaxYearInfoClass.Allowance, myAllowance);

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
-import java.util.Date;
 import java.util.ListIterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -30,6 +29,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
@@ -158,7 +158,7 @@ public class SheetEvent
         Boolean myReconciled = loadBoolean(COL_RECONCILED);
 
         /* Access the date and years */
-        Date myDate = loadDate(COL_DATE);
+        JDateDay myDate = loadDate(COL_DATE);
 
         /* Access the binary values */
         byte[] myDesc = loadBytes(COL_DESC);
@@ -176,7 +176,7 @@ public class SheetEvent
         String myCategory = loadString(COL_CATEGORY);
 
         /* Access the date and name and description bytes */
-        Date myDate = loadDate(COL_DATE);
+        JDateDay myDate = loadDate(COL_DATE);
 
         /* Load flags */
         Boolean myReconciled = loadBoolean(COL_RECONCILED);
@@ -336,7 +336,7 @@ public class SheetEvent
                     int iAdjust = 0;
 
                     /* Access date */
-                    Date myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
+                    JDateDay myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
 
                     /* Access the values */
                     String myDebit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ package net.sourceforge.jOceanus.jMoneyWise.data;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
@@ -60,11 +59,6 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
  */
 public class FinanceData
         extends DataSet<FinanceData> {
-    /**
-     * Money accounting format width.
-     */
-    private static final int ACCOUNTING_WIDTH = 10;
-
     /**
      * Report fields.
      */
@@ -391,11 +385,6 @@ public class FinanceData
     private JDateDayRange theDateRange = null;
 
     /**
-     * General formatter.
-     */
-    private final JDataFormatter theFormatter;
-
-    /**
      * Obtain AccountCategoryTypes.
      * @return the Account category types
      */
@@ -564,14 +553,6 @@ public class FinanceData
     }
 
     /**
-     * Obtain the data formatter.
-     * @return the formatter
-     */
-    public JDataFormatter getDataFormatter() {
-        return theFormatter;
-    }
-
-    /**
      * Standard constructor.
      * @param pSecurity the secure manager
      * @param pPreferenceMgr the preference manager
@@ -581,7 +562,7 @@ public class FinanceData
                        final PreferenceManager pPreferenceMgr,
                        final JFieldManager pFieldMgr) {
         /* Call Super-constructor */
-        super(pSecurity, pPreferenceMgr);
+        super(pSecurity, pPreferenceMgr, pFieldMgr.getDataFormatter());
 
         /* Create the empty lists */
         theActCatTypes = new AccountCategoryTypeList(this);
@@ -607,10 +588,6 @@ public class FinanceData
 
         /* Declare the lists */
         declareLists();
-
-        /* Create data formatter */
-        theFormatter = pFieldMgr.getDataFormatter();
-        theFormatter.setAccountingWidth(ACCOUNTING_WIDTH);
     }
 
     /**
@@ -619,9 +596,6 @@ public class FinanceData
      */
     private FinanceData(final FinanceData pSource) {
         super(pSource);
-
-        /* Copy formatter */
-        theFormatter = pSource.getDataFormatter();
     }
 
     @Override

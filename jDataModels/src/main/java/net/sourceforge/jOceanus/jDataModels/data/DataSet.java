@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import java.util.ListIterator;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.ControlData.ControlDataList;
@@ -181,6 +182,19 @@ public abstract class DataSet<T extends DataSet<T>>
     private final List<DataList<?>> theList;
 
     /**
+     * General formatter.
+     */
+    private final JDataFormatter theFormatter;
+
+    /**
+     * Obtain the data formatter.
+     * @return the formatter
+     */
+    public JDataFormatter getDataFormatter() {
+        return theFormatter;
+    }
+
+    /**
      * Get Security Manager.
      * @return the security manager
      */
@@ -242,7 +256,8 @@ public abstract class DataSet<T extends DataSet<T>>
      * @param pPreferenceMgr the preference manager
      */
     protected DataSet(final SecureManager pSecurity,
-                      final PreferenceManager pPreferenceMgr) {
+                      final PreferenceManager pPreferenceMgr,
+                      final JDataFormatter pFormatter) {
         /* Store the security manager and class */
         theSecurity = pSecurity;
 
@@ -257,6 +272,9 @@ public abstract class DataSet<T extends DataSet<T>>
 
         /* Create the list of additional DataLists */
         theList = new ArrayList<DataList<?>>();
+
+        /* record formatter */
+        theFormatter = pFormatter;
     }
 
     /**
@@ -272,6 +290,9 @@ public abstract class DataSet<T extends DataSet<T>>
 
         /* Create the map of additional lists */
         theList = new ArrayList<DataList<?>>();
+
+        /* Copy formatter */
+        theFormatter = pSource.getDataFormatter();
     }
 
     /**

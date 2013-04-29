@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jSpreadSheetManager: SpreadSheet management
- * Copyright 2013 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
-import java.util.Date;
-
 import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
@@ -115,14 +114,58 @@ public abstract class DataCell {
     /**
      * Obtain date value of the cell.
      * @return the date value
+     * @throws JDataException on error
      */
-    public abstract Date getDateValue();
+    public abstract JDateDay getDateValue() throws JDataException;
 
     /**
      * Obtain integer value of the cell.
      * @return the integer value
+     * @throws JDataException on error
      */
-    public abstract Integer getIntegerValue();
+    public abstract Integer getIntegerValue() throws JDataException;
+
+    /**
+     * Obtain money value of the cell.
+     * @return the money value
+     * @throws JDataException on error
+     */
+    public abstract JMoney getMoneyValue() throws JDataException;
+
+    /**
+     * Obtain price value of the cell.
+     * @return the price value
+     * @throws JDataException on error
+     */
+    public abstract JPrice getPriceValue() throws JDataException;
+
+    /**
+     * Obtain rate value of the cell.
+     * @return the rate value
+     * @throws JDataException on error
+     */
+    public abstract JRate getRateValue() throws JDataException;
+
+    /**
+     * Obtain units value of the cell.
+     * @return the units value
+     * @throws JDataException on error
+     */
+    public abstract JUnits getUnitsValue() throws JDataException;
+
+    /**
+     * Obtain dilution value of the cell.
+     * @return the dilution value
+     * @throws JDataException on error
+     */
+    public abstract JDilution getDilutionValue() throws JDataException;
+
+    /**
+     * Obtain ratio value of the cell.
+     * @return the ratio value
+     * @throws JDataException on error
+     */
+    public abstract JRatio getRatioValue() throws JDataException;
 
     /**
      * Obtain string value of the cell.
@@ -183,11 +226,18 @@ public abstract class DataCell {
     protected abstract void setBoolean(final Boolean pValue) throws JDataException;
 
     /**
+     * Set non-null date value of the cell.
+     * @param pValue the integer value
+     * @throws JDataException on error
+     */
+    protected abstract void setDate(final JDateDay pValue) throws JDataException;
+
+    /**
      * Set date value of the cell.
      * @param pValue the date value
      * @throws JDataException on error
      */
-    public void setDateValue(final Date pValue) throws JDataException {
+    public void setDateValue(final JDateDay pValue) throws JDataException {
         /* Handle null values */
         if (pValue == null) {
             setNullValue();
@@ -196,13 +246,6 @@ public abstract class DataCell {
             setDate(pValue);
         }
     }
-
-    /**
-     * Set non-null date value of the cell.
-     * @param pValue the integer value
-     * @throws JDataException on error
-     */
-    protected abstract void setDate(final Date pValue) throws JDataException;
 
     /**
      * Set integer value of the cell.
@@ -269,6 +312,28 @@ public abstract class DataCell {
      * @throws JDataException on error
      */
     protected abstract void setDecimal(final JDecimal pValue) throws JDataException;
+
+    /**
+     * Set monetary value of the cell.
+     * @param pValue the monetary value
+     * @throws JDataException on error
+     */
+    public void setMonetaryValue(final JMoney pValue) throws JDataException {
+        /* Handle null values */
+        if (pValue == null) {
+            setNullValue();
+        } else {
+            /* Set value */
+            setMonetary(pValue);
+        }
+    }
+
+    /**
+     * Set non-null monetary value of the cell.
+     * @param pValue the monetary value
+     * @throws JDataException on error
+     */
+    protected abstract void setMonetary(final JMoney pValue) throws JDataException;
 
     /**
      * Set header value of the cell.

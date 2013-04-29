@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDecimal: Decimals represented by long values
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,13 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * Provides classes to represent decimal numbers with fixed numbers of decimal digits {@link #theScale} as
- * Long integers. The decimal value is multiplied by 10 to the power of the number of decimals for the number
- * ({@link #theFactor}). The integral part of the number can be expressed as (Value / Factor) and the
- * fractional part as (Value % Factor). Arithmetic is then performed as whole number arithmetic on these
- * values, with due care taken on multiplication and division to express the result to the correct number of
- * decimals without losing any part of the answer to overflow.
+ * Provides classes to represent decimal numbers with fixed numbers of decimal digits {@link #theScale} as Long integers. The decimal value is multiplied by 10
+ * to the power of the number of decimals for the number ({@link #theFactor}). The integral part of the number can be expressed as (Value / Factor) and the
+ * fractional part as (Value % Factor). Arithmetic is then performed as whole number arithmetic on these values, with due care taken on multiplication and
+ * division to express the result to the correct number of decimals without losing any part of the answer to overflow.
  */
-public class JDecimal implements Comparable<JDecimal> {
+public class JDecimal
+        implements Comparable<JDecimal> {
     /**
      * The Decimal radix.
      */
@@ -97,10 +96,12 @@ public class JDecimal implements Comparable<JDecimal> {
     /**
      * Constructor.
      * @param pSource the decimal as a string
+     * @throws IllegalArgumentException on invalidly formatted argument
+     * @throws NullPointerException on null argument
      */
-    public JDecimal(final String pSource) {
+    public JDecimal(final String pSource) throws IllegalArgumentException, NullPointerException {
         /* Parse the string */
-        JDecimalParser.parseDecimalValue(pSource.trim(), this);
+        JDecimalParser.parseDecimalValue(pSource, this);
 
         /* Remove redundant decimals */
         reduceScale(0);
@@ -172,7 +173,8 @@ public class JDecimal implements Comparable<JDecimal> {
         /* If the scale is not correct */
         if (theScale != pScale) {
             /* Adjust the value appropriately */
-            movePointRight(pScale - theScale);
+            movePointRight(pScale
+                           - theScale);
         }
     }
 
@@ -191,8 +193,10 @@ public class JDecimal implements Comparable<JDecimal> {
      */
     private static void validateScale(final int pScale) {
         /* Throw exception on invalid decimals */
-        if ((pScale < 0) || (pScale > MAX_DECIMALS)) {
-            throw new IllegalArgumentException("Decimals must be in the range 0 to " + MAX_DECIMALS);
+        if ((pScale < 0)
+            || (pScale > MAX_DECIMALS)) {
+            throw new IllegalArgumentException("Decimals must be in the range 0 to "
+                                               + MAX_DECIMALS);
         }
     }
 
@@ -201,7 +205,8 @@ public class JDecimal implements Comparable<JDecimal> {
      * @return the integer part of the number
      */
     private long getIntegral() {
-        return theValue / theFactor;
+        return theValue
+               / theFactor;
     }
 
     /**
@@ -209,7 +214,8 @@ public class JDecimal implements Comparable<JDecimal> {
      * @return the decimal part of the number
      */
     private long getFractional() {
-        return theValue % theFactor;
+        return theValue
+               % theFactor;
     }
 
     /**
@@ -258,7 +264,9 @@ public class JDecimal implements Comparable<JDecimal> {
         if (theValue == 0) {
             return 0;
         }
-        return (theValue < 0) ? -1 : 1;
+        return (theValue < 0)
+                ? -1
+                : 1;
     }
 
     /**
@@ -281,12 +289,10 @@ public class JDecimal implements Comparable<JDecimal> {
     /**
      * Adjust a value to a different number of decimals.
      * <p>
-     * If the adjustment is to reduce the number of decimals, the most significant digit of the discarded
-     * digits is examined to determine whether to round up. If the number of decimals is to be increased,
-     * zeros are simply added to the end.
+     * If the adjustment is to reduce the number of decimals, the most significant digit of the discarded digits is examined to determine whether to round up.
+     * If the number of decimals is to be increased, zeros are simply added to the end.
      * @param pValue the value to adjust
-     * @param iAdjust the adjustment (positive if # of decimals are to increase, negative if they are to
-     *            decrease)
+     * @param iAdjust the adjustment (positive if # of decimals are to increase, negative if they are to decrease)
      * @return the adjusted value
      */
     protected static long adjustDecimals(final long pValue,
@@ -306,7 +312,8 @@ public class JDecimal implements Comparable<JDecimal> {
             }
 
             /* Access last digit */
-            long myDigit = myValue % RADIX_TEN;
+            long myDigit = myValue
+                           % RADIX_TEN;
 
             /* Reduce final decimal and round up if required */
             myValue /= RADIX_TEN;
@@ -326,14 +333,11 @@ public class JDecimal implements Comparable<JDecimal> {
     /**
      * Multiply two decimals together to produce a third.
      * <p>
-     * This function splits each part of the multiplication into integral and fractional parts (a,b) and
-     * (c,d). It then treats each factor as the sum of the two parts (a+b) etc and calculates the product as
-     * (a.c + a.d + b.c + b.d). To avoid losing significant digits at either end of the calculation each
-     * partial product is split into integral and fractional parts. The integers are summed together and the
-     * fractional parts are summed together at combined decimal places of the two factors. Once all partial
-     * products have been calculated, the integral and fractional totals are adjusted to the correct number of
-     * decimal places and combined. This allows the multiplication to be built without risk of unnecessary
-     * arithmetic overflow.
+     * This function splits each part of the multiplication into integral and fractional parts (a,b) and (c,d). It then treats each factor as the sum of the two
+     * parts (a+b) etc and calculates the product as (a.c + a.d + b.c + b.d). To avoid losing significant digits at either end of the calculation each partial
+     * product is split into integral and fractional parts. The integers are summed together and the fractional parts are summed together at combined decimal
+     * places of the two factors. Once all partial products have been calculated, the integral and fractional totals are adjusted to the correct number of
+     * decimal places and combined. This allows the multiplication to be built without risk of unnecessary arithmetic overflow.
      * @param pFirst the first factor
      * @param pSecond the second factor
      */
@@ -350,32 +354,42 @@ public class JDecimal implements Comparable<JDecimal> {
         int myScaleSecond = pSecond.scale();
 
         /* Calculate (a.c) the integral part of the answer and initialise the fractional part (at maxScale) */
-        int maxScale = myScaleFirst + myScaleSecond;
-        long myIntegral = myIntFirst * myIntSecond;
+        int maxScale = myScaleFirst
+                       + myScaleSecond;
+        long myIntegral = myIntFirst
+                          * myIntSecond;
         long myFractional = 0;
 
         /* Calculate (a.d) (@myScaleSecond scale) and split off fractions */
-        long myIntermediate = myIntFirst * myFracSecond;
-        long myFractions = myIntermediate % getFactor(myScaleSecond);
+        long myIntermediate = myIntFirst
+                              * myFracSecond;
+        long myFractions = myIntermediate
+                           % getFactor(myScaleSecond);
         myIntermediate -= myFractions;
         myIntegral += adjustDecimals(myIntermediate, -myScaleSecond);
-        myFractional += adjustDecimals(myFractions, maxScale - myScaleSecond);
+        myFractional += adjustDecimals(myFractions, maxScale
+                                                    - myScaleSecond);
 
         /* Calculate (b.c) (@myScaleFirst scale) and split off fractions */
-        myIntermediate = myIntSecond * myFracFirst;
-        myFractions = myIntermediate % getFactor(myScaleFirst);
+        myIntermediate = myIntSecond
+                         * myFracFirst;
+        myFractions = myIntermediate
+                      % getFactor(myScaleFirst);
         myIntermediate -= myFractions;
         myIntegral += adjustDecimals(myIntermediate, -myScaleFirst);
-        myFractional += adjustDecimals(myFractions, maxScale - myScaleFirst);
+        myFractional += adjustDecimals(myFractions, maxScale
+                                                    - myScaleFirst);
 
         /* Calculate (b.d) (@maxScale scale) */
-        myIntermediate = myFracFirst * myFracSecond;
+        myIntermediate = myFracFirst
+                         * myFracSecond;
         myFractional += myIntermediate;
 
         /* If the maxScale is too large, reduce it */
         if (maxScale > MAX_DECIMALS) {
             /* Adjust the decimals */
-            myFractional = adjustDecimals(myFractional, MAX_DECIMALS - maxScale);
+            myFractional = adjustDecimals(myFractional, MAX_DECIMALS
+                                                        - maxScale);
 
             /* Reduce maxScale */
             maxScale = MAX_DECIMALS;
@@ -383,17 +397,18 @@ public class JDecimal implements Comparable<JDecimal> {
 
         /* Adjust and combine the two calculations */
         myIntegral = adjustDecimals(myIntegral, theScale);
-        myFractional = adjustDecimals(myFractional, theScale - maxScale);
-        theValue = myIntegral + myFractional;
+        myFractional = adjustDecimals(myFractional, theScale
+                                                    - maxScale);
+        theValue = myIntegral
+                   + myFractional;
     }
 
     /**
      * Divide a decimal by another decimals to produce a third.
      * <p>
-     * In order to avoid loss of digits at the least significant bit end, the dividend is shifted left to
-     * insert the required number of digits. An additional decimal is added before division and removed
-     * afterwards to handle rounding correctly. In addition if the dividend has a different number of decimals
-     * to the divisor the dividend is adjusted accordingly.
+     * In order to avoid loss of digits at the least significant bit end, the dividend is shifted left to insert the required number of digits. An additional
+     * decimal is added before division and removed afterwards to handle rounding correctly. In addition if the dividend has a different number of decimals to
+     * the divisor the dividend is adjusted accordingly.
      * @param pDividend the number to divide
      * @param pDivisor the number to divide
      */
@@ -405,13 +420,15 @@ public class JDecimal implements Comparable<JDecimal> {
 
         /* Determine how many decimals to factor in to the dividend to get the correct result */
         int myDecimals = scale() + 1;
-        myDecimals += pDivisor.scale() - pDividend.scale();
+        myDecimals += pDivisor.scale()
+                      - pDividend.scale();
 
         /* Add in the decimals of the result plus 1 */
         myDividend = adjustDecimals(myDividend, myDecimals);
 
         /* Calculate the quotient */
-        long myQuotient = myDividend / myDivisor;
+        long myQuotient = myDividend
+                          / myDivisor;
 
         /* Remove the additional decimal to round correctly */
         myQuotient = adjustDecimals(myQuotient, -1);
@@ -429,7 +446,8 @@ public class JDecimal implements Comparable<JDecimal> {
         long myDelta = pValue.unscaledValue();
         int myScale = pValue.scale();
         if (theScale != myScale) {
-            myDelta = adjustDecimals(myDelta, theScale - myScale);
+            myDelta = adjustDecimals(myDelta, theScale
+                                              - myScale);
         }
 
         /* Adjust the value accordingly */
@@ -445,7 +463,8 @@ public class JDecimal implements Comparable<JDecimal> {
         long myDelta = pValue.unscaledValue();
         int myScale = pValue.scale();
         if (theScale != myScale) {
-            myDelta = adjustDecimals(myDelta, theScale - myScale);
+            myDelta = adjustDecimals(myDelta, theScale
+                                              - myScale);
         }
 
         /* Adjust the value accordingly */
@@ -458,7 +477,8 @@ public class JDecimal implements Comparable<JDecimal> {
      */
     public final void movePointRight(final int pPlaces) {
         /* Calculate the new scale */
-        int myNewScale = theScale + pPlaces;
+        int myNewScale = theScale
+                         + pPlaces;
 
         /* record the scale */
         recordScale(myNewScale);
@@ -485,28 +505,29 @@ public class JDecimal implements Comparable<JDecimal> {
     /**
      * Returns the maximum of this JDecimal and pValue.
      * @param pValue the value to compare.
-     * @return the JDecimal whose value is the greater of this JDecimal and pValue. If they are equal, as
-     *         defined by the compareTo method, this is returned
+     * @return the JDecimal whose value is the greater of this JDecimal and pValue. If they are equal, as defined by the compareTo method, this is returned
      */
     public JDecimal max(final JDecimal pValue) {
         /* return the BigDecimal value */
-        return (compareTo(pValue) < 0) ? pValue : this;
+        return (compareTo(pValue) < 0)
+                ? pValue
+                : this;
     }
 
     /**
      * Returns the minimum of this JDecimal and pValue.
      * @param pValue the value to compare.
-     * @return the JDecimal whose value is the lesser of this JDecimal and pValue. If they are equal, as
-     *         defined by the compareTo method, this is returned
+     * @return the JDecimal whose value is the lesser of this JDecimal and pValue. If they are equal, as defined by the compareTo method, this is returned
      */
     public JDecimal min(final JDecimal pValue) {
         /* return the BigDecimal value */
-        return (compareTo(pValue) > 0) ? pValue : this;
+        return (compareTo(pValue) > 0)
+                ? pValue
+                : this;
     }
 
     /**
-     * Returns a new JDecimal which is the sum of this JDecimal and pValue, and whose scale is the maximum of
-     * the two.
+     * Returns a new JDecimal which is the sum of this JDecimal and pValue, and whose scale is the maximum of the two.
      * @param pValue the value to add.
      * @return the resulting JDecimal
      * @see BigDecimal#add
@@ -531,8 +552,7 @@ public class JDecimal implements Comparable<JDecimal> {
     }
 
     /**
-     * Returns a new JDecimal which is the difference of this JDecimal and pValue, and whose scale is the
-     * maximum of the two.
+     * Returns a new JDecimal which is the difference of this JDecimal and pValue, and whose scale is the maximum of the two.
      * @param pValue the value to subtract.
      * @return the resulting JDecimal
      * @see BigDecimal#subtract
@@ -557,8 +577,7 @@ public class JDecimal implements Comparable<JDecimal> {
     }
 
     /**
-     * Returns a new JDecimal which is the product of this JDecimal and pValue, and whose scale is the sum of
-     * the two.
+     * Returns a new JDecimal which is the product of this JDecimal and pValue, and whose scale is the sum of the two.
      * @param pValue the value to multiply by.
      * @return the resulting JDecimal
      * @see BigDecimal#multiply
@@ -566,7 +585,8 @@ public class JDecimal implements Comparable<JDecimal> {
     public JDecimal multiply(final JDecimal pValue) {
         /* Create the new decimal at the correct scale */
         JDecimal myResult = new JDecimal();
-        myResult.setValue(0, theScale + pValue.scale());
+        myResult.setValue(0, theScale
+                             + pValue.scale());
 
         /* Calculate the product */
         myResult.calculateProduct(this, pValue);
@@ -651,7 +671,8 @@ public class JDecimal implements Comparable<JDecimal> {
 
         /* Re-multiply by the divisor and adjust to correct scale */
         JDecimal myWhole = myQuotient.multiply(pValue);
-        myWhole.setValue(adjustDecimals(myWhole.unscaledValue(), theScale - pValue.scale()), theScale);
+        myWhole.setValue(adjustDecimals(myWhole.unscaledValue(), theScale
+                                                                 - pValue.scale()), theScale);
 
         /* Calculate the result */
         JDecimal myResult = new JDecimal(this);
@@ -793,7 +814,8 @@ public class JDecimal implements Comparable<JDecimal> {
 
         /* If we have a fractional part */
         long myValue = getIntegral();
-        if ((myValue > Integer.MAX_VALUE) || (myValue < Integer.MIN_VALUE)) {
+        if ((myValue > Integer.MAX_VALUE)
+            || (myValue < Integer.MIN_VALUE)) {
             throw new ArithmeticException("Value out of range");
         }
 
@@ -812,7 +834,8 @@ public class JDecimal implements Comparable<JDecimal> {
 
         /* If we have a fractional part */
         long myValue = getIntegral();
-        if ((myValue > Short.MAX_VALUE) || (myValue < Short.MIN_VALUE)) {
+        if ((myValue > Short.MAX_VALUE)
+            || (myValue < Short.MIN_VALUE)) {
             throw new ArithmeticException("Value out of range");
         }
 
@@ -831,7 +854,8 @@ public class JDecimal implements Comparable<JDecimal> {
 
         /* If we have a fractional part */
         long myValue = getIntegral();
-        if ((myValue > Byte.MAX_VALUE) || (myValue < Byte.MIN_VALUE)) {
+        if ((myValue > Byte.MAX_VALUE)
+            || (myValue < Byte.MIN_VALUE)) {
             throw new ArithmeticException("Value out of range");
         }
 
@@ -863,7 +887,8 @@ public class JDecimal implements Comparable<JDecimal> {
 
     @Override
     public int hashCode() {
-        return (int) (theValue ^ (theValue >>> INT_SHIFT)) + theScale;
+        return (int) (theValue ^ (theValue >>> INT_SHIFT))
+               + theScale;
     }
 
     @Override
@@ -874,19 +899,25 @@ public class JDecimal implements Comparable<JDecimal> {
         }
 
         /* If there is no difference in scale */
-        int myScaleDiff = scale() - pThat.scale();
+        int myScaleDiff = scale()
+                          - pThat.scale();
         if (myScaleDiff == 0) {
             /* Just compare unscaled value */
             if (theValue == pThat.theValue) {
                 return 0;
             }
-            return (theValue < pThat.theValue) ? -1 : 1;
+            return (theValue < pThat.theValue)
+                    ? -1
+                    : 1;
         }
 
         /* Compare integral values */
-        long myDiff = getIntegral() - pThat.getIntegral();
+        long myDiff = getIntegral()
+                      - pThat.getIntegral();
         if (myDiff != 0) {
-            return (myDiff < 0) ? -1 : 1;
+            return (myDiff < 0)
+                    ? -1
+                    : 1;
         }
 
         /* Access fractional parts */
@@ -901,9 +932,12 @@ public class JDecimal implements Comparable<JDecimal> {
         }
 
         /* Compare fractional values */
-        myDiff = myFirst - mySecond;
+        myDiff = myFirst
+                 - mySecond;
         if (myDiff != 0) {
-            return (myDiff < 0) ? -1 : 1;
+            return (myDiff < 0)
+                    ? -1
+                    : 1;
         }
 
         /* Equal to all intents and purposes */

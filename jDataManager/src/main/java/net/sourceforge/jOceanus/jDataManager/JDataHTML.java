@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataManager: Java Data Manager
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,22 +92,22 @@ public final class JDataHTML {
     /**
      * Colour for standard elements.
      */
-    private final Color theColorStandard;
+    private Color theColorStandard;
 
     /**
      * Colour for changed elements.
      */
-    private final Color theColorChanged;
+    private Color theColorChanged;
 
     /**
      * Colour for standard links.
      */
-    private final Color theColorLink;
+    private Color theColorLink;
 
     /**
      * Colour for changed link.
      */
-    private final Color theColorChgLink;
+    private Color theColorChgLink;
 
     /**
      * Data formatter.
@@ -116,9 +116,14 @@ public final class JDataHTML {
 
     /**
      * Constructor.
+     * @param pFormatter the data formatter
      */
-    protected JDataHTML() {
-        this(COLOR_STANDARD, COLOR_CHANGED, COLOR_LINK, COLOR_CHGLINK);
+    protected JDataHTML(final JDataFormatter pFormatter) {
+        /* Record the formatter */
+        theFormatter = pFormatter;
+
+        /* Set default colours */
+        setColors(COLOR_STANDARD, COLOR_CHANGED, COLOR_LINK, COLOR_CHGLINK);
     }
 
     /**
@@ -128,18 +133,15 @@ public final class JDataHTML {
      * @param pLink the link colour
      * @param pChgLink the changed link colour
      */
-    protected JDataHTML(final Color pStandard,
-                        final Color pChanged,
-                        final Color pLink,
-                        final Color pChgLink) {
+    protected void setColors(final Color pStandard,
+                             final Color pChanged,
+                             final Color pLink,
+                             final Color pChgLink) {
         /* Set the colours */
         theColorStandard = pStandard;
         theColorChanged = pChanged;
         theColorLink = pLink;
         theColorChgLink = pChgLink;
-
-        /* Allocate the formatter */
-        theFormatter = new JDataFormatter();
     }
 
     /**
@@ -342,7 +344,9 @@ public final class JDataHTML {
 
             /* Start the field */
             myEntries.append("<tr class=\"");
-            myEntries.append(isOdd ? CLASS_ODDROW : CLASS_EVENROW);
+            myEntries.append(isOdd
+                    ? CLASS_ODDROW
+                    : CLASS_EVENROW);
             myEntries.append("\"><td>");
             myEntries.append(myField.getName());
             myEntries.append("</td><td>");
@@ -441,7 +445,9 @@ public final class JDataHTML {
 
         /* Build a div section */
         myBuffer.append("<div class=\"");
-        myBuffer.append(pDifference.isValueChanged() ? CLASS_CHANGED : CLASS_SECCHANGED);
+        myBuffer.append(pDifference.isValueChanged()
+                ? CLASS_CHANGED
+                : CLASS_SECCHANGED);
         myBuffer.append("\">");
 
         /* Add value and reformat */
@@ -472,7 +478,9 @@ public final class JDataHTML {
 
             /* Format the row */
             myEntries.append("<tr class=\"");
-            myEntries.append(isOdd ? CLASS_ODDROW : CLASS_EVENROW);
+            myEntries.append(isOdd
+                    ? CLASS_ODDROW
+                    : CLASS_EVENROW);
             myEntries.append("\">");
 
             /* Format the key */
@@ -530,7 +538,9 @@ public final class JDataHTML {
         for (StackTraceElement st : myArray) {
             /* Format the row */
             myResults.append("<tr class=\"");
-            myResults.append(isOdd ? CLASS_ODDROW : CLASS_EVENROW);
+            myResults.append(isOdd
+                    ? CLASS_ODDROW
+                    : CLASS_EVENROW);
             myResults.append("\">");
 
             /* Add the stack trace */

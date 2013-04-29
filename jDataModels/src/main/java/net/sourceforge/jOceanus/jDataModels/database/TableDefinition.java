@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -623,7 +622,7 @@ public class TableDefinition {
      * @return the Date value
      * @throws JDataException on error
      */
-    public Date getDateValue(final JDataField pId) throws JDataException {
+    public JDateDay getDateValue(final JDataField pId) throws JDataException {
         /* Obtain the correct id */
         ColumnDefinition myCol = getColumnForId(pId);
 

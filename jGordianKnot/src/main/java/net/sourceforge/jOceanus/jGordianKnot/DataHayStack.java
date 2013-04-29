@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jGordianKnot: Security Suite
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,9 @@ public class DataHayStack {
         }
 
         /* Allocate the new HayStack */
-        byte[] myHayStack = new byte[iHayStackLen + iNeedleLen + 2];
+        byte[] myHayStack = new byte[iHayStackLen
+                                     + iNeedleLen
+                                     + 2];
 
         /* Determine position of needle */
         int iMask = pHayStack[0];
@@ -102,7 +104,10 @@ public class DataHayStack {
         /* Split the hayStack into two parts */
         System.arraycopy(pHayStack, 0, myHayStack, 1, iPos);
         if (iPos < iHayStackLen) {
-            System.arraycopy(pHayStack, iPos, myHayStack, iPos + iNeedleLen + 2, iHayStackLen - iPos);
+            System.arraycopy(pHayStack, iPos, myHayStack, iPos
+                                                          + iNeedleLen
+                                                          + 2, iHayStackLen
+                                                               - iPos);
         }
 
         /* Store the needle length */
@@ -111,7 +116,9 @@ public class DataHayStack {
         /* Loop to store the needle */
         for (int i = 0; i < iNeedleLen; i++) {
             /* Store the needle */
-            myHayStack[iPos + i + 2] = (byte) (pNeedle[i] ^ iMask);
+            myHayStack[iPos
+                       + i
+                       + 2] = (byte) (pNeedle[i] ^ iMask);
         }
 
         /* Return the new hayStack */
@@ -143,10 +150,13 @@ public class DataHayStack {
 
         /* Access the needle length and the hayStack length */
         int iNeedleLen = (byte) (pHayStack[iPos + 1] ^ iMask);
-        int iHayStackLen = pHayStack.length - iNeedleLen - 2;
+        int iHayStackLen = pHayStack.length
+                           - iNeedleLen
+                           - 2;
 
         /* Check that we are within range */
-        if ((iNeedleLen + iPos + 2) > pHayStack.length) {
+        if ((iNeedleLen
+             + iPos + 2) > pHayStack.length) {
             return null;
         }
 
@@ -158,12 +168,17 @@ public class DataHayStack {
         /* Loop to recover the needle */
         for (int i = 0; i < iNeedleLen; i++) {
             /* Store the needle */
-            myNeedle[i] = (byte) (pHayStack[iPos + i + 2] ^ iMask);
+            myNeedle[i] = (byte) (pHayStack[iPos
+                                            + i
+                                            + 2] ^ iMask);
         }
 
         /* Rebuild the hayStack from the two parts */
         System.arraycopy(pHayStack, 1, myHayStack, 0, iPos);
-        System.arraycopy(pHayStack, iPos + iNeedleLen + 2, myHayStack, iPos, iHayStackLen - iPos);
+        System.arraycopy(pHayStack, iPos
+                                    + iNeedleLen
+                                    + 2, myHayStack, iPos, iHayStackLen
+                                                           - iPos);
 
         /* Return the results */
         return myResult;
@@ -303,7 +318,8 @@ public class DataHayStack {
             }
 
             /* Access Digest */
-            theType = DigestType.fromId(myNeedle[0] & ID_MASK);
+            theType = DigestType.fromId(myNeedle[0]
+                                        & ID_MASK);
         }
     }
 
@@ -398,7 +414,8 @@ public class DataHayStack {
             }
 
             /* Access SymKeyType */
-            theType = SymKeyType.fromId(myNeedle[0] & ID_MASK);
+            theType = SymKeyType.fromId(myNeedle[0]
+                                        & ID_MASK);
         }
     }
 
@@ -410,6 +427,11 @@ public class DataHayStack {
          * AsymKeyMode.
          */
         private final AsymKeyMode theMode;
+
+        /**
+         * Salt.
+         */
+        private final byte[] theSalt;
 
         /**
          * PublicKey.
@@ -427,6 +449,14 @@ public class DataHayStack {
          */
         protected AsymKeyMode getAsymKeyMode() {
             return theMode;
+        }
+
+        /**
+         * Obtain the Salt.
+         * @return the Salt
+         */
+        protected byte[] getSalt() {
+            return theSalt;
         }
 
         /**
@@ -448,19 +478,23 @@ public class DataHayStack {
         /**
          * Constructor to form External format.
          * @param pMode the AsmKeyMode
+         * @param pSalt the salt
          * @param pPublicKey the publicKey
          */
         protected AsymModeNeedle(final AsymKeyMode pMode,
+                                 final byte[] pSalt,
                                  final byte[] pPublicKey) {
             /* Don't store the parameters */
             theMode = null;
+            theSalt = null;
             thePublicKey = null;
 
             /* Create the byte array to hide */
             byte[] myMode = pMode.getEncoded();
 
-            /* Hide the AymKeyMode into the publicKey */
-            theExternal = hideNeedle(myMode, pPublicKey);
+            /* Hide the AsymKeyMode into the Salt and thence into hash */
+            byte[] myInternal = hideNeedle(myMode, pSalt);
+            theExternal = hideNeedle(myInternal, pPublicKey);
         }
 
         /**
@@ -482,6 +516,17 @@ public class DataHayStack {
 
             /* Store the publicKey */
             thePublicKey = myResult.getHayStack();
+
+            /* Find the needle in the hayStack again */
+            myResult = findNeedle(myResult.getNeedle());
+
+            /* Check that we found the needle */
+            if (myResult == null) {
+                throw new JDataException(ExceptionClass.DATA, "Invalid ASymKeyMode");
+            }
+
+            /* Store the salt */
+            theSalt = myResult.getHayStack();
 
             /* Access the needle */
             byte[] myNeedle = myResult.getNeedle();
@@ -682,7 +727,8 @@ public class DataHayStack {
             byte[] myMode = pMode.getEncoded();
 
             /* Allocate the hayStack */
-            byte[] myHayStack = new byte[SymmetricKey.IVSIZE + pBytes.length];
+            byte[] myHayStack = new byte[SymmetricKey.IVSIZE
+                                         + pBytes.length];
             System.arraycopy(pInitVector, 0, myHayStack, 0, SymmetricKey.IVSIZE);
             System.arraycopy(pBytes, 0, myHayStack, SymmetricKey.IVSIZE, pBytes.length);
 

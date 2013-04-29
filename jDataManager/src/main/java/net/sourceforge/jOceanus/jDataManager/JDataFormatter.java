@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataManager: Java Data Manager
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -243,9 +243,11 @@ public class JDataFormatter {
      * @param pSource the source value
      * @param pClass the value type class
      * @return the formatted value
+     * @throws IllegalArgumentException on bad Date/JDecimal format
+     * @throws NumberFormatException on bad numeric format
      */
     public <T> T parseValue(final String pSource,
-                            final Class<T> pClass) {
+                            final Class<T> pClass) throws IllegalArgumentException, NumberFormatException {
         if (pClass == Boolean.class) {
             return pClass.cast(Boolean.parseBoolean(pSource));
         }
@@ -306,6 +308,71 @@ public class JDataFormatter {
             /* Parse the dilution */
             return pClass.cast(theDecimalParser.parseRatioValue(pSource));
         }
-        return null;
+        throw new IllegalArgumentException("Invalid class - "
+                                           + pClass.getSimpleName());
+    }
+
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pClass the value type class
+     * @return the formatted value
+     * @throws IllegalArgumentException on bad Date/JDecimal format
+     * @throws NumberFormatException on bad numeric format
+     */
+    public <T> T parseValue(final Double pSource,
+                            final Class<T> pClass) throws IllegalArgumentException, NumberFormatException {
+        if (pClass == JPrice.class) {
+            /* Parse the price */
+            return pClass.cast(theDecimalParser.createPriceFromDouble(pSource));
+        }
+        if (pClass == JMoney.class) {
+            /* Parse the money */
+            return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource));
+        }
+        if (pClass == JRate.class) {
+            /* Parse the rate */
+            return pClass.cast(theDecimalParser.createRateFromDouble(pSource));
+        }
+        if (pClass == JUnits.class) {
+            /* Parse the units */
+            return pClass.cast(theDecimalParser.createUnitsFromDouble(pSource));
+        }
+        if (pClass == JDilution.class) {
+            /* Parse the dilution */
+            return pClass.cast(theDecimalParser.createDilutionFromDouble(pSource));
+        }
+        if (pClass == JRatio.class) {
+            /* Parse the dilution */
+            return pClass.cast(theDecimalParser.createRatioFromDouble(pSource));
+        }
+        throw new IllegalArgumentException("Invalid class - "
+                                           + pClass.getSimpleName());
+    }
+
+    /**
+     * Parse object value.
+     * @param <T> the value type
+     * @param pSource the source value
+     * @param pCurrCode the currency code
+     * @param pClass the value type class
+     * @return the formatted value
+     * @throws IllegalArgumentException on bad Date/JDecimal format
+     * @throws NumberFormatException on bad numeric format
+     */
+    public <T> T parseValue(final Double pSource,
+                            final String pCurrCode,
+                            final Class<T> pClass) throws IllegalArgumentException, NumberFormatException {
+        if (pClass == JPrice.class) {
+            /* Parse the price */
+            return pClass.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));
+        }
+        if (pClass == JMoney.class) {
+            /* Parse the money */
+            return pClass.cast(theDecimalParser.createMoneyFromDouble(pSource, pCurrCode));
+        }
+        throw new IllegalArgumentException("Invalid class - "
+                                           + pClass.getSimpleName());
     }
 }

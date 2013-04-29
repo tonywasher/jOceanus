@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,12 +22,11 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
-import java.util.Date;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.sheets.SheetDataItem;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -100,7 +99,7 @@ public class SheetAccountPrice
         Integer myActId = loadInteger(COL_ACCOUNT);
 
         /* Access the rates and end-date */
-        Date myDate = loadDate(COL_DATE);
+        JDateDay myDate = loadDate(COL_DATE);
         byte[] myPriceBytes = loadBytes(COL_PRICE);
 
         /* Load the item */
@@ -113,7 +112,7 @@ public class SheetAccountPrice
         String myAccount = loadString(COL_ACCOUNT);
 
         /* Access the name and description bytes */
-        Date myDate = loadDate(COL_DATE);
+        JDateDay myDate = loadDate(COL_DATE);
         String myPrice = loadString(COL_PRICE);
 
         /* Load the item */
@@ -222,7 +221,7 @@ public class SheetAccountPrice
 
                 /* Access date */
                 DataCell myCell = myView.getRowCellByIndex(myRow, 0);
-                Date myDate = myCell.getDateValue();
+                JDateDay myDate = myCell.getDateValue();
 
                 /* Loop through the columns of the table */
                 for (int j = 2; j < myCols; j++) {

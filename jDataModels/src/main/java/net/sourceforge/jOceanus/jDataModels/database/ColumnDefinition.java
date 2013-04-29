@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -772,44 +772,35 @@ public abstract class ColumnDefinition {
          * Set the value.
          * @param pValue the value
          */
-        protected void setValue(final Date pValue) {
-            super.setObject(pValue);
-        }
-
-        /**
-         * Set the value.
-         * @param pValue the value
-         */
         protected void setValue(final JDateDay pValue) {
-            super.setObject((pValue == null)
-                    ? null
-                    : pValue.getDate());
+            super.setObject(pValue);
         }
 
         /**
          * Get the value.
          * @return the value
          */
-        protected Date getValue() {
-            return (Date) super.getObject();
+        protected JDateDay getValue() {
+            return (JDateDay) super.getObject();
         }
 
         @Override
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             Date myValue = pResults.getDate(pIndex);
-            setValue(myValue);
+            setValue(new JDateDay(myValue));
         }
 
         @Override
         protected void storeValue(final PreparedStatement pStatement,
                                   final int pIndex) throws SQLException {
             java.sql.Date myDate = null;
-            Date myValue = getValue();
+            JDateDay myValue = getValue();
 
             /* Build the date as a SQL date */
             if (myValue != null) {
-                myDate = new java.sql.Date(myValue.getTime());
+                Date myDateValue = myValue.getDate();
+                myDate = new java.sql.Date(myDateValue.getTime());
             }
             pStatement.setDate(pIndex, myDate);
         }

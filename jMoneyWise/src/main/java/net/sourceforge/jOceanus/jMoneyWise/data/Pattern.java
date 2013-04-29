@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -245,7 +244,7 @@ public class Pattern
     private Pattern(final PatternList pList,
                     final Integer pId,
                     final Integer pControlId,
-                    final Date pDate,
+                    final JDateDay pDate,
                     final byte[] pDesc,
                     final Integer pDebitId,
                     final Integer pCreditId,
@@ -274,7 +273,7 @@ public class Pattern
      */
     private Pattern(final PatternList pList,
                     final Integer pId,
-                    final Date pDate,
+                    final JDateDay pDate,
                     final String pDesc,
                     final String pDebit,
                     final String pCredit,
@@ -692,7 +691,7 @@ public class Pattern
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer pId,
-                                final Date pDate,
+                                final JDateDay pDate,
                                 final String pDebit,
                                 final String pCredit,
                                 final String pAmount,
@@ -727,7 +726,7 @@ public class Pattern
          */
         public void addSecureItem(final Integer pId,
                                   final Integer pControlId,
-                                  final Date pDate,
+                                  final JDateDay pDate,
                                   final Integer pDebitId,
                                   final Integer pCreditId,
                                   final byte[] pAmount,

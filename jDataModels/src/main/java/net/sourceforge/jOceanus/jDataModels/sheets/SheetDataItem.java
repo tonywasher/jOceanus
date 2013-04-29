@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDataModels.sheets;
 
-import java.util.Date;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -33,6 +32,12 @@ import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem.EncryptedList;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
+import net.sourceforge.jOceanus.jDecimal.JDilution;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JPrice;
+import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jSpreadSheetManager.CellPosition;
 import net.sourceforge.jOceanus.jSpreadSheetManager.CellStyleType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
@@ -693,8 +698,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access an integer from the WorkSheet.
      * @param pOffset the column offset
      * @return the integer
+     * @throws JDataException on error
      */
-    protected Integer loadInteger(final int pOffset) {
+    protected Integer loadInteger(final int pOffset) throws JDataException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -729,8 +735,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
      * Access a date from the WorkSheet.
      * @param pOffset the column offset
      * @return the date
+     * @throws JDataException on error
      */
-    protected Date loadDate(final int pOffset) {
+    protected JDateDay loadDate(final int pOffset) throws JDataException {
         /* Adjust column if necessary */
         int myCol = adjustColumn(pOffset);
 
@@ -740,6 +747,120 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
         /* Return the value */
         return (myCell != null)
                 ? myCell.getDateValue()
+                : null;
+    }
+
+    /**
+     * Access a money value from the WorkSheet.
+     * @param pOffset the column offset
+     * @return the money
+     * @throws JDataException on error
+     */
+    protected JMoney loadMoney(final int pOffset) throws JDataException {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Access the cells by reference */
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+
+        /* Return the value */
+        return (myCell != null)
+                ? myCell.getMoneyValue()
+                : null;
+    }
+
+    /**
+     * Access a price value from the WorkSheet.
+     * @param pOffset the column offset
+     * @return the price
+     * @throws JDataException on error
+     */
+    protected JPrice loadPrice(final int pOffset) throws JDataException {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Access the cells by reference */
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+
+        /* Return the value */
+        return (myCell != null)
+                ? myCell.getPriceValue()
+                : null;
+    }
+
+    /**
+     * Access a rate value from the WorkSheet.
+     * @param pOffset the column offset
+     * @return the rate
+     * @throws JDataException on error
+     */
+    protected JRate loadRate(final int pOffset) throws JDataException {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Access the cells by reference */
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+
+        /* Return the value */
+        return (myCell != null)
+                ? myCell.getRateValue()
+                : null;
+    }
+
+    /**
+     * Access a units value from the WorkSheet.
+     * @param pOffset the column offset
+     * @return the units
+     * @throws JDataException on error
+     */
+    protected JUnits loadUnits(final int pOffset) throws JDataException {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Access the cells by reference */
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+
+        /* Return the value */
+        return (myCell != null)
+                ? myCell.getUnitsValue()
+                : null;
+    }
+
+    /**
+     * Access a dilution value from the WorkSheet.
+     * @param pOffset the column offset
+     * @return the dilution
+     * @throws JDataException on error
+     */
+    protected JDilution loadDilution(final int pOffset) throws JDataException {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Access the cells by reference */
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+
+        /* Return the value */
+        return (myCell != null)
+                ? myCell.getDilutionValue()
+                : null;
+    }
+
+    /**
+     * Access a ratio value from the WorkSheet.
+     * @param pOffset the column offset
+     * @return the ratio
+     * @throws JDataException on error
+     */
+    protected JRatio loadRatio(final int pOffset) throws JDataException {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Access the cells by reference */
+        DataCell myCell = theActiveView.getRowCellByIndex(theActiveRow, myCol);
+
+        /* Return the value */
+        return (myCell != null)
+                ? myCell.getRatioValue()
                 : null;
     }
 
@@ -852,7 +973,7 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Create the cell and set its value */
             DataCell myCell = theActiveRow.getMutableCellByIndex(myCol);
-            myCell.setDateValue(pValue.getDate());
+            myCell.setDateValue(pValue);
         }
     }
 

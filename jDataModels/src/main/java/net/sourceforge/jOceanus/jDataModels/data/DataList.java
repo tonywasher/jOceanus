@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jDataModels: Data models
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -749,7 +749,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     }
 
     /**
-     * Perform a validation on data load
+     * Perform a validation on data load.
      * @throws JDataException on error
      */
     public void validateOnLoad() throws JDataException {

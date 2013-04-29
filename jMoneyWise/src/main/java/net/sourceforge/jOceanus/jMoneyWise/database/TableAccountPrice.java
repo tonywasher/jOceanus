@@ -1,6 +1,6 @@
 /*******************************************************************************
  * jMoneyWise: Finance Application
- * Copyright 2012 Tony Washer
+ * Copyright 2012,2013 Tony Washer
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
-import java.util.Date;
-
 import javax.swing.SortOrder;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -36,6 +34,7 @@ import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableEncrypted;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
@@ -88,7 +87,7 @@ public class TableAccountPrice
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         Integer myAccountId = myTableDef.getIntegerValue(AccountPrice.FIELD_ACCOUNT);
-        Date myDate = myTableDef.getDateValue(AccountPrice.FIELD_DATE);
+        JDateDay myDate = myTableDef.getDateValue(AccountPrice.FIELD_DATE);
         byte[] myPrice = myTableDef.getBinaryValue(AccountPrice.FIELD_PRICE);
 
         /* Add into the list */
