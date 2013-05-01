@@ -45,7 +45,7 @@ public final class DataFormats {
     /**
      * The separator placeholder.
      */
-    private static final char CHAR_SEP = ';';
+    protected static final char CHAR_SEP = ';';
 
     /**
      * The Red indicating.
@@ -324,6 +324,8 @@ public final class DataFormats {
                 return getFormatName(new String());
             case Date:
                 return getFormatName(new JDateDay());
+            case Boolean:
+                return getFormatName(Boolean.TRUE);
             case Integer:
                 return getFormatName(new Integer(0));
             case Money:

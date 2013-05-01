@@ -79,7 +79,12 @@ public class ExcelWorkBook {
     /**
      * Map of Allocated styles.
      */
-    private final Map<String, HSSFCellStyle> theMap;
+    private final Map<String, HSSFCellStyle> theStyleMap;
+
+    /**
+     * Map of Constraints.
+     */
+    private final Map<Object, DVConstraint> theConstraintMap;
 
     /**
      * Style engine.
@@ -136,7 +141,8 @@ public class ExcelWorkBook {
         try {
             /* Load the book and set null map */
             theBook = new HSSFWorkbook(pInput);
-            theMap = null;
+            theStyleMap = null;
+            theConstraintMap = null;
             theStyleEngine = null;
             theNumberFont = null;
             theValueFont = null;
@@ -160,7 +166,8 @@ public class ExcelWorkBook {
     public ExcelWorkBook() {
         /* Create new book and map */
         theBook = new HSSFWorkbook();
-        theMap = new HashMap<String, HSSFCellStyle>();
+        theStyleMap = new HashMap<String, HSSFCellStyle>();
+        theConstraintMap = new HashMap<Object, DVConstraint>();
 
         /* Allocate the formatter */
         theDataFormatter = DataWorkBook.createFormatter();
@@ -310,8 +317,39 @@ public class ExcelWorkBook {
     protected void applyDataValidation(final Sheet pSheet,
                                        final CellRangeAddressList pCells,
                                        final String pValidRange) throws JDataException {
-        /* Create the constraint */
-        DVConstraint myConstraint = DVConstraint.createFormulaListConstraint(pValidRange);
+        /* Access the constraint */
+        DVConstraint myConstraint = theConstraintMap.get(pValidRange);
+        if (myConstraint == null) {
+            /* Create and add to map */
+            myConstraint = DVConstraint.createFormulaListConstraint(pValidRange);
+            theConstraintMap.put(pValidRange, myConstraint);
+        }
+
+        /* Link the two and use drop down arrow */
+        DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
+        myValidation.setSuppressDropDownArrow(false);
+
+        /* Apply to the sheet */
+        pSheet.addValidationData(myValidation);
+    }
+
+    /**
+     * Apply Data Validation.
+     * @param pSheet the workSheet containing the cells
+     * @param pCells the Cells to apply validation to
+     * @param pValueList the list of valid values
+     * @throws JDataException on error
+     */
+    protected void applyDataValidation(final Sheet pSheet,
+                                       final CellRangeAddressList pCells,
+                                       final String[] pValueList) throws JDataException {
+        /* Access the constraint */
+        DVConstraint myConstraint = theConstraintMap.get(pValueList);
+        if (myConstraint == null) {
+            /* Create and add to map */
+            myConstraint = DVConstraint.createExplicitListConstraint(pValueList);
+            theConstraintMap.put(pValueList, myConstraint);
+        }
 
         /* Link the two and use drop down arrow */
         DataValidation myValidation = new HSSFDataValidation(pCells, myConstraint);
@@ -378,7 +416,7 @@ public class ExcelWorkBook {
         String myStyleName = DataFormats.getFormatName(pType);
 
         /* Look for existing format */
-        HSSFCellStyle myStyle = theMap.get(myStyleName);
+        HSSFCellStyle myStyle = theStyleMap.get(myStyleName);
         if (myStyle != null) {
             return myStyle;
         }
@@ -396,7 +434,7 @@ public class ExcelWorkBook {
         }
 
         /* Add to the map and return new style */
-        theMap.put(myStyleName, myStyle);
+        theStyleMap.put(myStyleName, myStyle);
         return myStyle;
     }
 
@@ -410,7 +448,7 @@ public class ExcelWorkBook {
         String myStyleName = DataFormats.getFormatName(pValue);
 
         /* Look for existing format */
-        HSSFCellStyle myStyle = theMap.get(myStyleName);
+        HSSFCellStyle myStyle = theStyleMap.get(myStyleName);
         if (myStyle != null) {
             return myStyle;
         }
@@ -432,7 +470,7 @@ public class ExcelWorkBook {
         }
 
         /* Add to the map and return new style */
-        theMap.put(myStyleName, myStyle);
+        theStyleMap.put(myStyleName, myStyle);
         return myStyle;
     }
 
@@ -446,7 +484,7 @@ public class ExcelWorkBook {
         String myStyleName = DataFormats.getAlternateFormatName(pValue);
 
         /* Look for existing format */
-        HSSFCellStyle myStyle = theMap.get(myStyleName);
+        HSSFCellStyle myStyle = theStyleMap.get(myStyleName);
         if (myStyle != null) {
             return myStyle;
         }
@@ -476,7 +514,7 @@ public class ExcelWorkBook {
         }
 
         /* Add to the map and return new style */
-        theMap.put(myStyleName, myStyle);
+        theStyleMap.put(myStyleName, myStyle);
         return myStyle;
     }
 }

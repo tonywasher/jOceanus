@@ -50,8 +50,10 @@ public class JUnits
     /**
      * Constructor for units from a decimal string.
      * @param pSource The source decimal string
+     * @throws IllegalArgumentException on invalidly formatted argument
+     * @throws NullPointerException on null argument
      */
-    public JUnits(final String pSource) {
+    public JUnits(final String pSource) throws IllegalArgumentException, NullPointerException {
         /* Use default constructor */
         this();
 

@@ -22,11 +22,13 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSpreadSheetManager;
 
+import java.awt.Color;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
@@ -35,7 +37,9 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.OasisCellAddress.OasisCellRa
 import org.odftoolkit.odfdom.dom.OdfContentDom;
 import org.odftoolkit.odfdom.dom.attribute.table.TableMessageTypeAttribute;
 import org.odftoolkit.odfdom.dom.attribute.table.TableOrientationAttribute;
+import org.odftoolkit.odfdom.dom.element.number.NumberTextElement;
 import org.odftoolkit.odfdom.dom.element.office.OfficeSpreadsheetElement;
+import org.odftoolkit.odfdom.dom.element.style.StyleTextPropertiesElement;
 import org.odftoolkit.odfdom.dom.element.table.TableContentValidationElement;
 import org.odftoolkit.odfdom.dom.element.table.TableContentValidationsElement;
 import org.odftoolkit.odfdom.dom.element.table.TableDatabaseRangeElement;
@@ -186,7 +190,7 @@ public class OasisWorkBook {
     /**
      * Map of Constraints.
      */
-    private final Map<String, TableContentValidationElement> theConstraintMap;
+    private final Map<Object, TableContentValidationElement> theConstraintMap;
 
     /**
      * Obtain the contentsDom.
@@ -268,7 +272,7 @@ public class OasisWorkBook {
             theSheetMap = new HashMap<String, SheetReference>();
             theStyleMap = new HashMap<String, OdfStyle>();
             theRangeMap = new HashMap<String, TableNamedRangeElement>();
-            theConstraintMap = new HashMap<String, TableContentValidationElement>();
+            theConstraintMap = new HashMap<Object, TableContentValidationElement>();
 
             /* Create the cellStyles */
             createCellStyles();
@@ -461,31 +465,72 @@ public class OasisWorkBook {
                                        final String pValidRange) throws JDataException {
         /* Access constraint */
         TableContentValidationElement myConstraint = theConstraintMap.get(pValidRange);
-        String myName;
         if (myConstraint == null) {
-            /* Create a name for the constraint */
-            myName = "val"
-                     + ++theNumConstraints;
-
-            /* Create the new constraint */
-            myConstraint = theValidations.newTableContentValidationElement(myName);
-
-            /* Create the rule */
-            String myRule = "of:cell-content-is-in-list("
-                            + pValidRange
-                            + ")";
-            myConstraint.setTableConditionAttribute(myRule);
-            myConstraint.setTableAllowEmptyCellAttribute(Boolean.TRUE);
-            TableErrorMessageElement myError = myConstraint.newTableErrorMessageElement();
-            myError.setTableDisplayAttribute(Boolean.TRUE);
-            myError.setTableMessageTypeAttribute(TableMessageTypeAttribute.Value.STOP.toString());
+            /* Create the constraint */
+            myConstraint = createDataConstraint(pValidRange);
 
             /* Store the constraint */
             theConstraintMap.put(pValidRange, myConstraint);
         }
 
+        /* Apply the constraint */
+        applyDataConstraint(pSheet, pFirstCell, pLastCell, myConstraint);
+    }
+
+    /**
+     * Apply Data Validation.
+     * @param pSheet the workSheet containing the cells
+     * @param pFirstCell the the first cell in the range
+     * @param pLastCell the last cell in the range
+     * @param pValueList the value list
+     * @throws JDataException on error
+     */
+    protected void applyDataValidation(final OasisSheet pSheet,
+                                       final CellPosition pFirstCell,
+                                       final CellPosition pLastCell,
+                                       final String[] pValueList) throws JDataException {
+        /* Access constraint */
+        TableContentValidationElement myConstraint = theConstraintMap.get(pValueList);
+        if (myConstraint == null) {
+            /* Build the constraint list */
+            StringBuilder myBuilder = new StringBuilder();
+
+            /* Loop through the values */
+            for (String myValue : pValueList) {
+                /* If this is not the first element */
+                if (myBuilder.length() > 0) {
+                    /* Add a comma */
+                    myBuilder.append(',');
+                }
+                /* Add the escaped value */
+                myBuilder.append(OasisCellAddress.escapeApostrophes(myValue));
+            }
+
+            /* Create the constraint */
+            myConstraint = createDataConstraint(myBuilder.toString());
+
+            /* Store the constraint */
+            theConstraintMap.put(pValueList, myConstraint);
+        }
+
+        /* Apply the constraint */
+        applyDataConstraint(pSheet, pFirstCell, pLastCell, myConstraint);
+    }
+
+    /**
+     * Apply Data Validation.
+     * @param pSheet the workSheet containing the cells
+     * @param pFirstCell the the first cell in the range
+     * @param pLastCell the last cell in the range
+     * @param pConstraint the constraint
+     * @throws JDataException on error
+     */
+    private void applyDataConstraint(final OasisSheet pSheet,
+                                     final CellPosition pFirstCell,
+                                     final CellPosition pLastCell,
+                                     final TableContentValidationElement pConstraint) throws JDataException {
         /* Determine size of range */
-        myName = myConstraint.getTableNameAttribute();
+        String myName = pConstraint.getTableNameAttribute();
         int iRow = pFirstCell.getRowIndex();
         int iLastRow = pLastCell.getRowIndex();
         int iFirstCol = pFirstCell.getColumnIndex();
@@ -500,6 +545,34 @@ public class OasisWorkBook {
                 myCell.setValidationName(myName);
             }
         }
+    }
+
+    /**
+     * Create Data Constraint.
+     * @param pConstraint the constraint list
+     * @return the constraint
+     * @throws JDataException on error
+     */
+    private TableContentValidationElement createDataConstraint(final String pConstraint) throws JDataException {
+        /* Build the name */
+        String myName = "val"
+                        + ++theNumConstraints;
+
+        /* Create the new constraint */
+        TableContentValidationElement myConstraint = theValidations.newTableContentValidationElement(myName);
+
+        /* Create the rule */
+        String myRule = "of:cell-content-is-in-list("
+                        + pConstraint
+                        + ")";
+        myConstraint.setTableConditionAttribute(myRule);
+        myConstraint.setTableAllowEmptyCellAttribute(Boolean.TRUE);
+        TableErrorMessageElement myError = myConstraint.newTableErrorMessageElement();
+        myError.setTableDisplayAttribute(Boolean.TRUE);
+        myError.setTableMessageTypeAttribute(TableMessageTypeAttribute.Value.STOP.toString());
+
+        /* Store the constraint */
+        return myConstraint;
     }
 
     /**
@@ -607,7 +680,53 @@ public class OasisWorkBook {
                 theStyles.appendChild(new OdfNumberPercentageStyle(theContentDom, pFormat, pStyleName));
                 break;
             default:
-                theStyles.appendChild(new OdfNumberStyle(theContentDom, pFormat, pStyleName));
+                /* Declare variables */
+                String myPosName;
+                String myNegName;
+                OdfNumberStyle myPos;
+                OdfNumberStyle myNeg;
+                StyleTextPropertiesElement myNegStyle;
+
+                /* Look for format splits */
+                String[] myParts = pFormat.split(""
+                                                 + DataFormats.CHAR_SEP);
+                switch (myParts.length) {
+                    case 1:
+                        theStyles.appendChild(new OdfNumberStyle(theContentDom, pFormat, pStyleName));
+                        break;
+                    case 2:
+                        myNegName = "m"
+                                    + pStyleName;
+                        myPos = new OdfNumberStyle(theContentDom, myParts[0], pStyleName);
+                        myNeg = new OdfNumberStyle(theContentDom, myParts[0], myNegName);
+                        myPos.setMapNegative(myNegName);
+                        myNegStyle = new StyleTextPropertiesElement(theContentDom);
+                        myNegStyle.setFoColorAttribute(DataConverter.colorToHexString(Color.red));
+                        myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
+                        theStyles.appendChild(myNeg);
+                        theStyles.appendChild(myPos);
+                        break;
+                    default:
+                        myNegName = "n"
+                                    + pStyleName;
+                        myPosName = "p"
+                                    + pStyleName;
+                        myPos = new OdfNumberStyle(theContentDom, myParts[0], myPosName);
+                        myNeg = new OdfNumberStyle(theContentDom, myParts[0], myNegName);
+                        OdfNumberStyle myZero = new OdfNumberStyle(theContentDom);
+                        myZero.setStyleNameAttribute(pStyleName);
+                        NumberTextElement myZeroText = myZero.newNumberTextElement();
+                        myZeroText.setTextContent(myParts[2]);
+                        myZero.setMapNegative(myNegName);
+                        myZero.setMapPositive(myPosName);
+                        myNegStyle = new StyleTextPropertiesElement(theContentDom);
+                        myNegStyle.setFoColorAttribute(DataConverter.colorToHexString(Color.red));
+                        myNeg.insertBefore(myNegStyle, myNeg.getFirstChild());
+                        theStyles.appendChild(myNeg);
+                        theStyles.appendChild(myPos);
+                        theStyles.appendChild(myZero);
+                        break;
+                }
                 break;
         }
     }
@@ -770,7 +889,7 @@ public class OasisWorkBook {
             /* Determine the format */
             String myFormat = DataFormats.getDataFormatString(pType);
             String myFormatName = getDataStyleName(myStyleName);
-            createNumericStyle(myFormat, myFormatName, pType);
+            createNumericStyle(myFormatName, myFormat, pType);
             myStyle.setStyleDataStyleNameAttribute(myFormatName);
         }
 
@@ -810,7 +929,7 @@ public class OasisWorkBook {
             /* Determine the format */
             String myFormat = DataFormats.getDataFormatString(pValue);
             String myFormatName = getDataStyleName(myStyleName);
-            createNumericStyle(myFormat, myFormatName, myType);
+            createNumericStyle(myFormatName, myFormat, myType);
             myStyle.setStyleDataStyleNameAttribute(myFormatName);
         }
 
@@ -859,7 +978,7 @@ public class OasisWorkBook {
             /* Determine the format */
             String myFormat = DataFormats.getDataFormatString(pValue);
             String myFormatName = getDataStyleName(myStyleName);
-            createNumericStyle(myFormat, myFormatName, myType);
+            createNumericStyle(myFormatName, myFormat, myType);
             myStyle.setStyleDataStyleNameAttribute(myFormatName);
         }
 

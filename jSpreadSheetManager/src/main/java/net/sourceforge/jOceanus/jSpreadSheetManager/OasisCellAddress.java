@@ -233,6 +233,29 @@ public class OasisCellAddress {
     }
 
     /**
+     * Escape apostrophes in a string
+     * @param pSource the string to escape
+     * @return the escaped string
+     */
+    protected static String escapeApostrophes(final String pSource) {
+        /* Create a builder around the name */
+        StringBuilder myBuilder = new StringBuilder(pSource);
+
+        /* Escape all instances of apostrophe */
+        int iLoc = myBuilder.indexOf(STR_APOS);
+        while (iLoc != -1) {
+            /* Insert additional apostrophe and search for further characters */
+            myBuilder.insert(iLoc, CHAR_APOS);
+            iLoc = myBuilder.indexOf(STR_APOS, iLoc + 2);
+        }
+
+        /* Add wrapping apostrophes and format */
+        myBuilder.insert(0, CHAR_APOS);
+        myBuilder.append(CHAR_APOS);
+        return myBuilder.toString();
+    }
+
+    /**
      * Utility class to handle parsing and escaping of sheet names in ranges.
      */
     private static final class OasisSheetName {
@@ -304,22 +327,11 @@ public class OasisCellAddress {
 
                 /* else if the name needs to be escaped */
             } else if (needsEscaping(pName)) {
-                /* Store the escaped name and prepare to edit the name */
+                /* Store the original name */
                 theSheetName = pName;
-                StringBuilder myBuilder = new StringBuilder(pName);
 
-                /* Escape all instances of apostrophe */
-                int iLoc = myBuilder.indexOf(STR_APOS);
-                while (iLoc != -1) {
-                    /* Insert additional apostrophe and search for further characters */
-                    myBuilder.insert(iLoc, CHAR_APOS);
-                    iLoc = myBuilder.indexOf(STR_APOS, iLoc + 2);
-                }
-
-                /* Add wrapping apostrophes and format */
-                myBuilder.insert(0, CHAR_APOS);
-                myBuilder.append(CHAR_APOS);
-                theEscapedName = myBuilder.toString();
+                /* Escape the name */
+                theEscapedName = escapeApostrophes(pName);
 
                 /* else standard name */
             } else {
@@ -350,7 +362,7 @@ public class OasisCellAddress {
                 return true;
             }
 
-            /* If the name contains characters */
+            /* OK if the name contains characters */
             int iLen = pName.length();
             for (int i = 0; i < iLen; i++) {
                 if (!Character.isDigit(pName.charAt(i))) {
