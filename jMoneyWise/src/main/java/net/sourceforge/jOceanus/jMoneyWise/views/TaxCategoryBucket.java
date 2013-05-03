@@ -32,12 +32,12 @@ import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCatego
 /**
  * The Tax Bucket class.
  */
-public abstract class TaxBucket
+public abstract class TaxCategoryBucket
         extends AnalysisBucket {
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(TaxBucket.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(TaxCategoryBucket.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
 
     /**
      * Tax Type Field Id.
@@ -77,7 +77,7 @@ public abstract class TaxBucket
      * Constructor.
      * @param pTaxCategory the category
      */
-    private TaxBucket(final TaxCategory pTaxCategory) {
+    private TaxCategoryBucket(final TaxCategory pTaxCategory) {
         /* Call super-constructor */
         super(BucketType.getTaxBucketType(pTaxCategory), pTaxCategory.getId());
 
@@ -102,7 +102,7 @@ public abstract class TaxBucket
         }
 
         /* Access the object as an Tax Bucket */
-        TaxBucket myThat = (TaxBucket) pThat;
+        TaxCategoryBucket myThat = (TaxCategoryBucket) pThat;
 
         /* Compare the TaxCategories */
         return getTaxCategory().compareTo(myThat.getTaxCategory());
@@ -112,11 +112,11 @@ public abstract class TaxBucket
      * The Transaction Summary Bucket class.
      */
     public static final class CategorySummary
-            extends TaxBucket {
+            extends TaxCategoryBucket {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(CategorySummary.class.getSimpleName(), TaxBucket.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(CategorySummary.class.getSimpleName(), TaxCategoryBucket.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -240,11 +240,11 @@ public abstract class TaxBucket
      * The Category Total Bucket class.
      */
     public static final class CategoryTotal
-            extends TaxBucket {
+            extends TaxCategoryBucket {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(CategoryTotal.class.getSimpleName(), TaxBucket.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(CategoryTotal.class.getSimpleName(), TaxCategoryBucket.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {
@@ -366,11 +366,11 @@ public abstract class TaxBucket
      * The Taxation Detail Bucket class.
      */
     public static final class TaxDetail
-            extends TaxBucket {
+            extends TaxCategoryBucket {
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(TaxDetail.class.getSimpleName(), TaxBucket.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(TaxDetail.class.getSimpleName(), TaxCategoryBucket.FIELD_DEFS);
 
         @Override
         public JDataFields getDataFields() {

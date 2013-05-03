@@ -621,6 +621,10 @@ public final class DataConverter {
         /* Handle short input */
         int myXtra = (myLen % myTriplet.length);
         if (myXtra > 0) {
+            /* Determine padding length */
+            myXtra = myTriplet.length
+                     - myXtra;
+
             /* Remove redundant characters */
             myBuilder.setLength(myBuilder.length()
                                 - myXtra);

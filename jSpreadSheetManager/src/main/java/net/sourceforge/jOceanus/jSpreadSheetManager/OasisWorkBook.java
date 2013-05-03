@@ -360,16 +360,14 @@ public class OasisWorkBook {
     /**
      * Obtain a view of the named range.
      * @param pName the name of the range
-     * @return the view of the range
+     * @return the view of the range or null if range does not exist
      * @throws JDataException on error
      */
     protected DataView getRangeView(final String pName) throws JDataException {
         /* Locate the named range in the map */
         TableNamedRangeElement myRange = theRangeMap.get(pName);
         if (myRange == null) {
-            throw new JDataException(ExceptionClass.EXCEL, "Name "
-                                                           + pName
-                                                           + " not found in workbook");
+            return null;
         }
 
         /* Obtain the address */

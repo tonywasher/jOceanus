@@ -788,7 +788,9 @@ public abstract class ColumnDefinition {
         protected void loadValue(final ResultSet pResults,
                                  final int pIndex) throws SQLException {
             Date myValue = pResults.getDate(pIndex);
-            setValue(new JDateDay(myValue));
+            setValue((myValue == null)
+                    ? null
+                    : new JDateDay(myValue));
         }
 
         @Override

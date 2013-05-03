@@ -55,9 +55,9 @@ import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCatego
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.AccountRecord;
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.IncomeTotals;
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.RecordList;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.CategorySummary;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.CategoryTotal;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.TaxDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.CategorySummary;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.CategoryTotal;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxDetail;
 
 /**
  * Reporting class to build HTML from analysis.

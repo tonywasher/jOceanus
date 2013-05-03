@@ -249,16 +249,14 @@ public class ExcelWorkBook {
     /**
      * Obtain a view of the named range.
      * @param pName the name of the range
-     * @return the view of the range
+     * @return the view of the range or null if range does not exist
      * @throws JDataException on error
      */
     protected DataView getRangeView(final String pName) throws JDataException {
         /* Find the range of cells */
         Name myName = theBook.getName(pName);
         if (myName == null) {
-            throw new JDataException(ExceptionClass.EXCEL, "Name "
-                                                           + pName
-                                                           + " not found in workbook");
+            return null;
         }
 
         /* Parse the name reference */

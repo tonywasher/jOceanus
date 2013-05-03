@@ -207,6 +207,9 @@ public class SheetDataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem
                     theOwner.writeInteger(iData, pInfo.getValue(Integer.class));
                 }
                 break;
+            case STRING:
+                theOwner.writeString(iData, pInfo.getValue(String.class));
+                break;
             default:
                 break;
         }

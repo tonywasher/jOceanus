@@ -199,6 +199,9 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
 
             /* Access the view of the range */
             theActiveView = theWorkBook.getRangeView(theRangeName);
+            if (theActiveView == null) {
+                return true;
+            }
             Iterator<DataRow> myIterator = theActiveView.iterator();
 
             /* Declare the new stage */

@@ -51,9 +51,9 @@ import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.MarketTotal;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.PayeeTotal;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.CategorySummary;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.CategoryTotal;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxBucket.TaxDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.CategorySummary;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.CategoryTotal;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxDetail;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
 
