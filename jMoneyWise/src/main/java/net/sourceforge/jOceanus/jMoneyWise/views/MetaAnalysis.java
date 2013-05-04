@@ -49,6 +49,7 @@ import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetTotal;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.BucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.MarketTotal;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.PayeeTotal;
+import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryDetail;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.CategorySummary;
@@ -307,14 +308,14 @@ public class MetaAnalysis {
         CapitalEvent myEvent = pAsset.getCapitalEvents().addEvent(theDate);
 
         /* Add price and value */
-        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALPRICE, pAsset.getPrice());
+        myEvent.setAttribute(EventAttribute.FinalPrice, pAsset.getPrice());
         if (pAsset.getPrevValue() != null) {
-            myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALVALUE, pAsset.getPrevValue());
+            myEvent.setAttribute(EventAttribute.InitialValue, pAsset.getPrevValue());
         }
-        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALVALUE, pAsset.getValue());
-        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALINVEST, pAsset.getInvested());
-        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINS, pAsset.getGains());
-        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALDIVIDEND, pAsset.getDividend());
+        myEvent.setAttribute(EventAttribute.FinalValue, pAsset.getValue());
+        myEvent.setAttribute(EventAttribute.FinalInvested, pAsset.getInvested());
+        myEvent.setAttribute(EventAttribute.FinalGains, pAsset.getGains());
+        myEvent.setAttribute(EventAttribute.FinalDividend, pAsset.getDividend());
 
         /*
          * Calculate basic market movement which is defined as currentValue - previousValue - amountInvested
@@ -367,12 +368,12 @@ public class MetaAnalysis {
         myDeltaGained.addAmount(pAsset.getDividend());
 
         /* Record initial and delta gained */
-        myEvent.addAttribute(CapitalEvent.CAPITAL_INITIALGAINED, pAsset.getGained());
-        myEvent.addAttribute(CapitalEvent.CAPITAL_DELTAGAINED, myDeltaGained);
+        myEvent.setAttribute(EventAttribute.InitialGained, pAsset.getGained());
+        myEvent.setAttribute(EventAttribute.DeltaGained, myDeltaGained);
 
         /* Adjust the Gained Total */
         pAsset.getGained().addAmount(myDeltaGained);
-        myEvent.addAttribute(CapitalEvent.CAPITAL_FINALGAINED, pAsset.getGained());
+        myEvent.setAttribute(EventAttribute.FinalGained, pAsset.getGained());
 
         /* If the market movement is positive */
         if (myMarket.isPositive()) {
@@ -388,7 +389,7 @@ public class MetaAnalysis {
         }
 
         /* Record market details */
-        myEvent.addAttribute(CapitalEvent.CAPITAL_MARKET, myMarket);
+        myEvent.setAttribute(EventAttribute.MarketMovement, myMarket);
     }
 
     /**

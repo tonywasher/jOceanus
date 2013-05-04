@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.Map;
+
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -47,80 +49,25 @@ public class AccountInfoSet
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoSet.class.getSimpleName(), DataInfoSet.FIELD_DEFS);
 
+    /**
+     * FieldSet map.
+     */
+    private static final Map<JDataField, AccountInfoClass> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountInfoClass.class);
+
+    /**
+     * Reverse FieldSet map.
+     */
+    private static final Map<AccountInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, AccountInfoClass.class);
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
-    /**
-     * Maturity Field Id.
-     */
-    public static final JDataField FIELD_MATURITY = FIELD_DEFS.declareLocalField(AccountInfoClass.Maturity.toString());
-
-    /**
-     * Parent Field Id.
-     */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(AccountInfoClass.Parent.toString());
-
-    /**
-     * Alias Field Id.
-     */
-    public static final JDataField FIELD_ALIAS = FIELD_DEFS.declareLocalField(AccountInfoClass.Alias.toString());
-
-    /**
-     * Currency Field Id.
-     */
-    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareLocalField(AccountInfoClass.Currency.toString());
-
-    /**
-     * AutoExpense Field Id.
-     */
-    public static final JDataField FIELD_AUTOEXP = FIELD_DEFS.declareLocalField(AccountInfoClass.AutoExpense.toString());
-
-    /**
-     * Symbol Field Id.
-     */
-    public static final JDataField FIELD_SYMBOL = FIELD_DEFS.declareLocalField(AccountInfoClass.Symbol.toString());
-
-    /**
-     * OpeningBalance Field Id.
-     */
-    public static final JDataField FIELD_OPENBAL = FIELD_DEFS.declareLocalField(AccountInfoClass.OpeningBalance.toString());
-
-    /**
-     * WebSite Field Id.
-     */
-    public static final JDataField FIELD_WEBSITE = FIELD_DEFS.declareLocalField(AccountInfoClass.WebSite.toString());
-
-    /**
-     * CustNo Field Id.
-     */
-    public static final JDataField FIELD_CUSTNO = FIELD_DEFS.declareLocalField(AccountInfoClass.CustomerNo.toString());
-
-    /**
-     * UserId Field Id.
-     */
-    public static final JDataField FIELD_USERID = FIELD_DEFS.declareLocalField(AccountInfoClass.UserId.toString());
-
-    /**
-     * Password Field Id.
-     */
-    public static final JDataField FIELD_PASSWORD = FIELD_DEFS.declareLocalField(AccountInfoClass.Password.toString());
-
-    /**
-     * Account Details Field Id.
-     */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(AccountInfoClass.Account.toString());
-
-    /**
-     * Notes Field Id.
-     */
-    public static final JDataField FIELD_NOTES = FIELD_DEFS.declareLocalField(AccountInfoClass.Notes.toString());
-
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = getFieldClass(pField);
+        AccountInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -169,47 +116,9 @@ public class AccountInfoSet
      * @param pField the field
      * @return the class
      */
-    protected static AccountInfoClass getFieldClass(final JDataField pField) {
-        if (FIELD_MATURITY.equals(pField)) {
-            return AccountInfoClass.Maturity;
-        }
-        if (FIELD_PARENT.equals(pField)) {
-            return AccountInfoClass.Parent;
-        }
-        if (FIELD_ALIAS.equals(pField)) {
-            return AccountInfoClass.Alias;
-        }
-        if (FIELD_CURRENCY.equals(pField)) {
-            return AccountInfoClass.Currency;
-        }
-        if (FIELD_AUTOEXP.equals(pField)) {
-            return AccountInfoClass.AutoExpense;
-        }
-        if (FIELD_SYMBOL.equals(pField)) {
-            return AccountInfoClass.Symbol;
-        }
-        if (FIELD_OPENBAL.equals(pField)) {
-            return AccountInfoClass.OpeningBalance;
-        }
-        if (FIELD_WEBSITE.equals(pField)) {
-            return AccountInfoClass.WebSite;
-        }
-        if (FIELD_CUSTNO.equals(pField)) {
-            return AccountInfoClass.CustomerNo;
-        }
-        if (FIELD_USERID.equals(pField)) {
-            return AccountInfoClass.UserId;
-        }
-        if (FIELD_PASSWORD.equals(pField)) {
-            return AccountInfoClass.Password;
-        }
-        if (FIELD_ACCOUNT.equals(pField)) {
-            return AccountInfoClass.Account;
-        }
-        if (FIELD_NOTES.equals(pField)) {
-            return AccountInfoClass.Notes;
-        }
-        return null;
+    public static AccountInfoClass getClassForField(final JDataField pField) {
+        /* Look up field in map */
+        return FIELDSET_MAP.get(pField);
     }
 
     /**
@@ -217,37 +126,9 @@ public class AccountInfoSet
      * @param pClass the class
      * @return the field
      */
-    protected static JDataField getClassField(final AccountInfoClass pClass) {
-        switch (pClass) {
-            case Maturity:
-                return FIELD_MATURITY;
-            case Parent:
-                return FIELD_PARENT;
-            case Alias:
-                return FIELD_ALIAS;
-            case Currency:
-                return FIELD_CURRENCY;
-            case AutoExpense:
-                return FIELD_AUTOEXP;
-            case Symbol:
-                return FIELD_SYMBOL;
-            case OpeningBalance:
-                return FIELD_OPENBAL;
-            case WebSite:
-                return FIELD_WEBSITE;
-            case CustomerNo:
-                return FIELD_CUSTNO;
-            case UserId:
-                return FIELD_USERID;
-            case Password:
-                return FIELD_PASSWORD;
-            case Account:
-                return FIELD_ACCOUNT;
-            case Notes:
-                return FIELD_NOTES;
-            default:
-                return null;
-        }
+    public static JDataField getFieldForClass(final AccountInfoClass pClass) {
+        /* Look up field in map */
+        return REVERSE_FIELDMAP.get(pClass);
     }
 
     /**
@@ -332,7 +213,7 @@ public class AccountInfoSet
      * @return the status
      */
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
-        AccountInfoClass myClass = getFieldClass(pField);
+        AccountInfoClass myClass = getClassForField(pField);
         return myClass == null
                 ? JDataFieldRequired.NotAllowed
                 : isClassRequired(myClass);
@@ -439,14 +320,14 @@ public class AccountInfoSet
             if (!isExisting) {
                 /* Handle required field missing */
                 if (myState == JDataFieldRequired.MustExist) {
-                    myAccount.addError(DataItem.ERROR_MISSING, getClassField(myClass));
+                    myAccount.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
             if (myState == JDataFieldRequired.NotAllowed) {
-                myAccount.addError(DataItem.ERROR_EXIST, getClassField(myClass));
+                myAccount.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }
 
@@ -461,7 +342,7 @@ public class AccountInfoSet
                     /* Access data */
                     char[] myValue = myInfo.getValue(char[].class);
                     if (myValue.length > myClass.getMaximumLength()) {
-                        myAccount.addError(DataItem.ERROR_LENGTH, getClassField(myClass));
+                        myAccount.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
                 case Parent:
@@ -470,13 +351,13 @@ public class AccountInfoSet
 
                     /* check that any parent is owner */
                     if (!myParent.getAccountCategoryClass().canParentAccount()) {
-                        myAccount.addError("Parent account cannot have children", FIELD_PARENT);
+                        myAccount.addError("Parent account cannot have children", getFieldForClass(AccountInfoClass.Parent));
                     }
 
                     /* If we are open then parent must be open */
                     if (!myAccount.isClosed()
                         && myParent.isClosed()) {
-                        myAccount.addError("Parent account must not be closed", FIELD_PARENT);
+                        myAccount.addError("Parent account must not be closed", getFieldForClass(AccountInfoClass.Parent));
                     }
                     break;
                 case Alias:
@@ -486,38 +367,38 @@ public class AccountInfoSet
 
                     /* Cannot alias to self */
                     if (Difference.isEqual(myAccount, myAlias)) {
-                        myAccount.addError("Cannot alias to self", FIELD_ALIAS);
+                        myAccount.addError("Cannot alias to self", getFieldForClass(AccountInfoClass.Alias));
 
                         /* Must alias to same type */
                     } else if (!Difference.isEqual(myAccount.getAccountCategoryClass(), myAliasClass)) {
-                        myAccount.addError("Must alias to same account category", FIELD_ALIAS);
+                        myAccount.addError("Must alias to same account category", getFieldForClass(AccountInfoClass.Alias));
 
                         /* Must alias to different TaxFree type */
                     } else if (myAccount.isTaxFree().equals(myAlias.isTaxFree())) {
-                        myAccount.addError("Must alias to different TaxFree account type", FIELD_ALIAS);
+                        myAccount.addError("Must alias to different TaxFree account type", getFieldForClass(AccountInfoClass.Alias));
                     }
 
                     /* Must not be aliased to */
                     if (myAccount.isAliasedTo()) {
-                        myAccount.addError("This account is already aliased to", FIELD_ALIAS);
+                        myAccount.addError("This account is already aliased to", getFieldForClass(AccountInfoClass.Alias));
                     }
 
                     /* Alias cannot be aliased */
                     if (myAlias.isAlias()) {
-                        myAccount.addError("The alias account is already aliased", FIELD_ALIAS);
+                        myAccount.addError("The alias account is already aliased", getFieldForClass(AccountInfoClass.Alias));
                     }
 
                     /* Must not have prices */
                     AccountStatus myStatus = myAccount.getStatus();
                     if (myStatus.hasPrices()) {
-                        myAccount.addError("Aliased account has prices", FIELD_ALIAS);
+                        myAccount.addError("Aliased account has prices", getFieldForClass(AccountInfoClass.Alias));
                     }
 
                     /* Alias account must have prices */
                     AccountStatus myAliasStatus = myAlias.getStatus();
                     if ((!myAliasStatus.hasPrices())
                         && (myAliasStatus.hasEvents())) {
-                        myAccount.addError("Alias account has no prices", FIELD_ALIAS);
+                        myAccount.addError("Alias account has no prices", getFieldForClass(AccountInfoClass.Alias));
                     }
                     break;
                 default:

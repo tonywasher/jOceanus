@@ -254,6 +254,7 @@ public abstract class DataSet<T extends DataSet<T>>
      * Constructor for new empty DataSet.
      * @param pSecurity the secure manager
      * @param pPreferenceMgr the preference manager
+     * @param pFormatter the data formatter
      */
     protected DataSet(final SecureManager pSecurity,
                       final PreferenceManager pPreferenceMgr,

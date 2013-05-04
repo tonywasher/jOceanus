@@ -76,6 +76,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfoSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.ui.MainTab.ActionRequest;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.StatementSelect;
@@ -805,16 +806,16 @@ public class AccountStatement
                 case COLUMN_PARTNER:
                     return StatementLine.FIELD_PARTNER;
                 case COLUMN_DILUTION:
-                    return EventInfoSet.FIELD_DILUTION;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.Dilution);
                 case COLUMN_TAXCREDIT:
-                    return EventInfoSet.FIELD_TAXCREDIT;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit);
                 case COLUMN_YEARS:
-                    return EventInfoSet.FIELD_YEARS;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears);
                 case COLUMN_CREDIT:
                     if ((pLine == null)
                         || (pLine.isCredit())) {
                         return ((theStateType == StatementType.Units)
-                                ? EventInfoSet.FIELD_CREDITUNITS
+                                ? EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits)
                                 : Event.FIELD_AMOUNT);
                     } else {
                         return null;
@@ -823,7 +824,7 @@ public class AccountStatement
                     if ((pLine == null)
                         || (!pLine.isCredit())) {
                         return ((theStateType == StatementType.Units)
-                                ? EventInfoSet.FIELD_DEBITUNITS
+                                ? EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits)
                                 : Event.FIELD_AMOUNT);
                     } else {
                         return null;

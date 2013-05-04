@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.views;
 
-import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -33,9 +33,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -54,178 +51,20 @@ public final class CapitalEvent
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEvent.class.getSimpleName());
 
-    /**
-     * Report fields.
-     */
-    private final JDataFields theLocalFields;
-
     @Override
     public JDataFields getDataFields() {
-        return theLocalFields;
+        return FIELD_DEFS;
     }
 
     @Override
     public String formatObject() {
-        return getDataFields().getName();
+        return FIELD_DEFS.getName();
     }
 
     /**
-     * Declare local data fields.
-     * @return the local fields
+     * Attribute Map.
      */
-    public static JDataFields declareFields() {
-        return new JDataFields(FIELD_DEFS.getName(), FIELD_DEFS);
-    }
-
-    /**
-     * The Initial Cost Attribute.
-     */
-    public static final String CAPITAL_INITIALCOST = "CostInitial";
-
-    /**
-     * The Delta Cost Attribute.
-     */
-    public static final String CAPITAL_DELTACOST = "CostDelta";
-
-    /**
-     * The Final Cost Attribute.
-     */
-    public static final String CAPITAL_FINALCOST = "CostFinal";
-
-    /**
-     * The Initial Units Attribute.
-     */
-    public static final String CAPITAL_INITIALUNITS = "UnitsInitial";
-
-    /**
-     * The Delta Units Attribute.
-     */
-    public static final String CAPITAL_DELTAUNITS = "UnitsDelta";
-
-    /**
-     * The Final Units Attribute.
-     */
-    public static final String CAPITAL_FINALUNITS = "UnitsFinal";
-
-    /**
-     * The Initial Gains Attribute.
-     */
-    public static final String CAPITAL_INITIALGAINS = "GainsInitial";
-
-    /**
-     * The Delta Gains Attribute.
-     */
-    public static final String CAPITAL_DELTAGAINS = "GainsDelta";
-
-    /**
-     * The Final Gains Attribute.
-     */
-    public static final String CAPITAL_FINALGAINS = "GainsFinal";
-
-    /**
-     * The Initial Gained Attribute.
-     */
-    public static final String CAPITAL_INITIALGAINED = "GainedInitial";
-
-    /**
-     * The Delta Gained Attribute.
-     */
-    public static final String CAPITAL_DELTAGAINED = "GainedDelta";
-
-    /**
-     * The Final Gained Attribute.
-     */
-    public static final String CAPITAL_FINALGAINED = "GainedFinal";
-
-    /**
-     * The Initial Dividend Attribute.
-     */
-    public static final String CAPITAL_INITIALDIVIDEND = "DividendInitial";
-
-    /**
-     * The Delta Dividend Attribute.
-     */
-    public static final String CAPITAL_DELTADIVIDEND = "DividendDelta";
-
-    /**
-     * The Final Dividend Attribute.
-     */
-    public static final String CAPITAL_FINALDIVIDEND = "DividendFinal";
-
-    /**
-     * The Initial Invest Attribute.
-     */
-    public static final String CAPITAL_INITIALINVEST = "InvestedInitial";
-
-    /**
-     * The Delta Invest Attribute.
-     */
-    public static final String CAPITAL_DELTAINVEST = "InvestedDelta";
-
-    /**
-     * The Final Invest Attribute.
-     */
-    public static final String CAPITAL_FINALINVEST = "InvestedFinal";
-
-    /**
-     * The Initial Value Attribute.
-     */
-    public static final String CAPITAL_INITIALVALUE = "ValueInitial";
-
-    /**
-     * The Final Value Attribute.
-     */
-    public static final String CAPITAL_FINALVALUE = "ValueFinal";
-
-    /**
-     * The Initial Price Attribute.
-     */
-    public static final String CAPITAL_INITIALPRICE = "PriceInitial";
-
-    /**
-     * The Final Price Attribute.
-     */
-    public static final String CAPITAL_FINALPRICE = "PriceFinal";
-
-    /**
-     * The Market Attribute.
-     */
-    public static final String CAPITAL_MARKET = "MarketMovement";
-
-    /**
-     * The Takeover Cost.
-     */
-    public static final String CAPITAL_TAKEOVERCOST = "TakeoverCost";
-
-    /**
-     * The Takeover Cash.
-     */
-    public static final String CAPITAL_TAKEOVERCASH = "TakeoverCash";
-
-    /**
-     * The Takeover Stock.
-     */
-    public static final String CAPITAL_TAKEOVERSTOCK = "TakeoverStock";
-
-    /**
-     * The Takeover Total.
-     */
-    public static final String CAPITAL_TAKEOVERTOTAL = "TakeoverTotal";
-
-    /**
-     * The Takeover Price.
-     */
-    public static final String CAPITAL_TAKEOVERPRICE = "TakeoverPrice";
-
-    /**
-     * The Takeover Value.
-     */
-    public static final String CAPITAL_TAKEOVERVALUE = "TakeoverValue";
-
-    /**
-     * Attribute List.
-     */
-    private final AttributeList theAttributes;
+    private final Map<EventAttribute, JDecimal> theAttributes;
 
     /**
      * The event.
@@ -246,6 +85,16 @@ public final class CapitalEvent
      * Event Field id.
      */
     public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField("Event");
+
+    /**
+     * FieldSet map.
+     */
+    private static final Map<JDataField, EventAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, EventAttribute.class);
+
+    /**
+     * Reverse FieldSet map.
+     */
+    // private static final Map<EventAttribute, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, EventAttribute.class);
 
     /**
      * Obtain the date.
@@ -283,10 +132,10 @@ public final class CapitalEvent
                     : theEvent;
         }
 
-        /* If the field is an attribute handle specially */
-        if (pField.getAnchor() == theLocalFields) {
-            /* Obtain the attribute */
-            return findAttribute(pField.getName());
+        /* Handle Attribute fields */
+        EventAttribute myClass = getClassForField(pField);
+        if (myClass != null) {
+            return getAttributeValue(myClass);
         }
 
         /* Unknown */
@@ -294,15 +143,37 @@ public final class CapitalEvent
     }
 
     /**
+     * Get an attribute value.
+     * @param pAttr the attribute
+     * @return the value to set
+     */
+    private Object getAttributeValue(final EventAttribute pAttr) {
+        /* Access value of object */
+        Object myValue = getAttribute(pAttr);
+
+        /* Return the value */
+        return (myValue != null)
+                ? myValue
+                : JDataFieldValue.SkipField;
+    }
+
+    /**
+     * Obtain the class of the field if it is an infoSet field.
+     * @param pField the field
+     * @return the class
+     */
+    private static EventAttribute getClassForField(final JDataField pField) {
+        /* Look up field in map */
+        return FIELDSET_MAP.get(pField);
+    }
+
+    /**
      * Constructor.
      * @param pEvent the underlying event
      */
     private CapitalEvent(final Event pEvent) {
-        /* declare local fields */
-        theLocalFields = declareFields();
-
-        /* Create the attributes list */
-        theAttributes = new AttributeList();
+        /* Create the attributes map */
+        theAttributes = new EnumMap<EventAttribute, JDecimal>(EventAttribute.class);
 
         /* Store the values */
         theDate = pEvent.getDate();
@@ -314,11 +185,8 @@ public final class CapitalEvent
      * @param pDate the date of the event
      */
     private CapitalEvent(final JDateDay pDate) {
-        /* declare local fields */
-        theLocalFields = declareFields();
-
-        /* Create the attributes list */
-        theAttributes = new AttributeList();
+        /* Create the attributes map */
+        theAttributes = new EnumMap<EventAttribute, JDecimal>(EventAttribute.class);
 
         /* Store the values */
         theDate = pDate;
@@ -378,65 +246,37 @@ public final class CapitalEvent
     }
 
     /**
-     * Add Money Attribute.
-     * @param pName the name of the attribute
+     * Set Attribute.
+     * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void addAttribute(final String pName,
-                                final JMoney pValue) {
-        /* Create the attribute and add to the list */
-        MoneyAttribute myAttr = new MoneyAttribute(pName, new JMoney(pValue));
-        theAttributes.add(myAttr);
-        theLocalFields.declareLocalField(pName);
+    protected void setAttribute(final EventAttribute pAttr,
+                                final JDecimal pValue) {
+        /* Set the value into the list */
+        theAttributes.put(pAttr, pValue);
     }
 
     /**
-     * Add Units Attribute.
-     * @param pName the name of the attribute
-     * @param pValue the value of the attribute
-     */
-    protected void addAttribute(final String pName,
-                                final JUnits pValue) {
-        /* Create the attribute and add to the list */
-        UnitsAttribute myAttr = new UnitsAttribute(pName, new JUnits(pValue));
-        theAttributes.add(myAttr);
-        theLocalFields.declareLocalField(pName);
-    }
-
-    /**
-     * Add Price Attribute.
-     * @param pName the name of the attribute
-     * @param pValue the value of the attribute
-     */
-    protected void addAttribute(final String pName,
-                                final JPrice pValue) {
-        /* Create the attribute and add to the list */
-        PriceAttribute myAttr = new PriceAttribute(pName, new JPrice(pValue));
-        theAttributes.add(myAttr);
-        theLocalFields.declareLocalField(pName);
-    }
-
-    /**
-     * Find an attribute.
+     * Obtain an attribute value.
      * @param <X> the data type
-     * @param pName the name of the attribute
+     * @param pAttr the attribute
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    public <X extends JDecimal> X findAttribute(final String pName,
-                                                final Class<X> pClass) {
-        /* Search for the attribute */
-        return pClass.cast(findAttribute(pName));
+    public <X extends JDecimal> X getAttribute(final EventAttribute pAttr,
+                                               final Class<X> pClass) {
+        /* Obtain the attribute */
+        return pClass.cast(getAttribute(pAttr));
     }
 
     /**
-     * Find an attribute.
-     * @param pName the name of the attribute
+     * Obtain an attribute value.
+     * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object findAttribute(final String pName) {
-        /* Search for the attribute */
-        return theAttributes.findAttribute(pName);
+    private Object getAttribute(final EventAttribute pAttr) {
+        /* Obtain the attribute */
+        return theAttributes.get(pAttr);
     }
 
     /**
@@ -601,201 +441,152 @@ public final class CapitalEvent
     }
 
     /**
-     * Attribute class.
-     * @param <T> the data type for the attribute
+     * Capital Event Attributes.
      */
-    private abstract class Attribute<T extends JDecimal> {
+    public enum EventAttribute {
         /**
-         * The Name.
+         * The Initial Cost Attribute.
          */
-        private final String theName;
-
-        /**
-         * The value.
-         */
-        private final T theValue;
+        InitialCost,
 
         /**
-         * Obtain the name.
-         * @return the name
+         * The Delta Cost Attribute.
          */
-        public String getName() {
-            return theName;
-        }
+        DeltaCost,
 
         /**
-         * Obtain the value.
-         * @return the value
+         * The Final Cost Attribute.
          */
-        public T getValue() {
-            return theValue;
-        }
+        FinalCost,
 
         /**
-         * Constructor.
-         * @param pName the name
-         * @param pValue the value
+         * The Initial Units Attribute.
          */
-        private Attribute(final String pName,
-                          final T pValue) {
-            /* Store the values */
-            theName = pName;
-            theValue = pValue;
-        }
+        InitialUnits,
 
         /**
-         * Compare this Attribute to another to establish sort order.
-         * @param pThat The Attribute to compare to
-         * @return (-1,0,1) depending of whether this object is before, equal, or after the passed object in the sort order
+         * The Delta Units Attribute.
          */
-        public int compareTo(final Object pThat) {
-            /* Handle the trivial cases */
-            if (this == pThat) {
-                return 0;
-            }
-            if (pThat == null) {
-                return -1;
-            }
-
-            /* Make sure that the object is an Attributer */
-            if (pThat.getClass() != this.getClass()) {
-                return -1;
-            }
-
-            /* Access the object as an Attribute */
-            Attribute<?> myThat = (Attribute<?>) pThat;
-
-            /* Compare the year */
-            return theName.compareTo(myThat.theName);
-        }
-
-        @Override
-        public boolean equals(final Object pThat) {
-            /* Handle the trivial cases */
-            if (this == pThat) {
-                return true;
-            }
-            if (pThat == null) {
-                return false;
-            }
-
-            /* Make sure that the object is an Attributer */
-            if (pThat.getClass() != this.getClass()) {
-                return false;
-            }
-
-            /* Access the object as an Attribute */
-            Attribute<?> myThat = (Attribute<?>) pThat;
-
-            /* Compare the year */
-            return theName.equals(myThat.theName);
-        }
-
-        @Override
-        public int hashCode() {
-            return theName.hashCode();
-        }
-    }
-
-    /**
-     * MoneyAttribute class.
-     */
-    public final class MoneyAttribute
-            extends Attribute<JMoney> {
-        /**
-         * Constructor.
-         * @param pName the name
-         * @param pValue the value
-         */
-        private MoneyAttribute(final String pName,
-                               final JMoney pValue) {
-            /* Store the values */
-            super(pName, pValue);
-        }
-    }
-
-    /**
-     * UnitsAttribute class.
-     */
-    public final class UnitsAttribute
-            extends Attribute<JUnits> {
-        /**
-         * Constructor.
-         * @param pName the name
-         * @param pValue the value
-         */
-        private UnitsAttribute(final String pName,
-                               final JUnits pValue) {
-            /* Store the values */
-            super(pName, pValue);
-        }
-    }
-
-    /**
-     * PriceAttribute class.
-     */
-    public final class PriceAttribute
-            extends Attribute<JPrice> {
-        /**
-         * Constructor.
-         * @param pName the name
-         * @param pValue the value
-         */
-        private PriceAttribute(final String pName,
-                               final JPrice pValue) {
-            /* Store the values */
-            super(pName, pValue);
-        }
-    }
-
-    /**
-     * List of Attributes.
-     */
-    private static final class AttributeList {
-        /**
-         * List of attributes.
-         */
-        private List<Attribute<?>> theAttributes;
+        DeltaUnits,
 
         /**
-         * Construct a list.
+         * The Final Units Attribute.
          */
-        private AttributeList() {
-            theAttributes = new ArrayList<Attribute<?>>();
-        }
+        FinalUnits,
 
         /**
-         * Find an attribute.
-         * @param pName the name of the attribute
-         * @return the value of the attribute or null
+         * The Initial Gains Attribute.
          */
-        protected Object findAttribute(final String pName) {
-            Iterator<Attribute<?>> myIterator;
-            Attribute<?> myCurr;
-
-            /* Access the iterator */
-            myIterator = theAttributes.iterator();
-
-            /* Loop through the attributes */
-            while (myIterator.hasNext()) {
-                /* If we found the name return its value */
-                myCurr = myIterator.next();
-                if (myCurr.getName().equals(pName)) {
-                    return myCurr.getValue();
-                }
-            }
-
-            /* return attribute not found */
-            return null;
-        }
+        InitialGains,
 
         /**
-         * Add an attribute to the list.
-         * @param pAttr the attribute to add
+         * The Delta Gains Attribute.
          */
-        private void add(final Attribute<?> pAttr) {
-            /* Add the attribute */
-            theAttributes.add(pAttr);
-        }
+        DeltaGains,
+
+        /**
+         * The Final Gains Attribute.
+         */
+        FinalGains,
+
+        /**
+         * The Initial Gained Attribute.
+         */
+        InitialGained,
+
+        /**
+         * The Delta Gained Attribute.
+         */
+        DeltaGained,
+
+        /**
+         * The Final Gained Attribute.
+         */
+        FinalGained,
+
+        /**
+         * The Initial Dividend Attribute.
+         */
+        InitialDividend,
+
+        /**
+         * The Delta Dividend Attribute.
+         */
+        DeltaDividend,
+
+        /**
+         * The Final Dividend Attribute.
+         */
+        FinalDividend,
+
+        /**
+         * The Initial Invested Attribute.
+         */
+        InitialInvested,
+
+        /**
+         * The Delta Invested Attribute.
+         */
+        DeltaInvested,
+
+        /**
+         * The Final Invested Attribute.
+         */
+        FinalInvested,
+
+        /**
+         * The Initial Value Attribute.
+         */
+        InitialValue,
+
+        /**
+         * The Final Value Attribute.
+         */
+        FinalValue,
+
+        /**
+         * The Initial Price Attribute.
+         */
+        InitialPrice,
+
+        /**
+         * The Final Price Attribute.
+         */
+        FinalPrice,
+
+        /**
+         * The Market Movement Attribute.
+         */
+        MarketMovement,
+
+        /**
+         * The Takeover Cost Attribute.
+         */
+        TakeOverCost,
+
+        /**
+         * The Takeover Cash Attribute.
+         */
+        TakeOverCash,
+
+        /**
+         * The Takeover Stock Attribute.
+         */
+        TakeOverStock,
+
+        /**
+         * The Takeover Total Attribute.
+         */
+        TakeOverTotal,
+
+        /**
+         * The Takeover Price Attribute.
+         */
+        TakeOverPrice,
+
+        /**
+         * The Takeover Value Attrribute.
+         */
+        TakeoverValue;
     }
 }

@@ -396,9 +396,9 @@ public class MaintAccount
         theFieldSet.addFieldElement(Account.FIELD_NAME, DataType.STRING, myNameLabel, myName);
         theFieldSet.addFieldElement(Account.FIELD_DESC, DataType.STRING, myDescLabel, myDesc);
         theFieldSet.addFieldElement(Account.FIELD_CATEGORY, AccountCategory.class, myTypeLabel, theCategoriesBox);
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_PARENT, Account.class, myParLabel, theParentBox);
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_ALIAS, Account.class, myAlsLabel, theAliasBox);
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_MATURITY, DataType.DATEDAY, myMatLabel, myMaturity);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Parent), Account.class, myParLabel, theParentBox);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), Account.class, myAlsLabel, theAliasBox);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), DataType.DATEDAY, myMatLabel, myMaturity);
 
         /* Create the limits panel */
         JPanel myPanel = new JPanel();
@@ -498,12 +498,12 @@ public class MaintAccount
         myNotes.setColumns(AccountInfoClass.WebSite.getMaximumLength());
 
         /* Add the components to the field Set */
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_WEBSITE, DataType.CHARARRAY, myWebSiteLabel, myWebSite);
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_CUSTNO, DataType.CHARARRAY, myCustNoLabel, myCustNo);
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_USERID, DataType.CHARARRAY, myUserIdLabel, myUserId);
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_PASSWORD, DataType.CHARARRAY, myPasswordLabel, myPassword);
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_ACCOUNT, DataType.CHARARRAY, myAccountLabel, myAccount);
-        theFieldSet.addFieldElement(AccountInfoSet.FIELD_NOTES, DataType.CHARARRAY, myNotesLabel, myNotes);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.WebSite), DataType.CHARARRAY, myWebSiteLabel, myWebSite);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.CustomerNo), DataType.CHARARRAY, myCustNoLabel, myCustNo);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.UserId), DataType.CHARARRAY, myUserIdLabel, myUserId);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Password), DataType.CHARARRAY, myPasswordLabel, myPassword);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Account), DataType.CHARARRAY, myAccountLabel, myAccount);
+        theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Notes), DataType.CHARARRAY, myNotesLabel, myNotes);
 
         /* Create the limits panel */
         JPanel myPanel = new JPanel();
@@ -746,15 +746,15 @@ public class MaintAccount
             /* Set the visibility */
             theFieldSet.setVisibility(Account.FIELD_CATEGORY, theAccount.isDeletable()
                                                               && (isNewAccount));
-            theFieldSet.setVisibility(AccountInfoSet.FIELD_MATURITY, (myCatClass == AccountCategoryClass.Bond));
-            theFieldSet.setVisibility(AccountInfoSet.FIELD_PARENT, myCatClass.isChild());
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), (myCatClass == AccountCategoryClass.Bond));
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Parent), myCatClass.isChild());
 
             /* Handle alias */
             if (myCategory.getCategoryTypeClass().canAlias()
                 && (!theAccount.isAliasedTo())) {
 
                 /* Set visible */
-                theFieldSet.setVisibility(AccountInfoSet.FIELD_ALIAS, true);
+                theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), true);
 
                 /* If we have alias already populated */
                 if (theAliasBox.getItemCount() > 0) {
@@ -797,7 +797,7 @@ public class MaintAccount
                 }
             } else {
                 /* Set visible */
-                theFieldSet.setVisibility(AccountInfoSet.FIELD_ALIAS, false);
+                theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), false);
             }
 
             /* Render the FieldSet */
@@ -857,9 +857,9 @@ public class MaintAccount
 
             /* Hide the optional fields */
             theFieldSet.setVisibility(Account.FIELD_CATEGORY, false);
-            theFieldSet.setVisibility(AccountInfoSet.FIELD_MATURITY, false);
-            theFieldSet.setVisibility(AccountInfoSet.FIELD_PARENT, false);
-            theFieldSet.setVisibility(AccountInfoSet.FIELD_ALIAS, false);
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), false);
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Parent), false);
+            theFieldSet.setVisibility(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), false);
 
             /* Render the Null Field Set */
             theFieldSet.renderNullSet();
@@ -1045,41 +1045,39 @@ public class MaintAccount
                     }
 
                     /* If this is our Parent */
-                } else if (myField.equals(AccountInfoSet.FIELD_PARENT)) {
-                    /* Update the Value */
-                    theAccount.setParent(pUpdate.getValue(Account.class));
-                    /* If this is our Account type */
-                } else if (myField.equals(AccountInfoSet.FIELD_ALIAS)) {
-                    /* Update the Value */
-                    theAccount.setAlias(pUpdate.getValue(Account.class));
-                    /* If this is our Maturity */
-                } else if (myField.equals(AccountInfoSet.FIELD_MATURITY)) {
-                    /* Update the Value */
-                    theAccount.setMaturity(pUpdate.getDateDay());
-                    /* If this is our WebSite */
-                } else if (myField.equals(AccountInfoSet.FIELD_WEBSITE)) {
-                    /* Update the Value */
-                    theAccount.setWebSite(pUpdate.getCharArray());
-                    /* If this is our CustomerNo. */
-                } else if (myField.equals(AccountInfoSet.FIELD_CUSTNO)) {
-                    /* Update the Value */
-                    theAccount.setCustNo(pUpdate.getCharArray());
-                    /* If this is our UserId */
-                } else if (myField.equals(AccountInfoSet.FIELD_USERID)) {
-                    /* Update the Value */
-                    theAccount.setUserId(pUpdate.getCharArray());
-                    /* If this is our Password */
-                } else if (myField.equals(AccountInfoSet.FIELD_PASSWORD)) {
-                    /* Update the Value */
-                    theAccount.setPassword(pUpdate.getCharArray());
-                    /* If this is our Account */
-                } else if (myField.equals(AccountInfoSet.FIELD_ACCOUNT)) {
-                    /* Update the Value */
-                    theAccount.setAccount(pUpdate.getCharArray());
-                    /* If this is our Notes */
-                } else if (myField.equals(AccountInfoSet.FIELD_NOTES)) {
-                    /* Update the Value */
-                    theAccount.setNotes(pUpdate.getCharArray());
+                } else {
+                    /* Switch on the field */
+                    switch (AccountInfoSet.getClassForField(myField)) {
+                        case Parent:
+                            theAccount.setParent(pUpdate.getValue(Account.class));
+                            break;
+                        case Alias:
+                            theAccount.setAlias(pUpdate.getValue(Account.class));
+                            break;
+                        case Maturity:
+                            theAccount.setMaturity(pUpdate.getDateDay());
+                            break;
+                        case WebSite:
+                            theAccount.setWebSite(pUpdate.getCharArray());
+                            break;
+                        case CustomerNo:
+                            theAccount.setCustNo(pUpdate.getCharArray());
+                            break;
+                        case UserId:
+                            theAccount.setUserId(pUpdate.getCharArray());
+                            break;
+                        case Password:
+                            theAccount.setPassword(pUpdate.getCharArray());
+                            break;
+                        case Account:
+                            theAccount.setAccount(pUpdate.getCharArray());
+                            break;
+                        case Notes:
+                            theAccount.setNotes(pUpdate.getCharArray());
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
                 /* Handle Exceptions */

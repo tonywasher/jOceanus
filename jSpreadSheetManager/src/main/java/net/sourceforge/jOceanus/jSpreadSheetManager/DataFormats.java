@@ -291,7 +291,7 @@ public final class DataFormats {
 
     /**
      * Obtain alternate data format string for a cell value.
-     * @param pType the cell style type
+     * @param pValue the cell value
      * @return the format string
      */
     protected static String getAlternateFormatString(final Object pValue) {

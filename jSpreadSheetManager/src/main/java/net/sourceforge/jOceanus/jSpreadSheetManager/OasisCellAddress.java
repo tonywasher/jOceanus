@@ -233,7 +233,7 @@ public class OasisCellAddress {
     }
 
     /**
-     * Escape apostrophes in a string
+     * Escape apostrophes in a string.
      * @param pSource the string to escape
      * @return the escaped string
      */

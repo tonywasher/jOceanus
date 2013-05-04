@@ -336,7 +336,7 @@ public class Event
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        EventInfoClass myClass = EventInfoSet.getFieldClass(pField);
+        EventInfoClass myClass = EventInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                     ? theInfoSet.fieldChanged(myClass)
@@ -546,19 +546,19 @@ public class Event
                 && (myDebitUnits != null)) {
                 /* Debit Units are only allowed if debit is priced */
                 if (!myDebit.hasUnits()) {
-                    addError("Units are only allowed involving assets", EventInfoSet.FIELD_DEBITUNITS);
+                    addError("Units are only allowed involving assets", EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits));
                 }
 
                 /* Category of dividend cannot debit units */
                 if ((myCategory != null)
                     && (isDividend())) {
-                    addError("Units cannot be debited for a dividend", EventInfoSet.FIELD_DEBITUNITS);
+                    addError("Units cannot be debited for a dividend", EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits));
                 }
 
                 /* Units must be non-zero and positive */
                 if ((!myDebitUnits.isNonZero())
                     || (!myDebitUnits.isPositive())) {
-                    addError("Units must be non-Zero and positive", EventInfoSet.FIELD_DEBITUNITS);
+                    addError("Units must be non-Zero and positive", EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits));
                 }
             }
 
@@ -567,13 +567,13 @@ public class Event
                 && (myCreditUnits != null)) {
                 /* Credit Units are only allowed if credit is priced */
                 if (!myCredit.hasUnits()) {
-                    addError("Units are only allowed involving assets", EventInfoSet.FIELD_CREDITUNITS);
+                    addError("Units are only allowed involving assets", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
                 }
 
                 /* Units must be non-zero and positive */
                 if ((!myCreditUnits.isNonZero())
                     || (!myCreditUnits.isPositive())) {
-                    addError("Units must be non-Zero and positive", EventInfoSet.FIELD_CREDITUNITS);
+                    addError("Units must be non-Zero and positive", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
                 }
             }
             /* If both credit/debit are both priced */
@@ -585,32 +585,32 @@ public class Event
                 if ((myCategory == null)
                     || ((!isDividend()) && (!myCategory.getCategoryTypeClass().isStockAdjustment()))) {
                     addError("Units can only refer to a single priced asset unless "
-                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", EventInfoSet.FIELD_CREDITUNITS);
+                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
                     addError("Units can only refer to a single priced asset unless "
-                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", EventInfoSet.FIELD_DEBITUNITS);
+                             + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits));
                 }
 
                 /* Dividend between priced requires identical credit/debit */
                 if ((myCategory != null)
                     && (isDividend())
                     && (!Difference.isEqual(myCredit, myDebit))) {
-                    addError("Unit Dividends between assets must be between same asset", EventInfoSet.FIELD_CREDITUNITS);
+                    addError("Unit Dividends between assets must be between same asset", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
                 }
 
                 /* Cannot have Credit and Debit if accounts are identical */
                 if ((myCreditUnits != null)
                     && (myDebitUnits != null)
                     && (Difference.isEqual(myCredit, myDebit))) {
-                    addError("Cannot credit and debit same account", EventInfoSet.FIELD_CREDITUNITS);
+                    addError("Cannot credit and debit same account", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
                 }
             }
 
             /* Else check for required units */
         } else {
             if (isCategoryClass(EventCategoryClass.StockSplit)) {
-                addError("Stock Split requires non-zero Units", EventInfoSet.FIELD_CREDITUNITS);
+                addError("Stock Split requires non-zero Units", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
             } else if (isCategoryClass(EventCategoryClass.StockAdjust)) {
-                addError("Stock Adjustment requires non-zero Units", EventInfoSet.FIELD_DEBITUNITS);
+                addError("Stock Adjustment requires non-zero Units", EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits));
             }
         }
 
@@ -618,17 +618,17 @@ public class Event
         if (myDilution != null) {
             /* If the dilution is not allowed */
             if (!needsDilution(myCategory)) {
-                addError("Dilution factor given where not allowed", EventInfoSet.FIELD_DILUTION);
+                addError("Dilution factor given where not allowed", EventInfoSet.getFieldForClass(EventInfoClass.Dilution));
             }
 
             /* If the dilution is out of range */
             if (myDilution.outOfRange()) {
-                addError("Dilution factor value is outside allowed range (0-1)", EventInfoSet.FIELD_DILUTION);
+                addError("Dilution factor value is outside allowed range (0-1)", EventInfoSet.getFieldForClass(EventInfoClass.Dilution));
             }
 
             /* else if we are missing a required dilution factor */
         } else if (needsDilution(myCategory)) {
-            addError("Dilution factor missing where required", EventInfoSet.FIELD_DILUTION);
+            addError("Dilution factor missing where required", EventInfoSet.getFieldForClass(EventInfoClass.Dilution));
         }
 
         /* If we are a taxable gain */
@@ -637,13 +637,13 @@ public class Event
             /* Years must be positive */
             if ((myYears == null)
                 || (myYears <= 0)) {
-                addError("Years must be non-zero and positive", EventInfoSet.FIELD_YEARS);
+                addError("Years must be non-zero and positive", EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears));
             }
 
             /* Tax Credit must be non-null and positive */
             if ((myTaxCred == null)
                 || (!myTaxCred.isPositive())) {
-                addError("TaxCredit must be non-null", EventInfoSet.FIELD_TAXCREDIT);
+                addError("TaxCredit must be non-null", EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit));
             }
 
             /* If we need a tax credit */
@@ -652,24 +652,24 @@ public class Event
             /* Tax Credit must be non-null and positive */
             if ((myTaxCred == null)
                 || (!myTaxCred.isPositive())) {
-                addError("TaxCredit must be non-null", EventInfoSet.FIELD_TAXCREDIT);
+                addError("TaxCredit must be non-null", EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit));
             }
 
             /* Years must be null */
             if (myYears != null) {
-                addError("Years must be null", EventInfoSet.FIELD_YEARS);
+                addError("Years must be null", EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears));
             }
 
             /* else we should not have a tax credit */
         } else if (myCategory != null) {
             /* Tax Credit must be null */
             if (myTaxCred != null) {
-                addError("TaxCredit must be null", EventInfoSet.FIELD_TAXCREDIT);
+                addError("TaxCredit must be null", EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit));
             }
 
             /* Years must be null */
             if (myYears != null) {
-                addError("Years must be null", EventInfoSet.FIELD_YEARS);
+                addError("Years must be null", EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears));
             }
         }
 

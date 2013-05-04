@@ -64,15 +64,15 @@ public class TaxYear
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(TaxYear.class.getSimpleName(), TaxYearBase.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * TaxInfoSet field Id.
      */
     public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -84,7 +84,7 @@ public class TaxYear
         }
 
         /* Handle infoSet fields */
-        TaxYearInfoClass myClass = TaxInfoSet.getFieldClass(pField);
+        TaxYearInfoClass myClass = TaxInfoSet.getClassForField(pField);
         if ((theInfoSet != null)
             && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
@@ -630,7 +630,7 @@ public class TaxYear
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        TaxYearInfoClass myClass = TaxInfoSet.getFieldClass(pField);
+        TaxYearInfoClass myClass = TaxInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                     ? theInfoSet.fieldChanged(myClass)

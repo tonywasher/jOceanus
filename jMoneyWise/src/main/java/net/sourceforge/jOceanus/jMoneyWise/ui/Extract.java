@@ -80,6 +80,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfoSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.ui.MainTab.ActionRequest;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
@@ -798,15 +799,15 @@ public class Extract
                 case COLUMN_DEBIT:
                     return Event.FIELD_DEBIT;
                 case COLUMN_DEBUNITS:
-                    return EventInfoSet.FIELD_DEBITUNITS;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits);
                 case COLUMN_CREDUNITS:
-                    return EventInfoSet.FIELD_CREDITUNITS;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits);
                 case COLUMN_DILUTE:
-                    return EventInfoSet.FIELD_DILUTION;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.Dilution);
                 case COLUMN_TAXCRED:
-                    return EventInfoSet.FIELD_TAXCREDIT;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit);
                 case COLUMN_YEARS:
-                    return EventInfoSet.FIELD_YEARS;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears);
                 default:
                     return null;
             }

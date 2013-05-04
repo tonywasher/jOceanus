@@ -49,6 +49,7 @@ import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.MarketTotal;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.PayeeTotal;
 import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisBucket.BucketType;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
+import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryDetail;
@@ -755,10 +756,10 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, theFormatter.formatObject(myEvent.getDate()));
-            theReport.makeValueCell(myOutput, myEvent.findAttribute(CapitalEvent.CAPITAL_DELTAUNITS, JUnits.class));
-            theReport.makeValueCell(myOutput, myEvent.findAttribute(CapitalEvent.CAPITAL_DELTACOST, JMoney.class));
-            theReport.makeValueCell(myOutput, myEvent.findAttribute(CapitalEvent.CAPITAL_DELTAGAINS, JMoney.class));
-            theReport.makeValueCell(myOutput, myEvent.findAttribute(CapitalEvent.CAPITAL_DELTADIVIDEND, JMoney.class));
+            theReport.makeValueCell(myOutput, myEvent.getAttribute(EventAttribute.DeltaUnits, JUnits.class));
+            theReport.makeValueCell(myOutput, myEvent.getAttribute(EventAttribute.DeltaCost, JMoney.class));
+            theReport.makeValueCell(myOutput, myEvent.getAttribute(EventAttribute.DeltaGains, JMoney.class));
+            theReport.makeValueCell(myOutput, myEvent.getAttribute(EventAttribute.DeltaDividend, JMoney.class));
             theReport.endRow(myOutput);
 
             /* Flip row type */

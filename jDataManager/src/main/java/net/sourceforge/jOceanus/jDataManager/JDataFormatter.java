@@ -244,10 +244,9 @@ public class JDataFormatter {
      * @param pClass the value type class
      * @return the formatted value
      * @throws IllegalArgumentException on bad Date/JDecimal format
-     * @throws NumberFormatException on bad numeric format
      */
     public <T> T parseValue(final String pSource,
-                            final Class<T> pClass) throws IllegalArgumentException, NumberFormatException {
+                            final Class<T> pClass) throws IllegalArgumentException {
         if (pClass == Boolean.class) {
             return pClass.cast(Boolean.parseBoolean(pSource));
         }
@@ -319,10 +318,9 @@ public class JDataFormatter {
      * @param pClass the value type class
      * @return the formatted value
      * @throws IllegalArgumentException on bad Date/JDecimal format
-     * @throws NumberFormatException on bad numeric format
      */
     public <T> T parseValue(final Double pSource,
-                            final Class<T> pClass) throws IllegalArgumentException, NumberFormatException {
+                            final Class<T> pClass) throws IllegalArgumentException {
         if (pClass == JPrice.class) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.createPriceFromDouble(pSource));
@@ -359,11 +357,10 @@ public class JDataFormatter {
      * @param pClass the value type class
      * @return the formatted value
      * @throws IllegalArgumentException on bad Date/JDecimal format
-     * @throws NumberFormatException on bad numeric format
      */
     public <T> T parseValue(final Double pSource,
                             final String pCurrCode,
-                            final Class<T> pClass) throws IllegalArgumentException, NumberFormatException {
+                            final Class<T> pClass) throws IllegalArgumentException {
         if (pClass == JPrice.class) {
             /* Parse the price */
             return pClass.cast(theDecimalParser.createPriceFromDouble(pSource, pCurrCode));

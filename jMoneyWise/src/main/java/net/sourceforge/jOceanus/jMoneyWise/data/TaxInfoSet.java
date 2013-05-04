@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.Map;
+
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataFieldRequired;
@@ -46,115 +48,25 @@ public class TaxInfoSet
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(TaxInfoSet.class.getSimpleName(), DataInfoSet.FIELD_DEFS);
 
+    /**
+     * FieldSet map.
+     */
+    private static final Map<JDataField, TaxYearInfoClass> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, TaxYearInfoClass.class);
+
+    /**
+     * Reverse FieldSet map.
+     */
+    private static final Map<TaxYearInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, TaxYearInfoClass.class);
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
     }
 
-    /**
-     * Allowance field Id.
-     */
-    public static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField(TaxYearInfoClass.Allowance.toString());
-
-    /**
-     * Rental field Id.
-     */
-    public static final JDataField FIELD_RENTAL = FIELD_DEFS.declareLocalField(TaxYearInfoClass.RentalAllowance.toString());
-
-    /**
-     * LoAgeAllowance field Id.
-     */
-    public static final JDataField FIELD_LOAGAL = FIELD_DEFS.declareLocalField(TaxYearInfoClass.LoAgeAllowance.toString());
-
-    /**
-     * HiAgeAllowance field Id.
-     */
-    public static final JDataField FIELD_HIAGAL = FIELD_DEFS.declareLocalField(TaxYearInfoClass.HiAgeAllowance.toString());
-
-    /**
-     * LoTaxBand field Id.
-     */
-    public static final JDataField FIELD_LOBAND = FIELD_DEFS.declareLocalField(TaxYearInfoClass.LoTaxBand.toString());
-
-    /**
-     * BaseTaxBand field Id.
-     */
-    public static final JDataField FIELD_BSBAND = FIELD_DEFS.declareLocalField(TaxYearInfoClass.BasicTaxBand.toString());
-
-    /**
-     * CapitalAllowance field Id.
-     */
-    public static final JDataField FIELD_CAPALW = FIELD_DEFS.declareLocalField(TaxYearInfoClass.CapitalAllowance.toString());
-
-    /**
-     * AgeAllowanceLimit field Id.
-     */
-    public static final JDataField FIELD_AGELMT = FIELD_DEFS.declareLocalField(TaxYearInfoClass.AgeAllowanceLimit.toString());
-
-    /**
-     * Additional Allowance Limit field Id.
-     */
-    public static final JDataField FIELD_ADDLMT = FIELD_DEFS.declareLocalField(TaxYearInfoClass.AdditionalAllowanceLimit.toString());
-
-    /**
-     * Additional Income Boundary field Id.
-     */
-    public static final JDataField FIELD_ADDBDY = FIELD_DEFS.declareLocalField(TaxYearInfoClass.AdditionalIncomeThreshold.toString());
-
-    /**
-     * LoTaxRate field Id.
-     */
-    public static final JDataField FIELD_LOTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.LoTaxRate.toString());
-
-    /**
-     * BasicTaxRate field Id.
-     */
-    public static final JDataField FIELD_BASTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.BasicTaxRate.toString());
-
-    /**
-     * HiTaxRate field Id.
-     */
-    public static final JDataField FIELD_HITAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.HiTaxRate.toString());
-
-    /**
-     * InterestTaxRate field Id.
-     */
-    public static final JDataField FIELD_INTTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.InterestTaxRate.toString());
-
-    /**
-     * DividendTaxRate field Id.
-     */
-    public static final JDataField FIELD_DIVTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.DividendTaxRate.toString());
-
-    /**
-     * HiDividendTaxRate field Id.
-     */
-    public static final JDataField FIELD_HDVTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.HiDividendTaxRate.toString());
-
-    /**
-     * AdditionalTaxRate field Id.
-     */
-    public static final JDataField FIELD_ADDTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.AdditionalTaxRate.toString());
-
-    /**
-     * AddDividendTaxRate field Id.
-     */
-    public static final JDataField FIELD_ADVTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.AdditionalDividendTaxRate.toString());
-
-    /**
-     * CapitalTaxRate field Id.
-     */
-    public static final JDataField FIELD_CAPTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.CapitalTaxRate.toString());
-
-    /**
-     * HiCapitalTaxRate field Id.
-     */
-    public static final JDataField FIELD_HCPTAX = FIELD_DEFS.declareLocalField(TaxYearInfoClass.HiCapitalTaxRate.toString());
-
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle InfoSet fields */
-        TaxYearInfoClass myClass = TaxInfoSet.getFieldClass(pField);
+        TaxYearInfoClass myClass = getClassForField(pField);
         if (myClass != null) {
             return getInfoSetValue(myClass);
         }
@@ -183,68 +95,9 @@ public class TaxInfoSet
      * @param pField the field
      * @return the class
      */
-    protected static TaxYearInfoClass getFieldClass(final JDataField pField) {
-        if (FIELD_ALLOW.equals(pField)) {
-            return TaxYearInfoClass.Allowance;
-        }
-        if (FIELD_RENTAL.equals(pField)) {
-            return TaxYearInfoClass.RentalAllowance;
-        }
-        if (FIELD_LOAGAL.equals(pField)) {
-            return TaxYearInfoClass.LoAgeAllowance;
-        }
-        if (FIELD_HIAGAL.equals(pField)) {
-            return TaxYearInfoClass.HiAgeAllowance;
-        }
-        if (FIELD_LOBAND.equals(pField)) {
-            return TaxYearInfoClass.LoTaxBand;
-        }
-        if (FIELD_BSBAND.equals(pField)) {
-            return TaxYearInfoClass.BasicTaxBand;
-        }
-        if (FIELD_CAPALW.equals(pField)) {
-            return TaxYearInfoClass.CapitalAllowance;
-        }
-        if (FIELD_AGELMT.equals(pField)) {
-            return TaxYearInfoClass.AgeAllowanceLimit;
-        }
-        if (FIELD_ADDLMT.equals(pField)) {
-            return TaxYearInfoClass.AdditionalAllowanceLimit;
-        }
-        if (FIELD_ADDBDY.equals(pField)) {
-            return TaxYearInfoClass.AdditionalIncomeThreshold;
-        }
-        if (FIELD_LOTAX.equals(pField)) {
-            return TaxYearInfoClass.LoTaxRate;
-        }
-        if (FIELD_BASTAX.equals(pField)) {
-            return TaxYearInfoClass.BasicTaxRate;
-        }
-        if (FIELD_HITAX.equals(pField)) {
-            return TaxYearInfoClass.HiTaxRate;
-        }
-        if (FIELD_INTTAX.equals(pField)) {
-            return TaxYearInfoClass.InterestTaxRate;
-        }
-        if (FIELD_DIVTAX.equals(pField)) {
-            return TaxYearInfoClass.DividendTaxRate;
-        }
-        if (FIELD_HDVTAX.equals(pField)) {
-            return TaxYearInfoClass.HiDividendTaxRate;
-        }
-        if (FIELD_ADDTAX.equals(pField)) {
-            return TaxYearInfoClass.AdditionalTaxRate;
-        }
-        if (FIELD_ADVTAX.equals(pField)) {
-            return TaxYearInfoClass.AdditionalDividendTaxRate;
-        }
-        if (FIELD_CAPTAX.equals(pField)) {
-            return TaxYearInfoClass.CapitalTaxRate;
-        }
-        if (FIELD_HCPTAX.equals(pField)) {
-            return TaxYearInfoClass.HiCapitalTaxRate;
-        }
-        return null;
+    public static TaxYearInfoClass getClassForField(final JDataField pField) {
+        /* Look up field in map */
+        return FIELDSET_MAP.get(pField);
     }
 
     /**
@@ -252,51 +105,9 @@ public class TaxInfoSet
      * @param pClass the class
      * @return the field
      */
-    protected static JDataField getClassField(final TaxYearInfoClass pClass) {
-        switch (pClass) {
-            case Allowance:
-                return FIELD_ALLOW;
-            case LoTaxBand:
-                return FIELD_LOBAND;
-            case BasicTaxBand:
-                return FIELD_BSBAND;
-            case LoAgeAllowance:
-                return FIELD_LOAGAL;
-            case HiAgeAllowance:
-                return FIELD_HIAGAL;
-            case RentalAllowance:
-                return FIELD_RENTAL;
-            case CapitalAllowance:
-                return FIELD_CAPALW;
-            case AgeAllowanceLimit:
-                return FIELD_AGELMT;
-            case AdditionalAllowanceLimit:
-                return FIELD_ADDLMT;
-            case AdditionalIncomeThreshold:
-                return FIELD_ADDBDY;
-            case LoTaxRate:
-                return FIELD_LOTAX;
-            case BasicTaxRate:
-                return FIELD_BASTAX;
-            case HiTaxRate:
-                return FIELD_HITAX;
-            case AdditionalTaxRate:
-                return FIELD_ADDTAX;
-            case InterestTaxRate:
-                return FIELD_INTTAX;
-            case DividendTaxRate:
-                return FIELD_DIVTAX;
-            case HiDividendTaxRate:
-                return FIELD_HDVTAX;
-            case AdditionalDividendTaxRate:
-                return FIELD_ADVTAX;
-            case CapitalTaxRate:
-                return FIELD_CAPTAX;
-            case HiCapitalTaxRate:
-                return FIELD_HCPTAX;
-            default:
-                return null;
-        }
+    public static JDataField getFieldForClass(final TaxYearInfoClass pClass) {
+        /* Look up field in map */
+        return REVERSE_FIELDMAP.get(pClass);
     }
 
     /**
@@ -327,7 +138,7 @@ public class TaxInfoSet
      * @return the status
      */
     public JDataFieldRequired isFieldRequired(final JDataField pField) {
-        TaxYearInfoClass myClass = getFieldClass(pField);
+        TaxYearInfoClass myClass = getClassForField(pField);
         return myClass == null
                 ? JDataFieldRequired.NotAllowed
                 : isClassRequired(myClass);
@@ -399,14 +210,14 @@ public class TaxInfoSet
             if (!isExisting) {
                 /* Handle required field missing */
                 if (myState == JDataFieldRequired.MustExist) {
-                    myTaxYear.addError(DataItem.ERROR_MISSING, getClassField(myClass));
+                    myTaxYear.addError(DataItem.ERROR_MISSING, getFieldForClass(myClass));
                 }
                 continue;
             }
 
             /* If field is not allowed */
             if (myState == JDataFieldRequired.NotAllowed) {
-                myTaxYear.addError(DataItem.ERROR_EXIST, getClassField(myClass));
+                myTaxYear.addError(DataItem.ERROR_EXIST, getFieldForClass(myClass));
                 continue;
             }
 
@@ -415,7 +226,7 @@ public class TaxInfoSet
 
             /* Values must be positive */
             if (!myValue.isPositive()) {
-                myTaxYear.addError(DataItem.ERROR_POSITIVE, getClassField(myClass));
+                myTaxYear.addError(DataItem.ERROR_POSITIVE, getFieldForClass(myClass));
             }
 
             /* If this is LoAgeAllowance */
@@ -427,7 +238,7 @@ public class TaxInfoSet
                         : null;
                 if ((myAllowance != null)
                     && (myValue.compareTo(myAllowance) < 0)) {
-                    myTaxYear.addError("Value must be greater than allowance", FIELD_LOAGAL);
+                    myTaxYear.addError("Value must be greater than allowance", getFieldForClass(TaxYearInfoClass.LoAgeAllowance));
                 }
             }
 
@@ -440,7 +251,7 @@ public class TaxInfoSet
                         : null;
                 if ((myAllowance != null)
                     && (myValue.compareTo(myAllowance) < 0)) {
-                    myTaxYear.addError("Value must be greater than LoAgeAllowance", FIELD_HIAGAL);
+                    myTaxYear.addError("Value must be greater than LoAgeAllowance", getFieldForClass(TaxYearInfoClass.HiAgeAllowance));
                 }
             }
         }

@@ -64,11 +64,6 @@ public class Account
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountBase.FIELD_DEFS);
 
-    @Override
-    public JDataFields declareFields() {
-        return FIELD_DEFS;
-    }
-
     /**
      * AccountInfoSet field Id.
      */
@@ -78,6 +73,11 @@ public class Account
      * AccountStatus field Id.
      */
     public static final JDataField FIELD_STATUS = FIELD_DEFS.declareLocalField("AccountStatus");
+
+    @Override
+    public JDataFields declareFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -94,7 +94,7 @@ public class Account
         }
 
         /* Handle infoSet fields */
-        AccountInfoClass myClass = AccountInfoSet.getFieldClass(pField);
+        AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
         if ((theInfoSet != null)
             && (myClass != null)) {
             return theInfoSet.getFieldValue(pField);
@@ -447,7 +447,7 @@ public class Account
     @Override
     public Difference fieldChanged(final JDataField pField) {
         /* Handle InfoSet fields */
-        AccountInfoClass myClass = AccountInfoSet.getFieldClass(pField);
+        AccountInfoClass myClass = AccountInfoSet.getClassForField(pField);
         if (myClass != null) {
             return (useInfoSet)
                     ? theInfoSet.fieldChanged(myClass)

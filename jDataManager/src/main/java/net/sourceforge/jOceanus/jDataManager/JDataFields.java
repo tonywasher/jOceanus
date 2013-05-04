@@ -23,8 +23,11 @@
 package net.sourceforge.jOceanus.jDataManager;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Data Fields.
@@ -398,6 +401,57 @@ public class JDataFields {
         public int hashCode() {
             return theName.hashCode();
         }
+    }
+
+    /**
+     * Build field set for enum class.
+     * @param <E> the enum type
+     * @param pAnchor the field anchor
+     * @param pClass the enum class
+     * @return the map from field to enum.
+     */
+    public static <E extends Enum<E>> Map<JDataField, E> buildFieldMap(final JDataFields pAnchor,
+                                                                       final Class<E> pClass) {
+        /* Create the map */
+        Map<JDataField, E> myMap = new HashMap<JDataField, E>();
+
+        /* Loop through the enum values */
+        for (E myValue : pClass.getEnumConstants()) {
+            /* Declare a field for the value */
+            JDataField myField = pAnchor.declareLocalField(myValue.name());
+
+            /* Add to the map */
+            myMap.put(myField, myValue);
+        }
+
+        /* Return the map */
+        return myMap;
+    }
+
+    /**
+     * Reverse field set to enum map.
+     * @param <E> the enum type
+     * @param pSourceMap the source map
+     * @param pClass the enum class
+     * @return the map from field to enum.
+     */
+    public static <E extends Enum<E>> Map<E, JDataField> reverseFieldMap(final Map<JDataField, E> pSourceMap,
+                                                                         final Class<E> pClass) {
+        /* Create the map */
+        Map<E, JDataField> myMap = new EnumMap<E, JDataField>(pClass);
+
+        /* Loop through the enum values */
+        for (Map.Entry<JDataField, E> myEntry : pSourceMap.entrySet()) {
+            /* Access Key and Value */
+            JDataField myField = myEntry.getKey();
+            E myEnum = myEntry.getValue();
+
+            /* Add to the map */
+            myMap.put(myEnum, myField);
+        }
+
+        /* Return the map */
+        return myMap;
     }
 
     /**
