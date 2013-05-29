@@ -199,6 +199,16 @@ public class Account
     }
 
     /**
+     * Obtain Comments.
+     * @return the comments
+     */
+    public String getComments() {
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.Comments, String.class)
+                : null;
+    }
+
+    /**
      * Obtain Opening Balance.
      * @return the Opening balance
      */
@@ -245,6 +255,26 @@ public class Account
     public char[] getPassword() {
         return hasInfoSet
                 ? theInfoSet.getValue(AccountInfoClass.Password, char[].class)
+                : null;
+    }
+
+    /**
+     * Obtain SortCode.
+     * @return the sort code
+     */
+    public char[] getSortCode() {
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.SortCode, char[].class)
+                : null;
+    }
+
+    /**
+     * Obtain Reference.
+     * @return the reference
+     */
+    public char[] getReference() {
+        return hasInfoSet
+                ? theInfoSet.getValue(AccountInfoClass.Reference, char[].class)
                 : null;
     }
 
@@ -525,7 +555,6 @@ public class Account
      * @param pControlId the control id
      * @param pName the Encrypted Name of the account
      * @param pActCatId the Account category id
-     * @param pDesc the Encrypted Description of the account
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
      * @throws JDataException on error
@@ -535,11 +564,10 @@ public class Account
                     final Integer pControlId,
                     final byte[] pName,
                     final Integer pActCatId,
-                    final byte[] pDesc,
                     final Boolean isClosed,
                     final Boolean isTaxFree) throws JDataException {
         /* Initialise the item */
-        super(pList, pId, pControlId, pName, pActCatId, pDesc, isClosed, isTaxFree);
+        super(pList, pId, pControlId, pName, pActCatId, isClosed, isTaxFree);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -553,7 +581,6 @@ public class Account
      * @param pId the id
      * @param pName the Name of the account
      * @param pCategory the Account category
-     * @param pDesc the description
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
      * @throws JDataException on error
@@ -562,11 +589,10 @@ public class Account
                     final Integer pId,
                     final String pName,
                     final String pCategory,
-                    final String pDesc,
                     final Boolean isClosed,
                     final Boolean isTaxFree) throws JDataException {
         /* Initialise the item */
-        super(pList, pId, pName, pCategory, pDesc, isClosed, isTaxFree);
+        super(pList, pId, pName, pCategory, isClosed, isTaxFree);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -681,6 +707,15 @@ public class Account
     }
 
     /**
+     * Set new comments.
+     * @param pComments the new comments
+     * @throws JDataException on error
+     */
+    public void setComments(final String pComments) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Comments, pComments);
+    }
+
+    /**
      * Set a new opening balance.
      * @param pBalance the new opening balance
      * @throws JDataException on error
@@ -744,12 +779,30 @@ public class Account
     }
 
     /**
+     * Set a new SortCode.
+     * @param pSortCode the new sort code
+     * @throws JDataException on error
+     */
+    public void setSortCode(final char[] pSortCode) throws JDataException {
+        setInfoSetValue(AccountInfoClass.SortCode, pSortCode);
+    }
+
+    /**
      * Set a new Account.
      * @param pAccount the new account
      * @throws JDataException on error
      */
     public void setAccount(final char[] pAccount) throws JDataException {
         setInfoSetValue(AccountInfoClass.Account, pAccount);
+    }
+
+    /**
+     * Set a new Reference.
+     * @param pReference the new reference
+     * @throws JDataException on error
+     */
+    public void setReference(final char[] pReference) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Reference, pReference);
     }
 
     /**
@@ -1061,7 +1114,6 @@ public class Account
          * @param pId the is
          * @param pName the Name of the account
          * @param pCategory the Name of the account category
-         * @param pDesc the description of the account
          * @param isClosed is the account closed?
          * @param isTaxFree is the account taxFree?
          * @return the new account
@@ -1070,11 +1122,10 @@ public class Account
         public Account addOpenItem(final Integer pId,
                                    final String pName,
                                    final String pCategory,
-                                   final String pDesc,
                                    final Boolean isClosed,
                                    final Boolean isTaxFree) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, pId, pName, pCategory, pDesc, isClosed, isTaxFree);
+            Account myAccount = new Account(this, pId, pName, pCategory, isClosed, isTaxFree);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -1099,7 +1150,6 @@ public class Account
          * @param pControlId the control id
          * @param pName the Encrypted Name of the account
          * @param pActCatId the Id of the account category
-         * @param pDesc the Encrypted Description of the account (or null)
          * @param isClosed is the account closed?
          * @param isTaxFree is the account taxFree?
          * @throws JDataException on error
@@ -1108,11 +1158,10 @@ public class Account
                                   final Integer pControlId,
                                   final byte[] pName,
                                   final Integer pActCatId,
-                                  final byte[] pDesc,
                                   final Boolean isClosed,
                                   final Boolean isTaxFree) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, pDesc, isClosed, isTaxFree);
+            Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, isClosed, isTaxFree);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {

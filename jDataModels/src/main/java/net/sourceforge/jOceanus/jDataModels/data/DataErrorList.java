@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jDataModels.data;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -70,5 +71,18 @@ public class DataErrorList<T extends JDataContents>
             return size();
         }
         return JDataFieldValue.UnknownField;
+    }
+
+    /**
+     * Add elements.
+     * @param pValues the list of values to add
+     */
+    public void addList(final DataErrorList<T> pValues) {
+        /* Loop through the new values */
+        Iterator<T> myIterator = pValues.iterator();
+        while (myIterator.hasNext()) {
+            /* Add the value */
+            add(myIterator.next());
+        }
     }
 }

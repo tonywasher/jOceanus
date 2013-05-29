@@ -159,9 +159,9 @@ public class View
 
     @Override
     protected boolean analyseData(final boolean bPreserve) {
-        /* Clear the error */
+        /* Clear the errors */
         if (!bPreserve) {
-            setError(null);
+            clearErrors();
         }
 
         /* Calculate the Data Range */
@@ -184,11 +184,11 @@ public class View
             /* Catch any exceptions */
         } catch (JDataException e) {
             if (!bPreserve) {
-                setError(e);
+                addError(e);
             }
         }
 
         /* Return whether there was success */
-        return (getError() == null);
+        return (getErrors().size() > 0);
     }
 }

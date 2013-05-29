@@ -58,9 +58,11 @@ import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfoSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.Frequency.FrequencyList;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
@@ -152,7 +154,7 @@ public class AccountPatterns
 
     @Override
     protected void setError(final JDataException pError) {
-        theError.setError(pError);
+        theError.addError(pError);
     }
 
     /**
@@ -576,7 +578,7 @@ public class AccountPatterns
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
-                    return Event.FIELD_DESC;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.Comments);
                 case COLUMN_CATEGORY:
                     return Event.FIELD_CATEGORY;
                 case COLUMN_CREDIT:
@@ -609,6 +611,8 @@ public class AccountPatterns
             }
 
             switch (pColIndex) {
+                case COLUMN_DESC:
+                    return false;
                 case COLUMN_CREDIT:
                     return pPattern.isCredit();
                 case COLUMN_DEBIT:
@@ -626,7 +630,7 @@ public class AccountPatterns
                 case COLUMN_DATE:
                     return pPattern.getDate();
                 case COLUMN_DESC:
-                    return pPattern.getDesc();
+                    return null;
                 case COLUMN_CATEGORY:
                     return pPattern.getCategory();
                 case COLUMN_PARTNER:
@@ -654,9 +658,6 @@ public class AccountPatterns
             switch (pColIndex) {
                 case COLUMN_DATE:
                     pPattern.setDate((JDateDay) pValue);
-                    break;
-                case COLUMN_DESC:
-                    pPattern.setDescription((String) pValue);
                     break;
                 case COLUMN_CATEGORY:
                     pPattern.setCategory((EventCategory) pValue);

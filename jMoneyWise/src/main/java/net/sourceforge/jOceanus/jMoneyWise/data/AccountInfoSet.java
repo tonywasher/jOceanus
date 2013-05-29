@@ -239,7 +239,10 @@ public class AccountInfoSet
         switch (pClass) {
         /* Notes/Account are always available */
             case Notes:
+            case SortCode:
             case Account:
+            case Reference:
+            case Comments:
                 return JDataFieldRequired.CanExist;
 
                 /* Handle Institution Details */
@@ -337,8 +340,11 @@ public class AccountInfoSet
                 case CustomerNo:
                 case UserId:
                 case Password:
+                case SortCode:
                 case Account:
+                case Reference:
                 case Notes:
+                case Comments:
                     /* Access data */
                     char[] myValue = myInfo.getValue(char[].class);
                     if (myValue.length > myClass.getMaximumLength()) {

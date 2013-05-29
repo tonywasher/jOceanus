@@ -167,12 +167,12 @@ public class Event
     }
 
     /**
-     * Obtain xferDelay.
-     * @return the xferDelay
+     * Obtain credit date.
+     * @return the credit date
      */
-    public Integer getXferDelay() {
+    public JDateDay getCreditDate() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.XferDelay, Integer.class)
+                ? theInfoSet.getValue(EventInfoClass.CreditDate, JDateDay.class)
                 : null;
     }
 
@@ -223,6 +223,16 @@ public class Event
     public String getReference() {
         return hasInfoSet
                 ? theInfoSet.getValue(EventInfoClass.Reference, String.class)
+                : null;
+    }
+
+    /**
+     * Obtain Comments.
+     * @return the Comments
+     */
+    public String getComments() {
+        return hasInfoSet
+                ? theInfoSet.getValue(EventInfoClass.Comments, String.class)
                 : null;
     }
 
@@ -436,7 +446,6 @@ public class Event
      * @param pAmount the amount
      * @param pCategory the category id
      * @param pReconciled is the event reconciled
-     * @param pDesc the description
      * @throws JDataException on error
      */
     protected Event(final EventList pList,
@@ -447,10 +456,9 @@ public class Event
                     final Integer pCredit,
                     final byte[] pAmount,
                     final Integer pCategory,
-                    final Boolean pReconciled,
-                    final byte[] pDesc) throws JDataException {
+                    final Boolean pReconciled) throws JDataException {
         /* Initialise item */
-        super(pList, pId, pControlId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pDesc);
+        super(pList, pId, pControlId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -468,7 +476,6 @@ public class Event
      * @param pAmount the amount
      * @param pCategory the category
      * @param pReconciled is the event reconciled
-     * @param pDesc the description
      * @throws JDataException on error
      */
     protected Event(final EventList pList,
@@ -478,10 +485,9 @@ public class Event
                     final String pCredit,
                     final String pAmount,
                     final String pCategory,
-                    final Boolean pReconciled,
-                    final String pDesc) throws JDataException {
+                    final Boolean pReconciled) throws JDataException {
         /* Initialise item */
-        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pDesc);
+        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -757,12 +763,12 @@ public class Event
     }
 
     /**
-     * Set a new xferDelay.
-     * @param pXferDelay the new xferDelay
+     * Set a new Credit Date.
+     * @param pCreditDate the new credit date
      * @throws JDataException on error
      */
-    public void setXferDelay(final Integer pXferDelay) throws JDataException {
-        setInfoSetValue(EventInfoClass.QualifyYears, pXferDelay);
+    public void setCreditDate(final JDateDay pCreditDate) throws JDataException {
+        setInfoSetValue(EventInfoClass.CreditDate, pCreditDate);
     }
 
     /**
@@ -817,6 +823,15 @@ public class Event
      */
     public void setReference(final String pReference) throws JDataException {
         setInfoSetValue(EventInfoClass.Reference, pReference);
+    }
+
+    /**
+     * Set new Comments.
+     * @param pComments the new comments
+     * @throws JDataException on error
+     */
+    public void setComments(final String pComments) throws JDataException {
+        setInfoSetValue(EventInfoClass.Comments, pComments);
     }
 
     /**
@@ -1124,7 +1139,6 @@ public class Event
          * @param pAmount the amount
          * @param pCategory the category
          * @param pReconciled is the event reconciled
-         * @param pDesc the description
          * @return the new event
          * @throws JDataException on error
          */
@@ -1134,10 +1148,9 @@ public class Event
                                  final String pCredit,
                                  final String pAmount,
                                  final String pCategory,
-                                 final Boolean pReconciled,
-                                 final String pDesc) throws JDataException {
+                                 final Boolean pReconciled) throws JDataException {
             /* Create the new Event */
-            Event myEvent = new Event(this, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pDesc);
+            Event myEvent = new Event(this, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -1160,7 +1173,6 @@ public class Event
          * @param pAmount the amount
          * @param pCatId the category id
          * @param pReconciled is the event reconciled
-         * @param pDesc the description
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer pId,
@@ -1170,10 +1182,9 @@ public class Event
                                   final Integer pCreditId,
                                   final byte[] pAmount,
                                   final Integer pCatId,
-                                  final Boolean pReconciled,
-                                  final byte[] pDesc) throws JDataException {
+                                  final Boolean pReconciled) throws JDataException {
             /* Create the new Event */
-            Event myEvent = new Event(this, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, pReconciled, pDesc);
+            Event myEvent = new Event(this, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, pReconciled);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {

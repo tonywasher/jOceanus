@@ -246,6 +246,8 @@ public class MaintenanceTab
             /* Determine visibility */
             setVisibility();
         } catch (JDataException e) {
+            /* Show the error */
+            theView.addError(e);
         }
     }
 

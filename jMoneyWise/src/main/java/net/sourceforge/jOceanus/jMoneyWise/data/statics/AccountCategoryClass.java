@@ -449,10 +449,10 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountCategoryType can be parent categories.
-     * @return <code>true</code> if the account category type can parent categories, <code>false</code> otherwise.
+     * Determine whether the AccountCategoryType is a parent category.
+     * @return <code>true</code> if the account category type is a parent category, <code>false</code> otherwise.
      */
-    public boolean canParentCategory() {
+    public boolean isParentCategory() {
         switch (this) {
             case Category:
             case Totals:

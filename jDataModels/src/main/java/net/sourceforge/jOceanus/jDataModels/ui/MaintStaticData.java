@@ -232,7 +232,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
 
     @Override
     protected void setError(final JDataException pError) {
-        theError.setError(pError);
+        theError.addError(pError);
     }
 
     /**

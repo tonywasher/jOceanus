@@ -28,6 +28,7 @@ import javax.swing.SwingWorker;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
 import net.sourceforge.jOceanus.jDataModels.ui.StatusBar;
 import net.sourceforge.jOceanus.jDataModels.ui.StatusBar.StatusData;
 
@@ -49,9 +50,9 @@ public abstract class WorkerThread<T>
     private final String theTask;
 
     /**
-     * The error for the operation.
+     * The errors for the operation.
      */
-    private JDataException theError = null;
+    private final DataErrorList<JDataException> theErrors;
 
     /**
      * Constructor.
@@ -63,15 +64,25 @@ public abstract class WorkerThread<T>
         /* Record the parameters */
         theTask = pTask;
         theStatusBar = pStatus.getStatusBar();
+        theErrors = new DataErrorList<JDataException>();
     }
 
     /**
-     * Set Error.
+     * Add Error.
      * @param pError the Error for the task
      */
-    protected void setError(final JDataException pError) {
+    protected void addError(final JDataException pError) {
         /* Store the error */
-        theError = pError;
+        theErrors.add(pError);
+    }
+
+    /**
+     * Add Error List.
+     * @param pErrors the Errors for the task
+     */
+    protected void addErrorList(final DataErrorList<JDataException> pErrors) {
+        /* Store the errors */
+        theErrors.addList(pErrors);
     }
 
     /**
@@ -87,13 +98,13 @@ public abstract class WorkerThread<T>
     protected void completeStatusBar() {
         /* If we are not cancelled and have no error */
         if ((!isCancelled())
-            && (theError == null)) {
+            && (theErrors.isEmpty())) {
             /* Set success */
             theStatusBar.setSuccess(theTask);
 
             /* Else report the cancellation/failure */
         } else {
-            theStatusBar.setFailure(theTask, theError);
+            theStatusBar.setFailure(theTask, theErrors);
         }
     }
 
@@ -117,7 +128,7 @@ public abstract class WorkerThread<T>
 
             /* Catch any exception to keep thread interface clean */
         } catch (Exception e) {
-            setError(new JDataException(ExceptionClass.DATA, "Failed to perform background task", e));
+            addError(new JDataException(ExceptionClass.DATA, "Failed to perform background task", e));
             return null;
         }
     }

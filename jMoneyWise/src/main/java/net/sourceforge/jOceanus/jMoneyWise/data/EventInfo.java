@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.Date;
+
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -34,6 +36,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataInfo;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
@@ -394,6 +397,10 @@ public class EventInfo
                 return myFormatter.formatObject(getValue(JUnits.class));
             case DILUTION:
                 return myFormatter.formatObject(getValue(JDilution.class));
+            case DATEDAY:
+                return myFormatter.formatObject(getValue(JDateDay.class));
+            case STRING:
+                return myFormatter.formatObject(getValue(String.class));
             default:
                 return "null";
         }
@@ -465,6 +472,21 @@ public class EventInfo
                     bValueOK = true;
                 } else if (pValue instanceof String) {
                     setValueValue(myParser.parseDilutionValue((String) pValue));
+                    bValueOK = true;
+                }
+                break;
+            case DATEDAY:
+                if (pValue instanceof Date) {
+                    setValueValue(new JDateDay((Date) pValue));
+                    bValueOK = true;
+                } else if (pValue instanceof JDateDay) {
+                    setValueValue(pValue);
+                    bValueOK = true;
+                }
+                break;
+            case STRING:
+                if (pValue instanceof String) {
+                    setValueValue(pValue);
                     bValueOK = true;
                 }
                 break;

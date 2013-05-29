@@ -57,9 +57,9 @@ public enum EventInfoClass implements DataInfoClass {
     QualifyYears(5, 4, DataType.INTEGER),
 
     /**
-     * TransferDelay.
+     * CreditDate.
      */
-    XferDelay(6, 5, DataType.INTEGER),
+    CreditDate(6, 5, DataType.DATEDAY),
 
     /**
      * Credit Units.
@@ -94,7 +94,12 @@ public enum EventInfoClass implements DataInfoClass {
     /**
      * ThirdParty.
      */
-    ThirdParty(13, 12);
+    ThirdParty(13, 12),
+
+    /**
+     * Comments.
+     */
+    Comments(14, 13, DataType.STRING);
 
     /**
      * Class Id.

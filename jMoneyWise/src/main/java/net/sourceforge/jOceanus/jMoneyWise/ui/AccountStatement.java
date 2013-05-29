@@ -194,7 +194,7 @@ public class AccountStatement
 
     @Override
     protected void setError(final JDataException pError) {
-        theError.setError(pError);
+        theError.addError(pError);
     }
 
     /**
@@ -518,7 +518,7 @@ public class AccountStatement
                 JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to calculate table", e);
 
                 /* Show the error */
-                theError.setError(myError);
+                theError.addError(myError);
             }
         }
     }
@@ -560,7 +560,7 @@ public class AccountStatement
                     JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
                     /* Show the error */
-                    theError.setError(myError);
+                    theError.addError(myError);
 
                     /* Restore SavePoint */
                     theSelect.restoreSavePoint();
@@ -800,7 +800,7 @@ public class AccountStatement
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
-                    return Event.FIELD_DESC;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.Comments);
                 case COLUMN_CATEGORY:
                     return Event.FIELD_CATEGORY;
                 case COLUMN_PARTNER:
@@ -861,7 +861,7 @@ public class AccountStatement
                     return ((pLine.getDate() != null) && (pLine.getCategory() != null));
                 default:
                     if ((pLine.getDate() == null)
-                        || (pLine.getDesc() == null)
+                        || (pLine.getComments() == null)
                         || (pLine.getCategory() == null)) {
                         return false;
                     }
@@ -929,7 +929,7 @@ public class AccountStatement
                     }
                     return null;
                 case COLUMN_DESC:
-                    return pLine.getDesc();
+                    return pLine.getComments();
                 case COLUMN_DILUTION:
                     return pLine.getDilution();
                 case COLUMN_TAXCREDIT:
@@ -956,7 +956,7 @@ public class AccountStatement
                     pLine.setDate((JDateDay) pValue);
                     break;
                 case COLUMN_DESC:
-                    pLine.setDescription((String) pValue);
+                    pLine.setComments((String) pValue);
                     break;
                 case COLUMN_CATEGORY:
                     pLine.setCategory((EventCategory) pValue);

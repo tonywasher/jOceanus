@@ -22,17 +22,24 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.views;
 
+import java.util.Iterator;
+
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
+import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryDetail;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
+import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
 /**
  * The Tax Bucket class.
  */
-public abstract class TaxCategoryBucket
+public final class TaxCategoryBucket
         extends AnalysisBucket {
     /**
      * Local Report fields.
@@ -44,10 +51,49 @@ public abstract class TaxCategoryBucket
      */
     public static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField("TaxCategory");
 
+    /**
+     * Amount Field Id.
+     */
+    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField("Amount");
+
+    /**
+     * Taxation Field Id.
+     */
+    public static final JDataField FIELD_TAXATION = FIELD_DEFS.declareLocalField("Taxation");
+
+    /**
+     * Rate Field Id.
+     */
+    public static final JDataField FIELD_RATE = FIELD_DEFS.declareLocalField("Rate");
+
+    /**
+     * Parent Field Id.
+     */
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField("Parent");
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
+
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_TAXCAT.equals(pField)) {
             return theTaxCategory;
+        }
+        if (FIELD_AMOUNT.equals(pField)) {
+            return theAmount;
+        }
+        if (FIELD_TAXATION.equals(pField)) {
+            return theTaxation;
+        }
+        if (FIELD_RATE.equals(pField)) {
+            return theRate;
+        }
+        if (FIELD_PARENT.equals(pField)) {
+            return (theParent != null)
+                    ? theParent
+                    : JDataFieldValue.SkipField;
         }
         return super.getFieldValue(pField);
     }
@@ -56,6 +102,26 @@ public abstract class TaxCategoryBucket
      * Tax Category.
      */
     private final TaxCategory theTaxCategory;
+
+    /**
+     * The amount.
+     */
+    private JMoney theAmount = null;
+
+    /**
+     * The taxation.
+     */
+    private JMoney theTaxation = null;
+
+    /**
+     * The rate.
+     */
+    private JRate theRate = null;
+
+    /**
+     * The parent.
+     */
+    private TaxCategoryBucket theParent = null;
 
     /**
      * Obtain name.
@@ -71,6 +137,38 @@ public abstract class TaxCategoryBucket
      */
     public TaxCategory getTaxCategory() {
         return theTaxCategory;
+    }
+
+    /**
+     * Obtain the amount.
+     * @return the amount
+     */
+    public JMoney getAmount() {
+        return theAmount;
+    }
+
+    /**
+     * Obtain the taxation.
+     * @return the taxation
+     */
+    public JMoney getTaxation() {
+        return theTaxation;
+    }
+
+    /**
+     * Obtain the rate.
+     * @return the rate
+     */
+    public JRate getRate() {
+        return theRate;
+    }
+
+    /**
+     * Obtain the parent.
+     * @return the parent
+     */
+    public TaxCategoryBucket getParent() {
+        return theParent;
     }
 
     /**
@@ -108,424 +206,185 @@ public abstract class TaxCategoryBucket
         return getTaxCategory().compareTo(myThat.getTaxCategory());
     }
 
-    /**
-     * The Transaction Summary Bucket class.
-     */
-    public static final class CategorySummary
-            extends TaxCategoryBucket {
-        /**
-         * Local Report fields.
-         */
-        private static final JDataFields FIELD_DEFS = new JDataFields(CategorySummary.class.getSimpleName(), TaxCategoryBucket.FIELD_DEFS);
+    @Override
+    public boolean isActive() {
+        return false;
+    }
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        /**
-         * Amount Field Id.
-         */
-        public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField("Amount");
-
-        /**
-         * Previous Amount Field Id.
-         */
-        public static final JDataField FIELD_PREVAMOUNT = FIELD_DEFS.declareLocalField("PreviousAmount");
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_AMOUNT.equals(pField)) {
-                return theAmount;
-            }
-            if (FIELD_PREVAMOUNT.equals(pField)) {
-                return thePrevAmount;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * The amount.
-         */
-        private JMoney theAmount = null;
-
-        /**
-         * The previous amount.
-         */
-        private JMoney thePrevAmount = null;
-
-        @Override
-        public CategorySummary getBase() {
-            return (CategorySummary) super.getBase();
-        }
-
-        /**
-         * Obtain the amount.
-         * @return the amount.
-         */
-        public JMoney getAmount() {
-            return theAmount;
-        }
-
-        /**
-         * Obtain the previous amount.
-         * @return the amount.
-         */
-        public JMoney getPrevAmount() {
-            return thePrevAmount;
-        }
-
-        /**
-         * Constructor.
-         * @param pTaxCategory the tax category
-         */
-        protected CategorySummary(final TaxCategory pTaxCategory) {
-            /* Call super-constructor */
-            super(pTaxCategory);
-
-            /* Initialise the Money values */
-            theAmount = new JMoney();
-            thePrevAmount = new JMoney();
-        }
-
-        @Override
-        public boolean isActive() {
-            return false;
-        }
-
-        @Override
-        protected boolean isRelevant() {
-            return true;
-        }
-
-        /**
-         * Add values to the total value.
-         * @param pBucket the bucket
-         */
-        protected void addValues(final EventCategoryDetail pBucket) {
-            EventCategoryDetail myPrevious = pBucket.getBase();
-
-            /* Add the values */
-            theAmount.addAmount(pBucket.getAmount());
-            theAmount.addAmount(pBucket.getTaxCredit());
-
-            /* If there are previous totals and we have previous totals */
-            if (myPrevious != null) {
-                /* Add previous values */
-                thePrevAmount.addAmount(myPrevious.getAmount());
-                thePrevAmount.addAmount(myPrevious.getTaxCredit());
-            }
-        }
-
-        /**
-         * Subtract values from the total value.
-         * @param pBucket the bucket
-         */
-        protected void subtractValues(final EventCategoryDetail pBucket) {
-            EventCategoryDetail myPrevious = pBucket.getBase();
-
-            /* Add the values */
-            theAmount.subtractAmount(pBucket.getAmount());
-
-            /* If there are previous totals and we have previous totals */
-            if ((myPrevious != null)
-                && (getBase() != null)) {
-                /* Add previous values */
-                getBase().subtractValues(myPrevious);
-            }
-        }
+    @Override
+    protected boolean isRelevant() {
+        /* Relevant if this value or the previous value is non-zero */
+        return (theAmount.isNonZero() || theTaxation.isNonZero());
     }
 
     /**
-     * The Category Total Bucket class.
+     * Set a taxation amount and calculate the tax on it.
+     * @param pAmount Amount to set
+     * @return the taxation on this bucket
      */
-    public static final class CategoryTotal
-            extends TaxCategoryBucket {
-        /**
-         * Local Report fields.
-         */
-        private static final JDataFields FIELD_DEFS = new JDataFields(CategoryTotal.class.getSimpleName(), TaxCategoryBucket.FIELD_DEFS);
+    protected JMoney setAmount(final JMoney pAmount) {
+        /* Set the value */
+        theAmount = new JMoney(pAmount);
 
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
+        /* Calculate the tax if we have a rate */
+        theTaxation = (theRate != null)
+                ? theAmount.valueAtRate(theRate)
+                : new JMoney();
 
-        /**
-         * Amount Field Id.
-         */
-        public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField("Amount");
-
-        /**
-         * Previous Amount Field Id.
-         */
-        public static final JDataField FIELD_PREVAMOUNT = FIELD_DEFS.declareLocalField("PreviousAmount");
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_AMOUNT.equals(pField)) {
-                return theAmount;
-            }
-            if (FIELD_PREVAMOUNT.equals(pField)) {
-                return thePrevAmount;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * The amount.
-         */
-        private JMoney theAmount = null;
-
-        /**
-         * The previous amount.
-         */
-        private JMoney thePrevAmount = null;
-
-        @Override
-        public CategoryTotal getBase() {
-            return (CategoryTotal) super.getBase();
-        }
-
-        /**
-         * Obtain amount.
-         * @return the amount
-         */
-        public JMoney getAmount() {
-            return theAmount;
-        }
-
-        /**
-         * Obtain previous amount.
-         * @return the amount
-         */
-        public JMoney getPrevAmount() {
-            return thePrevAmount;
-        }
-
-        /**
-         * Constructor.
-         * @param pTaxCategory the tax category
-         */
-        protected CategoryTotal(final TaxCategory pTaxCategory) {
-            /* Call super-constructor */
-            super(pTaxCategory);
-
-            /* Initialise the Money values */
-            theAmount = new JMoney();
-            thePrevAmount = new JMoney();
-        }
-
-        @Override
-        public boolean isActive() {
-            return false;
-        }
-
-        @Override
-        protected boolean isRelevant() {
-            return true;
-        }
-
-        /**
-         * Add values to the total value.
-         * @param pBucket the bucket
-         */
-        protected void addValues(final CategorySummary pBucket) {
-            CategorySummary myPrevious = pBucket.getBase();
-
-            /* Add the values */
-            theAmount.addAmount(pBucket.getAmount());
-
-            /* If there are previous totals and we have previous totals */
-            if (myPrevious != null) {
-                /* Add previous values */
-                thePrevAmount.addAmount(myPrevious.getAmount());
-            }
-        }
-
-        /**
-         * Subtract values from the total value.
-         * @param pBucket the bucket
-         */
-        protected void subtractValues(final CategorySummary pBucket) {
-            CategorySummary myPrevious = pBucket.getBase();
-
-            /* Add the values */
-            theAmount.subtractAmount(pBucket.getAmount());
-
-            /* If there are previous totals and we have previous totals */
-            if ((myPrevious != null)
-                && (getBase() != null)) {
-                /* Add previous values */
-                getBase().subtractValues(myPrevious);
-            }
-        }
+        /* Return the taxation amount */
+        return theTaxation;
     }
 
     /**
-     * The Taxation Detail Bucket class.
+     * Set explicit taxation value.
+     * @param pAmount Amount to set
      */
-    public static final class TaxDetail
-            extends TaxCategoryBucket {
+    protected void setTaxation(final JMoney pAmount) {
+        /* Set the value */
+        theTaxation = new JMoney(pAmount);
+    }
+
+    /**
+     * Set parent bucket for reporting purposes.
+     * @param pParent the parent bucket
+     */
+    protected void setParent(final TaxCategoryBucket pParent) {
+        /* Set the value */
+        theParent = pParent;
+    }
+
+    /**
+     * Set a tax rate.
+     * @param pRate Amount to set
+     */
+    protected void setRate(final JRate pRate) {
+        /* Set the value */
+        theRate = pRate;
+    }
+
+    /**
+     * Add values.
+     * @param pBucket event category bucket
+     */
+    protected void addValues(final EventCategoryBucket pBucket) {
+        /* Set the value */
+        theAmount.addAmount(pBucket.getAttribute(EventAttribute.Income, JMoney.class));
+    }
+
+    /**
+     * Subtract values.
+     * @param pBucket event category bucket
+     */
+    protected void subtractValues(final EventCategoryBucket pBucket) {
+        /* Set the value */
+        theAmount.subtractAmount(pBucket.getAttribute(EventAttribute.Income, JMoney.class));
+    }
+
+    /**
+     * TaxCategoryBucketList class.
+     */
+    public static class TaxCategoryBucketList
+            extends OrderedIdList<Integer, TaxCategoryBucket>
+            implements JDataContents {
+
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(TaxDetail.class.getSimpleName(), TaxCategoryBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxCategoryBucketList.class.getSimpleName());
 
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
         }
 
-        /**
-         * Amount Field Id.
-         */
-        public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareLocalField("Amount");
+        @Override
+        public String formatObject() {
+            return getDataFields().getName()
+                   + "("
+                   + size()
+                   + ")";
+        }
 
         /**
-         * Taxation Field Id.
+         * Size Field Id.
          */
-        public static final JDataField FIELD_TAXATION = FIELD_DEFS.declareLocalField("Taxation");
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         /**
-         * Rate Field Id.
+         * Analysis field Id.
          */
-        public static final JDataField FIELD_RATE = FIELD_DEFS.declareLocalField("Rate");
+        public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
 
         @Override
         public Object getFieldValue(final JDataField pField) {
-            if (FIELD_AMOUNT.equals(pField)) {
-                return theAmount;
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
             }
-            if (FIELD_TAXATION.equals(pField)) {
-                return theTaxation;
+            if (FIELD_ANALYSIS.equals(pField)) {
+                return theAnalysis;
             }
-            if (FIELD_RATE.equals(pField)) {
-                return theRate;
+            return JDataFieldValue.UnknownField;
+        }
+
+        /**
+         * The analysis.
+         */
+        private final Analysis theAnalysis;
+
+        /**
+         * The data.
+         */
+        private final FinanceData theData;
+
+        /**
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
+         */
+        public TaxCategoryBucketList(final Analysis pAnalysis) {
+            super(TaxCategoryBucket.class);
+            theAnalysis = pAnalysis;
+            theData = theAnalysis.getData();
+        }
+
+        /**
+         * Obtain the EventCategoryBucket for a given event category class.
+         * @param pClass the event category class
+         * @return the bucket
+         */
+        protected TaxCategoryBucket getBucket(final TaxCategoryClass pClass) {
+            /* Locate the bucket in the list */
+            TaxCategory myCategory = theData.getTaxCategories().findItemByClass(pClass);
+            TaxCategoryBucket myItem = findItemById(myCategory.getId());
+
+            /* If the item does not yet exist */
+            if (myItem == null) {
+                /* Create the new bucket */
+                myItem = new TaxCategoryBucket(myCategory);
+
+                /* Add to the list */
+                add(myItem);
             }
-            return super.getFieldValue(pField);
+
+            /* Return the bucket */
+            return myItem;
         }
 
         /**
-         * The amount.
+         * Prune the list to remove irrelevant items.
          */
-        private JMoney theAmount = null;
+        protected void prune() {
+            /* Access the iterator */
+            Iterator<TaxCategoryBucket> myIterator = listIterator();
 
-        /**
-         * The taxation.
-         */
-        private JMoney theTaxation = null;
+            /* Loop through the buckets */
+            while (myIterator.hasNext()) {
+                TaxCategoryBucket myCurr = myIterator.next();
 
-        /**
-         * The rate.
-         */
-        private JRate theRate = null;
-
-        /**
-         * The parent.
-         */
-        private TaxDetail theParent = null;
-
-        @Override
-        public TaxDetail getBase() {
-            return (TaxDetail) super.getBase();
-        }
-
-        /**
-         * Obtain the amount.
-         * @return the amount
-         */
-        public JMoney getAmount() {
-            return theAmount;
-        }
-
-        /**
-         * Obtain the taxation.
-         * @return the taxation
-         */
-        public JMoney getTaxation() {
-            return theTaxation;
-        }
-
-        /**
-         * Obtain the rate.
-         * @return the rate
-         */
-        public JRate getRate() {
-            return theRate;
-        }
-
-        /**
-         * Obtain the parent.
-         * @return the parent
-         */
-        public TaxDetail getParent() {
-            return theParent;
-        }
-
-        /**
-         * Constructor.
-         * @param pTaxCategory the tax category
-         */
-        protected TaxDetail(final TaxCategory pTaxCategory) {
-            /* Call super-constructor */
-            super(pTaxCategory);
-        }
-
-        @Override
-        public boolean isActive() {
-            return false;
-        }
-
-        @Override
-        protected boolean isRelevant() {
-            /* Relevant if this value or the previous value is non-zero */
-            return (theAmount.isNonZero() || theTaxation.isNonZero());
-        }
-
-        /**
-         * Set a taxation amount and calculate the tax on it.
-         * @param pAmount Amount to set
-         * @return the taxation on this bucket
-         */
-        protected JMoney setAmount(final JMoney pAmount) {
-            /* Set the value */
-            theAmount = new JMoney(pAmount);
-
-            /* Calculate the tax if we have a rate */
-            theTaxation = (theRate != null)
-                    ? theAmount.valueAtRate(theRate)
-                    : new JMoney();
-
-            /* Return the taxation amount */
-            return theTaxation;
-        }
-
-        /**
-         * Set explicit taxation value.
-         * @param pAmount Amount to set
-         */
-        protected void setTaxation(final JMoney pAmount) {
-            /* Set the value */
-            theTaxation = new JMoney(pAmount);
-        }
-
-        /**
-         * Set parent bucket for reporting purposes.
-         * @param pParent the parent bucket
-         */
-        protected void setParent(final TaxDetail pParent) {
-            /* Set the value */
-            theParent = pParent;
-        }
-
-        /**
-         * Set a tax rate.
-         * @param pRate Amount to set
-         */
-        protected void setRate(final JRate pRate) {
-            /* Set the value */
-            theRate = pRate;
+                /* Remove the bucket if it is irrelevant */
+                if (!myCurr.isRelevant()) {
+                    myIterator.remove();
+                }
+            }
         }
     }
 }

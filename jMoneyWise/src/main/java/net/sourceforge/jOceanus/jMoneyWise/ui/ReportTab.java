@@ -377,7 +377,7 @@ public class ReportTab
                     JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to change selection", e);
 
                     /* Show the error */
-                    theError.setError(myError);
+                    theError.addError(myError);
 
                     /* Restore SavePoint */
                     theSelect.restoreSavePoint();

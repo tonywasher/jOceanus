@@ -707,7 +707,7 @@ public class AccountCategory
                     /* Check parent */
                     if (myParent == null) {
                         addError("AccountCategory must have parent", FIELD_PARENT);
-                    } else if (!myParent.getCategoryTypeClass().canParentCategory()) {
+                    } else if (!myParent.getCategoryTypeClass().isParentCategory()) {
                         addError("AccountCategory must have valid parent", FIELD_PARENT);
                     }
                     break;

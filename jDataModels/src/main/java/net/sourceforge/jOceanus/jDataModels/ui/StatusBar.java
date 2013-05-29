@@ -41,6 +41,7 @@ import javax.swing.plaf.basic.BasicProgressBarUI;
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 
 /**
@@ -164,9 +165,9 @@ public class StatusBar {
     private final ThreadControl theControl;
 
     /**
-     * Error.
+     * Errors.
      */
-    private JDataException theError = null;
+    private final DataErrorList<JDataException> theErrors;
 
     /**
      * Timer.
@@ -208,8 +209,8 @@ public class StatusBar {
      * Get error.
      * @return the error
      */
-    public JDataException getError() {
-        return theError;
+    public DataErrorList<JDataException> getErrors() {
+        return theErrors;
     }
 
     /**
@@ -224,6 +225,7 @@ public class StatusBar {
 
         /* Store access to the Data Entry */
         theDataEntry = pData.getDataEntry(DataControl.DATA_ERROR);
+        theErrors = new DataErrorList<JDataException>();
 
         /* Create the boxes */
         theCancel = new JButton(NLS_CANCEL);
@@ -292,7 +294,8 @@ public class StatusBar {
     /**
      * ProgressBar UI.
      */
-    private static final class ProgressUI extends BasicProgressBarUI {
+    private static final class ProgressUI
+            extends BasicProgressBarUI {
         @Override
         protected Color getSelectionBackground() {
             return Color.black;
@@ -318,7 +321,8 @@ public class StatusBar {
         /* Update Stage if required */
         if (pStatus.differStage(theCurrent)) {
             /* Expand stage text to 20 */
-            String myStage = pStatus.getStage() + "                              ";
+            String myStage = pStatus.getStage()
+                             + "                              ";
             myStage = myStage.substring(0, STAGE_CHARS);
             theStageLabel.setText(myStage);
         }
@@ -357,7 +361,9 @@ public class StatusBar {
      */
     public void setSuccess(final String pOperation) {
         /* Set the status text field */
-        theStatusLabel.setText(pOperation + " " + NLS_SUCCESS);
+        theStatusLabel.setText(pOperation
+                               + " "
+                               + NLS_SUCCESS);
 
         /* Show the status window rather than the progress window */
         theStatPanel.setVisible(true);
@@ -374,28 +380,32 @@ public class StatusBar {
     /**
      * Set Failure string.
      * @param pOperation the operation
-     * @param pError the error
+     * @param pErrors the error list
      */
     public void setFailure(final String pOperation,
-                           final JDataException pError) {
+                           final DataErrorList<JDataException> pErrors) {
         /* Initialise the message */
-        String myText = pOperation + " " + NLS_FAIL;
+        String myText = pOperation
+                        + " "
+                        + NLS_FAIL;
 
         /* If there is an error detail */
-        if (pError != null) {
-            /* Add the error detail */
-            myText += ". " + pError.getMessage();
+        if (!pErrors.isEmpty()) {
+            /* Add the first error detail */
+            myText += ". "
+                      + pErrors.get(0).getMessage();
 
             /* else no failure - must have cancelled */
         } else {
-            myText += ". " + NLS_CANCELLED;
+            myText += ". "
+                      + NLS_CANCELLED;
         }
 
-        /* Store the error */
-        theError = pError;
+        /* Store the errors */
+        theErrors.addList(pErrors);
 
         /* Enable data show for this error */
-        theDataEntry.setObject(theError);
+        theDataEntry.setObject(theErrors);
         theDataEntry.showPrimeEntry();
         theDataEntry.setFocus();
 
@@ -410,7 +420,8 @@ public class StatusBar {
     /**
      * Listener class.
      */
-    private class StatusListener implements ActionListener {
+    private class StatusListener
+            implements ActionListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -431,7 +442,7 @@ public class StatusBar {
                 theStatPanel.setVisible(false);
 
                 /* Clear the error */
-                theError = null;
+                theErrors.clear();
                 theDataEntry.hideEntry();
 
                 /* Finish the thread */
@@ -443,7 +454,7 @@ public class StatusBar {
                 theStatPanel.setVisible(false);
 
                 /* Clear the error */
-                theError = null;
+                theErrors.clear();
                 theDataEntry.hideEntry();
 
                 /* Finish the thread */
@@ -594,7 +605,8 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differNumSteps(final StatusData pData) {
-            return (pData == null) || (theNumSteps != pData.getNumSteps());
+            return (pData == null)
+                   || (theNumSteps != pData.getNumSteps());
         }
 
         /**
@@ -603,7 +615,8 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differNumStages(final StatusData pData) {
-            return (pData == null) || (theNumStages != pData.getNumStages());
+            return (pData == null)
+                   || (theNumStages != pData.getNumStages());
         }
 
         /**
@@ -612,7 +625,8 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differStepsDone(final StatusData pData) {
-            return (pData == null) || (theStepsDone != pData.getStepsDone());
+            return (pData == null)
+                   || (theStepsDone != pData.getStepsDone());
         }
 
         /**
@@ -621,7 +635,8 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differStagesDone(final StatusData pData) {
-            return (pData == null) || (theStagesDone != pData.getStagesDone());
+            return (pData == null)
+                   || (theStagesDone != pData.getStagesDone());
         }
 
         /**
@@ -630,7 +645,8 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differStage(final StatusData pData) {
-            return (pData == null) || !Difference.isEqual(theStage, pData.getStage());
+            return (pData == null)
+                   || !Difference.isEqual(theStage, pData.getStage());
         }
 
         /**
@@ -639,7 +655,8 @@ public class StatusBar {
          * @return true/false
          */
         public boolean differTask(final StatusData pData) {
-            return (pData == null) || !Difference.isEqual(theTask, pData.getTask());
+            return (pData == null)
+                   || !Difference.isEqual(theTask, pData.getTask());
         }
 
         /**

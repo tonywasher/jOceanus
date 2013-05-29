@@ -59,6 +59,26 @@ public class AccountInfoType
     }
 
     /**
+     * WebSite length.
+     */
+    protected static final int WEBSITE_LEN = 50;
+
+    /**
+     * Data length.
+     */
+    protected static final int DATA_LEN = 20;
+
+    /**
+     * Comment length.
+     */
+    protected static final int COMMENT_LEN = 50;
+
+    /**
+     * Notes length.
+     */
+    protected static final int NOTES_LEN = 500;
+
+    /**
      * Return the Account Info class of the AccountInfoType.
      * @return the class
      */

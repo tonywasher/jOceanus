@@ -61,18 +61,16 @@ public abstract class LoaderThread<T extends DataSet<T>>
 
                 /* If we have new data */
                 if (myData != null) {
-                    /* Activate the data and obtain any error */
+                    /* Activate the data and obtain any errors */
                     theControl.setData(myData);
-                    setError(theControl.getError());
+                    addErrorList(theControl.getErrors());
                 }
             }
-
-            completeStatusBar();
 
             /* Catch any exception to keep thread interface clean */
         } catch (Exception e) {
             /* Report the failure */
-            setError(new JDataException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
+            addError(new JDataException(ExceptionClass.DATA, "Failed to obtain and activate new data", e));
         }
 
         /* Update the Status Bar */

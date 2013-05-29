@@ -260,9 +260,12 @@ public class AccountSelect
      */
     public void restoreSavePoint() {
         /* Restore the savePoint */
-        theState = new AccountState(theSavePoint);
+        theState = (theSavePoint == null)
+                ? new AccountState()
+                : new AccountState(theSavePoint);
 
         /* Build the range and apply the state */
+        buildAccountTypes();
         buildAccounts();
         theState.applyState();
     }

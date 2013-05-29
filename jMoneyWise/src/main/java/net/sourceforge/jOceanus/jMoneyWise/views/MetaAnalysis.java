@@ -28,6 +28,8 @@ import java.util.Iterator;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JPrice;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
@@ -36,25 +38,15 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.MoneyAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AnalysisState;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetSummary;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AssetTotal;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.BucketList;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.MarketTotal;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.PayeeTotal;
-import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.EventAttribute;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.CategorySummary;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.CategoryTotal;
-import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
 
@@ -89,11 +81,6 @@ public class MetaAnalysis {
     private final Analysis theAnalysis;
 
     /**
-     * Analysis Buckets.
-     */
-    private final BucketList theList;
-
-    /**
      * Chargeable events.
      */
     private final ChargeableEventList theCharges;
@@ -109,54 +96,29 @@ public class MetaAnalysis {
     private final TaxYear theYear;
 
     /**
-     * The Assets Summary.
-     */
-    private AssetSummary theAssetSummary = null;
-
-    /**
-     * The payee totals.
-     */
-    private PayeeTotal thePayeeTotals = null;
-
-    /**
-     * The Category profit.
-     */
-    private CategoryTotal theCatProfit = null;
-
-    /**
-     * The core profit.
-     */
-    private CategoryTotal theCoreProfit = null;
-
-    /**
-     * The core income.
-     */
-    private CategoryTotal theCoreIncome = null;
-
-    /**
      * The market account.
      */
-    private PayeeAccountDetail theMarketAccount = null;
+    private final AccountBucket theMarketAccount;
 
     /**
      * The market growth.
      */
-    private EventCategoryDetail theMarketGrowth = null;
+    private final EventCategoryBucket theMarketGrowth;
 
     /**
      * The market shrink.
      */
-    private EventCategoryDetail theMarketShrink = null;
+    private final EventCategoryBucket theMarketShrink;
 
     /**
      * The capital Gains.
      */
-    private EventCategoryDetail theCapitalGains = null;
+    private final EventCategoryBucket theCapitalGains;
 
     /**
      * The capital loss.
      */
-    private EventCategoryDetail theCapitalLoss = null;
+    private final EventCategoryBucket theCapitalLoss;
 
     /**
      * Do we have an age allowance?
@@ -231,283 +193,162 @@ public class MetaAnalysis {
         theAnalysis = pAnalysis;
         theDate = theAnalysis.getDate();
         theYear = theAnalysis.getTaxYear();
-        theList = theAnalysis.getList();
         theCharges = theAnalysis.getCharges();
+
+        /* Access key accounts */
+        FinanceData myData = theAnalysis.getData();
+        AccountList myAccounts = myData.getAccounts();
+        AccountBucketList myAccountBuckets = theAnalysis.getAccounts();
+        theMarketAccount = myAccountBuckets.getBucket(myAccounts.getSingularClass(AccountCategoryClass.Market));
+
+        /* Access Key Categories */
+        EventCategoryBucketList myEventCategories = theAnalysis.getEventCategories();
+        theCapitalGains = myEventCategories.getBucket(EventCategoryClass.CapitalGain);
+        theCapitalLoss = myEventCategories.getBucket(EventCategoryClass.CapitalLoss);
+        theMarketGrowth = myEventCategories.getBucket(EventCategoryClass.MarketGrowth);
+        theMarketShrink = myEventCategories.getBucket(EventCategoryClass.MarketShrink);
     }
 
     /**
-     * Value the priced assets.
+     * Analyse accounts.
      */
-    protected void valueAssets() {
-        /* Access the state of the analysis */
-        AnalysisState myState = theAnalysis.getState();
-
-        /* Ignore request if we are not in raw state */
-        if (myState != AnalysisState.RAW) {
-            return;
-        }
-
-        /* Obtain access to account list */
-        FinanceData myData = theAnalysis.getData();
-        AccountList myAccounts = myData.getAccounts();
-
-        /* Obtain access to key elements */
-        theMarketAccount = (PayeeAccountDetail) theList.getAccountBucket(myAccounts.getSingularClass(AccountCategoryClass.Market));
-        theMarketGrowth = theList.getCategoryDetail(EventCategoryClass.MarketGrowth);
-        theMarketShrink = theList.getCategoryDetail(EventCategoryClass.MarketShrink);
-        theCapitalGains = theList.getCategoryDetail(EventCategoryClass.CapitalGain);
-        theCapitalLoss = theList.getCategoryDetail(EventCategoryClass.CapitalLoss);
-
+    protected void analyseAccounts() {
         /* Access the iterator */
-        Iterator<AnalysisBucket> myIterator = theList.iterator();
+        AccountBucketList myAccountBuckets = theAnalysis.getAccounts();
+        AccountCategoryBucketList myTotalBuckets = theAnalysis.getAccountCategories();
+        Iterator<AccountBucket> myIterator = myAccountBuckets.listIterator();
 
         /* Loop through the buckets */
         while (myIterator.hasNext()) {
-            AnalysisBucket myCurr = myIterator.next();
+            AccountBucket myCurr = myIterator.next();
+            AccountCategory myCategory = myCurr.getAccountCategory();
 
-            /* Switch on bucket Type */
-            switch (myCurr.getBucketType()) {
-            /* Money */
-                case BANKDETAIL:
-                    /* Access the Money account */
-                    MoneyAccountDetail myMoney = (MoneyAccountDetail) myCurr;
+            /* analyse the asset */
+            myCurr.analyseBucket(theDate);
 
-                    /* Record the Rate */
-                    myMoney.recordRate(myData, theDate);
-                    break;
+            /* Access total bucket */
+            AccountCategoryBucket myTotal = myTotalBuckets.getBucket(myCategory);
 
-                /* Assets */
-                case ASSETDETAIL:
-                    /* Access the Asset account */
-                    AssetAccountDetail myAsset = (AssetAccountDetail) myCurr;
-
-                    /* Value the asset */
-                    myAsset.valueAsset(theDate);
-
+            /* If the bucket is priced */
+            switch (myCurr.getCategoryType()) {
+                case Priced:
                     /* Process the market movement */
-                    processMarketMovement(myAsset);
-
-                    /* Calculate the profit */
-                    myAsset.calculateProfit();
+                    processMarketMovement(myCurr);
                     break;
                 default:
+                    /* Remove the bucket if it is irrelevant */
+                    if (!myCurr.isRelevant()) {
+                        myIterator.remove();
+                        continue;
+                    }
                     break;
             }
+
+            /* Add values to the total */
+            myTotal.addValues(myCurr);
         }
 
-        /* Set the state to valued */
-        theAnalysis.setState(AnalysisState.VALUED);
+        /* Produce account category totals */
+        myTotalBuckets.produceTotals();
     }
 
     /**
-     * Process market movement for asset.
+     * Process market movement for an asset.
      * @param pAsset the asset
      */
-    private void processMarketMovement(final AssetAccountDetail pAsset) {
+    private void processMarketMovement(final AccountBucket pAsset) {
+        /* Access key information */
+        Account myAccount = pAsset.getAccount();
+        JMoney myValue = pAsset.getAttribute(AccountAttribute.Valuation, JMoney.class);
+        JMoney myInvested = pAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+        JMoney myGains = pAsset.getAttribute(AccountAttribute.Gains, JMoney.class);
+        JMoney myGained = pAsset.getAttribute(AccountAttribute.Gained, JMoney.class);
+        JMoney myDividend = pAsset.getAttribute(AccountAttribute.Dividend, JMoney.class);
+        JPrice myPrice = pAsset.getAttribute(AccountAttribute.Price, JPrice.class);
+        JMoney myBaseValue = pAsset.getBaseAttribute(AccountAttribute.Valuation, JMoney.class);
+
         /* Create a capital event */
         CapitalEvent myEvent = pAsset.getCapitalEvents().addEvent(theDate);
 
         /* Add price and value */
-        myEvent.setAttribute(EventAttribute.FinalPrice, pAsset.getPrice());
-        if (pAsset.getPrevValue() != null) {
-            myEvent.setAttribute(EventAttribute.InitialValue, pAsset.getPrevValue());
+        myEvent.setAttribute(CapitalAttribute.FinalPrice, myPrice);
+        if (myBaseValue != null) {
+            myEvent.setAttribute(CapitalAttribute.InitialValue, myBaseValue);
         }
-        myEvent.setAttribute(EventAttribute.FinalValue, pAsset.getValue());
-        myEvent.setAttribute(EventAttribute.FinalInvested, pAsset.getInvested());
-        myEvent.setAttribute(EventAttribute.FinalGains, pAsset.getGains());
-        myEvent.setAttribute(EventAttribute.FinalDividend, pAsset.getDividend());
+        myEvent.setAttribute(CapitalAttribute.FinalValue, myValue);
+        myEvent.setAttribute(CapitalAttribute.FinalInvested, myInvested);
+        myEvent.setAttribute(CapitalAttribute.FinalGains, myGains);
+        myEvent.setAttribute(CapitalAttribute.FinalDividend, myDividend);
 
         /*
          * Calculate basic market movement which is defined as currentValue - previousValue - amountInvested
          */
-        JMoney myMarket = new JMoney(pAsset.getValue());
-        if (pAsset.getBase() != null) {
-            myMarket.subtractAmount(pAsset.getPrevValue());
+        JMoney myMarket = new JMoney(myValue);
+        if (myBaseValue != null) {
+            myMarket.subtractAmount(myBaseValue);
         }
-        myMarket.subtractAmount(pAsset.getInvested());
-
-        /* Access the amount that has been gained in this period */
-        JMoney myGain = pAsset.getGains();
-        Account myAccount = pAsset.getAccount();
+        myMarket.subtractAmount(myInvested);
 
         /* If there have been gains realised in this period */
-        if (myGain.isNonZero()) {
+        if (myGains.isNonZero()) {
             /* If we are subject to capital gains */
             if (myAccount.getAccountCategoryClass().isCapitalGains()) {
                 /* Subtract them from the market movement */
-                myMarket.subtractAmount(myGain);
+                myMarket.subtractAmount(myGains);
 
                 /* If the gains are positive */
-                if (myGain.isPositive()) {
+                if (myGains.isPositive()) {
                     /* Add to capital Gains and market income */
-                    theCapitalGains.getAmount().addAmount(myGain);
-                    theMarketAccount.getIncome().addAmount(myGain);
+                    theCapitalGains.addAmount(myGains);
+                    theMarketAccount.addIncome(myGains);
 
                     /* else the gains are negative */
                 } else {
                     /* Add to capital Loss and market expense */
-                    theCapitalLoss.getAmount().subtractAmount(myGain);
-                    theMarketAccount.getExpense().subtractAmount(myGain);
+                    theCapitalLoss.subtractAmount(myGains);
+                    theMarketAccount.subtractExpense(myGains);
                 }
 
                 /* else if this is a LifeBond */
             } else if (myAccount.isCategoryClass(AccountCategoryClass.LifeBond)) {
                 /* Subtract them from the market movement */
-                myMarket.subtractAmount(myGain);
+                myMarket.subtractAmount(myGains);
 
                 /* If the gains are positive */
-                if (myGain.isPositive()) {
+                if (myGains.isPositive()) {
                     /* Add the market income */
-                    theMarketAccount.getIncome().addAmount(myGain);
+                    theMarketAccount.addIncome(myGains);
                 }
             }
         }
 
         /* Determine the delta gained */
-        JMoney myDeltaGained = new JMoney(myGain);
-        myDeltaGained.addAmount(pAsset.getDividend());
+        JMoney myDeltaGained = new JMoney(myGains);
+        myDeltaGained.addAmount(myDividend);
 
         /* Record initial and delta gained */
-        myEvent.setAttribute(EventAttribute.InitialGained, pAsset.getGained());
-        myEvent.setAttribute(EventAttribute.DeltaGained, myDeltaGained);
+        myEvent.setAttribute(CapitalAttribute.InitialGained, new JMoney(myGained));
+        myEvent.setAttribute(CapitalAttribute.DeltaGained, myDeltaGained);
 
         /* Adjust the Gained Total */
-        pAsset.getGained().addAmount(myDeltaGained);
-        myEvent.setAttribute(EventAttribute.FinalGained, pAsset.getGained());
+        myGained.addAmount(myDeltaGained);
+        myEvent.setAttribute(CapitalAttribute.FinalGained, myGained);
 
         /* If the market movement is positive */
         if (myMarket.isPositive()) {
             /* Add to market income and growth */
-            theMarketAccount.getIncome().addAmount(myMarket);
-            theMarketGrowth.getAmount().addAmount(myMarket);
+            theMarketAccount.addIncome(myMarket);
+            theMarketGrowth.addAmount(myMarket);
 
             /* else the market movement is negative */
         } else {
             /* Add to market expense and shrink */
-            theMarketAccount.getExpense().subtractAmount(myMarket);
-            theMarketShrink.getAmount().subtractAmount(myMarket);
+            theMarketAccount.subtractExpense(myMarket);
+            theMarketShrink.subtractAmount(myMarket);
         }
 
         /* Record market details */
-        myEvent.setAttribute(EventAttribute.MarketMovement, myMarket);
-    }
-
-    /**
-     * Produce totals.
-     */
-    protected void produceTotals() {
-        /* Access the state of the analysis */
-        AnalysisState myState = theAnalysis.getState();
-
-        /* Ignore request if we are not in valued state */
-        if (myState != AnalysisState.VALUED) {
-            return;
-        }
-
-        /* Create a set of total buckets */
-        BucketList myTotals = new BucketList(theAnalysis);
-
-        /* Obtain access to key totals elements */
-        AssetTotal myAssetTotals = myTotals.getAssetTotal();
-        MarketTotal myMarketTotals = myTotals.getMarketTotal();
-        thePayeeTotals = myTotals.getPayeeTotal();
-        theCatProfit = myTotals.getCategoryTotal(TaxCategoryClass.ProfitLoss);
-        theCoreProfit = myTotals.getCategoryTotal(TaxCategoryClass.CoreProfitLoss);
-        theCoreIncome = myTotals.getCategoryTotal(TaxCategoryClass.CoreIncome);
-
-        /* Loop through the detail buckets */
-        Iterator<AnalysisBucket> myIterator = theList.iterator();
-        while (myIterator.hasNext()) {
-            AnalysisBucket myCurr = myIterator.next();
-
-            /* Switch on the bucket type */
-            switch (myCurr.getBucketType()) {
-            /* Accounts with valuations */
-                case ASSETDETAIL:
-                    /* Adjust Asset Summaries if the account is relevant */
-                    if (myCurr.isRelevant()) {
-                        adjustAssetSummary(myTotals, (AccountBucket) myCurr);
-                    }
-
-                    /* Adjust Market Totals */
-                    myMarketTotals.addValues((AssetAccountDetail) myCurr);
-                    break;
-
-                /* Accounts with valuations */
-                case BANKDETAIL:
-                case LOANDETAIL:
-                    /* Adjust Value Summaries */
-                    if (myCurr.isRelevant()) {
-                        adjustAssetSummary(myTotals, (AccountBucket) myCurr);
-                    }
-                    break;
-
-                /* External Accounts */
-                case PAYEEDETAIL:
-                    /* Adjust External Totals */
-                    adjustExternalTotals((PayeeAccountDetail) myCurr);
-                    break;
-
-                /* Category Detail */
-                case CATDETAIL:
-                    /* Adjust CategorySummary */
-                    adjustCategorySummary(myTotals, (EventCategoryDetail) myCurr);
-                    break;
-
-                /* Everything else */
-                default:
-                    /* Nothing to do */
-                    break;
-            }
-        }
-
-        /* Loop through the totals */
-        myIterator = myTotals.iterator();
-        while (myIterator.hasNext()) {
-            AnalysisBucket myCurr = myIterator.next();
-
-            /* Add it to the list */
-            theList.add(myCurr);
-
-            /* Switch on the bucket type */
-            switch (myCurr.getBucketType()) {
-            /* Asset Summaries */
-                case ASSETSUMMARY:
-                    /* Adjust Asset Totals */
-                    myAssetTotals.addValues((AssetSummary) myCurr);
-                    break;
-
-                /* Transaction Summaries */
-                case CATSUMMARY:
-                    /* Adjust Category Totals */
-                    adjustCategoryTotals((CategorySummary) myCurr);
-                    break;
-
-                /* Asset Totals */
-                case ASSETTOTAL:
-                    /* Calculate profit */
-                    ((AssetTotal) myCurr).calculateProfit();
-                    break;
-
-                /* External Totals */
-                case PAYEETOTAL:
-                    /* Calculate profit */
-                    ((PayeeTotal) myCurr).calculateProfit();
-                    break;
-
-                /* Market Totals etc */
-                case MARKETTOTAL:
-                default:
-                    /* Nothing to do */
-                    break;
-            }
-        }
-
-        /* Prune the analysis list */
-        theList.prune();
-
-        /* Set the state to totalled */
-        theAnalysis.setState(AnalysisState.TOTALLED);
+        myEvent.setAttribute(CapitalAttribute.MarketMovement, myMarket);
     }
 
     /**
@@ -515,43 +356,24 @@ public class MetaAnalysis {
      * @param pManager the preference manager
      */
     protected void calculateTax(final PreferenceManager pManager) {
-        TaxBands myBands;
-        JMoney myIncome = new JMoney();
-        JMoney myTax = new JMoney();
-        TaxDetail myBucket;
-        CategorySummary mySrcBucket;
-        AnalysisState myState;
-
-        /* Access the state of the analysis */
-        myState = theAnalysis.getState();
-
-        /* If we are in valued state */
-        if (myState == AnalysisState.VALUED) {
-            /* Produce totals */
-            produceTotals();
-
-            /* Access new state */
-            myState = theAnalysis.getState();
-        }
-
-        /* Ignore request if we are not in totalled state */
-        if (myState != AnalysisState.TOTALLED) {
-            return;
-        }
-
         /* Ignore request if we do not have a TaxYear */
         if (theYear == null) {
             return;
         }
 
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+
         /* Calculate the gross income */
         calculateGrossIncome();
+        JMoney myIncome = new JMoney();
+        JMoney myTax = new JMoney();
 
         /* Calculate the allowances and tax bands */
-        myBands = calculateAllowances(pManager);
+        TaxBands myBands = calculateAllowances(pManager);
 
         /* Calculate the salary taxation */
-        myBucket = calculateSalaryTax(myBands);
+        TaxCategoryBucket myBucket = calculateSalaryTax(myBands);
         myIncome.addAmount(myBucket.getAmount());
         myTax.addAmount(myBucket.getTaxation());
 
@@ -581,26 +403,25 @@ public class MetaAnalysis {
         myTax.addAmount(myBucket.getTaxation());
 
         /* Build the TotalTaxBucket */
-        myBucket = theList.getTaxDetail(TaxCategoryClass.TotalTaxationDue);
+        myBucket = myList.getBucket(TaxCategoryClass.TotalTaxationDue);
         myBucket.setAmount(myIncome);
         myBucket.setTaxation(myTax);
 
         /* Access the tax paid bucket */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.TaxPaid);
+        TaxCategoryBucket mySrcBucket = myList.getBucket(TaxCategoryClass.TaxPaid);
 
         /* Calculate the tax profit */
         myTax.subtractAmount(mySrcBucket.getAmount());
 
         /* Build the TaxProfitBucket */
-        myBucket = theList.getTaxDetail(TaxCategoryClass.TaxProfitLoss);
+        myBucket = myList.getBucket(TaxCategoryClass.TaxProfitLoss);
         myBucket.setAmount(new JMoney());
         myBucket.setTaxation(myTax);
 
-        /* Prune the analysis list */
-        theList.prune();
+        /* Prune the tax category list */
+        myList.prune();
 
         /* Set the state to taxed and record values */
-        theAnalysis.setState(AnalysisState.TAXED);
         theAnalysis.setHasReducedAllow(hasReducedAllow);
         theAnalysis.setHasGainsSlices(hasGainsSlices);
         theAnalysis.setAge(theAge);
@@ -612,20 +433,13 @@ public class MetaAnalysis {
      */
     public void markActiveAccounts() throws JDataException {
         /* Access the iterator */
-        Iterator<AnalysisBucket> myIterator = theList.listIterator();
+        AccountBucketList myList = theAnalysis.getAccounts();
+        Iterator<AccountBucket> myIterator = myList.listIterator();
 
         /* Loop through the items to find the match */
         while (myIterator.hasNext()) {
-            AnalysisBucket myCurr = myIterator.next();
-
-            /* Ignore non account buckets */
-            if (!(myCurr instanceof AccountBucket)) {
-                continue;
-            }
-
-            /* Access account */
-            AccountBucket myBucket = (AccountBucket) myCurr;
-            Account myAccount = myBucket.getAccount();
+            AccountBucket myCurr = myIterator.next();
+            Account myAccount = myCurr.getAccount();
 
             /* If we are closed */
             if (myAccount.isClosed()) {
@@ -633,176 +447,139 @@ public class MetaAnalysis {
                 myAccount.adjustDates();
             }
 
-            /* If this is an asset bucket */
-            if (myCurr instanceof AssetAccountDetail) {
-                /* Access the Asset */
-                AssetAccountDetail myAsset = (AssetAccountDetail) myCurr;
-
-                /* If we have non-zero units */
-                if (myAsset.getUnits().isNonZero()) {
-                    /* Set the account as non-closeable */
-                    myAccount.setNonCloseable();
-                }
-
-                /* else if this is a value bucket */
-            } else if (myCurr instanceof ValueBucket) {
-                /* Access the Account */
-                ValueBucket myValue = (ValueBucket) myCurr;
-
-                /* If we have non-zero value */
-                if (myValue.getValue().isNonZero()) {
-                    /* Set the account as non-close-able */
-                    myAccount.setNonCloseable();
-                }
+            /* switch on bucket type */
+            switch (myCurr.getCategoryType()) {
+                case Priced:
+                    /* If we have non-zero units */
+                    if (myCurr.getAttribute(AccountAttribute.Units, JUnits.class).isNonZero()) {
+                        /* Set the account as non-closeable */
+                        myAccount.setNonCloseable();
+                    }
+                    break;
+                case Money:
+                case CreditCard:
+                    /* If we have non-zero value */
+                    if (myCurr.getAttribute(AccountAttribute.Valuation, JMoney.class).isNonZero()) {
+                        /* Set the account as non-close-able */
+                        myAccount.setNonCloseable();
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }
 
     /**
-     * Adjust Asset Summary.
-     * @param pTotals the totals
+     * Prime tax category from Event Category Bucket.
      * @param pBucket the bucket
      */
-    private void adjustAssetSummary(final BucketList pTotals,
-                                    final AccountBucket pBucket) {
-        ValueBucket myAccount = null;
-        AccountCategory myCategory = pBucket.getAccountCategory();
-
-        /* Switch on the bucket type */
-        switch (pBucket.getBucketType()) {
-        /* Asset/Money/Debt details */
-            case ASSETDETAIL:
-            case BANKDETAIL:
-            case LOANDETAIL:
-                /* Access the account */
-                myAccount = (ValueBucket) pBucket;
-
-                /* If we need to look up the Asset summary */
-                if ((theAssetSummary == null)
-                    || (!theAssetSummary.getAccountCategory().equals(myCategory))) {
-                    /* Access the asset summary */
-                    theAssetSummary = pTotals.getAssetSummary(myCategory);
-                }
-
-                /* Add the value to the asset summary */
-                theAssetSummary.addValues(myAccount);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Adjust Category Summary.
-     * @param pTotals the totals
-     * @param pBucket the bucket
-     */
-    private static void adjustCategorySummary(final BucketList pTotals,
-                                              final EventCategoryDetail pBucket) {
-        EventCategory myCategory = pBucket.getCategory();
-        CategorySummary myBucket;
+    private void primeTaxCategory(final EventCategoryBucket pBucket) {
+        TaxCategoryBucketList myTax = theAnalysis.getTaxCategories();
+        EventCategory myCategory = pBucket.getEventCategory();
+        TaxCategoryBucket myBucket;
 
         /* Switch on the category type */
         switch (myCategory.getCategoryTypeClass()) {
             case TaxedIncome:
                 /* Adjust the Gross salary bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossSalary);
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossSalary);
                 myBucket.addValues(pBucket);
                 break;
             case Interest:
                 /* Adjust the Gross interest bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossInterest);
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossInterest);
                 myBucket.addValues(pBucket);
                 break;
             case Dividend:
                 /* Adjust the Gross dividend bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossDividend);
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossDividend);
                 myBucket.addValues(pBucket);
                 break;
             case UnitTrustDividend:
-                /* Adjust the Gross interest bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossUTDividend);
+                /* Adjust the Gross UT dividend bucket */
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossUTDividend);
                 myBucket.addValues(pBucket);
                 break;
             case TaxableGain:
                 /* Adjust the Taxable Gains bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossTaxableGains);
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossTaxableGains);
                 myBucket.addValues(pBucket);
                 break;
             case CapitalGain:
                 /* Adjust the Capital Gains bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossCapitalGains);
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossCapitalGains);
                 myBucket.addValues(pBucket);
                 break;
             case CapitalLoss:
                 /* Adjust the Capital Gains bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossCapitalGains);
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossCapitalGains);
                 myBucket.subtractValues(pBucket);
                 break;
             case NatInsurance:
             case Benefit:
                 /* Adjust the Gross salary bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossSalary);
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossSalary);
                 myBucket.addValues(pBucket);
 
                 /* Adjust the Virtual bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.Virtual);
+                myBucket = myTax.getBucket(TaxCategoryClass.Virtual);
                 myBucket.addValues(pBucket);
                 break;
             case RentalIncome:
                 /* Adjust the Gross rental bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.GrossRental);
+                myBucket = myTax.getBucket(TaxCategoryClass.GrossRental);
                 myBucket.addValues(pBucket);
                 break;
             case TaxCredit:
             case TaxSettlement:
                 /* Adjust the Tax Paid bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.TaxPaid);
+                myBucket = myTax.getBucket(TaxCategoryClass.TaxPaid);
                 myBucket.addValues(pBucket);
                 break;
             case TaxFreeInterest:
             case TaxFreeDividend:
             case LoanInterest:
                 /* Adjust the Tax Free bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.TaxFree);
+                myBucket = myTax.getBucket(TaxCategoryClass.TaxFree);
                 myBucket.addValues(pBucket);
                 break;
             case Inherited:
                 /* Adjust the Tax Free bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.TaxFree);
+                myBucket = myTax.getBucket(TaxCategoryClass.TaxFree);
                 myBucket.addValues(pBucket);
 
                 /* Adjust the Non-Core bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.NonCore);
+                myBucket = myTax.getBucket(TaxCategoryClass.NonCore);
                 myBucket.addValues(pBucket);
                 break;
             case Expense:
             case WriteOff:
                 /* Adjust the Expense bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.Expense);
+                myBucket = myTax.getBucket(TaxCategoryClass.Expense);
                 myBucket.addValues(pBucket);
                 break;
             case TaxRelief:
                 /* Adjust the Expense bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.Expense);
+                myBucket = myTax.getBucket(TaxCategoryClass.Expense);
                 myBucket.subtractValues(pBucket);
                 break;
             case MarketGrowth:
                 /* Adjust the Market bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.Market);
+                myBucket = myTax.getBucket(TaxCategoryClass.Market);
                 myBucket.addValues(pBucket);
 
                 /* Adjust the Non-Core bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.NonCore);
+                myBucket = myTax.getBucket(TaxCategoryClass.NonCore);
                 myBucket.addValues(pBucket);
                 break;
             case MarketShrink:
                 /* Adjust the Market bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.Market);
+                myBucket = myTax.getBucket(TaxCategoryClass.Market);
                 myBucket.subtractValues(pBucket);
 
                 /* Adjust the Non-Core bucket */
-                myBucket = pTotals.getCategorySummary(TaxCategoryClass.NonCore);
+                myBucket = myTax.getBucket(TaxCategoryClass.NonCore);
                 myBucket.subtractValues(pBucket);
                 break;
             case StockTakeOver:
@@ -818,95 +595,20 @@ public class MetaAnalysis {
     }
 
     /**
-     * Adjust Category Total.
-     * @param pBucket the bucket
-     */
-    private void adjustCategoryTotals(final CategorySummary pBucket) {
-        TaxCategory myType = pBucket.getTaxCategory();
-
-        /* Switch on the tax type */
-        switch (myType.getTaxClass()) {
-            case GrossSalary:
-            case GrossInterest:
-            case GrossDividend:
-            case GrossUTDividend:
-            case GrossRental:
-            case GrossTaxableGains:
-            case GrossCapitalGains:
-            case Market:
-            case TaxFree:
-                /* Adjust the Total Profit buckets */
-                theCatProfit.addValues(pBucket);
-                theCoreProfit.addValues(pBucket);
-                theCoreIncome.addValues(pBucket);
-                break;
-            case TaxPaid:
-                theCoreIncome.subtractValues(pBucket);
-                /* Fall through */
-            case Expense:
-                /* Adjust the Total profits buckets */
-                theCatProfit.subtractValues(pBucket);
-                theCoreProfit.subtractValues(pBucket);
-                break;
-            case Virtual:
-                /* Adjust the Total profits buckets */
-                theCatProfit.subtractValues(pBucket);
-                theCoreProfit.subtractValues(pBucket);
-                theCoreIncome.subtractValues(pBucket);
-                break;
-            case NonCore:
-                /* Adjust the Core profits buckets */
-                theCoreProfit.subtractValues(pBucket);
-                theCoreIncome.subtractValues(pBucket);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
-     * Adjust External Totals.
-     * @param pBucket the bucket
-     */
-    private void adjustExternalTotals(final PayeeAccountDetail pBucket) {
-        /* If the expense is negative */
-        JMoney myMoney = pBucket.getExpense();
-        if (!myMoney.isPositive()) {
-            /* Swap it to the income side */
-            pBucket.getIncome().subtractAmount(myMoney);
-            myMoney.setZero();
-        }
-
-        /* If the old expense is negative */
-        myMoney = pBucket.getPrevExpense();
-        if ((myMoney != null)
-            && (!myMoney.isPositive())) {
-            /* Swap it to the income side */
-            pBucket.getPrevIncome().subtractAmount(myMoney);
-            myMoney.setZero();
-        }
-
-        /* Add the values to the payee totals */
-        thePayeeTotals.addValues(pBucket);
-    }
-
-    /**
      * Calculate the gross income for tax purposes.
      */
     private void calculateGrossIncome() {
-        TaxDetail myBucket;
-        CategorySummary mySrcBucket;
-        EventCategoryDetail myDtlBucket;
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
         JMoney myIncome = new JMoney();
-        JMoney myChargeable;
 
         /* Access the salary bucket and add to income */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossSalary);
+        TaxCategoryBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossSalary);
         myIncome.addAmount(mySrcBucket.getAmount());
 
         /* Access the rental bucket */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossRental);
-        myChargeable = new JMoney(mySrcBucket.getAmount());
+        mySrcBucket = myList.getBucket(TaxCategoryClass.GrossRental);
+        JMoney myChargeable = new JMoney(mySrcBucket.getAmount());
 
         /* If we have a chargeable element */
         if (myChargeable.compareTo(theYear.getRentalAllowance()) > 0) {
@@ -916,27 +618,27 @@ public class MetaAnalysis {
         }
 
         /* Access the interest bucket and add to income */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossInterest);
+        mySrcBucket = myList.getBucket(TaxCategoryClass.GrossInterest);
         myIncome.addAmount(mySrcBucket.getAmount());
 
         /* Access the dividends bucket and add to income */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossDividend);
+        mySrcBucket = myList.getBucket(TaxCategoryClass.GrossDividend);
         myIncome.addAmount(mySrcBucket.getAmount());
 
         /* Access the unit trust dividends bucket and add to income */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossUTDividend);
+        mySrcBucket = myList.getBucket(TaxCategoryClass.GrossUTDividend);
         myIncome.addAmount(mySrcBucket.getAmount());
 
         /* Access the taxable gains bucket and add to income */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossTaxableGains);
+        mySrcBucket = myList.getBucket(TaxCategoryClass.GrossTaxableGains);
         myIncome.addAmount(mySrcBucket.getAmount());
 
         /* Access the taxable gains bucket and subtract the tax credit */
-        myDtlBucket = theList.getCategoryDetail(EventCategoryClass.TaxableGain);
-        myIncome.subtractAmount(myDtlBucket.getTaxCredit());
+        // EventCategoryBucket myDtlBucket = myList.getBucket(EventCategoryClass.TaxableGain);
+        // myIncome.subtractAmount(myDtlBucket.getAttribute(EventAttribute.TaxCredit, JMoney.class));
 
         /* Access the capital gains bucket */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossCapitalGains);
+        mySrcBucket = myList.getBucket(TaxCategoryClass.GrossCapitalGains);
         myChargeable = new JMoney(mySrcBucket.getAmount());
 
         /* If we have a chargeable element */
@@ -947,7 +649,7 @@ public class MetaAnalysis {
         }
 
         /* Access the Gross Income bucket and set the amount */
-        myBucket = theList.getTaxDetail(TaxCategoryClass.GrossIncome);
+        TaxCategoryBucket myBucket = myList.getBucket(TaxCategoryClass.GrossIncome);
         myBucket.setAmount(myIncome);
     }
 
@@ -957,6 +659,9 @@ public class MetaAnalysis {
      * @return the taxBands
      */
     private TaxBands calculateAllowances(final PreferenceManager pManager) {
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+
         /* Allocate the tax bands class */
         TaxBands myBands = new TaxBands();
         JMoney myAllowance;
@@ -980,11 +685,11 @@ public class MetaAnalysis {
         }
 
         /* Record the Original allowance */
-        TaxDetail myParentBucket = theList.getTaxDetail(TaxCategoryClass.OriginalAllowance);
+        TaxCategoryBucket myParentBucket = myList.getBucket(TaxCategoryClass.OriginalAllowance);
         myParentBucket.setAmount(myAllowance);
 
         /* Access the gross income */
-        TaxDetail myBucket = theList.getTaxDetail(TaxCategoryClass.GrossIncome);
+        TaxCategoryBucket myBucket = myList.getBucket(TaxCategoryClass.GrossIncome);
         JMoney myGrossIncome = myBucket.getAmount();
         myBucket.setParent(myParentBucket);
 
@@ -1011,7 +716,7 @@ public class MetaAnalysis {
             }
 
             /* Record the adjusted allowance */
-            myBucket = theList.getTaxDetail(TaxCategoryClass.AdjustedAllowance);
+            myBucket = myList.getBucket(TaxCategoryClass.AdjustedAllowance);
             myBucket.setAmount(myBands.theAllowance);
             myBucket.setParent(myParentBucket);
             hasReducedAllow = true;
@@ -1031,7 +736,7 @@ public class MetaAnalysis {
             myBands.theHiBand.subtractAmount(myBands.theBasicBand);
 
             /* Record the High tax band */
-            myBucket = theList.getTaxDetail(TaxCategoryClass.HiTaxBand);
+            myBucket = myList.getBucket(TaxCategoryClass.HiTaxBand);
             myBucket.setAmount(myBands.theHiBand);
             myBucket.setParent(myParentBucket);
 
@@ -1056,7 +761,7 @@ public class MetaAnalysis {
                 }
 
                 /* Record the adjusted allowance */
-                myBucket = theList.getTaxDetail(TaxCategoryClass.AdjustedAllowance);
+                myBucket = myList.getBucket(TaxCategoryClass.AdjustedAllowance);
                 myBucket.setAmount(myBands.theAllowance);
                 myBucket.setParent(myParentBucket);
                 hasReducedAllow = true;
@@ -1072,24 +777,22 @@ public class MetaAnalysis {
      * @param pBands the remaining allowances and tax bands
      * @return the salary taxation bucket
      */
-    private TaxDetail calculateSalaryTax(final TaxBands pBands) {
-        CategorySummary mySrcBucket;
-        TaxDetail myTaxBucket;
-        TaxDetail myTopBucket;
-        JMoney mySalary;
+    private TaxCategoryBucket calculateSalaryTax(final TaxBands pBands) {
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+
+        /* Access Salary */
+        TaxCategoryBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossSalary);
+        JMoney mySalary = new JMoney(mySrcBucket.getAmount());
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
-        /* Access Salary */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossSalary);
-        mySalary = new JMoney(mySrcBucket.getAmount());
-
         /* Store the total into the TaxDueSalary Bucket */
-        myTopBucket = theList.getTaxDetail(TaxCategoryClass.TaxDueSalary);
+        TaxCategoryBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueSalary);
         myTopBucket.setAmount(mySalary);
 
         /* Access the FreeSalaryBucket */
-        myTaxBucket = theList.getTaxDetail(TaxCategoryClass.SalaryNilRate);
+        TaxCategoryBucket myTaxBucket = myList.getBucket(TaxCategoryClass.SalaryNilRate);
         myTaxBucket.setParent(myTopBucket);
 
         /* If the salary is greater than the remaining allowance */
@@ -1116,7 +819,7 @@ public class MetaAnalysis {
             /* If we have a low salary band */
             if (theYear.hasLoSalaryBand()) {
                 /* Access the LowSalaryBucket */
-                myTaxBucket = theList.getTaxDetail(TaxCategoryClass.SalaryLoRate);
+                myTaxBucket = myList.getBucket(TaxCategoryClass.SalaryLoRate);
                 myTaxBucket.setRate(theYear.getLoTaxRate());
                 myTaxBucket.setParent(myTopBucket);
 
@@ -1155,7 +858,7 @@ public class MetaAnalysis {
         /* If we have salary left */
         if (!isFinished) {
             /* Access the BasicSalaryBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.SalaryBasicRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.SalaryBasicRate);
             myTaxBucket.setRate(theYear.getBasicTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1182,7 +885,7 @@ public class MetaAnalysis {
         /* If we have salary left */
         if (!isFinished) {
             /* Access the HiSalaryBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.SalaryHiRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.SalaryHiRate);
             myTaxBucket.setRate(theYear.getHiTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1212,7 +915,7 @@ public class MetaAnalysis {
         /* If we have salary left */
         if (!isFinished) {
             /* Access the AdditionalSalaryBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.SalaryAdditionalRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.SalaryAdditionalRate);
             myTaxBucket.setRate(theYear.getAddTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1232,29 +935,26 @@ public class MetaAnalysis {
      * @param pBands the remaining allowances and tax bands
      * @return the rental tax bucket
      */
-    private TaxDetail calculateRentalTax(final TaxBands pBands) {
-        CategorySummary mySrcBucket;
-        TaxDetail myTaxBucket;
-        TaxDetail myTopBucket;
-        JMoney myRental;
-        JMoney myAllowance;
+    private TaxCategoryBucket calculateRentalTax(final TaxBands pBands) {
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+
+        /* Access Rental */
+        TaxCategoryBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossRental);
+        JMoney myRental = new JMoney(mySrcBucket.getAmount());
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
-        /* Access Rental */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossRental);
-        myRental = new JMoney(mySrcBucket.getAmount());
-
         /* Store the total into the TaxDueRental Bucket */
-        myTopBucket = theList.getTaxDetail(TaxCategoryClass.TaxDueRental);
+        TaxCategoryBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueRental);
         myTopBucket.setAmount(myRental);
 
         /* Access the FreeRentalBucket */
-        myTaxBucket = theList.getTaxDetail(TaxCategoryClass.RentalNilRate);
+        TaxCategoryBucket myTaxBucket = myList.getBucket(TaxCategoryClass.RentalNilRate);
         myTaxBucket.setParent(myTopBucket);
 
         /* Pick up the rental allowance */
-        myAllowance = theYear.getRentalAllowance();
+        JMoney myAllowance = theYear.getRentalAllowance();
 
         /* If the rental is less than the rental allowance */
         if (myRental.compareTo(myAllowance) < 0) {
@@ -1298,8 +998,8 @@ public class MetaAnalysis {
         if (!isFinished) {
             /* If we have a low salary band */
             if (theYear.hasLoSalaryBand()) {
-                /* Access the LowSalaryBucket */
-                myTaxBucket = theList.getTaxDetail(TaxCategoryClass.RentalLoRate);
+                /* Access the LowRentalBucket */
+                myTaxBucket = myList.getBucket(TaxCategoryClass.RentalLoRate);
                 myTaxBucket.setRate(theYear.getLoTaxRate());
                 myTaxBucket.setParent(myTopBucket);
 
@@ -1338,7 +1038,7 @@ public class MetaAnalysis {
         /* If we have Rental left */
         if (!isFinished) {
             /* Access the BasicRentalBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.RentalBasicRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.RentalBasicRate);
             myTaxBucket.setRate(theYear.getBasicTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1365,7 +1065,7 @@ public class MetaAnalysis {
         /* If we have rental left */
         if (!isFinished) {
             /* Access the HiRentalBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.RentalHiRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.RentalHiRate);
             myTaxBucket.setRate(theYear.getHiTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1395,7 +1095,7 @@ public class MetaAnalysis {
         /* If we have rental left */
         if (!isFinished) {
             /* Access the AdditionalRentalBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.RentalAdditionalRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.RentalAdditionalRate);
             myTaxBucket.setRate(theYear.getAddTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1415,13 +1115,9 @@ public class MetaAnalysis {
      * @param pBands the remaining allowances and tax bands
      * @return the interest tax bucket
      */
-    private TaxDetail calculateInterestTax(final TaxBands pBands) {
-        CategorySummary mySrcBucket;
-        TaxDetail myTaxBucket;
-        TaxDetail myTopBucket;
-        JMoney myInterest;
-        JMoney myTax = new JMoney();
-        boolean isFinished = false;
+    private TaxCategoryBucket calculateInterestTax(final TaxBands pBands) {
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
 
         /* If we do not have a Low salary band */
         if (!theYear.hasLoSalaryBand()) {
@@ -1430,15 +1126,17 @@ public class MetaAnalysis {
         }
 
         /* Access Interest */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossInterest);
-        myInterest = new JMoney(mySrcBucket.getAmount());
+        TaxCategoryBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossInterest);
+        JMoney myInterest = new JMoney(mySrcBucket.getAmount());
+        JMoney myTax = new JMoney();
+        boolean isFinished = false;
 
         /* Store the total into the TaxDueInterest Bucket */
-        myTopBucket = theList.getTaxDetail(TaxCategoryClass.TaxDueInterest);
+        TaxCategoryBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueInterest);
         myTopBucket.setAmount(myInterest);
 
         /* Access the FreeInterestBucket */
-        myTaxBucket = theList.getTaxDetail(TaxCategoryClass.InterestNilRate);
+        TaxCategoryBucket myTaxBucket = myList.getBucket(TaxCategoryClass.InterestNilRate);
         myTaxBucket.setParent(myTopBucket);
 
         /* If the interest is greater than the remaining allowance */
@@ -1463,7 +1161,7 @@ public class MetaAnalysis {
         /* If we have interest left */
         if (!isFinished) {
             /* Access the LowInterestBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.InterestLoRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.InterestLoRate);
             myTaxBucket.setRate(theYear.getLoTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1490,7 +1188,7 @@ public class MetaAnalysis {
         /* If we have interest left */
         if (!isFinished) {
             /* Access the BasicInterestBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.InterestBasicRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.InterestBasicRate);
             myTaxBucket.setRate(theYear.getIntTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1517,7 +1215,7 @@ public class MetaAnalysis {
         /* If we have interest left */
         if (!isFinished) {
             /* Access the HiInterestBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.InterestHiRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.InterestHiRate);
             myTaxBucket.setRate(theYear.getHiTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1547,7 +1245,7 @@ public class MetaAnalysis {
         /* If we have interest left */
         if (!isFinished) {
             /* Access the AdditionalInterestBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.InterestAdditionalRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.InterestAdditionalRate);
             myTaxBucket.setRate(theYear.getAddTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1574,28 +1272,26 @@ public class MetaAnalysis {
      * @param pBands the remaining allowances and tax bands
      * @return the dividends tax bucket
      */
-    private TaxDetail calculateDividendsTax(final TaxBands pBands) {
-        CategorySummary mySrcBucket;
-        TaxDetail myTaxBucket;
-        TaxDetail myTopBucket;
-        JMoney myDividends;
+    private TaxCategoryBucket calculateDividendsTax(final TaxBands pBands) {
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+
+        /* Access Dividends */
+        TaxCategoryBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossDividend);
+        JMoney myDividends = new JMoney(mySrcBucket.getAmount());
         JMoney myTax = new JMoney();
         boolean isFinished = false;
 
-        /* Access Dividends */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossDividend);
-        myDividends = new JMoney(mySrcBucket.getAmount());
-
         /* Access Unit Trust Dividends */
-        mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossUTDividend);
+        mySrcBucket = myList.getBucket(TaxCategoryClass.GrossUTDividend);
         myDividends.addAmount(mySrcBucket.getAmount());
 
         /* Store the total into the TaxDueDividends Bucket */
-        myTopBucket = theList.getTaxDetail(TaxCategoryClass.TaxDueDividend);
+        TaxCategoryBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueDividend);
         myTopBucket.setAmount(myDividends);
 
         /* Access the BasicDividendBucket */
-        myTaxBucket = theList.getTaxDetail(TaxCategoryClass.DividendBasicRate);
+        TaxCategoryBucket myTaxBucket = myList.getBucket(TaxCategoryClass.DividendBasicRate);
         myTaxBucket.setRate(theYear.getDivTaxRate());
         myTaxBucket.setParent(myTopBucket);
 
@@ -1621,7 +1317,7 @@ public class MetaAnalysis {
         /* If we have dividends left */
         if (!isFinished) {
             /* Access the HiDividendsBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.DividendHiRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.DividendHiRate);
             myTaxBucket.setRate(theYear.getHiDivTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1651,7 +1347,7 @@ public class MetaAnalysis {
         /* If we have dividends left */
         if (!isFinished) {
             /* Access the AdditionalDividendsBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.DividendAdditionalRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.DividendAdditionalRate);
             myTaxBucket.setRate(theYear.getAddDivTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1671,21 +1367,24 @@ public class MetaAnalysis {
      * @param pBands the remaining allowances and tax bands
      * @return the taxable gains bucket
      */
-    private TaxDetail calculateTaxableGainsTax(final TaxBands pBands) {
+    private TaxCategoryBucket calculateTaxableGainsTax(final TaxBands pBands) {
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+
         /* Access Gains */
         JMoney myGains = theCharges.getGainsTotal();
         JMoney myTax = new JMoney();
         boolean isFinished = false;
-        TaxDetail myTaxBucket;
+        TaxCategoryBucket myTaxBucket;
 
         /* Store the total into the TaxDueTaxGains Bucket */
-        TaxDetail myTopBucket = theList.getTaxDetail(TaxCategoryClass.TaxDueTaxableGains);
+        TaxCategoryBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueTaxableGains);
         myTopBucket.setAmount(myGains);
 
         /* If the gains are less than the available basic tax band */
         if (myGains.compareTo(pBands.theBasicBand) <= 0) {
             /* Access the BasicGainsBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.GainsBasicRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.GainsBasicRate);
             myTaxBucket.setRate(theYear.getBasicTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1703,7 +1402,7 @@ public class MetaAnalysis {
         if ((!isFinished)
             && ((!pBands.theBasicBand.isNonZero()) || (hasAgeAllowance))) {
             /* Access the BasicGainsBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.GainsBasicRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.GainsBasicRate);
             myTaxBucket.setRate(theYear.getBasicTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1720,7 +1419,7 @@ public class MetaAnalysis {
             /* else case already handled */
 
             /* Access the HiGainsBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.GainsHiRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.GainsHiRate);
             myTaxBucket.setRate(theYear.getHiTaxRate());
             myTaxBucket.setParent(myTopBucket);
 
@@ -1749,7 +1448,7 @@ public class MetaAnalysis {
             /* If we have gains left */
             if (!isFinished) {
                 /* Access the AdditionalGainsBucket */
-                myTaxBucket = theList.getTaxDetail(TaxCategoryClass.GainsAdditionalRate);
+                myTaxBucket = myList.getBucket(TaxCategoryClass.GainsAdditionalRate);
                 myTaxBucket.setRate(theYear.getAddDivTaxRate());
                 myTaxBucket.setParent(myTopBucket);
 
@@ -1766,11 +1465,11 @@ public class MetaAnalysis {
             hasGainsSlices = true;
 
             /* Access the TaxDueSlice Bucket */
-            TaxDetail mySliceBucket = theList.getTaxDetail(TaxCategoryClass.TaxDueSlice);
+            TaxCategoryBucket mySliceBucket = myList.getBucket(TaxCategoryClass.TaxDueSlice);
             mySliceBucket.setAmount(mySlice);
 
             /* Access the BasicSliceBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.SliceBasicRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.SliceBasicRate);
             myTaxBucket.setRate(theYear.getBasicTaxRate());
             myTaxBucket.setParent(mySliceBucket);
 
@@ -1783,7 +1482,7 @@ public class MetaAnalysis {
                 theCharges.applyTax(myTax, theCharges.getSliceTotal());
 
                 /* Access the BasicGainsBucket */
-                myTaxBucket = theList.getTaxDetail(TaxCategoryClass.GainsBasicRate);
+                myTaxBucket = myList.getBucket(TaxCategoryClass.GainsBasicRate);
                 myTaxBucket.setRate(theYear.getBasicTaxRate());
 
                 /* Only basic rate tax is payable */
@@ -1799,7 +1498,7 @@ public class MetaAnalysis {
                 mySlice.subtractAmount(pBands.theBasicBand);
 
                 /* Access the BasicGainsBucket */
-                myTaxBucket = theList.getTaxDetail(TaxCategoryClass.GainsBasicRate);
+                myTaxBucket = myList.getBucket(TaxCategoryClass.GainsBasicRate);
                 myTaxBucket.setRate(theYear.getBasicTaxRate());
 
                 /* Basic Rate tax is payable on the remainder of the basic band */
@@ -1810,7 +1509,7 @@ public class MetaAnalysis {
                 myHiTax.negate();
 
                 /* Access the HiSliceBucket */
-                myTaxBucket = theList.getTaxDetail(TaxCategoryClass.SliceHiRate);
+                myTaxBucket = myList.getBucket(TaxCategoryClass.SliceHiRate);
                 myTaxBucket.setRate(theYear.getHiTaxRate());
                 myTaxBucket.setParent(mySliceBucket);
 
@@ -1824,7 +1523,7 @@ public class MetaAnalysis {
                     mySlice.subtractAmount(pBands.theHiBand);
 
                     /* Access the AdditionalSliceBucket */
-                    myTaxBucket = theList.getTaxDetail(TaxCategoryClass.SliceAdditionalRate);
+                    myTaxBucket = myList.getBucket(TaxCategoryClass.SliceAdditionalRate);
                     myTaxBucket.setRate(theYear.getAddTaxRate());
                     myTaxBucket.setParent(mySliceBucket);
 
@@ -1850,7 +1549,7 @@ public class MetaAnalysis {
                 myHiTax.addAmount(myTax);
 
                 /* Access the HiGainsBucket */
-                myTaxBucket = theList.getTaxDetail(TaxCategoryClass.GainsHiRate);
+                myTaxBucket = myList.getBucket(TaxCategoryClass.GainsHiRate);
                 myTaxBucket.setParent(myTopBucket);
 
                 /* Subtract the basic band from the gains */
@@ -1862,7 +1561,7 @@ public class MetaAnalysis {
             }
 
             /* Re-access the gains */
-            CategorySummary mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossTaxableGains);
+            TaxCategoryBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossTaxableGains);
             myGains = new JMoney(mySrcBucket.getAmount());
 
             /* Subtract the gains from the tax bands */
@@ -1874,7 +1573,7 @@ public class MetaAnalysis {
         }
 
         /* Access the TaxDueTaxableGains Bucket */
-        myTaxBucket = theList.getTaxDetail(TaxCategoryClass.TaxDueTaxableGains);
+        myTaxBucket = myList.getBucket(TaxCategoryClass.TaxDueTaxableGains);
         myTaxBucket.setTaxation(myTax);
 
         /* Return the tax bucket */
@@ -1886,17 +1585,20 @@ public class MetaAnalysis {
      * @param pBands the remaining allowances and tax bands
      * @return the capital gains tax bucket
      */
-    private TaxDetail calculateCapitalGainsTax(final TaxBands pBands) {
-        /* Access Capital */
-        CategorySummary mySrcBucket = theList.getCategorySummary(TaxCategoryClass.GrossCapitalGains);
+    private TaxCategoryBucket calculateCapitalGainsTax(final TaxBands pBands) {
+        /* Access Tax Categories */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
+
+        /* Access base bucket */
+        TaxCategoryBucket mySrcBucket = myList.getBucket(TaxCategoryClass.GrossCapitalGains);
         JMoney myCapital = new JMoney(mySrcBucket.getAmount());
 
         /* Store the total into the TaxDueCapital Bucket */
-        TaxDetail myTopBucket = theList.getTaxDetail(TaxCategoryClass.TaxDueCapitalGains);
+        TaxCategoryBucket myTopBucket = myList.getBucket(TaxCategoryClass.TaxDueCapitalGains);
         myTopBucket.setAmount(myCapital);
 
         /* Access the FreeGainsBucket */
-        TaxDetail myTaxBucket = theList.getTaxDetail(TaxCategoryClass.CapitalNilRate);
+        TaxCategoryBucket myTaxBucket = myList.getBucket(TaxCategoryClass.CapitalNilRate);
         myTaxBucket.setParent(myTopBucket);
 
         /* Pick up the capital allowance */
@@ -1923,7 +1625,7 @@ public class MetaAnalysis {
         /* If we have gains left */
         if (!isFinished) {
             /* Access the BasicGainsBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.CapitalBasicRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.CapitalBasicRate);
             myTaxBucket.setRate((myRegime.hasCapitalGainsAsIncome()
                     ? theYear.getBasicTaxRate()
                     : theYear.getCapTaxRate()));
@@ -1958,7 +1660,7 @@ public class MetaAnalysis {
         /* If we have gains left */
         if (!isFinished) {
             /* Access the HiGainsBucket */
-            myTaxBucket = theList.getTaxDetail(TaxCategoryClass.CapitalHiRate);
+            myTaxBucket = myList.getBucket(TaxCategoryClass.CapitalHiRate);
             myTaxBucket.setRate((myRegime.hasCapitalGainsAsIncome()
                     ? theYear.getHiTaxRate()
                     : theYear.getHiCapTaxRate()));

@@ -63,7 +63,6 @@ public class TableAccount
         /* Define the columns */
         myTableDef.addEncryptedColumn(AccountBase.FIELD_NAME, AccountBase.NAMELEN);
         ColumnDefinition mySortCol = myTableDef.addReferenceColumn(AccountBase.FIELD_CATEGORY, TableAccountCategory.TABLE_NAME);
-        myTableDef.addNullEncryptedColumn(AccountBase.FIELD_DESC, AccountBase.DESCLEN);
         myTableDef.addBooleanColumn(AccountBase.FIELD_CLOSED);
         myTableDef.addBooleanColumn(AccountBase.FIELD_TAXFREE);
 
@@ -85,12 +84,11 @@ public class TableAccount
         TableDefinition myTableDef = getTableDef();
         byte[] myName = myTableDef.getBinaryValue(AccountBase.FIELD_NAME);
         Integer myCategoryId = myTableDef.getIntegerValue(AccountBase.FIELD_CATEGORY);
-        byte[] myDesc = myTableDef.getBinaryValue(AccountBase.FIELD_DESC);
         Boolean isClosed = myTableDef.getBooleanValue(AccountBase.FIELD_CLOSED);
         Boolean isTaxFree = myTableDef.getBooleanValue(AccountBase.FIELD_TAXFREE);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myCategoryId, myDesc, isClosed, isTaxFree);
+        theList.addSecureItem(pId, pControlId, myName, myCategoryId, isClosed, isTaxFree);
     }
 
     @Override
@@ -102,8 +100,6 @@ public class TableAccount
             myTableDef.setBinaryValue(iField, pItem.getNameBytes());
         } else if (AccountBase.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getAccountCategoryId());
-        } else if (AccountBase.FIELD_DESC.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else if (AccountBase.FIELD_CLOSED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isClosed());
         } else if (AccountBase.FIELD_TAXFREE.equals(iField)) {

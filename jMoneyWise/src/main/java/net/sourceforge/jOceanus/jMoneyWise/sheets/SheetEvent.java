@@ -87,11 +87,6 @@ public class SheetEvent
     private static final int COL_RECONCILED = COL_CATEGORY + 1;
 
     /**
-     * Description column.
-     */
-    private static final int COL_DESC = COL_RECONCILED + 1;
-
-    /**
      * Events data list.
      */
     private final EventList theList;
@@ -123,7 +118,7 @@ public class SheetEvent
         /* Set up info Sheet */
         theInfoSheet = isBackup()
                 ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_DESC);
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     /**
@@ -143,7 +138,7 @@ public class SheetEvent
         /* Set up info Sheet */
         theInfoSheet = isBackup()
                 ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_DESC);
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     @Override
@@ -161,11 +156,10 @@ public class SheetEvent
         JDateDay myDate = loadDate(COL_DATE);
 
         /* Access the binary values */
-        byte[] myDesc = loadBytes(COL_DESC);
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myReconciled, myDesc);
+        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myReconciled);
     }
 
     @Override
@@ -182,11 +176,10 @@ public class SheetEvent
         Boolean myReconciled = loadBoolean(COL_RECONCILED);
 
         /* Access the binary values */
-        String myDesc = loadString(COL_DESC);
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        Event myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, myDesc);
+        Event myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled);
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myEvent);
@@ -201,7 +194,6 @@ public class SheetEvent
         writeInteger(COL_CREDIT, pItem.getCreditId());
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeBoolean(COL_RECONCILED, pItem.getReconciled());
-        writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
     }
 
@@ -209,7 +201,6 @@ public class SheetEvent
     protected void insertOpenItem(final Event pItem) throws JDataException {
         /* Set the fields */
         writeDate(COL_DATE, pItem.getDate());
-        writeString(COL_DESC, pItem.getDesc());
         writeDecimal(COL_AMOUNT, pItem.getAmount());
         writeBoolean(COL_RECONCILED, pItem.getReconciled());
         writeString(COL_DEBIT, pItem.getDebitName());
@@ -224,7 +215,6 @@ public class SheetEvent
     protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
-        writeHeader(COL_DESC, EventBase.FIELD_DESC.getName());
         writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
         writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
@@ -238,7 +228,6 @@ public class SheetEvent
     @Override
     protected void formatSheet() throws JDataException {
         /* Set the column types */
-        setStringColumn(COL_DESC);
         setStringColumn(COL_DEBIT);
         setStringColumn(COL_CREDIT);
         setStringColumn(COL_CATEGORY);
@@ -262,7 +251,7 @@ public class SheetEvent
     @Override
     protected int getLastColumn() {
         /* Set default */
-        int myLastCol = COL_DESC;
+        int myLastCol = COL_RECONCILED;
 
         /* If we are not creating a backup */
         if (!isBackup()) {
@@ -438,10 +427,18 @@ public class SheetEvent
                         myCreditAmount = myCell.getStringValue();
                     }
 
+                    /* Handle CreditDate which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    JDateDay myCreditDate = null;
+                    if (myCell != null) {
+                        myCreditDate = myCell.getDateValue();
+                    }
+
                     /* Add the event */
-                    Event myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, myDesc);
+                    Event myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled);
 
                     /* Add information relating to the account */
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.Comments, myDesc);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.NatInsurance, myNatInsurance);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.Benefit, myBenefit);
@@ -453,6 +450,7 @@ public class SheetEvent
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.CharityDonation, myDonation);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.ThirdParty, myThirdParty);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditAmount, myCreditAmount);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditDate, myCreditDate);
 
                     /* Validate the event */
                     myEvent.validate();

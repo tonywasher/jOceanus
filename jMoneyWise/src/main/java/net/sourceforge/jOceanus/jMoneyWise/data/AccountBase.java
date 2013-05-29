@@ -51,11 +51,6 @@ public abstract class AccountBase
     public static final int NAMELEN = 30;
 
     /**
-     * Account Description length.
-     */
-    public static final int DESCLEN = 50;
-
-    /**
      * Report fields.
      */
     protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
@@ -64,11 +59,6 @@ public abstract class AccountBase
      * Name Field Id.
      */
     public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField("Name");
-
-    /**
-     * Description Field Id.
-     */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
 
     /**
      * AccountCategory Field Id.
@@ -117,30 +107,6 @@ public abstract class AccountBase
      */
     private EncryptedString getNameField() {
         return getNameField(getValueSet());
-    }
-
-    /**
-     * Obtain Description.
-     * @return the description
-     */
-    public String getDesc() {
-        return getDesc(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted description.
-     * @return the bytes
-     */
-    public byte[] getDescBytes() {
-        return getDescBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Description Field.
-     * @return the Field
-     */
-    private EncryptedString getDescField() {
-        return getDescField(getValueSet());
     }
 
     /**
@@ -228,33 +194,6 @@ public abstract class AccountBase
     }
 
     /**
-     * Obtain Description.
-     * @param pValueSet the valueSet
-     * @return the description
-     */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
-    }
-
-    /**
-     * Obtain Encrypted description.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
-    }
-
-    /**
-     * Obtain Encrypted description field.
-     * @param pValueSet the valueSet
-     * @return the Field
-     */
-    private static EncryptedString getDescField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
-    }
-
-    /**
      * Obtain AccountCategory.
      * @param pValueSet the valueSet
      * @return the AccountCategory
@@ -305,32 +244,6 @@ public abstract class AccountBase
      */
     private void setValueName(final EncryptedString pValue) {
         getValueSet().setValue(FIELD_NAME, pValue);
-    }
-
-    /**
-     * Set description value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueDesc(final String pValue) throws JDataException {
-        setEncryptedValue(FIELD_DESC, pValue);
-    }
-
-    /**
-     * Set description value.
-     * @param pBytes the value
-     * @throws JDataException on error
-     */
-    private void setValueDesc(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_DESC, pBytes, String.class);
-    }
-
-    /**
-     * Set description value.
-     * @param pValue the value
-     */
-    private void setValueDesc(final EncryptedString pValue) {
-        getValueSet().setValue(FIELD_DESC, pValue);
     }
 
     /**
@@ -400,7 +313,6 @@ public abstract class AccountBase
      * @param uControlId the control id
      * @param pName the Encrypted Name of the account
      * @param uCategoryId the Account category id
-     * @param pDesc the Encrypted Description of the account
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
      * @throws JDataException on error
@@ -410,7 +322,6 @@ public abstract class AccountBase
                           final Integer uControlId,
                           final byte[] pName,
                           final Integer uCategoryId,
-                          final byte[] pDesc,
                           final Boolean isClosed,
                           final Boolean isTaxFree) throws JDataException {
         /* Initialise the item */
@@ -430,7 +341,6 @@ public abstract class AccountBase
 
             /* Record the encrypted values */
             setValueName(pName);
-            setValueDesc(pDesc);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -445,7 +355,6 @@ public abstract class AccountBase
      * @param uId the id
      * @param sName the Name of the account
      * @param pCategory the Account category
-     * @param pDesc the description
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
      * @throws JDataException on error
@@ -454,7 +363,6 @@ public abstract class AccountBase
                           final Integer uId,
                           final String sName,
                           final String pCategory,
-                          final String pDesc,
                           final Boolean isClosed,
                           final Boolean isTaxFree) throws JDataException {
         /* Initialise the item */
@@ -467,7 +375,6 @@ public abstract class AccountBase
 
             /* Record the encrypted values */
             setValueName(sName);
-            setValueDesc(pDesc);
 
             /* Set the closed and tax free indications */
             setValueClosed(isClosed);
@@ -608,7 +515,6 @@ public abstract class AccountBase
     public void validate() {
         AccountCategory myCategory = getAccountCategory();
         String myName = getName();
-        String myDesc = getDesc();
         AccountBaseList<?> myList = (AccountBaseList<?>) getList();
 
         /* AccountCategoryType must be non-null */
@@ -631,12 +537,6 @@ public abstract class AccountBase
                 addError(ERROR_DUPLICATE, FIELD_NAME);
             }
         }
-
-        /* The description must not be too long */
-        if ((myDesc != null)
-            && (myDesc.length() > DESCLEN)) {
-            addError(ERROR_LENGTH, FIELD_DESC);
-        }
     }
 
     /**
@@ -654,15 +554,6 @@ public abstract class AccountBase
      */
     public void setAccountCategory(final AccountCategory pCategory) {
         setValueCategory(pCategory);
-    }
-
-    /**
-     * Set a new description.
-     * @param pDesc the description
-     * @throws JDataException on error
-     */
-    public void setDescription(final String pDesc) throws JDataException {
-        setValueDesc(pDesc);
     }
 
     /**
@@ -707,11 +598,6 @@ public abstract class AccountBase
         /* Update the Name if required */
         if (!Difference.isEqual(getName(), myAccount.getName())) {
             setValueName(myAccount.getNameField());
-        }
-
-        /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myAccount.getDesc())) {
-            setValueDesc(myAccount.getDescField());
         }
 
         /* Update the account category if required */

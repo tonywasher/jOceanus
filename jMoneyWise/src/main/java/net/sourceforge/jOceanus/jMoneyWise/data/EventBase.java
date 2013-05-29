@@ -37,7 +37,6 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedMoney;
-import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
@@ -51,11 +50,6 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 public abstract class EventBase
         extends EncryptedItem
         implements Comparable<EventBase> {
-    /**
-     * Event Description length.
-     */
-    public static final int DESCLEN = 50;
-
     /**
      * Report fields.
      */
@@ -92,40 +86,11 @@ public abstract class EventBase
     public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField("Reconciled");
 
     /**
-     * Description Field Id.
-     */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
-
-    /**
      * Obtain Date.
      * @return the date
      */
     public JDateDay getDate() {
         return getDate(getValueSet());
-    }
-
-    /**
-     * Obtain Description.
-     * @return the description
-     */
-    public String getDesc() {
-        return getDesc(getValueSet());
-    }
-
-    /**
-     * Obtain encrypted description.
-     * @return the bytes
-     */
-    public byte[] getDescBytes() {
-        return getDescBytes(getValueSet());
-    }
-
-    /**
-     * Obtain Encrypted Description Field.
-     * @return the Field
-     */
-    protected EncryptedString getDescField() {
-        return getDescField(getValueSet());
     }
 
     /**
@@ -280,33 +245,6 @@ public abstract class EventBase
     }
 
     /**
-     * Obtain Description.
-     * @param pValueSet the valueSet
-     * @return the Description
-     */
-    public static String getDesc(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldValue(FIELD_DESC, String.class);
-    }
-
-    /**
-     * Obtain Encrypted description.
-     * @param pValueSet the valueSet
-     * @return the bytes
-     */
-    public static byte[] getDescBytes(final EncryptedValueSet pValueSet) {
-        return pValueSet.getEncryptedFieldBytes(FIELD_DESC);
-    }
-
-    /**
-     * Obtain Encrypted Description field.
-     * @param pValueSet the valueSet
-     * @return the field
-     */
-    private static EncryptedString getDescField(final ValueSet pValueSet) {
-        return pValueSet.getValue(FIELD_DESC, EncryptedString.class);
-    }
-
-    /**
      * Obtain Category.
      * @param pValueSet the valueSet
      * @return the category
@@ -374,32 +312,6 @@ public abstract class EventBase
      */
     private void setValueReconciled(final Boolean pValue) {
         getValueSet().setValue(FIELD_RECONCILED, pValue);
-    }
-
-    /**
-     * Set description value.
-     * @param pValue the value
-     * @throws JDataException on error
-     */
-    private void setValueDesc(final String pValue) throws JDataException {
-        setEncryptedValue(FIELD_DESC, pValue);
-    }
-
-    /**
-     * Set description value.
-     * @param pBytes the value
-     * @throws JDataException on error
-     */
-    private void setValueDesc(final byte[] pBytes) throws JDataException {
-        setEncryptedValue(FIELD_DESC, pBytes, String.class);
-    }
-
-    /**
-     * Set description value.
-     * @param pValue the value
-     */
-    protected final void setValueDesc(final EncryptedString pValue) {
-        getValueSet().setValue(FIELD_DESC, pValue);
     }
 
     /**
@@ -541,7 +453,6 @@ public abstract class EventBase
      * @param pAmount the amount
      * @param pCategory the category id
      * @param pReconciled is the event reconciled
-     * @param pDesc the description
      * @throws JDataException on error
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
@@ -552,8 +463,7 @@ public abstract class EventBase
                         final Integer pCredit,
                         final byte[] pAmount,
                         final Integer pCategory,
-                        final Boolean pReconciled,
-                        final byte[] pDesc) throws JDataException {
+                        final Boolean pReconciled) throws JDataException {
         /* Initialise item */
         super(pList, pId);
 
@@ -570,7 +480,6 @@ public abstract class EventBase
             setValueDate(pDate);
 
             /* Record the encrypted values */
-            setValueDesc(pDesc);
             setValueAmount(pAmount);
 
             /* Catch Exceptions */
@@ -590,7 +499,6 @@ public abstract class EventBase
      * @param pAmount the amount
      * @param pCategory the category
      * @param pReconciled is the event reconciled
-     * @param pDesc the description
      * @throws JDataException on error
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
@@ -600,8 +508,7 @@ public abstract class EventBase
                         final String pCredit,
                         final String pAmount,
                         final String pCategory,
-                        final Boolean pReconciled,
-                        final String pDesc) throws JDataException {
+                        final Boolean pReconciled) throws JDataException {
         /* Initialise item */
         super(pList, uId);
 
@@ -613,7 +520,6 @@ public abstract class EventBase
             JDecimalParser myParser = myFormatter.getDecimalParser();
 
             /* Record the standard values */
-            setValueDesc(pDesc);
             setValueDebit(pDebit);
             setValueCredit(pCredit);
             setValueCategory(pCategory);
@@ -663,12 +569,6 @@ public abstract class EventBase
 
         /* If the categories differ */
         iDiff = Difference.compareObject(getCategory(), pThat.getCategory());
-        if (iDiff != 0) {
-            return iDiff;
-        }
-
-        /* If the descriptions differ */
-        iDiff = Difference.compareObject(getDesc(), pThat.getDesc());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -1119,15 +1019,6 @@ public abstract class EventBase
     }
 
     /**
-     * Set a new description.
-     * @param pDesc the description
-     * @throws JDataException on error
-     */
-    public void setDescription(final String pDesc) throws JDataException {
-        setValueDesc(pDesc);
-    }
-
-    /**
      * Set a new amount.
      * @param pAmount the amount
      * @throws JDataException on error
@@ -1162,7 +1053,6 @@ public abstract class EventBase
     @Override
     public void validate() {
         JDateDay myDate = getDate();
-        String myDesc = getDesc();
         Account myDebit = getDebit();
         Account myCredit = getCredit();
         JMoney myAmount = getAmount();
@@ -1190,14 +1080,6 @@ public abstract class EventBase
             /* Must not be hidden */
         } else if (myCategory.getCategoryTypeClass().isHiddenType()) {
             addError("Hidden category types are not allowed", FIELD_CATEGORY);
-        }
-
-        /* The description must be non-null */
-        if (myDesc == null) {
-            addError(ERROR_MISSING, FIELD_DESC);
-            /* and not too long */
-        } else if (myDesc.length() > DESCLEN) {
-            addError(ERROR_LENGTH, FIELD_DESC);
         }
 
         /* Credit account must be non-null */
@@ -1263,11 +1145,6 @@ public abstract class EventBase
         /* Update the Date if required */
         if (!Difference.isEqual(getDate(), myEvent.getDate())) {
             setValueDate(myEvent.getDate());
-        }
-
-        /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myEvent.getDesc())) {
-            setValueDesc(myEvent.getDescField());
         }
 
         /* Update the category if required */

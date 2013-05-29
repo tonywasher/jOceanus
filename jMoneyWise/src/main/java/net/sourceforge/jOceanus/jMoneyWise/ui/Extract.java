@@ -286,7 +286,7 @@ public class Extract
 
     @Override
     protected void setError(final JDataException pError) {
-        theError.setError(pError);
+        theError.addError(pError);
     }
 
     /**
@@ -503,8 +503,8 @@ public class Extract
             /* Touch the updateSet */
             theDataExtract.setObject(theUpdateSet);
         } catch (JDataException e) {
-            /* TODO Show the error */
-            // setError(e);
+            /* Show the error */
+            theView.addError(e);
 
             /* Restore SavePoint */
             theSelect.restoreSavePoint();
@@ -789,7 +789,7 @@ public class Extract
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
-                    return Event.FIELD_DESC;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.Comments);
                 case COLUMN_CATEGORY:
                     return Event.FIELD_CATEGORY;
                 case COLUMN_AMOUNT:
@@ -832,7 +832,7 @@ public class Extract
                     return ((pEvent.getDate() != null) && (pEvent.getCategory() != null));
                 default:
                     if ((pEvent.getDate() == null)
-                        || (pEvent.getDesc() == null)
+                        || (pEvent.getComments() == null)
                         || (pEvent.getCategory() == null)) {
                         return false;
                     }
@@ -879,7 +879,7 @@ public class Extract
                 case COLUMN_YEARS:
                     return pEvent.getYears();
                 case COLUMN_DESC:
-                    return pEvent.getDesc();
+                    return pEvent.getComments();
                 default:
                     return null;
             }
@@ -898,7 +898,7 @@ public class Extract
                     pEvent.setDate((JDateDay) pValue);
                     break;
                 case COLUMN_DESC:
-                    pEvent.setDescription((String) pValue);
+                    pEvent.setComments((String) pValue);
                     break;
                 case COLUMN_CATEGORY:
                     pEvent.setCategory((EventCategory) pValue);

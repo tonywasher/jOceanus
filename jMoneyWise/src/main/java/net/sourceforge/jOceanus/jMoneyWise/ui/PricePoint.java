@@ -165,7 +165,7 @@ public class PricePoint
 
     @Override
     protected void setError(final JDataException pError) {
-        theError.setError(pError);
+        theError.addError(pError);
     }
 
     /**
@@ -321,8 +321,8 @@ public class PricePoint
             /* Create SavePoint */
             theSelect.createSavePoint();
         } catch (JDataException e) {
-            /* TODO Show the error */
-            // setError(e);
+            /* Show the error */
+            theView.addError(e);
 
             /* Restore SavePoint */
             theSelect.restoreSavePoint();

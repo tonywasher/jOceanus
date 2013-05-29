@@ -962,7 +962,7 @@ public class MaintTaxYear
                 JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field", e);
 
                 /* Show the error */
-                theError.setError(myError);
+                theError.addError(myError);
                 return;
             }
 

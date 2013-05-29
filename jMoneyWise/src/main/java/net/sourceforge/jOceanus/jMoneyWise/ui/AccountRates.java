@@ -133,7 +133,7 @@ public class AccountRates
 
     @Override
     protected void setError(final JDataException pError) {
-        theError.setError(pError);
+        theError.addError(pError);
     }
 
     /**
@@ -345,7 +345,9 @@ public class AccountRates
          */
         @Override
         public int getColumnCount() {
-            return (theColumns == null) ? 0 : theColumns.getColumnCount();
+            return (theColumns == null)
+                    ? 0
+                    : theColumns.getColumnCount();
         }
 
         /**
@@ -354,7 +356,9 @@ public class AccountRates
          */
         @Override
         public int getRowCount() {
-            return (theRates == null) ? 0 : theRates.size();
+            return (theRates == null)
+                    ? 0
+                    : theRates.size();
         }
 
         @Override

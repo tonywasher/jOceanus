@@ -52,13 +52,11 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.PayeeAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.AnalysisState;
-import net.sourceforge.jOceanus.jMoneyWise.views.Analysis.BucketList;
-import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.EventAttribute;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryDetail;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.Statement.StatementLine;
 import net.sourceforge.jOceanus.jMoneyWise.views.Statement.StatementLines;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
@@ -85,22 +83,22 @@ public class EventAnalysis
     /**
      * Years field Id.
      */
-    public static final JDataField FIELD_YEARS = FIELD_DEFS.declareLocalField("Years");
+    private static final JDataField FIELD_YEARS = FIELD_DEFS.declareLocalField("Years");
 
     /**
      * Account field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
+    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
     /**
      * Date field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+    private static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
 
     /**
      * Dilutions field Id.
      */
-    public static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField("Dilutions");
+    private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField("Dilutions");
 
     @Override
     public JDataFields getDataFields() {
@@ -160,9 +158,29 @@ public class EventAnalysis
     private final FinanceData theData;
 
     /**
+     * The event categories.
+     */
+    private final EventCategoryList theCategories;
+
+    /**
      * The analysis.
      */
     private Analysis theAnalysis = null;
+
+    /**
+     * The account bucket list.
+     */
+    private AccountBucketList theAccountBuckets = null;
+
+    /**
+     * The event category buckets.
+     */
+    private EventCategoryBucketList theCategoryBuckets = null;
+
+    /**
+     * The taxMan account.
+     */
+    private AccountBucket theTaxMan = null;
 
     /**
      * The metaAnalysis.
@@ -190,16 +208,6 @@ public class EventAnalysis
     private DilutionEventList theDilutions = null;
 
     /**
-     * The taxMan account.
-     */
-    private PayeeAccountDetail theTaxMan = null;
-
-    /**
-     * The taxPaid bucket.
-     */
-    private EventCategoryDetail theTaxPaid = null;
-
-    /**
      * Obtain the analysis.
      * @return the analysis
      */
@@ -224,7 +232,7 @@ public class EventAnalysis
     }
 
     /**
-     * Obtain the analysis for a tax year.
+     * Obtain the analysis for a particular tax year.
      * @param pYear the tax year
      * @return the analysis
      */
@@ -254,17 +262,20 @@ public class EventAnalysis
         theData = pData;
         theDate = pDate;
 
+        /* Access event categories and taxMan */
+        theCategories = theData.getEventCategories();
+        Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
+
         /* Create the analysis */
         theAnalysis = new Analysis(theData, theDate);
 
+        /* Access details from the analysis */
+        theAccountBuckets = theAnalysis.getAccounts();
+        theCategoryBuckets = theAnalysis.getEventCategories();
+        theTaxMan = theAccountBuckets.getBucket(myTaxMan);
+
         /* Create associated MetaAnalyser */
         theMetaAnalysis = new MetaAnalysis(theAnalysis);
-
-        /* Access the TaxMan account and Tax Credit transaction */
-        Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
-        BucketList myBuckets = theAnalysis.getList();
-        theTaxMan = (PayeeAccountDetail) myBuckets.getAccountBucket(myTaxMan);
-        theTaxPaid = myBuckets.getCategoryDetail(EventCategoryClass.TaxCredit);
 
         /* Access the events and the iterator */
         EventList myEvents = pData.getEvents();
@@ -284,11 +295,8 @@ public class EventAnalysis
             processEvent(myCurr);
         }
 
-        /* Value priced assets */
-        theMetaAnalysis.valueAssets();
-
-        /* produce totals */
-        theMetaAnalysis.produceTotals();
+        /* Analyse accounts */
+        theMetaAnalysis.analyseAccounts();
     }
 
     /**
@@ -308,15 +316,18 @@ public class EventAnalysis
         theData = pData;
         theDate = myRange.getStart();
 
-        /* Create the analysis */
-        theAnalysis = new Analysis(theData, myAccount, theDate);
-
-        /* Access the TaxMan account and Tax Credit transaction */
+        /* Access event categories and taxMan */
+        theCategories = theData.getEventCategories();
         Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
-        BucketList myBuckets = theAnalysis.getList();
-        theTaxMan = (PayeeAccountDetail) myBuckets.getAccountBucket(myTaxMan);
-        theTaxPaid = myBuckets.getCategoryDetail(EventCategoryClass.TaxCredit);
-        theAccount = myBuckets.getAccountBucket(myAccount);
+
+        /* Create the analysis */
+        theAnalysis = new Analysis(theData, theDate);
+
+        /* Access details from the analysis */
+        theAccountBuckets = theAnalysis.getAccounts();
+        theCategoryBuckets = theAnalysis.getEventCategories();
+        theAccount = theAccountBuckets.getBucket(myAccount);
+        theTaxMan = theAccountBuckets.getBucket(myTaxMan);
 
         /* Access the events and the iterator */
         EventList myEvents = pData.getEvents();
@@ -387,7 +398,7 @@ public class EventAnalysis
      */
     protected final void resetStatementBalance(final Statement pStatement) throws JDataException {
         /* If we don't have balances just return */
-        if (theAccount instanceof PayeeAccountDetail) {
+        if (!theAccount.getCategoryType().hasBalances()) {
             return;
         }
 
@@ -434,7 +445,8 @@ public class EventAnalysis
         /* Store the parameters */
         theData = pData;
 
-        /* Access the TaxMan account */
+        /* Access the Categories and TaxMan account */
+        theCategories = theData.getEventCategories();
         Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
 
         /* Access the top level debug entry for this analysis */
@@ -475,8 +487,8 @@ public class EventAnalysis
 
                 /* If we have an existing meta analysis year */
                 if (theMetaAnalysis != null) {
-                    /* Value priced assets */
-                    theMetaAnalysis.valueAssets();
+                    /* analyse accounts */
+                    theMetaAnalysis.analyseAccounts();
                 }
 
                 /* Create the new Analysis */
@@ -485,10 +497,10 @@ public class EventAnalysis
                 theMetaAnalysis = myYear.getMetaAnalysis();
                 myBreakdown = myYear.getBreakdown();
 
-                /* Access the TaxMan account bucket and Tax Credit transaction */
-                BucketList myBuckets = theAnalysis.getList();
-                theTaxMan = (PayeeAccountDetail) myBuckets.getAccountBucket(myTaxMan);
-                theTaxPaid = myBuckets.getCategoryDetail(EventCategoryClass.TaxCredit);
+                /* Access details from the analysis */
+                theAccountBuckets = theAnalysis.getAccounts();
+                theCategoryBuckets = theAnalysis.getEventCategories();
+                theTaxMan = theAccountBuckets.getBucket(myTaxMan);
             }
 
             /* Touch credit account */
@@ -517,9 +529,9 @@ public class EventAnalysis
             myTax.touchItem(myCurr);
         }
 
-        /* Value priced assets of the most recent set */
+        /* analyse accounts */
         if (theMetaAnalysis != null) {
-            theMetaAnalysis.valueAssets();
+            theMetaAnalysis.analyseAccounts();
         }
 
         /* Update analysis object */
@@ -592,11 +604,6 @@ public class EventAnalysis
         private final IncomeBreakdown theBreakdown;
 
         /**
-         * The preference manager.
-         */
-        private final PreferenceManager thePreferenceMgr;
-
-        /**
          * The taxYear.
          */
         private final TaxYear theYear;
@@ -664,7 +671,6 @@ public class EventAnalysis
                              final Analysis pPrevious) {
             /* Store data */
             theData = pData;
-            thePreferenceMgr = pManager;
 
             /* Store tax year */
             theYear = pYear;
@@ -718,28 +724,6 @@ public class EventAnalysis
         @Override
         public int hashCode() {
             return getDate().hashCode();
-        }
-
-        /**
-         * Produce totals for an analysis year.
-         */
-        public void produceTotals() {
-            /* If we are in valued state */
-            if (theAnalysis.getState() == AnalysisState.VALUED) {
-                /* call the meta analyser to produce totals */
-                theMetaAnalysis.produceTotals();
-            }
-        }
-
-        /**
-         * Calculate tax for an analysis year.
-         */
-        public void calculateTax() {
-            /* If we are not in taxed state */
-            if (theAnalysis.getState() != AnalysisState.TAXED) {
-                /* call the meta analyser to calculate tax */
-                theMetaAnalysis.calculateTax(thePreferenceMgr);
-            }
         }
     }
 
@@ -865,15 +849,13 @@ public class EventAnalysis
             /* Else handle the event normally */
         } else {
             EventCategory myCat = pEvent.getCategory();
-            EventCategoryList myCatList = theData.getEventCategories();
-            BucketList myBuckets = theAnalysis.getList();
 
             /* If the event is interest */
             if (pEvent.isInterest()) {
                 /* If the account is tax free */
                 if (myDebit.isTaxFree()) {
                     /* The true transaction type is TaxFreeInterest */
-                    myCat = myCatList.getSingularClass(EventCategoryClass.TaxFreeInterest);
+                    myCat = theCategories.getSingularClass(EventCategoryClass.TaxFreeInterest);
                 }
 
                 /* True debit account is the parent */
@@ -881,23 +863,22 @@ public class EventAnalysis
             }
 
             /* Adjust the debit account bucket */
-            AccountBucket myBucket = myBuckets.getAccountBucket(myDebit);
+            AccountBucket myBucket = theAccountBuckets.getBucket(myDebit);
             myBucket.adjustForDebit(pEvent);
 
             /* Adjust the credit account bucket */
-            myBucket = myBuckets.getAccountBucket(myCredit);
+            myBucket = theAccountBuckets.getBucket(myCredit);
             myBucket.adjustForCredit(pEvent);
 
-            /* If the event causes a tax credit */
-            if (pEvent.getTaxCredit() != null) {
-                /* Adjust the TaxMan account for the tax credit */
-                theTaxMan.adjustForTaxCredit(pEvent);
-                theTaxPaid.adjustForTaxCredit(pEvent);
-            }
+            /* Adjust the tax payments */
+            theTaxMan.adjustForTaxPayments(pEvent);
 
-            /* Adjust the relevant category bucket */
-            EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
-            myCatBucket.adjustAmount(pEvent);
+            /* If the event category is not a transfer */
+            if (!myCat.isTransfer()) {
+                /* Adjust the relevant category bucket */
+                EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
+                myCatBucket.adjustValues(pEvent);
+            }
         }
     }
 
@@ -968,86 +949,69 @@ public class EventAnalysis
      * @param pEvent the event
      */
     private void processStockSplit(final Event pEvent) {
-        /* Stock split has identical credit/debit and always has Units */
+        /* Stock split has identical credit/debit so just obtain credit account */
         Account myAccount = pEvent.getCredit();
-        JUnits myUnits = pEvent.getCreditUnits();
-        if (myUnits == null) {
-            myUnits = new JUnits(pEvent.getDebitUnits());
-            myUnits.negate();
+        JUnits myDelta = pEvent.getCreditUnits();
+        if (myDelta == null) {
+            myDelta = new JUnits(pEvent.getDebitUnits());
+            myDelta.negate();
         }
 
         /* Access the Asset Account Bucket */
-        BucketList myBuckets = theAnalysis.getList();
-        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
+        AccountBucket myAsset = theAccountBuckets.getBucket(myAccount);
 
-        /* Allocate a Capital event and record Current and delta units */
+        /* Allocate a Capital event and adjust the units */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
-        myEvent.setAttribute(EventAttribute.InitialUnits, myAsset.getUnits());
-        myEvent.setAttribute(EventAttribute.DeltaUnits, myUnits);
+        JUnits myUnits = myAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+        myEvent.adjustUnits(myUnits, myDelta);
 
-        /* Add/Subtract the units movement for the account */
-        myAsset.getUnits().addUnits(myUnits);
-        myEvent.setAttribute(EventAttribute.FinalUnits, myAsset.getUnits());
+        /* StockSplit/Adjust is a transfer, so no need to update the categories */
     }
 
     /**
-     * Process an event that is a transfer into capital (also StockRightTaken and Dividend Re-investment). This capital event relates only to the Credit Account
+     * Process an event that is a transfer into capital (also StockRightTaken). This capital event relates only to the Credit Account
      * @param pEvent the event
      */
     private void processTransferIn(final Event pEvent) {
-        /* Transfer in is to the credit account and may or may not have units */
+        /* Transfer in is to the credit account and may or may not have a change to the units */
         Account myAccount = pEvent.getCredit();
         Account myDebit = pEvent.getDebit();
-        JUnits myUnits = pEvent.getCreditUnits();
+        JUnits myDeltaUnits = pEvent.getCreditUnits();
         JMoney myAmount = pEvent.getAmount();
         EventCategory myCat = pEvent.getCategory();
 
         /* Access the Asset Account Bucket */
-        BucketList myBuckets = theAnalysis.getList();
-        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
+        AccountBucket myAsset = theAccountBuckets.getBucket(myAccount);
 
-        /* Allocate a Capital event and record Current and delta costs */
+        /* Allocate a Capital event and adjust cost */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
-        myEvent.setAttribute(EventAttribute.InitialCost, myAsset.getCost());
-        myEvent.setAttribute(EventAttribute.DeltaCost, myAmount);
-
-        /* Adjust the cost of this account */
-        myAsset.getCost().addAmount(myAmount);
-        myEvent.setAttribute(EventAttribute.FinalCost, myAsset.getCost());
-
-        /* If we have new units */
-        if (myUnits != null) {
-            /* Record current and delta units */
-            myEvent.setAttribute(EventAttribute.InitialUnits, myAsset.getUnits());
-            myEvent.setAttribute(EventAttribute.DeltaUnits, myUnits);
-
-            /* Add the units movement for the account */
-            myAsset.getUnits().addUnits(myUnits);
-            myEvent.setAttribute(EventAttribute.FinalUnits, myAsset.getUnits());
-        }
+        JMoney myCost = myAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
+        myEvent.adjustCost(myCost, myAmount);
 
         /* Record the current/delta investment */
-        myEvent.setAttribute(EventAttribute.InitialInvested, myAsset.getInvested());
-        myEvent.setAttribute(EventAttribute.DeltaInvested, myAmount);
+        JMoney myInvested = myAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+        myEvent.adjustInvested(myInvested, myAmount);
 
-        /* Adjust the total money invested into this account */
-        myAsset.getInvested().addAmount(myAmount);
-        myEvent.setAttribute(EventAttribute.FinalInvested, myAsset.getInvested());
-
-        /* If the event causes a tax credit */
-        if (pEvent.getTaxCredit() != null) {
-            /* Adjust the TaxMan account for the tax credit */
-            theTaxMan.adjustForTaxCredit(pEvent);
-            theTaxPaid.adjustForTaxCredit(pEvent);
+        /* If we have new units */
+        if (myDeltaUnits != null) {
+            /* Record change and adjust units */
+            JUnits myUnits = myAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+            myEvent.adjustUnits(myUnits, myDeltaUnits);
         }
 
-        /* Adjust the debit account bucket */
-        AccountBucket myBucket = myBuckets.getAccountBucket(myDebit);
+        /* Adjust the tax payments */
+        theTaxMan.adjustForTaxPayments(pEvent);
+
+        /* Adjust the debit account bucket for the debit */
+        AccountBucket myBucket = theAccountBuckets.getBucket(myDebit);
         myBucket.adjustForDebit(pEvent);
 
-        /* Adjust the relevant transaction bucket */
-        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
-        myCatBucket.adjustAmount(pEvent);
+        /* If the event category is not a transfer */
+        if (!myCat.isTransfer()) {
+            /* Adjust the relevant event category bucket */
+            EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
+            myCatBucket.adjustValues(pEvent);
+        }
     }
 
     /**
@@ -1059,110 +1023,83 @@ public class EventAnalysis
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         EventCategory myCat = pEvent.getCategory();
-        EventCategoryList myCatList = theData.getEventCategories();
         JMoney myAmount = pEvent.getAmount();
         JMoney myTaxCredit = pEvent.getTaxCredit();
-        JUnits myUnits = pEvent.getCreditUnits();
-        Account myDebit;
+        JUnits myDeltaUnits = pEvent.getCreditUnits();
 
         /* If the account is tax free */
         if (myAccount.isTaxFree()) {
             /* The true category type is TaxFreeDividend */
-            myCat = myCatList.getSingularClass(EventCategoryClass.TaxFreeDividend);
+            myCat = theCategories.getSingularClass(EventCategoryClass.TaxFreeDividend);
 
             /* else if the account is a unit trust */
         } else if (myAccount.isCategoryClass(AccountCategoryClass.UnitTrust)) {
             /* The true category type is UnitTrustDividend */
-            myCat = myCatList.getSingularClass(EventCategoryClass.UnitTrustDividend);
+            myCat = theCategories.getSingularClass(EventCategoryClass.UnitTrustDividend);
         }
 
         /* True debit account is the parent */
-        myDebit = myAccount.getParent();
+        Account myDebit = myAccount.getParent();
 
         /* Adjust the debit account bucket */
-        BucketList myBuckets = theAnalysis.getList();
-        AccountBucket myBucket = myBuckets.getAccountBucket(myDebit);
+        AccountBucket myBucket = theAccountBuckets.getBucket(myDebit);
         myBucket.adjustForDebit(pEvent);
 
         /* Access the Asset Account Bucket */
-        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
+        AccountBucket myAsset = theAccountBuckets.getBucket(myAccount);
 
-        /* Allocate a Capital event and record Current and delta costs */
+        /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* If this is a re-investment */
         if (myAccount.equals(myCredit)) {
             /* This amount is added to the cost, so record as the delta cost */
-            myEvent.setAttribute(EventAttribute.InitialCost, myAsset.getCost());
-            myEvent.setAttribute(EventAttribute.DeltaCost, myAmount);
-
-            /* Adjust the cost of this account */
-            myAsset.getCost().addAmount(myAmount);
-            myEvent.setAttribute(EventAttribute.FinalCost, myAsset.getCost());
+            JMoney myCost = myAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
+            myEvent.adjustCost(myCost, myAmount);
 
             /* Record the current/delta investment */
-            myEvent.setAttribute(EventAttribute.InitialInvested, myAsset.getInvested());
-            myEvent.setAttribute(EventAttribute.DeltaInvested, myAmount);
-
-            /* Adjust the total money invested into this account */
-            myAsset.getInvested().addAmount(myAmount);
-            myEvent.setAttribute(EventAttribute.FinalInvested, myAsset.getInvested());
+            JMoney myInvested = myAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+            myEvent.adjustInvested(myInvested, myAmount);
 
             /* If we have new units */
-            if (myUnits != null) {
+            if (myDeltaUnits != null) {
                 /* Record current and delta units */
-                myEvent.setAttribute(EventAttribute.InitialUnits, myAsset.getUnits());
-                myEvent.setAttribute(EventAttribute.DeltaUnits, myUnits);
-
-                /* Add the units movement for the account */
-                myAsset.getUnits().addUnits(myUnits);
-                myEvent.setAttribute(EventAttribute.FinalUnits, myAsset.getUnits());
+                JUnits myUnits = myAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+                myEvent.adjustUnits(myUnits, myDeltaUnits);
             }
 
             /* If we have a tax credit */
             if (myTaxCredit != null) {
-                /* The Tax Credit is viewed as a gain from the account */
-                myEvent.setAttribute(EventAttribute.InitialDividend, myAsset.getDividend());
-                myEvent.setAttribute(EventAttribute.DeltaDividend, myTaxCredit);
-
-                /* The Tax Credit is viewed as a gain from the account */
-                myAsset.getDividend().addAmount(myTaxCredit);
-                myEvent.setAttribute(EventAttribute.FinalDividend, myAsset.getDividend());
+                /* The Tax Credit is viewed as a received dividend from the account */
+                JMoney myDividend = myAsset.getAttribute(AccountAttribute.Dividend, JMoney.class);
+                myEvent.adjustDividend(myDividend, myTaxCredit);
             }
 
             /* else we are paying out to another account */
         } else {
-            /* Adjust the gains total for this asset */
-            JMoney myDividends = new JMoney(myAmount);
+            /* Adjust the dividend total for this asset */
+            JMoney myAdjust = new JMoney(myAmount);
 
-            /* Any tax credit is viewed as a realised gain from the account */
+            /* Any tax credit is viewed as a realised dividend from the account */
             if (myTaxCredit != null) {
-                myDividends.addAmount(myTaxCredit);
+                myAdjust.addAmount(myTaxCredit);
             }
 
             /* The Dividend is viewed as a dividend from the account */
-            myEvent.setAttribute(EventAttribute.InitialDividend, myAsset.getDividend());
-            myEvent.setAttribute(EventAttribute.DeltaDividend, myDividends);
-
-            /* The Dividend is viewed as a gain from the account */
-            myAsset.getDividend().addAmount(myDividends);
-            myEvent.setAttribute(EventAttribute.FinalDividend, myAsset.getDividend());
+            JMoney myDividend = myAsset.getAttribute(AccountAttribute.Dividend, JMoney.class);
+            myEvent.adjustDividend(myDividend, myAdjust);
 
             /* Adjust the credit account bucket */
-            myBucket = myBuckets.getAccountBucket(myCredit);
+            myBucket = theAccountBuckets.getBucket(myCredit);
             myBucket.adjustForCredit(pEvent);
         }
 
-        /* If the event causes a tax credit */
-        if (pEvent.getTaxCredit() != null) {
-            /* Adjust the TaxMan account for the tax credit */
-            theTaxMan.adjustForTaxCredit(pEvent);
-            theTaxPaid.adjustForTaxCredit(pEvent);
-        }
+        /* Adjust the tax payments */
+        theTaxMan.adjustForTaxPayments(pEvent);
 
         /* Adjust the relevant transaction bucket */
-        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
-        myCatBucket.adjustAmount(pEvent);
+        EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
+        myCatBucket.adjustValues(pEvent);
     }
 
     /**
@@ -1174,37 +1111,37 @@ public class EventAnalysis
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
-        JUnits myUnits = pEvent.getDebitUnits();
+        JUnits myDeltaUnits = pEvent.getDebitUnits();
         EventCategory myCat = pEvent.getCategory();
-        JMoney myReduction;
-        JMoney myDeltaCost;
-        JMoney myDeltaGains;
-        JMoney myCost;
 
         /* Access the Asset Account Bucket */
-        BucketList myBuckets = theAnalysis.getList();
-        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
+        AccountBucket myAsset = theAccountBuckets.getBucket(myAccount);
 
         /* Allocate a Capital event and record Current and delta costs */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Record the current/delta investment */
-        myEvent.setAttribute(EventAttribute.InitialInvested, myAsset.getInvested());
-        myEvent.setAttribute(EventAttribute.DeltaInvested, myAmount);
-
-        /* Adjust the total amount invested into this account */
-        myAsset.getInvested().subtractAmount(myAmount);
-        myEvent.setAttribute(EventAttribute.FinalInvested, myAsset.getInvested());
+        JMoney myInvested = myAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+        JMoney myDelta = new JMoney(myAmount);
+        myDelta.negate();
+        myEvent.adjustInvested(myInvested, myDelta);
 
         /* Assume the the cost reduction is the full value */
-        myReduction = new JMoney(myAmount);
-        myCost = myAsset.getCost();
+        JMoney myReduction = new JMoney(myAmount);
+        JMoney myCost = myAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
 
         /* If we are reducing units in the account */
-        if ((myUnits != null)
-            && (myUnits.isNonZero())) {
+        if (myDeltaUnits != null) {
             /* The reduction is the relevant fraction of the cost */
-            myReduction = myCost.valueAtWeight(myUnits, myAsset.getUnits());
+            JUnits myUnits = myAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+            myReduction = myCost.valueAtWeight(myDeltaUnits, myUnits);
+
+            /* Access units as negative value */
+            myDeltaUnits = new JUnits(myDeltaUnits);
+            myDeltaUnits.negate();
+
+            /* Record delta to units */
+            myEvent.adjustUnits(myUnits, myDeltaUnits);
         }
 
         /* If the reduction is greater than the total cost */
@@ -1214,57 +1151,36 @@ public class EventAnalysis
         }
 
         /* Determine the delta to the cost */
-        myDeltaCost = new JMoney(myReduction);
+        JMoney myDeltaCost = new JMoney(myReduction);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
         if (myDeltaCost.isNonZero()) {
             /* This amount is subtracted from the cost, so record as the delta cost */
-            myEvent.setAttribute(EventAttribute.InitialCost, myCost);
-            myEvent.setAttribute(EventAttribute.DeltaCost, myDeltaCost);
-
-            /* Adjust the cost appropriately */
-            myCost.addAmount(myDeltaCost);
-            myEvent.setAttribute(EventAttribute.FinalCost, myCost);
+            myEvent.adjustCost(myCost, myDeltaCost);
         }
 
         /* Determine the delta to the gains */
-        myDeltaGains = new JMoney(myAmount);
+        JMoney myDeltaGains = new JMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
         if (myDeltaGains.isNonZero()) {
             /* This amount is subtracted from the cost, so record as the delta cost */
-            myEvent.setAttribute(EventAttribute.InitialGains, myAsset.getGains());
-            myEvent.setAttribute(EventAttribute.DeltaGains, myDeltaGains);
-
-            /* Adjust the cost appropriately */
-            myAsset.getGains().addAmount(myDeltaGains);
-            myEvent.setAttribute(EventAttribute.FinalGains, myAsset.getGains());
-        }
-
-        /* If we have reduced units */
-        if (myUnits != null) {
-            /* Access units as negative value */
-            JUnits myDeltaUnits = new JUnits(myUnits);
-            myDeltaUnits.negate();
-
-            /* Record current and delta units */
-            myEvent.setAttribute(EventAttribute.InitialUnits, myAsset.getUnits());
-            myEvent.setAttribute(EventAttribute.DeltaUnits, myDeltaUnits);
-
-            /* Add the units movement for the account */
-            myAsset.getUnits().subtractUnits(myUnits);
-            myEvent.setAttribute(EventAttribute.FinalUnits, myAsset.getUnits());
+            JMoney myGains = myAsset.getAttribute(AccountAttribute.Gains, JMoney.class);
+            myEvent.adjustGains(myGains, myDeltaGains);
         }
 
         /* Adjust the credit account bucket */
-        AccountBucket myBucket = myBuckets.getAccountBucket(myCredit);
+        AccountBucket myBucket = theAccountBuckets.getBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
-        /* Adjust the relevant transaction bucket */
-        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
-        myCatBucket.adjustAmount(pEvent);
+        /* If the event category is not a transfer */
+        if (!myCat.isTransfer()) {
+            /* Adjust the relevant transaction bucket */
+            EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
+            myCatBucket.adjustValues(pEvent);
+        }
     }
 
     /**
@@ -1276,38 +1192,37 @@ public class EventAnalysis
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
-        JUnits myUnits = pEvent.getDebitUnits();
+        JUnits myDeltaUnits = pEvent.getDebitUnits();
         EventCategory myCat = pEvent.getCategory();
-        JMoney myReduction;
-        JMoney myDeltaCost;
-        JMoney myDeltaGains;
-        JMoney myCost;
-        Account myDebit;
 
         /* Access the Asset Account Bucket */
-        BucketList myBuckets = theAnalysis.getList();
-        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
+        AccountBucket myAsset = theAccountBuckets.getBucket(myAccount);
 
         /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Record the current/delta investment */
-        myEvent.setAttribute(EventAttribute.InitialInvested, myAsset.getInvested());
-        myEvent.setAttribute(EventAttribute.DeltaInvested, myAmount);
-
-        /* Adjust the total amount invested into this account */
-        myAsset.getInvested().subtractAmount(myAmount);
-        myEvent.setAttribute(EventAttribute.FinalInvested, myAsset.getInvested());
+        JMoney myInvested = myAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+        JMoney myDelta = new JMoney(myAmount);
+        myDelta.negate();
+        myEvent.adjustInvested(myInvested, myDelta);
 
         /* Assume the the cost reduction is the full value */
-        myReduction = new JMoney(myAmount);
-        myCost = myAsset.getCost();
+        JMoney myReduction = new JMoney(myAmount);
+        JMoney myCost = myAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
 
         /* If we are reducing units in the account */
-        if ((myUnits != null)
-            && (myUnits.isNonZero())) {
+        if (myDeltaUnits != null) {
             /* The reduction is the relevant fraction of the cost */
-            myReduction = myCost.valueAtWeight(myUnits, myAsset.getUnits());
+            JUnits myUnits = myAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+            myReduction = myCost.valueAtWeight(myDeltaUnits, myUnits);
+
+            /* Access units as negative value */
+            myDeltaUnits = new JUnits(myDeltaUnits);
+            myDeltaUnits.negate();
+
+            /* Record current and delta units */
+            myEvent.adjustUnits(myUnits, myDeltaUnits);
         }
 
         /* If the reduction is greater than the total cost */
@@ -1317,69 +1232,44 @@ public class EventAnalysis
         }
 
         /* Determine the delta to the cost */
-        myDeltaCost = new JMoney(myReduction);
+        JMoney myDeltaCost = new JMoney(myReduction);
         myDeltaCost.negate();
 
         /* If we have a delta to the cost */
         if (myDeltaCost.isNonZero()) {
             /* This amount is subtracted from the cost, so record as the delta cost */
-            myEvent.setAttribute(EventAttribute.InitialCost, myCost);
-            myEvent.setAttribute(EventAttribute.DeltaCost, myDeltaCost);
-
-            /* Adjust the cost appropriately */
-            myCost.addAmount(myDeltaCost);
-            myEvent.setAttribute(EventAttribute.FinalCost, myCost);
+            myEvent.adjustCost(myCost, myDeltaCost);
         }
 
         /* Determine the delta to the gains */
-        myDeltaGains = new JMoney(myAmount);
+        JMoney myDeltaGains = new JMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* If we have a delta to the gains */
         if (myDeltaGains.isNonZero()) {
             /* This amount is subtracted from the cost, so record as the delta cost */
-            myEvent.setAttribute(EventAttribute.InitialGains, myAsset.getGains());
-            myEvent.setAttribute(EventAttribute.DeltaGains, myDeltaGains);
-
-            /* Adjust the cost appropriately */
-            myAsset.getGains().addAmount(myDeltaGains);
-            myEvent.setAttribute(EventAttribute.FinalGains, myAsset.getGains());
-        }
-
-        /* If we have reduced units */
-        if (myUnits != null) {
-            /* Access units as negative value */
-            JUnits myDeltaUnits = new JUnits(myUnits);
-            myDeltaUnits.negate();
-
-            /* Record current and delta units */
-            myEvent.setAttribute(EventAttribute.InitialUnits, myAsset.getUnits());
-            myEvent.setAttribute(EventAttribute.DeltaUnits, myDeltaUnits);
-
-            /* Add the units movement for the account */
-            myAsset.getUnits().subtractUnits(myUnits);
-            myEvent.setAttribute(EventAttribute.FinalUnits, myAsset.getUnits());
+            JMoney myGains = myAsset.getAttribute(AccountAttribute.Gains, JMoney.class);
+            myEvent.adjustGains(myGains, myDeltaGains);
         }
 
         /* True debit account is the parent */
-        myDebit = myAccount.getParent();
+        // Account myDebit = myAccount.getParent();
 
         /* Adjust the debit account bucket */
-        PayeeAccountDetail myDebitBucket = (PayeeAccountDetail) myBuckets.getAccountBucket(myDebit);
-        myDebitBucket.adjustForTaxGainTaxCredit(pEvent);
+        // AccountBucket myDebitBucket = theAccountBuckets.getBucket(myDebit);
+        // myDebitBucket.adjustForTaxGainTaxCredit(pEvent);
 
         /* Adjust the credit account bucket */
-        AccountBucket myBucket = myBuckets.getAccountBucket(myCredit);
+        AccountBucket myBucket = theAccountBuckets.getBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
         /* Adjust the relevant category bucket */
-        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
-        myCatBucket.adjustAmount(pEvent);
-        myCatBucket.getAmount().subtractAmount(myReduction);
+        EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
+        myCatBucket.adjustValues(pEvent);
+        // myCatBucket.getAmount().subtractAmount(myReduction);
 
         /* Adjust the TaxMan account for the tax credit */
-        theTaxMan.adjustForTaxCredit(pEvent);
-        theTaxPaid.adjustForTaxCredit(pEvent);
+        theTaxMan.adjustForTaxPayments(pEvent);
 
         /* Add the chargeable event */
         theAnalysis.getCharges().addEvent(pEvent, myDeltaGains);
@@ -1395,45 +1285,35 @@ public class EventAnalysis
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
         JMoney myAmount = pEvent.getAmount();
-        EventCategory myCat = pEvent.getCategory();
-        AccountPrice myActPrice;
-        JPrice myPrice;
-        JMoney myValue;
-        JMoney myCost;
         JMoney myReduction;
-        JMoney myPortion;
-        JMoney myDeltaCost;
-        JMoney myDeltaGains;
 
         /* Access the Asset Account Bucket */
-        BucketList myBuckets = theAnalysis.getList();
-        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myAccount);
+        AccountBucket myAsset = theAccountBuckets.getBucket(myAccount);
 
         /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Record the current/delta investment */
-        myEvent.setAttribute(EventAttribute.InitialInvested, myAsset.getInvested());
-        myEvent.setAttribute(EventAttribute.DeltaInvested, myAmount);
-
-        /* Adjust the total amount invested into this account */
-        myAsset.getInvested().subtractAmount(myAmount);
-        myEvent.setAttribute(EventAttribute.FinalInvested, myAsset.getInvested());
+        JMoney myInvested = myAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+        JMoney myDelta = new JMoney(myAmount);
+        myDelta.negate();
+        myEvent.adjustInvested(myInvested, myDelta);
 
         /* Get the appropriate price for the account */
-        myActPrice = myPrices.getLatestPrice(myAccount, pEvent.getDate());
-        myPrice = myActPrice.getPrice();
-        myEvent.setAttribute(EventAttribute.InitialPrice, myPrice);
+        AccountPrice myActPrice = myPrices.getLatestPrice(myAccount, pEvent.getDate());
+        JPrice myPrice = myActPrice.getPrice();
+        myEvent.setAttribute(CapitalAttribute.InitialPrice, myPrice);
 
         /* Determine value of this stock at the current time */
-        myValue = myAsset.getUnits().valueAtPrice(myPrice);
-        myEvent.setAttribute(EventAttribute.InitialValue, myValue);
+        JUnits myUnits = myAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+        JMoney myValue = myUnits.valueAtPrice(myPrice);
+        myEvent.setAttribute(CapitalAttribute.InitialValue, myValue);
 
         /* Access the current cost */
-        myCost = myAsset.getCost();
+        JMoney myCost = myAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
 
         /* Calculate the portion of the value that creates a large transaction */
-        myPortion = myValue.valueAtRate(LIMIT_RATE);
+        JMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large stock waiver (> both valueLimit and rateLimit of value) */
         if ((myAmount.compareTo(LIMIT_VALUE) > 0)
@@ -1443,7 +1323,7 @@ public class EventAnalysis
             myTotalValue.addAmount(myValue);
 
             /* Determine the reduction as a proportion of the total value */
-            myReduction = myAsset.getCost().valueAtWeight(myAmount, myTotalValue);
+            myReduction = myCost.valueAtWeight(myAmount, myTotalValue);
 
             /* else this is viewed as small and is taken out of the cost */
         } else {
@@ -1458,36 +1338,25 @@ public class EventAnalysis
         }
 
         /* Calculate the delta cost */
-        myDeltaCost = new JMoney(myReduction);
+        JMoney myDeltaCost = new JMoney(myReduction);
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
-        myEvent.setAttribute(EventAttribute.InitialCost, myCost);
-        myEvent.setAttribute(EventAttribute.DeltaCost, myDeltaCost);
-
-        /* Adjust the cost */
-        myCost.addAmount(myDeltaCost);
-        myEvent.setAttribute(EventAttribute.FinalCost, myCost);
+        myEvent.adjustCost(myCost, myDeltaCost);
 
         /* Calculate the delta gains */
-        myDeltaGains = new JMoney(myAmount);
+        JMoney myDeltaGains = new JMoney(myAmount);
         myDeltaGains.addAmount(myDeltaCost);
 
         /* Record the current/delta gains */
-        myEvent.setAttribute(EventAttribute.InitialGains, myAsset.getGains());
-        myEvent.setAttribute(EventAttribute.DeltaGains, myDeltaGains);
-
-        /* Adjust the gains */
-        myAsset.getGains().addAmount(myDeltaGains);
-        myEvent.setAttribute(EventAttribute.FinalGains, myAsset.getGains());
+        JMoney myGains = myAsset.getAttribute(AccountAttribute.Gains, JMoney.class);
+        myEvent.adjustGains(myGains, myDeltaGains);
 
         /* Adjust the credit account bucket */
-        AccountBucket myBucket = myBuckets.getAccountBucket(myCredit);
+        AccountBucket myBucket = theAccountBuckets.getBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
-        /* Adjust the relevant category bucket */
-        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
-        myCatBucket.adjustAmount(pEvent);
+        /* StockRightWaived is a transfer, so no need to update the categories */
     }
 
     /**
@@ -1498,44 +1367,31 @@ public class EventAnalysis
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         JDilution myDilution = pEvent.getDilution();
-        JUnits myUnits = pEvent.getCreditUnits();
-        JMoney myCost;
-        JMoney myDeltaCost;
-        JMoney myNewCost;
+        JUnits myDeltaUnits = pEvent.getCreditUnits();
 
         /* Access the Debit Asset Account Bucket */
-        BucketList myBuckets = theAnalysis.getList();
-        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myDebit);
+        AccountBucket myAsset = theAccountBuckets.getBucket(myDebit);
 
         /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Calculate the diluted value of the Debit account */
-        myCost = myAsset.getCost();
-        myNewCost = myCost.getDilutedMoney(myDilution);
+        JMoney myCost = myAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
+        JMoney myNewCost = myCost.getDilutedMoney(myDilution);
 
         /* Calculate the delta to the cost */
-        myDeltaCost = new JMoney(myNewCost);
+        JMoney myDeltaCost = new JMoney(myNewCost);
         myDeltaCost.subtractAmount(myCost);
 
         /* Record the current/delta cost */
-        myEvent.setAttribute(EventAttribute.InitialCost, myCost);
-        myEvent.setAttribute(EventAttribute.DeltaCost, myDeltaCost);
-
-        /* Record the new total cost */
-        myCost.addAmount(myDeltaCost);
-        myEvent.setAttribute(EventAttribute.FinalCost, myCost);
+        myEvent.adjustCost(myCost, myDeltaCost);
 
         /* Record the current/delta investment */
-        myEvent.setAttribute(EventAttribute.InitialInvested, myAsset.getInvested());
-        myEvent.setAttribute(EventAttribute.DeltaInvested, myDeltaCost);
-
-        /* Adjust the investment for the debit account */
-        myAsset.getInvested().addAmount(myDeltaCost);
-        myEvent.setAttribute(EventAttribute.FinalInvested, myAsset.getInvested());
+        JMoney myInvested = myAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+        myEvent.adjustInvested(myInvested, myDeltaCost);
 
         /* Access the Credit Asset Account Bucket */
-        myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myCredit);
+        myAsset = theAccountBuckets.getBucket(myCredit);
 
         /* Allocate a Capital event */
         myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
@@ -1545,28 +1401,17 @@ public class EventAnalysis
         myDeltaCost.negate();
 
         /* Record the current/delta cost */
-        myEvent.setAttribute(EventAttribute.InitialCost, myAsset.getCost());
-        myEvent.setAttribute(EventAttribute.DeltaCost, myDeltaCost);
-
-        /* Adjust the cost */
-        myAsset.getCost().addAmount(myDeltaCost);
-        myEvent.setAttribute(EventAttribute.FinalCost, myAsset.getCost());
+        myEvent.adjustCost(myCost, myDeltaCost);
 
         /* Record the current/delta investment */
-        myEvent.setAttribute(EventAttribute.InitialInvested, myAsset.getInvested());
-        myEvent.setAttribute(EventAttribute.DeltaInvested, myDeltaCost);
-
-        /* Adjust the investment */
-        myAsset.getInvested().addAmount(myDeltaCost);
-        myEvent.setAttribute(EventAttribute.FinalInvested, myAsset.getInvested());
+        myInvested = myAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+        myEvent.adjustInvested(myInvested, myDeltaCost);
 
         /* Record the current/delta units */
-        myEvent.setAttribute(EventAttribute.InitialUnits, myAsset.getUnits());
-        myEvent.setAttribute(EventAttribute.DeltaUnits, myUnits);
+        JUnits myUnits = myAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+        myEvent.adjustUnits(myUnits, myDeltaUnits);
 
-        /* Adjust the units for the credit account */
-        myAsset.getUnits().addUnits(myUnits);
-        myEvent.setAttribute(EventAttribute.FinalUnits, myAsset.getUnits());
+        /* StockDeMerger is a transfer, so no need to update the categories */
     }
 
     /**
@@ -1579,56 +1424,45 @@ public class EventAnalysis
         AccountPriceList myPrices = theData.getPrices();
         JMoney myAmount = pEvent.getAmount();
         EventCategory myCat = pEvent.getCategory();
-        AccountPrice myActPrice;
-        JPrice myPrice;
-        JMoney myValue;
-        JMoney myPortion;
-        JMoney myReduction;
-        JMoney myCost;
-        JMoney myResidualCost;
-        JMoney myDeltaCost;
-        JMoney myDeltaGains;
 
         /* Access the Debit Asset Account Bucket */
-        BucketList myBuckets = theAnalysis.getList();
-        AssetAccountDetail myAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myDebit);
+        AccountBucket myAsset = theAccountBuckets.getBucket(myDebit);
 
         /* Allocate a Capital event */
         CapitalEvent myEvent = myAsset.getCapitalEvents().addEvent(pEvent);
 
         /* Record the current/delta investment */
-        myEvent.setAttribute(EventAttribute.InitialInvested, myAsset.getInvested());
-        myEvent.setAttribute(EventAttribute.DeltaInvested, myAmount);
-
-        /* Adjust the total amount invested into this account */
-        myAsset.getInvested().subtractAmount(myAmount);
-        myEvent.setAttribute(EventAttribute.FinalInvested, myAsset.getInvested());
+        JMoney myInvested = myAsset.getAttribute(AccountAttribute.Invested, JMoney.class);
+        JMoney myDelta = new JMoney(myAmount);
+        myDelta.negate();
+        myEvent.adjustInvested(myInvested, myDelta);
 
         /* Get the appropriate price for the account */
-        myActPrice = myPrices.getLatestPrice(myDebit, pEvent.getDate());
-        myPrice = myActPrice.getPrice();
-        myEvent.setAttribute(EventAttribute.InitialPrice, myPrice);
+        AccountPrice myActPrice = myPrices.getLatestPrice(myDebit, pEvent.getDate());
+        JPrice myPrice = myActPrice.getPrice();
+        myEvent.setAttribute(CapitalAttribute.InitialPrice, myPrice);
 
         /* Determine value of this stock at the current time */
-        myValue = myAsset.getUnits().valueAtPrice(myPrice);
-        myEvent.setAttribute(EventAttribute.InitialValue, myValue);
+        JUnits myUnits = myAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+        JMoney myValue = myUnits.valueAtPrice(myPrice);
+        myEvent.setAttribute(CapitalAttribute.InitialValue, myValue);
 
         /* Access the current cost */
-        myCost = myAsset.getCost();
+        JMoney myCost = myAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
 
         /* Calculate the portion of the value that creates a large transaction */
-        myPortion = myValue.valueAtRate(LIMIT_RATE);
+        JMoney myPortion = myValue.valueAtRate(LIMIT_RATE);
 
         /* If this is a large cash takeover portion (> both valueLimit and rateLimit of value) */
         if ((myAmount.compareTo(LIMIT_VALUE) > 0)
             && (myAmount.compareTo(myPortion) > 0)) {
             /* We have to defer the allocation of cost until we know of the Stock TakeOver part */
-            myEvent.setAttribute(EventAttribute.TakeOverCash, myAmount);
+            myEvent.setAttribute(CapitalAttribute.TakeOverCash, myAmount);
 
             /* else this is viewed as small and is taken out of the cost */
         } else {
             /* Set the reduction to be the entire amount */
-            myReduction = new JMoney(myAmount);
+            JMoney myReduction = new JMoney(myAmount);
 
             /* If the reduction is greater than the total cost */
             if (myReduction.compareTo(myCost) > 0) {
@@ -1637,45 +1471,36 @@ public class EventAnalysis
             }
 
             /* Calculate the residual cost */
-            myResidualCost = new JMoney(myReduction);
+            JMoney myResidualCost = new JMoney(myReduction);
             myResidualCost.negate();
             myResidualCost.addAmount(myCost);
 
             /* Record the residual cost */
-            myEvent.setAttribute(EventAttribute.TakeOverCost, myResidualCost);
+            myEvent.setAttribute(CapitalAttribute.TakeOverCost, myResidualCost);
 
             /* Calculate the delta cost */
-            myDeltaCost = new JMoney(myCost);
+            JMoney myDeltaCost = new JMoney(myCost);
             myDeltaCost.negate();
 
             /* Record the current/delta cost */
-            myEvent.setAttribute(EventAttribute.InitialCost, myCost);
-            myEvent.setAttribute(EventAttribute.DeltaCost, myDeltaCost);
-
-            /* Adjust the cost */
-            myCost.addAmount(myDeltaCost);
-            myEvent.setAttribute(EventAttribute.FinalCost, myCost);
+            myEvent.adjustCost(myCost, myDeltaCost);
 
             /* Calculate the gains */
-            myDeltaGains = new JMoney(myAmount);
+            JMoney myDeltaGains = new JMoney(myAmount);
             myDeltaGains.addAmount(myDeltaCost);
 
             /* Record the current/delta cost */
-            myEvent.setAttribute(EventAttribute.InitialGains, myAsset.getGains());
-            myEvent.setAttribute(EventAttribute.DeltaGains, myDeltaGains);
-
-            /* Adjust the gained */
-            myAsset.getGained().addAmount(myDeltaGains);
-            myEvent.setAttribute(EventAttribute.FinalGains, myAsset.getGains());
+            JMoney myGains = myAsset.getAttribute(AccountAttribute.Gains, JMoney.class);
+            myEvent.adjustGains(myGains, myDeltaGains);
         }
 
         /* Adjust the credit account bucket */
-        AccountBucket myBucket = myBuckets.getAccountBucket(myCredit);
+        AccountBucket myBucket = theAccountBuckets.getBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
         /* Adjust the relevant category bucket */
-        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
-        myCatBucket.adjustAmount(pEvent);
+        EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
+        myCatBucket.adjustValues(pEvent);
     }
 
     /**
@@ -1687,122 +1512,93 @@ public class EventAnalysis
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         AccountPriceList myPrices = theData.getPrices();
-        JUnits myUnits = pEvent.getCreditUnits();
         EventCategory myCat = pEvent.getCategory();
-        AccountPrice myActPrice;
-        JPrice myPrice;
-        JMoney myValue;
-        JMoney myStockCost;
-        JMoney myCashCost;
-        JMoney myTotalCost;
-        JMoney myDeltaCost;
-        JMoney myDeltaGains;
-        JUnits myDeltaUnits;
-        JMoney myResidualCash = null;
-        CapitalEvent myCredEvent;
-        CapitalEvent myDebEvent;
 
         /* Access the Asset Account Buckets */
-        BucketList myBuckets = theAnalysis.getList();
-        AssetAccountDetail myDebAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myDebit);
-        AssetAccountDetail myCredAsset = (AssetAccountDetail) myBuckets.getAccountBucket(myCredit);
+        AccountBucket myDebAsset = theAccountBuckets.getBucket(myDebit);
+        AccountBucket myCredAsset = theAccountBuckets.getBucket(myCredit);
 
         /* Access the cash takeover record for the debit account if it exists */
-        myDebEvent = myDebAsset.getCapitalEvents().getCashTakeOver();
+        CapitalEvent myDebEvent = myDebAsset.getCapitalEvents().getCashTakeOver();
+        JMoney myResidualCash = null;
+        JMoney myDeltaCost;
+        JMoney myCost;
+        JUnits myDeltaUnits = pEvent.getCreditUnits();
 
         /* If we have had a cash takeover event */
         if (myDebEvent != null) {
             /* Access the residual cost/cash */
-            myResidualCash = myDebEvent.getAttribute(EventAttribute.TakeOverCash, JMoney.class);
+            myResidualCash = myDebEvent.getAttribute(CapitalAttribute.TakeOverCash, JMoney.class);
         }
 
         /* Allocate new Capital events */
         myDebEvent = myDebAsset.getCapitalEvents().addEvent(pEvent);
-        myCredEvent = myCredAsset.getCapitalEvents().addEvent(pEvent);
+        CapitalEvent myCredEvent = myCredAsset.getCapitalEvents().addEvent(pEvent);
 
         /* If we have a Cash TakeOver component */
         if (myResidualCash != null) {
             /* Get the appropriate price for the credit account */
-            myActPrice = myPrices.getLatestPrice(myCredit, pEvent.getDate());
-            myPrice = myActPrice.getPrice();
-            myDebEvent.setAttribute(EventAttribute.TakeOverPrice, myPrice);
+            AccountPrice myActPrice = myPrices.getLatestPrice(myCredit, pEvent.getDate());
+            JPrice myPrice = myActPrice.getPrice();
+            myDebEvent.setAttribute(CapitalAttribute.TakeOverPrice, myPrice);
 
             /* Determine value of the stock part of the takeover */
-            myValue = myUnits.valueAtPrice(myPrice);
-            myDebEvent.setAttribute(EventAttribute.TakeoverValue, myValue);
+            JMoney myValue = myDeltaUnits.valueAtPrice(myPrice);
+            myDebEvent.setAttribute(CapitalAttribute.TakeoverValue, myValue);
 
             /* Calculate the total cost of the takeover */
-            myTotalCost = new JMoney(myResidualCash);
+            JMoney myTotalCost = new JMoney(myResidualCash);
             myTotalCost.addAmount(myValue);
 
             /* Split the total cost of the takeover between stock and cash */
-            myStockCost = myTotalCost.valueAtWeight(myValue, myTotalCost);
-            myCashCost = new JMoney(myTotalCost);
+            JMoney myStockCost = myTotalCost.valueAtWeight(myValue, myTotalCost);
+            JMoney myCashCost = new JMoney(myTotalCost);
             myCashCost.subtractAmount(myStockCost);
 
             /* Record the values */
-            myDebEvent.setAttribute(EventAttribute.TakeOverCash, myCashCost);
-            myDebEvent.setAttribute(EventAttribute.TakeOverStock, myStockCost);
-            myDebEvent.setAttribute(EventAttribute.TakeOverTotal, myTotalCost);
+            myDebEvent.setAttribute(CapitalAttribute.TakeOverCash, myCashCost);
+            myDebEvent.setAttribute(CapitalAttribute.TakeOverStock, myStockCost);
+            myDebEvent.setAttribute(CapitalAttribute.TakeOverTotal, myTotalCost);
 
             /* The Delta Gains is the Amount minus the CashCost */
-            myDeltaGains = new JMoney(myResidualCash);
+            JMoney myDeltaGains = new JMoney(myResidualCash);
             myDeltaGains.subtractAmount(myCashCost);
 
             /* Record the gains */
-            myDebEvent.setAttribute(EventAttribute.InitialGains, myDebAsset.getGains());
-            myDebEvent.setAttribute(EventAttribute.DeltaGains, myDeltaGains);
-            myDebAsset.getGained().addAmount(myDeltaGains);
-            myDebEvent.setAttribute(EventAttribute.FinalGains, myDebAsset.getGains());
+            JMoney myGains = myDebAsset.getAttribute(AccountAttribute.Gains, JMoney.class);
+            myDebEvent.adjustGains(myGains, myDeltaGains);
 
             /* The cost of the new stock is the stock cost */
-            myCredEvent.setAttribute(EventAttribute.InitialCost, myCredAsset.getCost());
-            myCredEvent.setAttribute(EventAttribute.DeltaCost, myStockCost);
-            myCredAsset.getCost().addAmount(myStockCost);
-            myCredEvent.setAttribute(EventAttribute.FinalCost, myCredAsset.getCost());
+            myCost = myCredAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
+            myCredEvent.adjustCost(myCost, myStockCost);
 
             /* else there is no cash part to this takeover */
         } else {
             /* The cost of the new stock is the residual debit cost */
-            myDeltaCost = myDebAsset.getCost();
-            myCredEvent.setAttribute(EventAttribute.InitialCost, myCredAsset.getCost());
-            myCredEvent.setAttribute(EventAttribute.DeltaCost, myDeltaCost);
-            myCredAsset.getCost().addAmount(myDeltaCost);
-            myCredEvent.setAttribute(EventAttribute.FinalCost, myCredAsset.getCost());
+            myDeltaCost = myDebAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
+            myCost = myCredAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
+            myCredEvent.adjustCost(myCost, myDeltaCost);
         }
 
         /* Calculate the delta cost */
-        myDeltaCost = new JMoney(myDebAsset.getCost());
+        myDeltaCost = myDebAsset.getAttribute(AccountAttribute.Cost, JMoney.class);
+        myDeltaCost = new JMoney(myCost);
         myDeltaCost.negate();
-
-        /* Record the current/delta cost */
-        myDebEvent.setAttribute(EventAttribute.InitialCost, myDebAsset.getCost());
-        myDebEvent.setAttribute(EventAttribute.DeltaCost, myDeltaCost);
-
-        /* Adjust the cost */
-        myDebAsset.getCost().addAmount(myDeltaCost);
-        myDebEvent.setAttribute(EventAttribute.FinalCost, myDebAsset.getCost());
+        myDebEvent.adjustCost(myCost, myDeltaCost);
 
         /* Calculate the delta units */
-        myDeltaUnits = new JUnits(myDebAsset.getUnits());
+        JUnits myUnits = myDebAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+        myDeltaUnits = new JUnits(myUnits);
         myDeltaUnits.negate();
+        myDebEvent.adjustUnits(myUnits, myDeltaUnits);
 
         /* Record the current/delta units */
-        myDebEvent.setAttribute(EventAttribute.InitialUnits, myDebAsset.getUnits());
-        myDebEvent.setAttribute(EventAttribute.DeltaUnits, myDeltaUnits);
-
-        /* Adjust the Units */
-        myDebAsset.getUnits().addUnits(myDeltaUnits);
-        myDebEvent.setAttribute(EventAttribute.FinalUnits, myDebAsset.getUnits());
-
-        /* Record the current/delta units */
-        myCredEvent.setAttribute(EventAttribute.InitialUnits, myCredAsset.getUnits());
-        myCredEvent.setAttribute(EventAttribute.DeltaUnits, myUnits);
-        myCredAsset.getUnits().addUnits(myUnits);
-        myCredEvent.setAttribute(EventAttribute.FinalUnits, myCredAsset.getUnits());
+        myUnits = myCredAsset.getAttribute(AccountAttribute.Units, JUnits.class);
+        myDeltaUnits = pEvent.getCreditUnits();
+        myCredEvent.adjustUnits(myUnits, myDeltaUnits);
 
         /* Adjust the relevant transaction bucket */
-        EventCategoryDetail myCatBucket = myBuckets.getCategoryDetail(myCat);
-        myCatBucket.adjustAmount(pEvent);
+        EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
+        myCatBucket.adjustValues(pEvent);
     }
 }

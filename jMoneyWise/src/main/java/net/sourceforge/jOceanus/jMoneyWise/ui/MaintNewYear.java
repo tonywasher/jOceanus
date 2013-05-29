@@ -50,11 +50,13 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventInfoSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
 
@@ -347,8 +349,8 @@ public class MaintNewYear
             OrderedListIterator<TaxYear> myIterator = myList.listIterator();
             setSelection(myIterator.peekLast());
         } catch (JDataException e) {
-            /* TODO Show the error */
-            // setError(e);
+            /* Record error */
+            theView.addError(e);
         }
     }
 
@@ -473,7 +475,7 @@ public class MaintNewYear
                 case COLUMN_DATE:
                     return Event.FIELD_DATE;
                 case COLUMN_DESC:
-                    return Event.FIELD_DESC;
+                    return EventInfoSet.getFieldForClass(EventInfoClass.Comments);
                 case COLUMN_CATEGORY:
                     return Event.FIELD_CATEGORY;
                 case COLUMN_AMOUNT:
@@ -525,7 +527,7 @@ public class MaintNewYear
                 case COLUMN_AMOUNT:
                     return pEvent.getAmount();
                 case COLUMN_DESC:
-                    return pEvent.getDesc();
+                    return pEvent.getComments();
                 default:
                     return null;
             }

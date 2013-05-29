@@ -22,10 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.views;
 
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
@@ -38,13 +44,16 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
+import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
+import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
 /**
  * The Account Bucket class.
  */
-public abstract class AccountBucket
-        extends AnalysisBucket {
+public final class AccountBucket
+        implements JDataContents, Comparable<AccountBucket>, OrderedIdItem<Integer> {
     /**
      * Local Report fields.
      */
@@ -53,25 +62,101 @@ public abstract class AccountBucket
     /**
      * Account Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
+    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(Account.class.getSimpleName());
+
+    /**
+     * Account Category Field Id.
+     */
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(AccountCategory.class.getSimpleName());
+
+    /**
+     * Account Type Field Id.
+     */
+    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(CategoryType.class.getSimpleName());
+
+    /**
+     * Base Field Id.
+     */
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+
+    /**
+     * FieldSet map.
+     */
+    private static final Map<JDataField, AccountAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+
+    /**
+     * The account.
+     */
+    private final Account theAccount;
+
+    /**
+     * The account category.
+     */
+    private final AccountCategory theCategory;
+
+    /**
+     * The category type.
+     */
+    private final CategoryType theType;
+
+    /**
+     * The dataSet.
+     */
+    private final FinanceData theData;
+
+    /**
+     * The base.
+     */
+    private final AccountBucket theBase;
+
+    /**
+     * CapitalEvent list.
+     */
+    private CapitalEventList theEvents = null;
+
+    /**
+     * Attribute Map.
+     */
+    private final Map<AccountAttribute, Object> theAttributes;
+
+    /**
+     * SavePoint.
+     */
+    private final Map<AccountAttribute, Object> theSavePoint;
+
+    @Override
+    public JDataFields getDataFields() {
+        return FIELD_DEFS;
+    }
 
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ACCOUNT.equals(pField)) {
             return theAccount;
         }
-        return super.getFieldValue(pField);
+        if (FIELD_CATEGORY.equals(pField)) {
+            return theCategory;
+        }
+        if (FIELD_TYPE.equals(pField)) {
+            return theType;
+        }
+        if (FIELD_BASE.equals(pField)) {
+            return theBase;
+        }
+
+        /* Handle Attribute fields */
+        AccountAttribute myClass = getClassForField(pField);
+        if (myClass != null) {
+            return getAttributeValue(myClass);
+        }
+
+        return JDataFieldValue.UnknownField;
     }
 
     @Override
     public String formatObject() {
         return getName();
     }
-
-    /**
-     * The account.
-     */
-    private final Account theAccount;
 
     /**
      * Obtain the name.
@@ -89,26 +174,181 @@ public abstract class AccountBucket
         return theAccount;
     }
 
+    @Override
+    public Integer getOrderedId() {
+        return theAccount.getId();
+    }
+
     /**
      * Obtain the account category.
      * @return the account category
      */
     public AccountCategory getAccountCategory() {
-        return theAccount.getAccountCategory();
+        return theCategory;
+    }
+
+    /**
+     * Obtain the category type.
+     * @return the category type
+     */
+    public CategoryType getCategoryType() {
+        return theType;
+    }
+
+    /**
+     * Obtain the capitalEventList.
+     * @return the capitalEventList
+     */
+    public CapitalEventList getCapitalEvents() {
+        return theEvents;
+    }
+
+    /**
+     * Obtain the base.
+     * @return the base
+     */
+    public AccountBucket getBase() {
+        return theBase;
+    }
+
+    /**
+     * Obtain the dataSet.
+     * @return the dataSet
+     */
+    private FinanceData getDataSet() {
+        return theData;
+    }
+
+    /**
+     * Obtain the attribute map.
+     * @return the attribute map
+     */
+    protected Map<AccountAttribute, Object> getAttributes() {
+        return theAttributes;
+    }
+
+    /**
+     * Set Attribute.
+     * @param pAttr the attribute
+     * @param pValue the value of the attribute
+     */
+    protected void setAttribute(final AccountAttribute pAttr,
+                                final Object pValue) {
+        /* Set the value into the list */
+        theAttributes.put(pAttr, pValue);
+    }
+
+    /**
+     * Get an attribute value.
+     * @param pAttr the attribute
+     * @return the value to set
+     */
+    private Object getAttributeValue(final AccountAttribute pAttr) {
+        /* Access value of object */
+        Object myValue = getAttribute(pAttr);
+
+        /* Return the value */
+        return (myValue != null)
+                ? myValue
+                : JDataFieldValue.SkipField;
+    }
+
+    /**
+     * Obtain the class of the field if it is an attribute field.
+     * @param pField the field
+     * @return the class
+     */
+    private static AccountAttribute getClassForField(final JDataField pField) {
+        /* Look up field in map */
+        return FIELDSET_MAP.get(pField);
+    }
+
+    /**
+     * Obtain an attribute value.
+     * @param <X> the data type
+     * @param pAttr the attribute
+     * @param pClass the class of the attribute
+     * @return the value of the attribute or null
+     */
+    public <X extends JDecimal> X getAttribute(final AccountAttribute pAttr,
+                                               final Class<X> pClass) {
+        /* Obtain the attribute */
+        return pClass.cast(getAttribute(pAttr));
+    }
+
+    /**
+     * Obtain an attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    private Object getAttribute(final AccountAttribute pAttr) {
+        /* Obtain the attribute */
+        return theAttributes.get(pAttr);
+    }
+
+    /**
+     * Obtain an attribute value from the base.
+     * @param <X> the data type
+     * @param pAttr the attribute
+     * @param pClass the class of the attribute
+     * @return the value of the attribute or null
+     */
+    public <X extends JDecimal> X getBaseAttribute(final AccountAttribute pAttr,
+                                                   final Class<X> pClass) {
+        /* Obtain the attribute */
+        return (theBase == null)
+                ? null
+                : theBase.getAttribute(pAttr, pClass);
     }
 
     /**
      * Constructor.
-     * @param pType the type
+     * @param pData the data
      * @param pAccount the account
      */
-    private AccountBucket(final BucketType pType,
+    private AccountBucket(final FinanceData pData,
                           final Account pAccount) {
-        /* Call super-constructor */
-        super(pType, pAccount.getId());
-
         /* Store the account */
         theAccount = pAccount;
+        theCategory = theAccount.getAccountCategory();
+        theType = AccountCategoryBucket.determineCategoryType(theCategory);
+        theData = pData;
+        theBase = null;
+
+        /* Create the attribute map and savePoint */
+        theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
+        theSavePoint = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
+
+        /* If we have value */
+        if (theType == CategoryType.Payee) {
+            /* Initialise income/expense to zero */
+            setAttribute(AccountAttribute.Income, new JMoney());
+            setAttribute(AccountAttribute.Expense, new JMoney());
+        } else {
+            /* Initialise valuation to zero */
+            setAttribute(AccountAttribute.Valuation, new JMoney());
+
+            /* If this is a credit card account */
+            if (theType == CategoryType.CreditCard) {
+                /* Initialise spend to zero */
+                setAttribute(AccountAttribute.Spend, new JMoney());
+
+                /* else if this account has units */
+            } else if (theType == CategoryType.Priced) {
+                /* Initialise units to zero */
+                setAttribute(AccountAttribute.Units, new JUnits());
+
+                /* Initialise money values */
+                setAttribute(AccountAttribute.Cost, new JMoney());
+                setAttribute(AccountAttribute.Invested, new JMoney());
+                setAttribute(AccountAttribute.Gains, new JMoney());
+                setAttribute(AccountAttribute.Gained, new JMoney());
+                setAttribute(AccountAttribute.Dividend, new JMoney());
+
+                /* allocate the Capital events */
+                theEvents = new CapitalEventList(theData, pAccount);
+            }
+        }
     }
 
     /**
@@ -116,15 +356,23 @@ public abstract class AccountBucket
      * @param pBase the underlying bucket
      */
     private AccountBucket(final AccountBucket pBase) {
-        /* Call super-constructor */
-        super(pBase);
-
-        /* Store the account */
+        /* Copy details from base */
         theAccount = pBase.getAccount();
+        theCategory = pBase.getAccountCategory();
+        theType = pBase.getCategoryType();
+        theData = pBase.getDataSet();
+        theBase = pBase;
+
+        /* Create a new attribute map and save point */
+        theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
+        theSavePoint = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
+
+        /* Clone the underlying map */
+        cloneMap(theBase.getAttributes(), theAttributes);
     }
 
     @Override
-    public int compareTo(final AnalysisBucket pThat) {
+    public int compareTo(final AccountBucket pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -133,1117 +381,596 @@ public abstract class AccountBucket
             return -1;
         }
 
-        /* Compare the super class */
-        int result = super.compareTo(pThat);
-        if (result != 0) {
-            return result;
-        }
-
-        /* Access the object as an Account Bucket */
-        AccountBucket myThat = (AccountBucket) pThat;
-
         /* Compare the Accounts */
-        return getAccount().compareTo(myThat.getAccount());
+        return getAccount().compareTo(pThat.getAccount());
     }
 
     /**
      * Adjust account for debit.
      * @param pEvent the event causing the debit
      */
-    protected abstract void adjustForDebit(final Event pEvent);
+    protected void adjustForDebit(final Event pEvent) {
+        switch (theType) {
+            case Money:
+            case CreditCard:
+                JMoney myValuation = getAttribute(AccountAttribute.Valuation, JMoney.class);
+                myValuation.subtractAmount(pEvent.getAmount());
+                if (theType == CategoryType.CreditCard) {
+                    JMoney mySpend = getAttribute(AccountAttribute.Spend, JMoney.class);
+                    mySpend.addAmount(pEvent.getAmount());
+                }
+                break;
+            case Priced:
+                JUnits myDelta = pEvent.getDebitUnits();
+                if (myDelta != null) {
+                    JUnits myUnits = getAttribute(AccountAttribute.Units, JUnits.class);
+                    myUnits.subtractUnits(myDelta);
+                }
+                break;
+            case Payee:
+                JMoney myIncome = getAttribute(AccountAttribute.Income, JMoney.class);
+                JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+                myIncome.addAmount(pEvent.getAmount());
+
+                /* If there is a TaxCredit */
+                JMoney myTaxCred = pEvent.getTaxCredit();
+                if (myTaxCred != null) {
+                    /* Adjust for Tax Credit */
+                    myIncome.addAmount(myTaxCred);
+                }
+
+                /* If there is National Insurance */
+                JMoney myNatIns = pEvent.getNatInsurance();
+                if (myNatIns != null) {
+                    /* Adjust for National Insurance */
+                    myIncome.addAmount(myNatIns);
+                }
+
+                /* If there is Charity Donation */
+                JMoney myDonation = pEvent.getDonation();
+                if (myDonation != null) {
+                    /* Adjust for Charity Donation */
+                    myIncome.addAmount(myDonation);
+                    myExpense.addAmount(myDonation);
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
     /**
      * Adjust account for credit.
      * @param pEvent the event causing the credit
      */
-    protected abstract void adjustForCredit(final Event pEvent);
+    protected void adjustForCredit(final Event pEvent) {
+        switch (theType) {
+            case Money:
+            case CreditCard:
+                JMoney myValuation = getAttribute(AccountAttribute.Valuation, JMoney.class);
+                myValuation.addAmount(pEvent.getAmount());
+                break;
+            case Priced:
+                JUnits myDelta = pEvent.getCreditUnits();
+                if (myDelta != null) {
+                    JUnits myUnits = getAttribute(AccountAttribute.Units, JUnits.class);
+                    myUnits.addUnits(myDelta);
+                }
+                break;
+            case Payee:
+                JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+                myExpense.addAmount(pEvent.getAmount());
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Adjust account for tax payments.
+     * @param pEvent the event causing the payments
+     */
+    protected void adjustForTaxPayments(final Event pEvent) {
+        JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+        JMoney myTaxCredit = pEvent.getTaxCredit();
+        JMoney myNatInsurance = pEvent.getNatInsurance();
+        if (myTaxCredit != null) {
+            myExpense.addAmount(myTaxCredit);
+        }
+        if (myNatInsurance != null) {
+            myExpense.addAmount(myNatInsurance);
+        }
+    }
+
+    /**
+     * Add income value.
+     * @param pValue the value to add
+     */
+    protected void addIncome(final JMoney pValue) {
+        JMoney myIncome = getAttribute(AccountAttribute.Income, JMoney.class);
+        myIncome.addAmount(pValue);
+    }
+
+    /**
+     * Subtract income value.
+     * @param pValue the value to subtract
+     */
+    protected void subtractIncome(final JMoney pValue) {
+        JMoney myIncome = getAttribute(AccountAttribute.Income, JMoney.class);
+        myIncome.subtractAmount(pValue);
+    }
+
+    /**
+     * Add expense value.
+     * @param pValue the value to add
+     */
+    protected void addExpense(final JMoney pValue) {
+        JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+        myExpense.addAmount(pValue);
+    }
+
+    /**
+     * Subtract expense value.
+     * @param pValue the value to subtract
+     */
+    protected void subtractExpense(final JMoney pValue) {
+        JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+        myExpense.subtractAmount(pValue);
+    }
 
     /**
      * Create a save point.
      */
-    protected abstract void createSavePoint();
-
-    /**
-     * Restore a save point.
-     */
-    protected abstract void restoreSavePoint();
+    protected void createSavePoint() {
+        /* Copy attribute map to SavePoint */
+        copyMap(theAttributes, theSavePoint);
+    }
 
     /**
      * Restore a Save Point.
      * @param pDate the date to restore.
      */
     protected void restoreSavePoint(final JDateDay pDate) {
-        restoreSavePoint();
-    }
+        /* Copy attribute map to SavePoint */
+        copyMap(theSavePoint, theAttributes);
 
-    /**
-     * The ValueBucket class.
-     */
-    protected abstract static class ValueBucket
-            extends AccountBucket {
-        /**
-         * Local Report fields.
-         */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ValueBucket.class.getSimpleName(), AccountBucket.FIELD_DEFS);
-
-        /**
-         * Value Field Id.
-         */
-        public static final JDataField FIELD_VALUE = FIELD_DEFS.declareLocalField("Value");
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_VALUE.equals(pField)) {
-                return theValue;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * The value.
-         */
-        private JMoney theValue = null;
-
-        @Override
-        public ValueBucket getBase() {
-            return (ValueBucket) super.getBase();
-        }
-
-        /**
-         * Obtain the value.
-         * @return the value
-         */
-        public JMoney getValue() {
-            return theValue;
-        }
-
-        /**
-         * Obtain the previous value.
-         * @return the value
-         */
-        public JMoney getPrevValue() {
-            return (getBase() != null)
-                    ? getBase().getValue()
-                    : null;
-        }
-
-        /**
-         * Set the value.
-         * @param pValue the value
-         */
-        protected void setValue(final JMoney pValue) {
-            theValue = pValue;
-        }
-
-        /**
-         * Constructor.
-         * @param pType the type
-         * @param pAccount the account
-         */
-        private ValueBucket(final BucketType pType,
-                            final Account pAccount) {
-            /* Call super-constructor */
-            super(pType, pAccount);
-
-            /* Initialise the money values */
-            theValue = new JMoney();
-        }
-
-        /**
-         * Constructor.
-         * @param pBase the underlying bucket
-         */
-        private ValueBucket(final ValueBucket pBase) {
-            /* Call super-constructor */
-            super(pBase);
-
-            /* Initialise the money values */
-            theValue = new JMoney();
-        }
-
-        @Override
-        public boolean isActive() {
-            /* Copy if the value is non-zero */
-            return theValue.isNonZero();
-        }
-
-        @Override
-        protected boolean isRelevant() {
-            /* Relevant if this value or the previous value is non-zero */
-            return (theValue.isNonZero() || ((getPrevValue() != null) && (getPrevValue().isNonZero())));
-        }
-
-        /**
-         * Adjust account for debit.
-         * @param pEvent the event causing the debit
-         */
-        @Override
-        protected void adjustForDebit(final Event pEvent) {
-            /* Adjust for debit */
-            theValue.subtractAmount(pEvent.getAmount());
-        }
-
-        /**
-         * Adjust account for credit.
-         * @param pEvent the event causing the credit
-         */
-        @Override
-        protected void adjustForCredit(final Event pEvent) {
-            /* Adjust for credit */
-            theValue.addAmount(pEvent.getAmount());
+        /* If there are capital events */
+        if ((theEvents != null)
+            && (pDate != null)) {
+            /* Trim back the capital events */
+            theEvents.purgeAfterDate(pDate);
         }
     }
 
     /**
-     * The MoneyAccountDetail Bucket class.
+     * Copy a map.
+     * @param pSource the source map
+     * @param pTarget the target map
      */
-    public static final class MoneyAccountDetail
-            extends ValueBucket {
-        /**
-         * Local Report fields.
-         */
-        private static final JDataFields FIELD_DEFS = new JDataFields(MoneyAccountDetail.class.getSimpleName(), ValueBucket.FIELD_DEFS);
+    protected void copyMap(final Map<AccountAttribute, Object> pSource,
+                           final Map<AccountAttribute, Object> pTarget) {
+        /* Clear the target map */
+        pTarget.clear();
 
-        /**
-         * Rate field Id.
-         */
-        public static final JDataField FIELD_RATE = FIELD_DEFS.declareLocalField("Rate");
+        /* For each entry in the source map */
+        for (Map.Entry<AccountAttribute, Object> myEntry : pSource.entrySet()) {
+            /* Access key and object */
+            AccountAttribute myAttr = myEntry.getKey();
+            Object myObject = myEntry.getValue();
 
-        /**
-         * Maturity field Id.
-         */
-        public static final JDataField FIELD_MATURITY = FIELD_DEFS.declareLocalField("Maturity");
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_RATE.equals(pField)) {
-                return (theRate != null)
-                        ? theRate
-                        : JDataFieldValue.SkipField;
+            /* Create copy of object in map */
+            if (myObject instanceof JPrice) {
+                pTarget.put(myAttr, new JPrice((JPrice) myObject));
+            } else if (myObject instanceof JMoney) {
+                pTarget.put(myAttr, new JMoney((JMoney) myObject));
+            } else if (myObject instanceof JUnits) {
+                pTarget.put(myAttr, new JUnits((JUnits) myObject));
+            } else if (myObject instanceof JRate) {
+                pTarget.put(myAttr, new JRate((JRate) myObject));
+            } else if (myObject instanceof JDateDay) {
+                pTarget.put(myAttr, new JDateDay((JDateDay) myObject));
             }
-            if (FIELD_MATURITY.equals(pField)) {
-                return (theMaturity != null)
-                        ? theMaturity
-                        : JDataFieldValue.SkipField;
+        }
+    }
+
+    /**
+     * Clone a map.
+     * @param pSource the source map
+     * @param pTarget the target map
+     */
+    private void cloneMap(final Map<AccountAttribute, Object> pSource,
+                          final Map<AccountAttribute, Object> pTarget) {
+        /* For each entry in the source map */
+        for (Map.Entry<AccountAttribute, Object> myEntry : pSource.entrySet()) {
+            /* Access key and object */
+            AccountAttribute myAttr = myEntry.getKey();
+            Object myObject = myEntry.getValue();
+
+            /* Switch on the Attribute */
+            switch (myAttr) {
+                case Valuation:
+                case Cost:
+                case Gained:
+                    pTarget.put(myAttr, new JMoney((JMoney) myObject));
+                    break;
+                case Gains:
+                case Invested:
+                case Dividend:
+                case Spend:
+                    pTarget.put(myAttr, new JMoney());
+                    break;
+                case Units:
+                    pTarget.put(myAttr, new JUnits((JUnits) myObject));
+                    break;
+                case Rate:
+                case Maturity:
+                case Price:
+                    pTarget.put(myAttr, myObject);
+                    break;
+                default:
+                    break;
             }
-            return super.getFieldValue(pField);
         }
+    }
 
-        /**
-         * The rate.
-         */
-        private JRate theRate = null;
+    /**
+     * record the rate of the account at a given date.
+     * @param pDate the date of valuation
+     */
+    protected void recordRate(final JDateDay pDate) {
+        /* Obtain the appropriate rate record */
+        AccountRateList myRates = theData.getRates();
+        AccountRate myRate = myRates.getLatestRate(theAccount, pDate);
+        JDateDay myDate = theAccount.getMaturity();
 
-        /**
-         * The maturity.
-         */
-        private JDateDay theMaturity = null;
-
-        /**
-         * The savePoint.
-         */
-        private MoneyAccountDetail theSavePoint = null;
-
-        @Override
-        public MoneyAccountDetail getBase() {
-            return (MoneyAccountDetail) super.getBase();
-        }
-
-        /**
-         * Obtain the rate.
-         * @return the rate
-         */
-        public JRate getRate() {
-            return theRate;
-        }
-
-        /**
-         * Obtain the maturity.
-         * @return the maturity
-         */
-        public JDateDay getMaturity() {
-            return theMaturity;
-        }
-
-        /**
-         * Constructor.
-         * @param pAccount the account
-         */
-        protected MoneyAccountDetail(final Account pAccount) {
-            /* Call super-constructor */
-            super(BucketType.BANKDETAIL, pAccount);
-        }
-
-        /**
-         * Constructor.
-         * @param pBase the underlying bucket.
-         */
-        protected MoneyAccountDetail(final MoneyAccountDetail pBase) {
-            /* Call super-constructor */
-            super(pBase.cloneIt());
-
-            /* Initialise the Money values */
-            setValue(new JMoney(pBase.getValue()));
-        }
-
-        /**
-         * Create a clone of the money account.
-         * @return the cloned MoneyAccount.
-         */
-        private MoneyAccountDetail cloneIt() {
-            /* Call super-constructor */
-            MoneyAccountDetail myClone = new MoneyAccountDetail(getAccount());
-
-            /* Copy the Money values */
-            myClone.setValue(new JMoney(getValue()));
-            if (getRate() != null) {
-                myClone.theRate = new JRate(getRate());
-            }
-            if (getMaturity() != null) {
-                myClone.theMaturity = new JDateDay(getMaturity());
+        /* If we have a rate */
+        if (myRate != null) {
+            /* Use Rate date instead */
+            if (myDate == null) {
+                myDate = myRate.getDate();
             }
 
-            /* Return the clone */
-            return myClone;
+            /* Store the rate */
+            setAttribute(AccountAttribute.Rate, myRate.getRate());
         }
 
-        /**
-         * record the rate of the account at a given date.
-         * @param pData the dataSet
-         * @param pDate the date of valuation
-         */
-        protected void recordRate(final FinanceData pData,
-                                  final JDateDay pDate) {
-            /* Obtain the appropriate price record */
-            AccountRateList myRates = pData.getRates();
-            AccountRate myRate = myRates.getLatestRate(getAccount(), pDate);
-            JDateDay myDate = getAccount().getMaturity();
+        /* Store the maturity */
+        setAttribute(AccountAttribute.Maturity, myDate);
+    }
 
-            /* If we have a rate */
-            if (myRate != null) {
-                /* Use Rate date instead */
-                if (myDate == null) {
-                    myDate = myRate.getDate();
+    /**
+     * value the asset at a particular date.
+     * @param pDate the date of valuation
+     */
+    protected void valueAsset(final JDateDay pDate) {
+        /* Obtain the appropriate price record */
+        AccountPriceList myPrices = theData.getPrices();
+        AccountPrice myActPrice = myPrices.getLatestPrice(getAccount(), pDate);
+
+        /* Access units */
+        JUnits myUnits = getAttribute(AccountAttribute.Units, JUnits.class);
+        JPrice myPrice;
+
+        /* If we found a price */
+        if (myActPrice != null) {
+            /* Store the price */
+            myPrice = myActPrice.getPrice();
+
+            /* else assume zero price */
+        } else {
+            myPrice = new JPrice();
+        }
+
+        /* Calculate the value */
+        setAttribute(AccountAttribute.Price, myPrice);
+        setAttribute(AccountAttribute.Valuation, myUnits.valueAtPrice(myPrice));
+
+        /* Calculate the profit */
+        JMoney myProfit = new JMoney(getAttribute(AccountAttribute.Valuation, JMoney.class));
+        myProfit.subtractAmount(getAttribute(AccountAttribute.Cost, JMoney.class));
+        myProfit.addAmount(getAttribute(AccountAttribute.Gained, JMoney.class));
+
+        /* Set the attribute */
+        setAttribute(AccountAttribute.Profit, myProfit);
+    }
+
+    /**
+     * Calculate delta.
+     */
+    private void calculateDelta() {
+        /* If we have a base value */
+        if (theBase != null) {
+            /* Switch on type */
+            switch (theType) {
+                case Money:
+                case Priced:
+                case CreditCard:
+                    JMoney myValue = new JMoney(getAttribute(AccountAttribute.Valuation, JMoney.class));
+                    myValue.subtractAmount(getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
+                    setAttribute(AccountAttribute.ValueDelta, myValue);
+                    break;
+                case Payee:
+                    JMoney myDelta = new JMoney(getAttribute(AccountAttribute.Income, JMoney.class));
+                    myDelta.subtractAmount(getBaseAttribute(AccountAttribute.Expense, JMoney.class));
+                    setAttribute(AccountAttribute.IncomeDelta, myDelta);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * analyse bucket.
+     * @param pDate the date for analysis
+     */
+    protected void analyseBucket(final JDateDay pDate) {
+        /* Switch on type */
+        switch (theType) {
+            case Money:
+            case CreditCard:
+                recordRate(pDate);
+                calculateDelta();
+                break;
+            case Priced:
+                valueAsset(pDate);
+                calculateDelta();
+                break;
+            case Payee:
+                calculateDelta();
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Is the bucket active?
+     * @return true/false
+     */
+    public boolean isActive() {
+        switch (theType) {
+            case Priced:
+                JUnits myUnits = getAttribute(AccountAttribute.Units, JUnits.class);
+                return (myUnits != null)
+                       && (myUnits.isNonZero());
+            case Money:
+                JMoney myValuation = getAttribute(AccountAttribute.Valuation, JMoney.class);
+                return (myValuation != null)
+                       && (myValuation.isNonZero());
+            case CreditCard:
+                JMoney myValue = getAttribute(AccountAttribute.Valuation, JMoney.class);
+                JMoney mySpend = getAttribute(AccountAttribute.Spend, JMoney.class);
+                if ((mySpend != null)
+                    && (mySpend.isNonZero())) {
+                    return true;
                 }
-
-                /* Store the rate */
-                theRate = myRate.getRate();
-            }
-
-            /* Store the maturity */
-            theMaturity = myDate;
-        }
-
-        /**
-         * Create a Save Point.
-         */
-        @Override
-        protected void createSavePoint() {
-            /* Create a save of the values */
-            theSavePoint = new MoneyAccountDetail(this);
-        }
-
-        /**
-         * Restore a Save Point.
-         */
-        @Override
-        protected void restoreSavePoint() {
-            /* If we have a Save point */
-            if (theSavePoint != null) {
-                /* Restore original value */
-                setValue(new JMoney(theSavePoint.getValue()));
-            }
+                return (myValue != null)
+                       && (myValue.isNonZero());
+            case Payee:
+                JMoney myIncome = getAttribute(AccountAttribute.Income, JMoney.class);
+                JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+                if ((myIncome != null)
+                    && (myIncome.isNonZero())) {
+                    return true;
+                }
+                return ((myExpense != null) && (myExpense.isNonZero()));
+            default:
+                return false;
         }
     }
 
     /**
-     * The LoanAccountDetail Bucket class.
+     * Is the bucket relevant? That is to say is either this bucket or it's base active?
+     * @return true/false
      */
-    public static final class LoanAccountDetail
-            extends ValueBucket {
+    protected boolean isRelevant() {
+        /* Relevant if this value or the previous value is non-zero */
+        if (isActive()) {
+            return true;
+        }
+        return (theBase != null)
+               && (theBase.isActive());
+    }
+
+    /**
+     * AccountBucket list class.
+     */
+    public static class AccountBucketList
+            extends OrderedIdList<Integer, AccountBucket>
+            implements JDataContents {
+
         /**
          * Local Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(LoanAccountDetail.class.getSimpleName(), ValueBucket.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucketList.class.getSimpleName());
 
         @Override
         public JDataFields getDataFields() {
             return FIELD_DEFS;
         }
 
+        @Override
+        public String formatObject() {
+            return getDataFields().getName()
+                   + "("
+                   + size()
+                   + ")";
+        }
+
         /**
-         * Spend Field Id.
+         * Size Field Id.
          */
-        public static final JDataField FIELD_SPEND = FIELD_DEFS.declareLocalField("Spend");
+        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+
+        /**
+         * Analysis field Id.
+         */
+        public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
 
         @Override
         public Object getFieldValue(final JDataField pField) {
-            if (FIELD_SPEND.equals(pField)) {
-                return theSpend;
+            if (FIELD_SIZE.equals(pField)) {
+                return size();
             }
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * The spend.
-         */
-        private JMoney theSpend = null;
-
-        /**
-         * The savePoint.
-         */
-        private LoanAccountDetail theSavePoint = null;
-
-        @Override
-        public LoanAccountDetail getBase() {
-            return (LoanAccountDetail) super.getBase();
-        }
-
-        /**
-         * Obtain the spend.
-         * @return the spend
-         */
-        public JMoney getSpend() {
-            return theSpend;
-        }
-
-        /**
-         * Constructor.
-         * @param pAccount the account
-         */
-        protected LoanAccountDetail(final Account pAccount) {
-            /* Call super-constructor */
-            super(BucketType.LOANDETAIL, pAccount);
-
-            /* Initialise the money values */
-            theSpend = new JMoney();
-        }
-
-        /**
-         * Constructor.
-         * @param pBase the underlying bucket
-         */
-        protected LoanAccountDetail(final LoanAccountDetail pBase) {
-            /* Call super-constructor */
-            super(pBase.cloneIt());
-
-            /* Initialise the Money values */
-            setValue(new JMoney(pBase.getValue()));
-            theSpend = new JMoney();
-        }
-
-        /**
-         * Adjust account for debit.
-         * @param pEvent the event causing the debit
-         */
-        @Override
-        protected void adjustForDebit(final Event pEvent) {
-            /* Adjust value */
-            super.adjustForDebit(pEvent);
-
-            /* Adjust for spend */
-            theSpend.addAmount(pEvent.getAmount());
-        }
-
-        /**
-         * Create a clone of the loan account.
-         * @return the cloned LoanAccount.
-         */
-        private LoanAccountDetail cloneIt() {
-            /* Call super-constructor */
-            LoanAccountDetail myClone = new LoanAccountDetail(getAccount());
-
-            /* Copy the Debt values */
-            myClone.setValue(new JMoney(getValue()));
-            myClone.theSpend = new JMoney(theSpend);
-
-            /* Return the clone */
-            return myClone;
-        }
-
-        /**
-         * Create a Save Point.
-         */
-        @Override
-        protected void createSavePoint() {
-            /* Create a save of the values */
-            theSavePoint = new LoanAccountDetail(this);
-        }
-
-        /**
-         * Restore a Save Point.
-         */
-        @Override
-        protected void restoreSavePoint() {
-            /* If we have a Save point */
-            if (theSavePoint != null) {
-                /* Restore original value */
-                setValue(new JMoney(theSavePoint.getValue()));
-                theSpend = new JMoney(theSavePoint.getSpend());
+            if (FIELD_ANALYSIS.equals(pField)) {
+                return theAnalysis;
             }
-        }
-    }
-
-    /**
-     * The AssetAccountDetail Bucket class.
-     */
-    public static final class AssetAccountDetail
-            extends ValueBucket {
-        /**
-         * Local Report fields.
-         */
-        private static final JDataFields FIELD_DEFS = new JDataFields(AssetAccountDetail.class.getSimpleName(), ValueBucket.FIELD_DEFS);
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
+            return JDataFieldValue.UnknownField;
         }
 
         /**
-         * Cost field id.
+         * The analysis.
          */
-        public static final JDataField FIELD_COST = FIELD_DEFS.declareLocalField("Cost");
+        private final Analysis theAnalysis;
 
         /**
-         * Units field id.
-         */
-        public static final JDataField FIELD_UNITS = FIELD_DEFS.declareLocalField("Units");
-
-        /**
-         * Gained field id.
-         */
-        public static final JDataField FIELD_GAINED = FIELD_DEFS.declareLocalField("Gained");
-
-        /**
-         * Invested field id.
-         */
-        public static final JDataField FIELD_INVESTED = FIELD_DEFS.declareLocalField("Invested");
-
-        /**
-         * Dividend field id.
-         */
-        public static final JDataField FIELD_DIVIDEND = FIELD_DEFS.declareLocalField("Cost");
-
-        /**
-         * Gains field id.
-         */
-        public static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField("Gains");
-
-        /**
-         * Price field id.
-         */
-        public static final JDataField FIELD_PRICE = FIELD_DEFS.declareLocalField("Price");
-
-        /**
-         * Profit field id.
-         */
-        public static final JDataField FIELD_PROFIT = FIELD_DEFS.declareLocalField("Profit");
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_COST.equals(pField)) {
-                return theCost;
-            }
-            if (FIELD_UNITS.equals(pField)) {
-                return theUnits;
-            }
-            if (FIELD_GAINED.equals(pField)) {
-                return theGained;
-            }
-            if (FIELD_INVESTED.equals(pField)) {
-                return theInvested;
-            }
-            if (FIELD_DIVIDEND.equals(pField)) {
-                return theDividend;
-            }
-            if (FIELD_GAINS.equals(pField)) {
-                return theGains;
-            }
-            if (FIELD_PRICE.equals(pField)) {
-                return thePrice;
-            }
-            if (FIELD_PROFIT.equals(pField)) {
-                return theProfit;
-            }
-            return super.getFieldValue(pField);
-        }
-
-        /**
-         * DataSet.
+         * The data.
          */
         private final FinanceData theData;
 
         /**
-         * CapitalEvent list.
+         * Construct a top-level List.
+         * @param pAnalysis the analysis
          */
-        private CapitalEventList theEvents = null;
-
-        /**
-         * The cost.
-         */
-        private JMoney theCost = null;
-
-        /**
-         * The units.
-         */
-        private JUnits theUnits = null;
-
-        /**
-         * The gained.
-         */
-        private JMoney theGained = null;
-
-        /**
-         * The invested.
-         */
-        private JMoney theInvested = null;
-
-        /**
-         * The dividend.
-         */
-        private JMoney theDividend = null;
-
-        /**
-         * The gains.
-         */
-        private JMoney theGains = null;
-
-        /**
-         * The profit.
-         */
-        private JMoney theProfit = null;
-
-        /**
-         * The price.
-         */
-        private JPrice thePrice = null;
-
-        /**
-         * The savePoint.
-         */
-        private AssetAccountDetail theSavePoint = null;
-
-        @Override
-        public AssetAccountDetail getBase() {
-            return (AssetAccountDetail) super.getBase();
+        public AccountBucketList(final Analysis pAnalysis) {
+            super(AccountBucket.class);
+            theAnalysis = pAnalysis;
+            theData = theAnalysis.getData();
         }
 
         /**
-         * Obtain cost.
-         * @return the cost
+         * Construct a secondary List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
          */
-        public JMoney getCost() {
-            return theCost;
+        public AccountBucketList(final Analysis pAnalysis,
+                                 final AccountBucketList pBase) {
+            super(AccountBucket.class);
+            theAnalysis = pAnalysis;
+            theData = theAnalysis.getData();
+
+            /* Access the iterator */
+            Iterator<AccountBucket> myIterator = pBase.listIterator();
+
+            /* Loop through the buckets */
+            while (myIterator.hasNext()) {
+                AccountBucket myCurr = myIterator.next();
+
+                /* If the bucket is active */
+                if (myCurr.isActive()) {
+                    /* Add a derived bucket to the list */
+                    AccountBucket myBucket = new AccountBucket(myCurr);
+                    add(myBucket);
+                }
+            }
         }
 
         /**
-         * Obtain units.
-         * @return the units
-         */
-        public JUnits getUnits() {
-            return theUnits;
-        }
-
-        /**
-         * Obtain gained.
-         * @return the gained
-         */
-        public JMoney getGained() {
-            return theGained;
-        }
-
-        /**
-         * Obtain invested.
-         * @return the invested
-         */
-        public JMoney getInvested() {
-            return theInvested;
-        }
-
-        /**
-         * Obtain dividend.
-         * @return the dividend
-         */
-        public JMoney getDividend() {
-            return theDividend;
-        }
-
-        /**
-         * Obtain gains.
-         * @return the gains
-         */
-        public JMoney getGains() {
-            return theGains;
-        }
-
-        /**
-         * Obtain profit.
-         * @return the profit
-         */
-        public JMoney getProfit() {
-            return theProfit;
-        }
-
-        /**
-         * Obtain price.
-         * @return the price
-         */
-        public JPrice getPrice() {
-            return thePrice;
-        }
-
-        /**
-         * Obtain previous cost.
-         * @return the cost
-         */
-        public JMoney getPrevCost() {
-            return (getBase() != null)
-                    ? getBase().getCost()
-                    : null;
-        }
-
-        /**
-         * Obtain previous units.
-         * @return the units
-         */
-        public JUnits getPrevUnits() {
-            return (getBase() != null)
-                    ? getBase().getUnits()
-                    : null;
-        }
-
-        /**
-         * Obtain previous gained.
-         * @return the gained
-         */
-        public JMoney getPrevGained() {
-            return (getBase() != null)
-                    ? getBase().getGained()
-                    : null;
-        }
-
-        /**
-         * Obtain capital events.
-         * @return the events
-         */
-        public CapitalEventList getCapitalEvents() {
-            return theEvents;
-        }
-
-        /**
-         * Constructor.
-         * @param pData the dataSet
+         * Obtain the AccountBucket for a given account.
          * @param pAccount the account
+         * @return the bucket
          */
-        protected AssetAccountDetail(final FinanceData pData,
-                                     final Account pAccount) {
-            /* Call super-constructor */
-            super(BucketType.ASSETDETAIL, pAccount);
+        protected AccountBucket getBucket(final Account pAccount) {
+            /* Locate the bucket in the list */
+            AccountBucket myItem = findItemById(pAccount.getId());
 
-            /* Initialise the values */
-            theData = pData;
-            theUnits = new JUnits();
-            theCost = new JMoney();
-            theGained = new JMoney();
+            /* If the item does not yet exist */
+            if (myItem == null) {
+                /* Create the new bucket */
+                myItem = new AccountBucket(theData, pAccount);
 
-            theInvested = new JMoney();
-            theDividend = new JMoney();
-            theGains = new JMoney();
-
-            /* allocate the Capital events */
-            theEvents = new CapitalEventList(pData, pAccount);
-        }
-
-        /**
-         * Constructor.
-         * @param pBase the underlying bucket
-         */
-        protected AssetAccountDetail(final AssetAccountDetail pBase) {
-            /* Call super-constructor */
-            super(pBase.cloneIt());
-
-            /* Initialise the values */
-            theData = pBase.theData;
-            theUnits = new JUnits(pBase.getUnits());
-            theCost = new JMoney(pBase.getCost());
-            theGained = new JMoney(pBase.getGained());
-            theInvested = new JMoney();
-            theGains = new JMoney();
-            theDividend = new JMoney();
-
-            /* Copy the Capital Events */
-            theEvents = pBase.getCapitalEvents();
-        }
-
-        /**
-         * Create a clone of the asset account.
-         * @return the cloned AssetAccount.
-         */
-        private AssetAccountDetail cloneIt() {
-            /* Call super-constructor */
-            AssetAccountDetail myClone = new AssetAccountDetail(theData, getAccount());
-
-            /* Copy the Asset values */
-            myClone.setValue(new JMoney(getValue()));
-            myClone.theUnits = new JUnits(theUnits);
-            myClone.theCost = new JMoney(theCost);
-            myClone.theGained = new JMoney(theGained);
-            myClone.theInvested = new JMoney(theInvested);
-            myClone.theGains = new JMoney(theGains);
-            myClone.theDividend = new JMoney(theDividend);
-
-            /* Copy price if available */
-            if (thePrice != null) {
-                myClone.thePrice = new JPrice(thePrice);
+                /* Add to the list */
+                add(myItem);
             }
 
-            /* Return the clone */
-            return myClone;
-        }
-
-        @Override
-        public boolean isActive() {
-            /* Copy if the units is non-zero */
-            return theUnits.isNonZero();
-        }
-
-        @Override
-        protected boolean isRelevant() {
-            /* Relevant if this value or the previous value is non-zero */
-            return (theUnits.isNonZero() || ((getPrevUnits() != null) && (getPrevUnits().isNonZero())));
-        }
-
-        /**
-         * value the asset at a particular date.
-         * @param pDate the date of valuation
-         */
-        protected void valueAsset(final JDateDay pDate) {
-            AccountPriceList myPrices = theData.getPrices();
-            AccountPrice myActPrice;
-
-            /* Obtain the appropriate price record */
-            myActPrice = myPrices.getLatestPrice(getAccount(), pDate);
-
-            /* If we found a price */
-            if (myActPrice != null) {
-                /* Store the price */
-                thePrice = myActPrice.getPrice();
-
-                /* else assume zero price */
-            } else {
-                thePrice = new JPrice();
-            }
-
-            /* Calculate the value */
-            setValue(theUnits.valueAtPrice(thePrice));
-        }
-
-        /**
-         * Calculate profit.
-         */
-        protected void calculateProfit() {
-            /* Calculate the profit */
-            theProfit = new JMoney(getValue());
-            theProfit.subtractAmount(theCost);
-            theProfit.addAmount(theGained);
-        }
-
-        /**
-         * Adjust account for debit.
-         * @param pEvent the event causing the debit
-         */
-        @Override
-        protected void adjustForDebit(final Event pEvent) {
-            /* Adjust for debit */
-            if (pEvent.getDebitUnits() != null) {
-                theUnits.subtractUnits(pEvent.getDebitUnits());
-            }
-        }
-
-        /**
-         * Adjust account for credit.
-         * @param pEvent the event causing the credit
-         */
-        @Override
-        protected void adjustForCredit(final Event pEvent) {
-            /* Adjust for credit */
-            if (pEvent.getCreditUnits() != null) {
-                theUnits.addUnits(pEvent.getCreditUnits());
-            }
-        }
-
-        /**
-         * Create a Save Point.
-         */
-        @Override
-        protected void createSavePoint() {
-            /* Create a save of the values */
-            theSavePoint = new AssetAccountDetail(this);
-        }
-
-        @Override
-        protected void restoreSavePoint() {
-            restoreSavePoint(null);
-        }
-
-        @Override
-        protected void restoreSavePoint(final JDateDay pDate) {
-            /* If we have a Save point */
-            if (theSavePoint != null) {
-                /* Restore original value */
-                setValue(new JMoney(theSavePoint.getValue()));
-
-                /* Initialise the Money values */
-                theUnits = new JUnits(theSavePoint.getUnits());
-                theCost = new JMoney(theSavePoint.getCost());
-                theGained = new JMoney(theSavePoint.getGained());
-                theInvested = new JMoney(theSavePoint.getInvested());
-                theDividend = new JMoney(theSavePoint.getDividend());
-                theGains = new JMoney(theSavePoint.getGains());
-
-                /* Copy price if available */
-                if (theSavePoint.getPrice() != null) {
-                    thePrice = new JPrice(theSavePoint.getPrice());
-                }
-
-                /* Trim back the capital events */
-                if (pDate != null) {
-                    theEvents.purgeAfterDate(pDate);
-                }
-            }
+            /* Return the bucket */
+            return myItem;
         }
     }
 
     /**
-     * The PayeeAccountDetail Bucket class.
+     * AccountAttribute enumeration.
      */
-    public static final class PayeeAccountDetail
-            extends AccountBucket {
+    public enum AccountAttribute {
         /**
-         * Local Report fields.
+         * Valuation.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(PayeeAccountDetail.class.getSimpleName(), AccountBucket.FIELD_DEFS);
-
-        @Override
-        public JDataFields getDataFields() {
-            return FIELD_DEFS;
-        }
+        Valuation,
 
         /**
-         * Income Field Id.
+         * Rate.
          */
-        public static final JDataField FIELD_INCOME = FIELD_DEFS.declareLocalField("Income");
+        Rate,
 
         /**
-         * Expense Field Id.
+         * Valuation Delta.
          */
-        public static final JDataField FIELD_EXPENSE = FIELD_DEFS.declareLocalField("Expense");
-
-        @Override
-        public Object getFieldValue(final JDataField pField) {
-            if (FIELD_INCOME.equals(pField)) {
-                return theIncome;
-            }
-            if (FIELD_EXPENSE.equals(pField)) {
-                return theExpense;
-            }
-            return super.getFieldValue(pField);
-        }
+        ValueDelta,
 
         /**
-         * The income.
+         * Maturity.
          */
-        private JMoney theIncome = null;
+        Maturity,
 
         /**
-         * The expense.
+         * Spend.
          */
-        private JMoney theExpense = null;
+        Spend,
 
         /**
-         * The save point.
+         * Units.
          */
-        private PayeeAccountDetail theSavePoint = null;
-
-        @Override
-        public PayeeAccountDetail getBase() {
-            return (PayeeAccountDetail) super.getBase();
-        }
+        Units,
 
         /**
-         * Obtain income.
-         * @return the income
+         * Cost.
          */
-        public JMoney getIncome() {
-            return theIncome;
-        }
+        Cost,
 
         /**
-         * Obtain expense.
-         * @return the expense
+         * Gained.
          */
-        public JMoney getExpense() {
-            return theExpense;
-        }
+        Gained,
 
         /**
-         * Obtain previous income.
-         * @return the income
+         * Invested.
          */
-        public JMoney getPrevIncome() {
-            return (getBase() != null)
-                    ? getBase().getIncome()
-                    : null;
-        }
+        Invested,
 
         /**
-         * Obtain previous expense.
-         * @return the expense
+         * Dividend.
          */
-        public JMoney getPrevExpense() {
-            return (getBase() != null)
-                    ? getBase().getExpense()
-                    : null;
-        }
+        Dividend,
 
         /**
-         * Constructor.
-         * @param pAccount the account
+         * Gains.
          */
-        protected PayeeAccountDetail(final Account pAccount) {
-            /* Call super-constructor */
-            super(BucketType.PAYEEDETAIL, pAccount);
-
-            /* Initialise the money values */
-            theIncome = new JMoney();
-            theExpense = new JMoney();
-        }
+        Gains,
 
         /**
-         * Constructor.
-         * @param pBase the underlying bucket
+         * Profit.
          */
-        protected PayeeAccountDetail(final PayeeAccountDetail pBase) {
-            /* Call super-constructor */
-            super(pBase.cloneIt());
-
-            /* Initialise the Money values */
-            theIncome = new JMoney();
-            theExpense = new JMoney();
-        }
+        Profit,
 
         /**
-         * Create a clone of the External account.
-         * @return the cloned ExternalAccount.
+         * Price.
          */
-        private PayeeAccountDetail cloneIt() {
-            /* Call super-constructor */
-            PayeeAccountDetail myClone = new PayeeAccountDetail(getAccount());
-
-            /* Copy the External values */
-            myClone.theIncome = new JMoney(theIncome);
-            myClone.theExpense = new JMoney(theExpense);
-
-            /* Return the clone */
-            return myClone;
-        }
-
-        @Override
-        public boolean isActive() {
-            /* Copy if the income or expense is non-zero */
-            return (theIncome.isNonZero() || theExpense.isNonZero());
-        }
-
-        @Override
-        protected boolean isRelevant() {
-            /* Relevant if this value or previous value is non-zero */
-            boolean bResult = (theIncome.isNonZero() || theExpense.isNonZero());
-            bResult |= ((getPrevIncome() != null) && (getPrevIncome().isNonZero()));
-            bResult |= ((getPrevExpense() != null) && (getPrevExpense().isNonZero()));
-            return bResult;
-        }
+        Price,
 
         /**
-         * Adjust account for debit.
-         * @param pEvent the event causing the debit
+         * Income.
          */
-        @Override
-        protected void adjustForDebit(final Event pEvent) {
-            // EventCategory myCategory = pEvent.getCategory();
-            JMoney myAmount = pEvent.getAmount();
-            JMoney myTaxCred = pEvent.getTaxCredit();
-
-            /* If this is a recovered transaction */
-            // if (myCategory.isRecovered()) {TODO
-            /* This is a negative expense */
-            // theExpense.subtractAmount(myAmount);
-
-            /* else this is a standard income */
-            // } else {
-            /* Adjust for income */
-            theIncome.addAmount(myAmount);
-
-            /* If there is a TaxCredit */
-            if (myTaxCred != null) {
-                /* Adjust for Tax Credit */
-                theIncome.addAmount(myTaxCred);
-            }
-            // }
-        }
+        Income,
 
         /**
-         * Adjust account for credit.
-         * @param pEvent the event causing the credit
+         * Expense.
          */
-        @Override
-        protected void adjustForCredit(final Event pEvent) {
-            /* Adjust for expense */
-            theExpense.addAmount(pEvent.getAmount());
-        }
+        Expense,
 
         /**
-         * Adjust account for tax credit.
-         * @param pEvent the event causing the tax credit
+         * Income Delta.
          */
-        protected void adjustForTaxCredit(final Event pEvent) {
-            /* Adjust for expense */
-            theExpense.addAmount(pEvent.getTaxCredit());
-        }
-
-        /**
-         * Adjust account for taxable gain tax credit.
-         * @param pEvent the event causing the tax credit
-         */
-        protected void adjustForTaxGainTaxCredit(final Event pEvent) {
-            /* Adjust for expense */
-            theIncome.addAmount(pEvent.getTaxCredit());
-        }
-
-        /**
-         * Create a Save Point.
-         */
-        @Override
-        protected void createSavePoint() {
-            /* Create a save of the values */
-            theSavePoint = new PayeeAccountDetail(this);
-        }
-
-        /**
-         * Restore a Save Point.
-         */
-        @Override
-        protected void restoreSavePoint() {
-            /* If we have a Save point */
-            if (theSavePoint != null) {
-                /* Restore original value */
-                theIncome = new JMoney(theSavePoint.getIncome());
-                theExpense = new JMoney(theSavePoint.getExpense());
-            }
-        }
+        IncomeDelta;
     }
 }

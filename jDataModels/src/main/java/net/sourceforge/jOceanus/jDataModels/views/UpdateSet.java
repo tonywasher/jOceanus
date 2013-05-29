@@ -33,6 +33,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
@@ -479,11 +480,11 @@ public class UpdateSet
         }
 
         /* Access any error */
-        JDataException myError = theControl.getError();
+        DataErrorList<JDataException> myErrors = theControl.getErrors();
 
         /* Show the error */
-        if (myError != null) {
-            pError.setError(myError);
+        if (myErrors.size() > 0) {
+            pError.setErrors(myErrors);
         }
     }
 }

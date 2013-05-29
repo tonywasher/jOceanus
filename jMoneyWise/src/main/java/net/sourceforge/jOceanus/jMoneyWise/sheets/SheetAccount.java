@@ -69,14 +69,9 @@ public class SheetAccount
     private static final int COL_ACCOUNTCAT = COL_NAME + 1;
 
     /**
-     * Description column.
-     */
-    private static final int COL_DESC = COL_ACCOUNTCAT + 1;
-
-    /**
      * Closed column.
      */
-    private static final int COL_CLOSED = COL_DESC + 1;
+    private static final int COL_CLOSED = COL_ACCOUNTCAT + 1;
 
     /**
      * TaxFree column.
@@ -157,10 +152,9 @@ public class SheetAccount
 
         /* Access the binary values */
         byte[] myName = loadBytes(COL_NAME);
-        byte[] myDesc = loadBytes(COL_DESC);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myName, myCategoryId, myDesc, isClosed, isTaxFree);
+        theList.addSecureItem(pId, myControlId, myName, myCategoryId, isClosed, isTaxFree);
     }
 
     @Override
@@ -168,14 +162,13 @@ public class SheetAccount
         /* Access the Account */
         String myName = loadString(COL_NAME);
         String myCategory = loadString(COL_ACCOUNTCAT);
-        String myDesc = loadString(COL_DESC);
 
         /* Access the flags */
         Boolean isClosed = loadBoolean(COL_CLOSED);
         Boolean isTaxFree = loadBoolean(COL_TAXFREE);
 
         /* Load the item */
-        theList.addOpenItem(pId, myName, myCategory, myDesc, isClosed, isTaxFree);
+        theList.addOpenItem(pId, myName, myCategory, isClosed, isTaxFree);
     }
 
     @Override
@@ -195,7 +188,6 @@ public class SheetAccount
         writeBoolean(COL_CLOSED, pItem.isClosed());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
         writeBytes(COL_NAME, pItem.getNameBytes());
-        writeBytes(COL_DESC, pItem.getDescBytes());
     }
 
     @Override
@@ -203,7 +195,6 @@ public class SheetAccount
         /* Set the fields */
         writeString(COL_NAME, pItem.getName());
         writeString(COL_ACCOUNTCAT, pItem.getAccountCategoryName());
-        writeString(COL_DESC, pItem.getDesc());
         writeBoolean(COL_CLOSED, pItem.isClosed());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
 
@@ -216,7 +207,6 @@ public class SheetAccount
         /* Write titles */
         writeHeader(COL_NAME, AccountBase.FIELD_NAME.getName());
         writeHeader(COL_ACCOUNTCAT, AccountBase.FIELD_CATEGORY.getName());
-        writeHeader(COL_DESC, AccountBase.FIELD_DESC.getName());
         writeHeader(COL_CLOSED, AccountBase.FIELD_CLOSED.getName());
         writeHeader(COL_TAXFREE, AccountBase.FIELD_TAXFREE.getName());
 
@@ -229,7 +219,6 @@ public class SheetAccount
         /* Set the column types */
         setStringColumn(COL_NAME);
         setStringColumn(COL_ACCOUNTCAT);
-        setStringColumn(COL_DESC);
         setBooleanColumn(COL_CLOSED);
         setBooleanColumn(COL_TAXFREE);
 
@@ -369,7 +358,7 @@ public class SheetAccount
                 }
 
                 /* Add the value into the finance tables */
-                Account myAccount = myList.addOpenItem(0, myName, myAcType, null, isClosed, isTaxFree);
+                Account myAccount = myList.addOpenItem(0, myName, myAcType, isClosed, isTaxFree);
 
                 /* Add information relating to the account */
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);

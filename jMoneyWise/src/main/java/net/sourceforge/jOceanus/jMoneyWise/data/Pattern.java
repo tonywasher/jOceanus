@@ -233,7 +233,6 @@ public class Pattern
      * @param pId the id
      * @param pControlId the control Id
      * @param pDate the date
-     * @param pDesc the description
      * @param pDebitId the debit Id
      * @param pCreditId the credit id
      * @param pCatId the category id
@@ -245,14 +244,13 @@ public class Pattern
                     final Integer pId,
                     final Integer pControlId,
                     final JDateDay pDate,
-                    final byte[] pDesc,
                     final Integer pDebitId,
                     final Integer pCreditId,
                     final Integer pCatId,
                     final byte[] pAmount,
                     final Integer pFreqId) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, Boolean.FALSE, pDesc);
+        super(pList, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, Boolean.FALSE);
 
         /* Record the IDs */
         setValueFrequency(pFreqId);
@@ -263,7 +261,6 @@ public class Pattern
      * @param pList the list
      * @param pId the id
      * @param pDate the date
-     * @param pDesc the description
      * @param pDebit the debit account
      * @param pCredit the credit account
      * @param pCategory the category
@@ -274,14 +271,13 @@ public class Pattern
     private Pattern(final PatternList pList,
                     final Integer pId,
                     final JDateDay pDate,
-                    final String pDesc,
                     final String pDebit,
                     final String pCredit,
                     final String pCategory,
                     final String pAmount,
                     final String pFrequency) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, Boolean.FALSE, pDesc);
+        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, Boolean.FALSE);
 
         /* Record the values */
         setValueFrequency(pFrequency);
@@ -471,11 +467,6 @@ public class Pattern
         /* Update the frequency if required */
         if (!Difference.isEqual(getFrequency(), myPattern.getFrequency())) {
             setFrequency(myPattern.getFrequency());
-        }
-
-        /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myPattern.getDesc())) {
-            setValueDesc(myPattern.getDescField());
         }
 
         /* Update the amount if required */
@@ -687,7 +678,6 @@ public class Pattern
          * @param pAmount the amount
          * @param pCategory the category type
          * @param pFrequency the frequency
-         * @param pDesc the description
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer pId,
@@ -696,10 +686,9 @@ public class Pattern
                                 final String pCredit,
                                 final String pAmount,
                                 final String pCategory,
-                                final String pFrequency,
-                                final String pDesc) throws JDataException {
+                                final String pFrequency) throws JDataException {
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, pId, pDate, pDesc, pDebit, pCredit, pCategory, pAmount, pFrequency);
+            Pattern myPattern = new Pattern(this, pId, pDate, pDebit, pCredit, pCategory, pAmount, pFrequency);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -716,7 +705,6 @@ public class Pattern
          * @param pId the id
          * @param pControlId the control id
          * @param pDate the date
-         * @param pDesc the description
          * @param pDebitId the account id
          * @param pCreditId the partner id
          * @param pCatId the category type id
@@ -731,10 +719,9 @@ public class Pattern
                                   final Integer pCreditId,
                                   final byte[] pAmount,
                                   final Integer pCatId,
-                                  final Integer pFreqId,
-                                  final byte[] pDesc) throws JDataException {
+                                  final Integer pFreqId) throws JDataException {
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, pId, pControlId, pDate, pDesc, pDebitId, pCreditId, pCatId, pAmount, pFreqId);
+            Pattern myPattern = new Pattern(this, pId, pControlId, pDate, pDebitId, pCreditId, pCatId, pAmount, pFreqId);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {

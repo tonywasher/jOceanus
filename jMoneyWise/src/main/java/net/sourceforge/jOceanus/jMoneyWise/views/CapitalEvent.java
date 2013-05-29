@@ -33,6 +33,8 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -64,7 +66,7 @@ public final class CapitalEvent
     /**
      * Attribute Map.
      */
-    private final Map<EventAttribute, JDecimal> theAttributes;
+    private final Map<CapitalAttribute, JDecimal> theAttributes;
 
     /**
      * The event.
@@ -89,12 +91,7 @@ public final class CapitalEvent
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, EventAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, EventAttribute.class);
-
-    /**
-     * Reverse FieldSet map.
-     */
-    // private static final Map<EventAttribute, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, EventAttribute.class);
+    private static final Map<JDataField, CapitalAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, CapitalAttribute.class);
 
     /**
      * Obtain the date.
@@ -133,7 +130,7 @@ public final class CapitalEvent
         }
 
         /* Handle Attribute fields */
-        EventAttribute myClass = getClassForField(pField);
+        CapitalAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             return getAttributeValue(myClass);
         }
@@ -147,7 +144,7 @@ public final class CapitalEvent
      * @param pAttr the attribute
      * @return the value to set
      */
-    private Object getAttributeValue(final EventAttribute pAttr) {
+    private Object getAttributeValue(final CapitalAttribute pAttr) {
         /* Access value of object */
         Object myValue = getAttribute(pAttr);
 
@@ -158,13 +155,47 @@ public final class CapitalEvent
     }
 
     /**
-     * Obtain the class of the field if it is an infoSet field.
+     * Obtain the class of the field if it is an attribute field.
      * @param pField the field
      * @return the class
      */
-    private static EventAttribute getClassForField(final JDataField pField) {
+    private static CapitalAttribute getClassForField(final JDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
+    }
+
+    /**
+     * Set Attribute.
+     * @param pAttr the attribute
+     * @param pValue the value of the attribute
+     */
+    protected void setAttribute(final CapitalAttribute pAttr,
+                                final JDecimal pValue) {
+        /* Set the value into the list */
+        theAttributes.put(pAttr, pValue);
+    }
+
+    /**
+     * Obtain an attribute value.
+     * @param <X> the data type
+     * @param pAttr the attribute
+     * @param pClass the class of the attribute
+     * @return the value of the attribute or null
+     */
+    public <X extends JDecimal> X getAttribute(final CapitalAttribute pAttr,
+                                               final Class<X> pClass) {
+        /* Obtain the attribute */
+        return pClass.cast(getAttribute(pAttr));
+    }
+
+    /**
+     * Obtain an attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    private Object getAttribute(final CapitalAttribute pAttr) {
+        /* Obtain the attribute */
+        return theAttributes.get(pAttr);
     }
 
     /**
@@ -173,7 +204,7 @@ public final class CapitalEvent
      */
     private CapitalEvent(final Event pEvent) {
         /* Create the attributes map */
-        theAttributes = new EnumMap<EventAttribute, JDecimal>(EventAttribute.class);
+        theAttributes = new EnumMap<CapitalAttribute, JDecimal>(CapitalAttribute.class);
 
         /* Store the values */
         theDate = pEvent.getDate();
@@ -186,7 +217,7 @@ public final class CapitalEvent
      */
     private CapitalEvent(final JDateDay pDate) {
         /* Create the attributes map */
-        theAttributes = new EnumMap<EventAttribute, JDecimal>(EventAttribute.class);
+        theAttributes = new EnumMap<CapitalAttribute, JDecimal>(CapitalAttribute.class);
 
         /* Store the values */
         theDate = pDate;
@@ -246,37 +277,83 @@ public final class CapitalEvent
     }
 
     /**
-     * Set Attribute.
-     * @param pAttr the attribute
-     * @param pValue the value of the attribute
+     * Adjust cost.
+     * @param pTotal the total cost
+     * @param pDelta the delta cost
      */
-    protected void setAttribute(final EventAttribute pAttr,
-                                final JDecimal pValue) {
-        /* Set the value into the list */
-        theAttributes.put(pAttr, pValue);
+    protected void adjustCost(final JMoney pTotal,
+                              final JMoney pDelta) {
+        /* Record current and delta cost */
+        setAttribute(CapitalAttribute.InitialCost, new JMoney(pTotal));
+        setAttribute(CapitalAttribute.DeltaCost, pDelta);
+
+        /* Adjust the total cost */
+        pTotal.addAmount(pDelta);
+        setAttribute(CapitalAttribute.FinalCost, new JMoney(pTotal));
     }
 
     /**
-     * Obtain an attribute value.
-     * @param <X> the data type
-     * @param pAttr the attribute
-     * @param pClass the class of the attribute
-     * @return the value of the attribute or null
+     * Adjust invested.
+     * @param pTotal the total invested
+     * @param pDelta the delta invested
      */
-    public <X extends JDecimal> X getAttribute(final EventAttribute pAttr,
-                                               final Class<X> pClass) {
-        /* Obtain the attribute */
-        return pClass.cast(getAttribute(pAttr));
+    protected void adjustInvested(final JMoney pTotal,
+                                  final JMoney pDelta) {
+        /* Record current and delta invested */
+        setAttribute(CapitalAttribute.InitialInvested, new JMoney(pTotal));
+        setAttribute(CapitalAttribute.DeltaInvested, pDelta);
+
+        /* Adjust the total invested */
+        pTotal.addAmount(pDelta);
+        setAttribute(CapitalAttribute.FinalInvested, new JMoney(pTotal));
     }
 
     /**
-     * Obtain an attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
+     * Adjust dividend.
+     * @param pTotal the total dividend
+     * @param pDelta the delta dividend
      */
-    private Object getAttribute(final EventAttribute pAttr) {
-        /* Obtain the attribute */
-        return theAttributes.get(pAttr);
+    protected void adjustDividend(final JMoney pTotal,
+                                  final JMoney pDelta) {
+        /* Record current and delta dividend */
+        setAttribute(CapitalAttribute.InitialDividend, new JMoney(pTotal));
+        setAttribute(CapitalAttribute.DeltaDividend, pDelta);
+
+        /* Adjust the total dividend */
+        pTotal.addAmount(pDelta);
+        setAttribute(CapitalAttribute.FinalDividend, new JMoney(pTotal));
+    }
+
+    /**
+     * Adjust gains.
+     * @param pTotal the total gains
+     * @param pDelta the delta gains
+     */
+    protected void adjustGains(final JMoney pTotal,
+                               final JMoney pDelta) {
+        /* Record current and delta gains */
+        setAttribute(CapitalAttribute.InitialGains, new JMoney(pTotal));
+        setAttribute(CapitalAttribute.DeltaGains, pDelta);
+
+        /* Adjust the total gains */
+        pTotal.addAmount(pDelta);
+        setAttribute(CapitalAttribute.FinalGains, new JMoney(pTotal));
+    }
+
+    /**
+     * Adjust units.
+     * @param pTotal the total units
+     * @param pDelta the delta units
+     */
+    protected void adjustUnits(final JUnits pTotal,
+                               final JUnits pDelta) {
+        /* Record current and delta units */
+        setAttribute(CapitalAttribute.InitialUnits, new JUnits(pTotal));
+        setAttribute(CapitalAttribute.DeltaUnits, pDelta);
+
+        /* Adjust the total units */
+        pTotal.addUnits(pDelta);
+        setAttribute(CapitalAttribute.FinalUnits, new JUnits(pTotal));
     }
 
     /**
@@ -373,10 +450,8 @@ public final class CapitalEvent
          * @return the Capital Event
          */
         protected CapitalEvent addEvent(final Event pEvent) {
-            CapitalEvent myEvent;
-
             /* Create the Capital Event and add to list */
-            myEvent = new CapitalEvent(pEvent);
+            CapitalEvent myEvent = new CapitalEvent(pEvent);
             append(myEvent);
 
             /* return the new event */
@@ -389,10 +464,8 @@ public final class CapitalEvent
          * @return the Capital Event
          */
         protected CapitalEvent addEvent(final JDateDay pDate) {
-            CapitalEvent myEvent;
-
             /* Create the Capital Event and add to list */
-            myEvent = new CapitalEvent(pDate);
+            CapitalEvent myEvent = new CapitalEvent(pDate);
             append(myEvent);
 
             /* return the new event */
@@ -443,7 +516,7 @@ public final class CapitalEvent
     /**
      * Capital Event Attributes.
      */
-    public enum EventAttribute {
+    public enum CapitalAttribute {
         /**
          * The Initial Cost Attribute.
          */

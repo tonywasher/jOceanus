@@ -33,6 +33,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.preferences.JFieldPreferences;
@@ -100,9 +101,9 @@ public abstract class DataControl<T extends DataSet<T>>
     private T theUpdates = null;
 
     /**
-     * The Error.
+     * The Error List.
      */
-    private JDataException theError = null;
+    private final DataErrorList<JDataException> theErrors;
 
     /**
      * The Frame.
@@ -158,6 +159,9 @@ public abstract class DataControl<T extends DataSet<T>>
 
         /* Create the Secure Manager */
         theSecurity = mySecurity.getSecurity();
+
+        /* Create the error list */
+        theErrors = new DataErrorList<JDataException>();
 
         /* Access the Field Preferences */
         theFieldPreferences = thePreferenceMgr.getPreferenceSet(JFieldPreferences.class);
@@ -234,19 +238,26 @@ public abstract class DataControl<T extends DataSet<T>>
     }
 
     /**
-     * Set new Error.
+     * Add new Error.
      * @param pError the new Error
      */
-    protected void setError(final JDataException pError) {
-        theError = pError;
+    public void addError(final JDataException pError) {
+        theErrors.add(pError);
+    }
+
+    /**
+     * Clear error list.
+     */
+    protected void clearErrors() {
+        theErrors.clear();
     }
 
     /**
      * Obtain current error.
      * @return the current Error
      */
-    public JDataException getError() {
-        return theError;
+    public DataErrorList<JDataException> getErrors() {
+        return theErrors;
     }
 
     /**

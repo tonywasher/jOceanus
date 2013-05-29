@@ -121,7 +121,7 @@ public enum EventCategoryClass implements StaticInterface {
     TaxSettlement(18, 17),
 
     /**
-     * Rental Income.
+     * Opening Balance.
      */
     OpeningBalance(19, 18),
 
@@ -172,18 +172,22 @@ public enum EventCategoryClass implements StaticInterface {
 
     /**
      * Tax Credit.
+     * <p>
+     * This is a singular category catching tax credits associated with an event.
      */
     TaxCredit(29, 28),
 
     /**
      * National Insurance.
+     * <p>
+     * This is a singular category catching national insurance payments associated with an event.
      */
     NatInsurance(30, 29),
 
     /**
      * Benefit.
      * <p>
-     * This is a singular category catching charity donations associated with an event.
+     * This is a singular category catching benefit payments associated with an event.
      */
     Benefit(31, 30),
 

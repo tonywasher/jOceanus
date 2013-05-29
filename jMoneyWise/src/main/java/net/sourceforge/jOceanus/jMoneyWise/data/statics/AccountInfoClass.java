@@ -47,54 +47,69 @@ public enum AccountInfoClass implements DataInfoClass {
     Alias(3, 2),
 
     /**
+     * Comments.
+     */
+    Comments(4, 3, DataType.STRING),
+
+    /**
      * Symbol.
      */
-    Symbol(4, 3, DataType.STRING),
+    Symbol(5, 4, DataType.STRING),
 
     /**
      * Opening Balance.
      */
-    OpeningBalance(5, 4, DataType.MONEY),
+    OpeningBalance(6, 5, DataType.MONEY),
 
     /**
      * AutoExpense Category.
      */
-    AutoExpense(6, 5),
+    AutoExpense(7, 6),
 
     /**
-     * Currency Category.
+     * Currency.
      */
-    Currency(7, 6),
+    Currency(8, 7),
 
     /**
      * WebSite.
      */
-    WebSite(8, 7, DataType.CHARARRAY),
+    WebSite(9, 8, DataType.CHARARRAY),
 
     /**
      * Customer #.
      */
-    CustomerNo(9, 8, DataType.CHARARRAY),
+    CustomerNo(10, 9, DataType.CHARARRAY),
 
     /**
      * User Id.
      */
-    UserId(10, 9, DataType.CHARARRAY),
+    UserId(11, 10, DataType.CHARARRAY),
 
     /**
      * Password.
      */
-    Password(11, 10, DataType.CHARARRAY),
+    Password(12, 11, DataType.CHARARRAY),
+
+    /**
+     * SortCode.
+     */
+    SortCode(13, 12, DataType.CHARARRAY),
 
     /**
      * Account.
      */
-    Account(12, 11, DataType.CHARARRAY),
+    Account(14, 13, DataType.CHARARRAY),
+
+    /**
+     * Reference.
+     */
+    Reference(15, 14, DataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    Notes(13, 12, DataType.CHARARRAY);
+    Notes(16, 15, DataType.CHARARRAY);
 
     /**
      * Class Id.
@@ -187,14 +202,18 @@ public enum AccountInfoClass implements DataInfoClass {
     public int getMaximumLength() {
         switch (this) {
             case WebSite:
-                return AccountCategoryType.WEBSITE_LEN;
+                return AccountInfoType.WEBSITE_LEN;
             case CustomerNo:
             case UserId:
             case Password:
+            case SortCode:
             case Account:
-                return AccountCategoryType.DATA_LEN;
+            case Reference:
+                return AccountInfoType.DATA_LEN;
             case Notes:
-                return AccountCategoryType.NOTES_LEN;
+                return AccountInfoType.NOTES_LEN;
+            case Comments:
+                return AccountInfoType.COMMENT_LEN;
             default:
                 return 0;
         }

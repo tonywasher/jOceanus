@@ -77,11 +77,6 @@ public class SheetPattern
     private static final int COL_FREQ = COL_CATEGORY + 1;
 
     /**
-     * Description column.
-     */
-    private static final int COL_DESC = COL_FREQ + 1;
-
-    /**
      * Patterns data list.
      */
     private final PatternList theList;
@@ -125,11 +120,10 @@ public class SheetPattern
         JDateDay myDate = loadDate(COL_DATE);
 
         /* Access the binary values */
-        byte[] myDesc = loadBytes(COL_DESC);
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myFreqId, myDesc);
+        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myFreqId);
     }
 
     @Override
@@ -144,11 +138,10 @@ public class SheetPattern
         JDateDay myDate = loadDate(COL_DATE);
 
         /* Access the string values */
-        String myDesc = loadString(COL_DESC);
         String myAmount = loadString(COL_AMOUNT);
 
         /* Load the item */
-        theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, myDesc);
+        theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency);
     }
 
     @Override
@@ -160,7 +153,6 @@ public class SheetPattern
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeInteger(COL_FREQ, pItem.getFrequencyId());
         writeDate(COL_DATE, pItem.getDate());
-        writeBytes(COL_DESC, pItem.getDescBytes());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
     }
 
@@ -172,7 +164,6 @@ public class SheetPattern
         writeString(COL_CATEGORY, pItem.getCategoryName());
         writeString(COL_FREQ, pItem.getFrequencyName());
         writeDate(COL_DATE, pItem.getDate());
-        writeString(COL_DESC, pItem.getDesc());
         writeDecimal(COL_AMOUNT, pItem.getAmount());
     }
 
@@ -180,7 +171,6 @@ public class SheetPattern
     protected void prepareSheet() throws JDataException {
         /* Write titles */
         writeHeader(COL_DATE, EventBase.FIELD_DATE.getName());
-        writeHeader(COL_DESC, EventBase.FIELD_DESC.getName());
         writeHeader(COL_DEBIT, EventBase.FIELD_DEBIT.getName());
         writeHeader(COL_CREDIT, EventBase.FIELD_CREDIT.getName());
         writeHeader(COL_AMOUNT, EventBase.FIELD_AMOUNT.getName());
@@ -191,7 +181,6 @@ public class SheetPattern
     @Override
     protected void formatSheet() throws JDataException {
         /* Set the column types */
-        setStringColumn(COL_DESC);
         setStringColumn(COL_DEBIT);
         setStringColumn(COL_CREDIT);
         setStringColumn(COL_CATEGORY);
@@ -209,7 +198,7 @@ public class SheetPattern
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_DESC;
+        return COL_FREQ;
     }
 
     @Override
@@ -274,10 +263,9 @@ public class SheetPattern
                 String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myFrequency = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                String myDesc = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myDate, myDesc, myDebit, myCredit, myCategory, myAmount, myFrequency);
+                myList.addOpenItem(0, myDate, myDebit, myCredit, myCategory, myAmount, myFrequency);
 
                 /* Report the progress */
                 myCount++;

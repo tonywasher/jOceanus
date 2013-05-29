@@ -101,11 +101,6 @@ public class MaintAccount
     private static final int ACT_WIDTH = 150;
 
     /**
-     * Description width.
-     */
-    private static final int DESC_WIDTH = 300;
-
-    /**
      * Column Height.
      */
     private static final int COL_HEIGHT = 20;
@@ -370,7 +365,6 @@ public class MaintAccount
     private JPanel buildDetailsPanel() {
         /* Create the labels */
         JLabel myNameLabel = new JLabel("Name:", SwingConstants.TRAILING);
-        JLabel myDescLabel = new JLabel("Description:", SwingConstants.TRAILING);
         JLabel myTypeLabel = new JLabel("AccountType:", SwingConstants.TRAILING);
         JLabel myMatLabel = new JLabel("Maturity:", SwingConstants.TRAILING);
         JLabel myParLabel = new JLabel("Parent:", SwingConstants.TRAILING);
@@ -378,23 +372,17 @@ public class MaintAccount
 
         /* Allocate the TextFields */
         JTextField myName = new JTextField();
-        JTextField myDesc = new JTextField();
         JDateDayButton myMaturity = new JDateDayButton();
 
         /* Set sizes */
         Dimension myActDims = new Dimension(ACT_WIDTH, COL_HEIGHT);
-        Dimension myDescDims = new Dimension(DESC_WIDTH, COL_HEIGHT);
         myName.setMaximumSize(myActDims);
-        myDesc.setMaximumSize(myDescDims);
         theParentBox.setMaximumSize(myActDims);
         theAliasBox.setMaximumSize(myActDims);
         theCategoriesBox.setMaximumSize(myActDims);
 
-        /*
-         * Dimension fields correctly /* Add the components to the field Set
-         */
+        /* Dimension fields correctly */
         theFieldSet.addFieldElement(Account.FIELD_NAME, DataType.STRING, myNameLabel, myName);
-        theFieldSet.addFieldElement(Account.FIELD_DESC, DataType.STRING, myDescLabel, myDesc);
         theFieldSet.addFieldElement(Account.FIELD_CATEGORY, AccountCategory.class, myTypeLabel, theCategoriesBox);
         theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Parent), Account.class, myParLabel, theParentBox);
         theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Alias), Account.class, myAlsLabel, theAliasBox);
@@ -409,8 +397,6 @@ public class MaintAccount
         myPanel.setLayout(mySpring);
         myPanel.add(myNameLabel);
         myPanel.add(myName);
-        myPanel.add(myDescLabel);
-        myPanel.add(myDesc);
         myPanel.add(myTypeLabel);
         myPanel.add(theCategoriesBox);
         myPanel.add(myParLabel);
@@ -723,6 +709,8 @@ public class MaintAccount
             /* notify changes */
             notifyChanges();
         } catch (JDataException e) {
+            /* Record error */
+            theView.addError(e);
         }
     }
 
@@ -898,6 +886,8 @@ public class MaintAccount
             /* Notify changes */
             notifyChanges();
         } catch (JDataException e) {
+            /* Record error */
+            theView.addError(e);
         }
     }
 
@@ -1015,10 +1005,6 @@ public class MaintAccount
                 if (myField.equals(Account.FIELD_NAME)) {
                     /* Update the Value */
                     theAccount.setAccountName(pUpdate.getString());
-                    /* If this is our Description */
-                } else if (myField.equals(Account.FIELD_DESC)) {
-                    /* Update the Value */
-                    theAccount.setDescription(pUpdate.getString());
                     /* If this is our Account type */
                 } else if (myField.equals(Account.FIELD_CATEGORY)) {
                     /* Update the Value */
@@ -1089,7 +1075,7 @@ public class MaintAccount
                 JDataException myError = new JDataException(ExceptionClass.DATA, "Failed to update field", e);
 
                 /* Show the error */
-                theError.setError(myError);
+                theError.addError(myError);
                 return;
             }
 

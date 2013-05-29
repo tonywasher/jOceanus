@@ -37,6 +37,7 @@ import javax.swing.JLabel;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
+import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 
@@ -44,7 +45,8 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
  * Error panel.
  * @author Tony Washer
  */
-public class ErrorPanel extends JEventPanel {
+public class ErrorPanel
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -88,14 +90,14 @@ public class ErrorPanel extends JEventPanel {
     /**
      * The error itself.
      */
-    private JDataException theError = null;
+    private final DataErrorList<JDataException> theErrors;
 
     /**
      * Do we have an error?
      * @return true/false
      */
     public boolean hasError() {
-        return (theError != null);
+        return (theErrors.size() > 0);
     }
 
     /**
@@ -109,6 +111,10 @@ public class ErrorPanel extends JEventPanel {
         theDataError = pManager.new JDataEntry(DataControl.DATA_ERROR);
         theDataError.addAsChildOf(pParent);
         theDataError.hideEntry();
+
+        /* Create the error list */
+        theErrors = new DataErrorList<JDataException>();
+        theDataError.setObject(theErrors);
 
         /* Create the error field */
         theErrorField = new JLabel();
@@ -138,9 +144,15 @@ public class ErrorPanel extends JEventPanel {
      * Set error indication for window.
      * @param pException the exception
      */
-    public void setError(final JDataException pException) {
+    public void addError(final JDataException pException) {
+        /* If we do not currently have an error */
+        if (!hasError()) {
+            /* Show the debug */
+            theDataError.showEntry();
+        }
+
         /* Record the error */
-        theError = pException;
+        theErrors.add(pException);
 
         /* Set the string for the error field */
         theErrorField.setText(pException.getMessage());
@@ -148,9 +160,36 @@ public class ErrorPanel extends JEventPanel {
         /* Make the panel visible */
         setVisible(true);
 
-        /* Show the debug */
-        theDataError.setObject(theError);
-        theDataError.showEntry();
+        /* Notify listeners */
+        fireStateChanged();
+    }
+
+    /**
+     * Set error list for window.
+     * @param pExceptions the exceptions
+     */
+    public void setErrors(final DataErrorList<JDataException> pExceptions) {
+        /* If we currently have an error */
+        if (hasError()) {
+            /* Clear the error */
+            theErrors.clear();
+            theDataError.hideEntry();
+        }
+
+        /* If we have some exceptions */
+        if (pExceptions.size() > 0) {
+            /* Show the debug */
+            theDataError.showEntry();
+
+            /* Add the new errors */
+            theErrors.addList(pExceptions);
+
+            /* Set the string for the error field */
+            theErrorField.setText(pExceptions.get(0).getMessage());
+
+            /* Make the panel visible */
+            setVisible(true);
+        }
 
         /* Notify listeners */
         fireStateChanged();
@@ -159,12 +198,11 @@ public class ErrorPanel extends JEventPanel {
     /**
      * Clear error indication for this window.
      */
-    public void clearError() {
+    public void clearErrors() {
         /* If we currently have an error */
-        if (theError != null) {
+        if (hasError()) {
             /* Clear the error */
-            theError = null;
-            theDataError.setObject(theError);
+            theErrors.clear();
             theDataError.hideEntry();
         }
 
@@ -178,13 +216,14 @@ public class ErrorPanel extends JEventPanel {
     /**
      * Listener class.
      */
-    private class ErrorListener implements ActionListener {
+    private class ErrorListener
+            implements ActionListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             /* If this event relates to the Clear box */
             if (evt.getSource() == theClearButton) {
                 /* Clear the error */
-                clearError();
+                clearErrors();
             }
         }
     }

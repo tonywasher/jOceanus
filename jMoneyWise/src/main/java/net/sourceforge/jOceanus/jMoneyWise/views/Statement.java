@@ -42,9 +42,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.BaseEventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AssetAccountDetail;
-import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.ValueBucket;
-import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisBucket.BucketType;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
 import net.sourceforge.jOceanus.jTableFilter.TableFilter;
 
 /**
@@ -306,13 +305,13 @@ public class Statement
         /* If the bucket has a balance */
         if (hasBalance()) {
             /* Set starting balance */
-            theStartBalance = new JMoney(((ValueBucket) theBucket).getValue());
+            theStartBalance = new JMoney(theBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
         }
 
         /* If the bucket has units */
         if (hasUnits()) {
             /* Set starting units */
-            theStartUnits = new JUnits(((AssetAccountDetail) theBucket).getUnits());
+            theStartUnits = new JUnits(theBucket.getAttribute(AccountAttribute.Units, JUnits.class));
         }
     }
 
@@ -323,13 +322,13 @@ public class Statement
         /* If the bucket has a balance */
         if (hasBalance()) {
             /* Set ending balance */
-            theEndBalance = new JMoney(((ValueBucket) theBucket).getValue());
+            theEndBalance = new JMoney(theBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
         }
 
         /* If the bucket has units */
         if (hasUnits()) {
             /* Set ending units */
-            theEndUnits = new JUnits(((AssetAccountDetail) theBucket).getUnits());
+            theEndUnits = new JUnits(theBucket.getAttribute(AccountAttribute.Units, JUnits.class));
         }
     }
 
@@ -347,7 +346,7 @@ public class Statement
      * @return TRUE/FALSE
      */
     public boolean hasBalance() {
-        return (theBucket.getBucketType() != BucketType.PAYEEDETAIL);
+        return (theBucket.getCategoryType().hasBalances());
     }
 
     /**
@@ -355,7 +354,7 @@ public class Statement
      * @return TRUE/FALSE
      */
     public boolean hasUnits() {
-        return (theBucket.getBucketType() == BucketType.ASSETDETAIL);
+        return (theBucket.getCategoryType() == CategoryType.Priced);
     }
 
     /**
@@ -606,6 +605,13 @@ public class Statement
             return theBalUnits;
         }
 
+        @Override
+        public String getComments() {
+            return isHeader()
+                    ? "Opening Balance"
+                    : super.getComments();
+        }
+
         /**
          * Obtain the bucket.
          * @return the bucket
@@ -668,7 +674,6 @@ public class Statement
             setHeader(true);
             setId(0);
             setDate(theStatement.getDateRange().getStart());
-            setDescription("Opening Balance");
             setValueIsCredit(false);
             setDebit(theStatement.getAccount());
             theBalance = theStatement.getStartBalance();
@@ -682,13 +687,13 @@ public class Statement
             /* If the bucket has a balance */
             if (theStatement.hasBalance()) {
                 /* Set current balance */
-                theBalance = new JMoney(((ValueBucket) getBucket()).getValue());
+                theBalance = new JMoney(getBucket().getAttribute(AccountAttribute.Valuation, JMoney.class));
             }
 
             /* If the bucket has units */
             if (theStatement.hasUnits()) {
                 /* Set current units */
-                theBalUnits = new JUnits(((AssetAccountDetail) getBucket()).getUnits());
+                theBalUnits = new JUnits(getBucket().getAttribute(AccountAttribute.Units, JUnits.class));
             }
         }
 

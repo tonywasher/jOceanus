@@ -72,7 +72,6 @@ public class TablePattern
         myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Pattern.FIELD_FREQ, TableFrequency.TABLE_NAME);
-        myTableDef.addNullEncryptedColumn(EventBase.FIELD_DESC, EventBase.DESCLEN);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -91,7 +90,6 @@ public class TablePattern
         /* Get the various fields */
         TableDefinition myTableDef = getTableDef();
         JDateDay myDate = myTableDef.getDateValue(EventBase.FIELD_DATE);
-        byte[] myDesc = myTableDef.getBinaryValue(EventBase.FIELD_DESC);
         Integer myDebitId = myTableDef.getIntegerValue(EventBase.FIELD_DEBIT);
         Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
         Integer myCategoryId = myTableDef.getIntegerValue(EventBase.FIELD_CATEGORY);
@@ -99,7 +97,7 @@ public class TablePattern
         Integer myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myFreq, myDesc);
+        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myFreq);
     }
 
     @Override
@@ -109,8 +107,6 @@ public class TablePattern
         TableDefinition myTableDef = getTableDef();
         if (EventBase.FIELD_DATE.equals(iField)) {
             myTableDef.setDateValue(iField, pItem.getDate());
-        } else if (EventBase.FIELD_DESC.equals(iField)) {
-            myTableDef.setBinaryValue(iField, pItem.getDescBytes());
         } else if (EventBase.FIELD_AMOUNT.equals(iField)) {
             myTableDef.setBinaryValue(iField, pItem.getAmountBytes());
         } else if (EventBase.FIELD_DEBIT.equals(iField)) {
