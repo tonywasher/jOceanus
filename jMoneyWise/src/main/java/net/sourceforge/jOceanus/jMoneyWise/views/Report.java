@@ -137,7 +137,7 @@ public final class Report {
 
         /* Define table headers */
         myBuilder.append("th { text-align: center; background-color: #bbbbbb; font-weight: bold;");
-        myBuilder.append(" color: white; border: 1px solid white; }");
+        myBuilder.append(" color: magenta; border: 1px solid white; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
@@ -277,7 +277,9 @@ public final class Report {
                           final Object pValue) {
         Object myValue = pValue;
         String myClass = CLASS_DATAVALUE;
-        String myType = (bTotal) ? "h" : "d";
+        String myType = (bTotal)
+                ? "h"
+                : "d";
 
         /* If this is an instance of JDecimal */
         if (myValue instanceof JDecimal) {
@@ -316,7 +318,9 @@ public final class Report {
     private void startDataRow(final StringBuilder pBuilder,
                               final boolean isOdd) {
         pBuilder.append("<tr class=\"");
-        pBuilder.append(isOdd ? CLASS_ODDROW : CLASS_EVENROW);
+        pBuilder.append(isOdd
+                ? CLASS_ODDROW
+                : CLASS_EVENROW);
         pBuilder.append("\"><td class=\"");
         pBuilder.append(CLASS_ROWHEADER);
         pBuilder.append("\">");

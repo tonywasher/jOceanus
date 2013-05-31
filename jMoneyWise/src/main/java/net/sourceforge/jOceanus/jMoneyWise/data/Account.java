@@ -184,7 +184,7 @@ public class Account
      */
     public EventCategory getAutoExpense() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.AutoExpense, EventCategory.class)
+                ? theInfoSet.getEventCategory(AccountInfoClass.AutoExpense)
                 : null;
     }
 

@@ -37,32 +37,37 @@ public enum AsymKeyType {
     /**
      * Elliptic Curve 1.
      */
-    EC1(2, "secp384r1"),
+    ECpSec384_1(2, "secp384r1"),
 
     /**
      * Elliptic Curve 2.
      */
-    EC2(3, "secp521r1"),
+    ECpSec521_1(3, "secp521r1"),
 
     /**
      * Elliptic Curve 3.
      */
-    EC3(4, "c2tnb431r1"),
+    ECmX431_1(4, "c2tnb431r1"),
 
     /**
      * Elliptic Curve 4.
      */
-    EC4(5, "sect409r1"),
+    ECmSec409_1(5, "sect409r1"),
 
     /**
      * Elliptic Curve 5.
      */
-    EC5(6, "sect571r1"),
+    ECmSec571_1(6, "sect571r1"),
 
     /**
      * Elliptic Curve 6.
      */
-    EC6(7, "brainpoolp384t1");
+    ECmTT384t_1(7, "brainpoolp384t1"),
+
+    /**
+     * Elliptic Curve 7.
+     */
+    ECmTT512t_1(8, "brainpoolp512t1");
 
     /**
      * Encryption algorithm.
@@ -143,9 +148,11 @@ public enum AsymKeyType {
      */
     public String getSignature() {
         if (isElliptic) {
-            return BASESIGNATURE + "ECDSA";
+            return BASESIGNATURE
+                   + "ECDSA";
         }
-        return BASESIGNATURE + toString();
+        return BASESIGNATURE
+               + toString();
     }
 
     /**
@@ -156,7 +163,8 @@ public enum AsymKeyType {
         if (isElliptic) {
             return "Null";
         }
-        return toString() + BASEALGORITHM;
+        return toString()
+               + BASEALGORITHM;
     }
 
     /**
@@ -197,7 +205,8 @@ public enum AsymKeyType {
                 return myType;
             }
         }
-        throw new JDataException(ExceptionClass.DATA, "Invalid AsymKeyType: " + id);
+        throw new JDataException(ExceptionClass.DATA, "Invalid AsymKeyType: "
+                                                      + id);
     }
 
     /**
@@ -215,8 +224,10 @@ public enum AsymKeyType {
         int iIndex;
 
         /* Reject call if invalid number of types */
-        if ((pNumTypes < 1) || (pNumTypes > iNumValues)) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of types: " + pNumTypes);
+        if ((pNumTypes < 1)
+            || (pNumTypes > iNumValues)) {
+            throw new JDataException(ExceptionClass.LOGIC, "Invalid number of types: "
+                                                           + pNumTypes);
         }
 
         /* Create the result set */

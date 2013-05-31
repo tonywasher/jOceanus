@@ -180,6 +180,14 @@ public class FinanceSheet
         }
 
         /**
+         * Get the reverse iterator.
+         * @return the iterator
+         */
+        protected ListIterator<ArchiveYear> getReverseIterator() {
+            return theYears.listIterator(theYears.size());
+        }
+
+        /**
          * Get the number of years.
          * @return the number of years
          */
@@ -188,7 +196,7 @@ public class FinanceSheet
         }
 
         /**
-         * Add a year.
+         * Add a year to the front of the list.
          * @param pName the range name
          */
         private void addYear(final String pName) {
@@ -365,9 +373,9 @@ public class FinanceSheet
                 myData.getAccounts().validateOnLoad();
             }
 
-            // if (bContinue) {
-            // bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, myRange);
-            // }
+            if (bContinue) {
+                bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, myRange);
+            }
             // if (bContinue) {
             // bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);
             // }

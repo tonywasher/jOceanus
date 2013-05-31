@@ -441,6 +441,10 @@ public class Analysis
         /* Access the money */
         JMoney myBalance = pAccount.getOpeningBalance();
 
+        /* Obtain the actual account bucket */
+        AccountBucket myBucket = theAccounts.getBucket(pAccount);
+        myBucket.setOpenBalance(myBalance);
+
         /* Obtain the opening income account bucket */
         Account myAccount = theData.getAccounts().getSingularClass(AccountCategoryClass.OpeningBalance);
         AccountBucket myOpeningAccount = theAccounts.getBucket(myAccount);
@@ -453,6 +457,6 @@ public class Analysis
         EventCategoryBucket myOpeningCategory = theEventCategories.getBucket(myCategory);
 
         /* Add value value */
-        myOpeningCategory.addAmount(myBalance);
+        myOpeningCategory.addIncome(myBalance);
     }
 }

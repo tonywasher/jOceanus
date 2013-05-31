@@ -44,6 +44,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
@@ -57,7 +58,7 @@ public final class AccountBucket
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucket.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucket.class.getSimpleName());
 
     /**
      * Account Field Id.
@@ -141,13 +142,21 @@ public final class AccountBucket
             return theType;
         }
         if (FIELD_BASE.equals(pField)) {
-            return theBase;
+            return (theBase != null)
+                    ? theBase
+                    : JDataFieldValue.SkipField;
         }
 
         /* Handle Attribute fields */
         AccountAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            return getAttributeValue(myClass);
+            Object myValue = getAttributeValue(myClass);
+            if (myValue instanceof JDecimal) {
+                return ((JDecimal) myValue).isNonZero()
+                        ? myValue
+                        : JDataFieldValue.SkipField;
+            }
+            return myValue;
         }
 
         return JDataFieldValue.UnknownField;
@@ -270,8 +279,8 @@ public final class AccountBucket
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    public <X extends JDecimal> X getAttribute(final AccountAttribute pAttr,
-                                               final Class<X> pClass) {
+    private <X> X getAttribute(final AccountAttribute pAttr,
+                               final Class<X> pClass) {
         /* Obtain the attribute */
         return pClass.cast(getAttribute(pAttr));
     }
@@ -287,18 +296,78 @@ public final class AccountBucket
     }
 
     /**
+     * Obtain a money attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JPrice getPriceAttribute(final AccountAttribute pAttr) {
+        /* Obtain the attribute */
+        return getAttribute(pAttr, JPrice.class);
+    }
+
+    /**
+     * Obtain a money attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JMoney getMoneyAttribute(final AccountAttribute pAttr) {
+        /* Obtain the attribute */
+        return getAttribute(pAttr, JMoney.class);
+    }
+
+    /**
+     * Obtain a units attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JUnits getUnitsAttribute(final AccountAttribute pAttr) {
+        /* Obtain the attribute */
+        return getAttribute(pAttr, JUnits.class);
+    }
+
+    /**
+     * Obtain a rate attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JRate getRateAttribute(final AccountAttribute pAttr) {
+        /* Obtain the attribute */
+        return getAttribute(pAttr, JRate.class);
+    }
+
+    /**
+     * Obtain a rate attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JDateDay getDateAttribute(final AccountAttribute pAttr) {
+        /* Obtain the attribute */
+        return getAttribute(pAttr, JDateDay.class);
+    }
+
+    /**
      * Obtain an attribute value from the base.
      * @param <X> the data type
      * @param pAttr the attribute
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    public <X extends JDecimal> X getBaseAttribute(final AccountAttribute pAttr,
-                                                   final Class<X> pClass) {
+    private <X extends JDecimal> X getBaseAttribute(final AccountAttribute pAttr,
+                                                    final Class<X> pClass) {
         /* Obtain the attribute */
         return (theBase == null)
                 ? null
                 : theBase.getAttribute(pAttr, pClass);
+    }
+
+    /**
+     * Obtain a money attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JMoney getBaseMoneyAttribute(final AccountAttribute pAttr) {
+        /* Obtain the attribute */
+        return getBaseAttribute(pAttr, JMoney.class);
     }
 
     /**
@@ -310,7 +379,15 @@ public final class AccountBucket
                           final Account pAccount) {
         /* Store the account */
         theAccount = pAccount;
-        theCategory = theAccount.getAccountCategory();
+
+        /* Obtain category, allowing for autoExpense */
+        if (theAccount.getAutoExpense() != null) {
+            theCategory = pData.getAccountCategories().getSingularClass(AccountCategoryClass.Payee);
+        } else {
+            theCategory = theAccount.getAccountCategory();
+        }
+
+        /* Determine type based on category */
         theType = AccountCategoryBucket.determineCategoryType(theCategory);
         theData = pData;
         theBase = null;
@@ -383,6 +460,15 @@ public final class AccountBucket
 
         /* Compare the Accounts */
         return getAccount().compareTo(pThat.getAccount());
+    }
+
+    /**
+     * Set opening balance.
+     * @param pBalance the opening balance
+     */
+    protected void setOpenBalance(final JMoney pBalance) {
+        JMoney myValuation = getAttribute(AccountAttribute.Valuation, JMoney.class);
+        myValuation.addAmount(pBalance);
     }
 
     /**
@@ -678,25 +764,34 @@ public final class AccountBucket
      * Calculate delta.
      */
     private void calculateDelta() {
-        /* If we have a base value */
-        if (theBase != null) {
-            /* Switch on type */
-            switch (theType) {
-                case Money:
-                case Priced:
-                case CreditCard:
-                    JMoney myValue = new JMoney(getAttribute(AccountAttribute.Valuation, JMoney.class));
+        /* Switch on type */
+        switch (theType) {
+            case Money:
+            case Priced:
+            case CreditCard:
+                /* Obtain a copy of the value */
+                JMoney myValue = new JMoney(getAttribute(AccountAttribute.Valuation, JMoney.class));
+
+                /* Subtract any base value */
+                if (theBase != null) {
                     myValue.subtractAmount(getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
-                    setAttribute(AccountAttribute.ValueDelta, myValue);
-                    break;
-                case Payee:
-                    JMoney myDelta = new JMoney(getAttribute(AccountAttribute.Income, JMoney.class));
-                    myDelta.subtractAmount(getBaseAttribute(AccountAttribute.Expense, JMoney.class));
-                    setAttribute(AccountAttribute.IncomeDelta, myDelta);
-                    break;
-                default:
-                    break;
-            }
+                }
+
+                /* Set the delta */
+                setAttribute(AccountAttribute.ValueDelta, myValue);
+                break;
+            case Payee:
+                /* Obtain a copy of the value */
+                JMoney myDelta = new JMoney(getAttribute(AccountAttribute.Income, JMoney.class));
+
+                /* Subtract the expense value */
+                myDelta.subtractAmount(getAttribute(AccountAttribute.Expense, JMoney.class));
+
+                /* Set the delta */
+                setAttribute(AccountAttribute.IncomeDelta, myDelta);
+                break;
+            default:
+                break;
         }
     }
 

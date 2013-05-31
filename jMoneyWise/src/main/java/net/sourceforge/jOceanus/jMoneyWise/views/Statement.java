@@ -305,13 +305,13 @@ public class Statement
         /* If the bucket has a balance */
         if (hasBalance()) {
             /* Set starting balance */
-            theStartBalance = new JMoney(theBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
+            theStartBalance = new JMoney(theBucket.getMoneyAttribute(AccountAttribute.Valuation));
         }
 
         /* If the bucket has units */
         if (hasUnits()) {
             /* Set starting units */
-            theStartUnits = new JUnits(theBucket.getAttribute(AccountAttribute.Units, JUnits.class));
+            theStartUnits = new JUnits(theBucket.getUnitsAttribute(AccountAttribute.Units));
         }
     }
 
@@ -322,13 +322,13 @@ public class Statement
         /* If the bucket has a balance */
         if (hasBalance()) {
             /* Set ending balance */
-            theEndBalance = new JMoney(theBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
+            theEndBalance = new JMoney(theBucket.getMoneyAttribute(AccountAttribute.Valuation));
         }
 
         /* If the bucket has units */
         if (hasUnits()) {
             /* Set ending units */
-            theEndUnits = new JUnits(theBucket.getAttribute(AccountAttribute.Units, JUnits.class));
+            theEndUnits = new JUnits(theBucket.getUnitsAttribute(AccountAttribute.Units));
         }
     }
 
@@ -687,13 +687,13 @@ public class Statement
             /* If the bucket has a balance */
             if (theStatement.hasBalance()) {
                 /* Set current balance */
-                theBalance = new JMoney(getBucket().getAttribute(AccountAttribute.Valuation, JMoney.class));
+                theBalance = new JMoney(getBucket().getMoneyAttribute(AccountAttribute.Valuation));
             }
 
             /* If the bucket has units */
             if (theStatement.hasUnits()) {
                 /* Set current units */
-                theBalUnits = new JUnits(getBucket().getAttribute(AccountAttribute.Units, JUnits.class));
+                theBalUnits = new JUnits(getBucket().getUnitsAttribute(AccountAttribute.Units));
             }
         }
 

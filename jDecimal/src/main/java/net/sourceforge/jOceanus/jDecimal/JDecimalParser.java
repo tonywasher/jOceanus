@@ -408,6 +408,7 @@ public class JDecimalParser {
         while (iNumSymbols < iNumChars) {
             char c = pWork.charAt(iNumSymbols);
             if (Character.isDigit(c)
+                || (c == JDecimalFormatter.CHAR_MINUS)
                 || Character.isWhitespace(c)) {
                 break;
             }

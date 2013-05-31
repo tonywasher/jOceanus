@@ -294,12 +294,13 @@ public class SheetEvent
             EventInfoList myInfoList = pData.getEventInfo();
 
             /* Obtain the range iterator */
-            ListIterator<ArchiveYear> myIterator = pRange.getIterator();
+            ListIterator<ArchiveYear> myIterator = pRange.getReverseIterator();
 
-            /* Loop through the individual year ranges in reverse order */
+            /* Loop through the individual year ranges */
             while (myIterator.hasPrevious()) {
                 /* Access year */
                 ArchiveYear myYear = myIterator.previous();
+                int iYearCount = 1;
 
                 /* Find the range of cells */
                 DataView myView = pWorkBook.getRangeView(myYear.getRangeName());
@@ -311,7 +312,7 @@ public class SheetEvent
                 }
 
                 /* Count the number of Events */
-                int myTotal = myView.getRowCount() - 1;
+                int myTotal = myView.getRowCount();
 
                 /* Declare the number of steps */
                 if (!pTask.setNumSteps(myTotal)) {
@@ -319,7 +320,7 @@ public class SheetEvent
                 }
 
                 /* Loop through the rows of the table */
-                for (int i = 1; i <= myTotal; i++) {
+                for (int i = 0; i < myTotal; i++) {
                     /* Access the row */
                     DataRow myRow = myView.getRowByIndex(i);
                     int iAdjust = 0;
@@ -347,6 +348,13 @@ public class SheetEvent
                         myDesc = myCell.getStringValue();
                     }
 
+                    /* Handle Tax Credit which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myTaxCredit = null;
+                    if (myCell != null) {
+                        myTaxCredit = myCell.getStringValue();
+                    }
+
                     /* Handle NatInsurance which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     String myNatInsurance = null;
@@ -359,13 +367,6 @@ public class SheetEvent
                     String myBenefit = null;
                     if (myCell != null) {
                         myBenefit = myCell.getStringValue();
-                    }
-
-                    /* Handle Tax Credit which may be missing */
-                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    String myTaxCredit = null;
-                    if (myCell != null) {
-                        myTaxCredit = myCell.getStringValue();
                     }
 
                     /* Handle DebitUnits which may be missing */
@@ -452,12 +453,6 @@ public class SheetEvent
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditAmount, myCreditAmount);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditDate, myCreditDate);
 
-                    /* Validate the event */
-                    myEvent.validate();
-                    if (myEvent.hasErrors()) {
-                        throw new JDataException(ExceptionClass.VALIDATE, myEvent, "Validation error");
-                    }
-
                     /* Report the progress */
                     myCount++;
                     if (((myCount % mySteps) == 0)
@@ -466,13 +461,18 @@ public class SheetEvent
                     }
                 }
 
-                /* Sort the list */
-                myList.resolveDataSetLinks();
-                myList.reSort();
-
-                /* Validate the list */
-                myList.validateOnLoad();
+                /* Break if we have done enough years */
+                if (--iYearCount == 0) {
+                    break;
+                }
             }
+
+            /* Sort the list */
+            myList.resolveDataSetLinks();
+            myList.reSort();
+
+            /* Validate the list */
+            myList.validateOnLoad();
 
             /* Handle Exceptions */
         } catch (JDataException e) {

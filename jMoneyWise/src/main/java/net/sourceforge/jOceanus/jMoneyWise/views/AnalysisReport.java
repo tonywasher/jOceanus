@@ -28,7 +28,6 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
@@ -38,19 +37,21 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategorySection;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisBucket.BucketType;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.AccountRecord;
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.IncomeTotals;
 import net.sourceforge.jOceanus.jMoneyWise.views.IncomeBreakdown.RecordList;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
 
 /**
@@ -144,7 +145,7 @@ public class AnalysisReport {
         /* Format the header */
         theReport.startReport(myOutput);
         theReport.makeLinkHeading(myOutput, "Asset Report for "
-                                            + myOutput.append(theDate.getYear()));
+                                            + Integer.toString(theDate.getYear()));
         theReport.startTable(myOutput);
         theReport.makeTableRowSpan(myOutput, "Class", 2);
         theReport.makeTableColumnSpan(myOutput, "Value", 2);
@@ -168,8 +169,8 @@ public class AnalysisReport {
 
             /* Format the SubTotal */
             theReport.startLinkRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theReport.makeValueCell(myOutput, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -184,13 +185,13 @@ public class AnalysisReport {
 
         /* Format the totals */
         theReport.startTotalRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.Valuation, JMoney.class));
-        theReport.makeTotalCell(myOutput, myTotals.getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Valuation));
+        theReport.makeTotalCell(myOutput, myTotals.getBaseMoneyAttribute(AccountAttribute.Valuation));
         theReport.endRow(myOutput);
 
         /* Format the profit */
         theReport.startTotalRow(myOutput, PROFIT_TEXT);
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.ValueDelta, JMoney.class));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.ValueDelta));
         theReport.makeTotalCell(myOutput);
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
@@ -239,7 +240,7 @@ public class AnalysisReport {
 
             /* Format the SubTotal */
             theReport.startLinkRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -247,18 +248,6 @@ public class AnalysisReport {
 
             /* Format the detail */
             myDetail.append(makeCategoryReport(myBucket, true));
-
-            /* Access the category class */
-            // AccountCategoryClass myCategory = mySummary.getAccountCategory().getCategoryTypeClass();
-
-            /* Format the detail */
-            // if (myCategory.isLoan()) {
-            // myDetail.append(makeLoanReport(mySummary));
-            // } else if (myCategory.hasUnits()) {
-            // myDetail.append(makePricedReport(mySummary));
-            // } else {
-            // myDetail.append(makeRatedReport(mySummary));
-            // }
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -269,7 +258,7 @@ public class AnalysisReport {
 
         /* Format the totals */
         theReport.startTotalRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.Valuation, JMoney.class));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Valuation));
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
 
@@ -321,10 +310,10 @@ public class AnalysisReport {
 
             /* Format the Asset */
             theReport.startLinkRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Cost, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Gained, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Profit, JMoney.class));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Cost));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Gained));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Profit));
             theReport.endRow(myOutput);
 
             /* If this is Capital */
@@ -342,10 +331,10 @@ public class AnalysisReport {
 
         /* Format the totals */
         theReport.startTotalRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.Cost, JMoney.class));
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.Valuation, JMoney.class));
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.Gained, JMoney.class));
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.Profit, JMoney.class));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Cost));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Valuation));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Gained));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Profit));
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
 
@@ -399,10 +388,10 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Income, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Expense, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getBaseAttribute(AccountAttribute.Income, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getBaseAttribute(AccountAttribute.Expense, JMoney.class));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Income));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Expense));
+            theReport.makeValueCell(myOutput, myBucket.getBaseMoneyAttribute(AccountAttribute.Income));
+            theReport.makeValueCell(myOutput, myBucket.getBaseMoneyAttribute(AccountAttribute.Expense));
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -414,17 +403,17 @@ public class AnalysisReport {
 
         /* Format the totals */
         theReport.startTotalRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.Income, JMoney.class));
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.Expense, JMoney.class));
-        theReport.makeTotalCell(myOutput, myTotals.getBaseAttribute(AccountAttribute.Income, JMoney.class));
-        theReport.makeTotalCell(myOutput, myTotals.getBaseAttribute(AccountAttribute.Expense, JMoney.class));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Income));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Expense));
+        theReport.makeTotalCell(myOutput, myTotals.getBaseMoneyAttribute(AccountAttribute.Income));
+        theReport.makeTotalCell(myOutput, myTotals.getBaseMoneyAttribute(AccountAttribute.Expense));
         theReport.endRow(myOutput);
 
         /* Format the profit */
         theReport.startTotalRow(myOutput, PROFIT_TEXT);
-        theReport.makeTotalCell(myOutput, myTotals.getAttribute(AccountAttribute.IncomeDelta, JMoney.class));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.IncomeDelta));
         theReport.makeTotalCell(myOutput);
-        theReport.makeTotalCell(myOutput, myTotals.getBaseAttribute(AccountAttribute.IncomeDelta, JMoney.class));
+        theReport.makeTotalCell(myOutput, myTotals.getBaseMoneyAttribute(AccountAttribute.IncomeDelta));
         theReport.makeTotalCell(myOutput);
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
@@ -453,11 +442,16 @@ public class AnalysisReport {
         /* Format the detail */
         theReport.makeLinkSubHeading(myOutput, pSummary.getName());
         theReport.startTable(myOutput);
-        theReport.makeTableRowSpan(myOutput, "Name", 2);
-        theReport.makeTableColumnSpan(myOutput, "Value", 2);
-        theReport.makeTableNewRow(myOutput);
-        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear()));
-        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear() - 1));
+        if (doDetailed) {
+            theReport.makeTableColumn(myOutput, "Category");
+            theReport.makeTableColumn(myOutput, "Value");
+        } else {
+            theReport.makeTableRowSpan(myOutput, "Category", 2);
+            theReport.makeTableColumnSpan(myOutput, "Value", 2);
+            theReport.makeTableNewRow(myOutput);
+            theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear()));
+            theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear() - 1));
+        }
         theReport.startTableBody(myOutput);
 
         /* Access the iterator */
@@ -473,17 +467,13 @@ public class AnalysisReport {
                 continue;
             }
 
-            /* Format the detail */
-            theReport.startDataRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
-            theReport.endRow(myOutput);
-
-            /* Flip row type */
-            isOdd = !isOdd;
-
             /* If we are performing a detailed report */
             if (doDetailed) {
+                /* Format the SubTotal */
+                theReport.startLinkRow(myOutput, isOdd, myBucket.getName());
+                theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+                theReport.endRow(myOutput);
+
                 /* Access the category class */
                 AccountCategoryClass myClass = pSummary.getAccountCategory().getCategoryTypeClass();
 
@@ -496,15 +486,26 @@ public class AnalysisReport {
                     myDetail.append(makeRatedReport(myBucket));
                 }
             } else {
+                /* Format the subTotal */
+                theReport.startLinkRow(myOutput, isOdd, myBucket.getName());
+                theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+                theReport.makeValueCell(myOutput, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
+                theReport.endRow(myOutput);
+
                 /* Format the standard detail */
                 myDetail.append(makeStandardReport(myBucket));
             }
+
+            /* Flip row type */
+            isOdd = !isOdd;
         }
 
         /* Build totals */
         theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, pSummary.getAttribute(AccountAttribute.Valuation, JMoney.class));
-        theReport.makeTotalCell(myOutput, pSummary.getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
+        theReport.makeTotalCell(myOutput, pSummary.getMoneyAttribute(AccountAttribute.Valuation));
+        if (!doDetailed) {
+            theReport.makeTotalCell(myOutput, pSummary.getBaseMoneyAttribute(AccountAttribute.Valuation));
+        }
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
 
@@ -553,8 +554,8 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theReport.makeValueCell(myOutput, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -563,8 +564,8 @@ public class AnalysisReport {
 
         /* Build totals */
         theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, pSummary.getAttribute(AccountAttribute.Valuation, JMoney.class));
-        theReport.makeTotalCell(myOutput, pSummary.getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
+        theReport.makeTotalCell(myOutput, pSummary.getMoneyAttribute(AccountAttribute.Valuation));
+        theReport.makeTotalCell(myOutput, pSummary.getBaseMoneyAttribute(AccountAttribute.Valuation));
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
 
@@ -609,9 +610,9 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Rate, JMoney.class));
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Maturity, JMoney.class));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theReport.makeValueCell(myOutput, myBucket.getRateAttribute(AccountAttribute.Rate));
+            theReport.makeValueCell(myOutput, myBucket.getDateAttribute(AccountAttribute.Maturity));
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -620,7 +621,7 @@ public class AnalysisReport {
 
         /* Build totals */
         theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, pSummary.getAttribute(AccountAttribute.Valuation, JMoney.class));
+        theReport.makeTotalCell(myOutput, pSummary.getMoneyAttribute(AccountAttribute.Valuation));
         theReport.makeTotalCell(myOutput);
         theReport.makeTotalCell(myOutput);
         theReport.endRow(myOutput);
@@ -665,7 +666,7 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -674,7 +675,7 @@ public class AnalysisReport {
 
         /* Build totals */
         theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, pSummary.getAttribute(AccountAttribute.Valuation, JMoney.class));
+        theReport.makeTotalCell(myOutput, pSummary.getMoneyAttribute(AccountAttribute.Valuation));
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
 
@@ -724,9 +725,9 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Units, JUnits.class));
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Price, JPrice.class));
-            theReport.makeValueCell(myOutput, myBucket.getAttribute(AccountAttribute.Valuation, JMoney.class));
+            theReport.makeValueCell(myOutput, myBucket.getUnitsAttribute(AccountAttribute.Units));
+            theReport.makeValueCell(myOutput, myBucket.getPriceAttribute(AccountAttribute.Price));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -737,7 +738,7 @@ public class AnalysisReport {
         theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
         theReport.makeTotalCell(myOutput);
         theReport.makeTotalCell(myOutput);
-        theReport.makeTotalCell(myOutput, pSummary.getAttribute(AccountAttribute.Valuation, JMoney.class));
+        theReport.makeTotalCell(myOutput, pSummary.getMoneyAttribute(AccountAttribute.Valuation));
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
 
@@ -792,9 +793,9 @@ public class AnalysisReport {
 
         /* Build Totals */
         theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, pAsset.getAttribute(AccountAttribute.Units, JUnits.class));
-        theReport.makeTotalCell(myOutput, pAsset.getAttribute(AccountAttribute.Cost, JMoney.class));
-        theReport.makeTotalCell(myOutput, pAsset.getAttribute(AccountAttribute.Gained, JMoney.class));
+        theReport.makeTotalCell(myOutput, pAsset.getUnitsAttribute(AccountAttribute.Units));
+        theReport.makeTotalCell(myOutput, pAsset.getMoneyAttribute(AccountAttribute.Cost));
+        theReport.makeTotalCell(myOutput, pAsset.getMoneyAttribute(AccountAttribute.Gained));
         theReport.makeTotalCell(myOutput);
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
@@ -809,97 +810,77 @@ public class AnalysisReport {
      */
     public String getTransReport() {
         /* Access the bucket lists */
-        EventCategoryBucketList myList = theAnalysis.getEventCategories();
+        EventCategoryBucketList myEvents = theAnalysis.getEventCategories();
+        TaxCategoryBucketList myTax = theAnalysis.getTaxCategories();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
         theReport.startReport(myOutput);
         theReport.makeLinkHeading(myOutput, "Transaction Report for "
                                             + theDate.getYear());
-        theReport.makeSubHeading(myOutput, "Transaction Totals");
+        theReport.makeSubHeading(myOutput, "Transaction Summary");
         theReport.startTable(myOutput);
-        theReport.makeTableRowSpan(myOutput, "Class", 2);
-        theReport.makeTableColumnSpan(myOutput, "Value", 2);
-        theReport.makeTableNewRow(myOutput);
-        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear()));
-        theReport.makeTableColumn(myOutput, Integer.toString(theDate.getYear() - 1));
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Value");
         theReport.startTableBody(myOutput);
 
         /* Access the bucket iterator */
-        Iterator<EventCategoryBucket> myIterator = myList.iterator();
+        Iterator<TaxCategoryBucket> myTaxIterator = myTax.iterator();
         boolean isOdd = true;
 
         /* Loop through the Transaction Summary Buckets */
-        while (myIterator.hasNext()) {
-            EventCategoryBucket myBucket = myIterator.next();
+        while (myTaxIterator.hasNext()) {
+            TaxCategoryBucket myBucket = myTaxIterator.next();
 
-            /* Switch on bucket type */
-            // switch (myBucket.getBucketType()) {
-            /* Summary */
-            // case CATSUMMARY:
-            // CategorySummary mySummary = (CategorySummary) myBucket;
+            /* Skip the non-summary elements */
+            switch (myBucket.getCategorySection()) {
+                case CATSUMM:
+                case CATTOTAL:
+                    /* Access the amount */
+                    JMoney myAmount = myBucket.getMoneyAttribute(TaxAttribute.Amount);
 
-            /* Format the detail */
-            // theReport.startDataRow(myOutput, isOdd, mySummary.getName());
-            // theReport.makeValueCell(myOutput, mySummary.getAmount());
-            // theReport.makeValueCell(myOutput, mySummary.getPrevAmount());
-            // theReport.endRow(myOutput);
-            // break;
-            /* Total */
-            // case CATTOTAL:
-            // CategoryTotal myTotal = (CategoryTotal) myBucket;
+                    /* If we have a non-zero value */
+                    if (myAmount.isNonZero()) {
+                        /* Format the detail */
+                        theReport.startDataRow(myOutput, isOdd, myBucket.getName());
+                        theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(TaxAttribute.Amount));
+                        theReport.endRow(myOutput);
 
-            /* Format the detail */
-            // theReport.startDataRow(myOutput, isOdd, myTotal.getName());
-            // theReport.makeValueCell(myOutput, myTotal.getAmount());
-            // theReport.makeValueCell(myOutput, myTotal.getPrevAmount());
-            // theReport.endRow(myOutput);
-            // break;
-            // default:
-            // continue;
-            // }
-
-            /* Flip row type */
-            isOdd = !isOdd;
+                        /* Flip row type */
+                        isOdd = !isOdd;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
 
         /* Format the next table */
         theReport.endTable(myOutput);
         theReport.makeSubHeading(myOutput, "Transaction Breakdown");
         theReport.startTable(myOutput);
-        theReport.makeTableRowSpan(myOutput, "Class", 2);
-        theReport.makeTableColumnSpan(myOutput, Integer.toString(theDate.getYear()), 2);
-        theReport.makeTableColumnSpan(myOutput, Integer.toString(theDate.getYear() - 1), 2);
-        theReport.makeTableNewRow(myOutput);
-        theReport.makeTableColumn(myOutput, "Value");
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Income");
         theReport.makeTableColumn(myOutput, "TaxCredit");
-        theReport.makeTableColumn(myOutput, "Value");
-        theReport.makeTableColumn(myOutput, "TaxCredit");
+        theReport.makeTableColumn(myOutput, "NatInsurance");
+        theReport.makeTableColumn(myOutput, "Expense");
         theReport.startTableBody(myOutput);
 
         /* Access a new bucket iterator */
-        myIterator = myList.iterator();
+        Iterator<EventCategoryBucket> myIterator = myEvents.iterator();
         isOdd = true;
 
-        /* Loop through the Transaction Summary Buckets */
+        /* Loop through the Event Category Buckets */
         while (myIterator.hasNext()) {
             EventCategoryBucket myBucket = myIterator.next();
 
-            /* Skip entries that are not TransDetail */
-            // if (myBucket.getBucketType() != BucketType.CATDETAIL) {
-            // continue;
-            // }
-
-            /* Access the detail */
-            // EventCategoryDetail myDetail = (EventCategoryDetail) myBucket;
-
             /* Format the detail */
-            // theReport.startDataRow(myOutput, isOdd, myDetail.getName());
-            // theReport.makeValueCell(myOutput, myDetail.getAmount());
-            // theReport.makeValueCell(myOutput, myDetail.getTaxCredit());
-            // theReport.makeValueCell(myOutput, myDetail.getPrevAmount());
-            // theReport.makeValueCell(myOutput, myDetail.getPrevTax());
-            // theReport.endRow(myOutput);
+            theReport.startDataRow(myOutput, isOdd, myBucket.getName());
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.Income));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.TaxCredit));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.NatInsurance));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.Expense));
+            theReport.endRow(myOutput);
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -919,7 +900,7 @@ public class AnalysisReport {
      */
     public String getTaxReport() {
         /* Ensure that tax has been calculated */
-        // theAnalysisYear.calculateTax();
+        theAnalysisYear.calculateTax();
 
         /* Access the bucket lists */
         TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
@@ -950,14 +931,14 @@ public class AnalysisReport {
             TaxCategoryBucket myBucket = myIterator.next();
 
             /* Skip the non-summary elements */
-            if (myBucket.getBucketType() != BucketType.TAXSUMMARY) {
+            if (myBucket.getCategorySection() != TaxCategorySection.TAXSUMM) {
                 continue;
             }
 
             /* Format the line */
             theReport.startLinkRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAmount());
-            theReport.makeValueCell(myOutput, myBucket.getTaxation());
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(TaxAttribute.Amount));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
             theReport.endRow(myOutput);
 
             /* Format the detail */
@@ -970,22 +951,22 @@ public class AnalysisReport {
         /* Access the Total taxation bucket */
         myTax = myList.getBucket(TaxCategoryClass.TotalTaxationDue);
         theReport.startTotalRow(myOutput, myTax.getName());
-        theReport.makeTotalCell(myOutput, myTax.getAmount());
-        theReport.makeTotalCell(myOutput, myTax.getTaxation());
+        theReport.makeTotalCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theReport.makeTotalCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Taxation));
         theReport.endRow(myOutput);
 
         /* Access the Tax Paid bucket */
-        // CategorySummary myTrans = myList.getCategorySummary(TaxCategoryClass.TaxPaid);
-        // theReport.startTotalRow(myOutput, myTrans.getName());
-        // theReport.makeTotalCell(myOutput);
-        // theReport.makeTotalCell(myOutput, myTrans.getAmount());
-        // theReport.endRow(myOutput);
+        myTax = myList.getBucket(TaxCategoryClass.TaxPaid);
+        theReport.startTotalRow(myOutput, myTax.getName());
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theReport.endRow(myOutput);
 
         /* Access the Tax Profit bucket */
         myTax = myList.getBucket(TaxCategoryClass.TaxProfitLoss);
         theReport.startTotalRow(myOutput, myTax.getName());
-        theReport.makeTotalCell(myOutput, myTax.getAmount());
-        theReport.makeTotalCell(myOutput, myTax.getTaxation());
+        theReport.makeTotalCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theReport.makeTotalCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Taxation));
         theReport.endRow(myOutput);
 
         /* Finish the table */
@@ -1093,7 +1074,7 @@ public class AnalysisReport {
         /* Access the original allowance */
         myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
         theReport.startDataRow(myOutput, false, "Personal Allowance");
-        theReport.makeValueCell(myOutput, myTax.getAmount());
+        theReport.makeValueCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Amount));
         theReport.endRow(myOutput);
 
         /* if we have adjusted the allowance */
@@ -1101,19 +1082,19 @@ public class AnalysisReport {
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.GrossIncome);
             theReport.startDataRow(myOutput, true, "Gross Taxable Income");
-            theReport.makeValueCell(myOutput, myTax.getAmount());
+            theReport.makeValueCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Amount));
             theReport.endRow(myOutput);
 
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.AdjustedAllowance);
             theReport.startDataRow(myOutput, false, "Adjusted Allowance");
-            theReport.makeValueCell(myOutput, myTax.getAmount());
+            theReport.makeValueCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Amount));
             theReport.endRow(myOutput);
         }
 
         /* Access the Low Tax Band */
         isOdd = true;
-        if (theYear.getLoBand() != null) {
+        if (theYear.getLoBand().isNonZero()) {
             theReport.startDataRow(myOutput, isOdd, "Low Tax Band");
             theReport.makeValueCell(myOutput, theYear.getLoBand());
             theReport.endRow(myOutput);
@@ -1130,7 +1111,7 @@ public class AnalysisReport {
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.HiTaxBand);
             theReport.startDataRow(myOutput, !isOdd, "High Tax Band");
-            theReport.makeValueCell(myOutput, myTax.getAmount());
+            theReport.makeValueCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Amount));
             theReport.endRow(myOutput);
         }
         theReport.endTable(myOutput);
@@ -1178,7 +1159,7 @@ public class AnalysisReport {
             TaxCategoryBucket myBucket = myIterator.next();
 
             /* Skip non-detail buckets */
-            if (myBucket.getBucketType() != BucketType.TAXDETAIL) {
+            if (myBucket.getCategorySection() != TaxCategorySection.TAXDETAIL) {
                 continue;
             }
 
@@ -1189,9 +1170,9 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getAmount());
-            theReport.makeValueCell(myOutput, myBucket.getRate());
-            theReport.makeValueCell(myOutput, myBucket.getTaxation());
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(TaxAttribute.Amount));
+            theReport.makeValueCell(myOutput, myBucket.getRateAttribute(TaxAttribute.Rate));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
             theReport.endRow(myOutput);
 
             /* Flip row type */
@@ -1200,9 +1181,9 @@ public class AnalysisReport {
 
         /* Build totals */
         theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
-        theReport.makeTotalCell(myOutput, pSummary.getAmount());
+        theReport.makeTotalCell(myOutput, pSummary.getMoneyAttribute(TaxAttribute.Amount));
         theReport.makeTotalCell(myOutput);
-        theReport.makeTotalCell(myOutput, pSummary.getTaxation());
+        theReport.makeTotalCell(myOutput, pSummary.getMoneyAttribute(TaxAttribute.Taxation));
         theReport.endRow(myOutput);
         theReport.endTable(myOutput);
 

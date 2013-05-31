@@ -22,10 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.views;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -51,22 +49,22 @@ public final class EventCategoryBucket
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EventCategoryBucket.class.getSimpleName(), AnalysisBucket.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(EventCategoryBucket.class.getSimpleName());
 
     /**
      * Event Category Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(EventCategory.class.getSimpleName());
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(EventCategory.class.getSimpleName());
 
     /**
      * Event Type Field Id.
      */
-    public static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(EventCategoryType.class.getSimpleName());
+    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(EventCategoryType.class.getSimpleName());
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
 
     /**
      * FieldSet map.
@@ -96,7 +94,7 @@ public final class EventCategoryBucket
     /**
      * Attribute Map.
      */
-    private final Map<EventAttribute, Object> theAttributes;
+    private final Map<EventAttribute, JMoney> theAttributes;
 
     @Override
     public JDataFields getDataFields() {
@@ -112,13 +110,21 @@ public final class EventCategoryBucket
             return theType;
         }
         if (FIELD_BASE.equals(pField)) {
-            return theBase;
+            return (theBase != null)
+                    ? theBase
+                    : JDataFieldValue.SkipField;
         }
 
         /* Handle Attribute fields */
         EventAttribute myClass = getClassForField(pField);
         if (myClass != null) {
-            return getAttributeValue(myClass);
+            Object myValue = getAttributeValue(myClass);
+            if (myValue instanceof JDecimal) {
+                return ((JDecimal) myValue).isNonZero()
+                        ? myValue
+                        : JDataFieldValue.SkipField;
+            }
+            return myValue;
         }
 
         return JDataFieldValue.UnknownField;
@@ -178,7 +184,7 @@ public final class EventCategoryBucket
      * Obtain the attribute map.
      * @return the attribute map
      */
-    protected Map<EventAttribute, Object> getAttributes() {
+    protected Map<EventAttribute, JMoney> getAttributes() {
         return theAttributes;
     }
 
@@ -188,7 +194,7 @@ public final class EventCategoryBucket
      * @param pValue the value of the attribute
      */
     protected void setAttribute(final EventAttribute pAttr,
-                                final Object pValue) {
+                                final JMoney pValue) {
         /* Set the value into the list */
         theAttributes.put(pAttr, pValue);
     }
@@ -225,8 +231,8 @@ public final class EventCategoryBucket
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    public <X extends JDecimal> X getAttribute(final EventAttribute pAttr,
-                                               final Class<X> pClass) {
+    private <X extends JMoney> X getAttribute(final EventAttribute pAttr,
+                                              final Class<X> pClass) {
         /* Obtain the attribute */
         return pClass.cast(getAttribute(pAttr));
     }
@@ -242,18 +248,38 @@ public final class EventCategoryBucket
     }
 
     /**
+     * Obtain a money attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JMoney getMoneyAttribute(final EventAttribute pAttr) {
+        /* Obtain the attribute */
+        return getAttribute(pAttr, JMoney.class);
+    }
+
+    /**
      * Obtain an attribute value from the base.
      * @param <X> the data type
      * @param pAttr the attribute
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    public <X extends JDecimal> X getBaseAttribute(final EventAttribute pAttr,
-                                                   final Class<X> pClass) {
+    private <X extends JMoney> X getBaseAttribute(final EventAttribute pAttr,
+                                                  final Class<X> pClass) {
         /* Obtain the attribute */
         return (theBase == null)
                 ? null
                 : theBase.getAttribute(pAttr, pClass);
+    }
+
+    /**
+     * Obtain a money attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JMoney getBaseMoneyAttribute(final EventAttribute pAttr) {
+        /* Obtain the attribute */
+        return getBaseAttribute(pAttr, JMoney.class);
     }
 
     /**
@@ -270,7 +296,7 @@ public final class EventCategoryBucket
         theBase = null;
 
         /* Create the attribute map */
-        theAttributes = new EnumMap<EventAttribute, Object>(EventAttribute.class);
+        theAttributes = new EnumMap<EventAttribute, JMoney>(EventAttribute.class);
 
         /* Create all possible values */
         setAttribute(EventAttribute.Income, new JMoney());
@@ -293,7 +319,7 @@ public final class EventCategoryBucket
         theBase = pBase;
 
         /* Create a new attribute map */
-        theAttributes = new EnumMap<EventAttribute, Object>(EventAttribute.class);
+        theAttributes = new EnumMap<EventAttribute, JMoney>(EventAttribute.class);
 
         /* Clone the underlying map */
         cloneMap(theBase.getAttributes(), theAttributes);
@@ -318,10 +344,10 @@ public final class EventCategoryBucket
      * @param pSource the source map
      * @param pTarget the target map
      */
-    private void cloneMap(final Map<EventAttribute, Object> pSource,
-                          final Map<EventAttribute, Object> pTarget) {
+    private void cloneMap(final Map<EventAttribute, JMoney> pSource,
+                          final Map<EventAttribute, JMoney> pTarget) {
         /* For each entry in the source map */
-        for (Map.Entry<EventAttribute, Object> myEntry : pSource.entrySet()) {
+        for (Map.Entry<EventAttribute, JMoney> myEntry : pSource.entrySet()) {
             /* Access key and object */
             EventAttribute myAttr = myEntry.getKey();
 
@@ -342,19 +368,37 @@ public final class EventCategoryBucket
     }
 
     /**
-     * Add value.
+     * Add income value.
      * @param pValue the value to add
      */
-    protected void addAmount(final JMoney pValue) {
+    protected void addIncome(final JMoney pValue) {
         JMoney myIncome = getAttribute(EventAttribute.Income, JMoney.class);
         myIncome.addAmount(pValue);
     }
 
     /**
-     * Subtract value.
+     * Subtract income value.
      * @param pValue the value to subtract
      */
-    protected void subtractAmount(final JMoney pValue) {
+    protected void subtractIncome(final JMoney pValue) {
+        JMoney myExpense = getAttribute(EventAttribute.Income, JMoney.class);
+        myExpense.subtractAmount(pValue);
+    }
+
+    /**
+     * Add expense value.
+     * @param pValue the value to add
+     */
+    protected void addExpense(final JMoney pValue) {
+        JMoney myIncome = getAttribute(EventAttribute.Expense, JMoney.class);
+        myIncome.addAmount(pValue);
+    }
+
+    /**
+     * Subtract expense value.
+     * @param pValue the value to subtract
+     */
+    protected void subtractExpense(final JMoney pValue) {
         JMoney myExpense = getAttribute(EventAttribute.Expense, JMoney.class);
         myExpense.subtractAmount(pValue);
     }
@@ -364,38 +408,57 @@ public final class EventCategoryBucket
      * @param pEvent the event
      */
     protected void adjustValues(final Event pEvent) {
-        /* Adjust amount */
-        JMoney myMoney = getAttribute(EventAttribute.Income, JMoney.class);
-        myMoney.addAmount(pEvent.getAmount());
+        /* Switch on the category */
+        switch (theCategory.getCategoryTypeClass()) {
+            case TaxedIncome:
+            case RentalIncome:
+            case Interest:
+            case TaxFreeInterest:
+            case Dividend:
+            case UnitTrustDividend:
+            case TaxFreeDividend:
+            case OtherIncome:
+            case Inherited:
+            case LoanInterest:
+                /* Adjust income */
+                JMoney myMoney = getAttribute(EventAttribute.Income, JMoney.class);
+                myMoney.addAmount(pEvent.getAmount());
 
-        /* Access subValues */
-        JMoney myTaxCredit = pEvent.getTaxCredit();
-        JMoney myNatIns = pEvent.getNatInsurance();
-        JMoney myBenefit = pEvent.getBenefit();
-        JMoney myDonation = pEvent.getDonation();
+                /* Access subValues */
+                JMoney myTaxCredit = pEvent.getTaxCredit();
+                JMoney myNatIns = pEvent.getNatInsurance();
+                JMoney myBenefit = pEvent.getBenefit();
+                JMoney myDonation = pEvent.getDonation();
 
-        /* If there is a tax credit */
-        if (myTaxCredit != null) {
-            myMoney = getAttribute(EventAttribute.TaxCredit, JMoney.class);
-            myMoney.addAmount(myTaxCredit);
-        }
+                /* If there is a tax credit */
+                if (myTaxCredit != null) {
+                    myMoney = getAttribute(EventAttribute.TaxCredit, JMoney.class);
+                    myMoney.addAmount(myTaxCredit);
+                }
 
-        /* If there is national insurance */
-        if (myNatIns != null) {
-            myMoney = getAttribute(EventAttribute.NatInsurance, JMoney.class);
-            myMoney.addAmount(myNatIns);
-        }
+                /* If there is national insurance */
+                if (myNatIns != null) {
+                    myMoney = getAttribute(EventAttribute.NatInsurance, JMoney.class);
+                    myMoney.addAmount(myNatIns);
+                }
 
-        /* If there is a benefit */
-        if (myBenefit != null) {
-            myMoney = getAttribute(EventAttribute.Benefit, JMoney.class);
-            myMoney.addAmount(myBenefit);
-        }
+                /* If there is a benefit */
+                if (myBenefit != null) {
+                    myMoney = getAttribute(EventAttribute.Benefit, JMoney.class);
+                    myMoney.addAmount(myBenefit);
+                }
 
-        /* If there is a donation */
-        if (myDonation != null) {
-            myMoney = getAttribute(EventAttribute.Donation, JMoney.class);
-            myMoney.addAmount(myDonation);
+                /* If there is a donation */
+                if (myDonation != null) {
+                    myMoney = getAttribute(EventAttribute.Donation, JMoney.class);
+                    myMoney.addAmount(myDonation);
+                }
+                break;
+            default:
+                /* Adjust expense */
+                myMoney = getAttribute(EventAttribute.Expense, JMoney.class);
+                myMoney.addAmount(pEvent.getAmount());
+                break;
         }
     }
 
@@ -412,22 +475,22 @@ public final class EventCategoryBucket
      * Add bucket to totals.
      * @param pAttributes the underlying attributes
      */
-    private void addValues(final Map<EventAttribute, Object> pAttributes) {
+    private void addValues(final Map<EventAttribute, JMoney> pAttributes) {
         /* For each entry in the source map */
-        for (Map.Entry<EventAttribute, Object> myEntry : pAttributes.entrySet()) {
+        for (Map.Entry<EventAttribute, JMoney> myEntry : pAttributes.entrySet()) {
             /* Access key and object */
             EventAttribute myAttr = myEntry.getKey();
-            Object myObject = myEntry.getValue();
+            JMoney myObject = myEntry.getValue();
 
             /* Switch on the Attribute */
             switch (myAttr) {
                 case Income:
                     JMoney myIncome = getAttribute(myAttr, JMoney.class);
-                    myIncome.addAmount(JMoney.class.cast(myObject));
+                    myIncome.addAmount(myObject);
                     break;
                 case Expense:
                     JMoney myExpense = getAttribute(myAttr, JMoney.class);
-                    myExpense.addAmount(JMoney.class.cast(myObject));
+                    myExpense.addAmount(myObject);
                     break;
                 case TaxCredit:
                 case NatInsurance:
@@ -456,10 +519,13 @@ public final class EventCategoryBucket
      * @return true/false
      */
     protected boolean isRelevant() {
-        /* Relevant if this value or the previous value is non-zero */
-        if (isActive()) {
+        /* Relevant if this value is non-zero or if this is the totals */
+        if (isActive()
+            || (theType.getCategoryClass() == EventCategoryClass.Totals)) {
             return true;
         }
+
+        /* Relevant if the previous value is non-zero */
         return (theBase != null)
                && (theBase.isActive());
     }
@@ -521,6 +587,19 @@ public final class EventCategoryBucket
         private final FinanceData theData;
 
         /**
+         * The totals.
+         */
+        private final EventCategoryBucket theTotals;
+
+        /**
+         * Obtain the Totals EventCategoryBucket.
+         * @return the bucket
+         */
+        protected EventCategoryBucket getTotalsBucket() {
+            return theTotals;
+        }
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
@@ -528,6 +607,7 @@ public final class EventCategoryBucket
             super(EventCategoryBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
+            theTotals = allocateTotalsBucket();
         }
 
         /**
@@ -555,6 +635,9 @@ public final class EventCategoryBucket
                     add(myBucket);
                 }
             }
+
+            /* Access the totals bucket */
+            theTotals = allocateTotalsBucket();
         }
 
         /**
@@ -606,18 +689,19 @@ public final class EventCategoryBucket
          * Obtain the Totals EventCategoryBucket.
          * @return the bucket
          */
-        protected EventCategoryBucket getTotalsBucket() {
+        private EventCategoryBucket allocateTotalsBucket() {
             /* Obtain the totals category */
             EventCategory myTotals = theData.getEventCategories().getSingularClass(EventCategoryClass.Totals);
             return getBucket(myTotals);
         }
 
         /**
-         * Consolidate additional attributes into their own categories.
+         * Produce totals for event categories.
+         * @param pMetaAnalysis the meta analysis
          */
-        protected void produceTotals() {
+        protected void produceTotals(final MetaAnalysis pMetaAnalysis) {
             /* Create a list of new buckets */
-            List<EventCategoryBucket> myTotals = new ArrayList<EventCategoryBucket>();
+            OrderedIdList<Integer, EventCategoryBucket> myTotals = new OrderedIdList<Integer, EventCategoryBucket>(EventCategoryBucket.class);
 
             /* Obtain the secondary buckets */
             EventCategoryBucket myTaxCredit = getBucket(EventCategoryClass.TaxCredit);
@@ -631,10 +715,10 @@ public final class EventCategoryBucket
                 EventCategoryBucket myCurr = myIterator.next();
 
                 /* Copy amounts down */
-                myTaxCredit.addAmount(myCurr.getAttribute(EventAttribute.TaxCredit, JMoney.class));
-                myNatInsurance.addAmount(myCurr.getAttribute(EventAttribute.NatInsurance, JMoney.class));
-                myBenefit.addAmount(myCurr.getAttribute(EventAttribute.Benefit, JMoney.class));
-                myDonation.addAmount(myCurr.getAttribute(EventAttribute.Donation, JMoney.class));
+                myTaxCredit.addExpense(myCurr.getAttribute(EventAttribute.TaxCredit, JMoney.class));
+                myNatInsurance.addExpense(myCurr.getAttribute(EventAttribute.NatInsurance, JMoney.class));
+                myBenefit.addExpense(myCurr.getAttribute(EventAttribute.Benefit, JMoney.class));
+                myDonation.addExpense(myCurr.getAttribute(EventAttribute.Donation, JMoney.class));
 
                 /* Obtain category and parent category */
                 EventCategory myCategory = myCurr.getEventCategory();
@@ -647,14 +731,23 @@ public final class EventCategoryBucket
 
                     /* If the bucket does not exist */
                     if (myTotal == null) {
-                        /* Create the new bucket and add to new list */
-                        myTotal = new EventCategoryBucket(theData, myParent);
-                        myTotals.add(myTotal);
+                        /* Look for bucket in the new list */
+                        myTotal = myTotals.findItemById(myParent.getId());
+
+                        /* If the bucket is completely new */
+                        if (myTotal == null) {
+                            /* Create the new bucket and add to new list */
+                            myTotal = new EventCategoryBucket(theData, myParent);
+                            myTotals.add(myTotal);
+                        }
                     }
 
                     /* Add the bucket to the totals */
                     myTotal.adjustValues(myCurr);
                 }
+
+                /* Prime the tax buckets */
+                pMetaAnalysis.primeTaxCategory(myCurr);
 
                 /* Remove the bucket if it is irrelevant */
                 if (!myCurr.isRelevant()) {
@@ -666,6 +759,11 @@ public final class EventCategoryBucket
             myIterator = myTotals.listIterator();
             while (myIterator.hasNext()) {
                 EventCategoryBucket myCurr = myIterator.next();
+
+                /* Ignore the bucket if it is irrelevant */
+                if (!myCurr.isRelevant()) {
+                    continue;
+                }
 
                 /* Obtain category and parent category */
                 EventCategory myCategory = myCurr.getEventCategory();
@@ -679,24 +777,6 @@ public final class EventCategoryBucket
 
                 /* Add it to the list */
                 add(myCurr);
-            }
-        }
-
-        /**
-         * Prune the list to remove irrelevant items.
-         */
-        protected void prune() {
-            /* Access the iterator */
-            Iterator<EventCategoryBucket> myIterator = listIterator();
-
-            /* Loop through the buckets */
-            while (myIterator.hasNext()) {
-                EventCategoryBucket myCurr = myIterator.next();
-
-                /* Remove the bucket if it is irrelevant */
-                if (!myCurr.isRelevant()) {
-                    myIterator.remove();
-                }
             }
         }
     }
