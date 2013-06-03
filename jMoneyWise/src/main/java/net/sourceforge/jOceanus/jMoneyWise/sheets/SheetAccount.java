@@ -310,10 +310,10 @@ public class SheetAccount
 
                 /* Handle closed which may be missing */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                Boolean isClosed = Boolean.FALSE;
-                if (myCell != null) {
-                    isClosed = myCell.getBooleanValue();
-                }
+                // Boolean isClosed = Boolean.FALSE;
+                // if (myCell != null) {
+                // isClosed = myCell.getBooleanValue();
+                // }
 
                 /* Handle parent which may be missing */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
@@ -358,7 +358,7 @@ public class SheetAccount
                 }
 
                 /* Add the value into the finance tables */
-                Account myAccount = myList.addOpenItem(0, myName, myAcType, isClosed, isTaxFree);
+                Account myAccount = myList.addOpenItem(0, myName, myAcType, Boolean.FALSE/* TODO isClosed */, isTaxFree);
 
                 /* Add information relating to the account */
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);

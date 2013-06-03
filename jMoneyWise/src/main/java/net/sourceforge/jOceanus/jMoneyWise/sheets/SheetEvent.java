@@ -295,12 +295,12 @@ public class SheetEvent
 
             /* Obtain the range iterator */
             ListIterator<ArchiveYear> myIterator = pRange.getReverseIterator();
+            int iYearCount = 2;
 
             /* Loop through the individual year ranges */
             while (myIterator.hasPrevious()) {
                 /* Access year */
                 ArchiveYear myYear = myIterator.previous();
-                int iYearCount = 1;
 
                 /* Find the range of cells */
                 DataView myView = pWorkBook.getRangeView(myYear.getRangeName());

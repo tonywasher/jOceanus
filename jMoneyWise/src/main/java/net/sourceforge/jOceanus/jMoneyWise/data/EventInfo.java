@@ -263,6 +263,12 @@ public class EventInfo
                 case DILUTION:
                     setValueBytes(pValue, JDilution.class);
                     break;
+                case DATEDAY:
+                    setValueBytes(pValue, JDateDay.class);
+                    break;
+                case STRING:
+                    setValueBytes(pValue, String.class);
+                    break;
                 default:
                     throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
             }

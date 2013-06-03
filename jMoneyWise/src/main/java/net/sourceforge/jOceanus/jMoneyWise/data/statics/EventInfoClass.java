@@ -184,4 +184,19 @@ public enum EventInfoClass implements DataInfoClass {
         throw new JDataException(ExceptionClass.DATA, "Invalid EventInfo Class Id: "
                                                       + id);
     }
+
+    /**
+     * Obtain maximum length for infoType.
+     * @return the maximum length
+     */
+    public int getMaximumLength() {
+        switch (this) {
+            case Reference:
+                return EventInfoType.DATA_LEN;
+            case Comments:
+                return EventInfoType.COMMENT_LEN;
+            default:
+                return 0;
+        }
+    }
 }

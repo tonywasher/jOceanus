@@ -182,10 +182,30 @@ public final class CapitalEvent
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    public <X extends JDecimal> X getAttribute(final CapitalAttribute pAttr,
-                                               final Class<X> pClass) {
+    private <X extends JDecimal> X getAttribute(final CapitalAttribute pAttr,
+                                                final Class<X> pClass) {
         /* Obtain the attribute */
         return pClass.cast(getAttribute(pAttr));
+    }
+
+    /**
+     * Obtain a money attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JMoney getMoneyAttribute(final CapitalAttribute pAttr) {
+        /* Obtain the attribute */
+        return getAttribute(pAttr, JMoney.class);
+    }
+
+    /**
+     * Obtain a units attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected JUnits getUnitsAttribute(final CapitalAttribute pAttr) {
+        /* Obtain the attribute */
+        return getAttribute(pAttr, JUnits.class);
     }
 
     /**

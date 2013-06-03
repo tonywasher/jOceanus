@@ -226,7 +226,7 @@ public class TaxInfoSet
 
             /* Values must be positive */
             if (!myValue.isPositive()) {
-                myTaxYear.addError(DataItem.ERROR_POSITIVE, getFieldForClass(myClass));
+                myTaxYear.addError(DataItem.ERROR_NEGATIVE, getFieldForClass(myClass));
             }
 
             /* If this is LoAgeAllowance */

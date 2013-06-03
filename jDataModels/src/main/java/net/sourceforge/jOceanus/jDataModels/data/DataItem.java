@@ -95,9 +95,14 @@ public abstract class DataItem
     public static final String ERROR_NEGATIVE = "Value is negative";
 
     /**
-     * Value must be positive error.
+     * Value zero error.
      */
-    public static final String ERROR_POSITIVE = "Value must be positive";
+    public static final String ERROR_ZERO = "Value is zero";
+
+    /**
+     * Value outside valid range.
+     */
+    public static final String ERROR_RANGE = "Value outside valid range";
 
     /**
      * Value disabled error.

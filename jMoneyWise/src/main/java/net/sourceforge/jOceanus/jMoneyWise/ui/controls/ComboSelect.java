@@ -265,7 +265,7 @@ public class ComboSelect {
                 myActCat = myAccount.getAccountCategory();
 
                 /* Determine whether we are a valid category */
-                isValid = Event.isValidEvent(pCategory, myActCat, false);
+                isValid = Event.isValidEvent(pCategory.getCategoryTypeClass(), myActCat, false);
             }
 
             /* Skip invalid types/closed accounts */
@@ -329,7 +329,7 @@ public class ComboSelect {
                 myActCat = myAccount.getAccountCategory();
 
                 /* Determine whether we are a valid type */
-                isValid = Event.isValidEvent(pCategory, myActCat, true);
+                isValid = Event.isValidEvent(pCategory.getCategoryTypeClass(), myActCat, true);
             }
 
             /* Skip invalid types/closed accounts */
@@ -400,7 +400,7 @@ public class ComboSelect {
                 myActCat = myAccount.getAccountCategory();
 
                 /* Determine whether we are a valid category */
-                isValid = Event.isValidEvent(pCategory, myActCat, false);
+                isValid = Event.isValidEvent(pCategory.getCategoryTypeClass(), myActCat, false);
             }
 
             /* Skip invalid types/closed accounts */

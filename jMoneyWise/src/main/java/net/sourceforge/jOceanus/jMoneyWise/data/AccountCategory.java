@@ -645,37 +645,37 @@ public class AccountCategory
 
         /* Name must be non-null */
         if (myName == null) {
-            addError("Name must be non-null", FIELD_NAME);
+            addError(ERROR_MISSING, FIELD_NAME);
 
             /* Check that the name is valid */
         } else {
             /* The name must not be too long */
             if (myName.length() > NAMELEN) {
-                addError("Name is too long", FIELD_NAME);
+                addError(ERROR_LENGTH, FIELD_NAME);
             }
 
             /* The name must be unique */
             if (myList.countInstances(myName) > 1) {
-                addError("Name must be unique", FIELD_NAME);
+                addError(ERROR_DUPLICATE, FIELD_NAME);
             }
         }
 
         /* Check description length */
         if ((myDesc != null)
             && (myDesc.length() > DESCLEN)) {
-            addError("Description is too long", FIELD_NAME);
+            addError(ERROR_LENGTH, FIELD_DESC);
         }
 
         /* AccountCategoryType must be non-null */
         if (myCatType == null) {
-            addError("AccountCategoryType must be non-null", FIELD_CATTYPE);
+            addError(ERROR_MISSING, FIELD_CATTYPE);
         } else {
             /* Access the class */
             AccountCategoryClass myClass = myCatType.getAccountClass();
 
             /* AccountCategoryType must be enabled */
             if (!myCatType.getEnabled()) {
-                addError("AccountCategoryType must be enabled", FIELD_CATTYPE);
+                addError(ERROR_DISABLED, FIELD_CATTYPE);
             }
 
             /* If the CategoryType is singular */

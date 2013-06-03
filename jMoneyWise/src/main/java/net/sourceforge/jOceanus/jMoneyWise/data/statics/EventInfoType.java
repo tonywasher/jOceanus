@@ -59,6 +59,16 @@ public class EventInfoType
     }
 
     /**
+     * Data length.
+     */
+    protected static final int DATA_LEN = 20;
+
+    /**
+     * Comment length.
+     */
+    protected static final int COMMENT_LEN = 50;
+
+    /**
      * Return the EventInfo class of the EventInfoType.
      * @return the class
      */

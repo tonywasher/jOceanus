@@ -438,6 +438,7 @@ public class AccountPrice
     @Override
     public void validate() {
         JDateDay myDate = getDate();
+        JPrice myPrice = getPrice();
         AccountPriceList myList = (AccountPriceList) getList();
         FinanceData mySet = getDataSet();
 
@@ -454,15 +455,17 @@ public class AccountPrice
 
             /* The date must be in-range */
             if (mySet.getDateRange().compareTo(myDate) != 0) {
-                addError("Date must be within range", FIELD_DATE);
+                addError(ERROR_RANGE, FIELD_DATE);
             }
         }
 
-        /* The Price must be non-zero */
-        if ((getPrice() == null)
-            || (!getPrice().isNonZero())
-            || (!getPrice().isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_PRICE);
+        /* The Price must be non-zero and greater than zero */
+        if (myPrice == null) {
+            addError(ERROR_MISSING, FIELD_PRICE);
+        } else if (myPrice.isZero()) {
+            addError(ERROR_ZERO, FIELD_PRICE);
+        } else if (!myPrice.isPositive()) {
+            addError(ERROR_NEGATIVE, FIELD_PRICE);
         }
 
         /* Set validation flag */

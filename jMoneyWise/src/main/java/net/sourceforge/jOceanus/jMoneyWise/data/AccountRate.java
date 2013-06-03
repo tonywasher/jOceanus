@@ -572,16 +572,22 @@ public class AccountRate
             }
         }
 
-        /* The rate must be non-zero */
-        if ((myRate == null)
-            || (!myRate.isPositive())) {
-            addError(ERROR_POSITIVE, FIELD_RATE);
+        /* The Rate must be non-zero and greater than zero */
+        if (myRate == null) {
+            addError(ERROR_MISSING, FIELD_RATE);
+        } else if (myRate.isZero()) {
+            addError(ERROR_ZERO, FIELD_RATE);
+        } else if (!myRate.isPositive()) {
+            addError(ERROR_NEGATIVE, FIELD_RATE);
         }
 
         /* The bonus rate must be non-zero if it exists */
-        if ((myBonus != null)
-            && ((!myBonus.isNonZero()) || (!myBonus.isPositive()))) {
-            addError(ERROR_POSITIVE, FIELD_BONUS);
+        if (myBonus != null) {
+            if (myRate.isZero()) {
+                addError(ERROR_ZERO, FIELD_BONUS);
+            } else if (!myRate.isPositive()) {
+                addError(ERROR_NEGATIVE, FIELD_BONUS);
+            }
         }
 
         /* Set validation flag */

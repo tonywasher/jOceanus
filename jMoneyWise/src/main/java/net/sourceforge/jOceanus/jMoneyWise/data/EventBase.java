@@ -659,7 +659,7 @@ public abstract class EventBase
      * @param pCredit is the account a credit or a debit
      * @return valid true/false
      */
-    public static boolean isValidEvent(final EventCategory pEventCategory,
+    public static boolean isValidEvent(final EventCategoryClass pEventClass,
                                        final AccountCategory pAccountCategory,
                                        final boolean pCredit) {
         boolean myResult = false;
@@ -672,14 +672,14 @@ public abstract class EventBase
         }
 
         /* Switch on the CategoryType */
-        switch (pEventCategory.getCategoryTypeClass()) {
-            case TaxableGain:
-                if (!isCredit) {
-                    myResult = (myClass == AccountCategoryClass.LifeBond);
-                } else {
-                    myResult = myClass.hasValue();
-                }
-                break;
+        switch (pEventClass) {
+        // case TaxableGain:
+        // if (!isCredit) {
+        // myResult = (myClass == AccountCategoryClass.LifeBond);
+        // } else {
+        // myResult = myClass.hasValue();
+        // }
+        // break;
             case StockAdjust:
                 myResult = (myClass == AccountCategoryClass.LifeBond);
                 break;
@@ -696,7 +696,7 @@ public abstract class EventBase
                 myResult = (myClass == AccountCategoryClass.Shares);
                 break;
             case StockRightsWaived:
-                isCredit = !isCredit;
+                return isValidEvent(EventCategoryClass.StockRightsTaken, pAccountCategory, !isCredit);
             case StockRightsTaken:
                 if (!isCredit) {
                     myResult = myClass.hasValue();
@@ -718,26 +718,26 @@ public abstract class EventBase
                     myResult = myClass.hasValue();
                 }
                 break;
-            case NatInsurance:
-                if (!isCredit) {
-                    myResult = (myClass == AccountCategoryClass.Employer);
-                } else {
-                    myResult = (myClass == AccountCategoryClass.TaxMan);
-                }
-                break;
+            // case NatInsurance:
+            // if (!isCredit) {
+            // myResult = (myClass == AccountCategoryClass.Employer);
+            // } else {
+            // myResult = (myClass == AccountCategoryClass.TaxMan);
+            // }
+            // break;
             case Transfer:
                 myResult = !myClass.isNonAsset();
                 if (isCredit) {
                     myResult &= (myClass != AccountCategoryClass.Endowment);
                 }
                 break;
-            case Endowment:
-                if (!isCredit) {
-                    myResult = (myClass.hasValue());
-                } else {
-                    myResult = (myClass == AccountCategoryClass.Endowment);
-                }
-                break;
+            // case Endowment:
+            // if (!isCredit) {
+            // myResult = (myClass.hasValue());
+            // } else {
+            // myResult = (myClass == AccountCategoryClass.Endowment);
+            // }
+            // break;
             case Inherited:
                 // if (!isCredit) {
                 // myResult = myClass.isInheritance();
@@ -745,13 +745,15 @@ public abstract class EventBase
                 myResult = !myClass.isNonAsset();
                 // }
                 break;
-            case Benefit:
-                if (!isCredit) {
-                    myResult = (myClass == AccountCategoryClass.Employer);
-                    // } else {TODO
-                    // myResult = myClass.isBenefit();
-                }
-                break;
+            // case Benefit:
+            // if (!isCredit) {
+            // myResult = (myClass == AccountCategoryClass.Employer);
+            // // } else {TODO
+            // // myResult = myClass.isBenefit();
+            // }
+            // break;
+            case OtherIncome:
+                return isValidEvent(EventCategoryClass.Expense, pAccountCategory, !isCredit);
             case Expense:
                 if (!isCredit) {
                     myResult = !myClass.isNonAsset();
@@ -781,13 +783,13 @@ public abstract class EventBase
                     myResult = myClass.isLoan();
                 }
                 break;
-            case WriteOff:
-                // if (!isCredit) {TODO
-                myResult = myClass.isLoan();
-                // } else {
-                // myResult = myClass.isWriteOff();
-                // }
-                break;
+            // case WriteOff:
+            // if (!isCredit) {
+            // myResult = myClass.isLoan();
+            // } else {
+            // myResult = myClass == AccountCategoryClass.isWriteOff();
+            // }
+            // break;
             default:
                 break;
         }
@@ -1057,6 +1059,9 @@ public abstract class EventBase
         Account myCredit = getCredit();
         JMoney myAmount = getAmount();
         EventCategory myCategory = getCategory();
+        EventCategoryClass myClass = (myCategory != null)
+                ? myCategory.getCategoryTypeClass()
+                : null;
 
         /* Determine date range to check for */
         EventBaseList<?> myList = getList();
@@ -1068,15 +1073,12 @@ public abstract class EventBase
 
             /* The date must be in-range */
         } else if (myRange.compareTo(myDate) != 0) {
-            addError("Date must be within range", FIELD_DATE);
+            addError(ERROR_RANGE, FIELD_DATE);
         }
 
         /* Category must be non-null */
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
-            /* Must be enabled */
-        } else if (!myCategory.getCategoryType().getEnabled()) {
-            addError("CategoryType must be enabled", FIELD_CATEGORY);
             /* Must not be hidden */
         } else if (myCategory.getCategoryTypeClass().isHiddenType()) {
             addError("Hidden category types are not allowed", FIELD_CATEGORY);
@@ -1087,7 +1089,7 @@ public abstract class EventBase
             addError(ERROR_MISSING, FIELD_CREDIT);
             /* And valid for category type */
         } else if ((myCategory != null)
-                   && (!isValidEvent(myCategory, myCredit.getAccountCategory(), true))) {
+                   && (!isValidEvent(myClass, myCredit.getAccountCategory(), true))) {
             addError("Invalid credit account for transaction", FIELD_CREDIT);
         }
 
@@ -1096,7 +1098,7 @@ public abstract class EventBase
             addError(ERROR_MISSING, FIELD_DEBIT);
             /* And valid for category type */
         } else if ((myCategory != null)
-                   && (!isValidEvent(myCategory, myDebit.getAccountCategory(), false))) {
+                   && (!isValidEvent(myClass, myDebit.getAccountCategory(), false))) {
             addError("Invalid debit account for transaction", FIELD_DEBIT);
         }
 

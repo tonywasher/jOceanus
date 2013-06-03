@@ -28,7 +28,6 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
@@ -781,10 +780,10 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, theFormatter.formatObject(myEvent.getDate()));
-            theReport.makeValueCell(myOutput, myEvent.getAttribute(CapitalAttribute.DeltaUnits, JUnits.class));
-            theReport.makeValueCell(myOutput, myEvent.getAttribute(CapitalAttribute.DeltaCost, JMoney.class));
-            theReport.makeValueCell(myOutput, myEvent.getAttribute(CapitalAttribute.DeltaGains, JMoney.class));
-            theReport.makeValueCell(myOutput, myEvent.getAttribute(CapitalAttribute.DeltaDividend, JMoney.class));
+            theReport.makeValueCell(myOutput, myEvent.getUnitsAttribute(CapitalAttribute.DeltaUnits));
+            theReport.makeValueCell(myOutput, myEvent.getMoneyAttribute(CapitalAttribute.DeltaCost));
+            theReport.makeValueCell(myOutput, myEvent.getMoneyAttribute(CapitalAttribute.DeltaGains));
+            theReport.makeValueCell(myOutput, myEvent.getMoneyAttribute(CapitalAttribute.DeltaDividend));
             theReport.endRow(myOutput);
 
             /* Flip row type */

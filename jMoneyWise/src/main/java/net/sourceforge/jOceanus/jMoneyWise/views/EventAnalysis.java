@@ -1580,7 +1580,7 @@ public class EventAnalysis
         /* If we have had a cash takeover event */
         if (myDebEvent != null) {
             /* Access the residual cost/cash */
-            myResidualCash = myDebEvent.getAttribute(CapitalAttribute.TakeOverCash, JMoney.class);
+            myResidualCash = myDebEvent.getMoneyAttribute(CapitalAttribute.TakeOverCash);
         }
 
         /* Allocate new Capital events */

@@ -47,9 +47,11 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.help.FinanceHelp;
 import net.sourceforge.jOceanus.jMoneyWise.threads.LoadArchive;
+import net.sourceforge.jOceanus.jMoneyWise.threads.WriteQIF;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jSvnManager.threads.SubversionBackup;
+
 /**
  * Main Window for jMoneyWise.
  * @author Tony Washer
@@ -107,12 +109,17 @@ public class MainTab
     private static final String TITLE_MAINT = NLS_BUNDLE.getString("TabMaint");
 
     /**
-     * Maintenance tab title.
+     * QIF menu title.
+     */
+    private static final String MENU_CREATEQIF = NLS_BUNDLE.getString("MenuCreateQIF");
+
+    /**
+     * Archive menu title.
      */
     private static final String MENU_ARCHIVE = NLS_BUNDLE.getString("MenuArchive");
 
     /**
-     * Maintenance tab title.
+     * SubVersion menu title.
      */
     private static final String MENU_SUBVERSION = NLS_BUNDLE.getString("MenuSubVersion");
 
@@ -165,6 +172,11 @@ public class MainTab
      * The SubversionBackup menu.
      */
     private JMenuItem theSVBackup = null;
+
+    /**
+     * The CreateQIF menu.
+     */
+    private JMenuItem theCreateQIF = null;
 
     @Override
     public View getView() {
@@ -274,6 +286,11 @@ public class MainTab
         theSVBackup.addActionListener(this);
         pMenu.add(theSVBackup);
 
+        /* Create the file menu items */
+        theCreateQIF = new JMenuItem(MENU_CREATEQIF);
+        theCreateQIF.addActionListener(this);
+        pMenu.add(theCreateQIF);
+
         /* Pass call on */
         super.addDataMenuItems(pMenu);
     }
@@ -300,6 +317,11 @@ public class MainTab
         } else if (theSVBackup.equals(o)) {
             /* Start a write backup operation */
             backupSubversion();
+
+            /* If this event relates to the Load spreadsheet item */
+        } else if (theCreateQIF.equals(o)) {
+            /* Start a createQIF operation */
+            createQIF();
 
             /* else pass the event on */
         } else {
@@ -329,6 +351,19 @@ public class MainTab
 
         /* Create the worker thread */
         SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus, theView.getPreferenceMgr());
+        myStatus.registerThread(myThread);
+        startThread(myThread);
+    }
+
+    /**
+     * Create QIF file.
+     */
+    public void createQIF() {
+        /* Allocate the status */
+        ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
+
+        /* Create the worker thread */
+        WriteQIF myThread = new WriteQIF(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

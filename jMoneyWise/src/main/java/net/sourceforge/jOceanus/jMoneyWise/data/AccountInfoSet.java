@@ -102,7 +102,6 @@ public class AccountInfoSet
                 /* Access value of object */
                 myValue = getField(pInfoClass);
                 break;
-
         }
 
         /* Return the value */
@@ -364,6 +363,12 @@ public class AccountInfoSet
                     if (!myAccount.isClosed()
                         && myParent.isClosed()) {
                         myAccount.addError("Parent account must not be closed", getFieldForClass(AccountInfoClass.Parent));
+                    }
+
+                    /* If we have Units then parent must be portfolio */
+                    if (myAccount.hasUnits()
+                        && (myParent.getAccountCategoryClass() != AccountCategoryClass.Portfolio)) {
+                        myAccount.addError("Parent account must be portfolio", getFieldForClass(AccountInfoClass.Parent));
                     }
                     break;
                 case Alias:
