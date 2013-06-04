@@ -31,11 +31,12 @@ import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
 
 /**
  * Quicken Category.
  */
-public class QCategory {
+public final class QCategory {
     /**
      * Item type.
      */
@@ -58,6 +59,7 @@ public class QCategory {
     /**
      * build QIF format.
      * @param pFormatter the formatter
+     * @return the QIF format
      */
     protected String buildQIF(final JDataFormatter pFormatter) {
         StringBuilder myBuilder = new StringBuilder();
@@ -77,21 +79,11 @@ public class QCategory {
         }
 
         /* Determine Income/Expense flag */
-        switch (theCategory.getCategoryTypeClass()) {
-            case TaxedIncome:
-            case RentalIncome:
-            case OtherIncome:
-            case Interest:
-            case Dividend:
-            case Inherited:
-                myBuilder.append(QCatLineType.Income.getSymbol());
-                myBuilder.append(QDataSet.QIF_EOL);
-                break;
-            default:
-                myBuilder.append(QCatLineType.Expense.getSymbol());
-                myBuilder.append(QDataSet.QIF_EOL);
-                break;
-        }
+        TransactionType myTranType = TransactionType.deriveType(theCategory);
+        myBuilder.append((myTranType.isIncome())
+                ? QCatLineType.Income.getSymbol()
+                : QCatLineType.Expense.getSymbol());
+        myBuilder.append(QDataSet.QIF_EOL);
 
         /* Add the End indicator */
         myBuilder.append(QDataSet.QIF_EOI);
@@ -121,7 +113,7 @@ public class QCategory {
         private final JDataFormatter theFormatter;
 
         /**
-         * Obtain category list size
+         * Obtain category list size.
          * @return the size
          */
         protected int size() {
@@ -141,7 +133,7 @@ public class QCategory {
         }
 
         /**
-         * Register category
+         * Register category.
          * @param pCategory the category
          */
         protected void registerCategory(final EventCategory pCategory) {

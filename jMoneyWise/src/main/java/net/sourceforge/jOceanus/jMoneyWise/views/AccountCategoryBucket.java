@@ -259,7 +259,6 @@ public final class AccountCategoryBucket
     /**
      * Obtain an attribute value from the base.
      * @param pAttr the attribute
-     * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
     private Object getBaseAttribute(final AccountAttribute pAttr) {
@@ -299,6 +298,7 @@ public final class AccountCategoryBucket
         setAttribute(AccountAttribute.Income, new JMoney());
         setAttribute(AccountAttribute.Expense, new JMoney());
         setAttribute(AccountAttribute.Valuation, new JMoney());
+        setAttribute(AccountAttribute.MarketValue, new JMoney());
         setAttribute(AccountAttribute.Spend, new JMoney());
         setAttribute(AccountAttribute.Cost, new JMoney());
         setAttribute(AccountAttribute.Gained, new JMoney());
@@ -395,6 +395,7 @@ public final class AccountCategoryBucket
                     pTarget.put(myAttr, new JMoney(JMoney.class.cast(myObject)));
                     break;
                 case Valuation:
+                case MarketValue:
                 case Income:
                 case Expense:
                 case Spend:
@@ -440,6 +441,7 @@ public final class AccountCategoryBucket
             /* Switch on the Attribute */
             switch (myAttr) {
                 case Valuation:
+                case MarketValue:
                 case Cost:
                 case Gained:
                 case Income:

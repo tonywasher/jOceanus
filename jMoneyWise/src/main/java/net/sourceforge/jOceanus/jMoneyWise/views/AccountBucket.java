@@ -44,6 +44,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
@@ -467,7 +468,7 @@ public final class AccountBucket
      * @param pBalance the opening balance
      */
     protected void setOpenBalance(final JMoney pBalance) {
-        JMoney myValuation = getAttribute(AccountAttribute.Valuation, JMoney.class);
+        JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
         myValuation.addAmount(pBalance);
     }
 
@@ -479,24 +480,32 @@ public final class AccountBucket
         switch (theType) {
             case Money:
             case CreditCard:
-                JMoney myValuation = getAttribute(AccountAttribute.Valuation, JMoney.class);
+                JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
                 myValuation.subtractAmount(pEvent.getAmount());
                 if (theType == CategoryType.CreditCard) {
-                    JMoney mySpend = getAttribute(AccountAttribute.Spend, JMoney.class);
+                    JMoney mySpend = getMoneyAttribute(AccountAttribute.Spend);
                     mySpend.addAmount(pEvent.getAmount());
                 }
                 break;
             case Priced:
                 JUnits myDelta = pEvent.getDebitUnits();
                 if (myDelta != null) {
-                    JUnits myUnits = getAttribute(AccountAttribute.Units, JUnits.class);
+                    JUnits myUnits = getUnitsAttribute(AccountAttribute.Units);
                     myUnits.subtractUnits(myDelta);
                 }
                 break;
             case Payee:
-                JMoney myIncome = getAttribute(AccountAttribute.Income, JMoney.class);
-                JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
-                myIncome.addAmount(pEvent.getAmount());
+                /* Analyse the event */
+                TransactionType myCatTran = TransactionType.deriveType(pEvent.getCategory());
+
+                /* Access values */
+                JMoney myIncome = getMoneyAttribute(AccountAttribute.Income);
+                JMoney myExpense = getMoneyAttribute(AccountAttribute.Expense);
+                if (myCatTran.isExpense()) {
+                    myExpense.subtractAmount(pEvent.getAmount());
+                } else {
+                    myIncome.addAmount(pEvent.getAmount());
+                }
 
                 /* If there is a TaxCredit */
                 JMoney myTaxCred = pEvent.getTaxCredit();
@@ -533,18 +542,18 @@ public final class AccountBucket
         switch (theType) {
             case Money:
             case CreditCard:
-                JMoney myValuation = getAttribute(AccountAttribute.Valuation, JMoney.class);
+                JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
                 myValuation.addAmount(pEvent.getAmount());
                 break;
             case Priced:
                 JUnits myDelta = pEvent.getCreditUnits();
                 if (myDelta != null) {
-                    JUnits myUnits = getAttribute(AccountAttribute.Units, JUnits.class);
+                    JUnits myUnits = getUnitsAttribute(AccountAttribute.Units);
                     myUnits.addUnits(myDelta);
                 }
                 break;
             case Payee:
-                JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+                JMoney myExpense = getMoneyAttribute(AccountAttribute.Expense);
                 myExpense.addAmount(pEvent.getAmount());
                 break;
             default:
@@ -557,7 +566,7 @@ public final class AccountBucket
      * @param pEvent the event causing the payments
      */
     protected void adjustForTaxPayments(final Event pEvent) {
-        JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+        JMoney myExpense = getMoneyAttribute(AccountAttribute.Expense);
         JMoney myTaxCredit = pEvent.getTaxCredit();
         JMoney myNatInsurance = pEvent.getNatInsurance();
         if (myTaxCredit != null) {
@@ -573,7 +582,7 @@ public final class AccountBucket
      * @param pValue the value to add
      */
     protected void addIncome(final JMoney pValue) {
-        JMoney myIncome = getAttribute(AccountAttribute.Income, JMoney.class);
+        JMoney myIncome = getMoneyAttribute(AccountAttribute.Income);
         myIncome.addAmount(pValue);
     }
 
@@ -582,7 +591,7 @@ public final class AccountBucket
      * @param pValue the value to subtract
      */
     protected void subtractIncome(final JMoney pValue) {
-        JMoney myIncome = getAttribute(AccountAttribute.Income, JMoney.class);
+        JMoney myIncome = getMoneyAttribute(AccountAttribute.Income);
         myIncome.subtractAmount(pValue);
     }
 
@@ -591,7 +600,7 @@ public final class AccountBucket
      * @param pValue the value to add
      */
     protected void addExpense(final JMoney pValue) {
-        JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+        JMoney myExpense = getMoneyAttribute(AccountAttribute.Expense);
         myExpense.addAmount(pValue);
     }
 
@@ -600,7 +609,7 @@ public final class AccountBucket
      * @param pValue the value to subtract
      */
     protected void subtractExpense(final JMoney pValue) {
-        JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+        JMoney myExpense = getMoneyAttribute(AccountAttribute.Expense);
         myExpense.subtractAmount(pValue);
     }
 
@@ -683,6 +692,8 @@ public final class AccountBucket
                 case Invested:
                 case Dividend:
                 case Spend:
+                case Income:
+                case Expense:
                     pTarget.put(myAttr, new JMoney());
                     break;
                 case Units:
@@ -734,7 +745,7 @@ public final class AccountBucket
         AccountPrice myActPrice = myPrices.getLatestPrice(getAccount(), pDate);
 
         /* Access units */
-        JUnits myUnits = getAttribute(AccountAttribute.Units, JUnits.class);
+        JUnits myUnits = getUnitsAttribute(AccountAttribute.Units);
         JPrice myPrice;
 
         /* If we found a price */
@@ -750,11 +761,13 @@ public final class AccountBucket
         /* Calculate the value */
         setAttribute(AccountAttribute.Price, myPrice);
         setAttribute(AccountAttribute.Valuation, myUnits.valueAtPrice(myPrice));
+        JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
+        setAttribute(AccountAttribute.MarketValue, myValuation);
 
         /* Calculate the profit */
-        JMoney myProfit = new JMoney(getAttribute(AccountAttribute.Valuation, JMoney.class));
-        myProfit.subtractAmount(getAttribute(AccountAttribute.Cost, JMoney.class));
-        myProfit.addAmount(getAttribute(AccountAttribute.Gained, JMoney.class));
+        JMoney myProfit = new JMoney(myValuation);
+        myProfit.subtractAmount(getMoneyAttribute(AccountAttribute.Cost));
+        myProfit.addAmount(getMoneyAttribute(AccountAttribute.Gained));
 
         /* Set the attribute */
         setAttribute(AccountAttribute.Profit, myProfit);
@@ -770,11 +783,11 @@ public final class AccountBucket
             case Priced:
             case CreditCard:
                 /* Obtain a copy of the value */
-                JMoney myValue = new JMoney(getAttribute(AccountAttribute.Valuation, JMoney.class));
+                JMoney myValue = new JMoney(getMoneyAttribute(AccountAttribute.Valuation));
 
                 /* Subtract any base value */
                 if (theBase != null) {
-                    myValue.subtractAmount(getBaseAttribute(AccountAttribute.Valuation, JMoney.class));
+                    myValue.subtractAmount(getBaseMoneyAttribute(AccountAttribute.Valuation));
                 }
 
                 /* Set the delta */
@@ -782,10 +795,10 @@ public final class AccountBucket
                 break;
             case Payee:
                 /* Obtain a copy of the value */
-                JMoney myDelta = new JMoney(getAttribute(AccountAttribute.Income, JMoney.class));
+                JMoney myDelta = new JMoney(getMoneyAttribute(AccountAttribute.Income));
 
                 /* Subtract the expense value */
-                myDelta.subtractAmount(getAttribute(AccountAttribute.Expense, JMoney.class));
+                myDelta.subtractAmount(getMoneyAttribute(AccountAttribute.Expense));
 
                 /* Set the delta */
                 setAttribute(AccountAttribute.IncomeDelta, myDelta);
@@ -826,25 +839,17 @@ public final class AccountBucket
     public boolean isActive() {
         switch (theType) {
             case Priced:
-                JUnits myUnits = getAttribute(AccountAttribute.Units, JUnits.class);
+                JUnits myUnits = getUnitsAttribute(AccountAttribute.Units);
                 return (myUnits != null)
                        && (myUnits.isNonZero());
             case Money:
-                JMoney myValuation = getAttribute(AccountAttribute.Valuation, JMoney.class);
+            case CreditCard:
+                JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
                 return (myValuation != null)
                        && (myValuation.isNonZero());
-            case CreditCard:
-                JMoney myValue = getAttribute(AccountAttribute.Valuation, JMoney.class);
-                JMoney mySpend = getAttribute(AccountAttribute.Spend, JMoney.class);
-                if ((mySpend != null)
-                    && (mySpend.isNonZero())) {
-                    return true;
-                }
-                return (myValue != null)
-                       && (myValue.isNonZero());
             case Payee:
-                JMoney myIncome = getAttribute(AccountAttribute.Income, JMoney.class);
-                JMoney myExpense = getAttribute(AccountAttribute.Expense, JMoney.class);
+                JMoney myIncome = getMoneyAttribute(AccountAttribute.Income);
+                JMoney myExpense = getMoneyAttribute(AccountAttribute.Expense);
                 if ((myIncome != null)
                     && (myIncome.isNonZero())) {
                     return true;
@@ -1012,6 +1017,11 @@ public final class AccountBucket
          * Spend.
          */
         Spend,
+
+        /**
+         * MarketValue.
+         */
+        MarketValue,
 
         /**
          * Units.

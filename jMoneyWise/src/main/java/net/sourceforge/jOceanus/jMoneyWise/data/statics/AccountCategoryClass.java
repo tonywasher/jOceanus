@@ -101,7 +101,7 @@ public enum AccountCategoryClass implements StaticInterface {
      * PrivateLoan.
      * <p>
      * This is a PrivateLoan account, which is a specialised form of a {@link #Loan} account. It represents a loan to/from the client from/to an individual
-     * represented by a {@link #LoanHolder} account.
+     * represented by an {@link #Individual} account.
      */
     PrivateLoan(10, 9),
 
@@ -120,12 +120,19 @@ public enum AccountCategoryClass implements StaticInterface {
     TaxMan(12, 11),
 
     /**
+     * Government.
+     * <p>
+     * This is a singular account category representing the government. All Local Taxes should be paid to the single account of this type.
+     */
+    Government(13, 12),
+
+    /**
      * Market pseudo account.
      * <p>
      * This is a singular account category representing the market. All increases/decreases in value of an asset that are due to fluctuations in unit prices are
      * viewed as income/expense from the single account of this type.
      */
-    Market(13, 12),
+    Market(14, 13),
 
     /**
      * OpeningBalance pseudo account.
@@ -133,21 +140,21 @@ public enum AccountCategoryClass implements StaticInterface {
      * This is a singular account category representing the source of account opening balances. All accounts that are created with an opening balance are viewed
      * as having received the opening balance from this account.
      */
-    OpeningBalance(14, 13),
+    OpeningBalance(15, 14),
 
     /**
      * Institution Account.
      * <p>
      * This is an institution (e.g. a bank) that holds another account of behalf of the client. It is a specialised form of the {@link #Payee} account.
      */
-    Institution(15, 14),
+    Institution(16, 15),
 
     /**
      * LoanHolder Account.
      * <p>
-     * This is an individual who owns a {@link #PrivateLoan} account. It is a specialised form of the {@link #Payee} account.
+     * This is an individual who can own a {@link #PrivateLoan} account, and who can be inherited from. It is a specialised form of the {@link #Payee} account.
      */
-    LoanHolder(16, 15),
+    Individual(17, 16),
 
     /**
      * Portfolio Account.
@@ -155,35 +162,35 @@ public enum AccountCategoryClass implements StaticInterface {
      * This is an institution (e.g. a bank) that holds another priced asset of behalf of the client. It is a specialised form of the {@link #Institution}
      * account, and is intended to ease management of priced assets.
      */
-    Portfolio(17, 16),
+    Portfolio(18, 17),
 
     /**
      * Employer Account.
      * <p>
      * This is an employer account which is a specialised form of the {@link #Institution} account. It has the ability to pay dividends.
      */
-    Employer(18, 17),
+    Employer(19, 18),
 
     /**
      * Generic Payee Account.
      * <p>
      * This is a simple account that represents an entity that monies are paid to.
      */
-    Payee(19, 18),
+    Payee(20, 19),
 
     /**
      * Category Account.
      * <p>
      * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
      */
-    Category(20, 19),
+    Category(21, 20),
 
     /**
      * Total Account.
      * <p>
      * This is used for the total of all categories and is used purely for reporting purposes.
      */
-    Totals(21, 20);
+    Totals(22, 21);
 
     /**
      * Class Id.
@@ -240,10 +247,11 @@ public enum AccountCategoryClass implements StaticInterface {
         switch (this) {
             case Employer:
             case Portfolio:
-            case LoanHolder:
+            case Individual:
             case Institution:
             case Payee:
             case TaxMan:
+            case Government:
             case Market:
             case OpeningBalance:
             case Category:
@@ -252,6 +260,14 @@ public enum AccountCategoryClass implements StaticInterface {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Determine whether the AccountCategory is Asset.
+     * @return <code>true</code> if the account is Asset, <code>false</code> otherwise.
+     */
+    public boolean isAsset() {
+        return !isNonAsset();
     }
 
     /**
@@ -287,7 +303,7 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
-     * Determine whether the AccountCategoryType has value.
+     * Determine whether the AccountCategoryType has explicit value.
      * @return <code>true</code> if the category account type has value, <code>false</code> otherwise.
      */
     public boolean hasValue() {
@@ -327,11 +343,26 @@ public enum AccountCategoryClass implements StaticInterface {
         switch (this) {
             case Savings:
             case Bond:
-            case Cash:
                 return true;
             default:
                 return false;
         }
+    }
+
+    /**
+     * Determine whether the AccountCategoryType is cash.
+     * @return <code>true</code> if the account category type is cash, <code>false</code> otherwise.
+     */
+    public boolean isCash() {
+        return (this == Cash);
+    }
+
+    /**
+     * Determine whether the AccountCategoryType is shares.
+     * @return <code>true</code> if the account category type is shares, <code>false</code> otherwise.
+     */
+    public boolean isShares() {
+        return (this == Shares);
     }
 
     /**
@@ -342,6 +373,7 @@ public enum AccountCategoryClass implements StaticInterface {
         switch (this) {
             case OpeningBalance:
             case TaxMan:
+            case Government:
             case Market:
             case Totals:
                 return true;
@@ -393,10 +425,11 @@ public enum AccountCategoryClass implements StaticInterface {
     public boolean canParentAccount() {
         switch (this) {
             case TaxMan:
+            case Government:
             case Institution:
             case Employer:
             case Portfolio:
-            case LoanHolder:
+            case Individual:
                 return true;
             default:
                 return false;
@@ -413,6 +446,21 @@ public enum AccountCategoryClass implements StaticInterface {
             case Bond:
             case Shares:
             case UnitTrust:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the AccountCategoryType can issue grant income.
+     * @return <code>true</code> if the account category type can grant income, <code>false</code> otherwise.
+     */
+    public boolean canGrant() {
+        switch (this) {
+            case Individual:
+            case Institution:
+            case Government:
                 return true;
             default:
                 return false;

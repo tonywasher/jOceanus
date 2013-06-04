@@ -310,7 +310,7 @@ public class AnalysisReport {
             /* Format the Asset */
             theReport.startLinkRow(myOutput, isOdd, myBucket.getName());
             theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Cost));
-            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.MarketValue));
             theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Gained));
             theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(AccountAttribute.Profit));
             theReport.endRow(myOutput);
@@ -331,7 +331,7 @@ public class AnalysisReport {
         /* Format the totals */
         theReport.startTotalRow(myOutput, TOTAL_TEXT);
         theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Cost));
-        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Valuation));
+        theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.MarketValue));
         theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Gained));
         theReport.makeTotalCell(myOutput, myTotals.getMoneyAttribute(AccountAttribute.Profit));
         theReport.endRow(myOutput);
@@ -474,7 +474,7 @@ public class AnalysisReport {
                 theReport.endRow(myOutput);
 
                 /* Access the category class */
-                AccountCategoryClass myClass = pSummary.getAccountCategory().getCategoryTypeClass();
+                AccountCategoryClass myClass = myBucket.getAccountCategory().getCategoryTypeClass();
 
                 /* Format the detail */
                 if (myClass.isLoan()) {
@@ -827,7 +827,7 @@ public class AnalysisReport {
         Iterator<TaxCategoryBucket> myTaxIterator = myTax.iterator();
         boolean isOdd = true;
 
-        /* Loop through the Transaction Summary Buckets */
+        /* Loop through the Category Summary Buckets */
         while (myTaxIterator.hasNext()) {
             TaxCategoryBucket myBucket = myTaxIterator.next();
 
@@ -884,6 +884,15 @@ public class AnalysisReport {
             /* Flip row type */
             isOdd = !isOdd;
         }
+
+        /* Format the profit */
+        EventCategoryBucket myTotal = myEvents.getTotalsBucket();
+        theReport.startTotalRow(myOutput, PROFIT_TEXT);
+        theReport.makeTotalCell(myOutput, myTotal.getMoneyAttribute(EventAttribute.IncomeDelta));
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput);
+        theReport.endRow(myOutput);
 
         /* Close the table */
         theReport.endTable(myOutput);
@@ -970,6 +979,34 @@ public class AnalysisReport {
 
         /* Finish the table */
         theReport.endTable(myOutput);
+
+        /* Add the detail */
+        myOutput.append(myDetail);
+
+        /* If we need a tax slice report */
+        if (theAnalysis.hasGainsSlices()) {
+            myOutput.append(makeTaxSliceReport());
+        }
+
+        /* Format the tax parameters */
+        myOutput.append(getTaxParameters());
+
+        /* Close the document */
+        theReport.endReport(myOutput);
+
+        /* Return the output */
+        return myOutput.toString();
+    }
+
+    /**
+     * Build a web output of the taxation parameters.
+     * @return Web output
+     */
+    public StringBuilder getTaxParameters() {
+        StringBuilder myOutput = new StringBuilder();
+
+        /* Access the bucket lists */
+        TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
 
         /* Format the tax parameters */
         theReport.makeHeading(myOutput, "Taxation Parameters");
@@ -1071,7 +1108,7 @@ public class AnalysisReport {
         theReport.endRow(myOutput);
 
         /* Access the original allowance */
-        myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
+        TaxCategoryBucket myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
         theReport.startDataRow(myOutput, false, "Personal Allowance");
         theReport.makeValueCell(myOutput, myTax.getMoneyAttribute(TaxAttribute.Amount));
         theReport.endRow(myOutput);
@@ -1092,7 +1129,7 @@ public class AnalysisReport {
         }
 
         /* Access the Low Tax Band */
-        isOdd = true;
+        boolean isOdd = true;
         if (theYear.getLoBand().isNonZero()) {
             theReport.startDataRow(myOutput, isOdd, "Low Tax Band");
             theReport.makeValueCell(myOutput, theYear.getLoBand());
@@ -1115,19 +1152,8 @@ public class AnalysisReport {
         }
         theReport.endTable(myOutput);
 
-        /* Add the detail */
-        myOutput.append(myDetail);
-
-        /* If we need a tax slice report */
-        if (theAnalysis.hasGainsSlices()) {
-            myOutput.append(makeTaxSliceReport());
-        }
-
-        /* Close the document */
-        theReport.endReport(myOutput);
-
         /* Return the output */
-        return myOutput.toString();
+        return myOutput;
     }
 
     /**

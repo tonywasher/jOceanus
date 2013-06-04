@@ -58,6 +58,7 @@ public class QPrice {
     /**
      * build QIF format.
      * @param pFormatter the formatter
+     * @return the QIF format
      */
     protected String buildQIF(final JDataFormatter pFormatter) {
         StringBuilder myBuilder = new StringBuilder();

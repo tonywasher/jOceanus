@@ -654,7 +654,7 @@ public abstract class EventBase
 
     /**
      * Determines whether an event can be valid.
-     * @param pEventCategory The event category of the event
+     * @param pEventClass The event category of the event
      * @param pAccountCategory The account category of the event
      * @param pCredit is the account a credit or a debit
      * @return valid true/false
@@ -662,144 +662,11 @@ public abstract class EventBase
     public static boolean isValidEvent(final EventCategoryClass pEventClass,
                                        final AccountCategory pAccountCategory,
                                        final boolean pCredit) {
-        boolean myResult = false;
-        boolean isCredit = pCredit;
-        AccountCategoryClass myClass = pAccountCategory.getCategoryTypeClass();
-
-        /* Market is always false */
-        if (myClass == AccountCategoryClass.Market) {
-            return false;
-        }
-
-        /* Switch on the CategoryType */
-        switch (pEventClass) {
-        // case TaxableGain:
-        // if (!isCredit) {
-        // myResult = (myClass == AccountCategoryClass.LifeBond);
-        // } else {
-        // myResult = myClass.hasValue();
-        // }
-        // break;
-            case StockAdjust:
-                myResult = (myClass == AccountCategoryClass.LifeBond);
-                break;
-            case Dividend:
-                if (!isCredit) {
-                    myResult = myClass.isDividend();
-                } else {
-                    myResult = (myClass.hasValue() || myClass.isCapital());
-                }
-                break;
-            case StockDeMerger:
-            case StockSplit:
-            case StockTakeOver:
-                myResult = (myClass == AccountCategoryClass.Shares);
-                break;
-            case StockRightsWaived:
-                return isValidEvent(EventCategoryClass.StockRightsTaken, pAccountCategory, !isCredit);
-            case StockRightsTaken:
-                if (!isCredit) {
-                    myResult = myClass.hasValue();
-                } else {
-                    myResult = (myClass == AccountCategoryClass.Shares);
-                }
-                break;
-            case Interest:
-                if (!isCredit) {
-                    myResult = myClass.hasValue();
-                } else {
-                    myResult = myClass.hasValue();
-                }
-                break;
-            case TaxedIncome:
-                if (!isCredit) {
-                    myResult = (myClass == AccountCategoryClass.Employer);
-                } else {
-                    myResult = myClass.hasValue();
-                }
-                break;
-            // case NatInsurance:
-            // if (!isCredit) {
-            // myResult = (myClass == AccountCategoryClass.Employer);
-            // } else {
-            // myResult = (myClass == AccountCategoryClass.TaxMan);
-            // }
-            // break;
-            case Transfer:
-                myResult = !myClass.isNonAsset();
-                if (isCredit) {
-                    myResult &= (myClass != AccountCategoryClass.Endowment);
-                }
-                break;
-            // case Endowment:
-            // if (!isCredit) {
-            // myResult = (myClass.hasValue());
-            // } else {
-            // myResult = (myClass == AccountCategoryClass.Endowment);
-            // }
-            // break;
-            case Inherited:
-                // if (!isCredit) {
-                // myResult = myClass.isInheritance();
-                // } else {
-                myResult = !myClass.isNonAsset();
-                // }
-                break;
-            // case Benefit:
-            // if (!isCredit) {
-            // myResult = (myClass == AccountCategoryClass.Employer);
-            // // } else {TODO
-            // // myResult = myClass.isBenefit();
-            // }
-            // break;
-            case OtherIncome:
-                return isValidEvent(EventCategoryClass.Expense, pAccountCategory, !isCredit);
-            case Expense:
-                if (!isCredit) {
-                    myResult = !myClass.isNonAsset();
-                } else {
-                    myResult = myClass.isNonAsset();
-                }
-                break;
-            case TaxSettlement:
-                if (!isCredit) {
-                    myResult = myClass.hasValue();
-                } else {
-                    myResult = (myClass == AccountCategoryClass.TaxMan);
-                }
-                break;
-            case TaxRelief:
-                if (!isCredit) {
-                    myResult = (myClass == AccountCategoryClass.TaxMan);
-                } else {
-                    myResult = myClass.isLoan();
-                }
-                break;
-            case LoanInterest:
-            case RentalIncome:
-                if (!isCredit) {
-                    myResult = myClass.hasValue();
-                } else {
-                    myResult = myClass.isLoan();
-                }
-                break;
-            // case WriteOff:
-            // if (!isCredit) {
-            // myResult = myClass.isLoan();
-            // } else {
-            // myResult = myClass == AccountCategoryClass.isWriteOff();
-            // }
-            // break;
-            default:
-                break;
-        }
-
-        /* Return the result */
-        return myResult;
+        return false; // TODO
     }
 
     /**
-     * Is an event allowed between these two accounts, used for more detailed analysis once the event is deemed valid based on the account types.
+     * Determine validity of an event between the two accounts, for the given category.
      * @param pCategory The category of the event
      * @param pDebit the debit account
      * @param pCredit the credit account
@@ -808,41 +675,166 @@ public abstract class EventBase
     public static boolean isValidEvent(final EventCategory pCategory,
                                        final Account pDebit,
                                        final Account pCredit) {
-        /* Generally we must not be recursive */
-        boolean myResult = !Difference.isEqual(pDebit, pCredit);
-        AccountCategoryClass myCreditClass = pCredit.getAccountCategoryClass();
+        /* Analyse the components */
+        boolean isRecursive = Difference.isEqual(pDebit, pCredit);
+        AccountType myDebitType = AccountType.deriveType(pDebit);
+        AccountType myCreditType = AccountType.deriveType(pCredit);
+        TransactionType myCatTran = TransactionType.deriveType(pCategory);
+        TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
 
-        /* Switch on the CategoryClass */
-        switch (pCategory.getCategoryTypeClass()) {
-        /* Dividend */
-            case Dividend:
-                /* If the credit account is capital */
-                if (myCreditClass.isCapital()) {
-                    /* Debit and credit accounts must be identical */
-                    myResult = !myResult;
-                }
-                break;
-            /* StockAdjust/StockSplit */
-            case StockAdjust:
-            case StockSplit:
-                /* Debit and credit accounts must be identical */
-                myResult = !myResult;
-                break;
-            /* Interest can be recursive */
-            case Interest:
-                myResult = true;
-                break;
-            /* Loan Interest and Rental Income must come from the owner of the debt */
-            case RentalIncome:
-            case LoanInterest:
-                myResult = Difference.isEqual(pDebit, pCredit.getParent());
-                break;
-            default:
-                break;
+        /* Handle illegal setups */
+        if ((myCatTran.isIllegal())
+            || (myActTran.isIllegal())) {
+            return false;
         }
 
-        /* Return the result */
-        return myResult;
+        /* Access account category classes */
+        AccountCategoryClass myDebitClass = pDebit.getAccountCategoryClass();
+        AccountCategoryClass myCreditClass = pCredit.getAccountCategoryClass();
+        EventCategoryClass myCatClass = pCategory.getCategoryTypeClass();
+
+        /* If the transaction involves autoExpense */
+        if (myActTran.isAutoExpense()) {
+            /* Special processing */
+            switch (myCatClass) {
+                case Transfer:
+                    /* Transfer must be to/from savings */
+                    return (myDebitType.isAutoExpense())
+                            ? myCreditClass.isSavings()
+                            : myDebitClass.isSavings();
+                case Expense:
+                    /* Transfer must be to/from nonAsset */
+                    return (myDebitType.isAutoExpense())
+                            ? myCreditClass.isNonAsset()
+                            : myDebitClass.isNonAsset();
+
+                    /* Auto Expense cannot be used for other categories */
+                default:
+                    return false;
+            }
+        }
+
+        /* Switch on the CategoryClass */
+        switch (myCatClass) {
+            case TaxedIncome:
+                /* Taxed income must be from employer to savings account */
+                return ((myDebitClass == AccountCategoryClass.Employer) && (myCreditClass.isSavings()));
+
+            case GrantIncome:
+                /* Grant income must be from grant-able to savings account */
+                return ((myDebitClass.canGrant()) && (myCreditClass.isSavings()));
+
+            case BenefitIncome:
+                /* Benefit income must be from government to savings account */
+                return ((myDebitClass == AccountCategoryClass.Government) && (myCreditClass.isSavings()));
+
+            case OtherIncome:
+                /* Other income is from nonAsset to savings/loan */
+                return ((myDebitClass.isNonAsset()) && ((myCreditClass.isSavings()) || (myCreditClass.isLoan())));
+
+            case Inherited:
+                /* Inheritance must be from individual to asset */
+                return ((myDebitClass == AccountCategoryClass.Individual) && (myCreditType.isAsset()));
+
+            case Interest:
+                /* Debit must be able to generate interest */
+                if (!myDebitClass.isSavings()) {
+                    return false;
+                }
+
+                /* Interest must be paid to valued account */
+                return myCreditType.isValued();
+
+            case Dividend:
+                /* Debit must be able to generate dividend */
+                if (!myDebitClass.isDividend()) {
+                    return false;
+                }
+
+                /* Dividend must be paid to valued account or else re-invested into capital */
+                return (myCreditType.isValued() || ((isRecursive) && (myDebitClass.isCapital())));
+
+            case StockRightsTaken:
+                /* Stock rights taken is a transfer from a valued account to shares */
+                return ((myDebitType.isValued()) && (myCreditClass.isShares()));
+
+            case StockRightsWaived:
+                /* Stock rights taken is a transfer to a valued account from shares */
+                return ((myCreditType.isValued()) && (myDebitClass.isShares()));
+
+            case StockSplit:
+                /* Stock adjust is only valid for shares and must be recursive */
+                return ((isRecursive) && (myDebitClass.isShares()));
+
+            case StockAdjust:
+                /* Stock adjust is only valid for capital and must be recursive */
+                return ((isRecursive) && (myDebitClass.isCapital()));
+
+            case StockDeMerger:
+            case StockTakeOver:
+                /* Stock DeMerger/TakeOver must be between different capital shares */
+                return ((!isRecursive)
+                        && (myDebitClass.isShares()) && (myCreditClass.isShares()));
+
+            case RentalIncome:
+            case LoanInterest:
+                /* Credit must be to loan */
+                if (!myCreditClass.isLoan()) {
+                    return false;
+                }
+
+                /* Debit must be from the owner of the loan */
+                return Difference.isEqual(pDebit, pCredit.getParent());
+
+            case WriteOff:
+                /* Debit must be from loan */
+                if (!myDebitClass.isLoan()) {
+                    return false;
+                }
+
+                /* Credit must be to the owner of the loan */
+                return Difference.isEqual(pCredit, pDebit.getParent());
+
+            case LocalTaxes:
+                /* Local taxes must be to government from valued account */
+                return ((myCreditClass == AccountCategoryClass.Government) && (myDebitType.isValued()));
+
+            case CharityDonation:
+                /* CharityDonation is from Asset to nonAsset */
+                return ((myDebitClass.isAsset()) && (myCreditClass.isNonAsset()));
+
+            case TaxRelief:
+                /* Tax Relief is from TaxMan to loan */
+                return ((myDebitClass == AccountCategoryClass.TaxMan) && (myCreditClass.isLoan()));
+
+            case TaxSettlement:
+                /* If this is an income */
+                if (myActTran.isIncome()) {
+                    /* Settlement income is from TaxMan to valued */
+                    return ((myDebitClass == AccountCategoryClass.TaxMan) && (myCreditType.isValued()));
+                }
+
+                /* Settlement expense is from valued account to TaxMan */
+                return ((myCreditClass == AccountCategoryClass.TaxMan) && (myDebitType.isValued()));
+
+            case Transfer:
+                /* transfer is nonRecursive and from Asset to Asset */
+                return ((!isRecursive)
+                        && (myDebitClass.isAsset()) && (myCreditClass.isAsset()));
+
+            case Expense:
+                /* If this is an income */
+                if (myActTran.isIncome()) {
+                    /* Recovered expense is from nonAsset to Asset */
+                    return ((myDebitClass.isNonAsset()) && (myCreditClass.isAsset()));
+                }
+
+                /* Standard expense is from nonAsset to Asset */
+                return ((myCreditClass.isNonAsset()) && (myDebitClass.isAsset()));
+
+            default:
+                return false;
+        }
     }
 
     /**
@@ -857,24 +849,6 @@ public abstract class EventBase
         if (getCredit().equals(pAccount)) {
             myResult = true;
         } else if (getDebit().equals(pAccount)) {
-            myResult = true;
-        }
-
-        /* Return the result */
-        return myResult;
-    }
-
-    /**
-     * Determines whether an event is asset related.
-     * @return asset-related to the account true/false
-     */
-    public boolean isAssetRelated() {
-        boolean myResult = false;
-
-        /* Check credit and debit accounts */
-        if (!getCredit().getAccountCategoryClass().isNonAsset()) {
-            myResult = true;
-        } else if (!getDebit().getAccountCategoryClass().isNonAsset()) {
             myResult = true;
         }
 
@@ -1059,9 +1033,7 @@ public abstract class EventBase
         Account myCredit = getCredit();
         JMoney myAmount = getAmount();
         EventCategory myCategory = getCategory();
-        EventCategoryClass myClass = (myCategory != null)
-                ? myCategory.getCategoryTypeClass()
-                : null;
+        boolean doCheckCombo = true;
 
         /* Determine date range to check for */
         EventBaseList<?> myList = getList();
@@ -1070,7 +1042,6 @@ public abstract class EventBase
         /* The date must be non-null */
         if (myDate == null) {
             addError(ERROR_MISSING, FIELD_DATE);
-
             /* The date must be in-range */
         } else if (myRange.compareTo(myDate) != 0) {
             addError(ERROR_RANGE, FIELD_DATE);
@@ -1079,6 +1050,7 @@ public abstract class EventBase
         /* Category must be non-null */
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
+            doCheckCombo = false;
             /* Must not be hidden */
         } else if (myCategory.getCategoryTypeClass().isHiddenType()) {
             addError("Hidden category types are not allowed", FIELD_CATEGORY);
@@ -1087,25 +1059,17 @@ public abstract class EventBase
         /* Credit account must be non-null */
         if (myCredit == null) {
             addError(ERROR_MISSING, FIELD_CREDIT);
-            /* And valid for category type */
-        } else if ((myCategory != null)
-                   && (!isValidEvent(myClass, myCredit.getAccountCategory(), true))) {
-            addError("Invalid credit account for transaction", FIELD_CREDIT);
+            doCheckCombo = false;
         }
 
         /* Debit account must be non-null */
         if (myDebit == null) {
             addError(ERROR_MISSING, FIELD_DEBIT);
-            /* And valid for category type */
-        } else if ((myCategory != null)
-                   && (!isValidEvent(myClass, myDebit.getAccountCategory(), false))) {
-            addError("Invalid debit account for transaction", FIELD_DEBIT);
+            doCheckCombo = false;
         }
 
-        /* Check valid Credit/Debit combination */
-        if ((myCategory != null)
-            && (myCredit != null)
-            && (myDebit != null)
+        /* Check combinations */
+        if ((doCheckCombo)
             && (!isValidEvent(myCategory, myDebit, myCredit))) {
             addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
             addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
@@ -1118,12 +1082,12 @@ public abstract class EventBase
             addError(ERROR_NEGATIVE, FIELD_AMOUNT);
         }
 
-        /* Money must be zero for stock split/demerger */
+        /* Money must be zero for stock split/adjust/deMerger */
         if ((myAmount != null)
             && (myAmount.isNonZero())
             && (myCategory != null)
             && (myCategory.getCategoryTypeClass().needsZeroAmount())) {
-            addError("Amount must be zero for Stock Split/Adjust/Demerger/Takeover", FIELD_AMOUNT);
+            addError("Amount must be zero for Stock Split/Adjust/Demerger", FIELD_AMOUNT);
         }
     }
 

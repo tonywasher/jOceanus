@@ -926,6 +926,8 @@ public class AccountCategory
             /* Access the iterator */
             Iterator<AccountCategory> myIterator = iterator();
 
+            /* Check that the class is singular */
+            // if (pClass.isSingular()) {
             /* Loop through the items to find the entry */
             while (myIterator.hasNext()) {
                 AccountCategory myCurr = myIterator.next();
@@ -933,6 +935,7 @@ public class AccountCategory
                     return myCurr;
                 }
             }
+            // }
 
             /* Return not found */
             return null;

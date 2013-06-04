@@ -375,7 +375,7 @@ public class Analysis
         if (pAnalysis != null) {
             theAccounts = new AccountBucketList(this, pAnalysis.getAccounts());
             theAccountCategories = new AccountCategoryBucketList(this, pAnalysis.getAccountCategories());
-            theEventCategories = new EventCategoryBucketList(this, pAnalysis.getEventCategories());
+            theEventCategories = new EventCategoryBucketList(this);
 
         } else {
             theAccounts = new AccountBucketList(this);

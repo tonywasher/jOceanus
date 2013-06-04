@@ -502,8 +502,8 @@ public class Event
         Account myDebit = getDebit();
         Account myCredit = getCredit();
         EventCategory myCategory = getCategory();
-        // JUnits myDebitUnits = getDebitUnits();
-        // JUnits myCreditUnits = getCreditUnits();
+        JUnits myDebitUnits = getDebitUnits();
+        JUnits myCreditUnits = getCreditUnits();
         // JMoney myTaxCred = getTaxCredit();
         // Integer myYears = getYears();
 
@@ -539,46 +539,12 @@ public class Event
             }
         }
 
-        // /* If we have Credit/Debit Units */
-        // if ((myDebitUnits != null)
-        // || (myCreditUnits != null)) {
-        // /* If both credit/debit are both priced */
-        // if ((myCredit != null)
-        // && (myDebit != null)
-        // && (myCredit.hasUnits())
-        // && (myDebit.hasUnits())) {
-        // /* Category must be stock split or dividend between same account */
-        // if ((myCategory == null)
-        // || ((!isDividend()) && (!myCategory.getCategoryTypeClass().isStockAdjustment()))) {
-        // addError("Units can only refer to a single priced asset unless "
-        // + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
-        // addError("Units can only refer to a single priced asset unless "
-        // + "transaction is StockSplit/Adjust/Demerger/Takeover or Dividend", EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits));
-        // }
-
-        // /* Dividend between priced requires identical credit/debit */
-        // if ((myCategory != null)
-        // && (isDividend())
-        // && (!Difference.isEqual(myCredit, myDebit))) {
-        // addError("Dividend re-investment must be to same asset", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
-        // }
-
-        // /* Cannot have Credit and Debit if accounts are identical */
-        // if ((myCreditUnits != null)
-        // && (myDebitUnits != null)
-        // && (Difference.isEqual(myCredit, myDebit))) {
-        // addError("Cannot credit and debit same account", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
-        // }
-        // }
-
-        // /* Else check for required units */
-        // } else {
-        // if (isCategoryClass(EventCategoryClass.StockSplit)) {
-        // addError("Stock Split requires non-zero Units", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
-        // } else if (isCategoryClass(EventCategoryClass.StockAdjust)) {
-        // addError("Stock Adjustment requires non-zero Units", EventInfoSet.getFieldForClass(EventInfoClass.DebitUnits));
-        // }
-        // }
+        /* Cannot have Credit and Debit if accounts are identical */
+        if ((myCreditUnits != null)
+            && (myDebitUnits != null)
+            && (Difference.isEqual(myCredit, myDebit))) {
+            addError("Cannot credit and debit same account", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
+        }
 
         // /* If we are a taxable gain */
         // if ((myCategory != null)

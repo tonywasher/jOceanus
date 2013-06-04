@@ -291,7 +291,7 @@ public class AccountInfoSet
 
                 /* Handle AutoExpense */
             case AutoExpense:
-                return (myClass == AccountCategoryClass.Cash)
+                return myClass.isCash()
                         ? JDataFieldRequired.CanExist
                         : JDataFieldRequired.NotAllowed;
 

@@ -486,6 +486,7 @@ public class MetaAnalysis {
         /* Switch on the category type */
         switch (myCategory.getCategoryTypeClass()) {
             case TaxedIncome:
+            case BenefitIncome:
                 /* Adjust the Gross salary bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.GrossSalary);
                 myBucket.addIncome(pBucket);
@@ -544,6 +545,7 @@ public class MetaAnalysis {
             case TaxFreeInterest:
             case TaxFreeDividend:
             case LoanInterest:
+            case GrantIncome:
                 /* Adjust the Tax Free bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.TaxFree);
                 myBucket.addIncome(pBucket);
@@ -558,6 +560,7 @@ public class MetaAnalysis {
                 myBucket.addIncome(pBucket);
                 break;
             case Expense:
+            case LocalTaxes:
             case WriteOff:
                 /* Adjust the Expense bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.Expense);
@@ -567,6 +570,11 @@ public class MetaAnalysis {
                 /* Adjust the Expense bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.Expense);
                 myBucket.subtractExpense(pBucket);
+                break;
+            case OtherIncome:
+                /* Adjust the Expense bucket */
+                myBucket = myTax.getBucket(TaxCategoryClass.Expense);
+                myBucket.subtractIncome(pBucket);
                 break;
             case MarketGrowth:
                 /* Adjust the Market bucket */

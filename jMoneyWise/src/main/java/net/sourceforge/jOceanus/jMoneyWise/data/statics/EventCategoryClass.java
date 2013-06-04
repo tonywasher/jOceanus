@@ -46,171 +46,186 @@ public enum EventCategoryClass implements StaticInterface {
     Dividend(3, 2),
 
     /**
+     * Grant Income.
+     */
+    GrantIncome(4, 3),
+
+    /**
+     * Benefit Income.
+     */
+    BenefitIncome(5, 4),
+
+    /**
      * Other Income.
      */
-    OtherIncome(4, 3),
+    OtherIncome(6, 5),
 
     /**
      * Rental Income.
      */
-    RentalIncome(5, 4),
+    RentalIncome(7, 6),
 
     /**
      * Inheritance.
      */
-    Inherited(6, 5),
+    Inherited(8, 7),
 
     /**
      * Interest on Loans.
      */
-    LoanInterest(7, 6),
+    LoanInterest(9, 8),
 
     /**
      * Transfer.
      */
-    Transfer(8, 7),
+    Transfer(10, 9),
 
     /**
      * Stock Adjustment.
      */
-    StockAdjust(9, 8),
+    StockAdjust(11, 10),
 
     /**
      * Stock Split.
      */
-    StockSplit(10, 9),
+    StockSplit(12, 11),
 
     /**
      * Stock Demerger.
      */
-    StockDeMerger(11, 10),
+    StockDeMerger(13, 12),
 
     /**
      * Stock Takeover.
      */
-    StockTakeOver(12, 11),
+    StockTakeOver(14, 13),
 
     /**
      * Stock Rights Taken.
      */
-    StockRightsTaken(13, 12),
+    StockRightsTaken(15, 14),
 
     /**
      * Stock Rights Waived.
      */
-    StockRightsWaived(14, 13),
+    StockRightsWaived(16, 15),
 
     /**
      * Expense.
      */
-    Expense(15, 14),
+    Expense(17, 16),
+
+    /**
+     * LocalTaxes.
+     */
+    LocalTaxes(18, 17),
 
     /**
      * Write Off.
      */
-    WriteOff(16, 15),
+    WriteOff(19, 18),
 
     /**
      * Tax Relief.
      */
-    TaxRelief(17, 16),
+    TaxRelief(20, 19),
 
     /**
      * Tax Settlement.
      */
-    TaxSettlement(18, 17),
+    TaxSettlement(21, 20),
 
     /**
      * Opening Balance.
      */
-    OpeningBalance(19, 18),
+    OpeningBalance(22, 21),
 
     /**
      * Tax Free Interest.
      */
-    TaxFreeInterest(20, 19),
+    TaxFreeInterest(23, 22),
 
     /**
      * Tax Free Dividend.
      */
-    TaxFreeDividend(21, 20),
+    TaxFreeDividend(24, 23),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UnitTrustDividend(22, 21),
+    UnitTrustDividend(25, 24),
 
     /**
      * Taxable Gain.
      */
-    TaxableGain(23, 22),
+    TaxableGain(26, 25),
 
     /**
      * Capital Gain.
      */
-    CapitalGain(24, 23),
+    CapitalGain(27, 26),
 
     /**
      * Capital Loss.
      */
-    CapitalLoss(25, 24),
+    CapitalLoss(28, 27),
 
     /**
      * Market Growth.
      */
-    MarketGrowth(26, 25),
+    MarketGrowth(29, 28),
 
     /**
      * Market Shrinkage.
      */
-    MarketShrink(27, 26),
+    MarketShrink(30, 29),
 
     /**
      * Endowment payment.
      */
-    Endowment(28, 27),
+    Endowment(31, 30),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TaxCredit(29, 28),
+    TaxCredit(32, 31),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NatInsurance(30, 29),
+    NatInsurance(33, 32),
 
     /**
      * Benefit.
      * <p>
      * This is a singular category catching benefit payments associated with an event.
      */
-    Benefit(31, 30),
+    Benefit(34, 33),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CharityDonation(32, 31),
+    CharityDonation(35, 34),
 
     /**
      * Category.
      * <p>
      * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
      */
-    Category(33, 32),
+    Category(36, 35),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    Totals(34, 33);
+    Totals(37, 36);
 
     /**
      * Class Id.
@@ -320,6 +335,7 @@ public enum EventCategoryClass implements StaticInterface {
     public boolean needsTaxCredit() {
         switch (this) {
             case TaxedIncome:
+            case BenefitIncome:
             case Interest:
             case Dividend:
             case UnitTrustDividend:
@@ -337,10 +353,11 @@ public enum EventCategoryClass implements StaticInterface {
     protected boolean isIncome() {
         switch (this) {
             case TaxedIncome:
+            case BenefitIncome:
+            case GrantIncome:
             case OtherIncome:
             case Interest:
             case Dividend:
-            case UnitTrustDividend:
             case Inherited:
             case RentalIncome:
                 return true;
@@ -419,7 +436,6 @@ public enum EventCategoryClass implements StaticInterface {
             case StockSplit:
             case StockAdjust:
             case StockDeMerger:
-            case StockTakeOver:
                 return true;
             default:
                 return false;
@@ -459,5 +475,4 @@ public enum EventCategoryClass implements StaticInterface {
                 return false;
         }
     }
-
 }

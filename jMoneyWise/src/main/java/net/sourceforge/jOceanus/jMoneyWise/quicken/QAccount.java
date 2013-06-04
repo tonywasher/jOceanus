@@ -40,14 +40,16 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory.QCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventList;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.QPortfolioEvent.QPortfolioEventList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
 
 /**
  * Quicken Account.
  */
-public class QAccount {
+public final class QAccount {
     /**
      * Item type.
      */
@@ -89,9 +91,19 @@ public class QAccount {
     private final QEventList theEvents;
 
     /**
+     * The portfolio events.
+     */
+    private final QPortfolioEventList thePortEvents;
+
+    /**
      * Is this account an autoExpense?
      */
     private final boolean isAutoExpense;
+
+    /**
+     * Is this account an portfolio?
+     */
+    private final boolean isPortfolio;
 
     /**
      * Constructor.
@@ -103,12 +115,19 @@ public class QAccount {
         /* Store the account */
         theAccount = pAccount;
         isAutoExpense = (pAccount.getAutoExpense() != null);
-        theEvents = new QEventList(this, pFormatter);
+        isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.Portfolio);
+        theEvents = (isPortfolio)
+                ? null
+                : new QEventList(this, pFormatter);
+        thePortEvents = (isPortfolio)
+                ? new QPortfolioEventList(this, pFormatter)
+                : null;
     }
 
     /**
      * build QIF format.
      * @param pFormatter the formatter
+     * @return the QIF format
      */
     protected String buildQIF(final JDataFormatter pFormatter) {
         StringBuilder myBuilder = new StringBuilder();
@@ -144,6 +163,7 @@ public class QAccount {
      * build QIF format header.
      * @param pFormatter the formatter
      * @param pStartDate the start date
+     * @return the QIF format
      */
     protected String buildQIFHeader(final JDataFormatter pFormatter,
                                     final JDateDay pStartDate) {
@@ -220,14 +240,18 @@ public class QAccount {
     }
 
     /**
-     * Process the event
+     * Process the event.
      * @param pEvent the event
      * @param isCredit is this the credit item?
      */
     private void processEvent(final Event pEvent,
                               final boolean isCredit) {
         /* register the event and add to the list */
-        theEvents.registerEvent(pEvent, isCredit);
+        if (isPortfolio) {
+            thePortEvents.registerEvent(pEvent, isCredit);
+        } else {
+            theEvents.registerEvent(pEvent, isCredit);
+        }
     }
 
     /**
@@ -236,7 +260,9 @@ public class QAccount {
      */
     protected boolean isActive() {
         /* If the account is non autoExpense or has Events */
-        return ((!isAutoExpense) || (theEvents.size() > 0));
+        return ((!isAutoExpense) || ((isPortfolio)
+                ? (thePortEvents.size() > 0)
+                : (theEvents.size() > 0)));
     }
 
     /**
@@ -250,7 +276,11 @@ public class QAccount {
         /* If the account is active */
         if (isActive()) {
             /* Output the events */
-            theEvents.outputEvents(pStream, pStartDate);
+            if (isPortfolio) {
+                thePortEvents.outputEvents(pStream, pStartDate);
+            } else {
+                theEvents.outputEvents(pStream, pStartDate);
+            }
         }
     }
 
@@ -301,7 +331,7 @@ public class QAccount {
         }
 
         /**
-         * Access account
+         * Access account.
          * @param pAccount the account
          * @return the QIF account
          */
@@ -444,7 +474,7 @@ public class QAccount {
         }
 
         /**
-         * Process the event
+         * Process the event.
          * @param pEvent the event
          * @param pAccount the account
          * @param isCredit is this the credit item?

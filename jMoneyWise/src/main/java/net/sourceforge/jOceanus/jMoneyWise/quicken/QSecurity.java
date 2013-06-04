@@ -40,7 +40,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 /**
  * Quicken Security.
  */
-public class QSecurity {
+public final class QSecurity {
     /**
      * Item type.
      */
@@ -71,6 +71,7 @@ public class QSecurity {
     /**
      * build QIF format.
      * @param pFormatter the formatter
+     * @return the QIF format
      */
     protected String buildQIF(final JDataFormatter pFormatter) {
         StringBuilder myBuilder = new StringBuilder();
@@ -108,7 +109,7 @@ public class QSecurity {
     }
 
     /**
-     * Add Price
+     * Add Price.
      * @param pPrice the price to add
      */
     protected void addPrice(final AccountPrice pPrice) {
@@ -121,6 +122,7 @@ public class QSecurity {
      * Output prices.
      * @param pStream the output stream
      * @param pFormatter the formatter
+     * @throws IOException on error
      */
     protected void outputPrices(final OutputStreamWriter pStream,
                                 final JDataFormatter pFormatter) throws IOException {
@@ -182,7 +184,7 @@ public class QSecurity {
         }
 
         /**
-         * Register security
+         * Register security.
          * @param pAccount the security account
          */
         protected void registerSecurity(final Account pAccount) {

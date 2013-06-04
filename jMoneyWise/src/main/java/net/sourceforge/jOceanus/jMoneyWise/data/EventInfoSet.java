@@ -230,7 +230,10 @@ public class EventInfoSet
             case TaxCredit:
                 switch (myClass) {
                     case TaxedIncome:
+                    case BenefitIncome:
                         return JDataFieldRequired.MustExist;
+                    case GrantIncome:
+                        return JDataFieldRequired.CanExist;
                     case Interest:
                     case Dividend:
                         return (myDebit.isTaxFree())
@@ -265,6 +268,7 @@ public class EventInfoSet
                     case StockSplit:
                         return JDataFieldRequired.MustExist;
                     case Transfer:
+                    case Inherited:
                     case StockAdjust:
                     case Dividend:
                         return JDataFieldRequired.CanExist;

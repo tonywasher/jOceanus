@@ -30,29 +30,15 @@ import java.util.List;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
-import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEvtLineType;
 
 /**
- * Quicken Standard event.
+ * Quicken Portfolio Event Representation.
  */
-public final class QEvent {
-    /**
-     * Reconciled flag.
-     */
-    protected static final char QIF_RECONCILED = 'R';
-
-    /**
-     * Transfer begin char.
-     */
-    protected static final char QIF_XFERSTART = '[';
-
-    /**
-     * Transfer end char.
-     */
-    protected static final char QIF_XFEREND = ']';
+public final class QPortfolioEvent {
 
     /**
      * The event.
@@ -74,8 +60,8 @@ public final class QEvent {
      * @param pEvent the event
      * @param pCredit is this the credit item?
      */
-    private QEvent(final Event pEvent,
-                   final boolean pCredit) {
+    private QPortfolioEvent(final Event pEvent,
+                            final boolean pCredit) {
         /* Store details */
         theEvent = pEvent;
         isCredit = pCredit;
@@ -107,7 +93,7 @@ public final class QEvent {
         /* Add the Cleared status */
         myBuilder.append(QEvtLineType.Cleared.getSymbol());
         myBuilder.append((theEvent.getReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
+                ? QEvent.QIF_RECONCILED
                 : QDataSet.QIF_BLANK);
         myBuilder.append(QDataSet.QIF_EOL);
 
@@ -161,9 +147,9 @@ public final class QEvent {
         } else {
             /* Add the category */
             if (isTransfer) {
-                myBuilder.append(QIF_XFERSTART);
+                myBuilder.append(QEvent.QIF_XFERSTART);
                 myBuilder.append(myPayee.getName());
-                myBuilder.append(QIF_XFEREND);
+                myBuilder.append(QEvent.QIF_XFEREND);
             } else {
                 myBuilder.append(theEvent.getCategoryName());
             }
@@ -179,63 +165,13 @@ public final class QEvent {
     }
 
     /**
-     * build OpeningBalance QIF format.
-     * @param pFormatter the formatter
-     * @param pAccount the account
-     * @param pStartDate the opening date
-     * @param pBalance the opening balance
-     * @return the QIF format
+     * Portfolio Event List class.
      */
-    protected static StringBuilder buildOpeningQIF(final JDataFormatter pFormatter,
-                                                   final Account pAccount,
-                                                   final JDateDay pStartDate,
-                                                   final JMoney pBalance) {
-        StringBuilder myBuilder = new StringBuilder();
-
-        /* Add the Date */
-        myBuilder.append(QEvtLineType.Date.getSymbol());
-        myBuilder.append(pFormatter.formatObject(pStartDate));
-        myBuilder.append(QDataSet.QIF_EOL);
-
-        /* Add the Amount (as a simple decimal) */
-        JDecimal myValue = new JDecimal(pBalance);
-        myBuilder.append(QEvtLineType.Amount.getSymbol());
-        myBuilder.append(pFormatter.formatObject(myValue));
-        myBuilder.append(QDataSet.QIF_EOL);
-
-        /* Add the Cleared status */
-        myBuilder.append(QEvtLineType.Cleared.getSymbol());
-        myBuilder.append(QIF_RECONCILED);
-        myBuilder.append(QDataSet.QIF_EOL);
-
-        /* Add the payee */
-        myBuilder.append(QEvtLineType.Payee.getSymbol());
-        myBuilder.append("Opening Balance");
-        myBuilder.append(QDataSet.QIF_EOL);
-
-        /* Add the category */
-        myBuilder.append(QEvtLineType.Category.getSymbol());
-        myBuilder.append(QIF_XFERSTART);
-        myBuilder.append(pAccount.getName());
-        myBuilder.append(QIF_XFEREND);
-        myBuilder.append(QDataSet.QIF_EOL);
-
-        /* Add the End indicator */
-        myBuilder.append(QDataSet.QIF_EOI);
-        myBuilder.append(QDataSet.QIF_EOL);
-
-        /* Return the builder */
-        return myBuilder;
-    }
-
-    /**
-     * Event List class.
-     */
-    protected static class QEventList {
+    protected static class QPortfolioEventList {
         /**
          * Event List.
          */
-        private final List<QEvent> theEvents;
+        private final List<QPortfolioEvent> theEvents;
 
         /**
          * The account.
@@ -260,10 +196,10 @@ public final class QEvent {
          * @param pAccount the list owner
          * @param pFormatter the data formatter
          */
-        protected QEventList(final QAccount pAccount,
-                             final JDataFormatter pFormatter) {
+        protected QPortfolioEventList(final QAccount pAccount,
+                                      final JDataFormatter pFormatter) {
             /* Create the list */
-            theEvents = new ArrayList<QEvent>();
+            theEvents = new ArrayList<QPortfolioEvent>();
             theAccount = pAccount;
             theFormatter = pFormatter;
         }
@@ -275,7 +211,7 @@ public final class QEvent {
          */
         protected void registerEvent(final Event pEvent,
                                      final boolean isCredit) {
-            QEvent myEvent = new QEvent(pEvent, isCredit);
+            QPortfolioEvent myEvent = new QPortfolioEvent(pEvent, isCredit);
             theEvents.add(myEvent);
         }
 
@@ -291,7 +227,7 @@ public final class QEvent {
             pStream.write(theAccount.buildQIFHeader(theFormatter, pStartDate));
 
             /* Loop through the events */
-            for (QEvent myEvent : theEvents) {
+            for (QPortfolioEvent myEvent : theEvents) {
                 /* Write Account details */
                 pStream.write(myEvent.buildQIF(theFormatter));
             }
@@ -299,13 +235,33 @@ public final class QEvent {
     }
 
     /**
-     * Quicken Event Line Types.
+     * Quicken Portfolio Event Line Types.
      */
-    public enum QEvtLineType {
+    public enum QPortLineType {
         /**
          * Date.
          */
         Date("D"),
+
+        /**
+         * Action.
+         */
+        Action("N"),
+
+        /**
+         * Security.
+         */
+        Security("Y"),
+
+        /**
+         * Price.
+         */
+        Price("I"),
+
+        /**
+         * Quantity.
+         */
+        Quantity("Q"),
 
         /**
          * Amount.
@@ -323,34 +279,24 @@ public final class QEvent {
         Comment("M"),
 
         /**
-         * Reference.
-         */
-        Reference("N"),
-
-        /**
          * Payee.
          */
         Payee("P"),
 
         /**
-         * Category.
+         * Commission.
          */
-        Category("L"),
+        Commission("O"),
 
         /**
-         * SplitCategory.
+         * TransferAccount.
          */
-        SplitCategory("S"),
+        TransferAccount("L"),
 
         /**
-         * SplitComment.
+         * TransferAmount.
          */
-        SplitComment("E"),
-
-        /**
-         * SplitAmount.
-         */
-        SplitAmount("$");
+        TransferAmount("$");
 
         /**
          * The symbol.
@@ -369,7 +315,7 @@ public final class QEvent {
          * Constructor.
          * @param pSymbol the symbol
          */
-        private QEvtLineType(final String pSymbol) {
+        private QPortLineType(final String pSymbol) {
             /* Store symbol */
             theSymbol = pSymbol;
         }
