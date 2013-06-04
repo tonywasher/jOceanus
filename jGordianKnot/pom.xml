@@ -12,7 +12,7 @@
     <dependency>
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcprov-jdk15on</artifactId>
-      <version>1.48</version>
+      <version>${BouncyCastleVersion}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -69,10 +69,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
       </plugin>
     </plugins>
   </build>

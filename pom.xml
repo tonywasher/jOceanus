@@ -72,6 +72,14 @@
     <svnBase>${svnParent}/trunk</svnBase>
     <packageMain/>
     <appLibDir/>
+    <JDateButtonVersion>v1.1.0-SNAPSHOT</JDateButtonVersion>
+    <BouncyCastleVersion>1.49</BouncyCastleVersion>
+    <SvnKitVersion>1.7.9</SvnKitVersion>
+    <ApacheMavenVersion>3.0.5</ApacheMavenVersion>
+    <PostGreSQLVersion>9.1-901.jdbc4</PostGreSQLVersion>
+    <ApachePOIVersion>3.9</ApachePOIVersion>
+    <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
+    <XercesVersion>2.9.1</XercesVersion>
   </properties>
   <build>
     <resources>
@@ -114,6 +122,7 @@
             </execution>
           </executions>
           <configuration>
+            <timestampFormat>{0,date,medium} {0,time,short}</timestampFormat>
             <doCheck>false</doCheck>
             <doUpdate>false</doUpdate>
           </configuration>
