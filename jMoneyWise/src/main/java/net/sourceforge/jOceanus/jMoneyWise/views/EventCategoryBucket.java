@@ -35,10 +35,12 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountType;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
@@ -606,10 +608,11 @@ public final class EventCategoryBucket
             OrderedIdList<Integer, EventCategoryBucket> myTotals = new OrderedIdList<Integer, EventCategoryBucket>(EventCategoryBucket.class);
 
             /* Obtain the secondary buckets */
-            EventCategoryBucket myTaxCredit = getBucket(EventCategoryClass.TaxCredit);
-            EventCategoryBucket myNatInsurance = getBucket(EventCategoryClass.NatInsurance);
-            EventCategoryBucket myBenefit = getBucket(EventCategoryClass.Benefit);
-            EventCategoryBucket myDonation = getBucket(EventCategoryClass.CharityDonation);
+            EventCategoryList myList = theData.getEventCategories();
+            EventCategoryBucket myTaxCredit = getBucket(myList.getEventInfoCategory(EventInfoClass.TaxCredit));
+            EventCategoryBucket myNatInsurance = getBucket(myList.getEventInfoCategory(EventInfoClass.NatInsurance));
+            EventCategoryBucket myBenefit = getBucket(myList.getEventInfoCategory(EventInfoClass.Benefit));
+            EventCategoryBucket myDonation = getBucket(myList.getEventInfoCategory(EventInfoClass.CharityDonation));
 
             /* Loop through the buckets */
             Iterator<EventCategoryBucket> myIterator = iterator();

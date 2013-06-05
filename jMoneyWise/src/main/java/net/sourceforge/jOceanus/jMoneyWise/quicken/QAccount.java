@@ -42,6 +42,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory.QCategoryList;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventBaseList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QPortfolioEvent.QPortfolioEventList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
@@ -49,7 +50,8 @@ import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
 /**
  * Quicken Account.
  */
-public final class QAccount {
+public final class QAccount
+        extends QElement {
     /**
      * Item type.
      */
@@ -88,12 +90,7 @@ public final class QAccount {
     /**
      * The events.
      */
-    private final QEventList theEvents;
-
-    /**
-     * The portfolio events.
-     */
-    private final QPortfolioEventList thePortEvents;
+    private final QEventBaseList<? extends QEvent> theEvents;
 
     /**
      * Is this account an autoExpense?
@@ -112,107 +109,95 @@ public final class QAccount {
      */
     private QAccount(final Account pAccount,
                      final JDataFormatter pFormatter) {
+        /* Call super constructor */
+        super(pFormatter);
+
         /* Store the account */
         theAccount = pAccount;
         isAutoExpense = (pAccount.getAutoExpense() != null);
         isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.Portfolio);
         theEvents = (isPortfolio)
-                ? null
-                : new QEventList(this, pFormatter);
-        thePortEvents = (isPortfolio)
                 ? new QPortfolioEventList(this, pFormatter)
-                : null;
+                : new QEventList(this, pFormatter);
     }
 
     /**
      * build QIF format.
-     * @param pFormatter the formatter
      * @return the QIF format
      */
-    protected String buildQIF(final JDataFormatter pFormatter) {
-        StringBuilder myBuilder = new StringBuilder();
+    protected String buildQIF() {
+        /* Reset the builder */
+        reset();
 
         /* Add the Account name */
-        myBuilder.append(QActLineType.Name.getSymbol());
-        myBuilder.append(theAccount.getName());
-        myBuilder.append(QDataSet.QIF_EOL);
+        addAccountLine(QActLineType.Name, theAccount);
 
         /* Add the AccountType */
-        myBuilder.append(QActLineType.Type.getSymbol());
-        myBuilder.append(getAccountType());
-        myBuilder.append(QDataSet.QIF_EOL);
+        addStringLine(QActLineType.Type, getAccountType());
 
         /* If we have a description */
         String myDesc = theAccount.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            myBuilder.append(QActLineType.Description.getSymbol());
-            myBuilder.append(myDesc);
-            myBuilder.append(QDataSet.QIF_EOL);
+            addStringLine(QActLineType.Description, myDesc);
         }
 
-        /* Add the End indicator */
-        myBuilder.append(QDataSet.QIF_EOI);
-        myBuilder.append(QDataSet.QIF_EOL);
+        /* Return the result */
+        return completeItem();
+    }
 
-        /* Return the builder */
-        return myBuilder.toString();
+    @Override
+    public String toString() {
+        return buildQIF();
     }
 
     /**
      * build QIF format header.
-     * @param pFormatter the formatter
      * @param pStartDate the start date
      * @return the QIF format
      */
-    protected String buildQIFHeader(final JDataFormatter pFormatter,
-                                    final JDateDay pStartDate) {
-        StringBuilder myBuilder = new StringBuilder();
-
+    protected String buildQIFHeader(final JDateDay pStartDate) {
         /* Obtain the account type */
         String myType = getAccountType();
 
+        /* Reset the builder */
+        reset();
+
         /* Add the Account indicator */
-        myBuilder.append(QIF_ITEM);
-        myBuilder.append(QDataSet.QIF_EOL);
+        append(QIF_ITEM);
+        endLine();
 
         /* Add the Account name */
-        myBuilder.append(QActLineType.Name.getSymbol());
-        myBuilder.append(theAccount.getName());
-        myBuilder.append(QDataSet.QIF_EOL);
+        addAccountLine(QActLineType.Name, theAccount);
 
         /* If we have a description */
         String myDesc = theAccount.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            myBuilder.append(QActLineType.Description.getSymbol());
-            myBuilder.append(myDesc);
-            myBuilder.append(QDataSet.QIF_EOL);
+            addStringLine(QActLineType.Description, myDesc);
         }
 
         /* Add the Account type */
-        myBuilder.append(QActLineType.Type.getSymbol());
-        myBuilder.append(myType);
-        myBuilder.append(QDataSet.QIF_EOL);
+        addStringLine(QActLineType.Type, myType);
 
         /* Add the End indicator */
-        myBuilder.append(QDataSet.QIF_EOI);
-        myBuilder.append(QDataSet.QIF_EOL);
+        endItem();
 
         /* Add the Item type */
-        myBuilder.append(QDataSet.QIF_ITEMTYPE);
-        myBuilder.append(myType);
-        myBuilder.append(QDataSet.QIF_EOL);
+        append(QIF_ITEMTYPE);
+        append(myType);
+        endLine();
 
         /* If the account has an opening balance */
         JMoney myOpeningBal = theAccount.getOpeningBalance();
         if (myOpeningBal != null) {
-            /* Create the event data */
-            myBuilder.append(QEvent.buildOpeningQIF(pFormatter, theAccount, pStartDate, myOpeningBal));
+            /* Create the opening balance event */
+            QEvent myEvent = new QEvent(getFormatter());
+            append(myEvent.buildOpeningQIF(theAccount, pStartDate, myOpeningBal));
         }
 
         /* Return the builder */
-        return myBuilder.toString();
+        return getBufferedString();
     }
 
     /**
@@ -247,11 +232,7 @@ public final class QAccount {
     private void processEvent(final Event pEvent,
                               final boolean isCredit) {
         /* register the event and add to the list */
-        if (isPortfolio) {
-            thePortEvents.registerEvent(pEvent, isCredit);
-        } else {
-            theEvents.registerEvent(pEvent, isCredit);
-        }
+        theEvents.registerEvent(pEvent, isCredit);
     }
 
     /**
@@ -259,10 +240,8 @@ public final class QAccount {
      * @return true/false
      */
     protected boolean isActive() {
-        /* If the account is non autoExpense or has Events */
-        return ((!isAutoExpense) || ((isPortfolio)
-                ? (thePortEvents.size() > 0)
-                : (theEvents.size() > 0)));
+        /* Check size of list */
+        return (theEvents.size() > 0);
     }
 
     /**
@@ -276,8 +255,8 @@ public final class QAccount {
         /* If the account is active */
         if (isActive()) {
             /* Output the events */
-            if (isPortfolio) {
-                thePortEvents.outputEvents(pStream, pStartDate);
+            if (isAutoExpense) {
+                theEvents.outputAutoEvents(pStream, pStartDate);
             } else {
                 theEvents.outputEvents(pStream, pStartDate);
             }
@@ -287,7 +266,8 @@ public final class QAccount {
     /**
      * Account List class.
      */
-    protected static class QAccountList {
+    protected static class QAccountList
+            extends QElement {
         /**
          * Account Map.
          */
@@ -304,11 +284,6 @@ public final class QAccount {
         private final QSecurityList theSecurities;
 
         /**
-         * Data Formatter.
-         */
-        private final JDataFormatter theFormatter;
-
-        /**
          * Number of events.
          */
         private int theNumEvents = 0;
@@ -323,11 +298,13 @@ public final class QAccount {
          * @param pFormatter the data formatter
          */
         protected QAccountList(final JDataFormatter pFormatter) {
+            /* Call the super-constructor */
+            super(pFormatter);
+
             /* Create the maps */
             theAccounts = new HashMap<Account, QAccount>();
             theCategories = new QCategoryList(pFormatter);
             theSecurities = new QSecurityList(pFormatter);
-            theFormatter = pFormatter;
         }
 
         /**
@@ -358,7 +335,7 @@ public final class QAccount {
             /* If this is a new account */
             if (myAccount == null) {
                 /* Allocate the account and add to the map */
-                myAccount = new QAccount(pAccount, theFormatter);
+                myAccount = new QAccount(pAccount, getFormatter());
                 theAccounts.put(pAccount, myAccount);
 
                 /* If the account is an autoExpense */
@@ -396,13 +373,18 @@ public final class QAccount {
 
             /* Update status bar */
             boolean bContinue = ((pStatus.setNumStages(QIF_NUMLISTS))
-                                 && (pStatus.setNewStage("Analysing events")) && (pStatus.setNumSteps(myEvents.size())));
+                                 && (pStatus.setNewStage("Analysing accounts")) && (pStatus.setNumSteps(myAccounts.size())));
 
             /* Loop through the accounts */
             Iterator<Account> myActIterator = myAccounts.iterator();
             while ((bContinue)
                    && (myActIterator.hasNext())) {
                 Account myAccount = myActIterator.next();
+
+                /* Ignore deleted accounts */
+                if (myAccount.isDeleted()) {
+                    continue;
+                }
 
                 /* If we have an opening balance */
                 JMoney myBalance = myAccount.getOpeningBalance();
@@ -430,6 +412,11 @@ public final class QAccount {
             while ((bContinue)
                    && (myIterator.hasNext())) {
                 Event myEvent = myIterator.next();
+
+                /* Ignore deleted events */
+                if (myEvent.isDeleted()) {
+                    continue;
+                }
 
                 /* Access key details */
                 Account myDebit = myEvent.getDebit();
@@ -514,8 +501,6 @@ public final class QAccount {
          */
         protected boolean outputData(final ThreadStatus<FinanceData> pStatus,
                                      final OutputStreamWriter pStream) throws IOException {
-            StringBuilder myBuilder = new StringBuilder();
-
             /* Access the number of reporting steps */
             int mySteps = pStatus.getReportingSteps();
             int myCount = 0;
@@ -531,17 +516,20 @@ public final class QAccount {
 
             /* If we should continue */
             if (bContinue) {
+                /* Reset the builder */
+                reset();
+
                 /* Set AutoSwitch */
-                myBuilder.append(QIF_SETOPT);
-                myBuilder.append(QIF_AUTOSWITCH);
-                myBuilder.append(QDataSet.QIF_EOL);
+                append(QIF_SETOPT);
+                append(QIF_AUTOSWITCH);
+                endLine();
 
                 /* Add the Item type */
-                myBuilder.append(QIF_ITEM);
-                myBuilder.append(QDataSet.QIF_EOL);
+                append(QIF_ITEM);
+                endLine();
 
                 /* Write Accounts header */
-                pStream.write(myBuilder.toString());
+                pStream.write(getBufferedString());
 
                 /* Update status bar */
                 bContinue = ((pStatus.setNewStage("Writing accounts")) && (pStatus.setNumSteps(theAccounts.size())));
@@ -556,7 +544,7 @@ public final class QAccount {
                 /* If the account is active */
                 if (myAccount.isActive()) {
                     /* Write Account details */
-                    pStream.write(myAccount.buildQIF(theFormatter));
+                    pStream.write(myAccount.buildQIF());
                 }
 
                 /* Report the progress */
@@ -611,7 +599,7 @@ public final class QAccount {
     /**
      * Quicken Account Line Types.
      */
-    public enum QActLineType {
+    public enum QActLineType implements QLineType {
         /**
          * Name.
          */
@@ -637,10 +625,7 @@ public final class QAccount {
          */
         private final String theSymbol;
 
-        /**
-         * Obtain the symbol.
-         * @return the symbol
-         */
+        @Override
         public String getSymbol() {
             return theSymbol;
         }

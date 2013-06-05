@@ -28,7 +28,6 @@ import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
 
 import javax.swing.BoxLayout;
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -43,6 +42,7 @@ import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
@@ -97,7 +97,7 @@ public class AccountTab
     /**
      * The Tabs.
      */
-    private final JTabbedPane theTabs;
+    private final JEnableTabbed theTabs;
 
     /**
      * The Account Selection panel.
@@ -175,7 +175,7 @@ public class AccountTab
         theDataEntry.setObject(theUpdateSet);
 
         /* Create the Tabbed Pane */
-        theTabs = new JTabbedPane();
+        theTabs = new JEnableTabbed();
 
         /* Create the error panel for this view */
         theError = new ErrorPanel(myDataMgr, theDataEntry);
@@ -216,6 +216,15 @@ public class AccountTab
         add(theError);
         add(theTabs);
         add(theSaveButtons);
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theSelect.setEnabled(bEnabled);
+        theError.setEnabled(bEnabled);
+        theTabs.setEnabled(bEnabled);
+        theSaveButtons.setEnabled(bEnabled);
     }
 
     /**

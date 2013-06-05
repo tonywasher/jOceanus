@@ -46,6 +46,7 @@ import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.RateCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
@@ -91,7 +92,7 @@ public class AccountRates
     /**
      * The Panel.
      */
-    private final JPanel thePanel;
+    private final JEnablePanel thePanel;
 
     /**
      * Self Reference.
@@ -232,7 +233,7 @@ public class AccountRates
         addMouseListener(myMouse);
 
         /* Create the panel */
-        thePanel = new JPanel();
+        thePanel = new JEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));

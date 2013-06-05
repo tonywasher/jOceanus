@@ -54,6 +54,7 @@ import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSet;
@@ -115,7 +116,7 @@ public class MaintTaxYear
     /**
      * The Regime panel.
      */
-    private final JPanel theRegime;
+    private final JEnablePanel theRegime;
 
     /**
      * The Allowances panel.
@@ -292,7 +293,7 @@ public class MaintTaxYear
         theError.addChangeListener(myListener);
 
         /* Create the regime panel */
-        theRegime = new JPanel();
+        theRegime = new JEnablePanel();
         theRegime.setBorder(BorderFactory.createTitledBorder("Tax Year"));
 
         /* Create the layout for the panel */
@@ -381,11 +382,11 @@ public class MaintTaxYear
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CapitalAllowance), DataType.MONEY, myCapLabel, myCapitalAllow);
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.RentalAllowance), DataType.MONEY, myRentalLabel, myRentalAllow);
 
-        /* Create the limits panel */
-        JPanel myPanel = new JPanel();
+        /* Create the allow panel */
+        JEnablePanel myPanel = new JEnablePanel();
         myPanel.setBorder(BorderFactory.createTitledBorder("Allowances"));
 
-        /* Layout the limits panel */
+        /* Layout the allow panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         myPanel.add(myAllowLabel);
@@ -429,7 +430,7 @@ public class MaintTaxYear
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalAllowanceLimit), DataType.MONEY, myAddLabel, myAddLimit);
 
         /* Create the limits panel */
-        JPanel myPanel = new JPanel();
+        JEnablePanel myPanel = new JEnablePanel();
         myPanel.setBorder(BorderFactory.createTitledBorder("Allowance Limits"));
 
         /* Layout the limits panel */
@@ -473,11 +474,11 @@ public class MaintTaxYear
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.BasicTaxBand), DataType.MONEY, myBasicBandLabel, myBasicBand);
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalIncomeThreshold), DataType.MONEY, myAddIncLabel, myAddIncBdy);
 
-        /* Create the limits panel */
-        JPanel myPanel = new JPanel();
+        /* Create the bands panel */
+        JEnablePanel myPanel = new JEnablePanel();
         myPanel.setBorder(BorderFactory.createTitledBorder("Tax Bands"));
 
-        /* Layout the limits panel */
+        /* Layout the bands panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         myPanel.add(myLoBandLabel);
@@ -524,11 +525,11 @@ public class MaintTaxYear
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HiTaxRate), DataType.RATE, myHiTaxLabel, myHiTaxRate);
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalTaxRate), DataType.RATE, myAddTaxLabel, myAddTaxRate);
 
-        /* Create the limits panel */
-        JPanel myPanel = new JPanel();
+        /* Create the rates panel */
+        JEnablePanel myPanel = new JEnablePanel();
         myPanel.setBorder(BorderFactory.createTitledBorder("Standard Rates"));
 
-        /* Layout the limits panel */
+        /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         myPanel.add(myLoTaxLabel);
@@ -577,11 +578,11 @@ public class MaintTaxYear
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HiDividendTaxRate), DataType.RATE, myHiDivTaxLabel, myHiDivTaxRate);
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.AdditionalDividendTaxRate), DataType.RATE, myAddDivTaxLabel, myAddDivTaxRate);
 
-        /* Create the limits panel */
-        JPanel myPanel = new JPanel();
+        /* Create the rates panel */
+        JEnablePanel myPanel = new JEnablePanel();
         myPanel.setBorder(BorderFactory.createTitledBorder("Interest/Dividend Rates"));
 
-        /* Layout the limits panel */
+        /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         myPanel.add(myIntTaxLabel);
@@ -622,11 +623,11 @@ public class MaintTaxYear
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.CapitalTaxRate), DataType.RATE, myCapTaxLabel, myCapTaxRate);
         theFieldSet.addFieldElement(TaxInfoSet.getFieldForClass(TaxYearInfoClass.HiCapitalTaxRate), DataType.RATE, myHiCapTaxLabel, myHiCapTaxRate);
 
-        /* Create the limits panel */
-        JPanel myPanel = new JPanel();
+        /* Create the rates panel */
+        JEnablePanel myPanel = new JEnablePanel();
         myPanel.setBorder(BorderFactory.createTitledBorder("Capital Rates"));
 
-        /* Layout the limits panel */
+        /* Layout the rates panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         myPanel.add(myCapTaxLabel);
@@ -637,6 +638,21 @@ public class MaintTaxYear
 
         /* Return the new panel */
         return myPanel;
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theSelect.setEnabled(bEnabled);
+        theError.setEnabled(bEnabled);
+        theRegime.setEnabled(bEnabled);
+        theAllows.setEnabled(bEnabled);
+        theLimits.setEnabled(bEnabled);
+        theBands.setEnabled(bEnabled);
+        theStdRates.setEnabled(bEnabled);
+        theXtraRates.setEnabled(bEnabled);
+        theCapRates.setEnabled(bEnabled);
+        theSaveButs.setEnabled(bEnabled);
     }
 
     /**

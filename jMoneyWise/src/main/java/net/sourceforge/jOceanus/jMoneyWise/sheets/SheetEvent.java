@@ -295,7 +295,7 @@ public class SheetEvent
 
             /* Obtain the range iterator */
             ListIterator<ArchiveYear> myIterator = pRange.getReverseIterator();
-            int iYearCount = 4;
+            int iYearCount = 1;
 
             /* Loop through the individual year ranges */
             while (myIterator.hasPrevious()) {

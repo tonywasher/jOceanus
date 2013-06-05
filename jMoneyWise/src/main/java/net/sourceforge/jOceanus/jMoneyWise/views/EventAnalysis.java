@@ -291,6 +291,11 @@ public class EventAnalysis
                 break;
             }
 
+            /* Ignore deleted events */
+            if (myCurr.isDeleted()) {
+                continue;
+            }
+
             /* Process the event in the asset report */
             processEvent(myCurr);
         }
@@ -341,6 +346,11 @@ public class EventAnalysis
             int myResult = myRange.compareTo(myCurr.getDate());
             if (myResult != 1) {
                 break;
+            }
+
+            /* Ignore deleted events */
+            if (myCurr.isDeleted()) {
+                continue;
             }
 
             /* Ignore items that do not relate to this account */
@@ -472,6 +482,11 @@ public class EventAnalysis
         while (myIterator.hasNext()) {
             Event myCurr = myIterator.next();
             JDateDay myCurrDay = myCurr.getDate();
+
+            /* Ignore deleted events */
+            if (myCurr.isDeleted()) {
+                continue;
+            }
 
             /* If we have a current tax year */
             if (myDate != null) {

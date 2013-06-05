@@ -42,6 +42,7 @@ import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.JDataTableColumn
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.BooleanCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.StringCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.BooleanCellRenderer;
@@ -180,7 +181,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
     /**
      * The Panel.
      */
-    private final JPanel thePanel;
+    private final JEnablePanel thePanel;
 
     /**
      * The Data class.
@@ -277,7 +278,7 @@ public class MaintStaticData<L extends StaticList<T, ?>, T extends StaticData<T,
         setPreferredScrollableViewportSize(new Dimension(WIDTH_PANEL, HEIGHT_PANEL));
 
         /* Create the panel */
-        thePanel = new JPanel();
+        thePanel = new JEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));

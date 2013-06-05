@@ -36,7 +36,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
 /**
  * Quicken Category.
  */
-public final class QCategory {
+public final class QCategory
+        extends QElement {
     /**
      * Item type.
      */
@@ -49,54 +50,56 @@ public final class QCategory {
 
     /**
      * Constructor.
+     * @param pFormatter the data formatter
      * @param pCategory the category
      */
-    private QCategory(final EventCategory pCategory) {
+    private QCategory(final JDataFormatter pFormatter,
+                      final EventCategory pCategory) {
+        /* Call super constructor */
+        super(pFormatter);
+
         /* Store the category */
         theCategory = pCategory;
     }
 
     /**
      * build QIF format.
-     * @param pFormatter the formatter
      * @return the QIF format
      */
-    protected String buildQIF(final JDataFormatter pFormatter) {
-        StringBuilder myBuilder = new StringBuilder();
+    protected String buildQIF() {
+        /* Reset the builder */
+        reset();
 
         /* Add the Category name */
-        myBuilder.append(QCatLineType.Name.getSymbol());
-        myBuilder.append(theCategory.getName());
-        myBuilder.append(QDataSet.QIF_EOL);
+        addCategoryLine(QCatLineType.Name, theCategory);
 
         /* If we have a description */
         String myDesc = theCategory.getDesc();
         if (myDesc != null) {
             /* Add the Description */
-            myBuilder.append(QCatLineType.Description.getSymbol());
-            myBuilder.append(myDesc);
-            myBuilder.append(QDataSet.QIF_EOL);
+            addStringLine(QCatLineType.Description, myDesc);
         }
 
         /* Determine Income/Expense flag */
         TransactionType myTranType = TransactionType.deriveType(theCategory);
-        myBuilder.append((myTranType.isIncome())
-                ? QCatLineType.Income.getSymbol()
-                : QCatLineType.Expense.getSymbol());
-        myBuilder.append(QDataSet.QIF_EOL);
+        addFlag((myTranType.isIncome())
+                ? QCatLineType.Income
+                : QCatLineType.Expense);
 
-        /* Add the End indicator */
-        myBuilder.append(QDataSet.QIF_EOI);
-        myBuilder.append(QDataSet.QIF_EOL);
+        /* Return the result */
+        return completeItem();
+    }
 
-        /* Return the builder */
-        return myBuilder.toString();
+    @Override
+    public String toString() {
+        return buildQIF();
     }
 
     /**
      * Category List class.
      */
-    protected static class QCategoryList {
+    protected static class QCategoryList
+            extends QElement {
         /**
          * Parent Category Map.
          */
@@ -106,11 +109,6 @@ public final class QCategory {
          * Security Map.
          */
         private final HashMap<EventCategory, QCategory> theCategories;
-
-        /**
-         * Data Formatter.
-         */
-        private final JDataFormatter theFormatter;
 
         /**
          * Obtain category list size.
@@ -126,10 +124,12 @@ public final class QCategory {
          * @param pFormatter the data formatter
          */
         protected QCategoryList(final JDataFormatter pFormatter) {
+            /* Call super constructor */
+            super(pFormatter);
+
             /* Create the map */
             theParents = new HashMap<EventCategory, QCategory>();
             theCategories = new HashMap<EventCategory, QCategory>();
-            theFormatter = pFormatter;
         }
 
         /**
@@ -143,7 +143,7 @@ public final class QCategory {
             /* If this is a new category */
             if (myCategory == null) {
                 /* Allocate the category and add to the map */
-                myCategory = new QCategory(pCategory);
+                myCategory = new QCategory(getFormatter(), pCategory);
                 theCategories.put(pCategory, myCategory);
 
                 /* Access the parent category */
@@ -153,7 +153,7 @@ public final class QCategory {
                 myCategory = theParents.get(myParent);
                 if (myCategory == null) {
                     /* Allocate the category and add to the map */
-                    myCategory = new QCategory(myParent);
+                    myCategory = new QCategory(getFormatter(), myParent);
                     theParents.put(myParent, myCategory);
                 }
             }
@@ -168,8 +168,6 @@ public final class QCategory {
          */
         protected boolean outputCategories(final ThreadStatus<FinanceData> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
-            StringBuilder myBuilder = new StringBuilder();
-
             /* If we have no categories */
             if ((theParents.size() == 0)
                 && (theCategories.size() == 0)) {
@@ -184,12 +182,13 @@ public final class QCategory {
             boolean bContinue = ((pStatus.setNewStage("Writing categories")) && (pStatus.setNumSteps(size())));
 
             /* Add the Item type */
-            myBuilder.append(QDataSet.QIF_ITEMTYPE);
-            myBuilder.append(QIF_ITEM);
-            myBuilder.append(QDataSet.QIF_EOL);
+            reset();
+            append(QIF_ITEMTYPE);
+            append(QIF_ITEM);
+            endLine();
 
             /* Write Category header */
-            pStream.write(myBuilder.toString());
+            pStream.write(getBufferedString());
 
             /* Loop through the parents */
             Iterator<QCategory> myIterator = theParents.values().iterator();
@@ -198,7 +197,7 @@ public final class QCategory {
                 QCategory myCategory = myIterator.next();
 
                 /* Write Category details */
-                pStream.write(myCategory.buildQIF(theFormatter));
+                pStream.write(myCategory.buildQIF());
 
                 /* Report the progress */
                 myCount++;
@@ -215,7 +214,7 @@ public final class QCategory {
                 QCategory myCategory = myIterator.next();
 
                 /* Write Category details */
-                pStream.write(myCategory.buildQIF(theFormatter));
+                pStream.write(myCategory.buildQIF());
 
                 /* Report the progress */
                 myCount++;
@@ -233,7 +232,7 @@ public final class QCategory {
     /**
      * Quicken Category Line Types.
      */
-    public enum QCatLineType {
+    public enum QCatLineType implements QLineType {
         /**
          * Name.
          */
@@ -264,10 +263,7 @@ public final class QCategory {
          */
         private final String theSymbol;
 
-        /**
-         * Obtain the symbol.
-         * @return the symbol
-         */
+        @Override
         public String getSymbol() {
             return theSymbol;
         }

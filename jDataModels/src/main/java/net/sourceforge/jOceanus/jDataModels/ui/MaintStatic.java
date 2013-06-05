@@ -46,6 +46,7 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticList;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 
 /**
@@ -87,7 +88,7 @@ public class MaintStatic
     /**
      * The card panel.
      */
-    private final JPanel theCardPanel;
+    private final JEnablePanel theCardPanel;
 
     /**
      * The card layout.
@@ -184,7 +185,7 @@ public class MaintStatic
         mySelect.add(theSelectBox);
 
         /* Create the card panel */
-        theCardPanel = new JPanel();
+        theCardPanel = new JEnablePanel();
         theLayout = new CardLayout();
         theCardPanel.setLayout(theLayout);
 
@@ -290,6 +291,15 @@ public class MaintStatic
             /* Refresh the underlying children */
             myPanel.cancelEditing();
         }
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theSelectBox.setEnabled(bEnabled);
+        theError.setEnabled(bEnabled);
+        theCardPanel.setEnabled(bEnabled);
+        theSaveButtons.setEnabled(bEnabled);
     }
 
     /**

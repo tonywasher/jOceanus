@@ -56,6 +56,7 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.DilutionCellEditor;
@@ -145,7 +146,7 @@ public class AccountStatement
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final JEnablePanel thePanel;
 
     /**
      * Self Reference.
@@ -478,13 +479,13 @@ public class AccountStatement
         theUpdateSet.addActionListener(myListener);
 
         /* Create a small panel for selection */
-        JPanel myTop = new JPanel();
+        JEnablePanel myTop = new JEnablePanel();
         myTop.setLayout(new BoxLayout(myTop, BoxLayout.X_AXIS));
         myTop.add(theSelect);
         myTop.add(theStateBox);
 
         /* Create the panel */
-        thePanel = new JPanel();
+        thePanel = new JEnablePanel();
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));
         thePanel.add(myTop);
         thePanel.add(getScrollPane());

@@ -38,21 +38,17 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 /**
  * Quicken Standard event.
  */
-public final class QEvent {
+public class QEvent
+        extends QElement {
     /**
      * Reconciled flag.
      */
-    protected static final char QIF_RECONCILED = 'R';
+    protected static final String QIF_RECONCILED = "R";
 
     /**
-     * Transfer begin char.
+     * Quicken Blank.
      */
-    protected static final char QIF_XFERSTART = '[';
-
-    /**
-     * Transfer end char.
-     */
-    protected static final char QIF_XFEREND = ']';
+    protected static final String QIF_OPEN = " ";
 
     /**
      * The event.
@@ -70,54 +66,77 @@ public final class QEvent {
     private final boolean isCredit;
 
     /**
+     * Is this an autoExpense event?
+     */
+    private final boolean isAutoExpense;
+
+    /**
      * Constructor.
+     * @param pFormatter the data formatter
      * @param pEvent the event
      * @param pCredit is this the credit item?
      */
-    private QEvent(final Event pEvent,
-                   final boolean pCredit) {
+    protected QEvent(final JDataFormatter pFormatter,
+                     final Event pEvent,
+                     final boolean pCredit) {
+        /* Call super constructor */
+        super(pFormatter);
+
         /* Store details */
         theEvent = pEvent;
         isCredit = pCredit;
         isTransfer = pEvent.getCategory().isTransfer();
+
+        /* Access the account */
+        Account myAccount = (isCredit)
+                ? pEvent.getCredit()
+                : pEvent.getDebit();
+        isAutoExpense = (myAccount.getAutoExpense() != null);
+    }
+
+    /**
+     * Constructor.
+     * @param pFormatter the data formatter
+     */
+    protected QEvent(final JDataFormatter pFormatter) {
+        /* Call super constructor */
+        super(pFormatter);
+
+        /* Store details */
+        theEvent = null;
+        isCredit = true;
+        isTransfer = true;
+        isAutoExpense = false;
     }
 
     /**
      * build QIF format.
-     * @param pFormatter the formatter
      * @return the QIF format
      */
-    protected String buildQIF(final JDataFormatter pFormatter) {
-        StringBuilder myBuilder = new StringBuilder();
+    protected String buildQIF() {
+        /* Reset the builder */
+        reset();
 
         /* Add the Date */
-        myBuilder.append(QEvtLineType.Date.getSymbol());
-        myBuilder.append(pFormatter.formatObject(theEvent.getDate()));
-        myBuilder.append(QDataSet.QIF_EOL);
+        addDateLine(QEvtLineType.Date, theEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(theEvent.getAmount());
         if (!isCredit) {
             myValue.negate();
         }
-        myBuilder.append(QEvtLineType.Amount.getSymbol());
-        myBuilder.append(pFormatter.formatObject(myValue));
-        myBuilder.append(QDataSet.QIF_EOL);
+        addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        myBuilder.append(QEvtLineType.Cleared.getSymbol());
-        myBuilder.append((theEvent.getReconciled() == Boolean.TRUE)
+        addStringLine(QEvtLineType.Cleared, (theEvent.getReconciled() == Boolean.TRUE)
                 ? QIF_RECONCILED
-                : QDataSet.QIF_BLANK);
-        myBuilder.append(QDataSet.QIF_EOL);
+                : QIF_OPEN);
 
         /* If we have a reference */
         String myRef = theEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            myBuilder.append(QEvtLineType.Reference.getSymbol());
-            myBuilder.append(myRef);
-            myBuilder.append(QDataSet.QIF_EOL);
+            addStringLine(QEvtLineType.Reference, myRef);
         }
 
         /* Determine partner account */
@@ -127,55 +146,56 @@ public final class QEvent {
 
         /* If the payee is autoExpense */
         EventCategory myAutoExpense = myPayee.getAutoExpense();
-        myBuilder.append(QEvtLineType.Payee.getSymbol());
         if (myAutoExpense != null) {
-            /* Add the payee */
-            myBuilder.append(myPayee.getName());
-            myBuilder.append("Expense");
+            /* Add the autoExpense payee */
+            addAutoAccountLine(QEvtLineType.Payee, myPayee);
         } else {
+            /* Add standard payee */
+            addLineType(QEvtLineType.Payee);
+
             /* Add the payee */
             if (isTransfer) {
-                myBuilder.append("Transfer ");
-                myBuilder.append((isCredit)
+                append("Transfer ");
+                append((isCredit)
                         ? "from "
                         : "to ");
             }
-            myBuilder.append(myPayee.getName());
+            addAccount(myPayee);
+            endLine();
         }
-        myBuilder.append(QDataSet.QIF_EOL);
 
         /* If we have a description */
         String myDesc = theEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            myBuilder.append(QEvtLineType.Comment.getSymbol());
-            myBuilder.append(myDesc);
-            myBuilder.append(QDataSet.QIF_EOL);
+            addStringLine(QEvtLineType.Comment, myDesc);
         }
 
         /* If the payee is autoExpense */
-        myBuilder.append(QEvtLineType.Category.getSymbol());
         if (myAutoExpense != null) {
             /* Add the autoExpense */
-            myBuilder.append(myAutoExpense.getName());
+            addCategoryLine(QEvtLineType.Category, myAutoExpense);
+            /* else if its a transfer */
+        } else if (isTransfer) {
+            addXferAccountLine(QEvtLineType.Category, myPayee);
+            /* else standard category */
         } else {
-            /* Add the category */
-            if (isTransfer) {
-                myBuilder.append(QIF_XFERSTART);
-                myBuilder.append(myPayee.getName());
-                myBuilder.append(QIF_XFEREND);
-            } else {
-                myBuilder.append(theEvent.getCategoryName());
-            }
+            addCategoryLine(QEvtLineType.Category, theEvent.getCategory());
         }
-        myBuilder.append(QDataSet.QIF_EOL);
 
-        /* Add the End indicator */
-        myBuilder.append(QDataSet.QIF_EOI);
-        myBuilder.append(QDataSet.QIF_EOL);
+        /* Return the result */
+        return completeItem();
+    }
 
-        /* Return the builder */
-        return myBuilder.toString();
+    @Override
+    public String toString() {
+        if (isAutoExpense) {
+            buildAutoExpenseCorrectionQIF(true);
+            buildAutoExpenseCorrectionQIF(false);
+            return getBufferedString();
+        } else {
+            return buildQIF();
+        }
     }
 
     /**
@@ -186,66 +206,104 @@ public final class QEvent {
      * @param pBalance the opening balance
      * @return the QIF format
      */
-    protected static StringBuilder buildOpeningQIF(final JDataFormatter pFormatter,
-                                                   final Account pAccount,
-                                                   final JDateDay pStartDate,
-                                                   final JMoney pBalance) {
-        StringBuilder myBuilder = new StringBuilder();
+    protected String buildOpeningQIF(final Account pAccount,
+                                     final JDateDay pStartDate,
+                                     final JMoney pBalance) {
+        /* Reset the builder */
+        reset();
 
         /* Add the Date */
-        myBuilder.append(QEvtLineType.Date.getSymbol());
-        myBuilder.append(pFormatter.formatObject(pStartDate));
-        myBuilder.append(QDataSet.QIF_EOL);
+        addDateLine(QEvtLineType.Date, pStartDate);
 
         /* Add the Amount (as a simple decimal) */
-        JDecimal myValue = new JDecimal(pBalance);
-        myBuilder.append(QEvtLineType.Amount.getSymbol());
-        myBuilder.append(pFormatter.formatObject(myValue));
-        myBuilder.append(QDataSet.QIF_EOL);
+        addDecimalLine(QEvtLineType.Amount, new JDecimal(pBalance));
 
         /* Add the Cleared status */
-        myBuilder.append(QEvtLineType.Cleared.getSymbol());
-        myBuilder.append(QIF_RECONCILED);
-        myBuilder.append(QDataSet.QIF_EOL);
+        addStringLine(QEvtLineType.Cleared, QIF_RECONCILED);
 
         /* Add the payee */
-        myBuilder.append(QEvtLineType.Payee.getSymbol());
-        myBuilder.append("Opening Balance");
-        myBuilder.append(QDataSet.QIF_EOL);
+        addStringLine(QEvtLineType.Payee, "Opening Balance");
 
         /* Add the category */
-        myBuilder.append(QEvtLineType.Category.getSymbol());
-        myBuilder.append(QIF_XFERSTART);
-        myBuilder.append(pAccount.getName());
-        myBuilder.append(QIF_XFEREND);
-        myBuilder.append(QDataSet.QIF_EOL);
+        addXferAccountLine(QEvtLineType.Category, pAccount);
 
-        /* Add the End indicator */
-        myBuilder.append(QDataSet.QIF_EOI);
-        myBuilder.append(QDataSet.QIF_EOL);
+        /* Return the result */
+        return completeItem();
+    }
 
-        /* Return the builder */
-        return myBuilder;
+    /**
+     * build AutoExpense Correction QIF format.
+     * @param doCredit perform credit correction
+     */
+    protected void buildAutoExpenseCorrectionQIF(final boolean doCredit) {
+        /* Add the Date */
+        addDateLine(QEvtLineType.Date, theEvent.getDate());
+
+        /* Add the Amount */
+        JDecimal myValue = new JDecimal(theEvent.getAmount());
+        if (!doCredit) {
+            myValue.negate();
+        }
+        addDecimalLine(QEvtLineType.Amount, myValue);
+
+        /* Add the Cleared status */
+        addStringLine(QEvtLineType.Cleared, QIF_RECONCILED);
+
+        /* If we have a reference */
+        String myRef = theEvent.getReference();
+        if (myRef != null) {
+            /* Add the reference */
+            addStringLine(QEvtLineType.Reference, myRef);
+        }
+
+        /* Determine this account and partner account */
+        Account myPayee = (isCredit)
+                ? theEvent.getDebit()
+                : theEvent.getCredit();
+        Account myAccount = (isCredit)
+                ? theEvent.getCredit()
+                : theEvent.getDebit();
+
+        /* Access autoExpense */
+        EventCategory myAutoExpense = myAccount.getAutoExpense();
+
+        /* Add the payee */
+        if (isCredit == doCredit) {
+            addAccountLine(QEvtLineType.Payee, myPayee);
+        } else {
+            addAutoAccountLine(QEvtLineType.Payee, myAccount);
+        }
+
+        /* If we have a description */
+        String myDesc = theEvent.getComments();
+        if (myDesc != null) {
+            /* Add the Description */
+            addStringLine(QEvtLineType.Comment, myDesc);
+        }
+
+        /* Set the category */
+        addCategoryLine(QEvtLineType.Category, (isCredit == doCredit)
+                ? theEvent.getCategory()
+                : myAutoExpense);
+
+        /* Complete the item */
+        endItem();
     }
 
     /**
      * Event List class.
      */
-    protected static class QEventList {
+    protected static abstract class QEventBaseList<T extends QEvent>
+            extends QElement {
         /**
          * Event List.
          */
-        private final List<QEvent> theEvents;
+        private final List<T> theEvents;
 
         /**
          * The account.
          */
         private final QAccount theAccount;
-
-        /**
-         * Data Formatter.
-         */
-        private final JDataFormatter theFormatter;
 
         /**
          * Obtain event list size.
@@ -260,12 +318,14 @@ public final class QEvent {
          * @param pAccount the list owner
          * @param pFormatter the data formatter
          */
-        protected QEventList(final QAccount pAccount,
-                             final JDataFormatter pFormatter) {
+        protected QEventBaseList(final QAccount pAccount,
+                                 final JDataFormatter pFormatter) {
+            /* Call super constructor */
+            super(pFormatter);
+
             /* Create the list */
-            theEvents = new ArrayList<QEvent>();
+            theEvents = new ArrayList<T>();
             theAccount = pAccount;
-            theFormatter = pFormatter;
         }
 
         /**
@@ -273,11 +333,17 @@ public final class QEvent {
          * @param pEvent the event
          * @param isCredit is this the credit item?
          */
-        protected void registerEvent(final Event pEvent,
-                                     final boolean isCredit) {
-            QEvent myEvent = new QEvent(pEvent, isCredit);
-            theEvents.add(myEvent);
+        protected void addEvent(final T pEvent) {
+            theEvents.add(pEvent);
         }
+
+        /**
+         * Register event.
+         * @param pEvent the event
+         * @param isCredit is this the credit item?
+         */
+        protected abstract void registerEvent(final Event pEvent,
+                                              final boolean isCredit);
 
         /**
          * Output events.
@@ -288,20 +354,69 @@ public final class QEvent {
         protected void outputEvents(final OutputStreamWriter pStream,
                                     final JDateDay pStartDate) throws IOException {
             /* Write the account header */
-            pStream.write(theAccount.buildQIFHeader(theFormatter, pStartDate));
+            pStream.write(theAccount.buildQIFHeader(pStartDate));
 
             /* Loop through the events */
-            for (QEvent myEvent : theEvents) {
-                /* Write Account details */
-                pStream.write(myEvent.buildQIF(theFormatter));
+            for (T myEvent : theEvents) {
+                /* Write Event details */
+                pStream.write(myEvent.buildQIF());
             }
+        }
+
+        /**
+         * Output autoExpense.
+         * @param pStream the output stream
+         * @param pStartDate the opening date
+         * @throws IOException on error
+         */
+        protected void outputAutoEvents(final OutputStreamWriter pStream,
+                                        final JDateDay pStartDate) throws IOException {
+            /* Write the account header */
+            pStream.write(theAccount.buildQIFHeader(pStartDate));
+
+            /* Loop through the events */
+            for (T myEvent : theEvents) {
+                /* Write Event details */
+                myEvent.reset();
+                myEvent.buildAutoExpenseCorrectionQIF(true);
+                myEvent.buildAutoExpenseCorrectionQIF(false);
+                pStream.write(myEvent.getBufferedString());
+            }
+        }
+    }
+
+    /**
+     * Event List class.
+     */
+    protected static class QEventList
+            extends QEventBaseList<QEvent> {
+        /**
+         * Constructor.
+         * @param pAccount the list owner
+         * @param pFormatter the data formatter
+         */
+        protected QEventList(final QAccount pAccount,
+                             final JDataFormatter pFormatter) {
+            /* Call super constructor */
+            super(pAccount, pFormatter);
+        }
+
+        /**
+         * Register event.
+         * @param pEvent the event
+         * @param isCredit is this the credit item?
+         */
+        protected void registerEvent(final Event pEvent,
+                                     final boolean isCredit) {
+            QEvent myEvent = new QEvent(getFormatter(), pEvent, isCredit);
+            addEvent(myEvent);
         }
     }
 
     /**
      * Quicken Event Line Types.
      */
-    public enum QEvtLineType {
+    public enum QEvtLineType implements QLineType {
         /**
          * Date.
          */
@@ -357,10 +472,7 @@ public final class QEvent {
          */
         private final String theSymbol;
 
-        /**
-         * Obtain the symbol.
-         * @return the symbol
-         */
+        @Override
         public String getSymbol() {
             return theSymbol;
         }

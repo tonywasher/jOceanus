@@ -189,6 +189,14 @@ public class ReportTab
         add(theScroll);
     }
 
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theSelect.setEnabled(bEnabled);
+        theError.setEnabled(bEnabled);
+        theScroll.setEnabled(bEnabled);
+    }
+
     /**
      * Refresh views/controls after a load/update of underlying data.
      */
@@ -206,8 +214,8 @@ public class ReportTab
             /* Create SavePoint */
             theSelect.createSavePoint();
         } catch (JDataException e) {
-            /* TODO Show the error */
-            // setError(e);
+            /* Show the error */
+            theView.addError(e);
 
             /* Restore SavePoint */
             theSelect.restoreSavePoint();

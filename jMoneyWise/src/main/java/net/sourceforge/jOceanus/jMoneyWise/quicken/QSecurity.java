@@ -40,7 +40,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 /**
  * Quicken Security.
  */
-public final class QSecurity {
+public final class QSecurity
+        extends QElement {
     /**
      * Item type.
      */
@@ -58,9 +59,14 @@ public final class QSecurity {
 
     /**
      * Constructor.
+     * @param pFormatter the data formatter
      * @param pAccount the security account
      */
-    private QSecurity(final Account pAccount) {
+    private QSecurity(final JDataFormatter pFormatter,
+                      final Account pAccount) {
+        /* Call super constructor */
+        super(pFormatter);
+
         /* Store the account */
         theSecurity = pAccount;
 
@@ -70,42 +76,37 @@ public final class QSecurity {
 
     /**
      * build QIF format.
-     * @param pFormatter the formatter
      * @return the QIF format
      */
-    protected String buildQIF(final JDataFormatter pFormatter) {
-        StringBuilder myBuilder = new StringBuilder();
+    protected String buildQIF() {
+        /* Reset the builder */
+        reset();
 
         /* Add the Item type */
-        myBuilder.append(QDataSet.QIF_ITEMTYPE);
-        myBuilder.append(QIF_ITEM);
-        myBuilder.append(QDataSet.QIF_EOL);
+        append(QIF_ITEMTYPE);
+        append(QIF_ITEM);
+        endLine();
 
         /* Add the Security name */
-        myBuilder.append(QSecLineType.Name.getSymbol());
-        myBuilder.append(theSecurity.getName());
-        myBuilder.append(QDataSet.QIF_EOL);
+        addStringLine(QSecLineType.Name, theSecurity.getName());
 
         /* If we have a symbol */
         String mySymbol = theSecurity.getSymbol();
         if (mySymbol != null) {
             /* Add the Security symbol */
-            myBuilder.append(QSecLineType.Symbol.getSymbol());
-            myBuilder.append(mySymbol);
-            myBuilder.append(QDataSet.QIF_EOL);
+            addStringLine(QSecLineType.Symbol, mySymbol);
         }
 
         /* Add the Security type */
-        myBuilder.append(QSecLineType.SecType.getSymbol());
-        myBuilder.append(getSecurityType());
-        myBuilder.append(QDataSet.QIF_EOL);
+        addStringLine(QSecLineType.SecType, getSecurityType());
 
-        /* Add the End indicator */
-        myBuilder.append(QDataSet.QIF_EOI);
-        myBuilder.append(QDataSet.QIF_EOL);
+        /* Return the result */
+        return completeItem();
+    }
 
-        /* Return the builder */
-        return myBuilder.toString();
+    @Override
+    public String toString() {
+        return buildQIF();
     }
 
     /**
@@ -114,22 +115,20 @@ public final class QSecurity {
      */
     protected void addPrice(final AccountPrice pPrice) {
         /* Add the price */
-        QPrice myQIF = new QPrice(pPrice);
+        QPrice myQIF = new QPrice(getFormatter(), pPrice);
         thePrices.add(myQIF);
     }
 
     /**
      * Output prices.
      * @param pStream the output stream
-     * @param pFormatter the formatter
      * @throws IOException on error
      */
-    protected void outputPrices(final OutputStreamWriter pStream,
-                                final JDataFormatter pFormatter) throws IOException {
+    protected void outputPrices(final OutputStreamWriter pStream) throws IOException {
         /* Loop through the securities */
         for (QPrice myPrice : thePrices) {
             /* Write price details */
-            pStream.write(myPrice.buildQIF(pFormatter));
+            pStream.write(myPrice.buildQIF());
         }
     }
 
@@ -157,16 +156,12 @@ public final class QSecurity {
     /**
      * Security List class.
      */
-    protected static class QSecurityList {
+    protected static class QSecurityList
+            extends QElement {
         /**
          * Security Map.
          */
         private final HashMap<Account, QSecurity> theSecurities;
-
-        /**
-         * Data Formatter.
-         */
-        private final JDataFormatter theFormatter;
 
         /**
          * Number of prices.
@@ -178,9 +173,11 @@ public final class QSecurity {
          * @param pFormatter the data formatter
          */
         protected QSecurityList(final JDataFormatter pFormatter) {
+            /* Call super constructor */
+            super(pFormatter);
+
             /* Create the map */
             theSecurities = new HashMap<Account, QSecurity>();
-            theFormatter = pFormatter;
         }
 
         /**
@@ -194,7 +191,7 @@ public final class QSecurity {
             /* If this is a new security */
             if (mySecurity == null) {
                 /* Allocate the security and add to the map */
-                mySecurity = new QSecurity(pAccount);
+                mySecurity = new QSecurity(getFormatter(), pAccount);
                 theSecurities.put(pAccount, mySecurity);
             }
         }
@@ -221,6 +218,11 @@ public final class QSecurity {
                 if (pDate.compareTo(myPrice.getDate()) < 0) {
                     /* Break the loop */
                     break;
+                }
+
+                /* Ignore deleted prices */
+                if (myPrice.isDeleted()) {
+                    continue;
                 }
 
                 /* Access the security */
@@ -263,14 +265,12 @@ public final class QSecurity {
             /* Update status bar */
             boolean bContinue = ((pStatus.setNewStage("Writing securities")) && (pStatus.setNumSteps(theSecurities.size())));
 
-            /* Allocate the string builder */
-            StringBuilder myBuilder = new StringBuilder();
-
             /* Clear AutoSwitch */
-            myBuilder.append(QAccount.QIF_CLROPT);
-            myBuilder.append(QAccount.QIF_AUTOSWITCH);
-            myBuilder.append(QDataSet.QIF_EOL);
-            pStream.write(myBuilder.toString());
+            reset();
+            append(QAccount.QIF_CLROPT);
+            append(QAccount.QIF_AUTOSWITCH);
+            endLine();
+            pStream.write(getBufferedString());
 
             /* Loop through the securities */
             Iterator<QSecurity> myIterator = theSecurities.values().iterator();
@@ -279,7 +279,7 @@ public final class QSecurity {
                 QSecurity mySecurity = myIterator.next();
 
                 /* Write Security details */
-                pStream.write(mySecurity.buildQIF(theFormatter));
+                pStream.write(mySecurity.buildQIF());
 
                 /* Report the progress */
                 myCount++;
@@ -290,10 +290,11 @@ public final class QSecurity {
             }
 
             /* Set AutoSwitch */
-            myBuilder.append(QAccount.QIF_SETOPT);
-            myBuilder.append(QAccount.QIF_AUTOSWITCH);
-            myBuilder.append(QDataSet.QIF_EOL);
-            pStream.write(myBuilder.toString());
+            reset();
+            append(QAccount.QIF_SETOPT);
+            append(QAccount.QIF_AUTOSWITCH);
+            endLine();
+            pStream.write(getBufferedString());
 
             /* Return success */
             return bContinue;
@@ -322,7 +323,7 @@ public final class QSecurity {
                 QSecurity mySecurity = myIterator.next();
 
                 /* Write price details */
-                mySecurity.outputPrices(pStream, theFormatter);
+                mySecurity.outputPrices(pStream);
 
                 /* Report the progress */
                 myCount++;
@@ -340,7 +341,7 @@ public final class QSecurity {
     /**
      * Quicken Security Line Types.
      */
-    public enum QSecLineType {
+    public enum QSecLineType implements QLineType {
         /**
          * Name.
          */
@@ -361,10 +362,7 @@ public final class QSecurity {
          */
         private final String theSymbol;
 
-        /**
-         * Obtain the symbol.
-         * @return the symbol
-         */
+        @Override
         public String getSymbol() {
             return theSymbol;
         }

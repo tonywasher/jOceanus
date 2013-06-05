@@ -39,6 +39,7 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 
 /**
  * Event Category class.
@@ -1045,6 +1046,27 @@ public final class EventCategory
 
             /* Return not found */
             return null;
+        }
+
+        /**
+         * Obtain singular category for EventInfoClass.
+         * @param pInfoClass the Event info class
+         * @return the corresponding category.
+         */
+        public EventCategory getEventInfoCategory(final EventInfoClass pInfoClass) {
+            /* Switch on info class */
+            switch (pInfoClass) {
+                case TaxCredit:
+                    return getSingularClass(EventCategoryClass.TaxCredit);
+                case NatInsurance:
+                    return getSingularClass(EventCategoryClass.NatInsurance);
+                case Benefit:
+                    return getSingularClass(EventCategoryClass.Benefit);
+                case CharityDonation:
+                    return getSingularClass(EventCategoryClass.CharityDonation);
+                default:
+                    return null;
+            }
         }
 
         /**

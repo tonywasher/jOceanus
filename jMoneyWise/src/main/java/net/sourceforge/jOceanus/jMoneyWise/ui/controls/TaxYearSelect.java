@@ -46,7 +46,8 @@ import net.sourceforge.jOceanus.jMoneyWise.views.View;
  * TaxYear selection panel.
  * @author Tony Washer
  */
-public class TaxYearSelect extends JEventPanel {
+public class TaxYearSelect
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -168,6 +169,13 @@ public class TaxYearSelect extends JEventPanel {
         refreshData();
     }
 
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theYearsBox.setEnabled(bEnabled);
+        theShowDeleted.setEnabled(bEnabled);
+    }
+
     /**
      * Create SavePoint.
      */
@@ -221,7 +229,8 @@ public class TaxYearSelect extends JEventPanel {
             TaxYear myYear = myYearIterator.previous();
 
             /* If the year is not deleted */
-            if ((!doShowDeleted()) && (myYear.isDeleted())) {
+            if ((!doShowDeleted())
+                && (myYear.isDeleted())) {
                 continue;
             }
 
@@ -253,7 +262,8 @@ public class TaxYearSelect extends JEventPanel {
     /**
      * TaxYear Listener class.
      */
-    private final class TaxYearListener implements ItemListener {
+    private final class TaxYearListener
+            implements ItemListener {
         /* ItemStateChanged listener event */
         @Override
         public void itemStateChanged(final ItemEvent evt) {
@@ -265,7 +275,8 @@ public class TaxYearSelect extends JEventPanel {
             }
 
             /* If this event relates to the years box */
-            if ((theYearsBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            if ((theYearsBox.equals(o))
+                && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Select the new year and notify the change */
                 TaxYear myYear = (TaxYear) evt.getItem();
                 if (theState.setTaxYear(myYear)) {
@@ -273,7 +284,8 @@ public class TaxYearSelect extends JEventPanel {
                 }
 
                 /* If this event relates to the showDeleted box */
-            } else if ((theShowDeleted.equals(o)) && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
+            } else if ((theShowDeleted.equals(o))
+                       && (theState.setDoShowDeleted(theShowDeleted.isSelected()))) {
                 /* Rebuild lists */
                 refreshData();
             }

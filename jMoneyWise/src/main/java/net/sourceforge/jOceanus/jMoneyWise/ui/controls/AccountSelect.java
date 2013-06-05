@@ -547,25 +547,21 @@ public class AccountSelect
 
     @Override
     public void setEnabled(final boolean bEnable) {
-        Account mySelected = getSelected();
-
         /* Lock/Unlock the selection */
         theCategoriesBox.setEnabled(bEnable);
         theAccountBox.setEnabled(bEnable);
 
         /* Can't switch off show closed if account is closed */
-        boolean bLock = ((mySelected != null) && (mySelected.isClosed()));
+        // boolean bLock = ((mySelected != null) && (mySelected.isClosed()));
 
         /* Lock Show Closed */
-        theShowClosed.setEnabled(bEnable
-                                 && !bLock);
+        theShowClosed.setEnabled(bEnable);
 
         /* Can't switch off show deleted if account is deleted */
-        bLock = ((mySelected != null) && (mySelected.isDeleted()));
+        // bLock = ((mySelected != null) && (mySelected.isDeleted()));
 
         /* Lock Show Deleted */
-        theShowDeleted.setEnabled(bEnable
-                                  && !bLock);
+        theShowDeleted.setEnabled(bEnable);
     }
 
     /**

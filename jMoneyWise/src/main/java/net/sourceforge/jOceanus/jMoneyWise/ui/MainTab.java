@@ -30,7 +30,6 @@ import java.util.ResourceBundle;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -40,6 +39,7 @@ import net.sourceforge.jOceanus.jDataModels.MainWindow;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.jOceanus.jHelpManager.HelpException;
 import net.sourceforge.jOceanus.jHelpManager.HelpModule;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
@@ -131,7 +131,7 @@ public class MainTab
     /**
      * The tabs.
      */
-    private JTabbedPane theTabs = null;
+    private JEnableTabbed theTabs = null;
 
     /**
      * The Events panel.
@@ -231,7 +231,7 @@ public class MainTab
     @Override
     protected JComponent buildMainPanel() {
         /* Create the Tabbed Pane */
-        theTabs = new JTabbedPane();
+        theTabs = new JEnableTabbed();
 
         /* Create the extract table and add to tabbed pane */
         theExtract = new Extract(theView, theComboList);
@@ -485,6 +485,9 @@ public class MainTab
         if (iIndex != -1) {
             theTabs.setEnabledAt(iIndex, showTab);
         }
+
+        /* Enable/Disable the tabs */
+        theTabs.setEnabled(!hasWorker);
 
         /* If we have updates disable the load backup/database option */
         theLoadSheet.setEnabled(!hasUpdates);

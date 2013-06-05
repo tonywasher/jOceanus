@@ -59,6 +59,7 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.DilutionCellEditor;
@@ -234,7 +235,7 @@ public class Extract
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final JEnablePanel thePanel;
 
     /**
      * Self Reference.
@@ -464,7 +465,7 @@ public class Extract
         theView.addChangeListener(myListener);
 
         /* Create the panel */
-        thePanel = new JPanel();
+        thePanel = new JEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));

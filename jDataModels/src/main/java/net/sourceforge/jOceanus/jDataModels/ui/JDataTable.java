@@ -42,6 +42,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTableColumn.RowColumnModel;
 import net.sourceforge.jOceanus.jDataModels.ui.JDataTableModel.RowTableModel;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableScroll;
 import net.sourceforge.jOceanus.jEventManager.JEventTable;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxSelector;
 import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
@@ -108,7 +109,7 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
     /**
      * The Scroll Pane.
      */
-    private JScrollPane theScroll = null;
+    private JEnableScroll theScroll = null;
 
     /**
      * Is Enabled?
@@ -269,7 +270,7 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
         theRowHdrTable.setSelectionModel(getSelectionModel());
 
         /* Create a new Scroll Pane and add this table to it */
-        theScroll = new JScrollPane();
+        theScroll = new JEnableScroll();
         theScroll.setViewportView(this);
 
         /* Add as the row header */
@@ -294,7 +295,9 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
      * @return the edit state
      */
     public EditState getEditState() {
-        return (theUpdateSet == null) ? EditState.CLEAN : theUpdateSet.getEditState();
+        return (theUpdateSet == null)
+                ? EditState.CLEAN
+                : theUpdateSet.getEditState();
     }
 
     /**
@@ -318,7 +321,9 @@ public abstract class JDataTable<T extends DataItem & Comparable<? super T>>
      * @param pList the list
      */
     protected void setList(final DataList<T> pList) {
-        int myZeroRow = hasHeader() ? 1 : 0;
+        int myZeroRow = hasHeader()
+                ? 1
+                : 0;
 
         /* Store list and select correct mode */
         theList = pList;

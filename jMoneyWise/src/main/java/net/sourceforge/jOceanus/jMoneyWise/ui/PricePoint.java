@@ -51,6 +51,7 @@ import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.PriceCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.CalendarCellRenderer;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellRenderer.DecimalCellRenderer;
@@ -113,7 +114,7 @@ public class PricePoint
     /**
      * The panel.
      */
-    private final JPanel thePanel;
+    private final JEnablePanel thePanel;
 
     /**
      * Self reference.
@@ -285,7 +286,7 @@ public class PricePoint
         theView.addChangeListener(myListener);
 
         /* Create the panel */
-        thePanel = new JPanel();
+        thePanel = new JEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));

@@ -40,31 +40,6 @@ import net.sourceforge.jOceanus.jMoneyWise.quicken.QAccount.QAccountList;
  */
 public class QDataSet {
     /**
-     * Quicken Item type.
-     */
-    protected static final String QIF_ITEMTYPE = "!Type:";
-
-    /**
-     * Quicken End of Item indicator.
-     */
-    protected static final String QIF_EOI = "^";
-
-    /**
-     * Quicken New line.
-     */
-    protected static final char QIF_EOL = '\n';
-
-    /**
-     * Quicken Quote.
-     */
-    protected static final char QIF_QUOTE = '"';
-
-    /**
-     * Quicken Blank.
-     */
-    protected static final char QIF_BLANK = ' ';
-
-    /**
      * Quicken Date Format.
      */
     private static final String QIF_DATEFORMAT = "dd/MM/YY";

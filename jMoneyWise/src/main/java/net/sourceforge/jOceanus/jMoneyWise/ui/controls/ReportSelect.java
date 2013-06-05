@@ -56,7 +56,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
  * Report selection panel.
  * @author Tony Washer
  */
-public class ReportSelect extends JEventPanel {
+public class ReportSelect
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -325,8 +326,12 @@ public class ReportSelect extends JEventPanel {
      * @param pRange the date range
      */
     public final void setRange(final JDateDayRange pRange) {
-        JDateDay myStart = (pRange == null) ? null : pRange.getStart();
-        JDateDay myEnd = (pRange == null) ? null : pRange.getEnd();
+        JDateDay myStart = (pRange == null)
+                ? null
+                : pRange.getStart();
+        JDateDay myEnd = (pRange == null)
+                ? null
+                : pRange.getEnd();
 
         /* Set up range */
         theDateButton.setEarliestDateDay(myStart);
@@ -368,12 +373,14 @@ public class ReportSelect extends JEventPanel {
         theYearsBox.setEnabled(bEnable);
         theDateButton.setEnabled(bEnable);
         theReportBox.setEnabled(bEnable);
+        thePrintButton.setEnabled(bEnable);
     }
 
     /**
      * Report Listener class.
      */
-    private final class ReportListener implements ActionListener, PropertyChangeListener, ItemListener {
+    private final class ReportListener
+            implements ActionListener, PropertyChangeListener, ItemListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();
@@ -388,7 +395,8 @@ public class ReportSelect extends JEventPanel {
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
             /* if this date relates to the Date button */
-            if ((theDateButton.equals(evt.getSource())) && (theState.setDate(theDateButton))) {
+            if ((theDateButton.equals(evt.getSource()))
+                && (theState.setDate(theDateButton))) {
                 /* Notify that the state has changed */
                 fireStateChanged();
             }
@@ -404,14 +412,16 @@ public class ReportSelect extends JEventPanel {
             }
 
             /* If this event relates to the years box */
-            if ((theYearsBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            if ((theYearsBox.equals(o))
+                && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 TaxYear myYear = (TaxYear) evt.getItem();
                 if (theState.setYear(myYear)) {
                     fireStateChanged();
                 }
 
                 /* If this event relates to the report box */
-            } else if ((theReportBox.equals(o)) && (evt.getStateChange() == ItemEvent.SELECTED)) {
+            } else if ((theReportBox.equals(o))
+                       && (evt.getStateChange() == ItemEvent.SELECTED)) {
                 /* Determine the new report */
                 ReportType myType = (ReportType) evt.getItem();
                 if (theState.setType(myType)) {

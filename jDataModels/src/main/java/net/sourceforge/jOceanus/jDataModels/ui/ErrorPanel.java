@@ -213,6 +213,12 @@ public class ErrorPanel
         fireStateChanged();
     }
 
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theClearButton.setEnabled(bEnabled);
+    }
+
     /**
      * Listener class.
      */

@@ -56,6 +56,7 @@ import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jFieldSet.JFieldSet;
@@ -113,7 +114,7 @@ public class MaintAccount
     /**
      * The buttons panel.
      */
-    private final JPanel theButtons;
+    private final JEnablePanel theButtons;
 
     /**
      * The security panel.
@@ -309,7 +310,7 @@ public class MaintAccount
         theError.addChangeListener(myListener);
 
         /* Create the buttons panel */
-        theButtons = new JPanel();
+        theButtons = new JEnablePanel();
         theButtons.setBorder(BorderFactory.createTitledBorder("Actions"));
 
         /* Create the layout for the panel */
@@ -389,7 +390,7 @@ public class MaintAccount
         theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Maturity), DataType.DATEDAY, myMatLabel, myMaturity);
 
         /* Create the limits panel */
-        JPanel myPanel = new JPanel();
+        JEnablePanel myPanel = new JEnablePanel();
         myPanel.setBorder(BorderFactory.createTitledBorder("Account Details"));
 
         /* Layout the limits panel */
@@ -492,10 +493,10 @@ public class MaintAccount
         theFieldSet.addFieldElement(AccountInfoSet.getFieldForClass(AccountInfoClass.Notes), DataType.CHARARRAY, myNotesLabel, myNotes);
 
         /* Create the limits panel */
-        JPanel myPanel = new JPanel();
+        JEnablePanel myPanel = new JEnablePanel();
         myPanel.setBorder(BorderFactory.createTitledBorder("Security"));
 
-        /* Layout the limits panel */
+        /* Layout the security panel */
         SpringLayout mySpring = new SpringLayout();
         myPanel.setLayout(mySpring);
         myPanel.add(myWebSiteLabel);
@@ -514,6 +515,17 @@ public class MaintAccount
 
         /* Return the new panel */
         return myPanel;
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theSelect.setEnabled(bEnabled);
+        theError.setEnabled(bEnabled);
+        theDetail.setEnabled(bEnabled);
+        theSecure.setEnabled(bEnabled);
+        theButtons.setEnabled(bEnabled);
+        theSaveButs.setEnabled(bEnabled);
     }
 
     /**

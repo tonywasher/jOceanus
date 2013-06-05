@@ -26,7 +26,6 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.util.ResourceBundle;
 
-import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -36,6 +35,7 @@ import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
 import net.sourceforge.jOceanus.jDataModels.preferences.DatabasePreferences;
 import net.sourceforge.jOceanus.jDataModels.ui.MaintStatic;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableTabbed;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jJira.data.JiraPreferences;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
@@ -114,7 +114,7 @@ public class MaintenanceTab
     /**
      * The Tabs.
      */
-    private final JTabbedPane theTabs;
+    private final JEnableTabbed theTabs;
 
     /**
      * The Account Panel.
@@ -178,7 +178,7 @@ public class MaintenanceTab
         MaintenanceListener myListener = new MaintenanceListener();
 
         /* Create the Tabbed Pane */
-        theTabs = new JTabbedPane();
+        theTabs = new JEnableTabbed();
         theTabs.addChangeListener(myListener);
 
         /* Create the account Tab and add it */
@@ -230,6 +230,12 @@ public class MaintenanceTab
 
         /* Set the layout */
         add(theTabs);
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theTabs.setEnabled(bEnabled);
     }
 
     /**

@@ -30,11 +30,17 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 /**
  * Quicken Price.
  */
-public class QPrice {
+public class QPrice
+        extends QElement {
     /**
      * Item type.
      */
     private static final String QIF_ITEM = "Prices";
+
+    /**
+     * Quicken Quote.
+     */
+    protected static final char QIF_QUOTE = '"';
 
     /**
      * Quicken Comma.
@@ -48,49 +54,57 @@ public class QPrice {
 
     /**
      * Constructor.
+     * @param pFormatter the data formatter
      * @param pPrice the account price
      */
-    protected QPrice(final AccountPrice pPrice) {
+    protected QPrice(final JDataFormatter pFormatter,
+                     final AccountPrice pPrice) {
+        /* Call super constructor */
+        super(pFormatter);
+
         /* Store the price */
         thePrice = pPrice;
     }
 
     /**
      * build QIF format.
-     * @param pFormatter the formatter
      * @return the QIF format
      */
-    protected String buildQIF(final JDataFormatter pFormatter) {
-        StringBuilder myBuilder = new StringBuilder();
+    protected String buildQIF() {
+        /* Access the account */
         Account myAccount = thePrice.getAccount();
 
+        /* Reset the builder */
+        reset();
+
         /* Add the Item type */
-        myBuilder.append(QDataSet.QIF_ITEMTYPE);
-        myBuilder.append(QIF_ITEM);
-        myBuilder.append(QDataSet.QIF_EOL);
+        append(QIF_ITEMTYPE);
+        append(QIF_ITEM);
+        endLine();
 
         /* Add the Ticker Symbol */
-        myBuilder.append(QDataSet.QIF_QUOTE);
-        myBuilder.append(myAccount.getSymbol());
-        myBuilder.append(QDataSet.QIF_QUOTE);
-        myBuilder.append(QIF_COMMA);
+        append(QIF_QUOTE);
+        append(myAccount.getSymbol());
+        append(QIF_QUOTE);
+        append(QIF_COMMA);
 
         /* Add the Price (as a simple decimal) */
         JDecimal myValue = new JDecimal(thePrice.getPrice());
-        myBuilder.append(pFormatter.formatObject(myValue));
-        myBuilder.append(QIF_COMMA);
+        addDecimal(myValue);
+        append(QIF_COMMA);
 
         /* Add the Date */
-        myBuilder.append(QDataSet.QIF_QUOTE);
-        myBuilder.append(pFormatter.formatObject(thePrice.getDate()));
-        myBuilder.append(QDataSet.QIF_QUOTE);
-        myBuilder.append(QDataSet.QIF_EOL);
+        append(QIF_QUOTE);
+        addDate(thePrice.getDate());
+        append(QIF_QUOTE);
+        endLine();
 
-        /* Add the End indicator */
-        myBuilder.append(QDataSet.QIF_EOI);
-        myBuilder.append(QDataSet.QIF_EOL);
+        /* Return the result */
+        return completeItem();
+    }
 
-        /* Return the builder */
-        return myBuilder.toString();
+    @Override
+    public String toString() {
+        return buildQIF();
     }
 }

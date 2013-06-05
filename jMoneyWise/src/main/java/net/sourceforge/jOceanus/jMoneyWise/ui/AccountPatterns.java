@@ -47,6 +47,7 @@ import net.sourceforge.jOceanus.jDataModels.views.UpdateEntry;
 import net.sourceforge.jOceanus.jDataModels.views.UpdateSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.CalendarCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.ComboBoxCellEditor;
 import net.sourceforge.jOceanus.jFieldSet.JFieldCellEditor.MoneyCellEditor;
@@ -102,7 +103,7 @@ public class AccountPatterns
     /**
      * The Panel.
      */
-    private final JPanel thePanel;
+    private final JEnablePanel thePanel;
 
     /**
      * Frequency Box.
@@ -318,7 +319,7 @@ public class AccountPatterns
         addMouseListener(myMouse);
 
         /* Create the panel */
-        thePanel = new JPanel();
+        thePanel = new JEnablePanel();
 
         /* Create the layout for the panel */
         thePanel.setLayout(new BoxLayout(thePanel, BoxLayout.Y_AXIS));

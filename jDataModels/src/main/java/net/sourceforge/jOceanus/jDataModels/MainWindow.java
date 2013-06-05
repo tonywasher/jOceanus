@@ -68,7 +68,8 @@ import net.sourceforge.jOceanus.jHelpManager.HelpWindow;
  * @author Tony Washer
  * @param <T> the data set type
  */
-public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl, ActionListener {
+public abstract class MainWindow<T extends DataSet<T>>
+        implements ThreadControl, ActionListener {
     /**
      * Resource Bundle.
      */
@@ -501,15 +502,13 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
 
         /* Set visibility */
         setVisibility();
-
-        /* Load data from the database */
-        // loadDatabase();
     }
 
     /**
      * Window Close Adapter.
      */
-    private class WindowClose extends WindowAdapter {
+    private class WindowClose
+            extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {
             Object o = evt.getSource();
@@ -517,10 +516,10 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
             /* If this is the frame that is closing down */
             if (theFrame.equals(o)) {
                 /* If we have updates or changes */
-                if ((hasUpdates()) || (hasChanges())) {
+                if ((hasUpdates())
+                    || (hasChanges())) {
                     /* Ask whether to continue */
-                    int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE,
-                                                                 JOptionPane.YES_NO_OPTION);
+                    int myOption = JOptionPane.showConfirmDialog(theFrame, PROMPT_DISCARD, TITLE_CLOSE, JOptionPane.YES_NO_OPTION);
 
                     /* Ignore if no was responded */
                     if (myOption != JOptionPane.YES_OPTION) {
@@ -646,15 +645,22 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
         /* Disable menus if we have a worker thread */
         theDataMenu.setEnabled(!hasWorker);
         theBackupMenu.setEnabled(!hasWorker);
-        theSecureMenu.setEnabled(!hasWorker && hasControl);
+        theSecureMenu.setEnabled(!hasWorker
+                                 && hasControl);
 
         /* If we have changes disable the create backup options */
-        theWriteBackup.setEnabled(!hasChanges && !hasUpdates && hasControl);
-        theWriteExtract.setEnabled(!hasChanges && !hasUpdates && hasControl);
+        theWriteBackup.setEnabled(!hasChanges
+                                  && !hasUpdates
+                                  && hasControl);
+        theWriteExtract.setEnabled(!hasChanges
+                                   && !hasUpdates
+                                   && hasControl);
 
         /* If we have changes disable the security options */
-        theUpdatePass.setEnabled(!hasChanges && !hasUpdates);
-        theRenewSec.setEnabled(!hasChanges && !hasUpdates);
+        theUpdatePass.setEnabled(!hasChanges
+                                 && !hasUpdates);
+        theRenewSec.setEnabled(!hasChanges
+                               && !hasUpdates);
 
         /* If we have updates disable the load backup/database option */
         theLoadBackup.setEnabled(!hasUpdates);
@@ -662,7 +668,8 @@ public abstract class MainWindow<T extends DataSet<T>> implements ThreadControl,
         theLoadDBase.setEnabled(!hasUpdates);
 
         /* If we have updates or no changes disable the save database */
-        theSaveDBase.setEnabled(!hasUpdates && hasChanges);
+        theSaveDBase.setEnabled(!hasUpdates
+                                && hasChanges);
     }
 
     @Override
