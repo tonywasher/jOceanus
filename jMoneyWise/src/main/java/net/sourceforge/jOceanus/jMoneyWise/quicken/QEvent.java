@@ -51,6 +51,11 @@ public class QEvent
     protected static final String QIF_OPEN = " ";
 
     /**
+     * The analysis.
+     */
+    private final QAnalysis theAnalysis;
+
+    /**
      * The event.
      */
     private final Event theEvent;
@@ -71,18 +76,43 @@ public class QEvent
     private final boolean isAutoExpense;
 
     /**
+     * Obtain analysis.
+     * @return the analysis
+     */
+    protected QAnalysis getAnalysis() {
+        return theAnalysis;
+    }
+
+    /**
+     * Obtain the event.
+     * @return the event
+     */
+    protected Event getEvent() {
+        return theEvent;
+    }
+
+    /**
+     * Is the event a credit.
+     * @return true/false
+     */
+    protected boolean isCredit() {
+        return isCredit;
+    }
+
+    /**
      * Constructor.
-     * @param pFormatter the data formatter
+     * @param pAnalysis the analysis
      * @param pEvent the event
      * @param pCredit is this the credit item?
      */
-    protected QEvent(final JDataFormatter pFormatter,
+    protected QEvent(final QAnalysis pAnalysis,
                      final Event pEvent,
                      final boolean pCredit) {
         /* Call super constructor */
-        super(pFormatter);
+        super(pAnalysis.getFormatter());
 
         /* Store details */
+        theAnalysis = pAnalysis;
         theEvent = pEvent;
         isCredit = pCredit;
         isTransfer = pEvent.getCategory().isTransfer();
@@ -103,6 +133,7 @@ public class QEvent
         super(pFormatter);
 
         /* Store details */
+        theAnalysis = null;
         theEvent = null;
         isCredit = true;
         isTransfer = true;
@@ -143,6 +174,11 @@ public class QEvent
         Account myPayee = (isCredit)
                 ? theEvent.getDebit()
                 : theEvent.getCredit();
+
+        /* Handle portfolio accounts */
+        if (myPayee.hasUnits()) {
+            myPayee = myPayee.getParent();
+        }
 
         /* If the payee is autoExpense */
         EventCategory myAutoExpense = myPayee.getAutoExpense();
@@ -296,6 +332,11 @@ public class QEvent
     protected static abstract class QEventBaseList<T extends QEvent>
             extends QElement {
         /**
+         * The analysis.
+         */
+        private final QAnalysis theAnalysis;
+
+        /**
          * Event List.
          */
         private final List<T> theEvents;
@@ -304,6 +345,14 @@ public class QEvent
          * The account.
          */
         private final QAccount theAccount;
+
+        /**
+         * Obtain analysis.
+         * @return the analysis
+         */
+        protected QAnalysis getAnalysis() {
+            return theAnalysis;
+        }
 
         /**
          * Obtain event list size.
@@ -315,15 +364,16 @@ public class QEvent
 
         /**
          * Constructor.
+         * @param pAnalysis the analysis
          * @param pAccount the list owner
-         * @param pFormatter the data formatter
          */
-        protected QEventBaseList(final QAccount pAccount,
-                                 final JDataFormatter pFormatter) {
+        protected QEventBaseList(final QAnalysis pAnalysis,
+                                 final QAccount pAccount) {
             /* Call super constructor */
-            super(pFormatter);
+            super(pAnalysis.getFormatter());
 
             /* Create the list */
+            theAnalysis = pAnalysis;
             theEvents = new ArrayList<T>();
             theAccount = pAccount;
         }
@@ -392,13 +442,13 @@ public class QEvent
             extends QEventBaseList<QEvent> {
         /**
          * Constructor.
+         * @param pAnalysis the analysis
          * @param pAccount the list owner
-         * @param pFormatter the data formatter
          */
-        protected QEventList(final QAccount pAccount,
-                             final JDataFormatter pFormatter) {
+        protected QEventList(final QAnalysis pAnalysis,
+                             final QAccount pAccount) {
             /* Call super constructor */
-            super(pAccount, pFormatter);
+            super(pAnalysis, pAccount);
         }
 
         /**
@@ -408,7 +458,19 @@ public class QEvent
          */
         protected void registerEvent(final Event pEvent,
                                      final boolean isCredit) {
-            QEvent myEvent = new QEvent(getFormatter(), pEvent, isCredit);
+            QEvent myEvent;
+            switch (pEvent.getCategoryClass()) {
+                case TaxedIncome:
+                case BenefitIncome:
+                    myEvent = new QSalaryEvent(getAnalysis(), pEvent, isCredit);
+                    break;
+                case Interest:
+                    myEvent = new QInterestEvent(getAnalysis(), pEvent, isCredit);
+                    break;
+                default:
+                    myEvent = new QEvent(getAnalysis(), pEvent, isCredit);
+                    break;
+            }
             addEvent(myEvent);
         }
     }

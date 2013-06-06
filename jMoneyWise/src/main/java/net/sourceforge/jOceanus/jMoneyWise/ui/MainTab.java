@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -124,6 +125,11 @@ public class MainTab
     private static final String MENU_SUBVERSION = NLS_BUNDLE.getString("MenuSubVersion");
 
     /**
+     * Program name.
+     */
+    private static final String PROGRAM_NAME = NLS_BUNDLE.getString("ProgramName");
+
+    /**
      * The data view.
      */
     private final View theView;
@@ -197,7 +203,7 @@ public class MainTab
      */
     @Override
     protected String getFrameName() {
-        return "jMoneyWise";
+        return PROGRAM_NAME;
     }
 
     @Override
@@ -520,6 +526,12 @@ public class MainTab
             /* Determine focus of maintenance */
             theMaint.determineFocus();
         }
+    }
+
+    @Override
+    protected void displayAbout() {
+        /* Show a quick dialog */
+        JOptionPane.showMessageDialog(getFrame(), getFrameName());
     }
 
     /**

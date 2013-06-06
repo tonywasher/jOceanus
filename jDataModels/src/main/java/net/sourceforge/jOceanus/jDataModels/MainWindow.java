@@ -156,6 +156,11 @@ public abstract class MainWindow<T extends DataSet<T>>
     private static final String ITEM_DATAMGR = NLS_BUNDLE.getString("ItemDataMgr");
 
     /**
+     * About menu item.
+     */
+    private static final String ITEM_ABOUT = NLS_BUNDLE.getString("ItemAbout");
+
+    /**
      * Discard prompt.
      */
     private static final String PROMPT_DISCARD = NLS_BUNDLE.getString("PromptDiscard");
@@ -254,6 +259,11 @@ public abstract class MainWindow<T extends DataSet<T>>
      * The Show dataMgr menu item.
      */
     private JMenuItem theShowDataMgr = null;
+
+    /**
+     * The Show about menu item.
+     */
+    private JMenuItem theShowAbout = null;
 
     /**
      * The Show help menu item.
@@ -483,6 +493,10 @@ public abstract class MainWindow<T extends DataSet<T>>
         theShowDataMgr = new JMenuItem(ITEM_DATAMGR);
         theShowDataMgr.addActionListener(this);
         pMenu.add(theShowDataMgr);
+        pMenu.addSeparator();
+        theShowAbout = new JMenuItem(ITEM_ABOUT);
+        theShowAbout.addActionListener(this);
+        pMenu.add(theShowAbout);
     }
 
     /**
@@ -627,6 +641,11 @@ public abstract class MainWindow<T extends DataSet<T>>
         } else if (theHelpMgr.equals(o)) {
             /* Open the help window */
             displayHelp();
+
+            /* If this event relates to the Display About item */
+        } else if (theShowAbout.equals(o)) {
+            /* Open the help window */
+            displayAbout();
         }
     }
 
@@ -887,4 +906,9 @@ public abstract class MainWindow<T extends DataSet<T>>
             theHelpWdw = null;
         }
     }
+
+    /**
+     * Display About Box.
+     */
+    protected abstract void displayAbout();
 }

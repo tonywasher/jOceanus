@@ -804,20 +804,76 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a web output of the transaction report.
+     * Build a web output of the event category report.
      * @return Web output
      */
-    public String getTransReport() {
+    public String getEventCategoryReport() {
         /* Access the bucket lists */
         EventCategoryBucketList myEvents = theAnalysis.getEventCategories();
+        StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
+
+        /* Format the header */
+        theReport.startReport(myOutput);
+        theReport.makeLinkHeading(myOutput, "Event Category Report for "
+                                            + theDate.getYear());
+        theReport.startTable(myOutput);
+        theReport.makeTableColumn(myOutput, "Name");
+        theReport.makeTableColumn(myOutput, "Income");
+        theReport.makeTableColumn(myOutput, "TaxCredit");
+        theReport.makeTableColumn(myOutput, "NatInsurance");
+        theReport.makeTableColumn(myOutput, "Expense");
+        theReport.startTableBody(myOutput);
+
+        /* Access a new bucket iterator */
+        Iterator<EventCategoryBucket> myIterator = myEvents.iterator();
+        boolean isOdd = true;
+
+        /* Loop through the Event Category Buckets */
+        while (myIterator.hasNext()) {
+            EventCategoryBucket myBucket = myIterator.next();
+
+            /* Format the detail */
+            theReport.startDataRow(myOutput, isOdd, myBucket.getName());
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.Income));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.TaxCredit));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.NatInsurance));
+            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.Expense));
+            theReport.endRow(myOutput);
+
+            /* Flip row type */
+            isOdd = !isOdd;
+        }
+
+        /* Format the profit */
+        EventCategoryBucket myTotal = myEvents.getTotalsBucket();
+        theReport.startTotalRow(myOutput, PROFIT_TEXT);
+        theReport.makeTotalCell(myOutput, myTotal.getMoneyAttribute(EventAttribute.IncomeDelta));
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput);
+        theReport.makeTotalCell(myOutput);
+        theReport.endRow(myOutput);
+
+        /* Close the table */
+        theReport.endTable(myOutput);
+        theReport.endReport(myOutput);
+
+        /* Return the output */
+        return myOutput.toString();
+    }
+
+    /**
+     * Build a web output of the tax category report.
+     * @return Web output
+     */
+    public String getTaxCategoryReport() {
+        /* Access the bucket lists */
         TaxCategoryBucketList myTax = theAnalysis.getTaxCategories();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
 
         /* Format the header */
         theReport.startReport(myOutput);
-        theReport.makeLinkHeading(myOutput, "Transaction Report for "
+        theReport.makeLinkHeading(myOutput, "Tax Category Report for "
                                             + theDate.getYear());
-        theReport.makeSubHeading(myOutput, "Transaction Summary");
         theReport.startTable(myOutput);
         theReport.makeTableColumn(myOutput, "Name");
         theReport.makeTableColumn(myOutput, "Value");
@@ -855,46 +911,6 @@ public class AnalysisReport {
         }
 
         /* Format the next table */
-        theReport.endTable(myOutput);
-        theReport.makeSubHeading(myOutput, "Transaction Breakdown");
-        theReport.startTable(myOutput);
-        theReport.makeTableColumn(myOutput, "Name");
-        theReport.makeTableColumn(myOutput, "Income");
-        theReport.makeTableColumn(myOutput, "TaxCredit");
-        theReport.makeTableColumn(myOutput, "NatInsurance");
-        theReport.makeTableColumn(myOutput, "Expense");
-        theReport.startTableBody(myOutput);
-
-        /* Access a new bucket iterator */
-        Iterator<EventCategoryBucket> myIterator = myEvents.iterator();
-        isOdd = true;
-
-        /* Loop through the Event Category Buckets */
-        while (myIterator.hasNext()) {
-            EventCategoryBucket myBucket = myIterator.next();
-
-            /* Format the detail */
-            theReport.startDataRow(myOutput, isOdd, myBucket.getName());
-            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.Income));
-            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.TaxCredit));
-            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.NatInsurance));
-            theReport.makeValueCell(myOutput, myBucket.getMoneyAttribute(EventAttribute.Expense));
-            theReport.endRow(myOutput);
-
-            /* Flip row type */
-            isOdd = !isOdd;
-        }
-
-        /* Format the profit */
-        EventCategoryBucket myTotal = myEvents.getTotalsBucket();
-        theReport.startTotalRow(myOutput, PROFIT_TEXT);
-        theReport.makeTotalCell(myOutput, myTotal.getMoneyAttribute(EventAttribute.IncomeDelta));
-        theReport.makeTotalCell(myOutput);
-        theReport.makeTotalCell(myOutput);
-        theReport.makeTotalCell(myOutput);
-        theReport.endRow(myOutput);
-
-        /* Close the table */
         theReport.endTable(myOutput);
         theReport.endReport(myOutput);
 

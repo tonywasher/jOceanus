@@ -216,7 +216,8 @@ public class ReportSelect
         theReportBox.addItem(ReportType.INSTANT);
         theReportBox.addItem(ReportType.ASSET);
         theReportBox.addItem(ReportType.INCOME);
-        theReportBox.addItem(ReportType.TRANSACTION);
+        theReportBox.addItem(ReportType.EVENTCATEGORY);
+        theReportBox.addItem(ReportType.TAXCATEGORY);
         theReportBox.addItem(ReportType.TAX);
         theReportBox.addItem(ReportType.BREAKDOWN);
         theReportBox.addItem(ReportType.MARKET);
@@ -567,9 +568,14 @@ public class ReportSelect
         TAX("Taxation"),
 
         /**
-         * Transaction Report.
+         * Tax Category Report.
          */
-        TRANSACTION("Transaction"),
+        TAXCATEGORY("TaxCategory"),
+
+        /**
+         * Event Category Report.
+         */
+        EVENTCATEGORY("EventCategory"),
 
         /**
          * Instant Asset Report.

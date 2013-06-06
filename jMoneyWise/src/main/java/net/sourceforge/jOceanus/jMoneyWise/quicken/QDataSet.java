@@ -33,7 +33,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QAccount.QAccountList;
 
 /**
  * Quicken DataSet Representation.
@@ -42,7 +41,7 @@ public class QDataSet {
     /**
      * Quicken Date Format.
      */
-    private static final String QIF_DATEFORMAT = "dd/MM/YY";
+    private static final String QIF_DATEFORMAT = "dd/MM/yyyy";
 
     /**
      * Data Formatter.
@@ -57,7 +56,7 @@ public class QDataSet {
     /**
      * Account List.
      */
-    private final QAccountList theAccounts;
+    private final QAnalysis theAnalysis;
 
     /**
      * Constructor.
@@ -72,11 +71,11 @@ public class QDataSet {
         /* Set Data Formatter to correct date format */
         theFormatter.setFormat(QIF_DATEFORMAT);
 
-        /* Create the lists */
-        theAccounts = new QAccountList(theFormatter);
+        /* Create the analysis */
+        theAnalysis = new QAnalysis(theFormatter);
 
         /* Analyse the data */
-        theAccounts.analyseData(pStatus, theData);
+        theAnalysis.analyseData(pStatus, theData);
     }
 
     /**
@@ -98,7 +97,7 @@ public class QDataSet {
             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer);
 
             /* Output the data */
-            boolean bSuccess = theAccounts.outputData(pStatus, myWriter);
+            boolean bSuccess = theAnalysis.outputData(pStatus, myWriter);
             myWriter.close();
             return bSuccess;
 

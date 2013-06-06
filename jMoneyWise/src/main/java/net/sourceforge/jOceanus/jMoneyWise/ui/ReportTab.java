@@ -271,10 +271,16 @@ public class ReportTab
                 myText = myReport.getIncomeReport();
                 break;
 
-            case TRANSACTION:
+            case EVENTCATEGORY:
                 myAnalysis = theAnalysis.getAnalysisYear(myYear);
                 myReport = new AnalysisReport(myAnalysis);
-                myText = myReport.getTransReport();
+                myText = myReport.getEventCategoryReport();
+                break;
+
+            case TAXCATEGORY:
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myReport = new AnalysisReport(myAnalysis);
+                myText = myReport.getTaxCategoryReport();
                 break;
 
             case TAX:

@@ -897,6 +897,12 @@ public class Account
             if (theInfoSet != null) {
                 /* Validate the InfoSet */
                 theInfoSet.validate();
+
+                /* If the account is autoExpense, check that there is no opening balance */
+                if ((getAutoExpense() != null)
+                    && (getOpeningBalance() != null)) {
+                    addError("cannot be autoExpense with an opening balance", AccountInfoSet.getFieldForClass(AccountInfoClass.AutoExpense));
+                }
             }
         }
 

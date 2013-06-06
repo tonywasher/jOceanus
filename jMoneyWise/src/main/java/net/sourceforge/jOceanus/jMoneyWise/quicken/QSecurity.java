@@ -170,11 +170,11 @@ public final class QSecurity
 
         /**
          * Constructor.
-         * @param pFormatter the data formatter
+         * @param pAnalysis the analysis
          */
-        protected QSecurityList(final JDataFormatter pFormatter) {
+        protected QSecurityList(final QAnalysis pAnalysis) {
             /* Call super constructor */
-            super(pFormatter);
+            super(pAnalysis.getFormatter());
 
             /* Create the map */
             theSecurities = new HashMap<Account, QSecurity>();
@@ -267,8 +267,8 @@ public final class QSecurity
 
             /* Clear AutoSwitch */
             reset();
-            append(QAccount.QIF_CLROPT);
-            append(QAccount.QIF_AUTOSWITCH);
+            append(QAnalysis.QIF_CLROPT);
+            append(QAnalysis.QIF_AUTOSWITCH);
             endLine();
             pStream.write(getBufferedString());
 
@@ -291,8 +291,8 @@ public final class QSecurity
 
             /* Set AutoSwitch */
             reset();
-            append(QAccount.QIF_SETOPT);
-            append(QAccount.QIF_AUTOSWITCH);
+            append(QAnalysis.QIF_SETOPT);
+            append(QAnalysis.QIF_AUTOSWITCH);
             endLine();
             pStream.write(getBufferedString());
 

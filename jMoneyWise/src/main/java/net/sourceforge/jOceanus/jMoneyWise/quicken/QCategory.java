@@ -121,11 +121,11 @@ public final class QCategory
 
         /**
          * Constructor.
-         * @param pFormatter the data formatter
+         * @param pAnalysis the analysis
          */
-        protected QCategoryList(final JDataFormatter pFormatter) {
+        protected QCategoryList(final QAnalysis pAnalysis) {
             /* Call super constructor */
-            super(pFormatter);
+            super(pAnalysis.getFormatter());
 
             /* Create the map */
             theParents = new HashMap<EventCategory, QCategory>();
