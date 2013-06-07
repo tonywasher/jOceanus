@@ -139,9 +139,9 @@ public final class QSecurity
     private String getSecurityType() {
         switch (theSecurity.getAccountCategoryClass()) {
             case Shares:
-                return "Stock";
+                return "Share";
             case UnitTrust:
-                return "Mutual Fund";
+                return "Unit/Inv. Trust";
             case LifeBond:
                 return "Bond";
             case Endowment:

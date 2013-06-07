@@ -169,12 +169,22 @@ public class Account
     }
 
     /**
+     * Obtain Holding.
+     * @return the holding
+     */
+    public Account getHolding() {
+        return hasInfoSet
+                ? theInfoSet.getAccount(AccountInfoClass.Holding)
+                : null;
+    }
+
+    /**
      * Obtain Currency.
      * @return the currency
      */
     public AccountCurrency getCurrency() {
         return hasInfoSet
-                ? theInfoSet.getValue(AccountInfoClass.Currency, AccountCurrency.class)
+                ? theInfoSet.getAccountCurrency(AccountInfoClass.Currency)
                 : null;
     }
 
@@ -698,6 +708,15 @@ public class Account
     }
 
     /**
+     * Set a new holding.
+     * @param pHolding the new holding
+     * @throws JDataException on error
+     */
+    public void setHolding(final Account pHolding) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Holding, pHolding);
+    }
+
+    /**
      * Set a new symbol.
      * @param pSymbol the new symbol
      * @throws JDataException on error
@@ -738,7 +757,7 @@ public class Account
      * @param pCategory the new autoExpense
      * @throws JDataException on error
      */
-    public void setAuroExpense(final EventCategory pCategory) throws JDataException {
+    public void setAutoExpense(final EventCategory pCategory) throws JDataException {
         setInfoSetValue(AccountInfoClass.AutoExpense, pCategory);
     }
 

@@ -87,6 +87,7 @@ public class AccountInfoSet
         switch (pInfoClass) {
             case Parent:
             case Alias:
+            case Holding:
                 /* Access account of object */
                 myValue = getAccount(pInfoClass);
                 break;
@@ -271,6 +272,12 @@ public class AccountInfoSet
                         ? JDataFieldRequired.CanExist
                         : JDataFieldRequired.NotAllowed;
 
+                /* Handle Holding */
+            case Holding:
+                return (myClass == AccountCategoryClass.Portfolio)
+                        ? JDataFieldRequired.MustExist
+                        : JDataFieldRequired.NotAllowed;
+
                 /* Handle Maturity */
             case Maturity:
                 return (myClass == AccountCategoryClass.Bond)
@@ -279,7 +286,7 @@ public class AccountInfoSet
 
                 /* Handle Symbol */
             case Symbol:
-                return (myClass.isCapital() && (myAccount.getAlias() == null))
+                return (myClass.hasUnits() && (myAccount.getAlias() == null))
                         ? JDataFieldRequired.MustExist
                         : JDataFieldRequired.NotAllowed;
 
@@ -341,12 +348,18 @@ public class AccountInfoSet
                 case Password:
                 case SortCode:
                 case Account:
-                case Reference:
                 case Notes:
+                    /* Access data */
+                    char[] myArray = myInfo.getValue(char[].class);
+                    if (myArray.length > myClass.getMaximumLength()) {
+                        myAccount.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
+                    }
+                    break;
+                case Reference:
                 case Comments:
                     /* Access data */
-                    char[] myValue = myInfo.getValue(char[].class);
-                    if (myValue.length > myClass.getMaximumLength()) {
+                    String myString = myInfo.getValue(String.class);
+                    if (myString.length() > myClass.getMaximumLength()) {
                         myAccount.addError(DataItem.ERROR_LENGTH, getFieldForClass(myClass));
                     }
                     break;
@@ -356,19 +369,19 @@ public class AccountInfoSet
 
                     /* check that any parent is owner */
                     if (!myParent.getAccountCategoryClass().canParentAccount()) {
-                        myAccount.addError("Parent account cannot have children", getFieldForClass(AccountInfoClass.Parent));
+                        myAccount.addError("Parent account cannot have children", getFieldForClass(myClass));
                     }
 
                     /* If we are open then parent must be open */
                     if (!myAccount.isClosed()
                         && myParent.isClosed()) {
-                        myAccount.addError("Parent account must not be closed", getFieldForClass(AccountInfoClass.Parent));
+                        myAccount.addError("Parent account must not be closed", getFieldForClass(myClass));
                     }
 
                     /* If we have Units then parent must be portfolio */
                     if (myAccount.hasUnits()
                         && (myParent.getAccountCategoryClass() != AccountCategoryClass.Portfolio)) {
-                        myAccount.addError("Parent account must be portfolio", getFieldForClass(AccountInfoClass.Parent));
+                        myAccount.addError("Parent account must be portfolio", getFieldForClass(myClass));
                     }
                     break;
                 case Alias:
@@ -378,38 +391,58 @@ public class AccountInfoSet
 
                     /* Cannot alias to self */
                     if (Difference.isEqual(myAccount, myAlias)) {
-                        myAccount.addError("Cannot alias to self", getFieldForClass(AccountInfoClass.Alias));
+                        myAccount.addError("Cannot alias to self", getFieldForClass(myClass));
 
                         /* Must alias to same type */
                     } else if (!Difference.isEqual(myAccount.getAccountCategoryClass(), myAliasClass)) {
-                        myAccount.addError("Must alias to same account category", getFieldForClass(AccountInfoClass.Alias));
+                        myAccount.addError("Must alias to same account category", getFieldForClass(myClass));
 
                         /* Must alias to different TaxFree type */
                     } else if (myAccount.isTaxFree().equals(myAlias.isTaxFree())) {
-                        myAccount.addError("Must alias to different TaxFree account type", getFieldForClass(AccountInfoClass.Alias));
+                        myAccount.addError("Must alias to different TaxFree account type", getFieldForClass(myClass));
                     }
 
                     /* Must not be aliased to */
                     if (myAccount.isAliasedTo()) {
-                        myAccount.addError("This account is already aliased to", getFieldForClass(AccountInfoClass.Alias));
+                        myAccount.addError("This account is already aliased to", getFieldForClass(myClass));
                     }
 
                     /* Alias cannot be aliased */
                     if (myAlias.isAlias()) {
-                        myAccount.addError("The alias account is already aliased", getFieldForClass(AccountInfoClass.Alias));
+                        myAccount.addError("The alias account is already aliased", getFieldForClass(myClass));
                     }
 
                     /* Must not have prices */
                     AccountStatus myStatus = myAccount.getStatus();
                     if (myStatus.hasPrices()) {
-                        myAccount.addError("Aliased account has prices", getFieldForClass(AccountInfoClass.Alias));
+                        myAccount.addError("Aliased account has prices", getFieldForClass(myClass));
                     }
 
                     /* Alias account must have prices */
                     AccountStatus myAliasStatus = myAlias.getStatus();
                     if ((!myAliasStatus.hasPrices())
                         && (myAliasStatus.hasEvents())) {
-                        myAccount.addError("Alias account has no prices", getFieldForClass(AccountInfoClass.Alias));
+                        myAccount.addError("Alias account has no prices", getFieldForClass(myClass));
+                    }
+                    break;
+                case Holding:
+                    /* Access parent */
+                    Account myHolding = myInfo.getAccount();
+
+                    /* check that holding account is savings */
+                    if (!myHolding.isSavings()) {
+                        myAccount.addError("Holding account must be a savings account", getFieldForClass(myClass));
+                    }
+
+                    /* If we are open then parent must be open */
+                    if (!myAccount.isClosed()
+                        && myHolding.isClosed()) {
+                        myAccount.addError("Holding account must not be closed", getFieldForClass(myClass));
+                    }
+
+                    /* We must be parent of holding account */
+                    if (!myAccount.equals(myHolding.getParent())) {
+                        myAccount.addError("Holding account must be child of this account", getFieldForClass(myClass));
                     }
                     break;
                 default:

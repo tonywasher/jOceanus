@@ -33,7 +33,7 @@ import javax.swing.JTabbedPane;
 /**
  * Wrappers for simple Swing objects that enable/disable child elements.
  */
-public class JEnableWrapper {
+public final class JEnableWrapper {
     /**
      * Constructor.
      */
@@ -65,9 +65,17 @@ public class JEnableWrapper {
         @Override
         public void add(final Component pComponent,
                         final Object pConstraints) {
-            /* Add to list */
-            theList.add(pComponent);
+            registerComponent(pComponent);
             super.add(pComponent, pConstraints);
+        }
+
+        /**
+         * Register component.
+         * @param pComponent the component to register
+         */
+        public void registerComponent(final Component pComponent) {
+            /* Add component to list */
+            theList.add(pComponent);
         }
 
         @Override

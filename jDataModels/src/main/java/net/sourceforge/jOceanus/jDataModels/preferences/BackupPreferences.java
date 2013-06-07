@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jDataModels.preferences;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 
@@ -53,6 +54,11 @@ public class BackupPreferences
     public static final String NAME_ARCHIVE_FILE = "ArchiveFile";
 
     /**
+     * Registry name for Last Event.
+     */
+    public static final String NAME_LAST_EVENT = "LastEvent";
+
+    /**
      * Registry name for Backup TimeStamp.
      */
     public static final String NAME_BACKUP_TIME = "BackupTimeStamp";
@@ -76,6 +82,11 @@ public class BackupPreferences
      * Display name for BackupDirectory.
      */
     private static final String DISPLAY_ARCHIVE_FILE = "Archive File";
+
+    /**
+     * Display name for Last Event.
+     */
+    private static final String DISPLAY_LAST_EVENT = "Last Event";
 
     /**
      * Display name for Backup Timestamp.
@@ -103,6 +114,11 @@ public class BackupPreferences
     private static final String DEFAULT_ARCHIVE_FILE = "C:\\Archive.xls";
 
     /**
+     * Default value for Last Event.
+     */
+    private static final JDateDay DEFAULT_LAST_EVENT = new JDateDay();
+
+    /**
      * Default value for Backup Time.
      */
     private static final Boolean DEFAULT_BACKUP_TIME = Boolean.FALSE;
@@ -122,6 +138,7 @@ public class BackupPreferences
         defineStringPreference(NAME_BACKUP_PFIX, DEFAULT_BACKUP_PFIX);
         definePreference(NAME_BACKUP_TYPE, DEFAULT_BACKUP_TYPE, WorkBookType.class);
         defineFilePreference(NAME_ARCHIVE_FILE, DEFAULT_ARCHIVE_FILE);
+        defineDatePreference(NAME_LAST_EVENT, DEFAULT_LAST_EVENT);
         defineBooleanPreference(NAME_BACKUP_TIME, DEFAULT_BACKUP_TIME);
     }
 
@@ -139,6 +156,9 @@ public class BackupPreferences
         }
         if (pName.equals(NAME_ARCHIVE_FILE)) {
             return DISPLAY_ARCHIVE_FILE;
+        }
+        if (pName.equals(NAME_LAST_EVENT)) {
+            return DISPLAY_LAST_EVENT;
         }
         if (pName.equals(NAME_BACKUP_TIME)) {
             return DISPLAY_BACKUP_TIME;

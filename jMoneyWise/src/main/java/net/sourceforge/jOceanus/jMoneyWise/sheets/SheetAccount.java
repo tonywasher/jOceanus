@@ -286,13 +286,13 @@ public class SheetAccount
             AccountList myList = pData.getAccounts();
             AccountInfoList myInfoList = pData.getAccountInfo();
 
-            /* Declare the number of steps */
-            if (!pTask.setNumSteps(myTotal)) {
+            /* Declare the number of steps (*2) */
+            if (!pTask.setNumSteps(myTotal << 1)) {
                 return false;
             }
 
-            /* Loop through the rows of the table in reverse order */
-            for (int i = myTotal - 1; i >= 0; i--) {
+            /* Loop through the rows of the table */
+            for (int i = 0; i < myTotal; i++) {
                 /* Access the row by reference */
                 DataRow myRow = myView.getRowByIndex(i);
                 int iAdjust = 0;
@@ -309,14 +309,39 @@ public class SheetAccount
                 }
 
                 /* Handle closed which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                // myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 // Boolean isClosed = Boolean.FALSE;
                 // if (myCell != null) {
                 // isClosed = myCell.getBooleanValue();
                 // }
+                /* Add the value into the finance tables */
+                myList.addOpenItem(0, myName, myAcType, Boolean.FALSE/* TODO isClosed */, isTaxFree);
+
+                /* Report the progress */
+                myCount++;
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
+                    return false;
+                }
+            }
+
+            /* Loop through the rows of the table */
+            for (int i = 0; i < myTotal; i++) {
+                /* Access the row by reference */
+                DataRow myRow = myView.getRowByIndex(i);
+                int iAdjust = 0;
+
+                /* Access account name */
+                String myName = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                Account myAccount = myList.findItemByName(myName);
+
+                /* Skip three columns */
+                iAdjust++;
+                iAdjust++;
+                iAdjust++;
 
                 /* Handle parent which may be missing */
-                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myParent = null;
                 if (myCell != null) {
                     myParent = myCell.getStringValue();
@@ -327,6 +352,13 @@ public class SheetAccount
                 String myAlias = null;
                 if (myCell != null) {
                     myAlias = myCell.getStringValue();
+                }
+
+                /* Handle holding account which may be missing */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                String myHolding = null;
+                if (myCell != null) {
+                    myHolding = myCell.getStringValue();
                 }
 
                 /* Handle maturity which may be missing */
@@ -357,13 +389,11 @@ public class SheetAccount
                     myAutoExpense = myCell.getStringValue();
                 }
 
-                /* Add the value into the finance tables */
-                Account myAccount = myList.addOpenItem(0, myName, myAcType, Boolean.FALSE/* TODO isClosed */, isTaxFree);
-
                 /* Add information relating to the account */
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Parent, myParent);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Alias, myAlias);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Holding, myHolding);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Symbol, mySymbol);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.OpeningBalance, myBalance);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.AutoExpense, myAutoExpense);

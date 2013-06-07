@@ -179,12 +179,14 @@ public class SheetAccountPrice
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
+     * @param pLastEvent the last date to load
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
                                          final DataWorkBook pWorkBook,
-                                         final FinanceData pData) throws JDataException {
+                                         final FinanceData pData,
+                                         final JDateDay pLastEvent) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Find the range of cells */
@@ -222,6 +224,12 @@ public class SheetAccountPrice
                 /* Access date */
                 DataCell myCell = myView.getRowCellByIndex(myRow, 0);
                 JDateDay myDate = myCell.getDateValue();
+
+                /* If the price is too late */
+                if (pLastEvent.compareTo(myDate) < 0) {
+                    /* Break the loop */
+                    break;
+                }
 
                 /* Loop through the columns of the table */
                 for (int j = 2; j < myCols; j++) {

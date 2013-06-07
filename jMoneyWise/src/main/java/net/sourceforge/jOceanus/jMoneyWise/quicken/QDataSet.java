@@ -32,6 +32,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 
 /**
@@ -49,6 +50,11 @@ public class QDataSet {
     private final JDataFormatter theFormatter = new JDataFormatter();
 
     /**
+     * QIF Preferences.
+     */
+    private final QIFPreference thePreferences;
+
+    /**
      * Data Set.
      */
     private final FinanceData theData;
@@ -62,11 +68,14 @@ public class QDataSet {
      * Constructor.
      * @param pStatus the thread status
      * @param pData the dataSet
+     * @param pPreferences the preferences
      */
     public QDataSet(final ThreadStatus<FinanceData> pStatus,
-                    final FinanceData pData) {
-        /* Store Data Set */
+                    final FinanceData pData,
+                    final QIFPreference pPreferences) {
+        /* Store parameters */
         theData = pData;
+        thePreferences = pPreferences;
 
         /* Set Data Formatter to correct date format */
         theFormatter.setFormat(QIF_DATEFORMAT);
@@ -75,42 +84,56 @@ public class QDataSet {
         theAnalysis = new QAnalysis(theFormatter);
 
         /* Analyse the data */
-        theAnalysis.analyseData(pStatus, theData);
+        JDateDay myLastEvent = thePreferences.getDateValue(QIFPreference.NAME_LASTEVENT);
+        theAnalysis.analyseData(pStatus, theData, myLastEvent);
     }
 
     /**
      * Output data to file.
      * @param pStatus the thread status
-     * @param pFile the output file
      * @return success true/false
      * @throws JDataException on error
      */
-    public boolean outputData(final ThreadStatus<FinanceData> pStatus,
-                              final File pFile) throws JDataException {
+    public boolean outputData(final ThreadStatus<FinanceData> pStatus) throws JDataException {
         FileOutputStream myOutput = null;
+        boolean doDelete = true;
+
+        /* Determine name of output file */
+        String myDirectory = thePreferences.getStringValue(QIFPreference.NAME_QIFDIR);
+
+        /* Determine the archive name */
+        File myQIFFile = new File(myDirectory
+                                  + "\\NewFinance.qif");
 
         /* Protect against exceptions */
         try {
             /* Create the Stream writer */
-            myOutput = new FileOutputStream(pFile);
+            myOutput = new FileOutputStream(myQIFFile);
             BufferedOutputStream myBuffer = new BufferedOutputStream(myOutput);
             OutputStreamWriter myWriter = new OutputStreamWriter(myBuffer);
 
             /* Output the data */
             boolean bSuccess = theAnalysis.outputData(pStatus, myWriter);
             myWriter.close();
+            doDelete = false;
             return bSuccess;
 
         } catch (IOException e) {
             /* Report the error */
             throw new JDataException(ExceptionClass.EXCEL, "Failed to write to file: "
-                                                           + pFile.getName(), e);
+                                                           + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
                 /* Close the output stream */
                 if (myOutput != null) {
                     myOutput.close();
+                }
+
+                /* Delete the file */
+                if ((doDelete)
+                    && (!myQIFFile.delete())) {
+                    doDelete = false;
                 }
 
                 /* Ignore errors */

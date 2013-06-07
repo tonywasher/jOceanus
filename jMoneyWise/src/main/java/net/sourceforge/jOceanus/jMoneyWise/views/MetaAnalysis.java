@@ -149,12 +149,12 @@ public class MetaAnalysis {
         /**
          * Registry name for BirthDate.
          */
-        protected static final String NAME_BIRTHDATE = "BirthDate";
+        public static final String NAME_BIRTHDATE = "BirthDate";
 
         /**
          * Display name for BirthDate.
          */
-        protected static final String DISPLAY_BIRTHDATE = "Birth Date";
+        private static final String DISPLAY_BIRTHDATE = "Birth Date";
 
         /**
          * Default value for BirthDate.

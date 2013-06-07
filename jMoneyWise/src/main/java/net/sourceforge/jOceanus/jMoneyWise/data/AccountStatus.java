@@ -102,6 +102,11 @@ public class AccountStatus
     public static final JDataField FIELD_ISALIASD = FIELD_DEFS.declareLocalField("isAliasedTo");
 
     /**
+     * isHolding Field Id.
+     */
+    public static final JDataField FIELD_ISHOLDING = FIELD_DEFS.declareLocalField("isHolding");
+
+    /**
      * isCloseable Field Id.
      */
     public static final JDataField FIELD_ISCLSABL = FIELD_DEFS.declareLocalField("isCloseable");
@@ -157,6 +162,11 @@ public class AccountStatus
         if (FIELD_ISALIASD.equals(pField)) {
             return isAliasedTo
                     ? isAliasedTo
+                    : JDataFieldValue.SkipField;
+        }
+        if (FIELD_ISHOLDING.equals(pField)) {
+            return isHolding
+                    ? isHolding
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_ISCLSABL.equals(pField)) {
@@ -221,6 +231,11 @@ public class AccountStatus
      * is this Aliased to?
      */
     private boolean isAliasedTo = false;
+
+    /**
+     * is this a holding account for a portfolio?
+     */
+    private boolean isHolding = false;
 
     /**
      * Get the close Date of the account.
@@ -319,6 +334,14 @@ public class AccountStatus
     }
 
     /**
+     * Is the account a holding account?
+     * @return true/false
+     */
+    protected boolean isHolding() {
+        return isHolding;
+    }
+
+    /**
      * Standard constructor.
      */
     protected AccountStatus() {
@@ -334,6 +357,7 @@ public class AccountStatus
         theCloseDate = pStatus.theCloseDate;
         theInitPrice = pStatus.theInitPrice;
         isCloseable = pStatus.isCloseable;
+        isHolding = pStatus.isHolding;
         isAliasedTo = pStatus.isAliasedTo;
         isParent = pStatus.isParent;
         hasPatterns = pStatus.hasPatterns;
@@ -357,6 +381,7 @@ public class AccountStatus
         hasPatterns = false;
         isParent = false;
         isAliasedTo = false;
+        isHolding = false;
     }
 
     /**
@@ -461,6 +486,13 @@ public class AccountStatus
                     }
                     if (myAccount.isLoan()) {
                         hasLoans = true;
+                    }
+                    break;
+                case Holding:
+                    /* Set flags */
+                    isHolding = true;
+                    if (!isClosed) {
+                        isCloseable = false;
                     }
                     break;
                 default:

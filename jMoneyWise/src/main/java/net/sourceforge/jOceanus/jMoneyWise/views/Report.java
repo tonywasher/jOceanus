@@ -162,10 +162,24 @@ public final class Report {
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
+        /* Define standard display section */
+        myBuilder.append(".");
+        myBuilder.append("showDiv");
+        myBuilder.append(" div { display: block; }");
+        pSheet.addRule(myBuilder.toString());
+        myBuilder.setLength(0);
+
+        /* Define standard hide section */
+        myBuilder.append(".");
+        myBuilder.append("hideDiv");
+        myBuilder.append(" div { width: 80%; margin-left: 15%; display: none; }");
+        pSheet.addRule(myBuilder.toString());
+        myBuilder.setLength(0);
+
         /* Set link definition */
         myBuilder.append("a { font-weight: bold; text-decoration: none; color: ");
         myBuilder.append(DataConverter.colorToHexString(Color.blue));
-        myBuilder.append(";}");
+        myBuilder.append("; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
     }

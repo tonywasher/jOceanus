@@ -45,6 +45,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 
@@ -132,7 +133,7 @@ public class MaintPreferences
     /**
      * The properties panel.
      */
-    private final JPanel theProperties;
+    private final JEnablePanel theProperties;
 
     /**
      * The layout.
@@ -198,7 +199,7 @@ public class MaintPreferences
         mySelection.add(theSelect);
 
         /* Create the properties panel */
-        theProperties = new JPanel();
+        theProperties = new JEnablePanel();
         theLayout = new CardLayout();
         theProperties.setLayout(theLayout);
 
@@ -247,6 +248,13 @@ public class MaintPreferences
 
         /* Set the required focus */
         theDataEntry.setFocus();
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Pass on to important elements */
+        theSelect.setEnabled(bEnabled);
+        theProperties.setEnabled(bEnabled);
     }
 
     /**

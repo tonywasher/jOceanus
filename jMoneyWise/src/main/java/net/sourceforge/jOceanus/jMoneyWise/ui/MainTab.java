@@ -30,7 +30,6 @@ import java.util.ResourceBundle;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -530,8 +529,11 @@ public class MainTab
 
     @Override
     protected void displayAbout() {
-        /* Show a quick dialog */
-        JOptionPane.showMessageDialog(getFrame(), getFrameName());
+        /* Create a new AboutBox */
+        AboutBox myAbout = new AboutBox(getFrame(), getFrameName());
+
+        /* Show the box */
+        myAbout.showDialog();
     }
 
     /**

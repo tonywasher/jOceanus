@@ -22,8 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.threads;
 
-import java.io.File;
-
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
@@ -31,6 +29,8 @@ import net.sourceforge.jOceanus.jDataModels.threads.WorkerThread;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QDataSet;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference;
+import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 
 /**
  * WorkerThread extension to create a QIF archive.
@@ -70,28 +70,23 @@ public class WriteQIF
 
     @Override
     public Void performTask() throws JDataException {
-        boolean doDelete = false;
-        File myQIFFile = null;
-
         /* Catch Exceptions */
         try {
             /* Initialise the status window */
             theStatus.initTask("Analysing Data");
 
-            /* Determine the archive name */
-            myQIFFile = new File("c:\\Users\\Tony\\NewFinance.qif");
+            /* Load configuration */
+            PreferenceManager myMgr = theControl.getPreferenceMgr();
+            QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
 
             /* Create QIF analysis */
-            QDataSet myQData = new QDataSet(theStatus, theControl.getData());
-
-            /* File created, so delete on error */
-            doDelete = true;
+            QDataSet myQData = new QDataSet(theStatus, theControl.getData(), myPrefs);
 
             /* Initialise the status window */
             theStatus.initTask("Writing QIF file");
 
             /* Create file */
-            boolean bContinue = myQData.outputData(theStatus, myQIFFile);
+            boolean bContinue = myQData.outputData(theStatus);
 
             /* Check for cancellation */
             if (!bContinue) {
@@ -100,14 +95,9 @@ public class WriteQIF
 
             /* Catch any exceptions */
         } catch (JDataException e) {
-            /* Delete the file */
-            if ((doDelete)
-                && (!myQIFFile.delete())) {
-                doDelete = false;
-            }
-
             /* Report the failure */
             throw e;
+
             /* Catch any exceptions */
         } catch (Exception e) {
             throw new JDataException(ExceptionClass.LOGIC, "Failed", e);

@@ -236,7 +236,6 @@ public class QEvent
 
     /**
      * build OpeningBalance QIF format.
-     * @param pFormatter the formatter
      * @param pAccount the account
      * @param pStartDate the opening date
      * @param pBalance the opening balance
@@ -329,7 +328,7 @@ public class QEvent
     /**
      * Event List class.
      */
-    protected static abstract class QEventBaseList<T extends QEvent>
+    protected abstract static class QEventBaseList<T extends QEvent>
             extends QElement {
         /**
          * The analysis.
@@ -379,9 +378,8 @@ public class QEvent
         }
 
         /**
-         * Register event.
+         * Add event to list.
          * @param pEvent the event
-         * @param isCredit is this the credit item?
          */
         protected void addEvent(final T pEvent) {
             theEvents.add(pEvent);

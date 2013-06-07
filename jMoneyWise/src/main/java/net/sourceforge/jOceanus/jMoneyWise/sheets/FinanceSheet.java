@@ -255,6 +255,7 @@ public class FinanceSheet
 
         /* Determine the archive name */
         String myName = pPreferences.getStringValue(BackupPreferences.NAME_ARCHIVE_FILE);
+        JDateDay myLastEvent = pPreferences.getDateValue(BackupPreferences.NAME_LAST_EVENT);
         File myArchive = new File(myName);
 
         /* Protect the workbook retrieval */
@@ -267,7 +268,7 @@ public class FinanceSheet
             WorkBookType myType = WorkBookType.determineType(myName);
 
             /* Load the data from the stream */
-            FinanceData myData = loadArchiveStream(pTask, myStream, myType);
+            FinanceData myData = loadArchiveStream(pTask, myStream, myType, myLastEvent);
 
             /* Close the Stream to force out errors */
             myStream.close();
@@ -297,12 +298,14 @@ public class FinanceSheet
      * @param pTask Task Control for task
      * @param pStream Input stream to load from
      * @param pType the workBookType
+     * @param pLastEvent the last event
      * @return the newly loaded data
      * @throws JDataException on error
      */
     private static FinanceData loadArchiveStream(final TaskControl<FinanceData> pTask,
                                                  final InputStream pStream,
-                                                 final WorkBookType pType) throws JDataException {
+                                                 final WorkBookType pType,
+                                                 final JDateDay pLastEvent) throws JDataException {
         /* Protect the workbook retrieval */
         try {
             /* Create the Data */
@@ -367,14 +370,14 @@ public class FinanceSheet
                 bContinue = SheetAccountRate.loadArchive(pTask, myWorkbook, myData);
             }
             if (bContinue) {
-                bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData);
+                bContinue = SheetAccountPrice.loadArchive(pTask, myWorkbook, myData, pLastEvent);
             }
             if (bContinue) {
                 myData.getAccounts().validateOnLoad();
             }
 
             if (bContinue) {
-                bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, myRange);
+                bContinue = SheetEvent.loadArchive(pTask, myWorkbook, myData, myRange, pLastEvent);
             }
             // if (bContinue) {
             // bContinue = SheetPattern.loadArchive(pTask, myWorkbook, myData);

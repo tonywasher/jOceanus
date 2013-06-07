@@ -66,6 +66,7 @@ public class QInterestEvent
 
     /**
      * Build interest debit event.
+     * @return the QIF string
      */
     private String buildDebitEvent() {
         /* Access the event */
@@ -158,6 +159,7 @@ public class QInterestEvent
 
     /**
      * Build interest credit event.
+     * @return the formatted QIF string
      */
     private String buildCreditEvent() {
         /* Access the event */

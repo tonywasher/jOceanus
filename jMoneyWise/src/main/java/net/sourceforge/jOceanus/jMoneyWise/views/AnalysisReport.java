@@ -262,7 +262,9 @@ public class AnalysisReport {
         theReport.endTable(myOutput);
 
         /* Add the detail */
+        myOutput.append("<div id=\"myTest\" class=\"hideDiv\" style=\"display:none\">");
         myOutput.append(myDetail);
+        myOutput.append("</div>");
 
         /* Terminate the html */
         theReport.endReport(myOutput);

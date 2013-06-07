@@ -24,18 +24,22 @@ package net.sourceforge.jOceanus.jMoneyWise.ui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
 import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
-import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.Document;
+import javax.swing.text.Element;
+import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.HTMLFrameHyperlinkEvent;
@@ -48,6 +52,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableScroll;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect;
@@ -77,7 +82,7 @@ public class ReportTab
     /**
      * The Scroll Pane.
      */
-    private final JScrollPane theScroll;
+    private final JEnableScroll theScroll;
 
     /**
      * The display version of the report.
@@ -115,6 +120,11 @@ public class ReportTab
     private final ErrorPanel theError;
 
     /**
+     * The Current Text.
+     */
+    private final StringBuilder theBuilder;
+
+    /**
      * Constructor for Report Window.
      * @param pView the data view
      */
@@ -131,6 +141,9 @@ public class ReportTab
         theSpotEntry.addAsChildOf(theDataReport);
         theSpotEntry.hideEntry();
 
+        /* Create stringBuilder */
+        theBuilder = new StringBuilder();
+
         /* Create listener */
         ReportListener myListener = new ReportListener();
 
@@ -138,13 +151,15 @@ public class ReportTab
         theEditor = new JEditorPane();
         theEditor.setEditable(false);
         theEditor.addHyperlinkListener(myListener);
+        theEditor.addMouseListener(myListener);
 
         /* Create the print pane for the window */
         thePrint = new JEditorPane();
         thePrint.setEditable(false);
 
         /* Create a scroll-pane for the editor */
-        theScroll = new JScrollPane(theEditor);
+        theScroll = new JEnableScroll();
+        theScroll.setViewportView(theEditor);
 
         /* Create display editorKit and styleSheet */
         HTMLEditorKit myDisplayKit = new HTMLEditorKit();
@@ -314,45 +329,121 @@ public class ReportTab
                 return;
         }
 
+        /* Store the text into the string builder */
+        theBuilder.setLength(0);
+        theBuilder.append(myText);
+
         /* Set the report text */
         theEditor.setText(myText);
         theEditor.setCaretPosition(0);
         theEditor.requestFocusInWindow();
         thePrint.setText(myText);
-
-        /* Document myDoc = theEditor.getDocument(); */
-        /* Element myEl = myDoc.getDefaultRootElement(); */
-        /* myEl. */
     }
 
     /**
      * Listener class.
      */
     private class ReportListener
+            extends MouseAdapter
             implements ChangeListener, ActionListener, HyperlinkListener {
         @Override
         public void hyperlinkUpdate(final HyperlinkEvent e) {
             /* If this is an activated event */
             if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                /* If this is a frame hyper-link */
                 if (e instanceof HTMLFrameHyperlinkEvent) {
+                    /* Pass through to the document */
                     HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
                     HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
                     doc.processHTMLFrameHyperlinkEvent(evt);
+
+                    /* else this is an interesting event */
                 } else {
+                    /* Protect against exceptions */
                     try {
+                        /* Access the URL and description */
                         URL url = e.getURL();
                         String desc = e.getDescription();
+
+                        /* If this is an internal link */
                         if ((url == null)
                             && (desc.startsWith("#"))) {
+                            /* Scroll to requested link */
                             theEditor.scrollToReference(desc.substring(1));
+
+                            /* else we should try the URL */
                         } else {
+                            /* Set URL page */
                             theEditor.setPage(e.getURL());
                         }
+
+                        /* Catch and ignore exceptions */
                     } catch (IOException t) {
                         t = null;
                     }
                 }
             }
+        }
+
+        @Override
+        public void mouseClicked(final MouseEvent e) {
+            /* If this is a right click event */
+            if (e.getButton() == MouseEvent.BUTTON3) {
+                /* Determine the document element that we right clicked on */
+                Element myElement = getHyperlinkElement(e);
+                if (myElement != null) {
+                    /* Obtain the attributes */
+                    Object myAttrs = myElement.getAttributes().getAttribute(HTML.Tag.A);
+                    if (myAttrs instanceof AttributeSet) {
+                        AttributeSet mySet = (AttributeSet) myAttrs;
+
+                        /* Access the reference name */
+                        String myRef = (String) mySet.getAttribute(HTML.Attribute.HREF);
+                        if (myRef != null) {
+                            /* Do something */
+                            int index = theBuilder.indexOf("<div id=\"myTest\"");
+                            if (index >= 0) {
+                                theBuilder.setLength(index);
+                            }
+                            // index = theBuilder.indexOf("class=\"", index);
+                            // index += 7;
+                            // String curState = theBuilder.substring(index, index + 7);
+                            // theBuilder.replace(index, index + 4, (curState.equals("showDiv")
+                            // ? "hide"
+                            // : "show"));
+                            theEditor.setText(theBuilder.toString());
+                        }
+                    }
+                }
+            }
+        }
+
+        /**
+         * Work out which element the mouse event relates to.
+         * @param pEvent the mouse event
+         * @return the element
+         */
+        private Element getHyperlinkElement(final MouseEvent pEvent) {
+            /* Access the editor and locate mouse position */
+            JEditorPane myEditor = (JEditorPane) pEvent.getSource();
+            int myPos = myEditor.getUI().viewToModel(myEditor, pEvent.getPoint());
+
+            /* If all looks OK so far */
+            if ((myPos >= 0)
+                && (myEditor.getDocument() instanceof HTMLDocument)) {
+
+                /* Access the document element for the position */
+                HTMLDocument myDoc = (HTMLDocument) myEditor.getDocument();
+                Element myElem = myDoc.getCharacterElement(myPos);
+
+                /* If there is an anchor reference, return the element */
+                if (myElem.getAttributes().getAttribute(HTML.Tag.A) != null) {
+                    return myElem;
+                }
+            }
+
+            /* Return no element */
+            return null;
         }
 
         @Override

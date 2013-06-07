@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jPreferenceSet;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -46,13 +47,13 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
+import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnablePanel;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jFieldSet.JFieldManager;
 import net.sourceforge.jOceanus.jLayoutManager.GridBagUtilities;
@@ -125,7 +126,12 @@ public class PreferenceSetPanel
     /**
      * The individual preference elements.
      */
-    private transient List<PreferenceElement> theList = null;
+    private final transient List<PreferenceElement> theElList;
+
+    /**
+     * The list of components to enable.
+     */
+    private transient List<Component> theCompList;
 
     /**
      * The FieldManager.
@@ -155,7 +161,7 @@ public class PreferenceSetPanel
     public PreferenceSetPanel(final JFieldManager pFieldMgr,
                               final PreferenceSet pSet) {
         /* Options SubPanel */
-        JPanel myOptions = null;
+        JEnablePanel myOptions = null;
         int myRow = 0;
 
         /* Record the set and manager */
@@ -166,8 +172,9 @@ public class PreferenceSetPanel
         /* Record the name of the set */
         theName = pSet.getClass().getSimpleName();
 
-        /* Create the list of items */
-        theList = new ArrayList<PreferenceElement>();
+        /* Create the lists of elements and items */
+        theElList = new ArrayList<PreferenceElement>();
+        theCompList = new ArrayList<Component>();
 
         /* Set a border */
         setBorder(BorderFactory.createTitledBorder(NLS_PREFERENCES));
@@ -182,7 +189,7 @@ public class PreferenceSetPanel
             PreferenceElement myItem = new PreferenceElement(myPref);
 
             /* Add it to the list */
-            theList.add(myItem);
+            theElList.add(myItem);
 
             /* Switch on the preference type */
             switch (myPref.getType()) {
@@ -190,9 +197,10 @@ public class PreferenceSetPanel
                     /* If we do not yet have an options panel */
                     if (myOptions == null) {
                         /* Create options */
-                        myOptions = new JPanel();
+                        myOptions = new JEnablePanel();
                         myOptions.setLayout(new FlowLayout(FlowLayout.LEADING));
                         myOptions.setBorder(BorderFactory.createTitledBorder(NLS_OPTIONS));
+                        theCompList.add(myOptions);
                     }
 
                     /* Add the item to the options panel */
@@ -206,16 +214,19 @@ public class PreferenceSetPanel
                     /* Add the Component into the second slot */
                     GridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
                     add(myItem.getComponent(), myConstraints);
+                    theCompList.add(myItem.getComponent());
                     break;
                 case Directory:
                 case File:
                     /* Add the Label into the first slot */
                     GridBagUtilities.setPanelLabel(myConstraints, myRow, GridBagConstraints.HORIZONTAL);
                     add(myItem.getLabel(), myConstraints);
+                    theCompList.add(myItem.getLabel());
 
                     /* Add the Component into the second slot */
                     GridBagUtilities.setPanelField(myConstraints, myRow++, 1, GridBagConstraints.REMAINDER);
                     add(myItem.getComponent(), myConstraints);
+                    theCompList.add(myItem.getComponent());
                     break;
                 default:
                     /* Add the Label into the first slot */
@@ -225,6 +236,7 @@ public class PreferenceSetPanel
                     /* Add the Component into the second slot */
                     GridBagUtilities.setPanelField(myConstraints, myRow, 1, 1);
                     add(myItem.getComponent(), myConstraints);
+                    theCompList.add(myItem.getComponent());
 
                     /* Add padding to the remainder */
                     GridBagUtilities.setPanelField(myConstraints, myRow++, 2, GridBagConstraints.REMAINDER);
@@ -277,7 +289,7 @@ public class PreferenceSetPanel
      */
     private void updateFields() {
         /* Loop through the fields */
-        for (PreferenceElement myItem : theList) {
+        for (PreferenceElement myItem : theElList) {
             /* Update the field */
             myItem.updateField();
         }
@@ -292,6 +304,15 @@ public class PreferenceSetPanel
 
         /* Notify listeners */
         fireStateChanged();
+    }
+
+    @Override
+    public void setEnabled(final boolean bEnabled) {
+        /* Loop through the registered components */
+        for (Component myComp : theCompList) {
+            /* Pass call on */
+            myComp.setEnabled(bEnabled);
+        }
     }
 
     /**

@@ -256,6 +256,7 @@ public class AccountInfo
                         switch (myType.getInfoClass()) {
                             case Alias:
                             case Parent:
+                            case Holding:
                                 myLink = myAccounts.findItemById(getValue(Integer.class));
                                 break;
                             case AutoExpense:
@@ -402,6 +403,7 @@ public class AccountInfo
             switch (myType.getInfoClass()) {
                 case Alias:
                 case Parent:
+                case Holding:
                     myNewLink = myAccounts.findItemById(myId);
                     break;
                 case AutoExpense:
@@ -476,6 +478,7 @@ public class AccountInfo
                         switch (myType.getInfoClass()) {
                             case Alias:
                             case Parent:
+                            case Holding:
                                 myLink = myData.getAccounts().findItemByName(myName);
                                 break;
                             case AutoExpense:
@@ -586,6 +589,7 @@ public class AccountInfo
         switch (getInfoClass()) {
             case Parent:
             case Alias:
+            case Holding:
                 getAccount().touchItem(this);
                 break;
             case AutoExpense:

@@ -47,69 +47,74 @@ public enum AccountInfoClass implements DataInfoClass {
     Alias(3, 2),
 
     /**
+     * Holding Account.
+     */
+    Holding(4, 3),
+
+    /**
      * Comments.
      */
-    Comments(4, 3, DataType.STRING),
+    Comments(5, 4, DataType.STRING),
 
     /**
      * Symbol.
      */
-    Symbol(5, 4, DataType.STRING),
+    Symbol(6, 5, DataType.STRING),
 
     /**
      * Opening Balance.
      */
-    OpeningBalance(6, 5, DataType.MONEY),
+    OpeningBalance(7, 6, DataType.MONEY),
 
     /**
      * AutoExpense Category.
      */
-    AutoExpense(7, 6),
+    AutoExpense(8, 7),
 
     /**
      * Currency.
      */
-    Currency(8, 7),
+    Currency(9, 8),
 
     /**
      * WebSite.
      */
-    WebSite(9, 8, DataType.CHARARRAY),
+    WebSite(10, 9, DataType.CHARARRAY),
 
     /**
      * Customer #.
      */
-    CustomerNo(10, 9, DataType.CHARARRAY),
+    CustomerNo(11, 10, DataType.CHARARRAY),
 
     /**
      * User Id.
      */
-    UserId(11, 10, DataType.CHARARRAY),
+    UserId(12, 11, DataType.CHARARRAY),
 
     /**
      * Password.
      */
-    Password(12, 11, DataType.CHARARRAY),
+    Password(13, 12, DataType.CHARARRAY),
 
     /**
      * SortCode.
      */
-    SortCode(13, 12, DataType.CHARARRAY),
+    SortCode(14, 13, DataType.CHARARRAY),
 
     /**
      * Account.
      */
-    Account(14, 13, DataType.CHARARRAY),
+    Account(15, 14, DataType.CHARARRAY),
 
     /**
      * Reference.
      */
-    Reference(15, 14, DataType.CHARARRAY),
+    Reference(16, 15, DataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    Notes(16, 15, DataType.CHARARRAY);
+    Notes(17, 16, DataType.CHARARRAY);
 
     /**
      * Class Id.

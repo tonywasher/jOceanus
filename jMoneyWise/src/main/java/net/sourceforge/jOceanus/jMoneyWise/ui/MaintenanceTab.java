@@ -55,6 +55,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jPreferenceSet.MaintPreferences;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
@@ -202,6 +203,7 @@ public class MaintenanceTab
         myPrefs.getPreferenceSet(BackupPreferences.class);
         myPrefs.getPreferenceSet(JiraPreferences.class);
         myPrefs.getPreferenceSet(SubVersionPreferences.class);
+        myPrefs.getPreferenceSet(QIFPreference.class);
 
         /* Create the PatternYear Tab */
         thePatternYear = new MaintNewYear(theView);

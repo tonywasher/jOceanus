@@ -122,6 +122,7 @@ public class QAnalysis
 
     /**
      * Access interest category.
+     * @param pEvent the event
      * @return the category
      */
     protected EventCategory getInterestCategory(final Event pEvent) {
@@ -201,9 +202,11 @@ public class QAnalysis
      * Analyse the data.
      * @param pStatus the thread status
      * @param pData the dataSet
+     * @param pLastEvent the date of the last event to process
      */
     protected void analyseData(final ThreadStatus<FinanceData> pStatus,
-                               final FinanceData pData) {
+                               final FinanceData pData,
+                               final JDateDay pLastEvent) {
         /* Store data */
         theData = pData;
 
@@ -211,7 +214,6 @@ public class QAnalysis
         EventList myEvents = pData.getEvents();
         AccountList myAccounts = pData.getAccounts();
         TaxYearList myTaxYears = pData.getTaxYears();
-        Event myLastEvent = null;
 
         /* Access the number of reporting steps */
         int mySteps = pStatus.getReportingSteps();
@@ -263,6 +265,12 @@ public class QAnalysis
                && (myIterator.hasNext())) {
             Event myEvent = myIterator.next();
 
+            /* If the price is too late */
+            if (pLastEvent.compareTo(myEvent.getDate()) < 0) {
+                /* Break the loop */
+                break;
+            }
+
             /* Ignore deleted events */
             if (myEvent.isDeleted()) {
                 continue;
@@ -280,7 +288,6 @@ public class QAnalysis
             }
 
             /* Process event for debit and credit */
-            myLastEvent = myEvent;
             processEvent(myEvent, myDebit, false);
             if (!myDebit.equals(myCredit)) {
                 processEvent(myEvent, myCredit, true);
@@ -294,19 +301,13 @@ public class QAnalysis
             }
         }
 
-        /* If we should continue */
+        /* Update status bar and analyse prices */
         AccountPriceList myPrices = pData.getPrices();
         if ((bContinue)
-            && (myLastEvent != null)) {
-            /* Determine Tax Year for last event */
-            myTaxYear = myTaxYears.findTaxYearForDate(myLastEvent.getDate());
-
-            /* Update status bar and analyse prices */
-            if ((pStatus.setNewStage("Analysing prices"))
-                && (pStatus.setNumSteps(myPrices.size()))) {
-                /* Analyse prices for securities */
-                theSecurities.buildPrices(pStatus, myPrices, myTaxYear.getTaxYear());
-            }
+            && (pStatus.setNewStage("Analysing prices"))
+            && (pStatus.setNumSteps(myPrices.size()))) {
+            /* Analyse prices for securities */
+            theSecurities.buildPrices(pStatus, myPrices, pLastEvent);
         }
     }
 

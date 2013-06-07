@@ -276,13 +276,15 @@ public class SheetEvent
      * @param pWorkBook the workbook
      * @param pData the data set to load into
      * @param pRange the range of tax years
+     * @param pLastEvent the last date to load
      * @return continue to load <code>true/false</code>
      * @throws JDataException on error
      */
     protected static boolean loadArchive(final TaskControl<FinanceData> pTask,
                                          final DataWorkBook pWorkBook,
                                          final FinanceData pData,
-                                         final YearRange pRange) throws JDataException {
+                                         final YearRange pRange,
+                                         final JDateDay pLastEvent) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the number of reporting steps */
@@ -295,7 +297,6 @@ public class SheetEvent
 
             /* Obtain the range iterator */
             ListIterator<ArchiveYear> myIterator = pRange.getReverseIterator();
-            int iYearCount = 4;
 
             /* Loop through the individual year ranges */
             while (myIterator.hasPrevious()) {
@@ -327,6 +328,12 @@ public class SheetEvent
 
                     /* Access date */
                     JDateDay myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
+
+                    /* If the event is too late */
+                    if (pLastEvent.compareTo(myDate) < 0) {
+                        /* Break the loop */
+                        break;
+                    }
 
                     /* Access the values */
                     String myDebit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
@@ -461,8 +468,9 @@ public class SheetEvent
                     }
                 }
 
-                /* Break if we have done enough years */
-                if (--iYearCount == 0) {
+                /* If the year is too late */
+                if (pLastEvent.compareTo(myYear.getDate()) < 0) {
+                    /* Break the loop */
                     break;
                 }
             }

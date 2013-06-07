@@ -102,6 +102,7 @@ public abstract class QElement {
 
     /**
      * Get Buffered String.
+     * @return the buffered string
      */
     protected String getBufferedString() {
         /* Return the string */
@@ -118,8 +119,7 @@ public abstract class QElement {
     }
 
     /**
-     * Build string.
-     * @param pBuilder the String builder to append to
+     * Complete the item.
      * @return the completed item
      */
     protected String completeItem() {
@@ -131,7 +131,7 @@ public abstract class QElement {
     }
 
     /**
-     * Append String to String Builder
+     * Append String to String Builder.
      * @param pValue string to append.
      */
     protected void append(final String pValue) {
@@ -139,7 +139,7 @@ public abstract class QElement {
     }
 
     /**
-     * Append Character to String Builder
+     * Append Character to String Builder.
      * @param pValue character to append.
      */
     protected void append(final char pValue) {
@@ -147,7 +147,7 @@ public abstract class QElement {
     }
 
     /**
-     * End line
+     * End line.
      */
     protected void endLine() {
         append(QIF_EOL);
@@ -279,6 +279,7 @@ public abstract class QElement {
 
     /**
      * Add String Line.
+     * @param pType the line type
      * @param pDetail the line detail
      */
     protected void addStringLine(final QLineType pType,

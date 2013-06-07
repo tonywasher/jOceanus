@@ -83,9 +83,84 @@ public enum AccountCurrencyClass implements StaticInterface {
     SEK(10, 9),
 
     /**
+     * Danish Krona.
+     */
+    DKK(11, 10),
+
+    /**
+     * Norwegian Krona.
+     */
+    NOK(12, 11),
+
+    /**
+     * Swiss Franc.
+     */
+    CHF(13, 12),
+
+    /**
+     * Polish Zloty.
+     */
+    PLN(14, 13),
+
+    /**
+     * Czech Koruna.
+     */
+    CZK(15, 14),
+
+    /**
+     * Hungarian Forint.
+     */
+    HUF(16, 15),
+
+    /**
+     * South Korean Won.
+     */
+    KRW(17, 16),
+
+    /**
+     * Indian Rupee.
+     */
+    INR(18, 17),
+
+    /**
+     * Pakistan Rupee.
+     */
+    PKR(19, 18),
+
+    /**
+     * SriLanka Rupee.
+     */
+    LKR(20, 19),
+
+    /**
+     * Bangladesh Taka.
+     */
+    BDT(21, 20),
+
+    /**
+     * Mexican Peso.
+     */
+    MXN(22, 21),
+
+    /**
+     * Russian Rouble.
+     */
+    RUB(23, 22),
+
+    /**
+     * SouthAfrican Rand.
+     */
+    ZAR(24, 23),
+
+    /**
+     * Brazilian Real.
+     */
+    BRL(25, 24),
+
+    /**
      * Turkish Lira.
      */
-    TRY(11, 10);
+    TRY(26, 25);
 
     /**
      * Class Id.
