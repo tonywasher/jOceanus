@@ -72,49 +72,44 @@ public enum AccountInfoClass implements DataInfoClass {
     AutoExpense(8, 7),
 
     /**
-     * Currency.
-     */
-    Currency(9, 8),
-
-    /**
      * WebSite.
      */
-    WebSite(10, 9, DataType.CHARARRAY),
+    WebSite(9, 8, DataType.CHARARRAY),
 
     /**
      * Customer #.
      */
-    CustomerNo(11, 10, DataType.CHARARRAY),
+    CustomerNo(10, 9, DataType.CHARARRAY),
 
     /**
      * User Id.
      */
-    UserId(12, 11, DataType.CHARARRAY),
+    UserId(11, 10, DataType.CHARARRAY),
 
     /**
      * Password.
      */
-    Password(13, 12, DataType.CHARARRAY),
+    Password(12, 11, DataType.CHARARRAY),
 
     /**
      * SortCode.
      */
-    SortCode(14, 13, DataType.CHARARRAY),
+    SortCode(13, 12, DataType.CHARARRAY),
 
     /**
      * Account.
      */
-    Account(15, 14, DataType.CHARARRAY),
+    Account(14, 13, DataType.CHARARRAY),
 
     /**
      * Reference.
      */
-    Reference(16, 15, DataType.CHARARRAY),
+    Reference(15, 14, DataType.CHARARRAY),
 
     /**
      * Notes.
      */
-    Notes(17, 16, DataType.CHARARRAY);
+    Notes(16, 15, DataType.CHARARRAY);
 
     /**
      * Class Id.

@@ -679,28 +679,37 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         /* Store the current detail into history */
         pushHistory();
 
-        /* Update the name if required */
-        if (!Difference.isEqual(getName(), myData.getName())) {
-            setValueName(myData.getNameField());
-        }
-
-        /* Update the description if required */
-        if (!Difference.isEqual(getDesc(), myData.getDesc())) {
-            setValueDesc(myData.getDescField());
-        }
-
-        /* Update the enabled indication if required */
-        if (getEnabled() != myData.getEnabled()) {
-            setEnabled(myData.getEnabled());
-        }
-
-        /* Update the order indication if required */
-        if (getOrder() != myData.getOrder()) {
-            setOrder(myData.getOrder());
-        }
+        /* Apply basic changes */
+        applyBasicChanges(myData);
 
         /* Check for changes */
         return checkForHistory();
+    }
+
+    /**
+     * Apply basic changes.
+     * @param pData the changed element
+     */
+    protected void applyBasicChanges(final StaticData<?, ?> pData) {
+        /* Update the name if required */
+        if (!Difference.isEqual(getName(), pData.getName())) {
+            setValueName(pData.getNameField());
+        }
+
+        /* Update the description if required */
+        if (!Difference.isEqual(getDesc(), pData.getDesc())) {
+            setValueDesc(pData.getDescField());
+        }
+
+        /* Update the enabled indication if required */
+        if (getEnabled() != pData.getEnabled()) {
+            setEnabled(pData.getEnabled());
+        }
+
+        /* Update the order indication if required */
+        if (getOrder() != pData.getOrder()) {
+            setOrder(pData.getOrder());
+        }
     }
 
     /**

@@ -312,9 +312,7 @@ public class ZipFileEntry {
 
         /* Access the top-level details */
         theFileName = pProperties.getStringProperty(PROP_NAME);
-        theFileSize = pProperties.getLongProperty(PROP_NAME);
         theZipName = pProperties.getStringProperty(PROP_ZIPNAME);
-        theCompressedSize = pProperties.getLongProperty(PROP_ZIPNAME);
 
         /* Determine whether this is a header */
         isHeader = (pProperties.getLongProperty(PROP_HEADER) != null);
@@ -327,6 +325,10 @@ public class ZipFileEntry {
 
             /* Else standard entry */
         } else {
+            /* Access file sizes */
+            theFileSize = pProperties.getLongProperty(PROP_NAME);
+            theCompressedSize = pProperties.getLongProperty(PROP_ZIPNAME);
+
             /* Determine whether this is a debug entry */
             isDebug = (pProperties.getLongProperty(PROP_DEBUG) != null);
 
@@ -338,8 +340,10 @@ public class ZipFileEntry {
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
                 /* Get digest properties */
-                theDigests[iIndex - 1] = pProperties.getByteProperty(PROP_DIGEST + iIndex);
-                theDigestLens[iIndex - 1] = pProperties.getLongProperty(PROP_DIGEST + iIndex);
+                theDigests[iIndex - 1] = pProperties.getByteProperty(PROP_DIGEST
+                                                                     + iIndex);
+                theDigestLens[iIndex - 1] = pProperties.getLongProperty(PROP_DIGEST
+                                                                        + iIndex);
             }
 
             /* Determine the number of encryption steps */
@@ -350,8 +354,10 @@ public class ZipFileEntry {
             /* Loop through the encrypts */
             for (int iIndex = 1; iIndex <= myNumEncrypts; iIndex++) {
                 /* Get digest properties */
-                theSecretKeys[iIndex - 1] = pProperties.getByteProperty(PROP_SECRETKEY + iIndex);
-                theInitVectors[iIndex - 1] = pProperties.getByteProperty(PROP_INITVECTOR + iIndex);
+                theSecretKeys[iIndex - 1] = pProperties.getByteProperty(PROP_SECRETKEY
+                                                                        + iIndex);
+                theInitVectors[iIndex - 1] = pProperties.getByteProperty(PROP_INITVECTOR
+                                                                         + iIndex);
             }
 
             /* Get signature */
@@ -394,8 +400,10 @@ public class ZipFileEntry {
             /* Loop through the digests */
             for (int iIndex = 1; iIndex <= myNumDigests; iIndex++) {
                 /* Set digest properties */
-                theProperties.setProperty(PROP_DIGEST + iIndex, theDigests[iIndex - 1]);
-                theProperties.setProperty(PROP_DIGEST + iIndex, theDigestLens[iIndex - 1]);
+                theProperties.setProperty(PROP_DIGEST
+                                          + iIndex, theDigests[iIndex - 1]);
+                theProperties.setProperty(PROP_DIGEST
+                                          + iIndex, theDigestLens[iIndex - 1]);
             }
 
             /* Store the number of encryption steps */
@@ -405,8 +413,10 @@ public class ZipFileEntry {
             /* Loop through the secret keys and initVectors */
             for (int iIndex = 1; iIndex <= myNumEncrypts; iIndex++) {
                 /* Set Secret key properties */
-                theProperties.setProperty(PROP_SECRETKEY + iIndex, theSecretKeys[iIndex - 1]);
-                theProperties.setProperty(PROP_INITVECTOR + iIndex, theInitVectors[iIndex - 1]);
+                theProperties.setProperty(PROP_SECRETKEY
+                                          + iIndex, theSecretKeys[iIndex - 1]);
+                theProperties.setProperty(PROP_INITVECTOR
+                                          + iIndex, theInitVectors[iIndex - 1]);
             }
 
             /* Store the signature */
@@ -426,7 +436,8 @@ public class ZipFileEntry {
     public void setUserStringProperty(final String pPropertyName,
                                       final String pPropertyValue) throws JDataException {
         /* Set the property */
-        theProperties.setProperty(PROP_USERPFIX + pPropertyName, pPropertyValue);
+        theProperties.setProperty(PROP_USERPFIX
+                                  + pPropertyName, pPropertyValue);
     }
 
     /**
@@ -438,7 +449,8 @@ public class ZipFileEntry {
     public void setUserLongProperty(final String pPropertyName,
                                     final Long pPropertyValue) throws JDataException {
         /* Set the property */
-        theProperties.setProperty(PROP_USERPFIX + pPropertyName, pPropertyValue);
+        theProperties.setProperty(PROP_USERPFIX
+                                  + pPropertyName, pPropertyValue);
     }
 
     /**
@@ -449,7 +461,8 @@ public class ZipFileEntry {
      */
     public String getUserStringProperty(final String pPropertyName) throws JDataException {
         /* Set the property */
-        return theProperties.getStringProperty(PROP_USERPFIX + pPropertyName);
+        return theProperties.getStringProperty(PROP_USERPFIX
+                                               + pPropertyName);
     }
 
     /**
@@ -460,7 +473,8 @@ public class ZipFileEntry {
      */
     public Long getUserLongProperty(final String pPropertyName) throws JDataException {
         /* Set the property */
-        return theProperties.getLongProperty(PROP_USERPFIX + pPropertyName);
+        return theProperties.getLongProperty(PROP_USERPFIX
+                                             + pPropertyName);
     }
 
     /**

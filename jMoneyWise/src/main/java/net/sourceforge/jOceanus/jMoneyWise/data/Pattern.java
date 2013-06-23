@@ -315,9 +315,6 @@ public class Pattern
         }
     }
 
-    /**
-     * Validate the pattern.
-     */
     @Override
     public void validate() {
         /* Check that frequency is non-null */

@@ -33,7 +33,6 @@ import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -94,10 +93,6 @@ public class AccountInfoSet
             case AutoExpense:
                 /* Access event category of object */
                 myValue = getEventCategory(pInfoClass);
-                break;
-            case Currency:
-                /* Access currency of object */
-                myValue = getAccountCurrency(pInfoClass);
                 break;
             default:
                 /* Access value of object */
@@ -190,24 +185,6 @@ public class AccountInfoSet
     }
 
     /**
-     * Obtain the currency for the infoClass.
-     * @param pInfoClass the Info Class
-     * @return the account currency
-     */
-    public AccountCurrency getAccountCurrency(final AccountInfoClass pInfoClass) {
-        /* Access existing entry */
-        AccountInfo myValue = getInfo(pInfoClass);
-
-        /* If we have no entry, return null */
-        if (myValue == null) {
-            return null;
-        }
-
-        /* Return the account currency */
-        return myValue.getAccountCurrency();
-    }
-
-    /**
      * Determine if a field is required.
      * @param pField the infoSet field
      * @return the status
@@ -253,12 +230,6 @@ public class AccountInfoSet
                 return myClass.isNonAsset()
                         ? JDataFieldRequired.CanExist
                         : JDataFieldRequired.NotAllowed;
-
-                /* Currency */
-            case Currency:
-                return myClass.isNonAsset()
-                        ? JDataFieldRequired.NotAllowed
-                        : JDataFieldRequired.CanExist;
 
                 /* Parent */
             case Parent:

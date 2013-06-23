@@ -32,6 +32,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
 import net.sourceforge.jOceanus.jDataModels.preferences.BackupPreferences;
+import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
 import net.sourceforge.jOceanus.jGordianKnot.PasswordHash;
 import net.sourceforge.jOceanus.jGordianKnot.SecureManager;
 import net.sourceforge.jOceanus.jGordianKnot.ZipFile.ZipFileEntry;
@@ -121,9 +122,8 @@ public class Backup {
         thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
 
         /* Access a default client manager */
-        theAuth = SVNWCUtil.createDefaultAuthenticationManager(thePreferences
-                .getStringValue(SubVersionPreferences.NAME_SVN_USER), thePreferences
-                .getStringValue(SubVersionPreferences.NAME_SVN_PASS));
+        theAuth = SVNWCUtil.createDefaultAuthenticationManager(thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_USER),
+                thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_PASS));
 
         /* Access a default client manager */
         theManager = SVNClientManager.newInstance();
@@ -239,7 +239,9 @@ public class Backup {
             long revLast = myRepo.getDatedRevision(new Date());
 
             /* Determine the name of the zip file */
-            myZipName = new File(pBackupDir.getPath(), myPrefix + myName + ".zip");
+            myZipName = new File(pBackupDir.getPath(), myPrefix
+                                                       + myName
+                                                       + SpreadSheet.ZIPFILE_EXT);
 
             /* If the backup file exists */
             if (myZipName.exists()) {
@@ -280,8 +282,7 @@ public class Backup {
             myEntry.setUserLongProperty(PROP_NUMREV, revLast);
 
             /* Dump the data to the zip file */
-            theAdminClient.doDump(pRepository, myStream, SVNRevision.UNDEFINED, SVNRevision.create(revLast),
-                                  false, true);
+            theAdminClient.doDump(pRepository, myStream, SVNRevision.UNDEFINED, SVNRevision.create(revLast), false, true);
 
             /* Close the stream */
             myStream.close();
@@ -322,7 +323,8 @@ public class Backup {
             }
 
             /* Delete the file on error */
-            if ((!bSuccess) && (myZipName != null)) {
+            if ((!bSuccess)
+                && (myZipName != null)) {
                 myZipName.delete();
             }
         }
@@ -384,7 +386,8 @@ public class Backup {
     /**
      * Event Handler class.
      */
-    private final class SubversionHandler implements ISVNAdminEventHandler {
+    private final class SubversionHandler
+            implements ISVNAdminEventHandler {
 
         @Override
         public void checkCancelled() throws SVNCancelException {

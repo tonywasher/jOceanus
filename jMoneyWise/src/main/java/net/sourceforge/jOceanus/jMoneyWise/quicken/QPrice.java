@@ -22,7 +22,6 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.quicken;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
@@ -30,8 +29,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 /**
  * Quicken Price.
  */
-public class QPrice
-        extends QElement {
+public class QPrice extends QElement {
     /**
      * Item type.
      */
@@ -54,13 +52,12 @@ public class QPrice
 
     /**
      * Constructor.
-     * @param pFormatter the data formatter
+     * @param pAnalysis the analysis
      * @param pPrice the account price
      */
-    protected QPrice(final JDataFormatter pFormatter,
-                     final AccountPrice pPrice) {
+    protected QPrice(final QAnalysis pAnalysis, final AccountPrice pPrice) {
         /* Call super constructor */
-        super(pFormatter);
+        super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
         /* Store the price */
         thePrice = pPrice;

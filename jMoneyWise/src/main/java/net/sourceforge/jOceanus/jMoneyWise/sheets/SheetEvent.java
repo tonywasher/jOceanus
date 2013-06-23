@@ -49,8 +49,7 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
  * SheetDataItem extension for Event.
  * @author Tony Washer
  */
-public class SheetEvent
-        extends SheetDataItem<Event> {
+public class SheetEvent extends SheetDataItem<Event> {
     /**
      * NamedArea for Events.
      */
@@ -116,9 +115,7 @@ public class SheetEvent
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup()
-                ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
+        theInfoSheet = isBackup() ? null : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     /**
@@ -136,9 +133,7 @@ public class SheetEvent
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup()
-                ? null
-                : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
+        theInfoSheet = isBackup() ? null : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     @Override
@@ -307,8 +302,7 @@ public class SheetEvent
                 DataView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
-                if (!pTask.setNewStage("Events from "
-                                       + myYear.getDate().getYear())) {
+                if (!pTask.setNewStage("Events from " + myYear.getDate().getYear())) {
                     return false;
                 }
 
@@ -320,6 +314,11 @@ public class SheetEvent
                     return false;
                 }
 
+                /* Create memory copies */
+                JDateDay myLastDay = null;
+                String myLastDebit = null;
+                String myLastCredit = null;
+
                 /* Loop through the rows of the table */
                 for (int i = 0; i < myTotal; i++) {
                     /* Access the row */
@@ -327,7 +326,9 @@ public class SheetEvent
                     int iAdjust = 0;
 
                     /* Access date */
-                    JDateDay myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
+                    DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    JDateDay myDate = (myCell != null) ? myCell.getDateValue() : myLastDay;
+                    myLastDay = myDate;
 
                     /* If the event is too late */
                     if (pLastEvent.compareTo(myDate) < 0) {
@@ -336,13 +337,17 @@ public class SheetEvent
                     }
 
                     /* Access the values */
-                    String myDebit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                    String myCredit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myDebit = (myCell != null) ? myCell.getStringValue() : myLastDebit;
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myCredit = (myCell != null) ? myCell.getStringValue() : myLastCredit;
                     String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                     String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
+                    myLastDebit = myDebit;
+                    myLastCredit = myCredit;
 
                     /* Handle Reconciled which may be missing */
-                    DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                     Boolean myReconciled = Boolean.FALSE;
                     if (myCell != null) {
                         myReconciled = Boolean.TRUE;
@@ -462,8 +467,7 @@ public class SheetEvent
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0)
-                        && (!pTask.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }
@@ -494,8 +498,7 @@ public class SheetEvent
     /**
      * EventInfoSet sheet.
      */
-    private static class SheetEventInfoSet
-            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass> {
+    private static class SheetEventInfoSet extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass> {
 
         /**
          * Constructor.
@@ -503,9 +506,7 @@ public class SheetEvent
          * @param pOwner the Owner
          * @param pBaseCol the base column
          */
-        public SheetEventInfoSet(final Class<EventInfoClass> pClass,
-                                 final SheetDataItem<Event> pOwner,
-                                 final int pBaseCol) {
+        public SheetEventInfoSet(final Class<EventInfoClass> pClass, final SheetDataItem<Event> pOwner, final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }
 

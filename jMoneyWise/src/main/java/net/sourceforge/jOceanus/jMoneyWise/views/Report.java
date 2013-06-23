@@ -308,6 +308,9 @@ public final class Report {
             } else if (!myDec.isPositive()) {
                 myClass = CLASS_NEGVALUE;
             }
+        } else if (myValue instanceof String) {
+            /* Escape the string */
+            myValue = escapeString((String) myValue);
         }
 
         /* Build the cell */
@@ -350,7 +353,7 @@ public final class Report {
                                 final boolean isOdd,
                                 final String pTitle) {
         startDataRow(pBuilder, isOdd);
-        pBuilder.append(pTitle);
+        pBuilder.append(escapeString(pTitle));
         pBuilder.append("</td>");
     }
 
@@ -380,9 +383,9 @@ public final class Report {
         startDataRow(pBuilder, isOdd);
         pBuilder.append("<a href=\"#");
         pBuilder.append(LINK_REF);
-        pBuilder.append(pLink);
+        pBuilder.append(escapeString(pLink));
         pBuilder.append("\">");
-        pBuilder.append(pTitle);
+        pBuilder.append(escapeString(pTitle));
         pBuilder.append("</a></td>");
     }
 
@@ -398,9 +401,9 @@ public final class Report {
         pBuilder.append("<tr><th>");
         pBuilder.append("<a href=\"#");
         pBuilder.append(LINK_REF);
-        pBuilder.append(pLink);
+        pBuilder.append(escapeString(pLink));
         pBuilder.append("\">");
-        pBuilder.append(pTitle);
+        pBuilder.append(escapeString(pTitle));
         pBuilder.append("</a></th>");
     }
 
@@ -412,7 +415,7 @@ public final class Report {
     protected void startTotalRow(final StringBuilder pBuilder,
                                  final String pTitle) {
         pBuilder.append("<tr><th>");
-        pBuilder.append(pTitle);
+        pBuilder.append(escapeString(pTitle));
         pBuilder.append("</th>");
     }
 
@@ -427,7 +430,7 @@ public final class Report {
         pBuilder.append("<a href=\"#");
         pBuilder.append(LINK_TOP);
         pBuilder.append("\">");
-        pBuilder.append(pTitle);
+        pBuilder.append(escapeString(pTitle));
         pBuilder.append("</a></th>");
     }
 
@@ -452,7 +455,7 @@ public final class Report {
                                       final String pTitle) {
         pBuilder.append("<a name=\"");
         pBuilder.append(LINK_REF);
-        pBuilder.append(pLink);
+        pBuilder.append(escapeString(pLink));
         pBuilder.append("\">");
         makeSubHeading(pBuilder, pTitle);
         pBuilder.append("</a>");
@@ -466,7 +469,7 @@ public final class Report {
     protected void makeSubHeading(final StringBuilder pBuilder,
                                   final String pTitle) {
         pBuilder.append("<h2>");
-        pBuilder.append(pTitle);
+        pBuilder.append(escapeString(pTitle));
         pBuilder.append("</h2>");
     }
 
@@ -492,7 +495,7 @@ public final class Report {
     protected void makeHeading(final StringBuilder pBuilder,
                                final String pTitle) {
         pBuilder.append("<h1>");
-        pBuilder.append(pTitle);
+        pBuilder.append(escapeString(pTitle));
         pBuilder.append("</h1>");
     }
 
@@ -544,7 +547,7 @@ public final class Report {
     protected void makeTableColumn(final StringBuilder pBuilder,
                                    final String pName) {
         pBuilder.append("<th>");
-        pBuilder.append(pName);
+        pBuilder.append(escapeString(pName));
         pBuilder.append("</th>");
     }
 
@@ -560,7 +563,7 @@ public final class Report {
         pBuilder.append("<th rowspan=\"");
         pBuilder.append(numRows);
         pBuilder.append("\">");
-        pBuilder.append(pName);
+        pBuilder.append(escapeString(pName));
         pBuilder.append("</th>");
     }
 
@@ -576,7 +579,7 @@ public final class Report {
         pBuilder.append("<th colspan=\"");
         pBuilder.append(numCols);
         pBuilder.append("\">");
-        pBuilder.append(pName);
+        pBuilder.append(escapeString(pName));
         pBuilder.append("</th>");
     }
 
@@ -594,5 +597,31 @@ public final class Report {
      */
     protected void startTableBody(final StringBuilder pBuilder) {
         pBuilder.append("</tr></thead><tbody>");
+    }
+
+    /**
+     * Escape String.
+     * @param pValue the string to escape
+     * @return the escaped value
+     */
+    protected String escapeString(final String pValue) {
+        String myString = pValue;
+
+        if (myString.indexOf("&") != -1) {
+            myString = myString.replaceAll("&", "&amp;");
+        }
+        if (myString.indexOf("<") != -1) {
+            myString = myString.replaceAll("<", "&lt;");
+        }
+        if (myString.indexOf(">") != -1) {
+            myString = myString.replaceAll(">", "&gt;");
+        }
+        if (myString.indexOf("'") != -1) {
+            myString = myString.replaceAll("'", "&apos;");
+        }
+        if (myString.indexOf("\"") != -1) {
+            myString = myString.replaceAll("\"", "&quot;");
+        }
+        return myString;
     }
 }

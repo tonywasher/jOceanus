@@ -37,7 +37,6 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
@@ -103,14 +102,6 @@ public class AccountInfo
     }
 
     /**
-     * Obtain Currency.
-     * @return the Currency
-     */
-    public AccountCurrency getAccountCurrency() {
-        return getAccountCurrency(getValueSet());
-    }
-
-    /**
      * Obtain InfoType.
      * @param pValueSet the valueSet
      * @return the InfoType
@@ -141,17 +132,6 @@ public class AccountInfo
                 : pValueSet.getValue(FIELD_LINK, EventCategory.class);
     }
 
-    /**
-     * Obtain Linked AccountCurrency.
-     * @param pValueSet the valueSet
-     * @return the AccountCurrency
-     */
-    public static AccountCurrency getAccountCurrency(final ValueSet pValueSet) {
-        return pValueSet.isDeletion()
-                ? null
-                : pValueSet.getValue(FIELD_LINK, AccountCurrency.class);
-    }
-
     @Override
     public String getLinkName() {
         DataItem myItem = getLink(DataItem.class);
@@ -160,9 +140,6 @@ public class AccountInfo
         }
         if (myItem instanceof EventCategory) {
             return ((EventCategory) myItem).getName();
-        }
-        if (myItem instanceof AccountCurrency) {
-            return ((AccountCurrency) myItem).getName();
         }
         return null;
     }
@@ -261,9 +238,6 @@ public class AccountInfo
                                 break;
                             case AutoExpense:
                                 myLink = myData.getEventCategories().findItemById(getValue(Integer.class));
-                                break;
-                            case Currency:
-                                myLink = myData.getAccountCurrencies().findItemById(getValue(Integer.class));
                                 break;
                             default:
                                 break;
@@ -409,9 +383,6 @@ public class AccountInfo
                 case AutoExpense:
                     myNewLink = myData.getEventCategories().findItemById(myId);
                     break;
-                case Currency:
-                    myNewLink = myData.getAccountCurrencies().findItemById(myId);
-                    break;
                 default:
                     break;
             }
@@ -483,9 +454,6 @@ public class AccountInfo
                                 break;
                             case AutoExpense:
                                 myLink = myData.getEventCategories().findItemByName(myName);
-                                break;
-                            case Currency:
-                                myLink = myData.getAccountCurrencies().findItemByName(myName);
                                 break;
                             default:
                                 break;
@@ -594,9 +562,6 @@ public class AccountInfo
                 break;
             case AutoExpense:
                 getEventCategory().touchItem(this);
-                break;
-            case Currency:
-                getAccountCurrency().touchItem(this);
                 break;
             default:
                 break;

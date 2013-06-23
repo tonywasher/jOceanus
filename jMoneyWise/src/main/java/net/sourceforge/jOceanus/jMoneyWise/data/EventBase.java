@@ -777,7 +777,6 @@ public abstract class EventBase
                         && (myDebitClass.isShares()) && (myCreditClass.isShares()));
 
             case RentalIncome:
-            case LoanInterest:
                 /* Credit must be to loan */
                 if (!myCreditClass.isLoan()) {
                     return false;
@@ -785,6 +784,16 @@ public abstract class EventBase
 
                 /* Debit must be from the owner of the loan */
                 return Difference.isEqual(pDebit, pCredit.getParent());
+
+            case LoanInterest:
+                /* If this is an income */
+                if (myActTran.isIncome()) {
+                    /* Debit must be from the owner of the loan to the loan */
+                    return (myCreditClass.isLoan() && Difference.isEqual(pDebit, pCredit.getParent()));
+                }
+
+                /* Credit must be to the owner of the loan from the loan */
+                return (myDebitClass.isLoan() && Difference.isEqual(pCredit, pDebit.getParent()));
 
             case WriteOff:
                 /* Debit must be from loan */

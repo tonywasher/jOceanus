@@ -44,13 +44,13 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory.QCategoryList;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference.QIFType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
 
 /**
  * Quicken analysis.
  */
-public class QAnalysis
-        extends QElement {
+public class QAnalysis extends QElement {
     /**
      * Set option.
      */
@@ -107,12 +107,29 @@ public class QAnalysis
     private FinanceData theData = null;
 
     /**
+     * Obtain account list iterator.
+     * @return the iterator
+     */
+    protected Iterator<QAccount> getAccountIterator() {
+        return theAccounts.values().iterator();
+    }
+
+    /**
+     * Obtain start date.
+     * @return the start date
+     */
+    protected JDateDay getStartDate() {
+        return theStartDate;
+    }
+
+    /**
      * Constructor.
      * @param pFormatter the data formatter
+     * @param pType the QIF file type
      */
-    protected QAnalysis(final JDataFormatter pFormatter) {
+    protected QAnalysis(final JDataFormatter pFormatter, final QIFType pType) {
         /* Call the super-constructor */
-        super(pFormatter);
+        super(pFormatter, pType);
 
         /* Create the maps */
         theAccounts = new HashMap<Account, QAccount>();
@@ -149,6 +166,21 @@ public class QAnalysis
         /* Access category */
         EventCategoryList myList = theData.getEventCategories();
         EventCategory myCategory = myList.getEventInfoCategory(pInfoClass);
+
+        /* Register category and return */
+        theCategories.registerCategory(myCategory);
+        return myCategory;
+    }
+
+    /**
+     * Access EventCategory for explicit class.
+     * @param pEventClass the event class
+     * @return the category
+     */
+    protected EventCategory getCategory(final EventCategoryClass pEventClass) {
+        /* Access category */
+        EventCategoryList myList = theData.getEventCategories();
+        EventCategory myCategory = myList.getSingularClass(pEventClass);
 
         /* Register category and return */
         theCategories.registerCategory(myCategory);
@@ -224,13 +256,11 @@ public class QAnalysis
         theStartDate = myTaxYear.getRange().getStart();
 
         /* Update status bar */
-        boolean bContinue = ((pStatus.setNumStages(QIF_NUMLISTS))
-                             && (pStatus.setNewStage("Analysing accounts")) && (pStatus.setNumSteps(myAccounts.size())));
+        boolean bContinue = ((pStatus.setNumStages(QIF_NUMLISTS)) && (pStatus.setNewStage("Analysing accounts")) && (pStatus.setNumSteps(myAccounts.size())));
 
         /* Loop through the accounts */
         Iterator<Account> myActIterator = myAccounts.iterator();
-        while ((bContinue)
-               && (myActIterator.hasNext())) {
+        while ((bContinue) && (myActIterator.hasNext())) {
             Account myAccount = myActIterator.next();
 
             /* Ignore deleted accounts */
@@ -247,8 +277,7 @@ public class QAnalysis
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -261,8 +290,7 @@ public class QAnalysis
         /* Loop through the events */
         myCount = 0;
         Iterator<Event> myIterator = myEvents.iterator();
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             Event myEvent = myIterator.next();
 
             /* If the price is too late */
@@ -295,17 +323,14 @@ public class QAnalysis
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
 
         /* Update status bar and analyse prices */
         AccountPriceList myPrices = pData.getPrices();
-        if ((bContinue)
-            && (pStatus.setNewStage("Analysing prices"))
-            && (pStatus.setNumSteps(myPrices.size()))) {
+        if ((bContinue) && (pStatus.setNewStage("Analysing prices")) && (pStatus.setNumSteps(myPrices.size()))) {
             /* Analyse prices for securities */
             theSecurities.buildPrices(pStatus, myPrices, pLastEvent);
         }
@@ -323,6 +348,9 @@ public class QAnalysis
         /* Access account */
         QAccount myAccount = getAccount(pAccount);
 
+        /* Determine whether we should ignore external interest */
+        boolean ignoreIntExternal = (getQIFType().hideBalancingTaxTransfer());
+
         /* If we should process the account */
         if (myAccount != null) {
             /* If the account is autoExpense */
@@ -335,8 +363,7 @@ public class QAnalysis
                 }
 
                 /* Normal event (ignore external interest credits they will be handled at source) */
-            } else if ((!isCredit)
-                       || (!pEvent.isInterest())) {
+            } else if ((!isCredit) || (!pEvent.isInterest()) || !(ignoreIntExternal)) {
                 /* Process the event */
                 myAccount.processEvent(pEvent, isCredit);
                 theNumEvents++;
@@ -389,8 +416,7 @@ public class QAnalysis
 
         /* Loop through the accounts */
         Iterator<QAccount> myIterator = theAccounts.values().iterator();
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             QAccount myAccount = myIterator.next();
 
             /* If the account is active */
@@ -401,8 +427,7 @@ public class QAnalysis
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -422,8 +447,7 @@ public class QAnalysis
         /* Loop through the accounts */
         myCount = 0;
         myIterator = theAccounts.values().iterator();
-        while ((bContinue)
-               && (myIterator.hasNext())) {
+        while ((bContinue) && (myIterator.hasNext())) {
             QAccount myAccount = myIterator.next();
 
             /* Output events */
@@ -431,8 +455,7 @@ public class QAnalysis
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0)
-                && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }

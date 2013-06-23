@@ -27,6 +27,7 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference.QIFType;
 
 /**
  * Quicken item.
@@ -73,6 +74,11 @@ public abstract class QElement {
     private final JDataFormatter theFormatter;
 
     /**
+     * QIF file type.
+     */
+    private final QIFType theQIFType;
+
+    /**
      * Obtain the data Formatter.
      * @return the formatter
      */
@@ -81,12 +87,22 @@ public abstract class QElement {
     }
 
     /**
+     * Obtain the QIF type.
+     * @return the QIF type
+     */
+    protected QIFType getQIFType() {
+        return theQIFType;
+    }
+
+    /**
      * Constructor.
      * @param pFormatter the formatter
+     * @param pType the QIF type
      */
-    protected QElement(final JDataFormatter pFormatter) {
-        /* Store formatter */
+    protected QElement(final JDataFormatter pFormatter, final QIFType pType) {
+        /* Store parameters */
         theFormatter = pFormatter;
+        theQIFType = pType;
 
         /* Create builder */
         theBuilder = new StringBuilder();
@@ -175,7 +191,14 @@ public abstract class QElement {
      * @param pDate the date value
      */
     protected void addDate(final JDateDay pDate) {
+        /* If this is the last day of a leap year */
+        // if (pDate.getCalendar().get(Calendar.DAY_OF_YEAR) == 366) {
+        // String myOld = theFormatter.formatObject(pDate);
+        // append("31/12/");
+        // append(Integer.toString(pDate.getYear()).substring(2));
+        // } else {
         append(theFormatter.formatObject(pDate));
+        // }
     }
 
     /**

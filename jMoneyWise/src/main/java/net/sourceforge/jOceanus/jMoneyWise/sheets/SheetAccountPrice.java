@@ -39,8 +39,7 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
  * SheetDataItem extension for AccountPrice.
  * @author Tony Washer
  */
-public class SheetAccountPrice
-        extends SheetDataItem<AccountPrice> {
+public class SheetAccountPrice extends SheetDataItem<AccountPrice> {
     /**
      * NamedArea for Prices.
      */
@@ -204,8 +203,7 @@ public class SheetAccountPrice
             /* Count the number of Prices */
             int myRows = myView.getRowCount();
             int myCols = myView.getColumnCount();
-            int myTotal = (myRows - 1)
-                          * (myCols - 2);
+            int myTotal = (myRows - 1) * (myCols - 1);
 
             /* Access the list of prices */
             AccountPriceList myList = pData.getPrices();
@@ -232,7 +230,7 @@ public class SheetAccountPrice
                 }
 
                 /* Loop through the columns of the table */
-                for (int j = 2; j < myCols; j++) {
+                for (int j = 1; j < myCols; j++) {
                     /* Access account */
                     myCell = myView.getRowCellByIndex(myActRow, j);
                     if (myCell == null) {
@@ -255,8 +253,7 @@ public class SheetAccountPrice
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0)
-                        && (!pTask.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }

@@ -51,6 +51,7 @@ import net.sourceforge.jOceanus.jMoneyWise.threads.WriteQIF;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jSvnManager.threads.SubversionBackup;
+import net.sourceforge.jOceanus.jSvnManager.threads.SubversionRestore;
 
 /**
  * Main Window for jMoneyWise.
@@ -121,7 +122,12 @@ public class MainTab
     /**
      * SubVersion menu title.
      */
-    private static final String MENU_SUBVERSION = NLS_BUNDLE.getString("MenuSubVersion");
+    private static final String MENU_BACKUPSVN = NLS_BUNDLE.getString("MenuBackupSVN");
+
+    /**
+     * SubVersion menu title.
+     */
+    private static final String MENU_RESTORESVN = NLS_BUNDLE.getString("MenuRestoreSVN");
 
     /**
      * Program name.
@@ -176,7 +182,12 @@ public class MainTab
     /**
      * The SubversionBackup menu.
      */
-    private JMenuItem theSVBackup = null;
+    private JMenuItem theSVNBackup = null;
+
+    /**
+     * The SubversionRestore menu.
+     */
+    private JMenuItem theSVNRestore = null;
 
     /**
      * The CreateQIF menu.
@@ -287,9 +298,14 @@ public class MainTab
         pMenu.add(theLoadSheet);
 
         /* Create the file menu items */
-        theSVBackup = new JMenuItem(MENU_SUBVERSION);
-        theSVBackup.addActionListener(this);
-        pMenu.add(theSVBackup);
+        theSVNBackup = new JMenuItem(MENU_BACKUPSVN);
+        theSVNBackup.addActionListener(this);
+        pMenu.add(theSVNBackup);
+
+        /* Create the file menu items */
+        theSVNRestore = new JMenuItem(MENU_RESTORESVN);
+        theSVNRestore.addActionListener(this);
+        pMenu.add(theSVNRestore);
 
         /* Create the file menu items */
         theCreateQIF = new JMenuItem(MENU_CREATEQIF);
@@ -319,9 +335,14 @@ public class MainTab
             loadSpreadsheet();
 
             /* If this event relates to the Load spreadsheet item */
-        } else if (theSVBackup.equals(o)) {
+        } else if (theSVNBackup.equals(o)) {
             /* Start a write backup operation */
             backupSubversion();
+
+            /* If this event relates to the Load spreadsheet item */
+        } else if (theSVNRestore.equals(o)) {
+            /* Start a restore backup operation */
+            restoreSubversion();
 
             /* If this event relates to the Load spreadsheet item */
         } else if (theCreateQIF.equals(o)) {
@@ -356,6 +377,19 @@ public class MainTab
 
         /* Create the worker thread */
         SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus, theView.getPreferenceMgr());
+        myStatus.registerThread(myThread);
+        startThread(myThread);
+    }
+
+    /**
+     * Restore subversion.
+     */
+    public void restoreSubversion() {
+        /* Allocate the status */
+        ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
+
+        /* Create the worker thread */
+        SubversionRestore<FinanceData> myThread = new SubversionRestore<FinanceData>(myStatus, theView.getPreferenceMgr());
         myStatus.registerThread(myThread);
         startThread(myThread);
     }

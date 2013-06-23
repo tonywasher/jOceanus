@@ -38,8 +38,7 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
  * SheetStaticData extension for AccountCurrency.
  * @author Tony Washer
  */
-public class SheetAccountCurrency
-        extends SheetStaticData<AccountCurrency> {
+public class SheetAccountCurrency extends SheetStaticData<AccountCurrency> {
     /**
      * NamedArea for AccountCurrencies.
      */
@@ -48,8 +47,12 @@ public class SheetAccountCurrency
     /**
      * NameList for AccountCurrencies.
      */
-    protected static final String AREA_ACCOUNTCURRNAMES = AccountCurrency.OBJECT_NAME
-                                                          + "Names";
+    protected static final String AREA_ACCOUNTCURRNAMES = AccountCurrency.OBJECT_NAME + "Names";
+
+    /**
+     * Default column.
+     */
+    private static final int COL_DEFAULT = COL_DESC + 1;
 
     /**
      * AccountCurrencies data list.
@@ -82,16 +85,6 @@ public class SheetAccountCurrency
         setDataList(theList);
     }
 
-    /**
-     * Load encrypted.
-     * @param pId the id
-     * @param pControlId the control id
-     * @param isEnabled isEnabled
-     * @param pOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JDataException on error
-     */
     @Override
     protected void loadEncryptedItem(final Integer pId,
                                      final Integer pControlId,
@@ -99,31 +92,70 @@ public class SheetAccountCurrency
                                      final Integer pOrder,
                                      final byte[] pName,
                                      final byte[] pDesc) throws JDataException {
+        /* Access the Default indication */
+        Boolean isDefault = loadBoolean(COL_DEFAULT);
+
         /* Create the item */
-        theList.addSecureItem(pId, pControlId, isEnabled, pOrder, pName, pDesc);
+        theList.addSecureItem(pId, pControlId, isEnabled, pOrder, pName, pDesc, isDefault);
     }
 
-    /**
-     * Load clear text.
-     * @param uId the id
-     * @param isEnabled isEnabled
-     * @param pOrder the sort order
-     * @param pName the name
-     * @param pDesc the description
-     * @throws JDataException on error
-     */
     @Override
     protected void loadClearTextItem(final Integer uId,
                                      final Boolean isEnabled,
                                      final Integer pOrder,
                                      final String pName,
                                      final String pDesc) throws JDataException {
+        /* Access the Default indication */
+        Boolean isDefault = loadBoolean(COL_DEFAULT);
+
         /* Create the item */
-        theList.addOpenItem(uId, isEnabled, pOrder, pName, pDesc);
+        theList.addOpenItem(uId, isEnabled, pOrder, pName, pDesc, isDefault);
+    }
+
+    @Override
+    protected void insertSecureItem(final AccountCurrency pItem) throws JDataException {
+        /* Insert standard fields */
+        super.insertSecureItem(pItem);
+
+        /* Set default indication */
+        writeBoolean(COL_DEFAULT, pItem.isDefault());
+    }
+
+    @Override
+    protected void insertOpenItem(final AccountCurrency pItem) throws JDataException {
+        /* Insert standard fields */
+        super.insertOpenItem(pItem);
+
+        /* Set default indication */
+        writeBoolean(COL_DEFAULT, pItem.isDefault());
+    }
+
+    @Override
+    protected void prepareSheet() throws JDataException {
+        /* Prepare standard fields */
+        super.prepareSheet();
+
+        /* Write titles */
+        writeHeader(COL_DEFAULT, AccountCurrency.FIELD_DEFAULT.getName());
+    }
+
+    @Override
+    protected void formatSheet() throws JDataException {
+        /* Format standard fields */
+        super.formatSheet();
+
+        /* Set default column types */
+        setBooleanColumn(COL_DEFAULT);
+    }
+
+    @Override
+    protected int getLastColumn() {
+        /* Return the last column */
+        return COL_DEFAULT;
     }
 
     /**
-     * Load the Account Types from an archive.
+     * Load the Account Currencies from an archive.
      * @param pTask the task control
      * @param pWorkBook the workbook
      * @param pData the data set to load into
@@ -169,8 +201,7 @@ public class SheetAccountCurrency
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -180,7 +211,7 @@ public class SheetAccountCurrency
 
             /* Handle exceptions */
         } catch (JDataException e) {
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Account Types", e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to Load Account Currencies", e);
         }
 
         /* Return to caller */

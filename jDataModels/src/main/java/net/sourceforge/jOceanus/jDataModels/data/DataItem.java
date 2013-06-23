@@ -542,6 +542,7 @@ public abstract class DataItem
      */
     public void clearHistory() {
         theHistory.clearHistory();
+        theEdit = EditState.CLEAN;
     }
 
     /**

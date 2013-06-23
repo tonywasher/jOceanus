@@ -7,8 +7,7 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
 /**
  * Quicken Preferences.
  */
-public class QIFPreference
-        extends PreferenceSet {
+public class QIFPreference extends PreferenceSet {
     /**
      * Registry name for QIF Directory.
      */
@@ -97,6 +96,89 @@ public class QIFPreference
         /**
          * MSMoney.
          */
-        MSMoneyPlus;
+        MSMoneyPlus,
+
+        /**
+         * MetaLogic.
+         */
+        MetaLogic,
+
+        /**
+         * HomeBank.
+         */
+        HomeBank,
+
+        /**
+         * GnuCash.
+         */
+        GnuCash;
+
+        /**
+         * Should we use a consolidated file?
+         * @return true/false
+         */
+        public boolean useConsolidated() {
+            switch (this) {
+                case AceMoney:
+                case MetaLogic:
+                case HomeBank:
+                case GnuCash:
+                    return true;
+                case MSMoneyPlus:
+                default:
+                    return false;
+            }
+        }
+
+        /**
+         * Should we use simple transfer payee lines?
+         * @return true/false
+         */
+        public boolean useSimpleTransfer() {
+            switch (this) {
+                case MSMoneyPlus:
+                case MetaLogic:
+                case HomeBank:
+                    return true;
+                case AceMoney:
+                case GnuCash:
+                default:
+                    return false;
+            }
+        }
+
+        /**
+         * Should we hide balancing tax transfers?
+         * @return true/false
+         */
+        public boolean hideBalancingTaxTransfer() {
+            switch (this) {
+                case AceMoney:
+                    return true;
+                case MSMoneyPlus:
+                case MetaLogic:
+                case HomeBank:
+                case GnuCash:
+                default:
+                    return false;
+            }
+        }
+
+        /**
+         * Should we use Self-Opening Balance?
+         * @return true/false
+         */
+        public boolean selfOpeningBalance() {
+            switch (this) {
+                case AceMoney:
+                case MSMoneyPlus:
+                case MetaLogic:
+                case HomeBank:
+                case GnuCash:
+                    return false;
+                default:
+                    return true;
+            }
+        }
     }
 }

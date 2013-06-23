@@ -81,6 +81,11 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField("ListStyle");
 
     /**
+     * DataSet Field Id.
+     */
+    public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField("DataSet");
+
+    /**
      * Generation Field Id.
      */
     public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField("Generation");
@@ -128,6 +133,9 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         }
         if (FIELD_STYLE.equals(pField)) {
             return theStyle;
+        }
+        if (FIELD_DATASET.equals(pField)) {
+            return theDataSet;
         }
         if (FIELD_GENERATION.equals(pField)) {
             return theGeneration;

@@ -80,7 +80,7 @@
     <ApachePOIVersion>3.9</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>
     <XercesVersion>2.9.1</XercesVersion>
-    <7ZipSDKVersion>9.20</7ZipSDKVersion>
+    <ZipSDKVersion>9.20</ZipSDKVersion>
   </properties>
   <build>
     <resources>

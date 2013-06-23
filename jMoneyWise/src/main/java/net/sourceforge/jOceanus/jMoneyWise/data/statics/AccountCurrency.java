@@ -27,10 +27,13 @@ import java.util.Currency;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
+import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
+import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 
 /**
  * AccountCurrency data type.
@@ -53,9 +56,41 @@ public class AccountCurrency
      */
     private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, StaticData.FIELD_DEFS);
 
+    /**
+     * Default Field Id.
+     */
+    public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareEqualityValueField("Default");
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
+    }
+
+    /**
+     * Is this the default currency.
+     * @return true/false
+     */
+    public Boolean isDefault() {
+        return isDefault(getValueSet());
+    }
+
+    /**
+     * Is this the default currency.
+     * @param pValueSet the valueSet
+     * @return true/false
+     */
+    public static Boolean isDefault(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DEFAULT, Boolean.class);
+    }
+
+    /**
+     * Set default indication.
+     * @param pValue the value
+     */
+    private void setValueDefault(final Boolean pValue) {
+        getValueSet().setValue(FIELD_DEFAULT, (pValue != null)
+                ? pValue
+                : Boolean.FALSE);
     }
 
     /**
@@ -98,6 +133,7 @@ public class AccountCurrency
     private AccountCurrency(final AccountCurrencyList pList,
                             final String pName) throws JDataException {
         super(pList, pName);
+        setValueDefault(Boolean.FALSE);
     }
 
     /**
@@ -109,6 +145,7 @@ public class AccountCurrency
     private AccountCurrency(final AccountCurrencyList pList,
                             final AccountCurrencyClass pClass) throws JDataException {
         super(pList, pClass);
+        setValueDefault(Boolean.FALSE);
     }
 
     /**
@@ -119,6 +156,7 @@ public class AccountCurrency
      * @param pOrder the sort order
      * @param pName Name of Account Currency
      * @param pDesc Description of Account Currency
+     * @param pDefault is this the default currency
      * @throws JDataException on error
      */
     private AccountCurrency(final AccountCurrencyList pList,
@@ -126,8 +164,10 @@ public class AccountCurrency
                             final Boolean isEnabled,
                             final Integer pOrder,
                             final String pName,
-                            final String pDesc) throws JDataException {
+                            final String pDesc,
+                            final Boolean pDefault) throws JDataException {
         super(pList, pId, isEnabled, pOrder, pName, pDesc);
+        setValueDefault(pDefault);
     }
 
     /**
@@ -139,6 +179,7 @@ public class AccountCurrency
      * @param pOrder the sort order
      * @param pName Encrypted Name of Account Currency
      * @param pDesc Encrypted Description of Account Currency
+     * @param pDefault is this the default currency
      * @throws JDataException on error
      */
     private AccountCurrency(final AccountCurrencyList pList,
@@ -147,8 +188,59 @@ public class AccountCurrency
                             final Boolean isEnabled,
                             final Integer pOrder,
                             final byte[] pName,
-                            final byte[] pDesc) throws JDataException {
+                            final byte[] pDesc,
+                            final Boolean pDefault) throws JDataException {
         super(pList, pId, pControlId, isEnabled, pOrder, pName, pDesc);
+        setValueDefault(pDefault);
+    }
+
+    /**
+     * Set default indication.
+     * @param pDefault the new indication
+     */
+    private void setDefault(final Boolean pDefault) {
+        setValueDefault(pDefault);
+    }
+
+    @Override
+    public void validate() {
+        AccountCurrencyList myList = (AccountCurrencyList) getList();
+
+        /* Check that default is non-null */
+        if (isDefault() == null) {
+            addError(ERROR_MISSING, FIELD_DEFAULT);
+        } else if ((isDefault())
+                   && (!this.equals(myList.getDefaultCurrency()))) {
+            addError("Multiple default currencies", FIELD_DEFAULT);
+        }
+
+        /* Validate it */
+        super.validate();
+    }
+
+    @Override
+    public boolean applyChanges(final DataItem pData) {
+        /* Can only apply changes for AccountCurrency */
+        if (!(pData instanceof AccountCurrency)) {
+            return false;
+        }
+
+        /* Access the data */
+        AccountCurrency myData = (AccountCurrency) pData;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Apply basic changes */
+        applyBasicChanges(myData);
+
+        /* Update the default indication if required */
+        if (isDefault() != myData.isDefault()) {
+            setDefault(myData.isDefault());
+        }
+
+        /* Check for changes */
+        return checkForHistory();
     }
 
     /**
@@ -161,9 +253,27 @@ public class AccountCurrency
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCurrency.class.getSimpleName(), DataList.FIELD_DEFS);
 
+        /**
+         * Default Field Id.
+         */
+        public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField("Default");
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
+        }
+
+        /**
+         * The default currency.
+         */
+        private AccountCurrency theDefault = null;
+
+        /**
+         * Obtain default currency.
+         * @return the default currency
+         */
+        public AccountCurrency getDefaultCurrency() {
+            return theDefault;
         }
 
         @Override
@@ -263,6 +373,13 @@ public class AccountCurrency
             /* Add the Account Currency to the list */
             append(myCurr);
 
+            /* If we have no default currency */
+            if (theDefault == null) {
+                /* Set this as the default currency */
+                myCurr.setDefault(Boolean.TRUE);
+                setAsDefaultCurrency(myCurr);
+            }
+
             /* Validate the Currency */
             myCurr.validate();
 
@@ -279,15 +396,17 @@ public class AccountCurrency
          * @param pOrder the sort order
          * @param pCurrency the Name of the account currency
          * @param pDesc the Description of the account currency
+         * @param pDefault is this the default currency
          * @throws JDataException on error
          */
         public void addOpenItem(final Integer pId,
                                 final Boolean isEnabled,
                                 final Integer pOrder,
                                 final String pCurrency,
-                                final String pDesc) throws JDataException {
+                                final String pDesc,
+                                final Boolean pDefault) throws JDataException {
             /* Create a new Account Currency */
-            AccountCurrency myCurr = new AccountCurrency(this, pId, isEnabled, pOrder, pCurrency, pDesc);
+            AccountCurrency myCurr = new AccountCurrency(this, pId, isEnabled, pOrder, pCurrency, pDesc, pDefault);
 
             /* Check that this AccountCurrencyTypeId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -297,6 +416,12 @@ public class AccountCurrency
 
             /* Add the Account Currency to the list */
             append(myCurr);
+
+            /* If this is the default currency */
+            if (pDefault) {
+                /* Set this as the default currency */
+                setAsDefaultCurrency(myCurr);
+            }
 
             /* Validate the AccountCurrency */
             myCurr.validate();
@@ -315,6 +440,7 @@ public class AccountCurrency
          * @param pOrder the sort order
          * @param pCurrency the encrypted Name of the account currency
          * @param pDesc the Encrypted Description of the account currency
+         * @param pDefault is this the default currency
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer pId,
@@ -322,9 +448,10 @@ public class AccountCurrency
                                   final Boolean isEnabled,
                                   final Integer pOrder,
                                   final byte[] pCurrency,
-                                  final byte[] pDesc) throws JDataException {
+                                  final byte[] pDesc,
+                                  final Boolean pDefault) throws JDataException {
             /* Create a new Account Currency */
-            AccountCurrency myCurr = new AccountCurrency(this, pId, pControlId, isEnabled, pOrder, pCurrency, pDesc);
+            AccountCurrency myCurr = new AccountCurrency(this, pId, pControlId, isEnabled, pOrder, pCurrency, pDesc, pDefault);
 
             /* Check that this AccountCurrencyId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -334,6 +461,12 @@ public class AccountCurrency
 
             /* Add the AccountCurrency to the list */
             append(myCurr);
+
+            /* If this is the default currency */
+            if (pDefault) {
+                /* Set this as the default currency */
+                setAsDefaultCurrency(myCurr);
+            }
 
             /* Validate the AccountCurrency */
             myCurr.validate();
@@ -357,6 +490,13 @@ public class AccountCurrency
                 /* Add the AccountCurrency to the list */
                 append(myCurr);
 
+                /* If we have no default currency */
+                if (theDefault == null) {
+                    /* Set this as the default currency */
+                    myCurr.setDefault(Boolean.TRUE);
+                    setAsDefaultCurrency(myCurr);
+                }
+
                 /* Validate the AccountCurrency */
                 myCurr.validate();
 
@@ -368,6 +508,41 @@ public class AccountCurrency
 
             /* Ensure that the list is sorted */
             reSort();
+        }
+
+        /**
+         * Set new default currency.
+         * @param pCurrency the new default currency.
+         */
+        private void setAsDefaultCurrency(final AccountCurrency pCurrency) {
+            /* Record the default currency */
+            theDefault = pCurrency;
+        }
+
+        /**
+         * Set default currency
+         * @param pView the current view
+         * @param pCurrency the new default currency.
+         */
+        public void setDefaultCurrency(final DataControl<?> pView,
+                                       final AccountCurrency pCurrency) {
+            /* Access existing default currency */
+            AccountCurrency myDefault = getDefaultCurrency();
+
+            /* If we are changing the currency */
+            if (!myDefault.equals(pCurrency)) {
+                /* Switch defaults */
+                myDefault.pushHistory();
+                myDefault.setDeleted(Boolean.FALSE);
+                pCurrency.pushHistory();
+                pCurrency.setDeleted(Boolean.TRUE);
+
+                /* Register the changes */
+                pView.incrementVersion();
+
+                /* Record default */
+                setAsDefaultCurrency(pCurrency);
+            }
         }
     }
 }

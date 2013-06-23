@@ -38,7 +38,6 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 
@@ -58,7 +57,6 @@ public class Account
      */
     public static final String LIST_NAME = OBJECT_NAME
                                            + "s";
-
     /**
      * Report fields.
      */
@@ -175,16 +173,6 @@ public class Account
     public Account getHolding() {
         return hasInfoSet
                 ? theInfoSet.getAccount(AccountInfoClass.Holding)
-                : null;
-    }
-
-    /**
-     * Obtain Currency.
-     * @return the currency
-     */
-    public AccountCurrency getCurrency() {
-        return hasInfoSet
-                ? theInfoSet.getAccountCurrency(AccountInfoClass.Currency)
                 : null;
     }
 
@@ -567,6 +555,7 @@ public class Account
      * @param pActCatId the Account category id
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
+     * @param uCurrencyId the Account currency id
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
@@ -575,9 +564,10 @@ public class Account
                     final byte[] pName,
                     final Integer pActCatId,
                     final Boolean isClosed,
-                    final Boolean isTaxFree) throws JDataException {
+                    final Boolean isTaxFree,
+                    final Integer uCurrencyId) throws JDataException {
         /* Initialise the item */
-        super(pList, pId, pControlId, pName, pActCatId, isClosed, isTaxFree);
+        super(pList, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, uCurrencyId);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -593,6 +583,7 @@ public class Account
      * @param pCategory the Account category
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
+     * @param pCurrency the Account currency
      * @throws JDataException on error
      */
     private Account(final AccountList pList,
@@ -600,9 +591,10 @@ public class Account
                     final String pName,
                     final String pCategory,
                     final Boolean isClosed,
-                    final Boolean isTaxFree) throws JDataException {
+                    final Boolean isTaxFree,
+                    final String pCurrency) throws JDataException {
         /* Initialise the item */
-        super(pList, pId, pName, pCategory, isClosed, isTaxFree);
+        super(pList, pId, pName, pCategory, isClosed, isTaxFree, pCurrency);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -741,15 +733,6 @@ public class Account
      */
     public void setOpeningBalance(final JMoney pBalance) throws JDataException {
         setInfoSetValue(AccountInfoClass.OpeningBalance, pBalance);
-    }
-
-    /**
-     * Set a new currency.
-     * @param pCurrency the new currency
-     * @throws JDataException on error
-     */
-    public void setCurrency(final AccountCurrency pCurrency) throws JDataException {
-        setInfoSetValue(AccountInfoClass.Currency, pCurrency);
     }
 
     /**
@@ -1142,15 +1125,17 @@ public class Account
          * @param isClosed is the account closed?
          * @param isTaxFree is the account taxFree?
          * @return the new account
+         * @param pCurrency the Account currency
          * @throws JDataException on error
          */
         public Account addOpenItem(final Integer pId,
                                    final String pName,
                                    final String pCategory,
                                    final Boolean isClosed,
-                                   final Boolean isTaxFree) throws JDataException {
+                                   final Boolean isTaxFree,
+                                   final String pCurrency) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, pId, pName, pCategory, isClosed, isTaxFree);
+            Account myAccount = new Account(this, pId, pName, pCategory, isClosed, isTaxFree, pCurrency);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -1177,6 +1162,7 @@ public class Account
          * @param pActCatId the Id of the account category
          * @param isClosed is the account closed?
          * @param isTaxFree is the account taxFree?
+         * @param pCurrencyId the Account currency id
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer pId,
@@ -1184,9 +1170,10 @@ public class Account
                                   final byte[] pName,
                                   final Integer pActCatId,
                                   final Boolean isClosed,
-                                  final Boolean isTaxFree) throws JDataException {
+                                  final Boolean isTaxFree,
+                                  final Integer pCurrencyId) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, isClosed, isTaxFree);
+            Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, pCurrencyId);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {

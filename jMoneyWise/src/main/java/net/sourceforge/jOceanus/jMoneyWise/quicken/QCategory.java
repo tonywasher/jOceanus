@@ -27,7 +27,6 @@ import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
@@ -36,8 +35,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
 /**
  * Quicken Category.
  */
-public final class QCategory
-        extends QElement {
+public final class QCategory extends QElement {
     /**
      * Item type.
      */
@@ -50,13 +48,12 @@ public final class QCategory
 
     /**
      * Constructor.
-     * @param pFormatter the data formatter
+     * @param pAnalysis the analysis
      * @param pCategory the category
      */
-    private QCategory(final JDataFormatter pFormatter,
-                      final EventCategory pCategory) {
+    private QCategory(final QAnalysis pAnalysis, final EventCategory pCategory) {
         /* Call super constructor */
-        super(pFormatter);
+        super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
         /* Store the category */
         theCategory = pCategory;
@@ -82,9 +79,7 @@ public final class QCategory
 
         /* Determine Income/Expense flag */
         TransactionType myTranType = TransactionType.deriveType(theCategory);
-        addFlag((myTranType.isIncome())
-                ? QCatLineType.Income
-                : QCatLineType.Expense);
+        addFlag((myTranType.isIncome()) ? QCatLineType.Income : QCatLineType.Expense);
 
         /* Return the result */
         return completeItem();
@@ -98,8 +93,7 @@ public final class QCategory
     /**
      * Category List class.
      */
-    protected static class QCategoryList
-            extends QElement {
+    protected static class QCategoryList extends QElement {
         /**
          * Parent Category Map.
          */
@@ -111,12 +105,16 @@ public final class QCategory
         private final HashMap<EventCategory, QCategory> theCategories;
 
         /**
+         * The analysis.
+         */
+        private final QAnalysis theAnalysis;
+
+        /**
          * Obtain category list size.
          * @return the size
          */
         protected int size() {
-            return theParents.size()
-                   + theCategories.size();
+            return theParents.size() + theCategories.size();
         }
 
         /**
@@ -125,7 +123,10 @@ public final class QCategory
          */
         protected QCategoryList(final QAnalysis pAnalysis) {
             /* Call super constructor */
-            super(pAnalysis.getFormatter());
+            super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
+
+            /* Store parameters */
+            theAnalysis = pAnalysis;
 
             /* Create the map */
             theParents = new HashMap<EventCategory, QCategory>();
@@ -143,7 +144,7 @@ public final class QCategory
             /* If this is a new category */
             if (myCategory == null) {
                 /* Allocate the category and add to the map */
-                myCategory = new QCategory(getFormatter(), pCategory);
+                myCategory = new QCategory(theAnalysis, pCategory);
                 theCategories.put(pCategory, myCategory);
 
                 /* Access the parent category */
@@ -153,7 +154,7 @@ public final class QCategory
                 myCategory = theParents.get(myParent);
                 if (myCategory == null) {
                     /* Allocate the category and add to the map */
-                    myCategory = new QCategory(getFormatter(), myParent);
+                    myCategory = new QCategory(theAnalysis, myParent);
                     theParents.put(myParent, myCategory);
                 }
             }
@@ -169,8 +170,7 @@ public final class QCategory
         protected boolean outputCategories(final ThreadStatus<FinanceData> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* If we have no categories */
-            if ((theParents.size() == 0)
-                && (theCategories.size() == 0)) {
+            if ((theParents.size() == 0) && (theCategories.size() == 0)) {
                 return true;
             }
 
@@ -192,8 +192,7 @@ public final class QCategory
 
             /* Loop through the parents */
             Iterator<QCategory> myIterator = theParents.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QCategory myCategory = myIterator.next();
 
                 /* Write Category details */
@@ -201,16 +200,14 @@ public final class QCategory
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }
 
             /* Loop through the categories */
             myIterator = theCategories.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QCategory myCategory = myIterator.next();
 
                 /* Write Category details */
@@ -218,8 +215,7 @@ public final class QCategory
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }

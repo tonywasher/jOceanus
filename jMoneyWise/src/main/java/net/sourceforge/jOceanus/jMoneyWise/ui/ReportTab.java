@@ -60,6 +60,7 @@ import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect.ReportType;
 import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisReport;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
+import net.sourceforge.jOceanus.jMoneyWise.views.HTMLSectionManager;
 import net.sourceforge.jOceanus.jMoneyWise.views.Report;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
@@ -120,9 +121,9 @@ public class ReportTab
     private final ErrorPanel theError;
 
     /**
-     * The Current Text.
+     * The HTML Manager.
      */
-    private final StringBuilder theBuilder;
+    private final HTMLSectionManager theHTMLManager;
 
     /**
      * Constructor for Report Window.
@@ -141,8 +142,8 @@ public class ReportTab
         theSpotEntry.addAsChildOf(theDataReport);
         theSpotEntry.hideEntry();
 
-        /* Create stringBuilder */
-        theBuilder = new StringBuilder();
+        /* Create HTML Manager */
+        theHTMLManager = new HTMLSectionManager();
 
         /* Create listener */
         ReportListener myListener = new ReportListener();
@@ -329,9 +330,9 @@ public class ReportTab
                 return;
         }
 
-        /* Store the text into the string builder */
-        theBuilder.setLength(0);
-        theBuilder.append(myText);
+        /* process the text to hide relevant sections */
+        theHTMLManager.setInitialText(myText);
+        myText = theHTMLManager.hideClassSections("hideDiv");
 
         /* Set the report text */
         theEditor.setText(myText);
@@ -353,23 +354,23 @@ public class ReportTab
                 /* If this is a frame hyper-link */
                 if (e instanceof HTMLFrameHyperlinkEvent) {
                     /* Pass through to the document */
-                    HTMLFrameHyperlinkEvent evt = (HTMLFrameHyperlinkEvent) e;
-                    HTMLDocument doc = (HTMLDocument) theEditor.getDocument();
-                    doc.processHTMLFrameHyperlinkEvent(evt);
+                    HTMLFrameHyperlinkEvent myEvent = (HTMLFrameHyperlinkEvent) e;
+                    HTMLDocument myDoc = (HTMLDocument) theEditor.getDocument();
+                    myDoc.processHTMLFrameHyperlinkEvent(myEvent);
 
                     /* else this is an interesting event */
                 } else {
                     /* Protect against exceptions */
                     try {
                         /* Access the URL and description */
-                        URL url = e.getURL();
-                        String desc = e.getDescription();
+                        URL myURL = e.getURL();
+                        String myDesc = e.getDescription();
 
                         /* If this is an internal link */
-                        if ((url == null)
-                            && (desc.startsWith("#"))) {
+                        if ((myURL == null)
+                            && (myDesc.startsWith("#"))) {
                             /* Scroll to requested link */
-                            theEditor.scrollToReference(desc.substring(1));
+                            theEditor.scrollToReference(myDesc.substring(1));
 
                             /* else we should try the URL */
                         } else {
@@ -400,18 +401,9 @@ public class ReportTab
                         /* Access the reference name */
                         String myRef = (String) mySet.getAttribute(HTML.Attribute.HREF);
                         if (myRef != null) {
-                            /* Do something */
-                            int index = theBuilder.indexOf("<div id=\"myTest\"");
-                            if (index >= 0) {
-                                theBuilder.setLength(index);
-                            }
-                            // index = theBuilder.indexOf("class=\"", index);
-                            // index += 7;
-                            // String curState = theBuilder.substring(index, index + 7);
-                            // theBuilder.replace(index, index + 4, (curState.equals("showDiv")
-                            // ? "hide"
-                            // : "show"));
-                            theEditor.setText(theBuilder.toString());
+                            /* Toggle the myTest section */
+                            theEditor.setText(theHTMLManager.toggleSection("myTest"));
+                            theEditor.setCaretPosition(0);
                         }
                     }
                 }

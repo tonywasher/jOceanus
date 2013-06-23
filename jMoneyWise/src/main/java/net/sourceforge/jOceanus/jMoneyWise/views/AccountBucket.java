@@ -445,6 +445,9 @@ public final class AccountBucket
         theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
         theSavePoint = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
 
+        /* Copy the Capital Events */
+        theEvents = pBase.getCapitalEvents();
+
         /* Clone the underlying map */
         cloneMap(theBase.getAttributes(), theAttributes);
     }

@@ -30,8 +30,7 @@ import net.sourceforge.jOceanus.jDataModels.data.StaticData;
  * @author Tony Washer
  * @param <T> the data type
  */
-public abstract class SheetStaticData<T extends StaticData<T, ?>>
-        extends SheetDataItem<T> {
+public abstract class SheetStaticData<T extends StaticData<T, ?>> extends SheetDataItem<T> {
     /**
      * Enabled column.
      */
@@ -50,7 +49,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
     /**
      * Description column.
      */
-    private static final int COL_DESC = COL_NAME + 1;
+    protected static final int COL_DESC = COL_NAME + 1;
 
     /**
      * Load the Static Data from backup.
@@ -94,8 +93,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
      * @param pReader the spreadsheet reader
      * @param pRange the range to load
      */
-    protected SheetStaticData(final SheetReader<?> pReader,
-                              final String pRange) {
+    protected SheetStaticData(final SheetReader<?> pReader, final String pRange) {
         /* Call super constructor */
         super(pReader, pRange);
     }
@@ -106,9 +104,7 @@ public abstract class SheetStaticData<T extends StaticData<T, ?>>
      * @param pRange the range to create
      * @param pNames the name range to create
      */
-    protected SheetStaticData(final SheetWriter<?> pWriter,
-                              final String pRange,
-                              final String pNames) {
+    protected SheetStaticData(final SheetWriter<?> pWriter, final String pRange, final String pNames) {
         /* Call super constructor */
         super(pWriter, pRange);
 

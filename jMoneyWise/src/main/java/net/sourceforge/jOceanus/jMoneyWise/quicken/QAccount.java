@@ -37,12 +37,16 @@ import net.sourceforge.jOceanus.jMoneyWise.quicken.QPortfolioEvent.QPortfolioEve
 /**
  * Quicken Account.
  */
-public final class QAccount
-        extends QElement {
+public final class QAccount extends QElement {
     /**
      * Item type.
      */
     protected static final String QIF_ITEM = "!Account";
+
+    /**
+     * The analysis.
+     */
+    private final QAnalysis theAnalysis;
 
     /**
      * The account.
@@ -60,9 +64,33 @@ public final class QAccount
     private final boolean isAutoExpense;
 
     /**
-     * Is this account an portfolio?
+     * Is this account a portfolio?
      */
     private final boolean isPortfolio;
+
+    /**
+     * Obtain the account name.
+     * @return the account name
+     */
+    protected String getName() {
+        return theAccount.getName();
+    }
+
+    /**
+     * Obtain the account.
+     * @return the account
+     */
+    protected Account getAccount() {
+        return theAccount;
+    }
+
+    /**
+     * Obtain the holding account.
+     * @return the holding account
+     */
+    protected Account getHolding() {
+        return theAccount.getHolding();
+    }
 
     /**
      * Is the account using autoExpense?
@@ -77,18 +105,17 @@ public final class QAccount
      * @param pAnalysis the analysis
      * @param pAccount the account
      */
-    protected QAccount(final QAnalysis pAnalysis,
-                       final Account pAccount) {
+    protected QAccount(final QAnalysis pAnalysis, final Account pAccount) {
         /* Call super constructor */
-        super(pAnalysis.getFormatter());
+        super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
-        /* Store the account */
+        /* Store the parameters */
+        theAnalysis = pAnalysis;
         theAccount = pAccount;
         isAutoExpense = (pAccount.getAutoExpense() != null);
         isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.Portfolio);
-        theEvents = (isPortfolio)
-                ? new QPortfolioEventList(pAnalysis, this)
-                : new QEventList(pAnalysis, this);
+
+        theEvents = (isPortfolio) ? new QPortfolioEventList(pAnalysis, this) : new QEventList(pAnalysis, this);
     }
 
     /**
@@ -162,7 +189,7 @@ public final class QAccount
         JMoney myOpeningBal = theAccount.getOpeningBalance();
         if (myOpeningBal != null) {
             /* Create the opening balance event */
-            QEvent myEvent = new QEvent(getFormatter());
+            QEvent myEvent = new QEvent(theAnalysis);
             append(myEvent.buildOpeningQIF(theAccount, pStartDate, myOpeningBal));
         }
 
@@ -203,6 +230,17 @@ public final class QAccount
                                 final boolean isCredit) {
         /* register the event and add to the list */
         theEvents.registerEvent(pEvent, isCredit);
+    }
+
+    /**
+     * Process the holding event.
+     * @param pEvent the event
+     * @param isCredit is this the credit item?
+     */
+    protected void processHoldingEvent(final Event pEvent,
+                                       final boolean isCredit) {
+        /* register the event and add to the list */
+        theEvents.registerHoldingEvent(pEvent, isCredit);
     }
 
     /**

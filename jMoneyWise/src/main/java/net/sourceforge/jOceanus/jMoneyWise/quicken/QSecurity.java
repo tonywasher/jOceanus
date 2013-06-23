@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
@@ -40,12 +39,16 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 /**
  * Quicken Security.
  */
-public final class QSecurity
-        extends QElement {
+public final class QSecurity extends QElement {
     /**
      * Item type.
      */
     private static final String QIF_ITEM = "Security";
+
+    /**
+     * The analysis.
+     */
+    private final QAnalysis theAnalysis;
 
     /**
      * The account for this security.
@@ -59,15 +62,15 @@ public final class QSecurity
 
     /**
      * Constructor.
-     * @param pFormatter the data formatter
+     * @param pAnalysis the analysis
      * @param pAccount the security account
      */
-    private QSecurity(final JDataFormatter pFormatter,
-                      final Account pAccount) {
+    private QSecurity(final QAnalysis pAnalysis, final Account pAccount) {
         /* Call super constructor */
-        super(pFormatter);
+        super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
-        /* Store the account */
+        /* Store the parameters */
+        theAnalysis = pAnalysis;
         theSecurity = pAccount;
 
         /* Create the price list */
@@ -115,7 +118,7 @@ public final class QSecurity
      */
     protected void addPrice(final AccountPrice pPrice) {
         /* Add the price */
-        QPrice myQIF = new QPrice(getFormatter(), pPrice);
+        QPrice myQIF = new QPrice(theAnalysis, pPrice);
         thePrices.add(myQIF);
     }
 
@@ -156,12 +159,16 @@ public final class QSecurity
     /**
      * Security List class.
      */
-    protected static class QSecurityList
-            extends QElement {
+    protected static class QSecurityList extends QElement {
         /**
          * Security Map.
          */
         private final HashMap<Account, QSecurity> theSecurities;
+
+        /**
+         * The analysis.
+         */
+        private final QAnalysis theAnalysis;
 
         /**
          * Number of prices.
@@ -174,7 +181,10 @@ public final class QSecurity
          */
         protected QSecurityList(final QAnalysis pAnalysis) {
             /* Call super constructor */
-            super(pAnalysis.getFormatter());
+            super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
+
+            /* Store parameters */
+            theAnalysis = pAnalysis;
 
             /* Create the map */
             theSecurities = new HashMap<Account, QSecurity>();
@@ -191,7 +201,7 @@ public final class QSecurity
             /* If this is a new security */
             if (mySecurity == null) {
                 /* Allocate the security and add to the map */
-                mySecurity = new QSecurity(getFormatter(), pAccount);
+                mySecurity = new QSecurity(theAnalysis, pAccount);
                 theSecurities.put(pAccount, mySecurity);
             }
         }
@@ -237,8 +247,7 @@ public final class QSecurity
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     break;
                 }
             }
@@ -274,8 +283,7 @@ public final class QSecurity
 
             /* Loop through the securities */
             Iterator<QSecurity> myIterator = theSecurities.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QSecurity mySecurity = myIterator.next();
 
                 /* Write Security details */
@@ -283,8 +291,7 @@ public final class QSecurity
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }
@@ -318,8 +325,7 @@ public final class QSecurity
 
             /* Loop through the securities */
             Iterator<QSecurity> myIterator = theSecurities.values().iterator();
-            while ((bContinue)
-                   && (myIterator.hasNext())) {
+            while ((bContinue) && (myIterator.hasNext())) {
                 QSecurity mySecurity = myIterator.next();
 
                 /* Write price details */
@@ -327,8 +333,7 @@ public final class QSecurity
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }

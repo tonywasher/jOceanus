@@ -33,17 +33,14 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 /**
  * Quicken Interest Event.
  */
-public class QInterestEvent
-        extends QEvent {
+public class QInterestEvent extends QEvent {
     /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pEvent the event
      * @param pCredit is this the credit item?
      */
-    protected QInterestEvent(final QAnalysis pAnalysis,
-                             final Event pEvent,
-                             final boolean pCredit) {
+    protected QInterestEvent(final QAnalysis pAnalysis, final Event pEvent, final boolean pCredit) {
         /* Call super constructor */
         super(pAnalysis, pEvent, pCredit);
 
@@ -59,9 +56,7 @@ public class QInterestEvent
 
     @Override
     protected String buildQIF() {
-        return isCredit()
-                ? buildCreditEvent()
-                : buildDebitEvent();
+        return isCredit() ? buildCreditEvent() : buildDebitEvent();
     }
 
     /**
@@ -93,9 +88,7 @@ public class QInterestEvent
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();
@@ -116,8 +109,7 @@ public class QInterestEvent
         }
 
         /* If this is tax free and re-invested */
-        if ((isReinvested)
-            && (isTaxFree)) {
+        if ((isReinvested) && (isTaxFree)) {
             /* Add the standard category */
             addCategoryLine(QEvtLineType.Category, myCategory);
         } else {
@@ -175,9 +167,7 @@ public class QInterestEvent
         addDecimalLine(QEvtLineType.Amount, new JDecimal(myEvent.getAmount()));
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();
@@ -188,8 +178,11 @@ public class QInterestEvent
 
         /* Payee is the debit account */
         addLineType(QEvtLineType.Payee);
-        append("Transfer from ");
-        addAccount(myEvent.getDebit());
+        append(QIF_XFER);
+        if (!getQIFType().useSimpleTransfer()) {
+            append(QIF_XFERFROM);
+            addAccount(myEvent.getDebit());
+        }
         endLine();
 
         /* If we have a description */

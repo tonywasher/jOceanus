@@ -934,9 +934,6 @@ public class AnalysisReport {
         StringBuilder myDetail = new StringBuilder(BUFFER_LEN);
         TaxCategoryBucket myTax;
 
-        /* Initialise the detail */
-        theReport.makeHeading(myOutput, "Taxation Breakdown");
-
         /* Format the header */
         theReport.startReport(myOutput);
         theReport.makeLinkHeading(myOutput, "Taxation Report for "
@@ -1309,6 +1306,7 @@ public class AnalysisReport {
         IncomeBreakdown myBreakdown = theAnalysisYear.getBreakdown();
 
         /* Create the heading */
+        theReport.startReport(myOutput);
         theReport.makeLinkHeading(myOutput, "Income Breakdown Report for "
                                             + theDate.getYear());
 
@@ -1320,6 +1318,7 @@ public class AnalysisReport {
         myOutput.append(makeAccountListReport(myBreakdown.getUnitTrustDividend(), null));
         myOutput.append(makeAccountListReport(myBreakdown.getTaxFreeInterest(), null));
         myOutput.append(makeAccountListReport(myBreakdown.getTaxFreeDividend(), null));
+        theReport.endReport(myOutput);
 
         /* Return the report */
         return myOutput.toString();

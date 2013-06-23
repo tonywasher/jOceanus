@@ -37,6 +37,8 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency.AccountCurrencyList;
 
 /**
  * Account data type.
@@ -74,6 +76,11 @@ public abstract class AccountBase
      * isTaxFree Field Id.
      */
     public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField("isTaxFree");
+
+    /**
+     * Currency Field Id.
+     */
+    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField("Currency");
 
     @Override
     public String formatObject() {
@@ -167,6 +174,36 @@ public abstract class AccountBase
     }
 
     /**
+     * Obtain Account Category.
+     * @return the category
+     */
+    public AccountCurrency getAccountCurrency() {
+        return getAccountCurrency(getValueSet());
+    }
+
+    /**
+     * Obtain AccountCategoryId.
+     * @return the actCategoryId
+     */
+    public Integer getAccountCurrencyId() {
+        AccountCurrency myCurrency = getAccountCurrency();
+        return (myCurrency == null)
+                ? null
+                : myCurrency.getId();
+    }
+
+    /**
+     * Obtain AccountCategoryName.
+     * @return the actCategoryName
+     */
+    public String getAccountCurrencyName() {
+        AccountCurrency myCurrency = getAccountCurrency();
+        return (myCurrency == null)
+                ? null
+                : myCurrency.getName();
+    }
+
+    /**
      * Obtain Name.
      * @param pValueSet the valueSet
      * @return the Name
@@ -221,6 +258,15 @@ public abstract class AccountBase
     }
 
     /**
+     * Obtain AccountCurrency.
+     * @param pValueSet the valueSet
+     * @return the AccountCurrency
+     */
+    public static AccountCurrency getAccountCurrency(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_CURRENCY, AccountCurrency.class);
+    }
+
+    /**
      * Set name value.
      * @param pValue the value
      * @throws JDataException on error
@@ -255,7 +301,7 @@ public abstract class AccountBase
     }
 
     /**
-     * Set account type id.
+     * Set account category id.
      * @param pValue the value
      */
     private void setValueCategory(final Integer pValue) {
@@ -263,7 +309,7 @@ public abstract class AccountBase
     }
 
     /**
-     * Set account type name.
+     * Set account category name.
      * @param pValue the value
      */
     private void setValueCategory(final String pValue) {
@@ -288,6 +334,30 @@ public abstract class AccountBase
         getValueSet().setValue(FIELD_TAXFREE, (pValue != null)
                 ? pValue
                 : Boolean.FALSE);
+    }
+
+    /**
+     * Set account currency value.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final AccountCurrency pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set account currency id.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final Integer pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
+    }
+
+    /**
+     * Set account currency name.
+     * @param pValue the value
+     */
+    private void setValueCurrency(final String pValue) {
+        getValueSet().setValue(FIELD_CURRENCY, pValue);
     }
 
     @Override
@@ -315,6 +385,7 @@ public abstract class AccountBase
      * @param uCategoryId the Account category id
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
+     * @param uCurrencyId the Account currency id
      * @throws JDataException on error
      */
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
@@ -323,7 +394,8 @@ public abstract class AccountBase
                           final byte[] pName,
                           final Integer uCategoryId,
                           final Boolean isClosed,
-                          final Boolean isTaxFree) throws JDataException {
+                          final Boolean isTaxFree,
+                          final Integer uCurrencyId) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -331,6 +403,7 @@ public abstract class AccountBase
         try {
             /* Store the IDs */
             setValueCategory(uCategoryId);
+            setValueCurrency(uCurrencyId);
 
             /* Set ControlId */
             setControlKey(uControlId);
@@ -357,6 +430,7 @@ public abstract class AccountBase
      * @param pCategory the Account category
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
+     * @param pCurrency the Account currency
      * @throws JDataException on error
      */
     protected AccountBase(final AccountBaseList<? extends AccountBase> pList,
@@ -364,7 +438,8 @@ public abstract class AccountBase
                           final String sName,
                           final String pCategory,
                           final Boolean isClosed,
-                          final Boolean isTaxFree) throws JDataException {
+                          final Boolean isTaxFree,
+                          final String pCurrency) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
 
@@ -372,6 +447,9 @@ public abstract class AccountBase
         try {
             /* Store the category */
             setValueCategory(pCategory);
+
+            /* Store the currency */
+            setValueCurrency(pCurrency);
 
             /* Record the encrypted values */
             setValueName(sName);
@@ -430,6 +508,7 @@ public abstract class AccountBase
         /* Access Relevant lists */
         FinanceData myData = getDataSet();
         AccountCategoryList myCategories = myData.getAccountCategories();
+        AccountCurrencyList myCurrencies = myData.getAccountCurrencies();
         ValueSet myValues = getValueSet();
 
         /* Adjust Category */
@@ -451,6 +530,30 @@ public abstract class AccountBase
                 throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
             }
             setValueCategory(myCat);
+            if (myCat.getCategoryTypeClass().isNonAsset()) {
+                setValueCurrency((AccountCurrency) null);
+            }
+        }
+
+        /* Adjust Currency */
+        Object myCurrency = myValues.getValue(FIELD_CURRENCY);
+        if (myCurrency instanceof AccountCurrency) {
+            myCurrency = ((AccountCurrency) myCurrency).getId();
+        }
+        if (myCurrency instanceof Integer) {
+            AccountCurrency myCurr = myCurrencies.findItemById((Integer) myCurrency);
+            if (myCurr == null) {
+                addError(ERROR_UNKNOWN, FIELD_CURRENCY);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueCurrency(myCurr);
+        } else if (myCurrency instanceof String) {
+            AccountCurrency myCurr = myCurrencies.findItemByName((String) myCurrency);
+            if (myCurr == null) {
+                addError(ERROR_UNKNOWN, FIELD_CURRENCY);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueCurrency(myCurr);
         }
     }
 
@@ -514,12 +617,23 @@ public abstract class AccountBase
     @Override
     public void validate() {
         AccountCategory myCategory = getAccountCategory();
+        AccountCurrency myCurrency = getAccountCurrency();
         String myName = getName();
         AccountBaseList<?> myList = (AccountBaseList<?>) getList();
 
         /* AccountCategoryType must be non-null */
         if (myCategory == null) {
             addError(ERROR_MISSING, FIELD_CATEGORY);
+        }
+
+        /* AccountCurrency must be non-null (for valued assets) and enabled */
+        if (myCurrency == null) {
+            if (hasUnits()
+                || hasValue()) {
+                addError(ERROR_MISSING, FIELD_CURRENCY);
+            }
+        } else if (!myCurrency.getEnabled()) {
+            addError(ERROR_DISABLED, FIELD_CURRENCY);
         }
 
         /* Name must be non-null */
@@ -572,10 +686,24 @@ public abstract class AccountBase
         setValueTaxFree(isTaxFree);
     }
 
+    /**
+     * Set a new account currency.
+     * @param pCurrency the new currency
+     */
+    public void setAccountCurrency(final AccountCurrency pCurrency) {
+        setValueCurrency(pCurrency);
+    }
+
     @Override
     public void touchUnderlyingItems() {
         /* touch the underlying account category */
         getAccountCategory().touchItem(this);
+
+        /* touch the underlying account currency */
+        AccountCurrency myCurrency = getAccountCurrency();
+        if (myCurrency != null) {
+            myCurrency.touchItem(this);
+        }
     }
 
     /**
@@ -613,6 +741,11 @@ public abstract class AccountBase
         /* Update the taxFree indication if required */
         if (!Difference.isEqual(isTaxFree(), myAccount.isTaxFree())) {
             setValueTaxFree(myAccount.isTaxFree());
+        }
+
+        /* Update the account currency if required */
+        if (!Difference.isEqual(getAccountCurrency(), myAccount.getAccountCurrency())) {
+            setValueCurrency(myAccount.getAccountCurrency());
         }
 
         /* Check for changes */

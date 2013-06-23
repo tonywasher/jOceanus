@@ -23,8 +23,11 @@
 package net.sourceforge.jOceanus.jMoneyWise.database;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
+import net.sourceforge.jOceanus.jDataModels.data.StaticData;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
+import net.sourceforge.jOceanus.jDataModels.database.TableDefinition;
 import net.sourceforge.jOceanus.jDataModels.database.TableStaticData;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
@@ -52,6 +55,8 @@ public class TableAccountCurrency
      */
     protected TableAccountCurrency(final Database<FinanceData> pDatabase) {
         super(pDatabase, TABLE_NAME);
+        TableDefinition myTableDef = getTableDef();
+        myTableDef.addBooleanColumn(AccountCurrency.FIELD_DEFAULT);
     }
 
     @Override
@@ -68,7 +73,32 @@ public class TableAccountCurrency
                                final Integer pOrder,
                                final byte[] pType,
                                final byte[] pDesc) throws JDataException {
+    }
+
+    @Override
+    protected void loadItem(final Integer pId,
+                            final Integer pControlId) throws JDataException {
+        /* Get the various fields */
+        TableDefinition myTableDef = getTableDef();
+        Boolean myEnabled = myTableDef.getBooleanValue(StaticData.FIELD_ENABLED);
+        Integer myOrder = myTableDef.getIntegerValue(StaticData.FIELD_ORDER);
+        byte[] myType = myTableDef.getBinaryValue(StaticData.FIELD_NAME);
+        byte[] myDesc = myTableDef.getBinaryValue(StaticData.FIELD_DESC);
+        Boolean myDefault = myTableDef.getBooleanValue(AccountCurrency.FIELD_DEFAULT);
+
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, isEnabled, pOrder, pType, pDesc);
+        theList.addSecureItem(pId, pControlId, myEnabled, myOrder, myType, myDesc, myDefault);
+    }
+
+    @Override
+    protected void setFieldValue(final AccountCurrency pItem,
+                                 final JDataField iField) throws JDataException {
+        /* Switch on field id */
+        TableDefinition myTableDef = getTableDef();
+        if (AccountCurrency.FIELD_DEFAULT.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.isDefault());
+        } else {
+            super.setFieldValue(pItem, iField);
+        }
     }
 }

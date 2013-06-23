@@ -34,6 +34,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
@@ -45,8 +46,7 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
  * SheetDataItem extension for Account.
  * @author Tony Washer
  */
-public class SheetAccount
-        extends SheetDataItem<Account> {
+public class SheetAccount extends SheetDataItem<Account> {
     /**
      * NamedArea for Accounts.
      */
@@ -55,8 +55,7 @@ public class SheetAccount
     /**
      * NameList for Accounts.
      */
-    protected static final String AREA_ACCOUNTNAMES = Account.OBJECT_NAME
-                                                      + "Names";
+    protected static final String AREA_ACCOUNTNAMES = Account.OBJECT_NAME + "Names";
 
     /**
      * Name column.
@@ -77,6 +76,11 @@ public class SheetAccount
      * TaxFree column.
      */
     private static final int COL_TAXFREE = COL_CLOSED + 1;
+
+    /**
+     * Currency column.
+     */
+    private static final int COL_CURRENCY = COL_TAXFREE + 1;
 
     /**
      * Account data list.
@@ -115,7 +119,7 @@ public class SheetAccount
             /* else extract load */
         } else {
             /* Set up info Sheet and ask for two-pass load */
-            theInfoSheet = new SheetAccountInfoSet(AccountInfoClass.class, this, COL_TAXFREE);
+            theInfoSheet = new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CURRENCY);
             requestDoubleLoad();
         }
     }
@@ -135,9 +139,7 @@ public class SheetAccount
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup()
-                ? null
-                : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_TAXFREE);
+        theInfoSheet = isBackup() ? null : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CURRENCY);
     }
 
     @Override
@@ -145,6 +147,7 @@ public class SheetAccount
         /* Access the IDs */
         Integer myControlId = loadInteger(COL_CONTROLID);
         Integer myCategoryId = loadInteger(COL_ACCOUNTCAT);
+        Integer myCurrencyId = loadInteger(COL_CURRENCY);
 
         /* Access the flags */
         Boolean isClosed = loadBoolean(COL_CLOSED);
@@ -154,7 +157,7 @@ public class SheetAccount
         byte[] myName = loadBytes(COL_NAME);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myName, myCategoryId, isClosed, isTaxFree);
+        theList.addSecureItem(pId, myControlId, myName, myCategoryId, isClosed, isTaxFree, myCurrencyId);
     }
 
     @Override
@@ -162,13 +165,14 @@ public class SheetAccount
         /* Access the Account */
         String myName = loadString(COL_NAME);
         String myCategory = loadString(COL_ACCOUNTCAT);
+        String myCurrency = loadString(COL_CURRENCY);
 
         /* Access the flags */
         Boolean isClosed = loadBoolean(COL_CLOSED);
         Boolean isTaxFree = loadBoolean(COL_TAXFREE);
 
         /* Load the item */
-        theList.addOpenItem(pId, myName, myCategory, isClosed, isTaxFree);
+        theList.addOpenItem(pId, myName, myCategory, isClosed, isTaxFree, myCurrency);
     }
 
     @Override
@@ -188,6 +192,7 @@ public class SheetAccount
         writeBoolean(COL_CLOSED, pItem.isClosed());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
         writeBytes(COL_NAME, pItem.getNameBytes());
+        writeInteger(COL_CURRENCY, pItem.getAccountCurrencyId());
     }
 
     @Override
@@ -197,6 +202,7 @@ public class SheetAccount
         writeString(COL_ACCOUNTCAT, pItem.getAccountCategoryName());
         writeBoolean(COL_CLOSED, pItem.isClosed());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
+        writeString(COL_CURRENCY, pItem.getAccountCurrencyName());
 
         /* Write infoSet fields */
         theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
@@ -209,6 +215,7 @@ public class SheetAccount
         writeHeader(COL_ACCOUNTCAT, AccountBase.FIELD_CATEGORY.getName());
         writeHeader(COL_CLOSED, AccountBase.FIELD_CLOSED.getName());
         writeHeader(COL_TAXFREE, AccountBase.FIELD_TAXFREE.getName());
+        writeHeader(COL_CURRENCY, AccountBase.FIELD_CURRENCY.getName());
 
         /* prepare infoSet sheet */
         theInfoSheet.prepareSheet();
@@ -221,12 +228,14 @@ public class SheetAccount
         setStringColumn(COL_ACCOUNTCAT);
         setBooleanColumn(COL_CLOSED);
         setBooleanColumn(COL_TAXFREE);
+        setStringColumn(COL_CURRENCY);
 
         /* Set the name column range */
         nameColumnRange(COL_NAME, AREA_ACCOUNTNAMES);
 
         /* Set the Validations */
         applyDataValidation(COL_ACCOUNTCAT, SheetAccountCategory.AREA_ACTCATEGORIES);
+        applyDataValidation(COL_CURRENCY, SheetAccountCurrency.AREA_ACCOUNTCURRNAMES);
 
         /* Format the info sheet */
         theInfoSheet.formatSheet();
@@ -291,6 +300,9 @@ public class SheetAccount
                 return false;
             }
 
+            /* Access default currency */
+            AccountCurrency myCurrency = pData.getAccountCurrencies().getDefaultCurrency();
+
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the row by reference */
@@ -315,12 +327,11 @@ public class SheetAccount
                 // isClosed = myCell.getBooleanValue();
                 // }
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, myAcType, Boolean.FALSE/* TODO isClosed */, isTaxFree);
+                myList.addOpenItem(0, myName, myAcType, Boolean.FALSE/* TODO isClosed */, isTaxFree, myCurrency.getName());
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -400,8 +411,7 @@ public class SheetAccount
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0)
-                    && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -425,8 +435,7 @@ public class SheetAccount
     /**
      * AccountInfoSet sheet.
      */
-    private static class SheetAccountInfoSet
-            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
+    private static class SheetAccountInfoSet extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
 
         /**
          * Constructor.
@@ -434,9 +443,7 @@ public class SheetAccount
          * @param pOwner the Owner
          * @param pBaseCol the base column
          */
-        public SheetAccountInfoSet(final Class<AccountInfoClass> pClass,
-                                   final SheetDataItem<Account> pOwner,
-                                   final int pBaseCol) {
+        public SheetAccountInfoSet(final Class<AccountInfoClass> pClass, final SheetDataItem<Account> pOwner, final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }
 
