@@ -50,7 +50,7 @@ public class DatabasePreferences
     /**
      * Registry name for DataBase name.
      */
-    public static final String NAME_DBNAME = "DBName";
+    public static final String NAME_DBNAME = "DBaseName";
 
     /**
      * Registry name for DataBase batch size.

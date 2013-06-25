@@ -51,7 +51,7 @@ public class BackupPreferences
     /**
      * Registry name for Archive FileName.
      */
-    public static final String NAME_ARCHIVE_FILE = "ArchiveFile";
+    public static final String NAME_ARCHIVE_FILE = "SourceFile";
 
     /**
      * Registry name for Last Event.

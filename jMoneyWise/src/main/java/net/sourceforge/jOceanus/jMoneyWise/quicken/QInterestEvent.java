@@ -33,14 +33,17 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 /**
  * Quicken Interest Event.
  */
-public class QInterestEvent extends QEvent {
+public class QInterestEvent
+        extends QEvent {
     /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pEvent the event
      * @param pCredit is this the credit item?
      */
-    protected QInterestEvent(final QAnalysis pAnalysis, final Event pEvent, final boolean pCredit) {
+    protected QInterestEvent(final QAnalysis pAnalysis,
+                             final Event pEvent,
+                             final boolean pCredit) {
         /* Call super constructor */
         super(pAnalysis, pEvent, pCredit);
 
@@ -56,7 +59,9 @@ public class QInterestEvent extends QEvent {
 
     @Override
     protected String buildQIF() {
-        return isCredit() ? buildCreditEvent() : buildDebitEvent();
+        return isCredit()
+                ? buildCreditEvent()
+                : buildDebitEvent();
     }
 
     /**
@@ -70,9 +75,16 @@ public class QInterestEvent extends QEvent {
         JMoney myTaxCredit = myEvent.getTaxCredit();
         JMoney myDonation = myEvent.getDonation();
         EventCategory myCategory = getAnalysis().getInterestCategory(myEvent);
+
+        /* Determine type of event */
         boolean isTaxFree = (myTaxCredit == null);
         boolean isDonation = (myDonation != null);
         boolean isReinvested = Difference.isEqual(myEvent.getDebit(), myEvent.getCredit());
+
+        /* Are we using splits */
+        boolean useSplits = ((!isTaxFree) || (isDonation));
+        boolean xtraXfer = ((!isReinvested) && (!getQIFType().supportsSplitTransfer()));
+        useSplits |= ((!isReinvested) && (!xtraXfer));
 
         /* Reset the builder */
         reset();
@@ -82,13 +94,16 @@ public class QInterestEvent extends QEvent {
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        if (!isReinvested) {
+        if ((!isReinvested)
+            && (!xtraXfer)) {
             myValue.setZero();
         }
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();
@@ -108,9 +123,9 @@ public class QInterestEvent extends QEvent {
             addStringLine(QEvtLineType.Comment, myDesc);
         }
 
-        /* If this is tax free and re-invested */
-        if ((isReinvested) && (isTaxFree)) {
-            /* Add the standard category */
+        /* If we are not using splits */
+        if (!useSplits) {
+            /* Just add the standard category */
             addCategoryLine(QEvtLineType.Category, myCategory);
         } else {
             /* Add a Split */
@@ -137,12 +152,56 @@ public class QInterestEvent extends QEvent {
                 addCategoryLine(QEvtLineType.SplitCategory, myCategory);
                 addDecimalLine(QEvtLineType.SplitAmount, myValue);
             }
-            if (!isReinvested) {
+            if ((!isReinvested)
+                && (!xtraXfer)) {
                 myValue = new JDecimal(myAmount);
                 myValue.negate();
                 addXferAccountLine(QEvtLineType.SplitCategory, myEvent.getCredit());
                 addDecimalLine(QEvtLineType.SplitAmount, myValue);
             }
+        }
+
+        /* If we are producing an extra Transfer */
+        if (xtraXfer) {
+            /* End the item */
+            endItem();
+
+            /* Add the Date */
+            addDateLine(QEvtLineType.Date, myEvent.getDate());
+
+            /* Add the Amount (as a simple decimal) */
+            myValue = new JDecimal(myAmount);
+            myValue.negate();
+            addDecimalLine(QEvtLineType.Amount, myValue);
+
+            /* Add the Cleared status */
+            addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                    ? QIF_RECONCILED
+                    : QIF_OPEN);
+
+            /* If we have a reference */
+            if (myRef != null) {
+                /* Add the reference */
+                addStringLine(QEvtLineType.Reference, myRef);
+            }
+
+            /* Payee is the credit account */
+            addLineType(QEvtLineType.Payee);
+            append(QIF_XFER);
+            if (!getQIFType().useSimpleTransfer()) {
+                append(QIF_XFERTO);
+                addAccount(myEvent.getCredit());
+            }
+            endLine();
+
+            /* If we have a description */
+            if (myDesc != null) {
+                /* Add the Description */
+                addStringLine(QEvtLineType.Comment, myDesc);
+            }
+
+            /* Add the transfer details */
+            addXferAccountLine(QEvtLineType.Category, myEvent.getCredit());
         }
 
         /* Return the result */
@@ -167,7 +226,9 @@ public class QInterestEvent extends QEvent {
         addDecimalLine(QEvtLineType.Amount, new JDecimal(myEvent.getAmount()));
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();

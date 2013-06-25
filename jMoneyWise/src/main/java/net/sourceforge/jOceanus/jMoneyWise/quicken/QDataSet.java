@@ -47,11 +47,6 @@ public class QDataSet {
     private static final String QIF_DATEFORMAT = "dd/MM/yy";
 
     /**
-     * Quicken suffix.
-     */
-    private static final String QIF_SUFFIX = ".qif";
-
-    /**
      * Data Formatter.
      */
     private final JDataFormatter theFormatter = new JDataFormatter();
@@ -82,7 +77,9 @@ public class QDataSet {
      * @param pData the dataSet
      * @param pPreferences the preferences
      */
-    public QDataSet(final ThreadStatus<FinanceData> pStatus, final FinanceData pData, final QIFPreference pPreferences) {
+    public QDataSet(final ThreadStatus<FinanceData> pStatus,
+                    final FinanceData pData,
+                    final QIFPreference pPreferences) {
         /* Store parameters */
         theData = pData;
         thePreferences = pPreferences;
@@ -126,7 +123,8 @@ public class QDataSet {
         boolean bContinue = true;
         /* Loop through the accounts */
         Iterator<QAccount> myIterator = theAnalysis.getAccountIterator();
-        while ((bContinue) && (myIterator.hasNext())) {
+        while ((bContinue)
+               && (myIterator.hasNext())) {
             QAccount myAccount = myIterator.next();
 
             /* Output the file */
@@ -151,7 +149,9 @@ public class QDataSet {
         String myDirectory = thePreferences.getStringValue(QIFPreference.NAME_QIFDIR);
 
         /* Determine the archive name */
-        File myQIFFile = new File(myDirectory + File.separator + "NewFinance" + QIF_SUFFIX);
+        File myQIFFile = new File(myDirectory
+                                  + File.separator
+                                  + theQIFType.getFileName());
 
         /* Protect against exceptions */
         try {
@@ -168,7 +168,8 @@ public class QDataSet {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to write to file: " + myQIFFile.getName(), e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to write to file: "
+                                                           + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -178,7 +179,8 @@ public class QDataSet {
                 }
 
                 /* Delete the file */
-                if ((doDelete) && (!myQIFFile.delete())) {
+                if ((doDelete)
+                    && (!myQIFFile.delete())) {
                     doDelete = false;
                 }
 
@@ -205,7 +207,10 @@ public class QDataSet {
         String myDirectory = thePreferences.getStringValue(QIFPreference.NAME_QIFDIR);
 
         /* Determine the archive name */
-        File myQIFFile = new File(myDirectory + File.separator + pAccount.getName() + QIF_SUFFIX);
+        File myQIFFile = new File(myDirectory
+                                  + File.separator
+                                  + pAccount.getName()
+                                  + QIFPreference.QIF_SUFFIX);
 
         /* Protect against exceptions */
         try {
@@ -222,7 +227,8 @@ public class QDataSet {
 
         } catch (IOException e) {
             /* Report the error */
-            throw new JDataException(ExceptionClass.EXCEL, "Failed to write to file: " + myQIFFile.getName(), e);
+            throw new JDataException(ExceptionClass.EXCEL, "Failed to write to file: "
+                                                           + myQIFFile.getName(), e);
         } finally {
             /* Protect while cleaning up */
             try {
@@ -232,7 +238,8 @@ public class QDataSet {
                 }
 
                 /* Delete the file */
-                if ((doDelete) && (!myQIFFile.delete())) {
+                if ((doDelete)
+                    && (!myQIFFile.delete())) {
                     doDelete = false;
                 }
 

@@ -7,7 +7,13 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
 /**
  * Quicken Preferences.
  */
-public class QIFPreference extends PreferenceSet {
+public class QIFPreference
+        extends PreferenceSet {
+    /**
+     * Quicken suffix.
+     */
+    protected static final String QIF_SUFFIX = ".qif";
+
     /**
      * Registry name for QIF Directory.
      */
@@ -94,14 +100,14 @@ public class QIFPreference extends PreferenceSet {
         AceMoney,
 
         /**
-         * MSMoney.
+         * BankTree.
          */
-        MSMoneyPlus,
+        BankTree,
 
         /**
-         * MetaLogic.
+         * GnuCash.
          */
-        MetaLogic,
+        GnuCash,
 
         /**
          * HomeBank.
@@ -109,9 +115,19 @@ public class QIFPreference extends PreferenceSet {
         HomeBank,
 
         /**
-         * GnuCash.
+         * jGnash.
          */
-        GnuCash;
+        jGnash,
+
+        /**
+         * MoneyDance.
+         */
+        MoneyDance,
+
+        /**
+         * YouNeedABudget.
+         */
+        YNAB;
 
         /**
          * Should we use a consolidated file?
@@ -120,11 +136,13 @@ public class QIFPreference extends PreferenceSet {
         public boolean useConsolidated() {
             switch (this) {
                 case AceMoney:
-                case MetaLogic:
-                case HomeBank:
+                case BankTree:
                 case GnuCash:
+                case HomeBank:
+                case jGnash:
+                case MoneyDance:
+                case YNAB:
                     return true;
-                case MSMoneyPlus:
                 default:
                     return false;
             }
@@ -136,9 +154,11 @@ public class QIFPreference extends PreferenceSet {
          */
         public boolean useSimpleTransfer() {
             switch (this) {
-                case MSMoneyPlus:
-                case MetaLogic:
+                case BankTree:
                 case HomeBank:
+                case jGnash:
+                case MoneyDance:
+                case YNAB:
                     return true;
                 case AceMoney:
                 case GnuCash:
@@ -155,10 +175,31 @@ public class QIFPreference extends PreferenceSet {
             switch (this) {
                 case AceMoney:
                     return true;
-                case MSMoneyPlus:
-                case MetaLogic:
-                case HomeBank:
+                case BankTree:
                 case GnuCash:
+                case HomeBank:
+                case jGnash:
+                case MoneyDance:
+                case YNAB:
+                default:
+                    return false;
+            }
+        }
+
+        /**
+         * do we support split transfer?
+         * @return true/false
+         */
+        public boolean supportsSplitTransfer() {
+            switch (this) {
+                case AceMoney:
+                case BankTree:
+                case jGnash:
+                case MoneyDance:
+                case YNAB:
+                    return true;
+                case GnuCash:
+                case HomeBank:
                 default:
                     return false;
             }
@@ -171,13 +212,36 @@ public class QIFPreference extends PreferenceSet {
         public boolean selfOpeningBalance() {
             switch (this) {
                 case AceMoney:
-                case MSMoneyPlus:
-                case MetaLogic:
-                case HomeBank:
+                case BankTree:
                 case GnuCash:
+                case HomeBank:
+                case jGnash:
+                case MoneyDance:
+                case YNAB:
                     return false;
                 default:
                     return true;
+            }
+        }
+
+        /**
+         * Obtain filename
+         * @return true/false
+         */
+        public String getFileName() {
+            switch (this) {
+                case AceMoney:
+                    return "all accounts"
+                           + QIF_SUFFIX;
+                case BankTree:
+                case GnuCash:
+                case HomeBank:
+                case jGnash:
+                case MoneyDance:
+                case YNAB:
+                default:
+                    return toString()
+                           + QIF_SUFFIX;
             }
         }
     }
