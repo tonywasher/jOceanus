@@ -77,11 +77,8 @@ public class AccountInfo
         return getInfoType().getInfoClass();
     }
 
-    /**
-     * Obtain Account.
-     * @return the Account
-     */
-    public Account getOwnerAccount() {
+    @Override
+    public Account getOwner() {
         return getOwner(getValueSet(), Account.class);
     }
 
@@ -307,7 +304,7 @@ public class AccountInfo
     @Override
     public void deRegister() {
         /* Access the AccountInfoSet and register this value */
-        AccountInfoSet mySet = getOwnerAccount().getInfoSet();
+        AccountInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -327,7 +324,7 @@ public class AccountInfo
         }
 
         /* Compare the Accounts */
-        int iDiff = getOwnerAccount().compareTo(pThat.getOwnerAccount());
+        int iDiff = getOwner().compareTo(pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -362,7 +359,7 @@ public class AccountInfo
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the Accounts */
-        Account myAccount = getOwnerAccount();
+        Account myAccount = getOwner();
         Account myOwner = myAccounts.findItemById(myAccount.getId());
         if (myOwner == null) {
             addError(ERROR_UNKNOWN, FIELD_OWNER);

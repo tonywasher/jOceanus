@@ -110,6 +110,12 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     }
 
     /**
+     * Obtain Owner.
+     * @return the Owner
+     */
+    public abstract O getOwner();
+
+    /**
      * Obtain OwnerId.
      * @return the OwnerId
      */

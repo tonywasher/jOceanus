@@ -466,7 +466,7 @@ public class AccountStatus
         } else if (pObject instanceof AccountInfo) {
             /* Access as account */
             AccountInfo myInfo = (AccountInfo) pObject;
-            Account myAccount = myInfo.getOwnerAccount();
+            Account myAccount = myInfo.getOwner();
             Boolean isClosed = myAccount.isClosed();
 
             /* If we are being aliased to */

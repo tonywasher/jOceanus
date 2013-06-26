@@ -30,7 +30,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
@@ -709,47 +708,31 @@ public abstract class AccountBase
     /**
      * Update base account from an edited account.
      * @param pAccount the edited account
-     * @return whether changes have been made
      */
-    @Override
-    public boolean applyChanges(final DataItem pAccount) {
-        /* Can only update from an account */
-        if (!(pAccount instanceof AccountBase)) {
-            return false;
-        }
-
-        AccountBase myAccount = (AccountBase) pAccount;
-
-        /* Store the current detail into history */
-        pushHistory();
-
-        /* Update the Name if required */
-        if (!Difference.isEqual(getName(), myAccount.getName())) {
-            setValueName(myAccount.getNameField());
+    protected void applyBasicChanges(final AccountBase pAccount) {
+        if (!Difference.isEqual(getName(), pAccount.getName())) {
+            setValueName(pAccount.getNameField());
         }
 
         /* Update the account category if required */
-        if (!Difference.isEqual(getAccountCategory(), myAccount.getAccountCategory())) {
-            setValueCategory(myAccount.getAccountCategory());
+        if (!Difference.isEqual(getAccountCategory(), pAccount.getAccountCategory())) {
+            setValueCategory(pAccount.getAccountCategory());
         }
 
         /* Update the closed indication if required */
-        if (!Difference.isEqual(isClosed(), myAccount.isClosed())) {
-            setValueClosed(myAccount.isClosed());
+        if (!Difference.isEqual(isClosed(), pAccount.isClosed())) {
+            setValueClosed(pAccount.isClosed());
         }
 
         /* Update the taxFree indication if required */
-        if (!Difference.isEqual(isTaxFree(), myAccount.isTaxFree())) {
-            setValueTaxFree(myAccount.isTaxFree());
+        if (!Difference.isEqual(isTaxFree(), pAccount.isTaxFree())) {
+            setValueTaxFree(pAccount.isTaxFree());
         }
 
         /* Update the account currency if required */
-        if (!Difference.isEqual(getAccountCurrency(), myAccount.getAccountCurrency())) {
-            setValueCurrency(myAccount.getAccountCurrency());
+        if (!Difference.isEqual(getAccountCurrency(), pAccount.getAccountCurrency())) {
+            setValueCurrency(pAccount.getAccountCurrency());
         }
-
-        /* Check for changes */
-        return checkForHistory();
     }
 
     /**

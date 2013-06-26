@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
 import java.util.ListIterator;
 
+import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
@@ -49,7 +50,8 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
  * SheetDataItem extension for Event.
  * @author Tony Washer
  */
-public class SheetEvent extends SheetDataItem<Event> {
+public class SheetEvent
+        extends SheetDataItem<Event> {
     /**
      * NamedArea for Events.
      */
@@ -86,6 +88,16 @@ public class SheetEvent extends SheetDataItem<Event> {
     private static final int COL_RECONCILED = COL_CATEGORY + 1;
 
     /**
+     * Split column.
+     */
+    private static final int COL_SPLIT = COL_RECONCILED + 1;
+
+    /**
+     * Reconciled column.
+     */
+    private static final int COL_PARENT = COL_SPLIT + 1;
+
+    /**
      * Events data list.
      */
     private final EventList theList;
@@ -99,6 +111,21 @@ public class SheetEvent extends SheetDataItem<Event> {
      * DataInfoSet Helper.
      */
     private final SheetEventInfoSet theInfoSheet;
+
+    /**
+     * Last loaded parent.
+     */
+    private Event theLastParent = null;
+
+    /**
+     * Last debit.
+     */
+    private String theLastDebit = null;
+
+    /**
+     * Last credit.
+     */
+    private String theLastCredit = null;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -115,7 +142,9 @@ public class SheetEvent extends SheetDataItem<Event> {
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup() ? null : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
+        theInfoSheet = isBackup()
+                ? null
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     /**
@@ -133,7 +162,9 @@ public class SheetEvent extends SheetDataItem<Event> {
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup() ? null : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
+        theInfoSheet = isBackup()
+                ? null
+                : new SheetEventInfoSet(EventInfoClass.class, this, COL_RECONCILED);
     }
 
     @Override
@@ -143,9 +174,11 @@ public class SheetEvent extends SheetDataItem<Event> {
         Integer myDebitId = loadInteger(COL_DEBIT);
         Integer myCreditId = loadInteger(COL_CREDIT);
         Integer myCatId = loadInteger(COL_CATEGORY);
+        Integer myParentId = loadInteger(COL_PARENT);
 
         /* Load flags */
         Boolean myReconciled = loadBoolean(COL_RECONCILED);
+        Boolean mySplit = loadBoolean(COL_SPLIT);
 
         /* Access the date and years */
         JDateDay myDate = loadDate(COL_DATE);
@@ -154,7 +187,7 @@ public class SheetEvent extends SheetDataItem<Event> {
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myReconciled);
+        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myReconciled, mySplit, myParentId);
     }
 
     @Override
@@ -173,8 +206,33 @@ public class SheetEvent extends SheetDataItem<Event> {
         /* Access the binary values */
         String myAmount = loadString(COL_AMOUNT);
 
-        /* Load the item */
-        Event myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled);
+        /* If we don't have a date */
+        Event myEvent;
+        if ((myDate == null)
+            && (theLastParent != null)) {
+            /* Pick up last date */
+            myDate = theLastParent.getDate();
+
+            /* Pick up debit and credit from last values */
+            if (myDebit == null) {
+                myDebit = theLastDebit;
+            }
+            if (myCredit == null) {
+                myCredit = theLastCredit;
+            }
+
+            /* Load the item */
+            myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.FALSE, theLastParent);
+            theLastParent.setSplit(Boolean.TRUE);
+        } else {
+            /* Load the item */
+            myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.FALSE, null);
+            theLastParent = myEvent;
+        }
+
+        /* Store last credit and debit */
+        theLastCredit = myCredit;
+        theLastDebit = myDebit;
 
         /* Load infoSet items */
         theInfoSheet.loadDataInfoSet(theInfoList, myEvent);
@@ -190,17 +248,42 @@ public class SheetEvent extends SheetDataItem<Event> {
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeBoolean(COL_RECONCILED, pItem.getReconciled());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
+        writeBoolean(COL_SPLIT, pItem.getReconciled());
+        writeInteger(COL_PARENT, pItem.getParentId());
     }
 
     @Override
     protected void insertOpenItem(final Event pItem) throws JDataException {
-        /* Set the fields */
-        writeDate(COL_DATE, pItem.getDate());
+        /* Determine whether we are a child event */
+        boolean isChild = (pItem.getParent() == null);
+
+        /* Access debit/credit names */
+        String myDebit = pItem.getDebitName();
+        String myCredit = pItem.getCreditName();
+
+        /* Write standard values */
         writeDecimal(COL_AMOUNT, pItem.getAmount());
         writeBoolean(COL_RECONCILED, pItem.getReconciled());
-        writeString(COL_DEBIT, pItem.getDebitName());
-        writeString(COL_CREDIT, pItem.getCreditName());
         writeString(COL_CATEGORY, pItem.getCategoryName());
+
+        /* If we are a child */
+        if (isChild) {
+            /* Only fill in debit credit if they are different */
+            if (Difference.isEqual(myDebit, theLastDebit)) {
+                writeString(COL_DEBIT, myDebit);
+            }
+            if (Difference.isEqual(myCredit, theLastCredit)) {
+                writeString(COL_CREDIT, myCredit);
+            }
+        } else {
+            writeDate(COL_DATE, pItem.getDate());
+            writeString(COL_DEBIT, myDebit);
+            writeString(COL_CREDIT, myCredit);
+        }
+
+        /* Store last credit and debit */
+        theLastCredit = myCredit;
+        theLastDebit = myDebit;
 
         /* Write infoSet fields */
         theInfoSheet.writeDataInfoSet(pItem.getInfoSet());
@@ -245,17 +328,11 @@ public class SheetEvent extends SheetDataItem<Event> {
 
     @Override
     protected int getLastColumn() {
-        /* Set default */
-        int myLastCol = COL_RECONCILED;
-
-        /* If we are not creating a backup */
-        if (!isBackup()) {
-            /* Name range plus infoSet */
-            myLastCol += theInfoSheet.getXtraColumnCount();
-        }
-
         /* Return the last column */
-        return myLastCol;
+        return (isBackup())
+                ? COL_PARENT
+                : COL_RECONCILED
+                  + theInfoSheet.getXtraColumnCount();
     }
 
     @Override
@@ -302,7 +379,8 @@ public class SheetEvent extends SheetDataItem<Event> {
                 DataView myView = pWorkBook.getRangeView(myYear.getRangeName());
 
                 /* Declare the new stage */
-                if (!pTask.setNewStage("Events from " + myYear.getDate().getYear())) {
+                if (!pTask.setNewStage("Events from "
+                                       + myYear.getDate().getYear())) {
                     return false;
                 }
 
@@ -315,7 +393,7 @@ public class SheetEvent extends SheetDataItem<Event> {
                 }
 
                 /* Create memory copies */
-                JDateDay myLastDay = null;
+                Event myLastParent = null;
                 String myLastDebit = null;
                 String myLastCredit = null;
 
@@ -327,8 +405,9 @@ public class SheetEvent extends SheetDataItem<Event> {
 
                     /* Access date */
                     DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    JDateDay myDate = (myCell != null) ? myCell.getDateValue() : myLastDay;
-                    myLastDay = myDate;
+                    JDateDay myDate = (myCell != null)
+                            ? myCell.getDateValue()
+                            : null;
 
                     /* If the event is too late */
                     if (pLastEvent.compareTo(myDate) < 0) {
@@ -338,13 +417,15 @@ public class SheetEvent extends SheetDataItem<Event> {
 
                     /* Access the values */
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    String myDebit = (myCell != null) ? myCell.getStringValue() : myLastDebit;
+                    String myDebit = (myCell != null)
+                            ? myCell.getStringValue()
+                            : null;
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    String myCredit = (myCell != null) ? myCell.getStringValue() : myLastCredit;
+                    String myCredit = (myCell != null)
+                            ? myCell.getStringValue()
+                            : null;
                     String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                     String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                    myLastDebit = myDebit;
-                    myLastCredit = myCredit;
 
                     /* Handle Reconciled which may be missing */
                     myCell = myView.getRowCellByIndex(myRow, iAdjust++);
@@ -447,8 +528,33 @@ public class SheetEvent extends SheetDataItem<Event> {
                         myCreditDate = myCell.getDateValue();
                     }
 
-                    /* Add the event */
-                    Event myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled);
+                    /* If we have a null date */
+                    Event myEvent;
+                    if ((myDate == null)
+                        && (myLastParent != null)) {
+                        /* Pick up last date */
+                        myDate = myLastParent.getDate();
+
+                        /* Pick up debit and credit from last values */
+                        if (myDebit == null) {
+                            myDebit = myLastDebit;
+                        }
+                        if (myCredit == null) {
+                            myCredit = myLastCredit;
+                        }
+
+                        /* Add the event */
+                        myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.FALSE, myLastParent);
+                        myLastParent.setSplit(Boolean.TRUE);
+                    } else {
+                        /* Add the event */
+                        myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.FALSE, null);
+                        myLastParent = myEvent;
+                    }
+
+                    /* Store last credit/debit */
+                    myLastDebit = myDebit;
+                    myLastCredit = myCredit;
 
                     /* Add information relating to the account */
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.Comments, myDesc);
@@ -467,7 +573,8 @@ public class SheetEvent extends SheetDataItem<Event> {
 
                     /* Report the progress */
                     myCount++;
-                    if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                    if (((myCount % mySteps) == 0)
+                        && (!pTask.setStepsDone(myCount))) {
                         return false;
                     }
                 }
@@ -498,7 +605,8 @@ public class SheetEvent extends SheetDataItem<Event> {
     /**
      * EventInfoSet sheet.
      */
-    private static class SheetEventInfoSet extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass> {
+    private static class SheetEventInfoSet
+            extends SheetDataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass> {
 
         /**
          * Constructor.
@@ -506,7 +614,9 @@ public class SheetEvent extends SheetDataItem<Event> {
          * @param pOwner the Owner
          * @param pBaseCol the base column
          */
-        public SheetEventInfoSet(final Class<EventInfoClass> pClass, final SheetDataItem<Event> pOwner, final int pBaseCol) {
+        public SheetEventInfoSet(final Class<EventInfoClass> pClass,
+                                 final SheetDataItem<Event> pOwner,
+                                 final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }
 

@@ -69,6 +69,8 @@ public class TableEvent
         myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(EventBase.FIELD_RECONCILED);
+        myTableDef.addBooleanColumn(EventBase.FIELD_SPLIT);
+        myTableDef.addNullReferenceColumn(EventBase.FIELD_PARENT, TABLE_NAME);
 
         /* Declare the sort order */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -93,9 +95,11 @@ public class TableEvent
         Integer myCreditId = myTableDef.getIntegerValue(EventBase.FIELD_CREDIT);
         Integer myCategoryId = myTableDef.getIntegerValue(EventBase.FIELD_CATEGORY);
         Boolean myReconciled = myTableDef.getBooleanValue(EventBase.FIELD_RECONCILED);
+        Boolean mySplit = myTableDef.getBooleanValue(EventBase.FIELD_SPLIT);
+        Integer myParentId = myTableDef.getIntegerValue(EventBase.FIELD_PARENT);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myReconciled);
+        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myReconciled, mySplit, myParentId);
     }
 
     @Override
@@ -115,6 +119,10 @@ public class TableEvent
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (EventBase.FIELD_RECONCILED.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.getReconciled());
+        } else if (EventBase.FIELD_SPLIT.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.getSplit());
+        } else if (EventBase.FIELD_PARENT.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else {
             super.setFieldValue(pItem, iField);
         }

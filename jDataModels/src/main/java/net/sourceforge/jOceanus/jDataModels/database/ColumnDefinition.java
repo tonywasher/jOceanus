@@ -34,7 +34,10 @@ import java.util.ListIterator;
 
 import javax.swing.SortOrder;
 
+import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
@@ -977,6 +980,20 @@ public abstract class ColumnDefinition {
             }
             pStatement.setBigDecimal(pIndex, myDecimal);
         }
+
+        /**
+         * Obtain the value.
+         * @param pFormatter the data formatter
+         * @return the money value
+         * @throws JDataException on error
+         */
+        public JMoney getValue(final JDataFormatter pFormatter) throws JDataException {
+            try {
+                return pFormatter.parseValue(getValue(), JMoney.class);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Money Value", e);
+            }
+        }
     }
 
     /**
@@ -1024,6 +1041,20 @@ public abstract class ColumnDefinition {
             }
             pStatement.setBigDecimal(pIndex, myDecimal);
         }
+
+        /**
+         * Obtain the value.
+         * @param pFormatter the data formatter
+         * @return the money value
+         * @throws JDataException on error
+         */
+        public JRate getValue(final JDataFormatter pFormatter) throws JDataException {
+            try {
+                return pFormatter.parseValue(getValue(), JRate.class);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Rate Value", e);
+            }
+        }
     }
 
     /**
@@ -1059,6 +1090,20 @@ public abstract class ColumnDefinition {
                 myString = pValue.toString();
             }
             super.setObject(myString);
+        }
+
+        /**
+         * Obtain the value.
+         * @param pFormatter the data formatter
+         * @return the money value
+         * @throws JDataException on error
+         */
+        public JPrice getValue(final JDataFormatter pFormatter) throws JDataException {
+            try {
+                return pFormatter.parseValue(getValue(), JPrice.class);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Price Value", e);
+            }
         }
     }
 
@@ -1096,6 +1141,20 @@ public abstract class ColumnDefinition {
             }
             super.setObject(myString);
         }
+
+        /**
+         * Obtain the value.
+         * @param pFormatter the data formatter
+         * @return the money value
+         * @throws JDataException on error
+         */
+        public JUnits getValue(final JDataFormatter pFormatter) throws JDataException {
+            try {
+                return pFormatter.parseValue(getValue(), JUnits.class);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Units Value", e);
+            }
+        }
     }
 
     /**
@@ -1132,6 +1191,20 @@ public abstract class ColumnDefinition {
             }
             super.setObject(myString);
         }
+
+        /**
+         * Obtain the value.
+         * @param pFormatter the data formatter
+         * @return the money value
+         * @throws JDataException on error
+         */
+        public JDilution getValue(final JDataFormatter pFormatter) throws JDataException {
+            try {
+                return pFormatter.parseValue(getValue(), JDilution.class);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Dilution Value", e);
+            }
+        }
     }
 
     /**
@@ -1167,6 +1240,20 @@ public abstract class ColumnDefinition {
                 myString = pValue.toString();
             }
             super.setObject(myString);
+        }
+
+        /**
+         * Obtain the value.
+         * @param pFormatter the data formatter
+         * @return the money value
+         * @throws JDataException on error
+         */
+        public JRatio getValue(final JDataFormatter pFormatter) throws JDataException {
+            try {
+                return pFormatter.parseValue(getValue(), JRatio.class);
+            } catch (IllegalArgumentException e) {
+                throw new JDataException(ExceptionClass.DATA, getValue(), "Bad Ratio Value", e);
+            }
         }
     }
 

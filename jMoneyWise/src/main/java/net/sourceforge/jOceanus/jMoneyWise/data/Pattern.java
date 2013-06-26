@@ -86,6 +86,11 @@ public class Pattern
      */
     public static final JDataField FIELD_FREQ = FIELD_DEFS.declareEqualityValueField("Frequency");
 
+    @Override
+    public Pattern getParent() {
+        return (Pattern) super.getParent();
+    }
+
     /**
      * Obtain Frequency.
      * @return the frequency
@@ -238,6 +243,8 @@ public class Pattern
      * @param pCatId the category id
      * @param pAmount the amount
      * @param pFreqId the frequency id
+     * @param pSplit is the pattern split?
+     * @param pParentId the parent id
      * @throws JDataException on error
      */
     private Pattern(final PatternList pList,
@@ -248,9 +255,11 @@ public class Pattern
                     final Integer pCreditId,
                     final Integer pCatId,
                     final byte[] pAmount,
-                    final Integer pFreqId) throws JDataException {
+                    final Integer pFreqId,
+                    final Boolean pSplit,
+                    final Integer pParentId) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, Boolean.FALSE);
+        super(pList, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, Boolean.FALSE, pSplit, pParentId);
 
         /* Record the IDs */
         setValueFrequency(pFreqId);
@@ -266,6 +275,8 @@ public class Pattern
      * @param pCategory the category
      * @param pAmount the amount
      * @param pFrequency the frequency
+     * @param pSplit is the pattern split?
+     * @param pParent the parent
      * @throws JDataException on error
      */
     private Pattern(final PatternList pList,
@@ -275,9 +286,11 @@ public class Pattern
                     final String pCredit,
                     final String pCategory,
                     final String pAmount,
-                    final String pFrequency) throws JDataException {
+                    final String pFrequency,
+                    final Boolean pSplit,
+                    final Pattern pParent) throws JDataException {
         /* Initialise item assuming account as debit and partner as credit */
-        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, Boolean.FALSE);
+        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, Boolean.FALSE, pSplit, pParent);
 
         /* Record the values */
         setValueFrequency(pFrequency);
@@ -291,6 +304,7 @@ public class Pattern
         /* Access Relevant lists */
         FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
+        PatternList myPatterns = (PatternList) getList();
         ValueSet myValues = getValueSet();
 
         /* Adjust Frequency */
@@ -312,6 +326,20 @@ public class Pattern
                 throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
             }
             setValueFrequency(myFreq);
+        }
+
+        /* Adjust Parent */
+        Object myParent = myValues.getValue(FIELD_PARENT);
+        if (myParent instanceof Pattern) {
+            myParent = ((Pattern) myParent).getId();
+        }
+        if (myParent instanceof Integer) {
+            Pattern myPattern = myPatterns.findItemById((Integer) myParent);
+            if (myPattern == null) {
+                addError(ERROR_UNKNOWN, FIELD_PARENT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueParent(myPattern);
         }
     }
 
@@ -456,34 +484,12 @@ public class Pattern
         /* Store the current detail into history */
         pushHistory();
 
-        /* Update the category if required */
-        if (!Difference.isEqual(getCategory(), myPattern.getCategory())) {
-            setCategory(myPattern.getCategory());
-        }
+        /* Apply basic changes */
+        applyBasicChanges(myPattern);
 
         /* Update the frequency if required */
         if (!Difference.isEqual(getFrequency(), myPattern.getFrequency())) {
             setFrequency(myPattern.getFrequency());
-        }
-
-        /* Update the amount if required */
-        if (!Difference.isEqual(getAmount(), myPattern.getAmount())) {
-            setValueAmount(myPattern.getAmountField());
-        }
-
-        /* Update the date if required */
-        if (!Difference.isEqual(getDate(), myPattern.getDate())) {
-            setDate(myPattern.getDate());
-        }
-
-        /* Update the partner account if required */
-        if (!Difference.isEqual(getDebit(), myPattern.getDebit())) {
-            setValueDebit(myPattern.getDebit());
-        }
-
-        /* Update the credit account if required */
-        if (!Difference.isEqual(getCredit(), myPattern.getCredit())) {
-            setValueCredit(myPattern.getCredit());
         }
 
         /* Check for changes */
@@ -675,17 +681,22 @@ public class Pattern
          * @param pAmount the amount
          * @param pCategory the category type
          * @param pFrequency the frequency
+         * @param pSplit is the pattern split
+         * @param pParent the parent
+         * @return the allocated pattern
          * @throws JDataException on error
          */
-        public void addOpenItem(final Integer pId,
-                                final JDateDay pDate,
-                                final String pDebit,
-                                final String pCredit,
-                                final String pAmount,
-                                final String pCategory,
-                                final String pFrequency) throws JDataException {
+        public Pattern addOpenItem(final Integer pId,
+                                   final JDateDay pDate,
+                                   final String pDebit,
+                                   final String pCredit,
+                                   final String pAmount,
+                                   final String pCategory,
+                                   final String pFrequency,
+                                   final Boolean pSplit,
+                                   final Pattern pParent) throws JDataException {
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, pId, pDate, pDebit, pCredit, pCategory, pAmount, pFrequency);
+            Pattern myPattern = new Pattern(this, pId, pDate, pDebit, pCredit, pCategory, pAmount, pFrequency, pSplit, pParent);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -695,6 +706,7 @@ public class Pattern
 
             /* Add to the list */
             append(myPattern);
+            return myPattern;
         }
 
         /**
@@ -707,6 +719,8 @@ public class Pattern
          * @param pCatId the category type id
          * @param pFreqId the frequency id
          * @param pAmount the amount
+         * @param pSplit is the pattern split
+         * @param pParentId the parent id
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer pId,
@@ -716,9 +730,11 @@ public class Pattern
                                   final Integer pCreditId,
                                   final byte[] pAmount,
                                   final Integer pCatId,
-                                  final Integer pFreqId) throws JDataException {
+                                  final Integer pFreqId,
+                                  final Boolean pSplit,
+                                  final Integer pParentId) throws JDataException {
             /* Create the new pattern */
-            Pattern myPattern = new Pattern(this, pId, pControlId, pDate, pDebitId, pCreditId, pCatId, pAmount, pFreqId);
+            Pattern myPattern = new Pattern(this, pId, pControlId, pDate, pDebitId, pCreditId, pCatId, pAmount, pFreqId, pSplit, pParentId);
 
             /* Check that this PatternId has not been previously added */
             if (!isIdUnique(pId)) {

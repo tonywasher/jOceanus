@@ -39,6 +39,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
@@ -128,6 +129,11 @@ public class FinanceData
      * TaxInfo Field Id.
      */
     public static final JDataField FIELD_TAXINFO = FIELD_DEFS.declareLocalField("TaxInfo");
+
+    /**
+     * ExchangeRates Field Id.
+     */
+    public static final JDataField FIELD_XCHGRATES = FIELD_DEFS.declareLocalField("ExchangeRates");
 
     /**
      * Accounts Field Id.
@@ -236,6 +242,11 @@ public class FinanceData
                     ? theTaxInfo
                     : JDataFieldValue.SkipField;
         }
+        if (FIELD_XCHGRATES.equals(pField)) {
+            return (theExchangeRates.size() > 0)
+                    ? theExchangeRates
+                    : JDataFieldValue.SkipField;
+        }
         if (FIELD_ACCOUNTS.equals(pField)) {
             return (theAccounts.size() > 0)
                     ? theAccounts
@@ -338,6 +349,11 @@ public class FinanceData
      * TaxYearInfo.
      */
     private TaxInfoList theTaxInfo = null;
+
+    /**
+     * ExchangeRates.
+     */
+    private ExchangeRateList theExchangeRates = null;
 
     /**
      * AccountInfo.
@@ -489,6 +505,14 @@ public class FinanceData
     }
 
     /**
+     * Obtain ExchangeRates.
+     * @return the ExchangeRates
+     */
+    public ExchangeRateList getExchangeRates() {
+        return theExchangeRates;
+    }
+
+    /**
      * Obtain Accounts.
      * @return the Accounts
      */
@@ -578,6 +602,7 @@ public class FinanceData
         theEvtCategories = new EventCategoryList(this);
         theTaxYears = new TaxYearList(this);
         theTaxInfo = new TaxInfoList(this);
+        theExchangeRates = new ExchangeRateList(this);
         theAccounts = new AccountList(this);
         theRates = new AccountRateList(this);
         thePrices = new AccountPriceList(this);
@@ -622,6 +647,7 @@ public class FinanceData
         myExtract.theEvtCategories = theEvtCategories.deriveList(ListStyle.UPDATE);
         myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.UPDATE);
         myExtract.theTaxInfo = theTaxInfo.deriveList(ListStyle.UPDATE);
+        myExtract.theExchangeRates = theExchangeRates.deriveList(ListStyle.UPDATE);
         myExtract.theAccounts = theAccounts.deriveList(ListStyle.UPDATE);
         myExtract.theRates = theRates.deriveList(ListStyle.UPDATE);
         myExtract.thePrices = thePrices.deriveList(ListStyle.UPDATE);
@@ -661,6 +687,7 @@ public class FinanceData
         myExtract.theEvtCategories = theEvtCategories.cloneList(this);
         myExtract.theTaxYears = theTaxYears.cloneList(this);
         myExtract.theTaxInfo = theTaxInfo.cloneList(this);
+        myExtract.theExchangeRates = theExchangeRates.cloneList(this);
         myExtract.theAccounts = theAccounts.cloneList(this);
         myExtract.theRates = theRates.cloneList(this);
         myExtract.thePrices = thePrices.cloneList(this);
@@ -708,6 +735,7 @@ public class FinanceData
         myDiffers.theEvtCategories = theEvtCategories.deriveDifferences(pOld.getEventCategories());
         myDiffers.theTaxYears = theTaxYears.deriveDifferences(pOld.getTaxYears());
         myDiffers.theTaxInfo = theTaxInfo.deriveDifferences(pOld.getTaxInfo());
+        myDiffers.theExchangeRates = theExchangeRates.deriveDifferences(pOld.getExchangeRates());
         myDiffers.theAccounts = theAccounts.deriveDifferences(pOld.getAccounts());
         myDiffers.theRates = theRates.deriveDifferences(pOld.getRates());
         myDiffers.thePrices = thePrices.deriveDifferences(pOld.getPrices());
@@ -749,6 +777,7 @@ public class FinanceData
         theEvtCategories.reBase(pOld.getEventCategories());
         theTaxYears.reBase(pOld.getTaxYears());
         theTaxInfo.reBase(pOld.getTaxInfo());
+        theExchangeRates.reBase(pOld.getExchangeRates());
         theAccounts.reBase(pOld.getAccounts());
         theRates.reBase(pOld.getRates());
         thePrices.reBase(pOld.getPrices());
@@ -776,6 +805,7 @@ public class FinanceData
         addList(theEvtCategories);
         addList(theTaxYears);
         addList(theTaxInfo);
+        addList(theExchangeRates);
         addList(theAccounts);
         addList(theRates);
         addList(thePrices);
@@ -818,6 +848,7 @@ public class FinanceData
         theTaxYears.touchUnderlyingItems();
         theActCategories.touchUnderlyingItems();
         theEvtCategories.touchUnderlyingItems();
+        theExchangeRates.touchUnderlyingItems();
 
         /* Touch items that are referenced by rates/prices/patterns */
         theAccounts.touchUnderlyingItems();

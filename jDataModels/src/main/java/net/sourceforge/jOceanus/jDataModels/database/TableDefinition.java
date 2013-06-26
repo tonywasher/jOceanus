@@ -36,19 +36,28 @@ import javax.swing.SortOrder;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.BinaryColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.BooleanColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.DateColumn;
+import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.DilutionColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.IdColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.IntegerColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.LongColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.MoneyColumn;
+import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.PriceColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.RateColumn;
+import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.RatioColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.ReferenceColumn;
 import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.StringColumn;
+import net.sourceforge.jOceanus.jDataModels.database.ColumnDefinition.UnitsColumn;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRate;
+import net.sourceforge.jOceanus.jDecimal.JRatio;
+import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jGordianKnot.CipherSet;
 import net.sourceforge.jOceanus.jGordianKnot.SymmetricKey;
 
@@ -360,6 +369,31 @@ public class TableDefinition {
      */
     public RateColumn addNullRateColumn(final JDataField pId) {
         RateColumn myColumn = addRateColumn(pId);
+        myColumn.setNullable();
+        return myColumn;
+    }
+
+    /**
+     * Add a rate column.
+     * @param pId the column id
+     * @return the rate column
+     */
+    public RatioColumn addRatioColumn(final JDataField pId) {
+        /* Create the new rate column */
+        RatioColumn myColumn = new RatioColumn(this, pId);
+
+        /* Add it to the list and return it */
+        theList.add(myColumn);
+        return myColumn;
+    }
+
+    /**
+     * Add a rate column, which can be null.
+     * @param pId the column id
+     * @return the rate column
+     */
+    public RatioColumn addNullRatioColumn(final JDataField pId) {
+        RatioColumn myColumn = addRatioColumn(pId);
         myColumn.setNullable();
         return myColumn;
     }
@@ -681,6 +715,144 @@ public class TableDefinition {
     }
 
     /**
+     * Get Money value for column.
+     * @param pId the column id
+     * @param pFormatter the data formatter
+     * @return the Money value
+     * @throws JDataException on error
+     */
+    public JMoney getMoneyValue(final JDataField pId,
+                                final JDataFormatter pFormatter) throws JDataException {
+        /* Obtain the correct id */
+        ColumnDefinition myCol = getColumnForId(pId);
+
+        /* Reject if this is not a money column */
+        if (!(myCol instanceof MoneyColumn)) {
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not money type");
+        }
+
+        /* Access the value */
+        MoneyColumn myMoneyCol = (MoneyColumn) myCol;
+        return myMoneyCol.getValue(pFormatter);
+    }
+
+    /**
+     * Get Price value for column.
+     * @param pId the column id
+     * @param pFormatter the data formatter
+     * @return the price value
+     * @throws JDataException on error
+     */
+    public JPrice getPriceValue(final JDataField pId,
+                                final JDataFormatter pFormatter) throws JDataException {
+        /* Obtain the correct id */
+        ColumnDefinition myCol = getColumnForId(pId);
+
+        /* Reject if this is not a price column */
+        if (!(myCol instanceof PriceColumn)) {
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Price type");
+        }
+
+        /* Access the value */
+        PriceColumn myPriceCol = (PriceColumn) myCol;
+        return myPriceCol.getValue(pFormatter);
+    }
+
+    /**
+     * Get Rate value for column.
+     * @param pId the column id
+     * @param pFormatter the data formatter
+     * @return the rate value
+     * @throws JDataException on error
+     */
+    public JRate getRateValue(final JDataField pId,
+                              final JDataFormatter pFormatter) throws JDataException {
+        /* Obtain the correct id */
+        ColumnDefinition myCol = getColumnForId(pId);
+
+        /* Reject if this is not a rate column */
+        if (!(myCol instanceof RateColumn)) {
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Rate type");
+        }
+
+        /* Access the value */
+        RateColumn myRateCol = (RateColumn) myCol;
+        return myRateCol.getValue(pFormatter);
+    }
+
+    /**
+     * Get Units value for column.
+     * @param pId the column id
+     * @param pFormatter the data formatter
+     * @return the Units value
+     * @throws JDataException on error
+     */
+    public JUnits getUnitsValue(final JDataField pId,
+                                final JDataFormatter pFormatter) throws JDataException {
+        /* Obtain the correct id */
+        ColumnDefinition myCol = getColumnForId(pId);
+
+        /* Reject if this is not a units column */
+        if (!(myCol instanceof UnitsColumn)) {
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Units type");
+        }
+
+        /* Access the value */
+        UnitsColumn myUnitsCol = (UnitsColumn) myCol;
+        return myUnitsCol.getValue(pFormatter);
+    }
+
+    /**
+     * Get Dilution value for column.
+     * @param pId the column id
+     * @param pFormatter the data formatter
+     * @return the Diluution value
+     * @throws JDataException on error
+     */
+    public JDilution getDilutionValue(final JDataField pId,
+                                      final JDataFormatter pFormatter) throws JDataException {
+        /* Obtain the correct id */
+        ColumnDefinition myCol = getColumnForId(pId);
+
+        /* Reject if this is not a dilution column */
+        if (!(myCol instanceof DilutionColumn)) {
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Dilution type");
+        }
+
+        /* Access the value */
+        DilutionColumn myDilutionCol = (DilutionColumn) myCol;
+        return myDilutionCol.getValue(pFormatter);
+    }
+
+    /**
+     * Get Ratio value for column.
+     * @param pId the column id
+     * @param pFormatter the data formatter
+     * @return the Ratio value
+     * @throws JDataException on error
+     */
+    public JRatio getRatioValue(final JDataField pId,
+                                final JDataFormatter pFormatter) throws JDataException {
+        /* Obtain the correct id */
+        ColumnDefinition myCol = getColumnForId(pId);
+
+        /* Reject if this is not a ratio column */
+        if (!(myCol instanceof RatioColumn)) {
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Ratio type");
+        }
+
+        /* Access the value */
+        RatioColumn myRatioCol = (RatioColumn) myCol;
+        return myRatioCol.getValue(pFormatter);
+    }
+
+    /**
      * Get Binary value for column.
      * @param pId the column id
      * @return the binary value
@@ -875,6 +1047,28 @@ public class TableDefinition {
         /* Set the value */
         RateColumn myRateCol = (RateColumn) myCol;
         myRateCol.setValue(pValue);
+    }
+
+    /**
+     * Set Ratio value for column.
+     * @param pId the column id
+     * @param pValue the value
+     * @throws JDataException on error
+     */
+    public void setRatioValue(final JDataField pId,
+                              final JRatio pValue) throws JDataException {
+        /* Obtain the correct id */
+        ColumnDefinition myCol = getColumnForId(pId);
+
+        /* Reject if this is not a ratio column */
+        if (!(myCol instanceof RatioColumn)) {
+            throw new JDataException(ExceptionClass.LOGIC, getColumnError(myCol)
+                                                           + " is not Ratio type");
+        }
+
+        /* Set the value */
+        RatioColumn myRatioCol = (RatioColumn) myCol;
+        myRatioCol.setValue(pValue);
     }
 
     /**

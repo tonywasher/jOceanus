@@ -72,6 +72,7 @@ public class FinanceReader
         if (isBackup) {
             addSheet(new SheetTaxYearInfo(this));
         }
+        addSheet(new SheetExchangeRate(this));
         addSheet(new SheetAccount(this));
         addSheet(new SheetAccountRate(this));
         addSheet(new SheetAccountPrice(this));

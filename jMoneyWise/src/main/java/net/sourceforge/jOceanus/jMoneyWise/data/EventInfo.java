@@ -28,9 +28,7 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfo;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
@@ -41,7 +39,6 @@ import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account.AccountList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
@@ -73,24 +70,6 @@ public class EventInfo
         return FIELD_DEFS;
     }
 
-    /**
-     * Account Field Id.
-     */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField("Account");
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if ((FIELD_ACCOUNT.equals(pField))
-            && !getInfoType().isLink()) {
-            return JDataFieldValue.SkipField;
-        }
-        if ((FIELD_VALUE.equals(pField))
-            && getInfoType().isLink()) {
-            return JDataFieldValue.SkipField;
-        }
-        return super.getFieldValue(pField);
-    }
-
     @Override
     public EventInfoType getInfoType() {
         return getInfoType(getValueSet(), EventInfoType.class);
@@ -101,11 +80,8 @@ public class EventInfo
         return getInfoType().getInfoClass();
     }
 
-    /**
-     * Obtain Event.
-     * @return the Event
-     */
-    public Event getEvent() {
+    @Override
+    public Event getOwner() {
         return getOwner(getValueSet(), Event.class);
     }
 
@@ -127,31 +103,14 @@ public class EventInfo
     }
 
     /**
-     * Obtain Event.
-     * @param pValueSet the valueSet
-     * @return the Event
-     */
-    public static Event getEvent(final ValueSet pValueSet) {
-        return getOwner(pValueSet, Event.class);
-    }
-
-    /**
-     * Obtain Account.
+     * Obtain Linked Account.
      * @param pValueSet the valueSet
      * @return the Account
      */
     public static Account getAccount(final ValueSet pValueSet) {
         return pValueSet.isDeletion()
                 ? null
-                : pValueSet.getValue(FIELD_ACCOUNT, Account.class);
-    }
-
-    /**
-     * Set Account.
-     * @param pAccount the account
-     */
-    private void setValueAccount(final Account pAccount) {
-        getValueSet().setValue(FIELD_ACCOUNT, pAccount);
+                : pValueSet.getValue(FIELD_LINK, Account.class);
     }
 
     @Override
@@ -246,12 +205,19 @@ public class EventInfo
                 case INTEGER:
                     setValueBytes(pValue, Integer.class);
                     if (myType.isLink()) {
-                        AccountList myAccounts = myData.getAccounts();
-                        Account myAccount = myAccounts.findItemById(getValue(Integer.class));
-                        if (myAccount == null) {
-                            throw new JDataException(ExceptionClass.DATA, this, "Invalid Account Id");
+                        DataItem myLink = null;
+                        switch (myType.getInfoClass()) {
+                            case ThirdParty:
+                                myLink = myData.getAccounts().findItemById(getValue(Integer.class));
+                                break;
+                            default:
+                                break;
                         }
-                        setValueAccount(myAccount);
+                        if (myLink == null) {
+                            addError(ERROR_UNKNOWN, FIELD_LINK);
+                            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                        }
+                        setValueLink(myLink);
                     }
                     break;
                 case MONEY:
@@ -316,7 +282,7 @@ public class EventInfo
     @Override
     public void deRegister() {
         /* Access the EventInfoSet and register this value */
-        EventInfoSet mySet = getEvent().getInfoSet();
+        EventInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -336,7 +302,7 @@ public class EventInfo
         }
 
         /* Compare the Events */
-        int iDiff = getEvent().compareTo(pThat.getEvent());
+        int iDiff = getOwner().compareTo(pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -368,15 +334,28 @@ public class EventInfo
 
         /* If we are using an account */
         if (myType.isLink()) {
-            /* Update to use the local copy of the accounts */
-            AccountList myAccounts = myData.getAccounts();
-            Account myAccount = getAccount();
-            Account myNewAct = myAccounts.findItemById(myAccount.getId());
-            setValueAccount(myNewAct);
+            Integer myId = getValue(Integer.class);
+            DataItem myNewLink = null;
+            switch (myType.getInfoClass()) {
+                case ThirdParty:
+                    myNewLink = myData.getAccounts().findItemById(myId);
+                    break;
+                default:
+                    break;
+            }
+
+            /* Check link is valid */
+            if (myNewLink == null) {
+                addError(ERROR_UNKNOWN, FIELD_LINK);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
+            }
+
+            /* Update link value */
+            setValueLink(myNewLink);
         }
 
         /* Update to use the local copy of the Events */
-        Event myEvent = getEvent();
+        Event myEvent = getOwner();
         Event myOwner = myEvents.findItemById(myEvent.getId());
         setValueOwner(myOwner);
 
@@ -432,21 +411,31 @@ public class EventInfo
         switch (myType.getDataType()) {
             case INTEGER:
                 if (myType.isLink()) {
-                    if (pValue instanceof Account) {
-                        Account myAccount = (Account) pValue;
-                        setValueValue(myAccount.getId());
-                        setValueAccount(myAccount);
-                        bValueOK = true;
-                    } else if (pValue instanceof String) {
-                        AccountList myList = myDataSet.getAccounts();
-                        Account myAccount = myList.findItemByName((String) pValue);
-                        if (myAccount == null) {
-                            throw new JDataException(ExceptionClass.DATA, this, "Invalid AccountName ["
-                                                                                + pValue
-                                                                                + "]");
+                    if (pValue instanceof String) {
+                        DataItem myLink = null;
+                        String myName = (String) pValue;
+                        FinanceData myData = getDataSet();
+                        switch (myType.getInfoClass()) {
+                            case ThirdParty:
+                                myLink = myData.getAccounts().findItemByName(myName);
+                                break;
+                            default:
+                                break;
                         }
-                        setValueValue(myAccount.getId());
-                        setValueAccount(myAccount);
+                        if (myLink == null) {
+                            addError(ERROR_UNKNOWN, FIELD_LINK);
+                            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION
+                                                                                + " "
+                                                                                + myName);
+                        }
+                        setValueValue(myLink.getId());
+                        setValueLink(myLink);
+                        bValueOK = true;
+                    }
+                    if (pValue instanceof DataItem) {
+                        DataItem myItem = (DataItem) pValue;
+                        setValueValue(myItem.getId());
+                        setValueLink(myItem);
                         bValueOK = true;
                     }
                 } else if (pValue instanceof Integer) {
@@ -528,7 +517,7 @@ public class EventInfo
         if (!Difference.isEqual(getField(), myEventInfo.getField())) {
             setValueValue(myEventInfo.getField());
             if (getInfoType().isLink()) {
-                setValueAccount(myEventInfo.getAccount());
+                setValueLink(myEventInfo.getLink(DataItem.class));
             }
         }
 

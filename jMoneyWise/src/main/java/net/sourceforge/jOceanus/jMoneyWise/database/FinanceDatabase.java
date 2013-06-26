@@ -64,6 +64,7 @@ public class FinanceDatabase
         addTable(new TableEventCategory(this));
         addTable(new TableTaxYear(this));
         addTable(new TableTaxYearInfo(this));
+        addTable(new TableExchangeRate(this));
         addTable(new TableAccount(this));
         addTable(new TableAccountRate(this));
         addTable(new TableAccountPrice(this));

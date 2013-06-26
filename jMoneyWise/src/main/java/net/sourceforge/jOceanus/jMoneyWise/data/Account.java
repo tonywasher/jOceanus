@@ -916,6 +916,30 @@ public class Account
     }
 
     /**
+     * Update base account from an edited account.
+     * @param pAccount the edited account
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final DataItem pAccount) {
+        /* Can only update from an account */
+        if (!(pAccount instanceof Account)) {
+            return false;
+        }
+
+        Account myAccount = (Account) pAccount;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Apply basic changes */
+        applyBasicChanges(myAccount);
+
+        /* Check for changes */
+        return checkForHistory();
+    }
+
+    /**
      * The Account List class.
      */
     public static class AccountList

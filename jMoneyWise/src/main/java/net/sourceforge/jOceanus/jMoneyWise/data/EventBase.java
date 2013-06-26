@@ -29,7 +29,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
-import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
@@ -84,6 +83,16 @@ public abstract class EventBase
      * Reconciled Field Id.
      */
     public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField("Reconciled");
+
+    /**
+     * Split Event Field Id.
+     */
+    public static final JDataField FIELD_SPLIT = FIELD_DEFS.declareEqualityValueField("Split");
+
+    /**
+     * Parent Field Id.
+     */
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField("Parent");
 
     /**
      * Obtain Date.
@@ -227,6 +236,33 @@ public abstract class EventBase
     }
 
     /**
+     * Obtain Split State.
+     * @return the split state
+     */
+    public Boolean getSplit() {
+        return getSplit(getValueSet());
+    }
+
+    /**
+     * Obtain Parent.
+     * @return the parent
+     */
+    public EventBase getParent() {
+        return getParent(getValueSet());
+    }
+
+    /**
+     * Obtain ParentId.
+     * @return the parentId
+     */
+    public Integer getParentId() {
+        EventBase myParent = getParent();
+        return (myParent == null)
+                ? null
+                : myParent.getId();
+    }
+
+    /**
      * Obtain Date.
      * @param pValueSet the valueSet
      * @return the Date
@@ -242,6 +278,15 @@ public abstract class EventBase
      */
     public static Boolean getReconciled(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_RECONCILED, Boolean.class);
+    }
+
+    /**
+     * Obtain Split State.
+     * @param pValueSet the valueSet
+     * @return the Split State
+     */
+    public static Boolean getSplit(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_SPLIT, Boolean.class);
     }
 
     /**
@@ -299,6 +344,15 @@ public abstract class EventBase
     }
 
     /**
+     * Obtain Parent Event.
+     * @param pValueSet the valueSet
+     * @return the Parent Event
+     */
+    public static EventBase getParent(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_PARENT, EventBase.class);
+    }
+
+    /**
      * Set date value.
      * @param pValue the value
      */
@@ -312,6 +366,14 @@ public abstract class EventBase
      */
     private void setValueReconciled(final Boolean pValue) {
         getValueSet().setValue(FIELD_RECONCILED, pValue);
+    }
+
+    /**
+     * Set split state.
+     * @param pValue the value
+     */
+    private void setValueSplit(final Boolean pValue) {
+        getValueSet().setValue(FIELD_SPLIT, pValue);
     }
 
     /**
@@ -373,11 +435,11 @@ public abstract class EventBase
     }
 
     /**
-     * Set debit id.
+     * Set parent id.
      * @param pId the value
      */
-    private void setValueDebit(final Integer pId) {
-        getValueSet().setValue(FIELD_DEBIT, pId);
+    private void setValueParent(final Integer pId) {
+        getValueSet().setValue(FIELD_PARENT, pId);
     }
 
     /**
@@ -410,6 +472,22 @@ public abstract class EventBase
      */
     private void setValueCredit(final String pName) {
         getValueSet().setValue(FIELD_CREDIT, pName);
+    }
+
+    /**
+     * Set parent value.
+     * @param pValue the value
+     */
+    protected void setValueParent(final EventBase pValue) {
+        getValueSet().setValue(FIELD_PARENT, pValue);
+    }
+
+    /**
+     * Set debit id.
+     * @param pId the value
+     */
+    private void setValueDebit(final Integer pId) {
+        getValueSet().setValue(FIELD_DEBIT, pId);
     }
 
     @Override
@@ -453,6 +531,8 @@ public abstract class EventBase
      * @param pAmount the amount
      * @param pCategory the category id
      * @param pReconciled is the event reconciled
+     * @param pSplit is the event split
+     * @param pParent the parent id
      * @throws JDataException on error
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
@@ -463,7 +543,9 @@ public abstract class EventBase
                         final Integer pCredit,
                         final byte[] pAmount,
                         final Integer pCategory,
-                        final Boolean pReconciled) throws JDataException {
+                        final Boolean pReconciled,
+                        final Boolean pSplit,
+                        final Integer pParent) throws JDataException {
         /* Initialise item */
         super(pList, pId);
 
@@ -472,9 +554,11 @@ public abstract class EventBase
             /* Store the IDs that we will look up */
             setValueDebit(pDebit);
             setValueCredit(pCredit);
+            setValueParent(pParent);
             setValueCategory(pCategory);
             setControlKey(pControlId);
             setValueReconciled(pReconciled);
+            setValueSplit(pSplit);
 
             /* Create the date */
             setValueDate(pDate);
@@ -499,6 +583,8 @@ public abstract class EventBase
      * @param pAmount the amount
      * @param pCategory the category
      * @param pReconciled is the event reconciled
+     * @param pSplit is the event split
+     * @param pParent the parent
      * @throws JDataException on error
      */
     protected EventBase(final EventBaseList<? extends EventBase> pList,
@@ -508,7 +594,9 @@ public abstract class EventBase
                         final String pCredit,
                         final String pAmount,
                         final String pCategory,
-                        final Boolean pReconciled) throws JDataException {
+                        final Boolean pReconciled,
+                        final Boolean pSplit,
+                        final EventBase pParent) throws JDataException {
         /* Initialise item */
         super(pList, uId);
 
@@ -522,8 +610,10 @@ public abstract class EventBase
             /* Record the standard values */
             setValueDebit(pDebit);
             setValueCredit(pCredit);
+            setValueParent(pParent);
             setValueCategory(pCategory);
             setValueReconciled(pReconciled);
+            setValueSplit(pSplit);
             setValueDate(pDate);
             setValueAmount(myParser.parseMoneyValue(pAmount));
 
@@ -565,6 +655,25 @@ public abstract class EventBase
         int iDiff = Difference.compareObject(getDate(), pThat.getDate());
         if (iDiff != 0) {
             return iDiff;
+        }
+
+        /* Access parents */
+        EventBase myParent = getParent();
+        EventBase myAltParent = pThat.getParent();
+
+        /* Sort based on parents if they exist */
+        if (myParent != null) {
+            iDiff = Difference.compareObject(myParent, (myAltParent == null)
+                    ? pThat
+                    : myAltParent);
+            if (iDiff != 0) {
+                return iDiff;
+            }
+        } else if (myAltParent != null) {
+            iDiff = Difference.compareObject(this, myAltParent);
+            if (iDiff != 0) {
+                return iDiff;
+            }
         }
 
         /* If the categories differ */
@@ -988,6 +1097,14 @@ public abstract class EventBase
     }
 
     /**
+     * Set a new parent event.
+     * @param pParent the parent event
+     */
+    public void setParent(final EventBase pParent) {
+        setValueParent(pParent);
+    }
+
+    /**
      * Set a new category.
      * @param pCategory the category
      */
@@ -1001,6 +1118,14 @@ public abstract class EventBase
      */
     public void setReconciled(final Boolean pReconciled) {
         setValueReconciled(pReconciled);
+    }
+
+    /**
+     * Set a split indication.
+     * @param pSplit the reconciled state
+     */
+    public void setSplit(final Boolean pSplit) {
+        setValueSplit(pSplit);
     }
 
     /**
@@ -1103,52 +1228,47 @@ public abstract class EventBase
     /**
      * Update base event from an edited event.
      * @param pEvent the edited event
-     * @return whether changes have been made
      */
-    @Override
-    public boolean applyChanges(final DataItem pEvent) {
-        /* Can only update from an event */
-        if (!(pEvent instanceof EventBase)) {
-            return false;
-        }
-
-        EventBase myEvent = (EventBase) pEvent;
-
-        /* Store the current detail into history */
-        pushHistory();
-
+    protected void applyBasicChanges(final EventBase pEvent) {
         /* Update the Date if required */
-        if (!Difference.isEqual(getDate(), myEvent.getDate())) {
-            setValueDate(myEvent.getDate());
+        if (!Difference.isEqual(getDate(), pEvent.getDate())) {
+            setValueDate(pEvent.getDate());
         }
 
         /* Update the category if required */
-        if (!Difference.isEqual(getCategory(), myEvent.getCategory())) {
-            setValueCategory(myEvent.getCategory());
+        if (!Difference.isEqual(getCategory(), pEvent.getCategory())) {
+            setValueCategory(pEvent.getCategory());
         }
 
         /* Update the debit account if required */
-        if (!Difference.isEqual(getDebit(), myEvent.getDebit())) {
-            setValueDebit(myEvent.getDebit());
+        if (!Difference.isEqual(getDebit(), pEvent.getDebit())) {
+            setValueDebit(pEvent.getDebit());
         }
 
         /* Update the credit account if required */
-        if (!Difference.isEqual(getCredit(), myEvent.getCredit())) {
-            setValueCredit(myEvent.getCredit());
+        if (!Difference.isEqual(getCredit(), pEvent.getCredit())) {
+            setValueCredit(pEvent.getCredit());
+        }
+
+        /* Update the parent event if required */
+        if (!Difference.isEqual(getParent(), pEvent.getParent())) {
+            setValueParent(pEvent.getParent());
         }
 
         /* Update the amount if required */
-        if (!Difference.isEqual(getAmount(), myEvent.getAmount())) {
-            setValueAmount(myEvent.getAmountField());
+        if (!Difference.isEqual(getAmount(), pEvent.getAmount())) {
+            setValueAmount(pEvent.getAmountField());
         }
 
         /* Update the reconciled state if required */
-        if (!Difference.isEqual(getReconciled(), myEvent.getReconciled())) {
-            setValueReconciled(myEvent.getReconciled());
+        if (!Difference.isEqual(getReconciled(), pEvent.getReconciled())) {
+            setValueReconciled(pEvent.getReconciled());
         }
 
-        /* Check for changes */
-        return checkForHistory();
+        /* Update the split state if required */
+        if (!Difference.isEqual(getSplit(), pEvent.getSplit())) {
+            setValueSplit(pEvent.getSplit());
+        }
     }
 
     /**

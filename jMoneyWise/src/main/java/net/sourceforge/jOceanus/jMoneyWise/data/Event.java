@@ -32,6 +32,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
@@ -113,6 +114,11 @@ public class Event
      */
     public EventInfoSet getInfoSet() {
         return theInfoSet;
+    }
+
+    @Override
+    public Event getParent() {
+        return (Event) super.getParent();
     }
 
     /**
@@ -445,6 +451,8 @@ public class Event
      * @param pAmount the amount
      * @param pCategory the category id
      * @param pReconciled is the event reconciled
+     * @param pSplit is the event split
+     * @param pParent the parent id
      * @throws JDataException on error
      */
     protected Event(final EventList pList,
@@ -455,9 +463,11 @@ public class Event
                     final Integer pCredit,
                     final byte[] pAmount,
                     final Integer pCategory,
-                    final Boolean pReconciled) throws JDataException {
+                    final Boolean pReconciled,
+                    final Boolean pSplit,
+                    final Integer pParent) throws JDataException {
         /* Initialise item */
-        super(pList, pId, pControlId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled);
+        super(pList, pId, pControlId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
@@ -475,6 +485,8 @@ public class Event
      * @param pAmount the amount
      * @param pCategory the category
      * @param pReconciled is the event reconciled
+     * @param pSplit is the event split
+     * @param pParent the parent
      * @throws JDataException on error
      */
     protected Event(final EventList pList,
@@ -484,14 +496,40 @@ public class Event
                     final String pCredit,
                     final String pAmount,
                     final String pCategory,
-                    final Boolean pReconciled) throws JDataException {
+                    final Boolean pReconciled,
+                    final Boolean pSplit,
+                    final Event pParent) throws JDataException {
         /* Initialise item */
-        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled);
+        super(pList, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
 
         /* Create the InfoSet */
         theInfoSet = new EventInfoSet(this, pList.getEventInfoTypes(), pList.getEventInfo());
         hasInfoSet = true;
         useInfoSet = false;
+    }
+
+    @Override
+    public void resolveDataSetLinks() throws JDataException {
+        /* Update the Event details */
+        super.resolveDataSetLinks();
+
+        /* Access Relevant lists */
+        EventList myEvents = (EventList) getList();
+        ValueSet myValues = getValueSet();
+
+        /* Adjust Parent */
+        Object myParent = myValues.getValue(FIELD_PARENT);
+        if (myParent instanceof Pattern) {
+            myParent = ((Pattern) myParent).getId();
+        }
+        if (myParent instanceof Integer) {
+            Event myEvent = myEvents.findItemById((Integer) myParent);
+            if (myEvent == null) {
+                addError(ERROR_UNKNOWN, FIELD_PARENT);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            }
+            setValueParent(myEvent);
+        }
     }
 
     /**
@@ -786,6 +824,30 @@ public class Event
     }
 
     /**
+     * Update base event from an edited event.
+     * @param pEvent the edited event
+     * @return whether changes have been made
+     */
+    @Override
+    public boolean applyChanges(final DataItem pEvent) {
+        /* Can only update from an event */
+        if (!(pEvent instanceof Event)) {
+            return false;
+        }
+
+        Event myEvent = (Event) pEvent;
+
+        /* Store the current detail into history */
+        pushHistory();
+
+        /* Apply basic changes */
+        applyBasicChanges(myEvent);
+
+        /* Check for changes */
+        return checkForHistory();
+    }
+
+    /**
      * The BaseEvent List class.
      * @param <T> the Event type
      */
@@ -1055,6 +1117,8 @@ public class Event
          * @param pAmount the amount
          * @param pCategory the category
          * @param pReconciled is the event reconciled
+         * @param pSplit is the event split
+         * @param pParent the parent
          * @return the new event
          * @throws JDataException on error
          */
@@ -1064,9 +1128,11 @@ public class Event
                                  final String pCredit,
                                  final String pAmount,
                                  final String pCategory,
-                                 final Boolean pReconciled) throws JDataException {
+                                 final Boolean pReconciled,
+                                 final Boolean pSplit,
+                                 final Event pParent) throws JDataException {
             /* Create the new Event */
-            Event myEvent = new Event(this, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled);
+            Event myEvent = new Event(this, pId, pDate, pDebit, pCredit, pAmount, pCategory, pReconciled, pSplit, pParent);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -1089,6 +1155,8 @@ public class Event
          * @param pAmount the amount
          * @param pCatId the category id
          * @param pReconciled is the event reconciled
+         * @param pSplit is the event split
+         * @param pParentId the parent id
          * @throws JDataException on error
          */
         public void addSecureItem(final Integer pId,
@@ -1098,9 +1166,11 @@ public class Event
                                   final Integer pCreditId,
                                   final byte[] pAmount,
                                   final Integer pCatId,
-                                  final Boolean pReconciled) throws JDataException {
+                                  final Boolean pReconciled,
+                                  final Boolean pSplit,
+                                  final Integer pParentId) throws JDataException {
             /* Create the new Event */
-            Event myEvent = new Event(this, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, pReconciled);
+            Event myEvent = new Event(this, pId, pControlId, pDate, pDebitId, pCreditId, pAmount, pCatId, pReconciled, pSplit, pParentId);
 
             /* Check that this EventId has not been previously added */
             if (!isIdUnique(pId)) {

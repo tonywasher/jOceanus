@@ -31,6 +31,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataFieldRequired;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountInfo.AccountInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoClass;
@@ -313,6 +314,13 @@ public class AccountInfoSet
 
             /* Switch on class */
             switch (myClass) {
+                case OpeningBalance:
+                    /* Access data */
+                    JMoney myBalance = myInfo.getValue(JMoney.class);
+                    if (!myBalance.getCurrency().equals(myAccount.getAccountCurrency().getCurrency())) {
+                        myAccount.addError("Opening balance is incorrect currency", getFieldForClass(myClass));
+                    }
+                    break;
                 case WebSite:
                 case CustomerNo:
                 case UserId:

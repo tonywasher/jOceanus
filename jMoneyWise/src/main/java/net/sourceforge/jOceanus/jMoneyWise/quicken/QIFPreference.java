@@ -225,7 +225,7 @@ public class QIFPreference
         }
 
         /**
-         * Obtain filename
+         * Obtain filename.
          * @return true/false
          */
         public String getFileName() {

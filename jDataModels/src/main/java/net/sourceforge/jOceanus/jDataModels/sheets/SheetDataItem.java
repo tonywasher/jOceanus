@@ -674,6 +674,18 @@ public abstract class SheetDataItem<T extends DataItem & Comparable<? super T>> 
     }
 
     /**
+     * Set Ratio column.
+     * @param pOffset the offset of the column
+     */
+    protected void setRatioColumn(final int pOffset) {
+        /* Adjust column if necessary */
+        int myCol = adjustColumn(pOffset);
+
+        /* Apply the style to the sheet */
+        theWorkSheet.getMutableColumnByIndex(myCol).setDefaultCellStyle(CellStyleType.Ratio);
+    }
+
+    /**
      * Set Boolean column.
      * @param pOffset the offset of the column
      */

@@ -72,6 +72,8 @@ public class TablePattern
         myTableDef.addEncryptedColumn(EventBase.FIELD_AMOUNT, EncryptedData.MONEYLEN);
         myTableDef.addReferenceColumn(EventBase.FIELD_CATEGORY, TableEventCategory.TABLE_NAME);
         myTableDef.addReferenceColumn(Pattern.FIELD_FREQ, TableFrequency.TABLE_NAME);
+        myTableDef.addBooleanColumn(EventBase.FIELD_SPLIT);
+        myTableDef.addNullReferenceColumn(EventBase.FIELD_PARENT, TABLE_NAME);
 
         /* Declare Sort Columns */
         myDateCol.setSortOrder(SortOrder.ASCENDING);
@@ -95,9 +97,11 @@ public class TablePattern
         Integer myCategoryId = myTableDef.getIntegerValue(EventBase.FIELD_CATEGORY);
         byte[] myAmount = myTableDef.getBinaryValue(EventBase.FIELD_AMOUNT);
         Integer myFreq = myTableDef.getIntegerValue(Pattern.FIELD_FREQ);
+        Boolean mySplit = myTableDef.getBooleanValue(EventBase.FIELD_SPLIT);
+        Integer myParentId = myTableDef.getIntegerValue(EventBase.FIELD_PARENT);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myFreq);
+        theList.addSecureItem(pId, pControlId, myDate, myDebitId, myCreditId, myAmount, myCategoryId, myFreq, mySplit, myParentId);
     }
 
     @Override
@@ -117,6 +121,10 @@ public class TablePattern
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (Pattern.FIELD_FREQ.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getFrequencyId());
+        } else if (EventBase.FIELD_SPLIT.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.getSplit());
+        } else if (EventBase.FIELD_PARENT.equals(iField)) {
+            myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else {
             super.setFieldValue(pItem, iField);
         }

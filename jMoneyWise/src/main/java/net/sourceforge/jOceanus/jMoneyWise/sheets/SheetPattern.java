@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.sheets;
 
+import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.data.TaskControl;
@@ -31,6 +32,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventBase;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
+import net.sourceforge.jOceanus.jSpreadSheetManager.DataCell;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataRow;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataView;
 import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
@@ -77,9 +79,34 @@ public class SheetPattern
     private static final int COL_FREQ = COL_CATEGORY + 1;
 
     /**
+     * Split column.
+     */
+    private static final int COL_SPLIT = COL_CATEGORY + 1;
+
+    /**
+     * Reconciled column.
+     */
+    private static final int COL_PARENT = COL_SPLIT + 1;
+
+    /**
      * Patterns data list.
      */
     private final PatternList theList;
+
+    /**
+     * Last loaded parent.
+     */
+    private Pattern theLastParent = null;
+
+    /**
+     * Last debit.
+     */
+    private String theLastDebit = null;
+
+    /**
+     * Last credit.
+     */
+    private String theLastCredit = null;
 
     /**
      * Constructor for loading a spreadsheet.
@@ -115,6 +142,10 @@ public class SheetPattern
         Integer myCreditId = loadInteger(COL_CREDIT);
         Integer myCatId = loadInteger(COL_CATEGORY);
         Integer myFreqId = loadInteger(COL_FREQ);
+        Integer myParentId = loadInteger(COL_PARENT);
+
+        /* Access the flags */
+        Boolean mySplit = loadBoolean(COL_SPLIT);
 
         /* Access the date */
         JDateDay myDate = loadDate(COL_DATE);
@@ -123,7 +154,7 @@ public class SheetPattern
         byte[] myAmount = loadBytes(COL_AMOUNT);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myFreqId);
+        theList.addSecureItem(pId, myControlId, myDate, myDebitId, myCreditId, myAmount, myCatId, myFreqId, mySplit, myParentId);
     }
 
     @Override
@@ -140,8 +171,31 @@ public class SheetPattern
         /* Access the string values */
         String myAmount = loadString(COL_AMOUNT);
 
-        /* Load the item */
-        theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency);
+        /* If we don't have a date */
+        if ((myDate == null)
+            && (theLastParent != null)) {
+            /* Pick up last date */
+            myDate = theLastParent.getDate();
+
+            /* Pick up debit and credit from last values */
+            if (myDebit == null) {
+                myDebit = theLastDebit;
+            }
+            if (myCredit == null) {
+                myCredit = theLastCredit;
+            }
+
+            /* Load the item */
+            theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, Boolean.FALSE, theLastParent);
+            theLastParent.setSplit(Boolean.TRUE);
+        } else {
+            /* Load the item */
+            theLastParent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, Boolean.FALSE, null);
+        }
+
+        /* Store last credit and debit */
+        theLastCredit = myCredit;
+        theLastDebit = myDebit;
     }
 
     @Override
@@ -154,17 +208,42 @@ public class SheetPattern
         writeInteger(COL_FREQ, pItem.getFrequencyId());
         writeDate(COL_DATE, pItem.getDate());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
+        writeBoolean(COL_SPLIT, pItem.getSplit());
+        writeInteger(COL_PARENT, pItem.getParentId());
     }
 
     @Override
     protected void insertOpenItem(final Pattern pItem) throws JDataException {
-        /* Set the fields */
-        writeString(COL_DEBIT, pItem.getDebitName());
-        writeString(COL_CREDIT, pItem.getCreditName());
+        /* Determine whether we are a child event */
+        boolean isChild = (pItem.getParent() == null);
+
+        /* Access debit/credit names */
+        String myDebit = pItem.getDebitName();
+        String myCredit = pItem.getCreditName();
+
+        /* Write standard values */
         writeString(COL_CATEGORY, pItem.getCategoryName());
         writeString(COL_FREQ, pItem.getFrequencyName());
-        writeDate(COL_DATE, pItem.getDate());
         writeDecimal(COL_AMOUNT, pItem.getAmount());
+
+        /* If we are a child */
+        if (isChild) {
+            /* Only fill in debit credit if they are different */
+            if (Difference.isEqual(myDebit, theLastDebit)) {
+                writeString(COL_DEBIT, myDebit);
+            }
+            if (Difference.isEqual(myCredit, theLastCredit)) {
+                writeString(COL_CREDIT, myCredit);
+            }
+        } else {
+            writeDate(COL_DATE, pItem.getDate());
+            writeString(COL_DEBIT, myDebit);
+            writeString(COL_CREDIT, myCredit);
+        }
+
+        /* Store last credit and debit */
+        theLastCredit = myCredit;
+        theLastDebit = myDebit;
     }
 
     @Override
@@ -198,7 +277,9 @@ public class SheetPattern
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return COL_FREQ;
+        return (isBackup())
+                ? COL_PARENT
+                : COL_FREQ;
     }
 
     @Override
@@ -250,22 +331,61 @@ public class SheetPattern
                 return false;
             }
 
+            /* Create memory copies */
+            Pattern myLastParent = null;
+            String myLastDebit = null;
+            String myLastCredit = null;
+
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
                 /* Access the cell by reference */
                 DataRow myRow = myView.getRowByIndex(i);
                 int iAdjust = 0;
 
-                /* Access strings */
-                String myDebit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                String myCredit = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
-                JDateDay myDate = myView.getRowCellByIndex(myRow, iAdjust++).getDateValue();
+                /* Access date */
+                DataCell myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                JDateDay myDate = (myCell != null)
+                        ? myCell.getDateValue()
+                        : null;
+
+                /* Access the values */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                String myDebit = (myCell != null)
+                        ? myCell.getStringValue()
+                        : null;
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                String myCredit = (myCell != null)
+                        ? myCell.getStringValue()
+                        : null;
                 String myAmount = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myCategory = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 String myFrequency = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
 
-                /* Add the value into the finance tables */
-                myList.addOpenItem(0, myDate, myDebit, myCredit, myCategory, myAmount, myFrequency);
+                /* If we have a null date */
+                if ((myDate == null)
+                    && (myLastParent != null)) {
+                    /* Pick up last date */
+                    myDate = myLastParent.getDate();
+
+                    /* Pick up debit and credit from last values */
+                    if (myDebit == null) {
+                        myDebit = myLastDebit;
+                    }
+                    if (myCredit == null) {
+                        myCredit = myLastCredit;
+                    }
+
+                    /* Add the pattern */
+                    myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, Boolean.FALSE, myLastParent);
+                    myLastParent.setSplit(Boolean.TRUE);
+                } else {
+                    /* Add the pattern */
+                    myLastParent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myFrequency, Boolean.FALSE, null);
+                }
+
+                /* Store last credit/debit */
+                myLastDebit = myDebit;
+                myLastCredit = myCredit;
 
                 /* Report the progress */
                 myCount++;

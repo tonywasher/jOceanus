@@ -520,7 +520,7 @@ public class AccountCurrency
         }
 
         /**
-         * Set default currency
+         * Set default currency.
          * @param pView the current view
          * @param pCurrency the new default currency.
          */

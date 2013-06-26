@@ -76,11 +76,8 @@ public class TaxYearInfo
         return getInfoType().getInfoClass();
     }
 
-    /**
-     * Obtain TaxYear.
-     * @return the TaxYear
-     */
-    public TaxYear getTaxYear() {
+    @Override
+    public TaxYear getOwner() {
         return getOwner(getValueSet(), TaxYear.class);
     }
 
@@ -237,7 +234,7 @@ public class TaxYearInfo
     @Override
     public void deRegister() {
         /* Access the TaxInfoSet and deRegister this value */
-        TaxInfoSet mySet = getTaxYear().getInfoSet();
+        TaxInfoSet mySet = getOwner().getInfoSet();
         mySet.deRegisterInfo(this);
     }
 
@@ -257,7 +254,7 @@ public class TaxYearInfo
         }
 
         /* Compare the TaxYears */
-        int iDiff = getTaxYear().compareTo(pThat.getTaxYear());
+        int iDiff = getOwner().compareTo(pThat.getOwner());
         if (iDiff != 0) {
             return iDiff;
         }
@@ -292,7 +289,7 @@ public class TaxYearInfo
         setValueInfoType(myNewType);
 
         /* Update to use the local copy of the TaxYears */
-        TaxYear myTaxYear = getTaxYear();
+        TaxYear myTaxYear = getOwner();
         TaxYear myNewYear = myTaxYears.findItemById(myTaxYear.getId());
         if (myNewYear == null) {
             addError(ERROR_UNKNOWN, FIELD_OWNER);
