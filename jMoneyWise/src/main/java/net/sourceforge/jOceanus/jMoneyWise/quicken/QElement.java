@@ -99,7 +99,8 @@ public abstract class QElement {
      * @param pFormatter the formatter
      * @param pType the QIF type
      */
-    protected QElement(final JDataFormatter pFormatter, final QIFType pType) {
+    protected QElement(final JDataFormatter pFormatter,
+                       final QIFType pType) {
         /* Store parameters */
         theFormatter = pFormatter;
         theQIFType = pType;
@@ -191,14 +192,7 @@ public abstract class QElement {
      * @param pDate the date value
      */
     protected void addDate(final JDateDay pDate) {
-        /* If this is the last day of a leap year */
-        // if (pDate.getCalendar().get(Calendar.DAY_OF_YEAR) == 366) {
-        // String myOld = theFormatter.formatObject(pDate);
-        // append("31/12/");
-        // append(Integer.toString(pDate.getYear()).substring(2));
-        // } else {
         append(theFormatter.formatObject(pDate));
-        // }
     }
 
     /**
@@ -310,6 +304,16 @@ public abstract class QElement {
         addLineType(pType);
         append(pDetail);
         endLine();
+    }
+
+    /**
+     * Add String Line.
+     * @param pType the line type
+     * @param pEnum the enum
+     */
+    protected void addEnumLine(final QLineType pType,
+                               final Enum<?> pEnum) {
+        addStringLine(pType, pEnum.toString());
     }
 
     /**

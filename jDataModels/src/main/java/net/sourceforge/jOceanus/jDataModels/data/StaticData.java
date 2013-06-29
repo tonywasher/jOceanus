@@ -385,13 +385,14 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         if (myName == null) {
             addError(ERROR_MISSING, FIELD_NAME);
 
-            /* Check that the name is unique */
+            /* Else check the name */
         } else {
             /* The description must not be too long */
             if (myName.length() > NAMELEN) {
                 addError(ERROR_LENGTH, FIELD_NAME);
             }
 
+            /* Check that the name is unique */
             if (myList.countInstances(myName) > 1) {
                 addError(ERROR_DUPLICATE, FIELD_NAME);
             }
@@ -408,6 +409,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             addError(ERROR_NEGATIVE, FIELD_ORDER);
         }
 
+        /* Cannot have duplicate order */
         if (myList.countInstances(getOrder()) > 1) {
             addError(ERROR_DUPLICATE, FIELD_ORDER);
         }

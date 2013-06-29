@@ -26,13 +26,13 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
-import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 
 /**
  * Quicken Portfolio Event Representation.
  */
-public class QPortfolioEvent extends QEvent {
+public class QPortfolioEvent
+        extends QEvent {
 
     /**
      * Constructor.
@@ -40,7 +40,9 @@ public class QPortfolioEvent extends QEvent {
      * @param pEvent the event
      * @param pCredit is this the credit item?
      */
-    protected QPortfolioEvent(final QAnalysis pAnalysis, final Event pEvent, final boolean pCredit) {
+    protected QPortfolioEvent(final QAnalysis pAnalysis,
+                              final Event pEvent,
+                              final boolean pCredit) {
         /* Call super-constructor */
         super(pAnalysis, pEvent, pCredit);
     }
@@ -73,7 +75,9 @@ public class QPortfolioEvent extends QEvent {
             case Inherited:
                 return buildInheritedQIF();
             case Transfer:
-                return (isCredit) ? buildXferInQIF() : buildXferOutQIF();
+                return (isCredit)
+                        ? buildXferInQIF()
+                        : buildXferOutQIF();
             case StockRightsWaived:
                 return buildXferOutQIF();
             case StockRightsTaken:
@@ -101,8 +105,6 @@ public class QPortfolioEvent extends QEvent {
         Event myEvent = getEvent();
         JMoney myAmount = myEvent.getAmount();
         JUnits myUnits = myEvent.getCreditUnits();
-        Account myPortfolio = myEvent.getCredit().getParent();
-        Account myHolding = myPortfolio.getHolding();
 
         /* Reset the builder */
         reset();
@@ -111,7 +113,7 @@ public class QPortfolioEvent extends QEvent {
         addDateLine(QPortLineType.Date, myEvent.getDate());
 
         /* Add the action */
-        addStringLine(QPortLineType.Action, "Buy");
+        addEnumLine(QPortLineType.Action, QActionType.Buy);
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, myEvent.getCredit());
@@ -121,7 +123,9 @@ public class QPortfolioEvent extends QEvent {
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = new JDecimal(myUnits);
@@ -133,12 +137,6 @@ public class QPortfolioEvent extends QEvent {
             /* Add the Description */
             addStringLine(QPortLineType.Comment, myDesc);
         }
-
-        /* Add the holding account */
-        addXferAccountLine(QPortLineType.TransferAccount, myHolding);
-
-        /* Add the Amount again */
-        addDecimalLine(QPortLineType.TransferAmount, myValue);
 
         /* Return the detail */
         return completeItem();
@@ -164,7 +162,7 @@ public class QPortfolioEvent extends QEvent {
         addDateLine(QPortLineType.Date, myEvent.getDate());
 
         /* Add the action */
-        addStringLine(QPortLineType.Action, "BuyX");
+        addEnumLine(QPortLineType.Action, QActionType.Buy);
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, myEvent.getCredit());
@@ -174,7 +172,9 @@ public class QPortfolioEvent extends QEvent {
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = new JDecimal(myUnits);
@@ -186,12 +186,6 @@ public class QPortfolioEvent extends QEvent {
             /* Add the Description */
             addStringLine(QPortLineType.Comment, myDesc);
         }
-
-        /* Add the category */
-        addXferAccountLine(QPortLineType.TransferAccount, myEvent.getDebit());
-
-        /* Add the Amount again */
-        addDecimalLine(QPortLineType.TransferAmount, myValue);
 
         /* Return the detail */
         return completeItem();
@@ -215,7 +209,9 @@ public class QPortfolioEvent extends QEvent {
         addDateLine(QPortLineType.Date, myEvent.getDate());
 
         /* Add the action */
-        addStringLine(QPortLineType.Action, (hasUnits) ? "SellX" : "RtrnCapX"); // TODO
+        addEnumLine(QPortLineType.Action, (hasUnits)
+                ? QActionType.Sell
+                : QActionType.RtrnCap);
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
@@ -226,7 +222,9 @@ public class QPortfolioEvent extends QEvent {
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* If we have units */
         if (hasUnits) {
@@ -242,12 +240,6 @@ public class QPortfolioEvent extends QEvent {
             /* Add the Description */
             addStringLine(QPortLineType.Comment, myDesc);
         }
-
-        /* Add the category */
-        addXferAccountLine(QPortLineType.TransferAccount, myEvent.getDebit());
-
-        /* Add the Value again */
-        addDecimalLine(QPortLineType.TransferAmount, myValue);
 
         /* Return the detail */
         return completeItem();
@@ -275,7 +267,9 @@ public class QPortfolioEvent extends QEvent {
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myValue = new JDecimal(myUnits);
@@ -299,7 +293,12 @@ public class QPortfolioEvent extends QEvent {
     private String buildStockAdjustQIF() {
         /* Access the event */
         Event myEvent = getEvent();
+        boolean isDebit = true;
         JUnits myUnits = myEvent.getDebitUnits();
+        if (myUnits == null) {
+            isDebit = false;
+            myUnits = myEvent.getCreditUnits();
+        }
 
         /* Reset the builder */
         reset();
@@ -308,17 +307,23 @@ public class QPortfolioEvent extends QEvent {
         addDateLine(QPortLineType.Date, myEvent.getDate());
 
         /* Add the action */
-        addStringLine(QPortLineType.Action, "ShrsIn"); // TODO
+        addEnumLine(QPortLineType.Action, (isDebit)
+                ? QActionType.ShrsOut
+                : QActionType.ShrsIn);
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myValue = new JDecimal(myUnits);
-        myValue.negate();
+        if (isDebit) {
+            myValue.negate();
+        }
         addDecimalLine(QPortLineType.Quantity, myValue);
 
         /* If we have a description */
@@ -351,7 +356,9 @@ public class QPortfolioEvent extends QEvent {
         addDateLine(QPortLineType.Date, myEvent.getDate());
 
         /* Add the action */
-        addStringLine(QPortLineType.Action, (isReinvested) ? "ReinvDiv" : "DivX"); // TODO
+        addEnumLine(QPortLineType.Action, (isReinvested)
+                ? QActionType.ReinvDiv
+                : QActionType.Div);
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
@@ -361,7 +368,9 @@ public class QPortfolioEvent extends QEvent {
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* If we have units */
         if (hasUnits) {
@@ -377,15 +386,6 @@ public class QPortfolioEvent extends QEvent {
             addStringLine(QPortLineType.Comment, myDesc);
         }
 
-        /* If this is not reinvested */
-        if (!isReinvested) {
-            /* Add the category */
-            addXferAccountLine(QPortLineType.TransferAccount, myEvent.getCredit());
-
-            /* Add the Amount again */
-            addDecimalLine(QPortLineType.TransferAmount, myValue);
-        }
-
         /* Return the detail */
         return completeItem();
     }
@@ -393,13 +393,15 @@ public class QPortfolioEvent extends QEvent {
     /**
      * Event List class.
      */
-    protected static class QPortfolioEventList extends QEventBaseList<QPortfolioEvent> {
+    protected static class QPortfolioEventList
+            extends QEventBaseList<QPortfolioEvent> {
         /**
          * Constructor.
          * @param pAnalysis the analysis
          * @param pAccount the list owner
          */
-        protected QPortfolioEventList(final QAnalysis pAnalysis, final QAccount pAccount) {
+        protected QPortfolioEventList(final QAnalysis pAnalysis,
+                                      final QAccount pAccount) {
             /* Call super constructor */
             super(pAnalysis, pAccount);
         }
@@ -424,6 +426,46 @@ public class QPortfolioEvent extends QEvent {
                 myHolding.processHoldingEvent(pEvent, isCredit);
             }
         }
+    }
+
+    /**
+     * Quicken Action Types.
+     */
+    public enum QActionType {
+        /**
+         * Buy.
+         */
+        Buy,
+
+        /**
+         * Sell.
+         */
+        Sell,
+
+        /**
+         * SharesIn.
+         */
+        ShrsIn,
+
+        /**
+         * SharesOut.
+         */
+        ShrsOut,
+
+        /**
+         * Dividend.
+         */
+        Div,
+
+        /**
+         * Reinvested Dividend.
+         */
+        ReinvDiv,
+
+        /**
+         * Return of Capital.
+         */
+        RtrnCap;
     }
 
     /**

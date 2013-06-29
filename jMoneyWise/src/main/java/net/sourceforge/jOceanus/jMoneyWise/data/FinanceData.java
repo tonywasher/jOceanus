@@ -44,6 +44,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYearInfo.TaxInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType.EventCategoryTypeList;
@@ -401,6 +402,11 @@ public class FinanceData
     private JDateDayRange theDateRange = null;
 
     /**
+     * Default Currency.
+     */
+    private AccountCurrency theDefaultCurrency = null;
+
+    /**
      * Obtain AccountCategoryTypes.
      * @return the Account category types
      */
@@ -574,6 +580,14 @@ public class FinanceData
      */
     public JDateDayRange getDateRange() {
         return theDateRange;
+    }
+
+    /**
+     * Obtain default currency.
+     * @return the default currency
+     */
+    public AccountCurrency getDefaultCurrency() {
+        return theDefaultCurrency;
     }
 
     /**
@@ -819,6 +833,7 @@ public class FinanceData
      * Calculate the allowed Date Range.
      */
     public void calculateDateRange() {
+        theDefaultCurrency = theCurrencies.findDefault();
         theDateRange = theTaxYears.getRange();
         theEvents.setRange(theDateRange);
     }

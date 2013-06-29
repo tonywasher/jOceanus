@@ -30,14 +30,17 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 /**
  * Quicken Interest Event.
  */
-public class QHoldingEvent extends QEvent {
+public class QHoldingEvent
+        extends QEvent {
     /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pEvent the event
      * @param pCredit is this the credit item?
      */
-    protected QHoldingEvent(final QAnalysis pAnalysis, final Event pEvent, final boolean pCredit) {
+    protected QHoldingEvent(final QAnalysis pAnalysis,
+                            final Event pEvent,
+                            final boolean pCredit) {
         /* Call super constructor */
         super(pAnalysis, pEvent, pCredit);
     }
@@ -68,6 +71,9 @@ public class QHoldingEvent extends QEvent {
         JMoney myAmount = myEvent.getAmount();
         Account myPortfolio = myEvent.getCredit().getParent();
 
+        /* Determine whether we need to use a separate transfer */
+        boolean xtraXfer = (!getQIFType().supportsSplitTransfer());
+
         /* Reset the builder */
         reset();
 
@@ -76,11 +82,15 @@ public class QHoldingEvent extends QEvent {
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        myValue.setZero();
+        if (!xtraXfer) {
+            myValue.setZero();
+        }
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
@@ -92,19 +102,62 @@ public class QHoldingEvent extends QEvent {
         /* Add the Payee */
         addAccountLine(QEvtLineType.Payee, myEvent.getDebit());
 
-        /* Add the category */
-        addCategoryLine(QEvtLineType.SplitCategory, myEvent.getCategory());
+        if (!xtraXfer) {
+            /* Add the category */
+            addCategoryLine(QEvtLineType.SplitCategory, myEvent.getCategory());
 
-        /* Add the Amount again */
-        myValue = new JDecimal(myAmount);
-        addDecimalLine(QEvtLineType.SplitAmount, myValue);
+            /* Access the Amount again */
+            myValue = new JDecimal(myAmount);
 
-        /* Add the portfolio account */
-        addXferAccountLine(QEvtLineType.SplitCategory, myPortfolio);
+            /* Add the Amount again */
+            addDecimalLine(QEvtLineType.SplitAmount, myValue);
 
-        /* Add the Amount again (negative) */
-        myValue.negate();
-        addDecimalLine(QEvtLineType.SplitAmount, myValue);
+            /* Add the portfolio account */
+            addXferAccountLine(QEvtLineType.SplitCategory, myPortfolio);
+
+            /* Add the Amount again (negative) */
+            myValue.negate();
+            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+
+            /* else need to split out the record */
+        } else {
+            /* Just add the category */
+            addCategoryLine(QEvtLineType.Category, myEvent.getCategory());
+
+            /* End the item */
+            endItem();
+
+            /* Add the Date */
+            addDateLine(QEvtLineType.Date, myEvent.getDate());
+
+            /* Add the Amount (as a simple decimal) */
+            myValue = new JDecimal(myAmount);
+            myValue.negate();
+            addDecimalLine(QEvtLineType.Amount, myValue);
+
+            /* Add the Cleared status */
+            addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+                    ? QIF_RECONCILED
+                    : QIF_OPEN);
+
+            /* Payee is the credit account */
+            addLineType(QEvtLineType.Payee);
+            append(QIF_XFER);
+            if (!getQIFType().useSimpleTransfer()) {
+                append(QIF_XFERTO);
+                addAccount(myPortfolio);
+            }
+            endLine();
+
+            /* If we have a description */
+            if (myDesc != null) {
+                /* Add the Description */
+                addStringLine(QEvtLineType.Comment, myDesc);
+            }
+
+            /* Add the transfer details */
+            addXferAccountLine(QEvtLineType.Category, myPortfolio);
+        }
 
         /* Return the detail */
         return completeItem();

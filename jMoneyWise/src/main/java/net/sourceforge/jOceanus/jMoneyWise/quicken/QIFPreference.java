@@ -115,11 +115,6 @@ public class QIFPreference
         HomeBank,
 
         /**
-         * jGnash.
-         */
-        jGnash,
-
-        /**
          * MoneyDance.
          */
         MoneyDance,
@@ -139,7 +134,6 @@ public class QIFPreference
                 case BankTree:
                 case GnuCash:
                 case HomeBank:
-                case jGnash:
                 case MoneyDance:
                 case YNAB:
                     return true;
@@ -156,11 +150,10 @@ public class QIFPreference
             switch (this) {
                 case BankTree:
                 case HomeBank:
-                case jGnash:
-                case MoneyDance:
                 case YNAB:
                     return true;
                 case AceMoney:
+                case MoneyDance:
                 case GnuCash:
                 default:
                     return false;
@@ -174,12 +167,11 @@ public class QIFPreference
         public boolean hideBalancingTaxTransfer() {
             switch (this) {
                 case AceMoney:
+                case MoneyDance:
                     return true;
                 case BankTree:
                 case GnuCash:
                 case HomeBank:
-                case jGnash:
-                case MoneyDance:
                 case YNAB:
                 default:
                     return false;
@@ -194,7 +186,6 @@ public class QIFPreference
             switch (this) {
                 case AceMoney:
                 case BankTree:
-                case jGnash:
                 case MoneyDance:
                 case YNAB:
                     return true;
@@ -215,7 +206,6 @@ public class QIFPreference
                 case BankTree:
                 case GnuCash:
                 case HomeBank:
-                case jGnash:
                 case MoneyDance:
                 case YNAB:
                     return false;
@@ -236,7 +226,6 @@ public class QIFPreference
                 case BankTree:
                 case GnuCash:
                 case HomeBank:
-                case jGnash:
                 case MoneyDance:
                 case YNAB:
                 default:

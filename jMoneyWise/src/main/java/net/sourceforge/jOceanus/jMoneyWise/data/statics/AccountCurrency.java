@@ -22,7 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data.statics;
 
+import java.text.DecimalFormatSymbols;
 import java.util.Currency;
+import java.util.Iterator;
+import java.util.Locale;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -33,7 +36,6 @@ import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 
 /**
  * AccountCurrency data type.
@@ -209,9 +211,18 @@ public class AccountCurrency
         /* Check that default is non-null */
         if (isDefault() == null) {
             addError(ERROR_MISSING, FIELD_DEFAULT);
-        } else if ((isDefault())
-                   && (!this.equals(myList.getDefaultCurrency()))) {
-            addError("Multiple default currencies", FIELD_DEFAULT);
+
+            /* else check various things for a default currency */
+        } else if (isDefault()) {
+            /* Check that default is enabled */
+            if (!getEnabled()) {
+                addError(ERROR_DISABLED, FIELD_DEFAULT);
+            }
+
+            /* Check for multiple defaults */
+            if (myList.countDefaults() > 1) {
+                addError("Multiple default currencies", FIELD_DEFAULT);
+            }
         }
 
         /* Validate it */
@@ -253,27 +264,9 @@ public class AccountCurrency
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCurrency.class.getSimpleName(), DataList.FIELD_DEFS);
 
-        /**
-         * Default Field Id.
-         */
-        public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField("Default");
-
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
-        }
-
-        /**
-         * The default currency.
-         */
-        private AccountCurrency theDefault = null;
-
-        /**
-         * Obtain default currency.
-         * @return the default currency
-         */
-        public AccountCurrency getDefaultCurrency() {
-            return theDefault;
         }
 
         @Override
@@ -373,13 +366,6 @@ public class AccountCurrency
             /* Add the Account Currency to the list */
             append(myCurr);
 
-            /* If we have no default currency */
-            if (theDefault == null) {
-                /* Set this as the default currency */
-                myCurr.setDefault(Boolean.TRUE);
-                setAsDefaultCurrency(myCurr);
-            }
-
             /* Validate the Currency */
             myCurr.validate();
 
@@ -416,12 +402,6 @@ public class AccountCurrency
 
             /* Add the Account Currency to the list */
             append(myCurr);
-
-            /* If this is the default currency */
-            if (pDefault) {
-                /* Set this as the default currency */
-                setAsDefaultCurrency(myCurr);
-            }
 
             /* Validate the AccountCurrency */
             myCurr.validate();
@@ -462,12 +442,6 @@ public class AccountCurrency
             /* Add the AccountCurrency to the list */
             append(myCurr);
 
-            /* If this is the default currency */
-            if (pDefault) {
-                /* Set this as the default currency */
-                setAsDefaultCurrency(myCurr);
-            }
-
             /* Validate the AccountCurrency */
             myCurr.validate();
 
@@ -490,13 +464,6 @@ public class AccountCurrency
                 /* Add the AccountCurrency to the list */
                 append(myCurr);
 
-                /* If we have no default currency */
-                if (theDefault == null) {
-                    /* Set this as the default currency */
-                    myCurr.setDefault(Boolean.TRUE);
-                    setAsDefaultCurrency(myCurr);
-                }
-
                 /* Validate the AccountCurrency */
                 myCurr.validate();
 
@@ -506,42 +473,127 @@ public class AccountCurrency
                 }
             }
 
+            /* Initialise the default currency */
+            initialiseDefault();
+
             /* Ensure that the list is sorted */
             reSort();
         }
 
         /**
-         * Set new default currency.
-         * @param pCurrency the new default currency.
+         * Initialise the default currency.
          */
-        private void setAsDefaultCurrency(final AccountCurrency pCurrency) {
-            /* Record the default currency */
-            theDefault = pCurrency;
+        public void initialiseDefault() {
+            /* Determine the locale currency */
+            Locale myLocale = Locale.getDefault();
+            DecimalFormatSymbols mySymbols = DecimalFormatSymbols.getInstance(myLocale);
+            Currency myCurrency = mySymbols.getCurrency();
+
+            /* Find the currency in the list */
+            AccountCurrency myCurr = findCurrency(myCurrency);
+            if (myCurr == null) {
+                /* Default to GBP if local currency not found */
+                myCurr = findItemByClass(AccountCurrencyClass.GBP);
+            }
+
+            /* If we have a currency */
+            if (myCurr != null) {
+                /* Set it as the default */
+                myCurr.setDefault(Boolean.TRUE);
+            }
+        }
+
+        /**
+         * find a currency in the list.
+         * @param pCurrency the currency to find
+         * @return The currency
+         */
+        public AccountCurrency findCurrency(final Currency pCurrency) {
+            /* Access the iterator */
+            Iterator<AccountCurrency> myIterator = iterator();
+
+            /* Loop through the items to find the entry */
+            while (myIterator.hasNext()) {
+                AccountCurrency myCurr = myIterator.next();
+
+                /* If this is a default value */
+                if (pCurrency.equals(myCurr.getCurrency())) {
+                    /* return the currency */
+                    return myCurr;
+                }
+            }
+
+            /* Return not found */
+            return null;
+        }
+
+        /**
+         * Count the number of default currencies.
+         * @return The # of default currencies
+         */
+        protected int countDefaults() {
+            /* Access the iterator */
+            Iterator<AccountCurrency> myIterator = iterator();
+            int iCount = 0;
+
+            /* Loop through the items to find the entry */
+            while (myIterator.hasNext()) {
+                AccountCurrency myCurr = myIterator.next();
+
+                /* If this is a default value */
+                if (myCurr.isDefault()) {
+                    /* Increment count */
+                    iCount++;
+                }
+            }
+
+            /* Return to caller */
+            return iCount;
+        }
+
+        /**
+         * Find the default currency.
+         * @return The default currency
+         */
+        public AccountCurrency findDefault() {
+            /* Access the iterator */
+            Iterator<AccountCurrency> myIterator = iterator();
+
+            /* Loop through the items to find the entry */
+            while (myIterator.hasNext()) {
+                AccountCurrency myCurr = myIterator.next();
+
+                /* If this is a default value */
+                if (myCurr.isDefault()) {
+                    /* Return the default */
+                    return myCurr;
+                }
+            }
+
+            /* Return to caller */
+            return null;
         }
 
         /**
          * Set default currency.
-         * @param pView the current view
          * @param pCurrency the new default currency.
          */
-        public void setDefaultCurrency(final DataControl<?> pView,
-                                       final AccountCurrency pCurrency) {
-            /* Access existing default currency */
-            AccountCurrency myDefault = getDefaultCurrency();
+        public void setDefaultCurrency(final AccountCurrency pCurrency) {
+            /* Find the default currency */
+            AccountCurrency myCurr = findDefault();
 
             /* If we are changing the currency */
-            if (!myDefault.equals(pCurrency)) {
-                /* Switch defaults */
-                myDefault.pushHistory();
-                myDefault.setDeleted(Boolean.FALSE);
+            if (!pCurrency.equals(myCurr)) {
+                /* If we have a default value */
+                if (myCurr != null) {
+                    /* Clear default value */
+                    myCurr.pushHistory();
+                    myCurr.setDefault(Boolean.FALSE);
+                }
+
+                /* Set new currency */
                 pCurrency.pushHistory();
-                pCurrency.setDeleted(Boolean.TRUE);
-
-                /* Register the changes */
-                pView.incrementVersion();
-
-                /* Record default */
-                setAsDefaultCurrency(pCurrency);
+                pCurrency.setDefault(Boolean.TRUE);
             }
         }
     }

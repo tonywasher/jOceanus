@@ -29,6 +29,7 @@ import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.database.FinanceDatabase;
 import net.sourceforge.jOceanus.jMoneyWise.sheets.FinanceSheet;
 import net.sourceforge.jOceanus.jMoneyWise.views.DilutionEvent.DilutionEventList;
@@ -190,5 +191,23 @@ public class View
 
         /* Return whether there was success */
         return (getErrors().size() > 0);
+    }
+
+    /**
+     * Set the default currency
+     * @param pCurrency the new default currency
+     */
+    public void setDefaultCurrency(final AccountCurrency pCurrency) {
+        /* Set default currency in AccountCurrencies */
+        theData.getAccountCurrencies().setDefaultCurrency(pCurrency);
+
+        /* Set default currency in ExchangeRates */
+        theData.getExchangeRates().setDefaultCurrency(pCurrency);
+
+        /* Register the changes */
+        incrementVersion();
+
+        /* Discover data */
+        theData.calculateDateRange();
     }
 }

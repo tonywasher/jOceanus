@@ -22,6 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.Currency;
+import java.util.Iterator;
+
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -33,6 +36,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency.AccountCurrencyList;
@@ -174,6 +178,17 @@ public final class ExchangeRate
      */
     public JRatio getExchangeRate() {
         return getExchangeRate(getValueSet());
+    }
+
+    /**
+     * Obtain InverseRate.
+     * @return the inverse rate
+     */
+    public JRatio getInverseRate() {
+        JRatio myRate = getExchangeRate();
+        return (myRate == null)
+                ? null
+                : myRate.getInverseRatio();
     }
 
     /**
@@ -480,6 +495,7 @@ public final class ExchangeRate
 
     @Override
     public void validate() {
+        ExchangeRateList myList = (ExchangeRateList) getList();
         AccountCurrency myFrom = getFromCurrency();
         AccountCurrency myTo = getToCurrency();
         JDateDay myDate = getDate();
@@ -517,11 +533,15 @@ public final class ExchangeRate
                 addError("Cannot have exchange rate between same currency", FIELD_TO);
             }
 
-            /* One must be the default currency */
-            AccountCurrency myDefault = getDataSet().getAccountCurrencies().getDefaultCurrency();
-            if ((!myFrom.equals(myDefault))
-                && (!myTo.equals(myDefault))) {
-                addError("Exchange Rate must involve default currency", FIELD_FROM);
+            /* From currency must be the default currency */
+            AccountCurrency myDefault = getDataSet().getDefaultCurrency();
+            if (!myFrom.equals(myDefault)) {
+                addError("Exchange Rate must be from the default currency", FIELD_FROM);
+            }
+
+            /* Cannot have duplicate rate */
+            if (myList.countInstances(this) > 1) {
+                addError(ERROR_DUPLICATE, FIELD_DATE);
             }
         }
 
@@ -591,9 +611,27 @@ public final class ExchangeRate
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(ExchangeRateList.class.getSimpleName(), DataList.FIELD_DEFS);
 
+        /**
+         * Default Field Id.
+         */
+        public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField("Default");
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
+        }
+
+        /**
+         * The default currency.
+         */
+        private AccountCurrency theDefault = null;
+
+        /**
+         * Obtain default currency.
+         * @return the default currency
+         */
+        public AccountCurrency getDefaultCurrency() {
+            return theDefault;
         }
 
         @Override
@@ -607,7 +645,7 @@ public final class ExchangeRate
         }
 
         /**
-         * Construct an empty CORE Event Category list.
+         * Construct an empty CORE ExchangeRate list.
          * @param pData the DataSet for the list
          */
         protected ExchangeRateList(final FinanceData pData) {
@@ -642,6 +680,44 @@ public final class ExchangeRate
         @Override
         public ExchangeRateList deriveDifferences(final DataList<ExchangeRate> pOld) {
             return (ExchangeRateList) super.deriveDifferences(pOld);
+        }
+
+        /**
+         * Count the instances of an exchange rate.
+         * @param pName the name to check for
+         * @return The # of instances of the name
+         */
+        protected int countInstances(final ExchangeRate pRate) {
+            /* Access key values */
+            JDateDay myDate = pRate.getDate();
+            AccountCurrency myFrom = pRate.getFromCurrency();
+            AccountCurrency myTo = pRate.getToCurrency();
+
+            /* Access the iterator */
+            Iterator<ExchangeRate> myIterator = iterator();
+            int iCount = 0;
+
+            /* Loop through the items to find the entry */
+            while (myIterator.hasNext()) {
+                ExchangeRate myCurr = myIterator.next();
+
+                /* Ignore different rates */
+                if (!myDate.equals(myCurr.getDate())) {
+                    continue;
+                }
+                if (!myFrom.equals(myCurr.getFromCurrency())) {
+                    continue;
+                }
+                if (!myTo.equals(myCurr.getToCurrency())) {
+                    continue;
+                }
+
+                /* Increment count */
+                iCount++;
+            }
+
+            /* Return to caller */
+            return iCount;
         }
 
         /**
@@ -724,6 +800,130 @@ public final class ExchangeRate
 
             /* Add to the list */
             append(myRate);
+        }
+
+        /**
+         * Convert a monetary value to the currency.
+         * @param pValue the value to convert
+         * @param pCurrency the required currency
+         * @param pDate the date of the conversion
+         * @return the converted value
+         */
+        public JMoney convertCurrency(final JMoney pValue,
+                                      final AccountCurrency pCurrency,
+                                      final JDateDay pDate) {
+            /* Obtain the existing currency */
+            JMoney myValue = pValue;
+            AccountCurrencyList myCurrencies = getDataSet().getAccountCurrencies();
+            Currency myCurrent = pValue.getCurrency();
+            Currency myDefault = theDefault.getCurrency();
+            Currency myTarget = pCurrency.getCurrency();
+
+            /* Handle no conversion required */
+            if (myCurrent.equals(myTarget)) {
+                return pValue;
+            }
+
+            /* If the value is not already the default currency */
+            if (!myCurrent.equals(myDefault)) {
+                /* Find the required exchange rate */
+                ExchangeRate myRate = findRate(myCurrencies.findCurrency(myCurrent), pDate);
+
+                /* Convert the currency */
+                myValue = myValue.convertCurrency(myDefault, myRate.getInverseRate());
+            }
+
+            /* If we need to convert to a non-default currency */
+            if (!myDefault.equals(myTarget)) {
+                /* Find the required exchange rate */
+                ExchangeRate myRate = findRate(pCurrency, pDate);
+
+                /* Convert the currency */
+                myValue = myValue.convertCurrency(myTarget, myRate.getExchangeRate());
+            }
+
+            /* Return the converted currency */
+            return myValue;
+        }
+
+        /**
+         * Find the exchange rate
+         * @param pCurrency the currency to find
+         * @param pDate the date to find the exchange rate for
+         * @return the exchange rate
+         */
+        private ExchangeRate findRate(final AccountCurrency pCurrency,
+                                      final JDateDay pDate) {
+            /* Access the iterator */
+            Iterator<ExchangeRate> myIterator = iterator();
+            ExchangeRate myRate = null;
+
+            /* Loop through the items to find the entry */
+            while (myIterator.hasNext()) {
+                ExchangeRate myCurr = myIterator.next();
+
+                /* break loop if we have passed the date */
+                if (myCurr.getDate().compareTo(pDate) > 0) {
+                    break;
+                }
+
+                /* If this is the correct currency */
+                if (pCurrency.equals(myCurr.getToCurrency())) {
+                    /* Record as best rate */
+                    myRate = myCurr;
+                }
+            }
+
+            /* Return the exchange rate */
+            return myRate;
+        }
+
+        /**
+         * Set the default currency
+         * @param pCurrency the new default currency
+         */
+        public void setDefaultCurrency(final AccountCurrency pCurrency) {
+            /* Access the iterator */
+            Iterator<ExchangeRate> myIterator = iterator();
+            JRatio myCurrRate = null;
+            JDateDay myCurrDate = null;
+
+            /* Loop through the items to find the entry */
+            while (myIterator.hasNext()) {
+                ExchangeRate myCurr = myIterator.next();
+
+                /* Access details */
+                JDateDay myDate = myCurr.getDate();
+                AccountCurrency myTo = myCurr.getToCurrency();
+                JRatio myRatio = myCurr.getExchangeRate();
+
+                /* If this is a new date */
+                if (!myDate.equals(myCurrDate)) {
+                    /* Access the current rate for the new default currency */
+                    /* TODO This must exist on the same date */
+                    myCurrRate = findRate(pCurrency, myDate).getExchangeRate();
+                }
+
+                /* Update the item */
+                myCurr.pushHistory();
+
+                /* If this is a conversion to the new default */
+                if (myTo.equals(pCurrency)) {
+                    /* Switch the direction of the currencies */
+                    myCurr.setToCurrency(myCurr.getFromCurrency());
+
+                    /* Invert the ratio */
+                    myCurr.setExchangeRate(myRatio.getInverseRatio());
+
+                    /* Else does not currently involve the new currency */
+                } else {
+                    /* Need to combine the rates */
+                    myCurr.setExchangeRate(new JRatio(myRatio, myCurrRate));
+                }
+
+                /* Set from currency */
+                myCurr.setFromCurrency(pCurrency);
+            }
         }
     }
 }

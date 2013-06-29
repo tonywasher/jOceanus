@@ -38,7 +38,8 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
  * SheetStaticData extension for AccountCurrency.
  * @author Tony Washer
  */
-public class SheetAccountCurrency extends SheetStaticData<AccountCurrency> {
+public class SheetAccountCurrency
+        extends SheetStaticData<AccountCurrency> {
     /**
      * NamedArea for AccountCurrencies.
      */
@@ -47,7 +48,8 @@ public class SheetAccountCurrency extends SheetStaticData<AccountCurrency> {
     /**
      * NameList for AccountCurrencies.
      */
-    protected static final String AREA_ACCOUNTCURRNAMES = AccountCurrency.OBJECT_NAME + "Names";
+    protected static final String AREA_ACCOUNTCURRNAMES = AccountCurrency.OBJECT_NAME
+                                                          + "Names";
 
     /**
      * Default column.
@@ -201,10 +203,14 @@ public class SheetAccountCurrency extends SheetStaticData<AccountCurrency> {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
+
+            /* Initialise the default currency */
+            myList.initialiseDefault();
 
             /* Sort the list */
             myList.reSort();

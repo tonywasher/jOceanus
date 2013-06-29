@@ -46,7 +46,8 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook;
  * SheetDataItem extension for Account.
  * @author Tony Washer
  */
-public class SheetAccount extends SheetDataItem<Account> {
+public class SheetAccount
+        extends SheetDataItem<Account> {
     /**
      * NamedArea for Accounts.
      */
@@ -55,7 +56,8 @@ public class SheetAccount extends SheetDataItem<Account> {
     /**
      * NameList for Accounts.
      */
-    protected static final String AREA_ACCOUNTNAMES = Account.OBJECT_NAME + "Names";
+    protected static final String AREA_ACCOUNTNAMES = Account.OBJECT_NAME
+                                                      + "Names";
 
     /**
      * Name column.
@@ -139,7 +141,9 @@ public class SheetAccount extends SheetDataItem<Account> {
         setDataList(theList);
 
         /* Set up info Sheet */
-        theInfoSheet = isBackup() ? null : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CURRENCY);
+        theInfoSheet = isBackup()
+                ? null
+                : new SheetAccountInfoSet(AccountInfoClass.class, this, COL_CURRENCY);
     }
 
     @Override
@@ -301,7 +305,7 @@ public class SheetAccount extends SheetDataItem<Account> {
             }
 
             /* Access default currency */
-            AccountCurrency myCurrency = pData.getAccountCurrencies().getDefaultCurrency();
+            AccountCurrency myCurrency = pData.getDefaultCurrency();
 
             /* Loop through the rows of the table */
             for (int i = 0; i < myTotal; i++) {
@@ -331,7 +335,8 @@ public class SheetAccount extends SheetDataItem<Account> {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -411,7 +416,8 @@ public class SheetAccount extends SheetDataItem<Account> {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pTask.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pTask.setStepsDone(myCount))) {
                     return false;
                 }
             }
@@ -435,7 +441,8 @@ public class SheetAccount extends SheetDataItem<Account> {
     /**
      * AccountInfoSet sheet.
      */
-    private static class SheetAccountInfoSet extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
+    private static class SheetAccountInfoSet
+            extends SheetDataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
 
         /**
          * Constructor.
@@ -443,7 +450,9 @@ public class SheetAccount extends SheetDataItem<Account> {
          * @param pOwner the Owner
          * @param pBaseCol the base column
          */
-        public SheetAccountInfoSet(final Class<AccountInfoClass> pClass, final SheetDataItem<Account> pOwner, final int pBaseCol) {
+        public SheetAccountInfoSet(final Class<AccountInfoClass> pClass,
+                                   final SheetDataItem<Account> pOwner,
+                                   final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
         }
 
