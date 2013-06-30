@@ -530,6 +530,13 @@ public class EventAnalysis
             EventCategory myCategory = myCurr.getCategory();
             myCategory.touchItem(myCurr);
 
+            /* If the event has a parent */
+            Event myParent = myCurr.getParent();
+            if (myParent != null) {
+                /* Touch the parent */
+                myParent.touchItem(myCurr);
+            }
+
             /* If the event has a dilution factor */
             if (myCurr.getDilution() != null) {
                 /* Add to the dilution event list */

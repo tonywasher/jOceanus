@@ -311,6 +311,7 @@ public final class JDataHTML {
     private StringBuilder formatHTMLDetail(final JDataDetail pDetail,
                                            final Object pObject) {
         JDataContents myDetail = JDataContents.class.cast(pObject);
+        JDataValues myValueCtl = null;
         StringBuilder myResults = new StringBuilder(BUFFER_LEN);
         StringBuilder myEntries = new StringBuilder(BUFFER_LEN);
         JDataFields myFields = myDetail.getDataFields();
@@ -319,7 +320,8 @@ public final class JDataHTML {
 
         /* Access valueSet if it exists */
         if (JDataValues.class.isInstance(pObject)) {
-            myValues = ((JDataValues) pObject).getValueSet();
+            myValueCtl = (JDataValues) pObject;
+            myValues = myValueCtl.getValueSet();
         }
 
         /* Loop through the fields */
@@ -332,7 +334,9 @@ public final class JDataHTML {
             /* Access the value */
             if ((myField.isValueSetField())
                 && (myValues != null)) {
-                myValue = myValues.getValue(myField);
+                myValue = myValueCtl.skipField(myField)
+                        ? JDataFieldValue.SkipField
+                        : myValues.getValue(myField);
             } else {
                 myValue = myDetail.getFieldValue(myField);
             }

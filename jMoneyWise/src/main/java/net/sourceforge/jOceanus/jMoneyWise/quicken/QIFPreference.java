@@ -110,11 +110,6 @@ public class QIFPreference
         GnuCash,
 
         /**
-         * HomeBank.
-         */
-        HomeBank,
-
-        /**
          * MoneyDance.
          */
         MoneyDance,
@@ -133,7 +128,6 @@ public class QIFPreference
                 case AceMoney:
                 case BankTree:
                 case GnuCash:
-                case HomeBank:
                 case MoneyDance:
                 case YNAB:
                     return true;
@@ -149,7 +143,6 @@ public class QIFPreference
         public boolean useSimpleTransfer() {
             switch (this) {
                 case BankTree:
-                case HomeBank:
                 case YNAB:
                     return true;
                 case AceMoney:
@@ -171,7 +164,6 @@ public class QIFPreference
                     return true;
                 case BankTree:
                 case GnuCash:
-                case HomeBank:
                 case YNAB:
                 default:
                     return false;
@@ -190,7 +182,6 @@ public class QIFPreference
                 case YNAB:
                     return true;
                 case GnuCash:
-                case HomeBank:
                 default:
                     return false;
             }
@@ -205,7 +196,6 @@ public class QIFPreference
                 case AceMoney:
                 case BankTree:
                 case GnuCash:
-                case HomeBank:
                 case MoneyDance:
                 case YNAB:
                     return false;
@@ -225,7 +215,6 @@ public class QIFPreference
                            + QIF_SUFFIX;
                 case BankTree:
                 case GnuCash:
-                case HomeBank:
                 case MoneyDance:
                 case YNAB:
                 default:

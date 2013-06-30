@@ -214,17 +214,17 @@ public class AccountStatement
     /**
      * Date column header.
      */
-    private static final String TITLE_DATE = Extract.TITLE_DATE;
+    private static final String TITLE_DATE = Register.TITLE_DATE;
 
     /**
      * Description column header.
      */
-    private static final String TITLE_DESC = Extract.TITLE_DESC;
+    private static final String TITLE_DESC = Register.TITLE_DESC;
 
     /**
      * Category Type column header.
      */
-    private static final String TITLE_CATEGORY = Extract.TITLE_CATEGORY;
+    private static final String TITLE_CATEGORY = Register.TITLE_CATEGORY;
 
     /**
      * Partner column header.
@@ -234,12 +234,12 @@ public class AccountStatement
     /**
      * Credit column header.
      */
-    private static final String TITLE_CREDIT = Extract.TITLE_CREDIT;
+    private static final String TITLE_CREDIT = Register.TITLE_CREDIT;
 
     /**
      * Debit column header.
      */
-    private static final String TITLE_DEBIT = Extract.TITLE_DEBIT;
+    private static final String TITLE_DEBIT = Register.TITLE_DEBIT;
 
     /**
      * Balance column header.
@@ -249,22 +249,22 @@ public class AccountStatement
     /**
      * Dilution column header.
      */
-    private static final String TITLE_DILUTION = Extract.TITLE_DILUTE;
+    private static final String TITLE_DILUTION = Register.TITLE_DILUTE;
 
     /**
      * TaxCredit column header.
      */
-    private static final String TITLE_TAXCREDIT = Extract.TITLE_TAXCRED;
+    private static final String TITLE_TAXCREDIT = Register.TITLE_TAXCRED;
 
     /**
      * Years column header.
      */
-    private static final String TITLE_YEARS = Extract.TITLE_YEARS;
+    private static final String TITLE_YEARS = Register.TITLE_YEARS;
 
     /**
      * Pop-up View Extract.
      */
-    private static final String POPUP_EXTRACT = NLS_BUNDLE.getString("PopUpExtract");
+    private static final String POPUP_REGISTER = NLS_BUNDLE.getString("PopUpRegister");
 
     /**
      * Pop-up Maintain account.
@@ -294,22 +294,22 @@ public class AccountStatement
     /**
      * Pop-up Set null units.
      */
-    private static final String POPUP_NULLUNITS = Extract.POPUP_NULLDEBUNITS;
+    private static final String POPUP_NULLUNITS = Register.POPUP_NULLDEBUNITS;
 
     /**
      * Pop-up Set null Tax Credit.
      */
-    private static final String POPUP_NULLTAX = Extract.POPUP_NULLTAX;
+    private static final String POPUP_NULLTAX = Register.POPUP_NULLTAX;
 
     /**
      * Pop-up Set null Years.
      */
-    private static final String POPUP_NULLYEARS = Extract.POPUP_NULLYEARS;
+    private static final String POPUP_NULLYEARS = Register.POPUP_NULLYEARS;
 
     /**
      * Pop-up Set null dilution.
      */
-    private static final String POPUP_NULLDILUTE = Extract.POPUP_NULLDILUTE;
+    private static final String POPUP_NULLDILUTE = Register.POPUP_NULLDILUTE;
 
     /**
      * Pop-up Add Pattern.
@@ -319,7 +319,7 @@ public class AccountStatement
     /**
      * Pop-up Calculate Tax.
      */
-    private static final String POPUP_CALCTAX = Extract.POPUP_CALCTAX;
+    private static final String POPUP_CALCTAX = Register.POPUP_CALCTAX;
 
     /**
      * Pop-up Set Credit.
@@ -1268,8 +1268,8 @@ public class AccountStatement
             }
 
             /* Create the View extract choice */
-            myItem = new JMenuItem(POPUP_EXTRACT);
-            myItem.setActionCommand(POPUP_EXTRACT);
+            myItem = new JMenuItem(POPUP_REGISTER);
+            myItem.setActionCommand(POPUP_REGISTER);
             myItem.addActionListener(this);
             pMenu.add(myItem);
 
@@ -1368,7 +1368,7 @@ public class AccountStatement
             theTable.cancelEditing();
 
             /* Determine whether this is a navigate command */
-            boolean isNavigate = myCmd.equals(POPUP_EXTRACT)
+            boolean isNavigate = myCmd.equals(POPUP_REGISTER)
                                  || myCmd.equals(POPUP_MAINT);
             isNavigate = isNavigate
                          || myCmd.equals(POPUP_PARENT)
@@ -1524,8 +1524,8 @@ public class AccountStatement
             }
 
             /* Handle commands */
-            if (myCmd.equals(POPUP_EXTRACT)) {
-                fireActionEvent(MainTab.ACTION_VIEWEXTRACT, new ActionRequest(theSelect));
+            if (myCmd.equals(POPUP_REGISTER)) {
+                fireActionEvent(MainTab.ACTION_VIEWREGISTER, new ActionRequest(theSelect));
             } else if (myCmd.equals(POPUP_MAINT)) {
                 fireActionEvent(MainTab.ACTION_MAINTACCOUNT, new ActionRequest(theAccount));
             } else if (myCmd.equals(POPUP_PARENT)) {

@@ -157,32 +157,32 @@ public class MaintNewYear
     /**
      * Date column title.
      */
-    private static final String TITLE_DATE = Extract.TITLE_DATE;
+    private static final String TITLE_DATE = Register.TITLE_DATE;
 
     /**
      * Description column title.
      */
-    private static final String TITLE_DESC = Extract.TITLE_DESC;
+    private static final String TITLE_DESC = Register.TITLE_DESC;
 
     /**
      * Category column title.
      */
-    private static final String TITLE_CATEGORY = Extract.TITLE_CATEGORY;
+    private static final String TITLE_CATEGORY = Register.TITLE_CATEGORY;
 
     /**
      * Amount column title.
      */
-    private static final String TITLE_AMOUNT = Extract.TITLE_AMOUNT;
+    private static final String TITLE_AMOUNT = Register.TITLE_AMOUNT;
 
     /**
      * Debit column title.
      */
-    private static final String TITLE_DEBIT = Extract.TITLE_DEBIT;
+    private static final String TITLE_DEBIT = Register.TITLE_DEBIT;
 
     /**
      * Credit column title.
      */
-    private static final String TITLE_CREDIT = Extract.TITLE_CREDIT;
+    private static final String TITLE_CREDIT = Register.TITLE_CREDIT;
 
     /**
      * Date column id.

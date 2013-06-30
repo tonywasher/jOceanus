@@ -43,7 +43,8 @@ public final class JDataObject {
     /**
      * Detail object interface.
      */
-    public interface JDataContents extends JDataFormat {
+    public interface JDataContents
+            extends JDataFormat {
         /**
          * Obtain the Report Fields.
          * @return the report fields
@@ -61,12 +62,20 @@ public final class JDataObject {
     /**
      * ValueSet object interface.
      */
-    public interface JDataValues extends JDataContents {
+    public interface JDataValues
+            extends JDataContents {
         /**
          * Obtain Object ValueSet.
          * @return the ValueSet of the object
          */
         ValueSet getValueSet();
+
+        /**
+         * Should we skip a ValueSet object?.
+         * @param pField the field
+         * @return true/false
+         */
+        boolean skipField(final JDataField pField);
 
         /**
          * Declare the valueSet as active.

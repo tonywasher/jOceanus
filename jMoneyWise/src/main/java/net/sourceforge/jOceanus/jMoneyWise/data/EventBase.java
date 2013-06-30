@@ -94,6 +94,19 @@ public abstract class EventBase
      */
     public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField("Parent");
 
+    @Override
+    public boolean skipField(final JDataField pField) {
+        if ((FIELD_SPLIT.equals(pField))
+            && !getSplit()) {
+            return true;
+        }
+        if ((FIELD_PARENT.equals(pField))
+            && (!getSplit() || (getParent() == null))) {
+            return true;
+        }
+        return super.skipField(pField);
+    }
+
     /**
      * Obtain Date.
      * @return the date
@@ -1155,6 +1168,12 @@ public abstract class EventBase
         /* Touch the credit and debit accounts */
         getDebit().touchItem(this);
         getCredit().touchItem(this);
+
+        /* Touch parent */
+        EventBase myParent = getParent();
+        if (myParent != null) {
+            myParent.touchItem(this);
+        }
     }
 
     /**

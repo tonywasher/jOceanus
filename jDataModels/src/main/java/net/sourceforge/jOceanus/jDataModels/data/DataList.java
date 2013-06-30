@@ -518,7 +518,7 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
                     myNew.setBase(myItem);
 
                     /* Ensure that we record the correct history */
-                    myNew.setHistory(myCurr);
+                    myNew.setHistory(myItem);
                 }
 
                 /* Remove the item from the map */

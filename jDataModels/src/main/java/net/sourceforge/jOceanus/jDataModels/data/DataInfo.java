@@ -25,7 +25,6 @@ package net.sourceforge.jOceanus.jDataModels.data;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
@@ -77,16 +76,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField("Link");
 
     @Override
-    public Object getFieldValue(final JDataField pField) {
+    public boolean skipField(final JDataField pField) {
         if ((FIELD_LINK.equals(pField))
             && !getInfoClass().isLink()) {
-            return JDataFieldValue.SkipField;
+            return true;
         }
         if ((FIELD_VALUE.equals(pField))
             && getInfoClass().isLink()) {
-            return JDataFieldValue.SkipField;
+            return true;
         }
-        return super.getFieldValue(pField);
+        return super.skipField(pField);
     }
 
     /**

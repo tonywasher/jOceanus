@@ -65,14 +65,14 @@ public class MainTab
     protected static final int ACTION_ADDPATTERN = ActionEvent.ACTION_PERFORMED + 1;
 
     /**
-     * View Extract.
+     * View Register.
      */
-    protected static final int ACTION_VIEWEXTRACT = ACTION_ADDPATTERN + 1;
+    protected static final int ACTION_VIEWREGISTER = ACTION_ADDPATTERN + 1;
 
     /**
      * View Account.
      */
-    protected static final int ACTION_VIEWACCOUNT = ACTION_VIEWEXTRACT + 1;
+    protected static final int ACTION_VIEWACCOUNT = ACTION_VIEWREGISTER + 1;
 
     /**
      * Maintain Account.
@@ -85,9 +85,9 @@ public class MainTab
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(MainTab.class.getName());
 
     /**
-     * Extract tab title.
+     * Register tab title.
      */
-    private static final String TITLE_EXTRACT = NLS_BUNDLE.getString("TabExtract");
+    private static final String TITLE_REGISTER = NLS_BUNDLE.getString("TabRegister");
 
     /**
      * Account tab title.
@@ -145,9 +145,9 @@ public class MainTab
     private JEnableTabbed theTabs = null;
 
     /**
-     * The Events panel.
+     * The Register panel.
      */
-    private Extract theExtract = null;
+    private Register theRegister = null;
 
     /**
      * The Account panel.
@@ -249,9 +249,9 @@ public class MainTab
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
 
-        /* Create the extract table and add to tabbed pane */
-        theExtract = new Extract(theView, theComboList);
-        theTabs.addTab(TITLE_EXTRACT, theExtract.getPanel());
+        /* Create the register table and add to tabbed pane */
+        theRegister = new Register(theView, theComboList);
+        theTabs.addTab(TITLE_REGISTER, theRegister.getPanel());
 
         /* Create the accounts control and add to tabbed pane */
         theAccountCtl = new AccountTab(theView, theComboList);
@@ -273,11 +273,11 @@ public class MainTab
         MainListener myListener = new MainListener();
         theView.addChangeListener(myListener);
         theTabs.addChangeListener(myListener);
-        theExtract.addChangeListener(myListener);
+        theRegister.addChangeListener(myListener);
         theAccountCtl.addChangeListener(myListener);
         theSpotView.addChangeListener(myListener);
         theMaint.addChangeListener(myListener);
-        theExtract.addActionListener(myListener);
+        theRegister.addActionListener(myListener);
         theAccountCtl.addActionListener(myListener);
         theMaint.addActionListener(myListener);
         determineFocus();
@@ -319,7 +319,7 @@ public class MainTab
     @Override
     public final boolean hasUpdates() {
         /* Determine whether we have edit session updates */
-        return theExtract.hasUpdates()
+        return theRegister.hasUpdates()
                || theAccountCtl.hasUpdates()
                || theSpotView.hasUpdates()
                || theMaint.hasUpdates();
@@ -422,15 +422,15 @@ public class MainTab
     }
 
     /**
-     * Select an explicit extract period.
+     * Select an explicit register period.
      * @param pSource the range
      */
-    private void selectExtract(final JDateDayRangeSelect pSource) {
-        /* Pass through to the Extract */
-        theExtract.selectPeriod(pSource);
+    private void selectRegister(final JDateDayRangeSelect pSource) {
+        /* Pass through to the Register */
+        theRegister.selectPeriod(pSource);
 
-        /* Goto the Extract tab */
-        gotoNamedTab(TITLE_EXTRACT);
+        /* Goto the Register tab */
+        gotoNamedTab(TITLE_REGISTER);
     }
 
     /**
@@ -480,9 +480,9 @@ public class MainTab
         /* Note whether we have a worker thread */
         boolean hasWorker = hasWorker();
 
-        /* Access the Extract panel and determine its status */
-        int iIndex = theTabs.indexOfTab(TITLE_EXTRACT);
-        boolean showTab = (!hasWorker && (!hasUpdates || theExtract.hasUpdates()));
+        /* Access the Register panel and determine its status */
+        int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
+        boolean showTab = (!hasWorker && (!hasUpdates || theRegister.hasUpdates()));
 
         /* Enable/Disable the extract tab */
         if (iIndex != -1) {
@@ -539,10 +539,10 @@ public class MainTab
         /* Access the selected component */
         Component myComponent = theTabs.getSelectedComponent();
 
-        /* If the selected component is extract */
-        if (myComponent.equals(theExtract.getPanel())) {
-            /* Determine focus of extract */
-            theExtract.determineFocus();
+        /* If the selected component is register */
+        if (myComponent.equals(theRegister.getPanel())) {
+            /* Determine focus of register */
+            theRegister.determineFocus();
 
             /* If the selected component is account */
         } else if (myComponent.equals(theAccountCtl)) {
@@ -592,7 +592,7 @@ public class MainTab
                 theComboList.refreshData();
 
                 /* else if it is one of the sub-panels */
-            } else if (theExtract.equals(o)
+            } else if (theRegister.equals(o)
                        || theAccountCtl.equals(o)
                        || theMaint.equals(o)
                        || theSpotView.equals(o)) {
@@ -617,9 +617,9 @@ public class MainTab
                             addPattern(myReq.getEvent());
                             break;
 
-                        /* View the requested extract */
-                        case ACTION_VIEWEXTRACT:
-                            selectExtract(myReq.getRange());
+                        /* View the requested register */
+                        case ACTION_VIEWREGISTER:
+                            selectRegister(myReq.getRange());
                             break;
 
                         /* View the requested account */

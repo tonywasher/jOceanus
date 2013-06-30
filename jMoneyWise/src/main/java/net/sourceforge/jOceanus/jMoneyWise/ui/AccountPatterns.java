@@ -166,17 +166,17 @@ public class AccountPatterns
     /**
      * Date column title.
      */
-    private static final String TITLE_DATE = Extract.TITLE_DATE;
+    private static final String TITLE_DATE = Register.TITLE_DATE;
 
     /**
      * Description column title.
      */
-    private static final String TITLE_DESC = Extract.TITLE_DESC;
+    private static final String TITLE_DESC = Register.TITLE_DESC;
 
     /**
      * Category type column title.
      */
-    private static final String TITLE_CATEGORY = Extract.TITLE_CATEGORY;
+    private static final String TITLE_CATEGORY = Register.TITLE_CATEGORY;
 
     /**
      * Partner column title.
@@ -186,12 +186,12 @@ public class AccountPatterns
     /**
      * Credit column title.
      */
-    private static final String TITLE_CREDIT = Extract.TITLE_CREDIT;
+    private static final String TITLE_CREDIT = Register.TITLE_CREDIT;
 
     /**
      * Debit column title.
      */
-    private static final String TITLE_DEBIT = Extract.TITLE_DEBIT;
+    private static final String TITLE_DEBIT = Register.TITLE_DEBIT;
 
     /**
      * Frequency column title.

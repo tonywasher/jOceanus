@@ -222,7 +222,7 @@ public class SheetEvent
             }
 
             /* Load the item */
-            myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.FALSE, theLastParent);
+            myEvent = theList.addOpenItem(pId, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.TRUE, theLastParent);
             theLastParent.setSplit(Boolean.TRUE);
         } else {
             /* Load the item */
@@ -248,14 +248,14 @@ public class SheetEvent
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
         writeBoolean(COL_RECONCILED, pItem.getReconciled());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
-        writeBoolean(COL_SPLIT, pItem.getReconciled());
+        writeBoolean(COL_SPLIT, pItem.getSplit());
         writeInteger(COL_PARENT, pItem.getParentId());
     }
 
     @Override
     protected void insertOpenItem(final Event pItem) throws JDataException {
         /* Determine whether we are a child event */
-        boolean isChild = (pItem.getParent() == null);
+        boolean isChild = (pItem.getParent() != null);
 
         /* Access debit/credit names */
         String myDebit = pItem.getDebitName();
@@ -269,10 +269,10 @@ public class SheetEvent
         /* If we are a child */
         if (isChild) {
             /* Only fill in debit credit if they are different */
-            if (Difference.isEqual(myDebit, theLastDebit)) {
+            if (!Difference.isEqual(myDebit, theLastDebit)) {
                 writeString(COL_DEBIT, myDebit);
             }
-            if (Difference.isEqual(myCredit, theLastCredit)) {
+            if (!Difference.isEqual(myCredit, theLastCredit)) {
                 writeString(COL_CREDIT, myCredit);
             }
         } else {
@@ -410,7 +410,8 @@ public class SheetEvent
                             : null;
 
                     /* If the event is too late */
-                    if (pLastEvent.compareTo(myDate) < 0) {
+                    if ((myDate != null)
+                        && (pLastEvent.compareTo(myDate) < 0)) {
                         /* Break the loop */
                         break;
                     }
@@ -544,7 +545,7 @@ public class SheetEvent
                         }
 
                         /* Add the event */
-                        myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.FALSE, myLastParent);
+                        myEvent = myList.addOpenItem(0, myDate, myDebit, myCredit, myAmount, myCategory, myReconciled, Boolean.TRUE, myLastParent);
                         myLastParent.setSplit(Boolean.TRUE);
                     } else {
                         /* Add the event */

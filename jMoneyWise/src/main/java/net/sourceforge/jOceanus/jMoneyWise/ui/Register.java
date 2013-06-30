@@ -87,10 +87,10 @@ import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
- * Event Extract Table.
+ * Event Register Table.
  * @author Tony Washer
  */
-public class Extract
+public class Register
         extends JDataTable<Event> {
     /**
      * Serial Id.
@@ -100,7 +100,7 @@ public class Extract
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Extract.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Register.class.getName());
 
     /**
      * Date column title.
@@ -225,7 +225,7 @@ public class Extract
     /**
      * Table Model.
      */
-    private final ExtractModel theModel;
+    private final RegisterModel theModel;
 
     /**
      * Events.
@@ -240,12 +240,12 @@ public class Extract
     /**
      * Self Reference.
      */
-    private final Extract theTable = this;
+    private final Register theTable = this;
 
     /**
      * Column Model.
      */
-    private final ExtractColumnModel theColumns;
+    private final RegisterColumnModel theColumns;
 
     /**
      * Selected range.
@@ -265,7 +265,7 @@ public class Extract
     /**
      * Data Entry.
      */
-    private final transient JDataEntry theDataExtract;
+    private final transient JDataEntry theDataRegister;
 
     /**
      * Error Panel.
@@ -406,12 +406,12 @@ public class Extract
     private static final int PANEL_HEIGHT = 200;
 
     /**
-     * Constructor for Extract Window.
+     * Constructor for Register Window.
      * @param pView the data view
      * @param pCombo the combo manager
      */
-    public Extract(final View pView,
-                   final ComboSelect pCombo) {
+    public Register(final View pView,
+                    final ComboSelect pCombo) {
         /* Record the passed details */
         theView = pView;
         theComboList = pCombo;
@@ -427,15 +427,15 @@ public class Extract
         /* Create the top level debug entry for this view */
         JDataManager myDataMgr = theView.getDataMgr();
         JDataEntry mySection = theView.getDataEntry(DataControl.DATA_EDIT);
-        theDataExtract = myDataMgr.new JDataEntry(Extract.class.getSimpleName());
-        theDataExtract.addAsChildOf(mySection);
+        theDataRegister = myDataMgr.new JDataEntry(Register.class.getSimpleName());
+        theDataRegister.addAsChildOf(mySection);
 
         /* Create the model and declare it to our superclass */
-        theModel = new ExtractModel();
+        theModel = new RegisterModel();
         setModel(theModel);
 
         /* Create the data column model and declare it */
-        theColumns = new ExtractColumnModel();
+        theColumns = new RegisterColumnModel();
         setColumnModel(theColumns);
 
         /* Prevent reordering of columns and auto-resizing */
@@ -446,7 +446,7 @@ public class Extract
         setPreferredScrollableViewportSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
 
         /* Add the mouse listener */
-        ExtractMouse myMouse = new ExtractMouse();
+        RegisterMouse myMouse = new RegisterMouse();
         addMouseListener(myMouse);
 
         /* Create the sub panels */
@@ -454,10 +454,10 @@ public class Extract
         theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Create the error panel for this view */
-        theError = new ErrorPanel(myDataMgr, theDataExtract);
+        theError = new ErrorPanel(myDataMgr, theDataRegister);
 
         /* Create listener */
-        ExtractListener myListener = new ExtractListener();
+        RegisterListener myListener = new RegisterListener();
         theSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, myListener);
         theError.addChangeListener(myListener);
         theSaveButtons.addActionListener(myListener);
@@ -483,7 +483,7 @@ public class Extract
         requestFocusInWindow();
 
         /* Focus on the Data entry */
-        theDataExtract.setFocus();
+        theDataRegister.setFocus();
     }
 
     /**
@@ -502,7 +502,7 @@ public class Extract
             theSelect.createSavePoint();
 
             /* Touch the updateSet */
-            theDataExtract.setObject(theUpdateSet);
+            theDataRegister.setObject(theUpdateSet);
         } catch (JDataException e) {
             /* Show the error */
             theView.addError(e);
@@ -556,7 +556,7 @@ public class Extract
         fireStateChanged();
 
         /* Touch the updateSet */
-        theDataExtract.setObject(theUpdateSet);
+        theDataRegister.setObject(theUpdateSet);
     }
 
     /**
@@ -611,9 +611,9 @@ public class Extract
     }
 
     /**
-     * Extract listener class.
+     * Register listener class.
      */
-    private final class ExtractListener
+    private final class RegisterListener
             implements ActionListener, PropertyChangeListener, ChangeListener {
 
         @Override
@@ -691,9 +691,9 @@ public class Extract
     }
 
     /**
-     * Extract table model.
+     * Register table model.
      */
-    public final class ExtractModel
+    public final class RegisterModel
             extends JDataTableModel<Event> {
         /**
          * Serial Id.
@@ -703,7 +703,7 @@ public class Extract
         /**
          * Constructor.
          */
-        private ExtractModel() {
+        private RegisterModel() {
             /* call constructor */
             super(theTable);
         }
@@ -948,14 +948,14 @@ public class Extract
     }
 
     /**
-     * Extract mouse listener.
+     * Register mouse listener.
      */
-    private final class ExtractMouse
+    private final class RegisterMouse
             extends JDataTableMouse<Event> {
         /**
          * Constructor.
          */
-        private ExtractMouse() {
+        private RegisterMouse() {
             /* Call super-constructor */
             super(theTable);
         }
@@ -1334,7 +1334,7 @@ public class Extract
     /**
      * Column Model class.
      */
-    private final class ExtractColumnModel
+    private final class RegisterColumnModel
             extends JDataTableColumnModel {
         /**
          * Serial Id.
@@ -1399,7 +1399,7 @@ public class Extract
         /**
          * Constructor.
          */
-        private ExtractColumnModel() {
+        private RegisterColumnModel() {
             /* call constructor */
             super(theTable);
 

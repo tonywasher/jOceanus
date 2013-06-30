@@ -248,7 +248,7 @@ public class SheetAccount
     @Override
     protected int getLastColumn() {
         /* Set default */
-        int myLastCol = COL_TAXFREE;
+        int myLastCol = COL_CURRENCY;
 
         /* If we are not creating a backup */
         if (!isBackup()) {

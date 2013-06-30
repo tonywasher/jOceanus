@@ -209,6 +209,11 @@ public abstract class DataItem
     }
 
     @Override
+    public boolean skipField(final JDataField pField) {
+        return false;
+    }
+
+    @Override
     public Object getFieldValue(final JDataField pField) {
         /* If this is a valueSet field */
         if (pField.isValueSetField()) {
