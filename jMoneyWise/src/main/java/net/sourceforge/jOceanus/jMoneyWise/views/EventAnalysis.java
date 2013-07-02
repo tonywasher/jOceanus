@@ -991,21 +991,18 @@ public class EventAnalysis
             case StockTakeOver:
                 processStockTakeover(pEvent);
                 break;
-            /* Process a Taxable Gain */
-            case TaxableGain:
-                processTaxableGain(pEvent);
-                break;
             /* Process a dividend */
             case Dividend:
                 processDividend(pEvent);
                 break;
             /* Process standard transfer in/out */
             case Transfer:
-            case Endowment:
             case Expense:
             case Inherited:
             case OtherIncome:
-                if (pEvent.getCredit().hasUnits()) {
+                if (pEvent.getDebit().isCategoryClass(AccountCategoryClass.LifeBond)) {
+                    processTaxableGain(pEvent);
+                } else if (pEvent.getCredit().hasUnits()) {
                     processTransferIn(pEvent);
                 } else {
                     processTransferOut(pEvent);
@@ -1019,7 +1016,9 @@ public class EventAnalysis
     }
 
     /**
-     * Process an event that is a stock split. This capital event relates only to the Debit Account
+     * Process an event that is a stock split.
+     * <p>
+     * This capital event relates only to the Credit Account since the debit account is the same.
      * @param pEvent the event
      */
     private void processStockSplit(final Event pEvent) {
@@ -1043,11 +1042,13 @@ public class EventAnalysis
     }
 
     /**
-     * Process an event that is a transfer into capital (also StockRightTaken). This capital event relates only to the Credit Account
+     * Process an event that is a transfer into capital (also StockRightTaken).
+     * <p>
+     * This capital event relates only to the Credit Account.
      * @param pEvent the event
      */
     private void processTransferIn(final Event pEvent) {
-        /* Transfer in is to the credit account and may or may not have a change to the units */
+        /* Transfer is to the credit account and may or may not have a change to the units */
         Account myAccount = pEvent.getCredit();
         Account myDebit = pEvent.getDebit();
         JUnits myDeltaUnits = pEvent.getCreditUnits();

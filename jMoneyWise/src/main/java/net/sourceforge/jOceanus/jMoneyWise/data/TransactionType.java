@@ -181,8 +181,6 @@ public enum TransactionType {
             case StockRightsWaived:
             case StockDeMerger:
             case StockTakeOver:
-            case TaxableGain:
-            case Endowment:
                 return Transfer;
             case Category:
             case Totals:
@@ -196,8 +194,6 @@ public enum TransactionType {
             case NatInsurance:
             case Benefit:
             case CharityDonation:
-            case MarketShrink:
-            case CapitalLoss:
             default:
                 return Expense;
         }

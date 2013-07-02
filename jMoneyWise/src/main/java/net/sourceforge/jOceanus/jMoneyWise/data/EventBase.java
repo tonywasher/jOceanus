@@ -674,19 +674,40 @@ public abstract class EventBase
         EventBase myParent = getParent();
         EventBase myAltParent = pThat.getParent();
 
-        /* Sort based on parents if they exist */
+        /* If we are a child */
         if (myParent != null) {
-            iDiff = Difference.compareObject(myParent, (myAltParent == null)
-                    ? pThat
-                    : myAltParent);
-            if (iDiff != 0) {
-                return iDiff;
+            /* If we are both children */
+            if (myAltParent != null) {
+                /* Compare parents */
+                iDiff = Difference.compareObject(myParent, myAltParent);
+                if (iDiff != 0) {
+                    return iDiff;
+                }
+
+                /* Same parent so compare directly */
+
+                /* else we are comparing against a parent */
+            } else {
+                /* Compare parent with target */
+                iDiff = Difference.compareObject(myParent, pThat);
+                if (iDiff != 0) {
+                    return iDiff;
+                }
+
+                /* We are comparing against our parent, so always later */
+                return 1;
             }
+
+            /* else if we are comparing against a child */
         } else if (myAltParent != null) {
+            /* Compare with targets parent */
             iDiff = Difference.compareObject(this, myAltParent);
             if (iDiff != 0) {
                 return iDiff;
             }
+
+            /* We are comparing against our parent, so always later */
+            return -1;
         }
 
         /* If the categories differ */
@@ -839,8 +860,8 @@ public abstract class EventBase
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TaxedIncome:
-                /* Taxed income must be from employer to savings account */
-                return ((myDebitClass == AccountCategoryClass.Employer) && (myCreditClass.isSavings()));
+                /* Taxed income must be from employer to savings/loan */
+                return ((myDebitClass == AccountCategoryClass.Employer) && ((myCreditClass.isSavings()) || (myCreditClass.isLoan())));
 
             case GrantIncome:
                 /* Grant income must be from grant-able to savings account */
@@ -1056,7 +1077,7 @@ public abstract class EventBase
         /* Switch on category class */
         switch (pCategory.getCategoryTypeClass()) {
         /* If this is a Taxable Gain/TaxedIncome we need a tax credit */
-            case TaxableGain:
+        // case TaxableGain:
             case TaxedIncome:
                 return true;
                 /* Check for dividend/interest */

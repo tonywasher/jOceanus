@@ -107,19 +107,9 @@ public class MetaAnalysis {
     private final EventCategoryBucket theMarketGrowth;
 
     /**
-     * The market shrink.
-     */
-    private final EventCategoryBucket theMarketShrink;
-
-    /**
      * The capital Gains.
      */
     private final EventCategoryBucket theCapitalGains;
-
-    /**
-     * The capital loss.
-     */
-    private final EventCategoryBucket theCapitalLoss;
 
     /**
      * Do we have an age allowance?
@@ -205,9 +195,7 @@ public class MetaAnalysis {
         /* Access Key Categories */
         EventCategoryBucketList myEventCategories = theAnalysis.getEventCategories();
         theCapitalGains = myEventCategories.getBucket(EventCategoryClass.CapitalGain);
-        theCapitalLoss = myEventCategories.getBucket(EventCategoryClass.CapitalLoss);
         theMarketGrowth = myEventCategories.getBucket(EventCategoryClass.MarketGrowth);
-        theMarketShrink = myEventCategories.getBucket(EventCategoryClass.MarketShrink);
     }
 
     /**
@@ -314,7 +302,7 @@ public class MetaAnalysis {
                     /* else the gains are negative */
                 } else {
                     /* Add to capital Loss and market expense */
-                    theCapitalLoss.subtractExpense(myGains);
+                    theCapitalGains.subtractExpense(myGains);
                     theMarketAccount.subtractExpense(myGains);
                 }
 
@@ -353,7 +341,7 @@ public class MetaAnalysis {
         } else {
             /* Add to market expense and shrink */
             theMarketAccount.subtractExpense(myMarket);
-            theMarketShrink.subtractExpense(myMarket);
+            theMarketGrowth.subtractExpense(myMarket);
         }
 
         /* Record market details */
@@ -515,10 +503,6 @@ public class MetaAnalysis {
                 /* Adjust the Capital Gains bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.GrossCapitalGains);
                 myBucket.addIncome(pBucket);
-                break;
-            case CapitalLoss:
-                /* Adjust the Capital Gains bucket */
-                myBucket = myTax.getBucket(TaxCategoryClass.GrossCapitalGains);
                 myBucket.subtractExpense(pBucket);
                 break;
             case NatInsurance:
@@ -580,18 +564,11 @@ public class MetaAnalysis {
                 /* Adjust the Market bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.Market);
                 myBucket.addIncome(pBucket);
-
-                /* Adjust the Non-Core bucket */
-                myBucket = myTax.getBucket(TaxCategoryClass.NonCore);
-                myBucket.addIncome(pBucket);
-                break;
-            case MarketShrink:
-                /* Adjust the Market bucket */
-                myBucket = myTax.getBucket(TaxCategoryClass.Market);
                 myBucket.subtractExpense(pBucket);
 
                 /* Adjust the Non-Core bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.NonCore);
+                myBucket.addIncome(pBucket);
                 myBucket.subtractExpense(pBucket);
                 break;
             case StockTakeOver:
@@ -600,7 +577,6 @@ public class MetaAnalysis {
             case StockRightsTaken:
             case StockRightsWaived:
             case Transfer:
-            case Endowment:
             default:
                 break;
         }

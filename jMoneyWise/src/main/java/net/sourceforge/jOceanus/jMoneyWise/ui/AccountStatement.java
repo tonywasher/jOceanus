@@ -76,7 +76,6 @@ import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfoSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.ui.MainTab.ActionRequest;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
@@ -876,8 +875,8 @@ public class AccountStatement
                             return pLine.isCredit();
                         case COLUMN_DEBIT:
                             return !pLine.isCredit();
-                        case COLUMN_YEARS:
-                            return pLine.isCategoryClass(EventCategoryClass.TaxableGain);
+                            // case COLUMN_YEARS:
+                            // return pLine.isCategoryClass(EventCategoryClass.TaxableGain);
                         case COLUMN_TAXCREDIT:
                             return myCategory.getCategoryTypeClass().needsTaxCredit();
                         case COLUMN_DILUTION:

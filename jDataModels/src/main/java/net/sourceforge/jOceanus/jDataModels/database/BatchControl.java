@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jDataModels.database;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
@@ -91,7 +92,8 @@ public class BatchControl {
      * @return true/false is the batch full
      */
     protected boolean isFull() {
-        return (theCapacity != 0) && (theItems >= theCapacity);
+        return (theCapacity != 0)
+               && (theItems >= theCapacity);
     }
 
     /**
@@ -146,7 +148,14 @@ public class BatchControl {
             BatchTable myTable = myIterator.next();
 
             /* Commit batch items in the table */
-            myTable.commitBatch();
+            switch (theCurrMode) {
+                case DELETED:
+                    myTable.commitDeleteBatch();
+                    break;
+                default:
+                    myTable.commitBatch();
+                    break;
+            }
         }
 
         /* Clear the list */
@@ -179,11 +188,11 @@ public class BatchControl {
         }
 
         /**
-         * Mark a update in the table as committed.
+         * Mark updates in the table as committed for insert/change.
          */
         private void commitBatch() {
             /* Access the iterator */
-            Iterator<?> myIterator = theTable.getList().iterator();
+            ListIterator<?> myIterator = theTable.getList().listIterator();
 
             /* Loop through the list */
             while (myIterator.hasNext()) {
@@ -194,32 +203,65 @@ public class BatchControl {
                     continue;
                 }
 
-                /* Access the underlying element */
-                DataItem myBase = myCurr.getBase();
-
-                /* If we are handling deletions */
-                if (theState == DataState.DELETED) {
-                    /* Unlink the underlying item */
-                    myBase.unLink();
-
-                    /* Remove any registration */
-                    myBase.deRegister();
-
-                    /* else we are handling new/changed items */
-                } else {
-                    /* Clear the history */
-                    myBase.clearHistory();
-                }
-
-                /* Mark this item as clean */
-                myCurr.clearHistory();
-
-                /* If we have to worry about batch space */
-                /* Adjust batch and break if we are finished */
-                if ((theCapacity > 0) && (--theItems == 0)) {
+                /* Commit the item and break loop if required */
+                if (commitItem(myCurr)) {
                     break;
                 }
             }
+        }
+
+        /**
+         * Mark updates in the table as committed for delete.
+         */
+        private void commitDeleteBatch() {
+            /* Access the iterator */
+            ListIterator<?> myIterator = theTable.getList().listIterator();
+
+            /* Loop through the list */
+            while (myIterator.hasPrevious()) {
+                DataItem myCurr = (DataItem) myIterator.previous();
+
+                /* Ignore items that are not this type */
+                if (myCurr.getState() != theState) {
+                    continue;
+                }
+
+                /* Commit the item and break loop if required */
+                if (commitItem(myCurr)) {
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Mark an item in the table as committed.
+         * @param pItem the item to commit
+         * @return have we reached the end of the batch?
+         */
+        private boolean commitItem(final DataItem pItem) {
+            /* Access the underlying element */
+            DataItem myBase = pItem.getBase();
+
+            /* If we are handling deletions */
+            if (theState == DataState.DELETED) {
+                /* Unlink the underlying item */
+                myBase.unLink();
+
+                /* Remove any registration */
+                myBase.deRegister();
+
+                /* else we are handling new/changed items */
+            } else {
+                /* Clear the history */
+                myBase.clearHistory();
+            }
+
+            /* Mark this item as clean */
+            pItem.clearHistory();
+
+            /* If we have to worry about batch space */
+            /* Adjust batch and note if we are finished */
+            return ((theCapacity > 0) && (--theItems == 0));
         }
     }
 }

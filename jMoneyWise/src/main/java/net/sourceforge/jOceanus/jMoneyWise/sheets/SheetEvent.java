@@ -508,27 +508,6 @@ public class SheetEvent
                         myDonation = myCell.getStringValue();
                     }
 
-                    /* Handle ThirdParty which may be missing */
-                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    String myThirdParty = null;
-                    if (myCell != null) {
-                        myThirdParty = myCell.getStringValue();
-                    }
-
-                    /* Handle CreditAmount which may be missing */
-                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    String myCreditAmount = null;
-                    if (myCell != null) {
-                        myCreditAmount = myCell.getStringValue();
-                    }
-
-                    /* Handle CreditDate which may be missing */
-                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                    JDateDay myCreditDate = null;
-                    if (myCell != null) {
-                        myCreditDate = myCell.getDateValue();
-                    }
-
                     /* If we have a null date */
                     Event myEvent;
                     if ((myDate == null)
@@ -568,9 +547,6 @@ public class SheetEvent
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.Reference, myReference);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.QualifyYears, myYears);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.CharityDonation, myDonation);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.ThirdParty, myThirdParty);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditAmount, myCreditAmount);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditDate, myCreditDate);
 
                     /* Report the progress */
                     myCount++;
@@ -619,15 +595,6 @@ public class SheetEvent
                                  final SheetDataItem<Event> pOwner,
                                  final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
-        }
-
-        @Override
-        public void formatSheet() throws JDataException {
-            /* Apply basic formatting */
-            super.formatSheet();
-
-            /* Set validation for ThirdParty */
-            applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);
         }
     }
 }

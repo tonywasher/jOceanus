@@ -33,42 +33,36 @@ import java.util.List;
 import java.util.RandomAccess;
 
 /**
- * Ordered Linked list. Extension of {@link java.util.List} that provides a sorted list implementation. The
- * underlying implementation is that of a linked list, but the {@link java.util.LinkedList} interface is not
- * implemented.
+ * Ordered Linked list. Extension of {@link java.util.List} that provides a sorted list implementation. The underlying implementation is that of a linked list,
+ * but the {@link java.util.LinkedList} interface is not implemented.
  * <ul>
  * <li>Null objects are not allowed.
- * <li>The semantics of the {@link #add} method are changed such that the element is added at its natural
- * position in the list rather than at the end of the list. Methods that attempt to specify the position of an
- * object are disallowed.
+ * <li>The semantics of the {@link #add} method are changed such that the element is added at its natural position in the list rather than at the end of the
+ * list. Methods that attempt to specify the position of an object are disallowed.
  * <li>The {@link #subList} method is not supported
  * </ul>
  * <p>
- * Because the elements in the list are mutable, changes can be made to the items themselves that result in
- * the list being incorrectly sorted, since the list is unaware of these changes. When this occurs the list is
- * referred to as being <b>dirty</b>, as opposed to <b>clean</b>. The {@link #reSort} method is provided to
- * clean up the list and repair the sort order.
+ * Because the elements in the list are mutable, changes can be made to the items themselves that result in the list being incorrectly sorted, since the list is
+ * unaware of these changes. When this occurs the list is referred to as being <b>dirty</b>, as opposed to <b>clean</b>. The {@link #reSort} method is provided
+ * to clean up the list and repair the sort order.
  * <p>
  * A dirty list has the following implications.
  * <ol>
- * <li>If an element is added to a dirty list, the element may not be inserted in the correct position. It
- * will be inserted into <i>a valid</i> position in that it will be correctly positioned with respect to its
- * previous and following element. However, these elements may not be in the correct order.
- * <li>If duplicate items are added to the list, the most recently added item will be added last in the
- * sequence of equal items.
- * <li>If an element is searched for in a dirty list, it may not be found, since the search may be aborted
- * early if the item is not found in its expected location. To alleviate this, the {@link #remove(Object)}
- * method will assume that it is searching a dirty list. The {@link #contains} and {@link #indexOf(Object)}
- * methods assume a clean list, and so may give incorrect results on a dirty list.
- * <li>The {@link #append} method is provided to insert items explicitly at the end of the list, and hence is
- * likely to produce a dirty list. It should be used for bulk additions to the list, followed by a single call
- * to {@link #reSort}.
+ * <li>If an element is added to a dirty list, the element may not be inserted in the correct position. It will be inserted into <i>a valid</i> position in that
+ * it will be correctly positioned with respect to its previous and following element. However, these elements may not be in the correct order.
+ * <li>If duplicate items are added to the list, the most recently added item will be added last in the sequence of equal items.
+ * <li>If an element is searched for in a dirty list, it may not be found, since the search may be aborted early if the item is not found in its expected
+ * location. To alleviate this, the {@link #remove(Object)} method will assume that it is searching a dirty list. The {@link #contains} and
+ * {@link #indexOf(Object)} methods assume a clean list, and so may give incorrect results on a dirty list.
+ * <li>The {@link #append} method is provided to insert items explicitly at the end of the list, and hence is likely to produce a dirty list. It should be used
+ * for bulk additions to the list, followed by a single call to {@link #reSort}.
  * </ol>
  * <p>
  * @author Tony Washer
  * @param <T> the data-type of the list
  */
-public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cloneable, RandomAccess {
+public class OrderedList<T extends Comparable<? super T>>
+        implements List<T>, Cloneable, RandomAccess {
     /**
      * The Hash prime.
      */
@@ -145,6 +139,35 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
     public OrderedList(final Class<T> pClass,
                        final int pIndexGranularity) {
         this(pClass, new OrderedIndex<T>(pIndexGranularity));
+    }
+
+    /**
+     * Construct a list containing the elements of the passed list.
+     * @param pSource the source ordered list
+     */
+    public OrderedList(final OrderedList<T> pSource) {
+        /* Initialise for the correct class */
+        this(pSource.getBaseClass(), pSource);
+    }
+
+    /**
+     * Construct a list containing the elements of the passed list.
+     * @param pClass the class of the sortedItem
+     * @param pSource the source ordered list
+     */
+    public OrderedList(final Class<T> pClass,
+                       final List<T> pSource) {
+        /* Initialise for the correct class */
+        this(pClass);
+
+        /* Loop through the source members */
+        Iterator<T> myIterator = pSource.iterator();
+        while (myIterator.hasNext()) {
+            T myItem = myIterator.next();
+
+            /* Add the item */
+            add(myItem);
+        }
     }
 
     /**
@@ -367,10 +390,11 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         }
 
         /* Loop through the list */
-        for (myCurr = theFirst, myOther = myThat.theFirst; (myCurr != null) || (myOther != null); myCurr = myCurr
-                .getNext(), myOther = myOther.getNext()) {
+        for (myCurr = theFirst, myOther = myThat.theFirst; (myCurr != null)
+                                                           || (myOther != null); myCurr = myCurr.getNext(), myOther = myOther.getNext()) {
             /* If either entry is null then we differ */
-            if ((myCurr == null) || (myOther == null)) {
+            if ((myCurr == null)
+                || (myOther == null)) {
                 return false;
             }
 
@@ -608,7 +632,9 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         OrderedNode<T> myNode = getFirst();
 
         /* Return the next object */
-        return (myNode == null) ? null : myNode.getObject();
+        return (myNode == null)
+                ? null
+                : myNode.getObject();
     }
 
     /**
@@ -620,7 +646,9 @@ public class OrderedList<T extends Comparable<? super T>> implements List<T>, Cl
         OrderedNode<T> myNode = getLast();
 
         /* Return the next object */
-        return (myNode == null) ? null : myNode.getObject();
+        return (myNode == null)
+                ? null
+                : myNode.getObject();
     }
 
     @Override

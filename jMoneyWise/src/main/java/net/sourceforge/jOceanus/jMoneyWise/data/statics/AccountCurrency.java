@@ -99,7 +99,7 @@ public class AccountCurrency
      * Return the Currency class of the AccountCurrency.
      * @return the class
      */
-    public AccountCurrencyClass getAccountClass() {
+    public AccountCurrencyClass getCurrencyClass() {
         return super.getStaticClass();
     }
 
@@ -113,7 +113,7 @@ public class AccountCurrency
      * @return the currency
      */
     public Currency getCurrency() {
-        return getAccountClass().getCurrency();
+        return getCurrencyClass().getCurrency();
     }
 
     /**
@@ -136,6 +136,8 @@ public class AccountCurrency
                             final String pName) throws JDataException {
         super(pList, pName);
         setValueDefault(Boolean.FALSE);
+        setValueEnabled(Boolean.FALSE);
+        setValueDesc(getCurrencyClass().getCurrency().getDisplayName());
     }
 
     /**
@@ -148,6 +150,8 @@ public class AccountCurrency
                             final AccountCurrencyClass pClass) throws JDataException {
         super(pList, pClass);
         setValueDefault(Boolean.FALSE);
+        setValueEnabled(Boolean.FALSE);
+        setValueDesc(pClass.getCurrency().getDisplayName());
     }
 
     /**
@@ -500,6 +504,7 @@ public class AccountCurrency
             if (myCurr != null) {
                 /* Set it as the default */
                 myCurr.setDefault(Boolean.TRUE);
+                myCurr.setValueEnabled(Boolean.TRUE);
             }
         }
 

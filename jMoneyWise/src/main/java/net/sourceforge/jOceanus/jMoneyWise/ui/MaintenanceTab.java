@@ -41,6 +41,8 @@ import net.sourceforge.jOceanus.jJira.data.JiraPreferences;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryType.AccountCategoryTypeList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency.AccountCurrencyList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountInfoTypeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryType;
@@ -218,6 +220,7 @@ public class MaintenanceTab
         /* Add the static elements */
         theStatic.addStatic(AccountCategoryType.LIST_NAME, AccountCategoryTypeList.class, AccountCategoryType.class);
         theStatic.addStatic(EventCategoryType.LIST_NAME, EventCategoryTypeList.class, EventCategoryType.class);
+        theStatic.addStatic(AccountCurrency.LIST_NAME, AccountCurrencyList.class, AccountCurrency.class);
         theStatic.addStatic(TaxCategory.LIST_NAME, TaxCategoryList.class, TaxCategory.class);
         theStatic.addStatic(TaxRegime.LIST_NAME, TaxRegimeList.class, TaxRegime.class);
         theStatic.addStatic(Frequency.LIST_NAME, FrequencyList.class, Frequency.class);

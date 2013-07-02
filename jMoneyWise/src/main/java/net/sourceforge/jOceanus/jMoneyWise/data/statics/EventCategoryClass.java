@@ -166,66 +166,51 @@ public enum EventCategoryClass implements StaticInterface {
     CapitalGain(27, 26),
 
     /**
-     * Capital Loss.
-     */
-    CapitalLoss(28, 27),
-
-    /**
      * Market Growth.
      */
-    MarketGrowth(29, 28),
-
-    /**
-     * Market Shrinkage.
-     */
-    MarketShrink(30, 29),
-
-    /**
-     * Endowment payment.
-     */
-    Endowment(31, 30),
+    MarketGrowth(28, 27),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TaxCredit(32, 31),
+    TaxCredit(29, 28),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NatInsurance(33, 32),
+    NatInsurance(30, 29),
 
     /**
      * Benefit.
      * <p>
      * This is a singular category catching benefit payments associated with an event.
      */
-    Benefit(34, 33),
+    Benefit(31, 30),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CharityDonation(35, 34),
+    CharityDonation(32, 31),
 
     /**
      * Category.
      * <p>
      * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
      */
-    Category(36, 35),
+    Category(33, 32),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    Totals(37, 36);
+    Totals(34, 33);
 
     /**
      * Class Id.
@@ -283,15 +268,11 @@ public enum EventCategoryClass implements StaticInterface {
             case UnitTrustDividend:
             case TaxFreeDividend:
             case TaxFreeInterest:
-            case MarketShrink:
             case MarketGrowth:
             case TaxCredit:
             case NatInsurance:
             case Benefit:
             case CapitalGain:
-            case CapitalLoss:
-            case TaxableGain:
-            case Endowment:
             case OpeningBalance:
             case Category:
             case Totals:
@@ -311,16 +292,12 @@ public enum EventCategoryClass implements StaticInterface {
             case TaxFreeDividend:
             case TaxFreeInterest:
             case OpeningBalance:
-            case MarketShrink:
             case MarketGrowth:
             case TaxCredit:
             case NatInsurance:
             case Benefit:
             case CharityDonation:
             case CapitalGain:
-            case CapitalLoss:
-            case TaxableGain:
-            case Endowment:
             case Totals:
                 return true;
             default:
@@ -339,7 +316,6 @@ public enum EventCategoryClass implements StaticInterface {
             case Interest:
             case Dividend:
             case UnitTrustDividend:
-            case TaxableGain:
                 return true;
             default:
                 return false;
@@ -463,7 +439,6 @@ public enum EventCategoryClass implements StaticInterface {
     public boolean isTransfer() {
         switch (this) {
             case Transfer:
-            case Endowment:
             case StockAdjust:
             case StockSplit:
             case StockDeMerger:

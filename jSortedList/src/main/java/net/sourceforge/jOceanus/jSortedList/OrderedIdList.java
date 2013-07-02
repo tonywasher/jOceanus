@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jSortedList;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -77,6 +79,35 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
     }
 
     /**
+     * Construct a list containing the elements of the passed list.
+     * @param pSource the source ordered list
+     */
+    public OrderedIdList(final OrderedIdList<I, T> pSource) {
+        /* Initialise for the correct class */
+        this(pSource.getBaseClass(), pSource);
+    }
+
+    /**
+     * Construct a list containing the elements of the passed list.
+     * @param pClass the class of the sortedItem
+     * @param pSource the source ordered list
+     */
+    public OrderedIdList(final Class<T> pClass,
+                         final List<T> pSource) {
+        /* Initialise for the correct class */
+        this(pClass);
+
+        /* Loop through the source members */
+        Iterator<T> myIterator = pSource.iterator();
+        while (myIterator.hasNext()) {
+            T myItem = myIterator.next();
+
+            /* Add the item */
+            add(myItem);
+        }
+    }
+
+    /**
      * Construct a list.
      * @param pClass the class of the sortedItem
      * @param pIndex the index.
@@ -129,7 +160,9 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
         myNode = myNode.getNext();
 
         /* Return the next object */
-        return (myNode == null) ? null : myNode.getObject();
+        return (myNode == null)
+                ? null
+                : myNode.getObject();
     }
 
     /**
@@ -155,7 +188,9 @@ public class OrderedIdList<I, T extends Comparable<? super T> & OrderedIdItem<I>
         myNode = myNode.getPrev();
 
         /* Return the previous object */
-        return (myNode == null) ? null : myNode.getObject();
+        return (myNode == null)
+                ? null
+                : myNode.getObject();
     }
 
     /**

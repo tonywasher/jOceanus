@@ -35,6 +35,7 @@ import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType;
@@ -183,7 +184,6 @@ public class EventInfoSet
     protected JDataFieldRequired isClassRequired(final EventInfoClass pClass) {
         /* Access details about the Account */
         Event myEvent = getOwner();
-        JMoney myAmount = myEvent.getAmount();
         Account myDebit = myEvent.getDebit();
         Account myCredit = myEvent.getCredit();
         EventCategory myCategory = myEvent.getCategory();
@@ -220,12 +220,6 @@ public class EventInfoSet
                         ? JDataFieldRequired.CanExist
                         : JDataFieldRequired.NotAllowed;
 
-                /* Third Party is only available for stockTakeover with cash element */
-            case ThirdParty:
-                return ((myClass == EventCategoryClass.StockTakeOver) && (myAmount.isNonZero()))
-                        ? JDataFieldRequired.MustExist
-                        : JDataFieldRequired.NotAllowed;
-
                 /* Handle Tax Credit */
             case TaxCredit:
                 switch (myClass) {
@@ -239,6 +233,10 @@ public class EventInfoSet
                         return (myDebit.isTaxFree())
                                 ? JDataFieldRequired.NotAllowed
                                 : JDataFieldRequired.MustExist;
+                    case Transfer:
+                        return myDebit.isCategoryClass(AccountCategoryClass.LifeBond)
+                                ? JDataFieldRequired.MustExist
+                                : JDataFieldRequired.NotAllowed;
                     default:
                         return JDataFieldRequired.NotAllowed;
                 }
@@ -276,7 +274,7 @@ public class EventInfoSet
                         return JDataFieldRequired.NotAllowed;
                 }
 
-                /* Dilution is only required for stock split/rights/demerger */
+                /* Dilution is only required for stock split/rights/deMerger */
             case Dilution:
                 switch (myClass) {
                     case StockSplit:
@@ -290,13 +288,14 @@ public class EventInfoSet
 
                 /* Qualify Years is needed only for Taxable Gain */
             case QualifyYears:
-                return (myClass == EventCategoryClass.TaxableGain)
+                return ((myClass == EventCategoryClass.Transfer) && (myDebit.isCategoryClass(AccountCategoryClass.LifeBond)))
                         ? JDataFieldRequired.MustExist
                         : JDataFieldRequired.NotAllowed;
 
             default:
             case Pension:
             case CreditAmount:
+            case ThirdParty:
                 return JDataFieldRequired.NotAllowed;
         }
     }
@@ -340,13 +339,6 @@ public class EventInfoSet
                     JDateDay myDate = myInfo.getValue(JDateDay.class);
                     if (myDate.compareTo(myEvent.getDate()) <= 0) {
                         myEvent.addError("Must be later than Event Date", getFieldForClass(myClass));
-                    }
-                    break;
-                case ThirdParty:
-                    /* Check value */
-                    Account myAccount = myInfo.getAccount();
-                    if (!myAccount.isSavings()) {
-                        myEvent.addError("Must be savings account", getFieldForClass(myClass));
                     }
                     break;
                 case QualifyYears:
@@ -402,6 +394,7 @@ public class EventInfoSet
                     }
                     break;
                 default:
+                case ThirdParty:
                 case CreditAmount:
                 case Pension:
                     break;

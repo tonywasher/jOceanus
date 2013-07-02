@@ -297,7 +297,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * @param pValue the description
      * @throws JDataException on error
      */
-    private void setValueDesc(final String pValue) throws JDataException {
+    protected void setValueDesc(final String pValue) throws JDataException {
         setEncryptedValue(FIELD_DESC, pValue);
     }
 
@@ -322,7 +322,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
      * Set the Enabled flag.
      * @param isEnabled TRUE/FALSE
      */
-    private void setValueEnabled(final Boolean isEnabled) {
+    protected void setValueEnabled(final Boolean isEnabled) {
         getValueSet().setValue(FIELD_ENABLED, isEnabled);
     }
 

@@ -60,6 +60,11 @@ public enum JDatePeriod {
     OneYear(Calendar.YEAR, 1),
 
     /**
+     * Custom.
+     */
+    Custom(-1, -1),
+
+    /**
      * Unlimited.
      */
     Unlimited(-1, -1);
@@ -88,7 +93,9 @@ public enum JDatePeriod {
      * @return the amount
      */
     public int getAmount(final boolean bForward) {
-        return (bForward) ? theAmount : -theAmount;
+        return (bForward)
+                ? theAmount
+                : -theAmount;
     }
 
     /**
