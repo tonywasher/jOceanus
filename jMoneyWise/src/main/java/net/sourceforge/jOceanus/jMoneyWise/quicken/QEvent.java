@@ -38,7 +38,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 /**
  * Quicken Standard event.
  */
-public class QEvent extends QElement {
+public class QEvent
+        extends QElement {
     /**
      * Reconciled flag.
      */
@@ -119,7 +120,9 @@ public class QEvent extends QElement {
      * @param pEvent the event
      * @param pCredit is this the credit item?
      */
-    protected QEvent(final QAnalysis pAnalysis, final Event pEvent, final boolean pCredit) {
+    protected QEvent(final QAnalysis pAnalysis,
+                     final Event pEvent,
+                     final boolean pCredit) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -130,7 +133,9 @@ public class QEvent extends QElement {
         isTransfer = pEvent.getCategory().isTransfer();
 
         /* Access the account */
-        Account myAccount = (isCredit) ? pEvent.getCredit() : pEvent.getDebit();
+        Account myAccount = (isCredit)
+                ? pEvent.getCredit()
+                : pEvent.getDebit();
         isAutoExpense = (myAccount.getAutoExpense() != null);
     }
 
@@ -169,7 +174,9 @@ public class QEvent extends QElement {
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (theEvent.getReconciled() == Boolean.TRUE) ? QIF_RECONCILED : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, (theEvent.isReconciled() == Boolean.TRUE)
+                ? QIF_RECONCILED
+                : QIF_OPEN);
 
         /* If we have a reference */
         String myRef = theEvent.getReference();
@@ -179,7 +186,9 @@ public class QEvent extends QElement {
         }
 
         /* Determine partner account */
-        Account myPayee = (isCredit) ? theEvent.getDebit() : theEvent.getCredit();
+        Account myPayee = (isCredit)
+                ? theEvent.getDebit()
+                : theEvent.getCredit();
 
         /* Handle portfolio accounts */
         if (myPayee.hasUnits()) {
@@ -203,7 +212,9 @@ public class QEvent extends QElement {
                 /* If we are not using simple transfer */
                 if (!getQIFType().useSimpleTransfer()) {
                     /* Add extra detail */
-                    append((isCredit) ? QIF_XFERFROM : QIF_XFERTO);
+                    append((isCredit)
+                            ? QIF_XFERFROM
+                            : QIF_XFERTO);
                     addAccount(myPayee);
                 }
                 /* else just add payee */
@@ -313,8 +324,12 @@ public class QEvent extends QElement {
         }
 
         /* Determine this account and partner account */
-        Account myPayee = (isCredit) ? theEvent.getDebit() : theEvent.getCredit();
-        Account myAccount = (isCredit) ? theEvent.getCredit() : theEvent.getDebit();
+        Account myPayee = (isCredit)
+                ? theEvent.getDebit()
+                : theEvent.getCredit();
+        Account myAccount = (isCredit)
+                ? theEvent.getCredit()
+                : theEvent.getDebit();
 
         /* Access autoExpense */
         EventCategory myAutoExpense = myAccount.getAutoExpense();
@@ -334,7 +349,9 @@ public class QEvent extends QElement {
         }
 
         /* Set the category */
-        addCategoryLine(QEvtLineType.Category, (isCredit == doCredit) ? theEvent.getCategory() : myAutoExpense);
+        addCategoryLine(QEvtLineType.Category, (isCredit == doCredit)
+                ? theEvent.getCategory()
+                : myAutoExpense);
 
         /* Complete the item */
         endItem();
@@ -343,7 +360,8 @@ public class QEvent extends QElement {
     /**
      * Event List class.
      */
-    protected abstract static class QEventBaseList<T extends QEvent> extends QElement {
+    protected abstract static class QEventBaseList<T extends QEvent>
+            extends QElement {
         /**
          * The analysis.
          */
@@ -388,7 +406,8 @@ public class QEvent extends QElement {
          * @param pAnalysis the analysis
          * @param pAccount the list owner
          */
-        protected QEventBaseList(final QAnalysis pAnalysis, final QAccount pAccount) {
+        protected QEventBaseList(final QAnalysis pAnalysis,
+                                 final QAccount pAccount) {
             /* Call super constructor */
             super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -466,13 +485,15 @@ public class QEvent extends QElement {
     /**
      * Event List class.
      */
-    protected static class QEventList extends QEventBaseList<QEvent> {
+    protected static class QEventList
+            extends QEventBaseList<QEvent> {
         /**
          * Constructor.
          * @param pAnalysis the analysis
          * @param pAccount the list owner
          */
-        protected QEventList(final QAnalysis pAnalysis, final QAccount pAccount) {
+        protected QEventList(final QAnalysis pAnalysis,
+                             final QAccount pAccount) {
             /* Call super constructor */
             super(pAnalysis, pAccount);
         }

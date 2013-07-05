@@ -194,7 +194,7 @@ public class View
     }
 
     /**
-     * Set the default currency
+     * Set the default currency.
      * @param pCurrency the new default currency
      */
     public void setDefaultCurrency(final AccountCurrency pCurrency) {

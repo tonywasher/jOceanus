@@ -311,10 +311,10 @@ public class ReportTab
                 myText = myReport.getBreakdownReport();
                 break;
 
-            case INSTANT:
+            case NETWORTH:
                 mySnapshot = new EventAnalysis(theView.getData(), myDate);
                 myReport = new AnalysisReport(mySnapshot);
-                myText = myReport.getInstantReport();
+                myText = myReport.getNetWorthReport();
                 theSpotEntry.setObject(mySnapshot);
                 theSpotEntry.showEntry();
                 break;

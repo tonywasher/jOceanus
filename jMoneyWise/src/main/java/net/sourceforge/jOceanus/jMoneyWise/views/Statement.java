@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.views;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -40,6 +42,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.BaseEventList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventGroup;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
@@ -133,8 +136,9 @@ public class Statement
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
-        /* Pass onwards */
-        return null;
+
+        /* Unknown */
+        return JDataFieldValue.UnknownField;
     }
 
     /**
@@ -367,10 +371,33 @@ public class Statement
          */
         protected static final JDataFields FIELD_DEFS = new JDataFields(StatementLines.class.getSimpleName(), DataList.FIELD_DEFS);
 
+        /**
+         * EventGroupList field Id.
+         */
+        public static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField("EventGroups");
+
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
         }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_EVENTGROUPS.equals(pField)) {
+                return theGroups.size() > 0
+                        ? theGroups
+                        : JDataFieldValue.SkipField;
+            }
+
+            /* Pass onwards */
+            return super.getFieldValue(pField);
+        }
+
+        /**
+         * EventGroupMap.
+         */
+        private final Map<Integer, EventGroup<StatementLine>> theGroups = new HashMap<Integer, EventGroup<StatementLine>>();
 
         /**
          * Statement.
@@ -458,6 +485,36 @@ public class Statement
             add(myLine);
             return myLine;
         }
+
+        /**
+         * Register child into event group.
+         * @param pChild the child to register
+         */
+        public void registerChild(final StatementLine pChild) {
+            /* Access parent */
+            StatementLine myParent = pChild.getParent();
+            Integer myId = myParent.getId();
+            myParent = findItemById(myId);
+
+            /* Access EventGroup */
+            EventGroup<StatementLine> myGroup = theGroups.get(myId);
+            if (myGroup == null) {
+                myGroup = new EventGroup<StatementLine>(myParent, StatementLine.class);
+                theGroups.put(myId, myGroup);
+            }
+
+            /* Register the child */
+            myGroup.registerChild(pChild);
+        }
+
+        /**
+         * Obtain the group for a parent.
+         * @param pParent the parent event
+         * @return the group
+         */
+        public EventGroup<StatementLine> getGroup(final StatementLine pParent) {
+            return theGroups.get(pParent.getId());
+        }
     }
 
     /**
@@ -516,6 +573,11 @@ public class Statement
             }
             /* Pass onwards */
             return super.getFieldValue(pField);
+        }
+
+        @Override
+        public StatementLine getParent() {
+            return (StatementLine) super.getParent();
         }
 
         /**

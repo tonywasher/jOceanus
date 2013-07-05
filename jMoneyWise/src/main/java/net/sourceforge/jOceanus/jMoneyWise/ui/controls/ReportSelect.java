@@ -213,7 +213,7 @@ public class ReportSelect
         refreshData(null);
 
         /* Add the ReportTypes to the report box */
-        theReportBox.addItem(ReportType.INSTANT);
+        theReportBox.addItem(ReportType.NETWORTH);
         theReportBox.addItem(ReportType.ASSET);
         theReportBox.addItem(ReportType.INCOME);
         theReportBox.addItem(ReportType.EVENTCATEGORY);
@@ -221,7 +221,7 @@ public class ReportSelect
         theReportBox.addItem(ReportType.TAX);
         theReportBox.addItem(ReportType.BREAKDOWN);
         theReportBox.addItem(ReportType.MARKET);
-        theReportBox.setSelectedItem(ReportType.INSTANT);
+        theReportBox.setSelectedItem(ReportType.NETWORTH);
 
         /* Create the labels */
         JLabel myRepLabel = new JLabel(NLS_REPORT);
@@ -362,7 +362,7 @@ public class ReportSelect
     public void setEnabled(final boolean bEnable) {
         ReportType myType = theState.getType();
 
-        boolean isDate = ((myType == ReportType.INSTANT) || (myType == ReportType.MARKET));
+        boolean isDate = ((myType == ReportType.NETWORTH) || (myType == ReportType.MARKET));
         boolean isNull = (myType == null);
         boolean isYear = (!isNull && !isDate);
 
@@ -481,7 +481,7 @@ public class ReportSelect
         private ReportState() {
             theDate = new JDateDay();
             theYear = null;
-            theType = ReportType.INSTANT;
+            theType = ReportType.NETWORTH;
         }
 
         /**
@@ -578,9 +578,9 @@ public class ReportSelect
         EVENTCATEGORY("EventCategory"),
 
         /**
-         * Instant Asset Report.
+         * Net Worth Report.
          */
-        INSTANT("Instant"),
+        NETWORTH("NetWorth"),
 
         /**
          * IncomeBreakdown Report.

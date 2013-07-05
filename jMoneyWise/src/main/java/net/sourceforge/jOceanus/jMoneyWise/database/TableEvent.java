@@ -118,9 +118,9 @@ public class TableEvent
         } else if (EventBase.FIELD_CATEGORY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getCategoryId());
         } else if (EventBase.FIELD_RECONCILED.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.getReconciled());
+            myTableDef.setBooleanValue(iField, pItem.isReconciled());
         } else if (EventBase.FIELD_SPLIT.equals(iField)) {
-            myTableDef.setBooleanValue(iField, pItem.getSplit());
+            myTableDef.setBooleanValue(iField, pItem.isSplit());
         } else if (EventBase.FIELD_PARENT.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getParentId());
         } else {

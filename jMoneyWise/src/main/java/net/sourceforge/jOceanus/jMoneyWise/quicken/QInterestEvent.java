@@ -101,7 +101,7 @@ public class QInterestEvent
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
                 ? QIF_RECONCILED
                 : QIF_OPEN);
 
@@ -175,7 +175,7 @@ public class QInterestEvent
             addDecimalLine(QEvtLineType.Amount, myValue);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+            addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
                     ? QIF_RECONCILED
                     : QIF_OPEN);
 
@@ -226,7 +226,7 @@ public class QInterestEvent
         addDecimalLine(QEvtLineType.Amount, new JDecimal(myEvent.getAmount()));
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.getReconciled() == Boolean.TRUE)
+        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
                 ? QIF_RECONCILED
                 : QIF_OPEN);
 

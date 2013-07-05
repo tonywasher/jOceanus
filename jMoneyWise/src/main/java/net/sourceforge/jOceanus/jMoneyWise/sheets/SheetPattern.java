@@ -208,7 +208,7 @@ public class SheetPattern
         writeInteger(COL_FREQ, pItem.getFrequencyId());
         writeDate(COL_DATE, pItem.getDate());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
-        writeBoolean(COL_SPLIT, pItem.getSplit());
+        writeBoolean(COL_SPLIT, pItem.isSplit());
         writeInteger(COL_PARENT, pItem.getParentId());
     }
 

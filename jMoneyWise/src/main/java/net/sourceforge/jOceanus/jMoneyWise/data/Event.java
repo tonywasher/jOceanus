@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -542,8 +544,6 @@ public class Event
         EventCategory myCategory = getCategory();
         JUnits myDebitUnits = getDebitUnits();
         JUnits myCreditUnits = getCreditUnits();
-        // JMoney myTaxCred = getTaxCredit();
-        // Integer myYears = getYears();
 
         /* Header is always valid */
         if (isHeader()) {
@@ -583,48 +583,6 @@ public class Event
             && (Difference.isEqual(myCredit, myDebit))) {
             addError("Cannot credit and debit same account", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
         }
-
-        // /* If we are a taxable gain */
-        // if ((myCategory != null)
-        // && (myCategory.getCategoryTypeClass() == EventCategoryClass.TaxableGain)) {
-        // /* Years must be positive */
-        // if ((myYears == null)
-        // || (myYears <= 0)) {
-        // addError("Years must be non-zero and positive", EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears));
-        // }
-
-        // /* Tax Credit must be non-null and positive */
-        // if ((myTaxCred == null)
-        // || (!myTaxCred.isPositive())) {
-        // addError("TaxCredit must be non-null", EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit));
-        // }
-
-        // /* If we need a tax credit */
-        // } else if ((myCategory != null)
-        // && (needsTaxCredit(myCategory, myDebit))) {
-        // /* Tax Credit must be non-null and positive */
-        // if ((myTaxCred == null)
-        // || (!myTaxCred.isPositive())) {
-        // addError("TaxCredit must be non-null", EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit));
-        // }
-
-        // /* Years must be null */
-        // if (myYears != null) {
-        // addError("Years must be null", EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears));
-        // }
-
-        // /* else we should not have a tax credit */
-        // } else if (myCategory != null) {
-        // /* Tax Credit must be null */
-        // if (myTaxCred != null) {
-        // addError("TaxCredit must be null", EventInfoSet.getFieldForClass(EventInfoClass.TaxCredit));
-        // }
-
-        // /* Years must be null */
-        // if (myYears != null) {
-        // addError("Years must be null", EventInfoSet.getFieldForClass(EventInfoClass.QualifyYears));
-        // }
-        // }
 
         /* If we have a category and an infoSet */
         if ((myCategory != null)
@@ -834,7 +792,6 @@ public class Event
         if (!(pEvent instanceof Event)) {
             return false;
         }
-
         Event myEvent = (Event) pEvent;
 
         /* Store the current detail into history */
@@ -847,6 +804,9 @@ public class Event
         return checkForHistory();
     }
 
+    /**
+     * Register a child event
+     */
     /**
      * The BaseEvent List class.
      * @param <T> the Event type
@@ -941,6 +901,29 @@ public class Event
         }
 
         /**
+         * EventGroupList field Id.
+         */
+        public static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField("EventGroups");
+
+        /**
+         * EventGroupMap.
+         */
+        private final Map<Integer, EventGroup<Event>> theGroups = new HashMap<Integer, EventGroup<Event>>();
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_EVENTGROUPS.equals(pField)) {
+                return theGroups.size() > 0
+                        ? theGroups
+                        : JDataFieldValue.SkipField;
+            }
+
+            /* Pass onwards */
+            return super.getFieldValue(pField);
+        }
+
+        /**
          * Construct an empty CORE event list.
          * @param pData the DataSet for the list
          */
@@ -1013,6 +996,11 @@ public class Event
             while (myIterator.hasNext()) {
                 Event myCurr = myIterator.next();
 
+                /* Ignore deleted events */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
                 /* Check the range */
                 int myResult = pRange.compareTo(myCurr.getDate());
 
@@ -1023,9 +1011,15 @@ public class Event
                     break;
                 }
 
-                /* Build the new linked event and add it to the extract */
+                /* Build the new linked event and add it to the list */
                 Event myEvent = new Event(myList, myCurr);
                 myList.append(myEvent);
+
+                /* If this is a child event */
+                if (myEvent.isChild()) {
+                    /* Register child against parent (in this edit list) */
+                    registerChild(myEvent);
+                }
             }
 
             /* Return the List */
@@ -1059,6 +1053,11 @@ public class Event
             while (myIterator.hasNext()) {
                 Pattern myCurr = myIterator.next();
 
+                /* Ignore deleted patterns */
+                if (myCurr.isDeleted()) {
+                    continue;
+                }
+
                 /* Access a copy of the base date */
                 JDateDay myDate = new JDateDay(myCurr.getDate());
 
@@ -1066,6 +1065,12 @@ public class Event
                 while ((myEvent = myCurr.nextEvent(myList, pTaxYear, myDate)) != null) {
                     /* Add it to the extract */
                     myList.append(myEvent);
+
+                    /* If this is a child event */
+                    if (myEvent.isChild()) {
+                        /* Register child against parent (in this edit list) */
+                        registerChild(myEvent);
+                    }
                 }
             }
 
@@ -1074,6 +1079,43 @@ public class Event
 
             /* Return the List */
             return myList;
+        }
+
+        /**
+         * Register child into event group.
+         * @param pChild the child to register
+         */
+        public void registerChild(final Event pChild) {
+            /* Access parent */
+            Event myParent = pChild.getParent();
+            Integer myId = myParent.getId();
+            myParent = findItemById(myId);
+
+            /* Access EventGroup */
+            EventGroup<Event> myGroup = theGroups.get(myId);
+            if (myGroup == null) {
+                myGroup = new EventGroup<Event>(myParent, Event.class);
+                theGroups.put(myId, myGroup);
+            }
+
+            /* Register the child */
+            myGroup.registerChild(pChild);
+        }
+
+        /**
+         * Obtain the group for a parent.
+         * @param pParent the parent event
+         * @return the group
+         */
+        public EventGroup<Event> getGroup(final Event pParent) {
+            return theGroups.get(pParent.getId());
+        }
+
+        /**
+         * Reset groups.
+         */
+        public void resetGroups() {
+            theGroups.clear();
         }
 
         /**

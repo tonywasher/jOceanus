@@ -206,10 +206,10 @@ public class AnalysisReport {
     }
 
     /**
-     * Build a web output of the instant report.
+     * Build a web output of the net worth report.
      * @return Web output
      */
-    public String getInstantReport() {
+    public String getNetWorthReport() {
         /* Access the bucket list */
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
         StringBuilder myOutput = new StringBuilder(BUFFER_LEN);
@@ -217,7 +217,7 @@ public class AnalysisReport {
 
         /* Format the header */
         theReport.startReport(myOutput);
-        theReport.makeLinkHeading(myOutput, "Instant Asset Report for "
+        theReport.makeLinkHeading(myOutput, "Net Worth Report for "
                                             + theFormatter.formatObject(theDate));
         theReport.startTable(myOutput);
         theReport.makeTableColumn(myOutput, "Class");

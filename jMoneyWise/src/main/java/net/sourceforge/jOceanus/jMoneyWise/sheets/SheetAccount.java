@@ -325,13 +325,14 @@ public class SheetAccount
                 }
 
                 /* Handle closed which may be missing */
-                // myCell = myView.getRowCellByIndex(myRow, iAdjust++);
-                // Boolean isClosed = Boolean.FALSE;
-                // if (myCell != null) {
-                // isClosed = myCell.getBooleanValue();
-                // }
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                Boolean isClosed = Boolean.FALSE;
+                if (myCell != null) {
+                    isClosed = myCell.getBooleanValue();
+                }
+
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, myAcType, Boolean.FALSE/* TODO isClosed */, isTaxFree, myCurrency.getName());
+                myList.addOpenItem(0, myName, myAcType, isClosed, isTaxFree, myCurrency.getName());
 
                 /* Report the progress */
                 myCount++;

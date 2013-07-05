@@ -246,9 +246,9 @@ public class SheetEvent
         writeInteger(COL_DEBIT, pItem.getDebitId());
         writeInteger(COL_CREDIT, pItem.getCreditId());
         writeInteger(COL_CATEGORY, pItem.getCategoryId());
-        writeBoolean(COL_RECONCILED, pItem.getReconciled());
+        writeBoolean(COL_RECONCILED, pItem.isReconciled());
         writeBytes(COL_AMOUNT, pItem.getAmountBytes());
-        writeBoolean(COL_SPLIT, pItem.getSplit());
+        writeBoolean(COL_SPLIT, pItem.isSplit());
         writeInteger(COL_PARENT, pItem.getParentId());
     }
 
@@ -263,7 +263,7 @@ public class SheetEvent
 
         /* Write standard values */
         writeDecimal(COL_AMOUNT, pItem.getAmount());
-        writeBoolean(COL_RECONCILED, pItem.getReconciled());
+        writeBoolean(COL_RECONCILED, pItem.isReconciled());
         writeString(COL_CATEGORY, pItem.getCategoryName());
 
         /* If we are a child */

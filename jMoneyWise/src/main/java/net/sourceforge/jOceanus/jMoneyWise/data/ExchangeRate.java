@@ -684,7 +684,7 @@ public final class ExchangeRate
 
         /**
          * Count the instances of an exchange rate.
-         * @param pName the name to check for
+         * @param pRate the rate to check for
          * @return The # of instances of the name
          */
         protected int countInstances(final ExchangeRate pRate) {
@@ -847,7 +847,7 @@ public final class ExchangeRate
         }
 
         /**
-         * Find the exchange rate
+         * Find the exchange rate.
          * @param pCurrency the currency to find
          * @param pDate the date to find the exchange rate for
          * @return the exchange rate
@@ -879,7 +879,7 @@ public final class ExchangeRate
         }
 
         /**
-         * Set the default currency
+         * Set the default currency.
          * @param pCurrency the new default currency
          */
         public void setDefaultCurrency(final AccountCurrency pCurrency) {

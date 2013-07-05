@@ -47,6 +47,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventGroup;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
@@ -285,15 +286,15 @@ public class EventAnalysis
         while (myIterator.hasNext()) {
             Event myCurr = myIterator.next();
 
+            /* Ignore deleted events */
+            if (myCurr.isDeleted()) {
+                continue;
+            }
+
             /* Check the range and exit loop if necessary */
             int myResult = theDate.compareTo(myCurr.getDate());
             if (myResult < 0) {
                 break;
-            }
-
-            /* Ignore deleted events */
-            if (myCurr.isDeleted()) {
-                continue;
             }
 
             /* Process the event in the asset report */
@@ -378,8 +379,14 @@ public class EventAnalysis
         myList.append(myLine);
 
         /* Continue looping through the Events extracting relevant elements */
+        boolean addChildren = false;
         while (myIterator.hasNext()) {
             Event myCurr = myIterator.next();
+
+            /* Ignore deleted events */
+            if (myCurr.isDeleted()) {
+                continue;
+            }
 
             /* Check the range and exit loop if required */
             int myResult = myRange.compareTo(myCurr.getDate());
@@ -387,14 +394,42 @@ public class EventAnalysis
                 break;
             }
 
-            /* Ignore items that do not relate to this account */
-            if (!myCurr.relatesTo(myAccount)) {
-                continue;
+            /* If this is a split line */
+            if (myCurr.isSplit()) {
+                /* If this is the parent */
+                if (!myCurr.isChild()) {
+                    /* Access the event group */
+                    EventGroup<Event> myGroup = myEvents.getGroup(myCurr);
+
+                    /* Set flag for subsequent children */
+                    addChildren = (myGroup.relatesTo(myAccount));
+                }
+
+                /* Ignore items that do not relate to this account */
+                if (!addChildren) {
+                    continue;
+                }
+
+                /* else this is a standard line */
+            } else {
+                /* Clear addChildren flag */
+                addChildren = false;
+
+                /* Ignore items that do not relate to this account */
+                if (!myCurr.relatesTo(myAccount)) {
+                    continue;
+                }
             }
 
             /* Add a statement line to the statement */
             myLine = new StatementLine(myList, myCurr);
             myList.append(myLine);
+
+            /* If this is a child line */
+            if (myLine.isChild()) {
+                /* Register child against parent (in this edit list) */
+                myList.registerChild(myLine);
+            }
         }
 
         /* Reset the statement balances */
@@ -468,15 +503,19 @@ public class EventAnalysis
         /* Create the Dilution Event List */
         theDilutions = new DilutionEventList(theData);
 
-        /* Access the tax years list */
-        TaxYearList myList = theData.getTaxYears();
+        /* Access the lists */
+        TaxYearList myTaxYears = theData.getTaxYears();
+        EventList myEvents = theData.getEvents();
 
         /* Access the Event iterator */
-        Iterator<Event> myIterator = theData.getEvents().listIterator();
+        Iterator<Event> myIterator = myEvents.listIterator();
         TaxYear myTax = null;
         JDateDay myDate = null;
         IncomeBreakdown myBreakdown = null;
         int myResult = -1;
+
+        /* Reset the groups */
+        myEvents.resetGroups();
 
         /* Loop through the Events extracting relevant elements */
         while (myIterator.hasNext()) {
@@ -497,7 +536,7 @@ public class EventAnalysis
             /* If we have exhausted the tax year or else this is the first tax year */
             if (myResult < 0) {
                 /* Access the relevant tax year */
-                myTax = myList.findTaxYearForDate(myCurrDay);
+                myTax = myTaxYears.findTaxYearForDate(myCurrDay);
                 myDate = myTax.getTaxYear();
 
                 /* If we have an existing meta analysis year */
@@ -535,6 +574,9 @@ public class EventAnalysis
             if (myParent != null) {
                 /* Touch the parent */
                 myParent.touchItem(myCurr);
+
+                /* Register child against parent */
+                myEvents.registerChild(myCurr);
             }
 
             /* If the event has a dilution factor */

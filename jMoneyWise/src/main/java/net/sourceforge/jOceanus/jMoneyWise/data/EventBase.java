@@ -97,11 +97,11 @@ public abstract class EventBase
     @Override
     public boolean skipField(final JDataField pField) {
         if ((FIELD_SPLIT.equals(pField))
-            && !getSplit()) {
+            && !isSplit()) {
             return true;
         }
         if ((FIELD_PARENT.equals(pField))
-            && (!getSplit() || (getParent() == null))) {
+            && (!isSplit() || (!isChild()))) {
             return true;
         }
         return super.skipField(pField);
@@ -244,16 +244,16 @@ public abstract class EventBase
      * Obtain Reconciled State.
      * @return the reconciled state
      */
-    public Boolean getReconciled() {
-        return getReconciled(getValueSet());
+    public Boolean isReconciled() {
+        return isReconciled(getValueSet());
     }
 
     /**
      * Obtain Split State.
      * @return the split state
      */
-    public Boolean getSplit() {
-        return getSplit(getValueSet());
+    public Boolean isSplit() {
+        return isSplit(getValueSet());
     }
 
     /**
@@ -262,6 +262,14 @@ public abstract class EventBase
      */
     public EventBase getParent() {
         return getParent(getValueSet());
+    }
+
+    /**
+     * Is the event a child.
+     * @return true/false
+     */
+    public boolean isChild() {
+        return (getParent() != null);
     }
 
     /**
@@ -289,7 +297,7 @@ public abstract class EventBase
      * @param pValueSet the valueSet
      * @return the Reconciled State
      */
-    public static Boolean getReconciled(final ValueSet pValueSet) {
+    public static Boolean isReconciled(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_RECONCILED, Boolean.class);
     }
 
@@ -298,7 +306,7 @@ public abstract class EventBase
      * @param pValueSet the valueSet
      * @return the Split State
      */
-    public static Boolean getSplit(final ValueSet pValueSet) {
+    public static Boolean isSplit(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_SPLIT, Boolean.class);
     }
 
@@ -1206,6 +1214,7 @@ public abstract class EventBase
         Account myDebit = getDebit();
         Account myCredit = getCredit();
         JMoney myAmount = getAmount();
+        EventBase myParent = getParent();
         EventCategory myCategory = getCategory();
         boolean doCheckCombo = true;
 
@@ -1247,6 +1256,19 @@ public abstract class EventBase
             && (!isValidEvent(myCategory, myDebit, myCredit))) {
             addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
             addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
+        }
+
+        /* If we have a parent */
+        if (myParent != null) {
+            /* Parent must not be child */
+            if (myParent.isChild()) {
+                addError("Invalid Parent", FIELD_PARENT);
+            }
+
+            /* Parent must not be child */
+            if (!Difference.isEqual(myDate, myParent.getDate())) {
+                addError("Parent must be same date", FIELD_PARENT);
+            }
         }
 
         /* Money must not be null/negative */
@@ -1301,19 +1323,19 @@ public abstract class EventBase
         }
 
         /* Update the reconciled state if required */
-        if (!Difference.isEqual(getReconciled(), pEvent.getReconciled())) {
-            setValueReconciled(pEvent.getReconciled());
+        if (!Difference.isEqual(isReconciled(), pEvent.isReconciled())) {
+            setValueReconciled(pEvent.isReconciled());
         }
 
         /* Update the split state if required */
-        if (!Difference.isEqual(getSplit(), pEvent.getSplit())) {
-            setValueSplit(pEvent.getSplit());
+        if (!Difference.isEqual(isSplit(), pEvent.isSplit())) {
+            setValueSplit(pEvent.isSplit());
         }
     }
 
     /**
      * The Event List class.
-     * @param <T> the dataType
+     * @param <T> the dataTypeoppo
      */
     public abstract static class EventBaseList<T extends EventBase>
             extends EncryptedList<T> {
