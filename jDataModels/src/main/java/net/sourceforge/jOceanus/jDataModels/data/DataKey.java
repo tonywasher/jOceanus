@@ -494,6 +494,11 @@ public class DataKey
             return LIST_NAME;
         }
 
+        @Override
+        public boolean includeDataXML() {
+            return false;
+        }
+
         /**
          * Construct an empty CORE DataKey list.
          * @param pData the DataSet for the list

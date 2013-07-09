@@ -35,6 +35,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataManager.ValueSet;
+import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
@@ -55,7 +56,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
  * @author Tony Washer
  */
 public class Event
-        extends EventBase {
+        extends EventBase
+        implements InfoSetItem {
     /**
      * The name of the object.
      */
@@ -110,10 +112,7 @@ public class Event
      */
     private final EventInfoSet theInfoSet;
 
-    /**
-     * Obtain InfoSet.
-     * @return the infoSet
-     */
+    @Override
     public EventInfoSet getInfoSet() {
         return theInfoSet;
     }

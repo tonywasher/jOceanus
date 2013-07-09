@@ -30,6 +30,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataList.ListStyle;
@@ -46,7 +47,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountI
  * @author Tony Washer
  */
 public class Account
-        extends AccountBase {
+        extends AccountBase
+        implements InfoSetItem {
     /**
      * Object name.
      */
@@ -122,10 +124,7 @@ public class Account
      */
     private AccountStatus theStatus = new AccountStatus();
 
-    /**
-     * Obtain InfoSet.
-     * @return the infoSet
-     */
+    @Override
     public AccountInfoSet getInfoSet() {
         return theInfoSet;
     }

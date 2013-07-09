@@ -39,7 +39,7 @@ Public Const rangeUnitsData As String = "UnitsData"
 
 'Report on Units Data for the Year
 Private Sub reportUnitsYear(ByRef Context As FinanceState, _
-			ByRef Year As String)
+							ByRef Year As String)
 	Dim myDoc As Object
 	Dim myData As Object
 	Dim myAccount As Object
@@ -83,7 +83,7 @@ End Sub
 
 'Report on Assets Data for the Year
 Private Sub reportAssetsYear(ByRef Context As FinanceState, _
-			 ByRef Year As String)
+							 ByRef Year As String)
 	Dim myDoc As Object
 	Dim myData As Object
 	Dim myAccount As Object
@@ -127,7 +127,7 @@ End Sub
 
 'Report on Income Data for the Year
 Sub reportIncomeYear(ByRef Context As FinanceState, _
-		 ByRef Year As String)
+					 ByRef Year As String)
 	Dim myDoc As Object
 	Dim myData As Object
 	Dim myAccount As Object
@@ -171,7 +171,7 @@ End Sub
 
 'Report on Expense Data for the Year
 Sub reportExpenseYear(ByRef Context As FinanceState, _
-		  ByRef Year As String)
+					  ByRef Year As String)
 	Dim myDoc As Object
 	Dim myData As Object
 	Dim myAccount As Object
@@ -215,7 +215,7 @@ End Sub
 
 'Report on Category Data for the Year
 Sub reportCategoryYear(ByRef Context As FinanceData, _
-		   ByRef Year As String)
+					   ByRef Year As String)
 	Dim myDoc As Object
 	Dim myData As Object
 	Dim myCategory As Object

@@ -21,25 +21,27 @@
 '* $Date$
 '******************************************************************************/
 'Range Names
-Private Const rangeCategoryInfo As String = "CategoryInfo"
+Private Const rangeCategoryInfo As String = "EventCategoryInfo"
 
 'Category Column locations
 Private Const colCatName As Integer = 0
 Private Const colCatClass As Integer = 1
-Private Const colCatHidden As Integer = 2
-Private Const colCatIncome As Integer = 3
-Private Const colCatTransfer As Integer = 4
-Private Const colCatInterest As Integer = 5
-Private Const colCatDividend As Integer = 6
-Private Const colCatWaived As Integer = 7
-Private Const colCatDemerger As Integer = 8
-Private Const colCatTakeover As Integer = 9
+Private Const colCatParent As Integer = 2
+Private Const colCatHidden As Integer = 3
+Private Const colCatIncome As Integer = 4
+Private Const colCatTransfer As Integer = 5
+Private Const colCatInterest As Integer = 6
+Private Const colCatDividend As Integer = 7
+Private Const colCatWaived As Integer = 8
+Private Const colCatDemerger As Integer = 9
+Private Const colCatTakeover As Integer = 10
 
 'Statistics for Category
 Public Type CategoryStats
 	'Category details
 	strCategory As String
 	strCatClass As String
+	strCatParent As String
 	
 	'Flags
 	isInterest As Boolean
@@ -96,6 +98,7 @@ Private Sub loadCategories(ByRef Context As FinanceState)
     	'Build values 
     	myCat.strCategory = myName
 	    myCat.strCatClass = myRow.getCellByPosition(colCatClass, 0).getString()
+	    myCat.strCatParent = myRow.getCellByPosition(colCatParent, 0).getString()
 	    myCat.isIncome = myRow.getCellByPosition(colCatIncome, 0).getValue()
 	    myCat.isTransfer = myRow.getCellByPosition(colCatTransfer, 0).getValue()
 	    myCat.isInterest = myRow.getCellByPosition(colCatInterest, 0).getValue()
@@ -127,7 +130,7 @@ End Sub
 
 'Access the Category Statistics 
 Public Function getCategoryStats(ByRef Context As FinanceState, _
-				 ByRef Category As String) As CategoryStats
+								 ByRef Category As String) As CategoryStats
 	Dim myMap As Object
 	Dim myCategory As Object 
 	

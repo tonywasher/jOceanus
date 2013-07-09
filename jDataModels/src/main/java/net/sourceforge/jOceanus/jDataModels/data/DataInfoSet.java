@@ -90,6 +90,17 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
     }
 
     /**
+     * Interface for an infoSet item.
+     */
+    public interface InfoSetItem {
+        /**
+         * Obtain infoSet.
+         * @return the infoSet
+         */
+        DataInfoSet<?, ?, ?, ?> getInfoSet();
+    }
+
+    /**
      * Version # of the values.
      */
     private int theVersion;

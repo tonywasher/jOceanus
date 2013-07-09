@@ -494,6 +494,11 @@ public class ControlKey
             return LIST_NAME;
         }
 
+        @Override
+        public boolean includeDataXML() {
+            return false;
+        }
+
         /**
          * Construct an empty CORE ControlKey list.
          * @param pData the DataSet for the list

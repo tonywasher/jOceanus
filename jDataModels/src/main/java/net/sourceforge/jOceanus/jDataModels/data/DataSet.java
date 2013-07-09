@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jDataModels.data;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -767,5 +768,13 @@ public abstract class DataSet<T extends DataSet<T>>
 
         /* Update the control details */
         getControlKey().updatePasswordHash(myHash);
+    }
+
+    /**
+     * Obtain list iterator.
+     * @return the iterator
+     */
+    public Iterator<DataList<?>> iterator() {
+        return theList.iterator();
     }
 }

@@ -284,6 +284,11 @@ public class ControlData
             return LIST_NAME;
         }
 
+        @Override
+        public boolean includeDataXML() {
+            return false;
+        }
+
         /**
          * The single element of the list.
          */

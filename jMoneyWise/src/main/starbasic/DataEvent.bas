@@ -21,11 +21,11 @@
 '* $Date$
 '******************************************************************************/
 'Event Column locations
-Private Const colEvtDate As Integer = 0
-Private Const colEvtDebit As Integer = 1
-Private Const colEvtCredit As Integer = 2
-Private Const colEvtAmount As Integer = 3
-Private Const colEvtCategory As Integer = 4
+Public Const colEvtDate As Integer = 0
+Public Const colEvtDebit As Integer = 1
+Public Const colEvtCredit As Integer = 2
+Public Const colEvtAmount As Integer = 3
+Public Const colEvtCategory As Integer = 4
 Private Const colEvtReconciled As Integer = 5
 Private Const colEvtComment As Integer = 6
 Private Const colEvtTaxCred As Integer = 7
@@ -42,7 +42,6 @@ Private Const colEvtCharity As Integer = 15
 Public Const catTransfer As String = "Transfer"
 Public Const catInterest As String = "Income:Interest"
 Public Const catDividend As String = "Income:Dividend"
-Public Const catEndowment As String = "Mortgage:Endowment"
 Public Const catUnitDividend As String = "Income:UnitTrustDividend"
 Public Const catTaxFreeDividend As String = "Income:TaxFreeDividend"
 Public Const catTaxFreeInterest As String = "Income:TaxFreeInterest"
@@ -88,7 +87,7 @@ End Function
 
 'Adjust the Category
 Private Sub adjustCategory(ByRef Context As FinanceState, _
-			   ByRef Event As EventInfo) 
+						   ByRef Event As EventInfo) 
 	'Access category
 	myCategory = Event.strCategory
 	Set myDebitInfo = Event.acctDebit
@@ -106,10 +105,6 @@ Private Sub adjustCategory(ByRef Context As FinanceState, _
 			ElseIf (myDebitInfo.isUnitTrust) Then
 				myCategory = catUnitDividend
 			End If
-		Case catTransfer
-			If (myCreditInfo.isEndowment) Then
-				myCategory = catEndowment
-			End If
 	End Select
 	
 	'Resolve the category
@@ -119,8 +114,8 @@ End Sub
 
  'Parse the event 
 Public Function parseEventRow(ByRef Context As FinanceState, _
-			  ByRef eventRow As ScTableRowObj, _
-			  ByRef lastEvent As EventInfo) As EventInfo
+							  ByRef eventRow As ScTableRowObj, _
+							  ByRef lastEvent As EventInfo) As EventInfo
 	Dim myEvent As Variant
 	Dim myDate As Date
 	Dim myDebit As String

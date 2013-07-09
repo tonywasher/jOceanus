@@ -31,26 +31,30 @@ Private Const colAcctTaxFree As Integer = 3
 Private Const colAcctClosed As Integer = 4
 Private Const colAcctParent As Integer = 5
 Private Const colAcctAlias As Integer = 6
-Private Const colAcctPortfolio As Integer = 7
-Private Const colAcctOpenBal As Integer = 8
-Private Const colAcctSymbol As Integer = 9
-Private Const colAcctAutoExp As Integer = 10
+Private Const colAcctHolding As Integer = 7
+Private Const colAcctMaturity As Integer = 8
+Private Const colAcctOpenBal As Integer = 9
+Private Const colAcctSymbol As Integer = 10
+Private Const colAcctAutoExp As Integer = 11
 
 'Account Type Column locations
 Private Const colAcTpName As Integer = 0
 Private Const colAcTpClass As Integer = 1
-Private Const colAcTpValue As Integer = 2
-Private Const colAcTpUnits As Integer = 3
-Private Const colAcTpUnitTrust As Integer = 4
-Private Const colAcTpEndowment As Integer = 5
-Private Const colAcTpCapital As Integer = 6
-Private Const colAcTpLifeBond As Integer = 7
+Private Const colAcTpParent As Integer = 2
+Private Const colAcTpValue As Integer = 3
+Private Const colAcTpUnits As Integer = 4
+Private Const colAcTpUnitTrust As Integer = 5
+Private Const colAcTpEndowment As Integer = 6
+Private Const colAcTpPortfolio As Integer = 7
+Private Const colAcTpCapital As Integer = 8
+Private Const colAcTpLifeBond As Integer = 9
 
 'Account Type
 Public Type AccountType
 	' Account Type details
 	strAccountType As String
 	strAccountClass As String
+	strAccountParent As String
 	
 	'Account flags
 	hasUnits As Boolean
@@ -58,6 +62,7 @@ Public Type AccountType
 	isNonAsset As Boolean
 	isUnitTrust As Boolean
 	isEndowment As Boolean
+	isPortfolio As Boolean
 	isCapital As Boolean
 	isLifeBond As Boolean	
 	
@@ -72,8 +77,8 @@ Public Type AccountStats
 	'Account details
 	strAccount As String
 	strParent As String
+	strHolding As String
 	strAlias As String
-	strPortfolio As String
 	strSymbol As String
 	
 	'Account type
@@ -97,6 +102,7 @@ Public Type AccountStats
 	isLifeBond As Boolean
 	isEndowment As Boolean
 	isUnitTrust As Boolean
+	isPortfolio As Boolean
 	
 	'Reporting indices
 	idxAssets As Integer
@@ -163,6 +169,7 @@ Private Sub loadAccountTypes(ByRef Context As FinanceState)
     	'Build values 
     	myType.strAccountType = myName
 	    myType.strAccountClass = myRow.getCellByPosition(colAcTpClass, 0).getString()
+	    myType.strAccountParent = myRow.getCellByPosition(colAcTpParent, 0).getString()
 	    myType.hasValue = myRow.getCellByPosition(colAcTpValue, 0).getValue()
 	    myType.hasUnits = myRow.getCellByPosition(colAcTpUnits, 0).getValue()
 	    myType.isNonAsset = Not(myType.hasValue Or myType.hasUnits)
@@ -170,6 +177,7 @@ Private Sub loadAccountTypes(ByRef Context As FinanceState)
 	    myType.isCapital = myRow.getCellByPosition(colAcTpCapital, 0).getValue()
 	    myType.isLifeBond = myRow.getCellByPosition(colAcTpLifeBond, 0).getValue()
 	    myType.isEndowment = myRow.getCellByPosition(colAcTpEndowment, 0).getValue()
+	    myType.isPortfolio = myRow.getCellByPosition(colAcTpPortfolio, 0).getValue()
     		
     	'Store the account type
     	putHashKey(myMap, myName, myType) 
@@ -216,6 +224,7 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		myAcct.isCapital = myType.isCapital
 		myAcct.isLifeBond = myType.isLifeBond
 		myAcct.isEndowment = myType.isEndowment
+		myAcct.isPortfolio = myType.isPortfolio
 		myAcct.isActive = True()
     		
 		'Handle value accounts
@@ -232,8 +241,12 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 		'Handle asset accounts
 		If (myAcct.hasUnits) Then		
 	    	myAcct.strAlias = myRow.getCellByPosition(colAcctAlias, 0).getString()
-	    	myAcct.strPortfolio = myRow.getCellByPosition(colAcctPortfolio, 0).getString()
 		    myAcct.strSymbol = myRow.getCellByPosition(colAcctSymbol, 0).getString()
+		End If 
+		
+		'Handle portfolio accounts
+		If (myAcct.isPortfolio) Then		
+	    	myAcct.strHolding = myRow.getCellByPosition(colAcctHolding, 0).getString()
 		End If 
 		
 		'Initialise indices
@@ -252,7 +265,7 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
 	
     'Access Opening Balances
     Set myOpeningAcct = getCachedAccount(Context, acctOpenBal)
-    Set myOpeningCat = getCategoryStats(Context, acctOpenBal)
+    Set myOpeningCat = getCategoryStats(Context, catOpenBal)
     
 	'Loop through the Accounts 
 	myIterator = hashIterator(Context.mapAccounts)
@@ -311,7 +324,7 @@ End Sub
 
 'Access the AccountType
 Public Function getAccountType(ByRef Context As FinanceState, _
-			       ByRef acctType As String) As AccountType
+							   ByRef acctType As String) As AccountType
 	Dim myMap As Object
 	Dim myType As Object 
 	
@@ -334,7 +347,7 @@ End Function
 
 'Access the Account Statistics 
 Public Function getAccountStats(ByRef Context As FinanceState, _
-				ByRef Account As String) As AccountStats
+								ByRef Account As String) As AccountStats
 	Dim myMap As Object
 	Dim myAccount As Object 
 	

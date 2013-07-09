@@ -161,6 +161,14 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     }
 
     /**
+     * Should this list be included in DataXml?
+     * @return true/false
+     */
+    public boolean includeDataXML() {
+        return true;
+    }
+
+    /**
      * Obtain List Name.
      * @return the ListName
      */

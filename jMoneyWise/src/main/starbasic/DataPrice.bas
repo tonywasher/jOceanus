@@ -27,7 +27,7 @@ Private Const rangePricesDates As String = "PricesDates"
 
 'Get the Spot Price Index for an Account
 Public Function getSpotPriceIndexForAcct(ByRef Context As FinanceState, _
-					 ByRef Account As AccountStats) As Integer
+										 ByRef Account As AccountStats) As Integer
 	Dim myName As String
 	
 	'If the price index is unknown
@@ -48,8 +48,8 @@ End Function
 
 'Get the Asset Value for a Date
 Public Function getAssetValueForDate(ByRef Context As FinanceState, _
-				 ByRef Account As AccountStats, _
-				 ByVal PriceDate As Date) As Double
+									 ByRef Account As AccountStats, _
+									 ByVal PriceDate As Date) As Double
 	Dim myRow As Integer
 	Dim myCol As Integer
 	Dim myPrice As Double
@@ -75,7 +75,7 @@ End Function
 
 'Get the Spot Price Index for a Date
 Public Function getSpotPriceIndexForDate(ByRef Context As FinanceState, _
-					 ByVal PriceDate As Date) As Integer
+										 ByVal PriceDate As Date) As Integer
 	Dim myDoc As Object
 	Dim myRow as Integer
 	Dim myDate as Date
@@ -103,8 +103,8 @@ End Function
 
 'Get the Spot Price for a set of indices
 Public Function getBaseSpotPrice(ByRef Context As FinanceState, _
-				 ByVal AcctIndex As Integer, _
-				 ByVal PriceIndex As Integer) As Double
+								 ByVal AcctIndex As Integer, _
+								 ByVal PriceIndex As Integer) As Double
 	Dim myIndex As Integer
 	Dim myDoc As Object
 	Dim myRange As Object

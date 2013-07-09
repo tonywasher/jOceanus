@@ -25,10 +25,12 @@ package net.sourceforge.jOceanus.jMoneyWise.data;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
 /**
@@ -143,5 +145,212 @@ public class EventGroup<T extends EventBase>
 
         /* Does not relate */
         return false;
+    }
+
+    /**
+     * Get display debit.
+     * @return the display text for debit
+     */
+    public String getDebit() {
+        /* Access parent debit */
+        Account myDebit = theParent.getDebit();
+
+        /* Access iterator and skip first event */
+        Iterator<T> myIterator = iterator();
+        myIterator.next();
+
+        /* Loop through events */
+        while (myIterator.hasNext()) {
+            T myEvent = myIterator.next();
+
+            /* Ignore deleted children */
+            if (myEvent.isDeleted()) {
+                continue;
+            }
+
+            /* Handle different debits */
+            if (!myDebit.equals(myEvent.getDebit())) {
+                return NAME_SPLIT;
+            }
+        }
+
+        /* Return the standard debit name */
+        return myDebit.getName();
+    }
+
+    /**
+     * Get display credit.
+     * @return the display text for debit
+     */
+    public String getCredit() {
+        /* Access parent credit */
+        Account myCredit = theParent.getCredit();
+
+        /* Access iterator and skip first event */
+        Iterator<T> myIterator = iterator();
+        myIterator.next();
+
+        /* Loop through events */
+        while (myIterator.hasNext()) {
+            T myEvent = myIterator.next();
+
+            /* Ignore deleted children */
+            if (myEvent.isDeleted()) {
+                continue;
+            }
+
+            /* Handle different credits */
+            if (!myCredit.equals(myEvent.getCredit())) {
+                return NAME_SPLIT;
+            }
+        }
+
+        /* Return the standard credit name */
+        return myCredit.getName();
+    }
+
+    /**
+     * Get display category.
+     * @return the display text for category
+     */
+    public String getCategory() {
+        /* Access parent category */
+        EventCategory myCategory = theParent.getCategory();
+
+        /* Access iterator and skip first event */
+        Iterator<T> myIterator = iterator();
+        myIterator.next();
+
+        /* Loop through events */
+        while (myIterator.hasNext()) {
+            T myEvent = myIterator.next();
+
+            /* Ignore deleted children */
+            if (myEvent.isDeleted()) {
+                continue;
+            }
+
+            /* Handle different categories */
+            if (!myCategory.equals(myEvent.getCategory())) {
+                return NAME_SPLIT;
+            }
+        }
+
+        /* Return the standard category name */
+        return myCategory.getName();
+    }
+
+    /**
+     * Get display partner for account.
+     * @param pAccount the account
+     * @return the display text for partner
+     */
+    public String getPartner(final Account pAccount) {
+        /* Initialise partner name */
+        String myPartner = null;
+
+        /* Access iterator and loop through events */
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            T myEvent = myIterator.next();
+
+            /* Ignore deleted children */
+            if (myEvent.isDeleted()) {
+                continue;
+            }
+
+            /* If the event relates to the account */
+            if (myEvent.relatesTo(pAccount)) {
+                /* Access partner name */
+                String myName = (pAccount.equals(myEvent.getDebit()))
+                        ? myEvent.getCreditName()
+                        : myEvent.getDebitName();
+
+                /* Determine differences in partners */
+                if (myPartner == null) {
+                    myPartner = myName;
+                } else if (!Difference.isEqual(myName, myPartner)) {
+                    return NAME_SPLIT;
+                }
+            }
+        }
+
+        /* Return the standard partner name */
+        return myPartner;
+    }
+
+    /**
+     * Get display category for account.
+     * @param pAccount the account
+     * @return the display text for category
+     */
+    public String getCategory(final Account pAccount) {
+        /* Initialise category name */
+        String myCategory = null;
+
+        /* Access iterator and loop through events */
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            T myEvent = myIterator.next();
+
+            /* Ignore deleted children */
+            if (myEvent.isDeleted()) {
+                continue;
+            }
+
+            /* If the event relates to the account */
+            if (myEvent.relatesTo(pAccount)) {
+                /* Access category name */
+                String myName = myEvent.getCategoryName();
+
+                /* Determine differences in partners */
+                if (myCategory == null) {
+                    myCategory = myName;
+                } else if (!Difference.isEqual(myName, myCategory)) {
+                    return NAME_SPLIT;
+                }
+            }
+        }
+
+        /* Return the standard category name */
+        return myCategory;
+    }
+
+    /**
+     * Get display amount for account.
+     * @param pAccount the account
+     * @return the display amount
+     */
+    public JMoney getAmount(final Account pAccount) {
+        /* Initialise category name */
+        JMoney myAmount = new JMoney();
+
+        /* Access iterator and loop through events */
+        Iterator<T> myIterator = iterator();
+        while (myIterator.hasNext()) {
+            T myEvent = myIterator.next();
+
+            /* Ignore deleted children */
+            if (myEvent.isDeleted()) {
+                continue;
+            }
+
+            /* If the event relates to the account */
+            if (myEvent.relatesTo(pAccount)) {
+                /* Access amount */
+                JMoney myValue = myEvent.getAmount();
+
+                /* Handle deltas to the account */
+                if (pAccount.equals(myEvent.getCredit())) {
+                    myAmount.addAmount(myValue);
+                } else if ((!myEvent.isDividend())
+                           && (!myEvent.isInterest())) {
+                    myAmount.subtractAmount(myValue);
+                }
+            }
+        }
+
+        /* Return the amount */
+        return myAmount;
     }
 }

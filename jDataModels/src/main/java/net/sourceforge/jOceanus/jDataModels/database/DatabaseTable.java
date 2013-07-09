@@ -138,7 +138,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
      * @return is there a next line
      * @throws SQLException on error
      */
-    private boolean next() throws SQLException {
+    private boolean nextLine() throws SQLException {
         return theResults.next();
     }
 
@@ -310,7 +310,7 @@ public abstract class DatabaseTable<T extends DataItem & Comparable<? super T>> 
             executeQuery();
 
             /* Loop through the results */
-            while (next()) {
+            while (nextLine()) {
                 /* Read in the results */
                 theTable.loadResults(theResults);
                 Integer myId = theTable.getIntegerValue(DataItem.FIELD_ID);

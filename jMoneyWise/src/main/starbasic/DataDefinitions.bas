@@ -64,7 +64,7 @@ End Function
 
 'Access the Cached Account Statistics 
 Public Function getCachedAccount(ByRef Context As FinanceState, _
-				 ByRef Account As String) As AccountStats
+								 ByRef Account As String) As AccountStats
 	Dim myMap As Object
 	Dim myAccount As Object 
 	

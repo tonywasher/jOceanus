@@ -38,14 +38,13 @@ Public Const catNatInsurance As String = "Taxes:NatInsurance"
 Public Const catBenefit As String = "Taxes:DeemedBenefit"
 Public Const catCharityDonate As String = "Donations:Charity"
 Public Const catMktGrowth As String = "Market:Growth"
-Public Const catMktShrink As String = "Market:Shrink"
 Public Const catCapitalGain	As String = "Market:CapitalGain"
-Public Const catCapitalLoss	As String = "Market:CapitalLoss"
 Public Const catTaxableGain	As String = "Market:TaxableGain"
+Public Const catOpenBal As String = "Income:" + acctOpenBal
 
 'Analyse data for the year
 Sub analyseYear(ByRef Context As FinanceState, _
-		ByRef Year As String)
+				ByRef Year As String)
 	Dim myDoc As Object
 	Dim myRange As Object
     Dim myDebUnits As Double
@@ -347,13 +346,12 @@ End Sub
 
 'Value the priced assets
 Sub valuePricedAssets(ByRef Context As FinanceState, _
-		      ByRef Year As String)
+					  ByRef Year As String)
 	Dim myDoc As Object
 	Dim myAcct As Object
 	Dim myAccount As Object
 	Dim myMarket As Object
 	Dim myGrowth As Object
-	Dim myShrink As Object
 	Dim myRow As Integer
 	Dim myCol As Integer
 	Dim myValue As Double
@@ -370,9 +368,7 @@ Sub valuePricedAssets(ByRef Context As FinanceState, _
 	
 	'Access the market categories
 	myGrowth   = getCategoryStats(Context, catMktGrowth)
-	myShrink   = getCategoryStats(Context, catMktShrink)
 	myCapGains = getCategoryStats(Context, catCapitalGain)
-	myCapLoss  = getCategoryStats(Context, catCapitalLoss)
 	
 	'Loop through the Accounts 
 	myIterator = hashIterator(Context.mapAccounts)
@@ -448,8 +444,8 @@ Sub valuePricedAssets(ByRef Context As FinanceState, _
     					myCapGains.catValue = myCapGains.catValue + myAccount.acctGains
 						myMarket.acctIncome = myMarket.acctIncome + myAccount.acctGains
     				Else
-    					'Add to capital Loss
-    					myCapLoss.catValue = myCapLoss.catValue - myAccount.acctGains	
+    					'Add to capital Gains
+    					myCapGains.catValue = myCapGains.catValue + myAccount.acctGains	
 						myMarket.acctExpense = myMarket.acctExpense - myAccount.acctGains
 					End If
 
@@ -478,7 +474,7 @@ Sub valuePricedAssets(ByRef Context As FinanceState, _
 				myGrowth.catValue = myGrowth.catValue + myValue
 			Else 
 				myMarket.acctExpense = myMarket.acctExpense - myValue
-				myShrink.catValue = myShrink.catValue - myValue
+				myGrowth.catValue = myGrowth.catValue + myValue
 			End If
 		
 		'Else check for rounding errors on zero values

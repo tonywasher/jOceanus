@@ -419,6 +419,11 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
             return FIELD_DEFS;
         }
 
+        @Override
+        public boolean includeDataXML() {
+            return false;
+        }
+
         /**
          * Construct a generic data info list.
          * @param pBaseClass the class of the underlying object

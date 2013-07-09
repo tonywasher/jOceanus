@@ -30,6 +30,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jOceanus.jDataModels.data.DataInfoSet.InfoSetItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
 import net.sourceforge.jOceanus.jDataModels.data.DataSet;
@@ -47,7 +48,8 @@ import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
  * @author Tony Washer
  */
 public class TaxYear
-        extends TaxYearBase {
+        extends TaxYearBase
+        implements InfoSetItem {
     /**
      * Object name.
      */
@@ -109,10 +111,7 @@ public class TaxYear
      */
     private final TaxInfoSet theInfoSet;
 
-    /**
-     * Obtain InfoSet.
-     * @return the infoSet
-     */
+    @Override
     public TaxInfoSet getInfoSet() {
         return theInfoSet;
     }
