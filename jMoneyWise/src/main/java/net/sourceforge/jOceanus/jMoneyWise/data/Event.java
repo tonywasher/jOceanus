@@ -780,6 +780,20 @@ public class Event
         theInfoSet.touchUnderlyingItems();
     }
 
+    @Override
+    public boolean relatesTo(final Account pAccount) {
+        /* Determine standard relations */
+        boolean myResult = super.relatesTo(pAccount);
+
+        /* If not currently related, check thirdParty */
+        if (!myResult) {
+            myResult = Difference.isEqual(pAccount, getThirdParty());
+        }
+
+        /* Return the result */
+        return myResult;
+    }
+
     /**
      * Update base event from an edited event.
      * @param pEvent the edited event
@@ -803,9 +817,6 @@ public class Event
         return checkForHistory();
     }
 
-    /**
-     * Register a child event
-     */
     /**
      * The BaseEvent List class.
      * @param <T> the Event type

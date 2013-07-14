@@ -42,7 +42,7 @@ import org.w3c.dom.NodeList;
  * Arguments class for DataItem.
  * @author Tony Washer
  */
-public class DataArguments {
+public class DataValues {
     /**
      * InfoSet Items tag.
      */
@@ -97,9 +97,9 @@ public class DataArguments {
 
     /**
      * Constructor.
-     * @param pItem the Item to obtain arguments from
+     * @param pItem the Item to obtain values from
      */
-    private DataArguments(final DataItem pItem) {
+    private DataValues(final DataItem pItem) {
         /* Store Item type */
         theItemType = pItem.getDataFields().getName();
 
@@ -160,11 +160,11 @@ public class DataArguments {
 
     /**
      * Constructor.
-     * @param pElement the Item to obtain arguments from
+     * @param pElement the Item to obtain values from
      * @param pFields the field definitions
      */
-    public DataArguments(final Element pElement,
-                         final JDataFields pFields) {
+    public DataValues(final Element pElement,
+                      final JDataFields pFields) {
         /* Store Item type */
         theItemType = pElement.getNodeName();
 
@@ -210,7 +210,7 @@ public class DataArguments {
                     Element myChild = (Element) myCurr;
 
                     /* Add item to the list */
-                    InfoItem myInfo = new InfoItem(myChild, getId(myChild));
+                    InfoItem myInfo = new InfoItem(myChild);
                     theInfoItems.add(myInfo);
                 }
             }
@@ -225,7 +225,7 @@ public class DataArguments {
      * Constructor.
      * @param pName the Item type
      */
-    public DataArguments(final String pName) {
+    public DataValues(final String pName) {
         /* Store Item type */
         this(pName, false);
     }
@@ -235,8 +235,8 @@ public class DataArguments {
      * @param pName the Item type
      * @param hasInfoSet does this item have an infoSet?
      */
-    public DataArguments(final String pName,
-                         final boolean hasInfoSet) {
+    public DataValues(final String pName,
+                      final boolean hasInfoSet) {
         /* Store Item type */
         theItemType = pName;
 
@@ -265,7 +265,7 @@ public class DataArguments {
      * @param pElement the element.
      * @return the id
      */
-    protected Integer getId(final Element pElement) {
+    protected static Integer getId(final Element pElement) {
         /* Access the id */
         String myId = pElement.getAttribute(DataItem.FIELD_ID.getName());
         return (myId.length() > 0)
@@ -279,8 +279,8 @@ public class DataArguments {
      * @param pName the element name
      * @return the element
      */
-    private Element getChild(final Element pParent,
-                             final String pName) {
+    private static Element getChild(final Element pParent,
+                                    final String pName) {
         /* Obtain the node list */
         NodeList myList = pParent.getElementsByTagName(pName);
         if (myList.getLength() == 0) {
@@ -389,7 +389,7 @@ public class DataArguments {
             DataItem myItem = (DataItem) myObject;
 
             /* Create DataArguments for item */
-            DataArguments myArgs = new DataArguments(myItem);
+            DataValues myArgs = new DataValues(myItem);
 
             /* Add the child to the list */
             Element myChild = myArgs.createXML(pDocument);
@@ -486,13 +486,11 @@ public class DataArguments {
         /**
          * Constructor.
          * @param pElement the XML element
-         * @param pId the Id of the item
          */
-        private InfoItem(final Element pElement,
-                         final Integer pId) {
+        private InfoItem(final Element pElement) {
             /* Store values */
             theName = pElement.getNodeName();
-            theId = pId;
+            theId = DataValues.getId(pElement);
             theValue = pElement.getTextContent();
         }
 

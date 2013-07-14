@@ -116,7 +116,7 @@ public class Analysis
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_TAXCATS.equals(pField)) {
-            return (theTaxCategories.size() > 0)
+            return ((theTaxCategories != null) && (theTaxCategories.size() > 0))
                     ? theTaxCategories
                     : JDataFieldValue.SkipField;
         }

@@ -508,6 +508,13 @@ public class SheetEvent
                         myDonation = myCell.getStringValue();
                     }
 
+                    /* Handle ThirdParty which may be missing */
+                    myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                    String myThirdParty = null;
+                    if (myCell != null) {
+                        myThirdParty = myCell.getStringValue();
+                    }
+
                     /* If we have a null date */
                     Event myEvent;
                     if ((myDate == null)
@@ -547,6 +554,7 @@ public class SheetEvent
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.Reference, myReference);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.QualifyYears, myYears);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.CharityDonation, myDonation);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.ThirdParty, myThirdParty);
 
                     /* Report the progress */
                     myCount++;
@@ -595,6 +603,15 @@ public class SheetEvent
                                  final SheetDataItem<Event> pOwner,
                                  final int pBaseCol) {
             super(pClass, pOwner, pBaseCol);
+        }
+
+        @Override
+        public void formatSheet() throws JDataException {
+            /* Apply basic formatting */
+            super.formatSheet();
+
+            /* Set the Validations */
+            applyDataValidation(EventInfoClass.ThirdParty, SheetAccount.AREA_ACCOUNTNAMES);
         }
     }
 }

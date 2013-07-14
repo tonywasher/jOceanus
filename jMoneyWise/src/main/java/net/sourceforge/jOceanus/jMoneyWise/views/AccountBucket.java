@@ -77,6 +77,11 @@ public final class AccountBucket
     private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(CategoryType.class.getSimpleName());
 
     /**
+     * Capital Events Field Id.
+     */
+    private static final JDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(CapitalEventList.class.getSimpleName());
+
+    /**
      * Base Field Id.
      */
     private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
@@ -141,6 +146,11 @@ public final class AccountBucket
         }
         if (FIELD_TYPE.equals(pField)) {
             return theType;
+        }
+        if (FIELD_CAPITAL.equals(pField)) {
+            return (theEvents != null)
+                    ? theEvents
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_BASE.equals(pField)) {
             return (theBase != null)
@@ -766,8 +776,14 @@ public final class AccountBucket
         setAttribute(AccountAttribute.Valuation, myUnits.valueAtPrice(myPrice));
         JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
         setAttribute(AccountAttribute.MarketValue, myValuation);
+    }
 
+    /**
+     * calculate the profit for a priced asset.
+     */
+    protected void calculateProfit() {
         /* Calculate the profit */
+        JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
         JMoney myProfit = new JMoney(myValuation);
         myProfit.subtractAmount(getMoneyAttribute(AccountAttribute.Cost));
         myProfit.addAmount(getMoneyAttribute(AccountAttribute.Gained));

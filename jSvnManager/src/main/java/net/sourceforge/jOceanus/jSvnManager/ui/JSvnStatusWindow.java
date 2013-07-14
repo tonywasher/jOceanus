@@ -41,11 +41,23 @@ import net.sourceforge.jOceanus.jSvnManager.data.JSvnReporter.ReportTask;
  * Status window for SubVersion operations.
  * @author Tony Washer
  */
-public class JSvnStatusWindow extends JPanel implements ReportTask {
+public class JSvnStatusWindow
+        extends JPanel
+        implements ReportTask {
     /**
      * Serial Id.
      */
     private static final long serialVersionUID = -97846502218500569L;
+
+    /**
+     * Window Height.
+     */
+    private static final int WINDOW_HEIGHT = 400;
+
+    /**
+     * Window Width.
+     */
+    private static final int WINDOW_WIDTH = 600;
 
     /**
      * SvnManager.
@@ -104,7 +116,7 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
         /* Create the scrollPane */
         theScroll = new JScrollPane();
         theScroll.setViewportView(theText);
-        theScroll.setPreferredSize(new Dimension(600, 400));
+        theScroll.setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
 
         /* Add listener */
         StatusListener myListener = new StatusListener();
@@ -179,7 +191,8 @@ public class JSvnStatusWindow extends JPanel implements ReportTask {
     /**
      * Status Listener class.
      */
-    private final class StatusListener implements ActionListener {
+    private final class StatusListener
+            implements ActionListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();

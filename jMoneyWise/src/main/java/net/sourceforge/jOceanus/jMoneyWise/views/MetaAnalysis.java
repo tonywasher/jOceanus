@@ -45,6 +45,7 @@ import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
@@ -246,6 +247,18 @@ public class MetaAnalysis {
             /* Produce event category totals */
             myEventTotals.produceTotals(this);
             calculateTransProfit();
+
+            /* Access deltas */
+            AccountCategoryBucket myAccountTotal = myAccountTotals.getTotalsBucket();
+            JMoney myAssetDelta = myAccountTotal.getMoneyAttribute(AccountAttribute.ValueDelta);
+            JMoney myIncomeDelta = myAccountTotal.getMoneyAttribute(AccountAttribute.IncomeDelta);
+            JMoney myCategoryDelta = myEventTotals.getTotalsBucket().getMoneyAttribute(EventAttribute.IncomeDelta);
+
+            /* Check for errors */
+            if ((!myAssetDelta.equals(myIncomeDelta))
+                || (!myAssetDelta.equals(myCategoryDelta))) {
+                myAccountTotal = null;
+            }
         }
     }
 
@@ -327,9 +340,10 @@ public class MetaAnalysis {
         myEvent.setAttribute(CapitalAttribute.InitialGained, new JMoney(myGained));
         myEvent.setAttribute(CapitalAttribute.DeltaGained, myDeltaGained);
 
-        /* Adjust the Gained Total */
+        /* Adjust the Gained Total and calculate the profit */
         myGained.addAmount(myDeltaGained);
         myEvent.setAttribute(CapitalAttribute.FinalGained, myGained);
+        pAsset.calculateProfit();
 
         /* If the market movement is positive */
         if (myMarket.isPositive()) {

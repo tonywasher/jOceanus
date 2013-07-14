@@ -347,23 +347,24 @@ public final class EventCategoryBucket
         AccountType myCreditType = AccountType.deriveType(pEvent.getCredit());
         TransactionType myCatTran = TransactionType.deriveType(pEvent.getCategory());
         TransactionType myActTran = myDebitType.getTransactionType(myCreditType);
+        JMoney myExpense = getMoneyAttribute(EventAttribute.Expense);
+        JMoney myIncome = getMoneyAttribute(EventAttribute.Income);
 
         /* If this is an expense */
         if (myCatTran.isExpense()) {
-            /* Access expense */
-            JMoney myExpense = getMoneyAttribute(EventAttribute.Expense);
-
             /* If this is a recovered expense */
             if (myActTran.isIncome()) {
-                /* Subtract the amount */
-                myExpense.subtractAmount(pEvent.getAmount());
+                myIncome.addAmount(pEvent.getAmount());
             } else {
                 myExpense.addAmount(pEvent.getAmount());
             }
         } else {
-            /* Adjust income */
-            JMoney myMoney = getMoneyAttribute(EventAttribute.Income);
-            myMoney.addAmount(pEvent.getAmount());
+            /* If this is a returned income */
+            if (myActTran.isExpense()) {
+                myExpense.addAmount(pEvent.getAmount());
+            } else {
+                myIncome.addAmount(pEvent.getAmount());
+            }
 
             /* Access subValues */
             JMoney myTaxCredit = pEvent.getTaxCredit();
@@ -373,26 +374,26 @@ public final class EventCategoryBucket
 
             /* If there is a tax credit */
             if (myTaxCredit != null) {
-                myMoney = getMoneyAttribute(EventAttribute.TaxCredit);
-                myMoney.addAmount(myTaxCredit);
+                myIncome = getMoneyAttribute(EventAttribute.TaxCredit);
+                myIncome.addAmount(myTaxCredit);
             }
 
             /* If there is national insurance */
             if (myNatIns != null) {
-                myMoney = getMoneyAttribute(EventAttribute.NatInsurance);
-                myMoney.addAmount(myNatIns);
+                myIncome = getMoneyAttribute(EventAttribute.NatInsurance);
+                myIncome.addAmount(myNatIns);
             }
 
             /* If there is a benefit */
             if (myBenefit != null) {
-                myMoney = getMoneyAttribute(EventAttribute.Benefit);
-                myMoney.addAmount(myBenefit);
+                myIncome = getMoneyAttribute(EventAttribute.Benefit);
+                myIncome.addAmount(myBenefit);
             }
 
             /* If there is a donation */
             if (myDonation != null) {
-                myMoney = getMoneyAttribute(EventAttribute.Donation);
-                myMoney.addAmount(myDonation);
+                myIncome = getMoneyAttribute(EventAttribute.Donation);
+                myIncome.addAmount(myDonation);
             }
         }
     }

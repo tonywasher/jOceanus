@@ -761,6 +761,7 @@ public class AnalysisReport {
         theReport.makeLinkSubHeading(myOutput, pAsset.getName());
         theReport.startTable(myOutput);
         theReport.makeTableColumn(myOutput, "Date");
+        theReport.makeTableColumn(myOutput, "Event");
         theReport.makeTableColumn(myOutput, "DeltaUnits");
         theReport.makeTableColumn(myOutput, "DeltaCost");
         theReport.makeTableColumn(myOutput, "DeltaGains");
@@ -782,6 +783,7 @@ public class AnalysisReport {
 
             /* Format the detail */
             theReport.startDataRow(myOutput, isOdd, theFormatter.formatObject(myEvent.getDate()));
+            theReport.makeValueCell(myOutput, myEvent.getCategory());
             theReport.makeValueCell(myOutput, myEvent.getUnitsAttribute(CapitalAttribute.DeltaUnits));
             theReport.makeValueCell(myOutput, myEvent.getMoneyAttribute(CapitalAttribute.DeltaCost));
             theReport.makeValueCell(myOutput, myEvent.getMoneyAttribute(CapitalAttribute.DeltaGains));
@@ -794,6 +796,7 @@ public class AnalysisReport {
 
         /* Build Totals */
         theReport.startTotalLinkRow(myOutput, TOTAL_TEXT);
+        theReport.makeTotalCell(myOutput);
         theReport.makeTotalCell(myOutput, pAsset.getUnitsAttribute(AccountAttribute.Units));
         theReport.makeTotalCell(myOutput, pAsset.getMoneyAttribute(AccountAttribute.Cost));
         theReport.makeTotalCell(myOutput, pAsset.getMoneyAttribute(AccountAttribute.Gained));

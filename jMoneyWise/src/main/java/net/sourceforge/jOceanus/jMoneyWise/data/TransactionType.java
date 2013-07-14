@@ -169,7 +169,6 @@ public enum TransactionType {
             case OtherIncome:
             case RentalIncome:
             case Inherited:
-            case LoanInterest:
             case OpeningBalance:
             case MarketGrowth:
             case CapitalGain:
@@ -194,6 +193,7 @@ public enum TransactionType {
             case NatInsurance:
             case Benefit:
             case CharityDonation:
+            case LoanInterest:
             default:
                 return Expense;
         }

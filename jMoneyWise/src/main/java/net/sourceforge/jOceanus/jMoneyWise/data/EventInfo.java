@@ -533,7 +533,7 @@ public class EventInfo
         /* Switch on info class */
         switch (getInfoClass()) {
             case ThirdParty:
-                getAccount().touchItem(this);
+                getAccount().touchItem(getOwner());
                 break;
             default:
                 break;

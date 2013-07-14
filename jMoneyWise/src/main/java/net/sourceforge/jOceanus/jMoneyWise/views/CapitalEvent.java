@@ -37,10 +37,10 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
-import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
 
 /**
  * Capital Events relating to asset movements.
@@ -69,6 +69,11 @@ public final class CapitalEvent
     private final Map<CapitalAttribute, JDecimal> theAttributes;
 
     /**
+     * The account.
+     */
+    private final Account theAccount;
+
+    /**
      * The event.
      */
     private final Event theEvent;
@@ -77,6 +82,11 @@ public final class CapitalEvent
      * The Date of the event.
      */
     private final JDateDay theDate;
+
+    /**
+     * Account field id.
+     */
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
 
     /**
      * Date field id.
@@ -89,9 +99,22 @@ public final class CapitalEvent
     public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField("Event");
 
     /**
+     * Category Field id.
+     */
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityField("Category");
+
+    /**
      * FieldSet map.
      */
     private static final Map<JDataField, CapitalAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, CapitalAttribute.class);
+
+    /**
+     * Obtain the account.
+     * @return the account.
+     */
+    public Account getAccount() {
+        return theAccount;
+    }
 
     /**
      * Obtain the date.
@@ -109,6 +132,16 @@ public final class CapitalEvent
         return theEvent;
     }
 
+    /**
+     * Obtain the category.
+     * @return the category.
+     */
+    public EventCategory getCategory() {
+        return (theEvent != null)
+                ? theEvent.getCategory()
+                : null;
+    }
+
     @Override
     public Integer getOrderedId() {
         /* This is the id of the event, or in the case where there is no event, the negative Date id */
@@ -120,6 +153,9 @@ public final class CapitalEvent
     @Override
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
+        if (FIELD_ACCOUNT.equals(pField)) {
+            return theAccount;
+        }
         if (FIELD_DATE.equals(pField)) {
             return theDate;
         }
@@ -127,6 +163,11 @@ public final class CapitalEvent
             return (theEvent == null)
                     ? JDataFieldValue.SkipField
                     : theEvent;
+        }
+        if (FIELD_CATEGORY.equals(pField)) {
+            return (theEvent == null)
+                    ? JDataFieldValue.SkipField
+                    : getCategory();
         }
 
         /* Handle Attribute fields */
@@ -220,27 +261,33 @@ public final class CapitalEvent
 
     /**
      * Constructor.
+     * @param pAccount the owning account
      * @param pEvent the underlying event
      */
-    private CapitalEvent(final Event pEvent) {
+    private CapitalEvent(final Account pAccount,
+                         final Event pEvent) {
         /* Create the attributes map */
         theAttributes = new EnumMap<CapitalAttribute, JDecimal>(CapitalAttribute.class);
 
         /* Store the values */
         theDate = pEvent.getDate();
+        theAccount = pAccount;
         theEvent = pEvent;
     }
 
     /**
      * Constructor.
+     * @param pAccount the owning account
      * @param pDate the date of the event
      */
-    private CapitalEvent(final JDateDay pDate) {
+    private CapitalEvent(final Account pAccount,
+                         final JDateDay pDate) {
         /* Create the attributes map */
         theAttributes = new EnumMap<CapitalAttribute, JDecimal>(CapitalAttribute.class);
 
         /* Store the values */
         theDate = pDate;
+        theAccount = pAccount;
         theEvent = null;
     }
 
@@ -471,7 +518,7 @@ public final class CapitalEvent
          */
         protected CapitalEvent addEvent(final Event pEvent) {
             /* Create the Capital Event and add to list */
-            CapitalEvent myEvent = new CapitalEvent(pEvent);
+            CapitalEvent myEvent = new CapitalEvent(theAccount, pEvent);
             append(myEvent);
 
             /* return the new event */
@@ -485,33 +532,11 @@ public final class CapitalEvent
          */
         protected CapitalEvent addEvent(final JDateDay pDate) {
             /* Create the Capital Event and add to list */
-            CapitalEvent myEvent = new CapitalEvent(pDate);
+            CapitalEvent myEvent = new CapitalEvent(theAccount, pDate);
             append(myEvent);
 
             /* return the new event */
             return myEvent;
-        }
-
-        /**
-         * Find the cash takeover event (if present).
-         * @return the Capital Event
-         */
-        protected CapitalEvent getCashTakeOver() {
-            /* Create the iterator */
-            OrderedListIterator<CapitalEvent> myIterator = listIterator();
-
-            /* Access the last element */
-            CapitalEvent myEvent = myIterator.peekLast();
-
-            /* If the element is a cash takeover */
-            if ((myEvent != null)
-                && (myEvent.getEvent() != null)) {
-                // && (myEvent.getEvent().getCategoryClass() == EventCategoryClass.CashTakeOver)) TODO {
-                return myEvent;
-            }
-
-            /* Return no such event */
-            return null;
         }
 
         /**
@@ -653,33 +678,28 @@ public final class CapitalEvent
         MarketMovement,
 
         /**
-         * The Takeover Cost Attribute.
+         * The Takeover Cash Cost Portion Attribute.
          */
-        TakeOverCost,
+        TakeOverCashCost,
 
         /**
-         * The Takeover Cash Attribute.
+         * The Takeover Stock Cost Portion Attribute.
          */
-        TakeOverCash,
+        TakeOverStockCost,
 
         /**
-         * The Takeover Stock Attribute.
+         * The Takeover Cash Value Attribute.
          */
-        TakeOverStock,
+        TakeOverCashValue,
 
         /**
-         * The Takeover Total Attribute.
+         * The Takeover Stock Price Attribute.
          */
-        TakeOverTotal,
+        TakeOverStockPrice,
 
         /**
-         * The Takeover Price Attribute.
+         * The Takeover Stock Value Attribute.
          */
-        TakeOverPrice,
-
-        /**
-         * The Takeover Value Attrribute.
-         */
-        TakeoverValue;
+        TakeOverStockValue;
     }
 }

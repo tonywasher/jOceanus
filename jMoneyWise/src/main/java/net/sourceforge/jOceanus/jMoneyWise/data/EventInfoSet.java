@@ -292,10 +292,20 @@ public class EventInfoSet
                         ? JDataFieldRequired.MustExist
                         : JDataFieldRequired.NotAllowed;
 
+                /* Qualify Years is possible only for StockTakeOver */
+            case ThirdParty:
+                switch (myClass) {
+                    case StockTakeOver:
+                        return myEvent.getAmount().isNonZero()
+                                ? JDataFieldRequired.MustExist
+                                : JDataFieldRequired.NotAllowed;
+                    default:
+                        return JDataFieldRequired.NotAllowed;
+                }
+
             default:
             case Pension:
             case CreditAmount:
-            case ThirdParty:
                 return JDataFieldRequired.NotAllowed;
         }
     }
@@ -385,6 +395,13 @@ public class EventInfoSet
                         myEvent.addError(DataItem.ERROR_RANGE, getFieldForClass(myClass));
                     }
                     break;
+                case ThirdParty:
+                    /* Check account type */
+                    Account myThirdParty = myInfo.getAccount();
+                    if (!myThirdParty.isSavings()) {
+                        myEvent.addError("Invalid Account", getFieldForClass(myClass));
+                    }
+                    break;
                 case Reference:
                 case Comments:
                     /* Check length */
@@ -394,7 +411,6 @@ public class EventInfoSet
                     }
                     break;
                 default:
-                case ThirdParty:
                 case CreditAmount:
                 case Pension:
                     break;

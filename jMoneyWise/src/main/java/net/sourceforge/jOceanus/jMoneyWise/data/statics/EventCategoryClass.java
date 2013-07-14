@@ -171,46 +171,51 @@ public enum EventCategoryClass implements StaticInterface {
     MarketGrowth(28, 27),
 
     /**
+     * CurrencyFluctuation.
+     */
+    CurrencyFluctuation(29, 28),
+
+    /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TaxCredit(29, 28),
+    TaxCredit(30, 29),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NatInsurance(30, 29),
+    NatInsurance(31, 30),
 
     /**
      * Benefit.
      * <p>
      * This is a singular category catching benefit payments associated with an event.
      */
-    Benefit(31, 30),
+    Benefit(32, 31),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CharityDonation(32, 31),
+    CharityDonation(33, 32),
 
     /**
      * Category.
      * <p>
      * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
      */
-    Category(33, 32),
+    Category(34, 33),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    Totals(34, 33);
+    Totals(35, 34);
 
     /**
      * Class Id.
@@ -269,6 +274,7 @@ public enum EventCategoryClass implements StaticInterface {
             case TaxFreeDividend:
             case TaxFreeInterest:
             case MarketGrowth:
+            case CurrencyFluctuation:
             case TaxCredit:
             case NatInsurance:
             case Benefit:
@@ -293,6 +299,7 @@ public enum EventCategoryClass implements StaticInterface {
             case TaxFreeInterest:
             case OpeningBalance:
             case MarketGrowth:
+            case CurrencyFluctuation:
             case TaxCredit:
             case NatInsurance:
             case Benefit:
