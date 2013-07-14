@@ -9,6 +9,7 @@
     <section name="Build History">
       <dl>
         <dt>v1.1.0-b1</dt> <dd>initial upload of code</dd>
+        <dt>v1.2.0-b1</dt> <dd>migration to Quicken category types</dd>
       </dl>
     </section>
   </body>
