@@ -83,12 +83,6 @@
       <version>1.2.8</version>
     </dependency>
   </dependencies>
-  <scm>
-    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</connection>
-    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</developerConnection>
-    <tag>HEAD</tag>
-    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}/${svnComponent}</url>
-  </scm>
   <properties>
     <svnComponent>jJira</svnComponent>
     <packageName>${project.groupId}.${svnComponent}</packageName>

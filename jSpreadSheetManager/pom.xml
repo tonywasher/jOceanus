@@ -30,12 +30,6 @@
       <version>${XercesVersion}</version>
     </dependency>
   </dependencies>
-  <scm>
-    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</connection>
-    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</developerConnection>
-    <tag>HEAD</tag>
-    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}/${svnComponent}</url>
-  </scm>
   <properties>
     <svnComponent>jSpreadSheetManager</svnComponent>
     <packageName>${project.groupId}.${svnComponent}</packageName>

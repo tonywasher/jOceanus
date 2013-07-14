@@ -20,12 +20,6 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  <scm>
-    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</connection>
-    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</developerConnection>
-    <tag>HEAD</tag>
-    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}/${svnComponent}</url>
-  </scm>
   <properties>
     <svnComponent>jDateDay</svnComponent>
     <packageName>${project.groupId}.${svnComponent}</packageName>

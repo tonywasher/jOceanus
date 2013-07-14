@@ -8,12 +8,6 @@
   <artifactId>jLayoutManager</artifactId>
   <name>Java Swing Layout Manager Utilities</name>
   <description>Java Swing Layout Manager Utilities</description>
-  <scm>
-    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</connection>
-    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</developerConnection>
-    <tag>HEAD</tag>
-    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}/${svnComponent}</url>
-  </scm>
   <properties>
     <svnComponent>jLayoutManager</svnComponent>
     <packageName>${project.groupId}.${svnComponent}</packageName>

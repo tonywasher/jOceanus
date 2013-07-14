@@ -8,12 +8,6 @@
   <artifactId>jTableFilter</artifactId>
   <name>JTable Row Filter</name>
   <description>JTable RowSorter than implements a simplified filter/sort mechanism based on natural order of the rows</description>
-  <scm>
-    <connection>scm:svn:http://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</connection>
-    <developerConnection>scm:svn:https://${svnHost}/svn/${svnRepository}/${svnBase}/${svnComponent}</developerConnection>
-    <tag>HEAD</tag>
-    <url>http://${svnHost}/viewvc/${svnRepository}/${svnBase}/${svnComponent}</url>
-  </scm>
   <properties>
     <svnComponent>jTableFilter</svnComponent>
     <packageName>${project.groupId}.${svnComponent}</packageName>
