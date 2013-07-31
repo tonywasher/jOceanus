@@ -91,6 +91,11 @@ public class AccountCategory
      */
     public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField("Parent");
 
+    /**
+     * SubCategory Field Id.
+     */
+    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField("SubCategory");
+
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
@@ -226,6 +231,14 @@ public class AccountCategory
     }
 
     /**
+     * Obtain subCategory.
+     * @return the subCategory
+     */
+    public String getSubCategory() {
+        return getSubCategory(getValueSet());
+    }
+
+    /**
      * Obtain Name.
      * @param pValueSet the valueSet
      * @return the Name
@@ -295,6 +308,15 @@ public class AccountCategory
      */
     public static AccountCategory getParentCategory(final ValueSet pValueSet) {
         return pValueSet.getValue(FIELD_PARENT, AccountCategory.class);
+    }
+
+    /**
+     * Obtain SubCategory.
+     * @param pValueSet the valueSet
+     * @return the subCategory
+     */
+    public static String getSubCategory(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_SUBCAT, String.class);
     }
 
     /**
@@ -397,6 +419,14 @@ public class AccountCategory
         getValueSet().setValue(FIELD_PARENT, pValue);
     }
 
+    /**
+     * Set subCategory name.
+     * @param pValue the value
+     */
+    private void setValueSubCategory(final String pValue) {
+        getValueSet().setValue(FIELD_SUBCAT, pValue);
+    }
+
     @Override
     public FinanceData getDataSet() {
         return (FinanceData) super.getDataSet();
@@ -457,6 +487,9 @@ public class AccountCategory
             setValueName(pName);
             setValueDesc(pDesc);
 
+            /* Resolve the subCategory */
+            resolveSubCategory();
+
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
@@ -492,6 +525,9 @@ public class AccountCategory
             /* Record the encrypted values */
             setValueName(pName);
             setValueDesc(pDesc);
+
+            /* Resolve the subCategory */
+            resolveSubCategory();
 
             /* Catch Exceptions */
         } catch (JDataException e) {
@@ -590,12 +626,35 @@ public class AccountCategory
     }
 
     /**
+     * Resolve subCategory name.
+     */
+    private void resolveSubCategory() {
+        /* Set to null */
+        setValueSubCategory(null);
+
+        /* Obtain the name */
+        String myName = getName();
+        if (myName != null) {
+            /* Look for separator */
+            int iIndex = myName.indexOf(EventCategory.STR_SEP);
+            if (iIndex != -1) {
+                /* Access and set subCategory */
+                String mySub = myName.substring(iIndex + 1);
+                setValueSubCategory(mySub);
+            }
+        }
+    }
+
+    /**
      * Set a new category name.
      * @param pName the new name
      * @throws JDataException on error
      */
     public void setCategoryName(final String pName) throws JDataException {
         setValueName(pName);
+
+        /* Resolve the subCategory */
+        resolveSubCategory();
     }
 
     /**

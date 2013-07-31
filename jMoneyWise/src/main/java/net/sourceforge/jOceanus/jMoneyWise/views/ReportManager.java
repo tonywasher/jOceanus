@@ -35,6 +35,9 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -44,21 +47,21 @@ import org.xml.sax.InputSource;
  * Provides functionality to hide and restore sections of an HTML document. This is useful for displaying HTML documents in a jEditorPane, allowing a click to
  * open/close sections of the document.
  */
-public class HTMLSectionManager {
+public class ReportManager {
     /**
      * The division element.
      */
-    private static final String ELEMENT_DIV = "div";
+    private static final String ELEMENT_ROW = HTMLBuilder.ELEMENT_ROW;
 
     /**
      * The id attribute.
      */
-    private static final String ATTR_ID = "id";
+    private static final String ATTR_ID = HTMLBuilder.ATTR_ID;
 
     /**
      * The class attribute.
      */
-    private static final String ATTR_CLASS = "class";
+    private static final String ATTR_CLASS = HTMLBuilder.ATTR_CLASS;
 
     /**
      * The Document Builder.
@@ -87,8 +90,9 @@ public class HTMLSectionManager {
 
     /**
      * Constructor.
+     * @throws JDataException on error
      */
-    public HTMLSectionManager() {
+    public ReportManager() throws JDataException {
         /* Allocate the hashMap */
         theMap = new HashMap<String, Element>();
 
@@ -104,16 +108,16 @@ public class HTMLSectionManager {
             theXformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
 
         } catch (Exception e) {
-            theBuilder = null;
-            theXformer = null;
+            throw new JDataException(ExceptionClass.XML, "Failed to create", e);
         }
     }
 
     /**
      * Set Text.
      * @param pText the text to parse
+     * @throws JDataException on error
      */
-    public void setInitialText(final String pText) {
+    public void setInitialText(final String pText) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Store the text */
@@ -126,16 +130,31 @@ public class HTMLSectionManager {
                 theDocument = theBuilder.parse(new InputSource(new StringReader(pText)));
             }
         } catch (Exception e) {
-            theDocument = null;
+            throw new JDataException(ExceptionClass.XML, "Failed to parse text", e);
         }
+    }
+
+    /**
+     * Set Document.
+     * @param pDocument the document
+     * @throws JDataException on error
+     */
+    public void setDocument(final Document pDocument) throws JDataException {
+        /* Store the document */
+        theMap.clear();
+        theDocument = pDocument;
+
+        /* Format the document */
+        formatXML();
     }
 
     /**
      * Toggle section.
      * @param pId the id of the text to toggle.
      * @return the modified text
+     * @throws JDataException on error
      */
-    public String toggleSection(final String pId) {
+    public String toggleSection(final String pId) throws JDataException {
         /* If the section is hidden */
         if (theMap.get(pId) != null) {
             return restoreSection(pId);
@@ -149,10 +168,12 @@ public class HTMLSectionManager {
      * Hide all section of specified class.
      * @param pClass the class of the sections to hide.
      * @return the modified text
+     * @throws JDataException on error
      */
-    public String hideClassSections(final String pClass) {
+    public String hideClassSections(final String pClass) throws JDataException {
         /* Ignore if we have no document or transformer */
-        if ((theDocument == null) || (theXformer == null)) {
+        if ((theDocument == null)
+            || (theXformer == null)) {
             /* Return current text */
             return theText;
         }
@@ -213,7 +234,7 @@ public class HTMLSectionManager {
                 return;
             }
             /* Create a new placeholder section */
-            Element myReplacement = theDocument.createElement(ELEMENT_DIV);
+            Element myReplacement = theDocument.createElement(ELEMENT_ROW);
             myReplacement.setAttribute(ATTR_ID, myId);
 
             /* Access parent node */
@@ -231,10 +252,12 @@ public class HTMLSectionManager {
      * Hide section.
      * @param pId the id of the section to hide.
      * @return the modified text
+     * @throws JDataException on error
      */
-    public String hideSection(final String pId) {
+    public String hideSection(final String pId) throws JDataException {
         /* Ignore if we have no document or transformer */
-        if ((theDocument == null) || (theXformer == null)) {
+        if ((theDocument == null)
+            || (theXformer == null)) {
             /* Return current text */
             return theText;
         }
@@ -251,7 +274,7 @@ public class HTMLSectionManager {
             Node myParent = mySection.getParentNode();
 
             /* Create a new placeholder section */
-            Element myReplacement = theDocument.createElement(ELEMENT_DIV);
+            Element myReplacement = theDocument.createElement(ELEMENT_ROW);
             myReplacement.setAttribute(ATTR_ID, pId);
 
             /* Remove the child and replace with dummy */
@@ -334,10 +357,12 @@ public class HTMLSectionManager {
      * Restore section.
      * @param pId the id of the section to restore.
      * @return the modified text
+     * @throws JDataException on error
      */
-    public String restoreSection(final String pId) {
+    public String restoreSection(final String pId) throws JDataException {
         /* Ignore if we have no document or transformer */
-        if ((theDocument == null) || (theXformer == null)) {
+        if ((theDocument == null)
+            || (theXformer == null)) {
             /* Return current text */
             return theText;
         }
@@ -371,8 +396,9 @@ public class HTMLSectionManager {
     /**
      * Format XML.
      * @return the formatted XML
+     * @throws JDataException on error
      */
-    public String formatXML() {
+    public String formatXML() throws JDataException {
         /* Protect against exceptions */
         try {
             /* Transform the new document */
@@ -383,7 +409,7 @@ public class HTMLSectionManager {
             /* Return the new text */
             return theText;
         } catch (TransformerException e) {
-            return null;
+            throw new JDataException(ExceptionClass.XML, "Failed to format", e);
         }
     }
 }

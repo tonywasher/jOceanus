@@ -330,8 +330,9 @@ public abstract class MainWindow<T extends DataSet<T>>
     /**
      * Build the main panel.
      * @return the main panel
+     * @throws JDataException on error
      */
-    protected abstract JComponent buildMainPanel();
+    protected abstract JComponent buildMainPanel() throws JDataException;
 
     /**
      * Obtain the frame name.

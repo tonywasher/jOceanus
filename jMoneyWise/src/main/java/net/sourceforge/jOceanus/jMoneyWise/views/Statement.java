@@ -722,6 +722,14 @@ public class Statement
             theStatement = pList.getStatement();
             setValueIsCredit(!Difference.isEqual(getDebit(), pList.getAccount()));
             setBase(pEvent);
+
+            /* If we have a parent */
+            Integer myParentId = getParentId();
+            if (myParentId != null) {
+                /* Convert to Statement parent */
+                StatementLine myParent = pList.findItemById(myParentId);
+                setValueParent(myParent);
+            }
         }
 
         /**

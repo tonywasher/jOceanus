@@ -804,7 +804,7 @@ public class EventAnalysis
         /**
          * calculate tax.
          */
-        protected void calculateTax() {
+        public void calculateTax() {
             /* If tax has not yet been calculated */
             if (!taxCalculated) {
                 /* Calculate the tax and record the fact */

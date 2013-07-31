@@ -30,7 +30,9 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
  * Exception extension class. Provides capability of attaching ExceptionClass and Causing object to exception.
  * @author Tony Washer
  */
-public class JDataException extends Exception implements JDataContents {
+public class JDataException
+        extends Exception
+        implements JDataContents {
     /**
      * Required serialisation field.
      */
@@ -110,7 +112,9 @@ public class JDataException extends Exception implements JDataContents {
                 return getCause();
             }
             if (FIELD_OBJECT.equals(pField)) {
-                return (theObject == null) ? JDataFieldValue.SkipField : theObject;
+                return (theObject == null)
+                        ? JDataFieldValue.SkipField
+                        : theObject;
             }
             if (FIELD_STACK.equals(pField)) {
                 return getStackTrace();
@@ -135,7 +139,9 @@ public class JDataException extends Exception implements JDataContents {
 
     @Override
     public String formatObject() {
-        return "Exception(" + theClass + ")";
+        return "Exception("
+               + theClass
+               + ")";
     }
 
     /**
@@ -272,6 +278,11 @@ public class JDataException extends Exception implements JDataContents {
          * Exception from Logic.
          */
         LOGIC,
+
+        /**
+         * Exception from XML.
+         */
+        XML,
 
         /**
          * Exception from SubVersion.

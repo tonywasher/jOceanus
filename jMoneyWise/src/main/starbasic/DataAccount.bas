@@ -28,14 +28,15 @@ Private Const rangeAccountCategories As String = "AccountCategoryInfo"
 Private Const colAcctName As Integer = 1
 Private Const colAcctType As Integer = 2
 Private Const colAcctTaxFree As Integer = 3
-Private Const colAcctClosed As Integer = 4
-Private Const colAcctParent As Integer = 5
-Private Const colAcctAlias As Integer = 6
-Private Const colAcctHolding As Integer = 7
-Private Const colAcctMaturity As Integer = 8
-Private Const colAcctOpenBal As Integer = 9
-Private Const colAcctSymbol As Integer = 10
-Private Const colAcctAutoExp As Integer = 11
+Private Const colAcctGrossInt As Integer = 4
+Private Const colAcctClosed As Integer = 5
+Private Const colAcctParent As Integer = 6
+Private Const colAcctAlias As Integer = 7
+Private Const colAcctHolding As Integer = 8
+Private Const colAcctMaturity As Integer = 9
+Private Const colAcctOpenBal As Integer = 10
+Private Const colAcctSymbol As Integer = 11
+Private Const colAcctAutoExp As Integer = 12
 
 'Account Type Column locations
 Private Const colAcTpName As Integer = 0
@@ -98,6 +99,7 @@ Public Type AccountStats
 	isActive As Boolean
 	isClosed As Boolean
 	isTaxFree As Boolean
+	isGrossInt As Boolean
 	isCapital As Boolean
 	isLifeBond As Boolean
 	isEndowment As Boolean
@@ -213,6 +215,7 @@ Private Sub loadAccounts(ByRef Context As FinanceState)
     	myAcct.strAccount = myName
 	    myAcct.strParent = myRow.getCellByPosition(colAcctParent, 0).getString()
 	    myAcct.isTaxFree = myRow.getCellByPosition(colAcctTaxFree, 0).getValue()
+	    myAcct.isGrossInt = myRow.getCellByPosition(colAcctGrossInt, 0).getValue()
 	    myAcct.isClosed = myRow.getCellByPosition(colAcctClosed, 0).getValue()
 
 		'Promote values from account type	    

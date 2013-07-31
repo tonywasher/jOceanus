@@ -156,6 +156,14 @@ public final class EventCategoryBucket
     }
 
     /**
+     * Obtain the event category type.
+     * @return the event category type
+     */
+    public EventCategoryType getEventCategoryType() {
+        return theType;
+    }
+
+    /**
      * Obtain the base.
      * @return the base
      */
@@ -620,24 +628,24 @@ public final class EventCategoryBucket
             while (myIterator.hasNext()) {
                 EventCategoryBucket myCurr = myIterator.next();
 
-                /* Copy tax credit down */
+                /* Apply tax credit correctly */
                 JMoney myMoney = myCurr.getMoneyAttribute(EventAttribute.TaxCredit);
-                myTaxCredit.addIncome(myMoney);
+                myCurr.addIncome(myMoney);
                 myTaxCredit.addExpense(myMoney);
 
-                /* Copy NatInsurance down */
+                /* Apply NatInsurance correctly */
                 myMoney = myCurr.getMoneyAttribute(EventAttribute.NatInsurance);
-                myNatInsurance.addIncome(myMoney);
+                myCurr.addIncome(myMoney);
                 myNatInsurance.addExpense(myMoney);
 
-                /* Copy benefit down */
+                /* Apply benefit correctly */
                 myMoney = myCurr.getMoneyAttribute(EventAttribute.Benefit);
-                myBenefit.addIncome(myMoney);
+                myCurr.addIncome(myMoney);
                 myBenefit.addExpense(myMoney);
 
-                /* Copy donation down */
+                /* Apply donation correctly */
                 myMoney = myCurr.getMoneyAttribute(EventAttribute.Donation);
-                myDonation.addIncome(myMoney);
+                myCurr.addIncome(myMoney);
                 myDonation.addExpense(myMoney);
 
                 /* Obtain category and parent category */

@@ -314,12 +314,13 @@ Sub analyseYear(ByRef Context As FinanceState, _
 			'Adjust the investments
 			myCredInfo.acctInvestment = myCredInfo.acctInvestment + myTransfer
 			myDebInfo.acctInvestment = myDebInfo.acctInvestment - myTransfer
+		End If
 
         'If we have a Stock Takeover
-        ElseIf (myCatInfo.isStockTakeover) Then
+        If (myCatInfo.isStockTakeover) Then
 			'Access the Existing Cost and any cash element of takeover
 			myCost = myDebInfo.acctCost
-			myCash = 0 ' myEvent.evtCashTakeover
+			myCash = myEvent.evtValue
 
 			'Access the value of shares used in the takeover on this date
 			myShares = getAssetValueForDate(Context, myCredInfo, myDate)						
@@ -337,6 +338,10 @@ Sub analyseYear(ByRef Context As FinanceState, _
 			myDebInfo.acctGains = myDebInfo.acctGains + myGains
 			myDebInfo.acctInvestment = myDebInfo.acctInvestment - myCash
 			myDebInfo.acctCost = 0
+			If (myCash <> 0) Then
+			    myCredInfo = myEvent.acctThirdParty
+			    myCredInfo.acctValue = myCredInfo.acctValue + myCash
+			End If
         End If
         
         'Store details

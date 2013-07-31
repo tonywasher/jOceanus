@@ -65,6 +65,7 @@ public class TableAccount
         ColumnDefinition mySortCol = myTableDef.addReferenceColumn(AccountBase.FIELD_CATEGORY, TableAccountCategory.TABLE_NAME);
         myTableDef.addBooleanColumn(AccountBase.FIELD_CLOSED);
         myTableDef.addBooleanColumn(AccountBase.FIELD_TAXFREE);
+        myTableDef.addBooleanColumn(AccountBase.FIELD_GROSS);
         myTableDef.addNullReferenceColumn(AccountBase.FIELD_CURRENCY, TableAccountCurrency.TABLE_NAME);
 
         /* Declare the sort order */
@@ -87,10 +88,11 @@ public class TableAccount
         Integer myCategoryId = myTableDef.getIntegerValue(AccountBase.FIELD_CATEGORY);
         Boolean isClosed = myTableDef.getBooleanValue(AccountBase.FIELD_CLOSED);
         Boolean isTaxFree = myTableDef.getBooleanValue(AccountBase.FIELD_TAXFREE);
+        Boolean isGross = myTableDef.getBooleanValue(AccountBase.FIELD_GROSS);
         Integer myCurrencyId = myTableDef.getIntegerValue(AccountBase.FIELD_CURRENCY);
 
         /* Add into the list */
-        theList.addSecureItem(pId, pControlId, myName, myCategoryId, isClosed, isTaxFree, myCurrencyId);
+        theList.addSecureItem(pId, pControlId, myName, myCategoryId, isClosed, isTaxFree, isGross, myCurrencyId);
     }
 
     @Override
@@ -106,6 +108,8 @@ public class TableAccount
             myTableDef.setBooleanValue(iField, pItem.isClosed());
         } else if (AccountBase.FIELD_TAXFREE.equals(iField)) {
             myTableDef.setBooleanValue(iField, pItem.isTaxFree());
+        } else if (AccountBase.FIELD_GROSS.equals(iField)) {
+            myTableDef.setBooleanValue(iField, pItem.isGrossInterest());
         } else if (AccountBase.FIELD_CURRENCY.equals(iField)) {
             myTableDef.setIntegerValue(iField, pItem.getAccountCurrencyId());
         } else {

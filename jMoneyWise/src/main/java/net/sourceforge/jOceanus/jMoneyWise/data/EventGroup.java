@@ -27,11 +27,8 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
-import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
-import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jOceanus.jDataModels.data.DataGroup;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
 /**
  * Event group type.
@@ -39,8 +36,7 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
  * @author Tony Washer
  */
 public class EventGroup<T extends EventBase>
-        extends OrderedIdList<Integer, T>
-        implements JDataContents {
+        extends DataGroup<T> {
     /**
      * Resource Bundle.
      */
@@ -54,45 +50,11 @@ public class EventGroup<T extends EventBase>
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EventGroup.class.getSimpleName());
-
-    /**
-     * Parent field id.
-     */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField("Parent");
+    protected static final JDataFields FIELD_DEFS = new JDataFields(EventGroup.class.getSimpleName(), DataGroup.FIELD_DEFS);
 
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
-    }
-
-    @Override
-    public Object getFieldValue(final JDataField pField) {
-        if (FIELD_PARENT.equals(pField)) {
-            return theParent;
-        }
-        return JDataFieldValue.UnknownField;
-    }
-
-    @Override
-    public String formatObject() {
-        return getDataFields().getName()
-               + "("
-               + size()
-               + ")";
-    }
-
-    /**
-     * Parent Event.
-     */
-    private final T theParent;
-
-    /**
-     * Obtain parent.
-     * @return the parent
-     */
-    public T getParent() {
-        return theParent;
     }
 
     /**
@@ -103,22 +65,7 @@ public class EventGroup<T extends EventBase>
     public EventGroup(final T pParent,
                       final Class<T> pClass) {
         /* Call super-constructor */
-        super(pClass);
-
-        /* Store parameter */
-        theParent = pParent;
-
-        /* Add the parent to the list */
-        add(theParent);
-    }
-
-    /**
-     * Register a child event.
-     * @param pChild the child event
-     */
-    public void registerChild(final T pChild) {
-        /* Add the child to the list */
-        add(pChild);
+        super(pParent, pClass);
     }
 
     /**
@@ -153,7 +100,7 @@ public class EventGroup<T extends EventBase>
      */
     public String getDebit() {
         /* Access parent debit */
-        Account myDebit = theParent.getDebit();
+        Account myDebit = getParent().getDebit();
 
         /* Access iterator and skip first event */
         Iterator<T> myIterator = iterator();
@@ -184,7 +131,7 @@ public class EventGroup<T extends EventBase>
      */
     public String getCredit() {
         /* Access parent credit */
-        Account myCredit = theParent.getCredit();
+        Account myCredit = getParent().getCredit();
 
         /* Access iterator and skip first event */
         Iterator<T> myIterator = iterator();
@@ -215,7 +162,7 @@ public class EventGroup<T extends EventBase>
      */
     public String getCategory() {
         /* Access parent category */
-        EventCategory myCategory = theParent.getCategory();
+        EventCategory myCategory = getParent().getCategory();
 
         /* Access iterator and skip first event */
         Iterator<T> myIterator = iterator();

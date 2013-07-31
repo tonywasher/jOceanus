@@ -277,7 +277,7 @@ public abstract class EventBase
      * @return the parentId
      */
     public Integer getParentId() {
-        EventBase myParent = getParent();
+        EventBase myParent = EventBase.getParent(getValueSet());
         return (myParent == null)
                 ? null
                 : myParent.getId();

@@ -554,6 +554,7 @@ public class Account
      * @param pActCatId the Account category id
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
+     * @param isGross is the account grossInterest?
      * @param uCurrencyId the Account currency id
      * @throws JDataException on error
      */
@@ -564,9 +565,10 @@ public class Account
                     final Integer pActCatId,
                     final Boolean isClosed,
                     final Boolean isTaxFree,
+                    final Boolean isGross,
                     final Integer uCurrencyId) throws JDataException {
         /* Initialise the item */
-        super(pList, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, uCurrencyId);
+        super(pList, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, isGross, uCurrencyId);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -582,6 +584,7 @@ public class Account
      * @param pCategory the Account category
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
+     * @param isGross is the account grossInterest?
      * @param pCurrency the Account currency
      * @throws JDataException on error
      */
@@ -591,9 +594,10 @@ public class Account
                     final String pCategory,
                     final Boolean isClosed,
                     final Boolean isTaxFree,
+                    final Boolean isGross,
                     final String pCurrency) throws JDataException {
         /* Initialise the item */
-        super(pList, pId, pName, pCategory, isClosed, isTaxFree, pCurrency);
+        super(pList, pId, pName, pCategory, isClosed, isTaxFree, isGross, pCurrency);
 
         /* Create the InfoSet */
         theInfoSet = new AccountInfoSet(this, pList.getActInfoTypes(), pList.getAccountInfo());
@@ -894,6 +898,19 @@ public class Account
                 addError("cannot be taxFree account", FIELD_TAXFREE);
             }
 
+            /* If the account is gross interest, check that it is allowed */
+            if ((isGrossInterest())
+                && (!myClass.canTaxFree())) {
+                addError("cannot be grossInterest account", FIELD_GROSS);
+            }
+
+            /* Cannot be both gross interest and taxFree */
+            if ((isGrossInterest())
+                && (isTaxFree())) {
+                addError("cannot be both taxFree and grossInterest", FIELD_TAXFREE);
+                addError("cannot be both taxFree and grossInterest", FIELD_GROSS);
+            }
+
             /* If we have a category and an infoSet */
             if (theInfoSet != null) {
                 /* Validate the InfoSet */
@@ -1147,8 +1164,9 @@ public class Account
          * @param pCategory the Name of the account category
          * @param isClosed is the account closed?
          * @param isTaxFree is the account taxFree?
-         * @return the new account
+         * @param isGross is the account gross Interest?
          * @param pCurrency the Account currency
+         * @return the new account
          * @throws JDataException on error
          */
         public Account addOpenItem(final Integer pId,
@@ -1156,9 +1174,10 @@ public class Account
                                    final String pCategory,
                                    final Boolean isClosed,
                                    final Boolean isTaxFree,
+                                   final Boolean isGross,
                                    final String pCurrency) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, pId, pName, pCategory, isClosed, isTaxFree, pCurrency);
+            Account myAccount = new Account(this, pId, pName, pCategory, isClosed, isTaxFree, isGross, pCurrency);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {
@@ -1185,6 +1204,7 @@ public class Account
          * @param pActCatId the Id of the account category
          * @param isClosed is the account closed?
          * @param isTaxFree is the account taxFree?
+         * @param isGross is the account gross Interest?
          * @param pCurrencyId the Account currency id
          * @throws JDataException on error
          */
@@ -1194,9 +1214,10 @@ public class Account
                                   final Integer pActCatId,
                                   final Boolean isClosed,
                                   final Boolean isTaxFree,
+                                  final Boolean isGross,
                                   final Integer pCurrencyId) throws JDataException {
             /* Create the new account */
-            Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, pCurrencyId);
+            Account myAccount = new Account(this, pId, pControlId, pName, pActCatId, isClosed, isTaxFree, isGross, pCurrencyId);
 
             /* Check that this AccountId has not been previously added */
             if (!isIdUnique(pId)) {

@@ -37,7 +37,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
-import javax.swing.text.Document;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
@@ -57,23 +56,24 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect.ReportType;
-import net.sourceforge.jOceanus.jMoneyWise.views.AnalysisReport;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
-import net.sourceforge.jOceanus.jMoneyWise.views.HTMLSectionManager;
-import net.sourceforge.jOceanus.jMoneyWise.views.Report;
+import net.sourceforge.jOceanus.jMoneyWise.views.HTMLBuilder;
+import net.sourceforge.jOceanus.jMoneyWise.views.ReportBuilder;
+import net.sourceforge.jOceanus.jMoneyWise.views.ReportManager;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
+import org.w3c.dom.Document;
+
 /**
- * Report Panel.
- * @author Tony Washer
+ * Alternate version of ReportTab.
  */
 public class ReportTab
         extends JEventPanel {
     /**
      * Serial Id.
      */
-    private static final long serialVersionUID = 6499559461558661107L;
+    private static final long serialVersionUID = 2219752518436850014L;
 
     /**
      * The Data View.
@@ -121,15 +121,21 @@ public class ReportTab
     private final ErrorPanel theError;
 
     /**
-     * The HTML Manager.
+     * The Report Manager.
      */
-    private final HTMLSectionManager theHTMLManager;
+    private final ReportManager theManager;
+
+    /**
+     * The ReportBuilder.
+     */
+    private final ReportBuilder theBuilder;
 
     /**
      * Constructor for Report Window.
      * @param pView the data view
+     * @throws JDataException on error
      */
-    public ReportTab(final View pView) {
+    public ReportTab(final View pView) throws JDataException {
         /* Store the view */
         theView = pView;
 
@@ -142,8 +148,11 @@ public class ReportTab
         theSpotEntry.addAsChildOf(theDataReport);
         theSpotEntry.hideEntry();
 
-        /* Create HTML Manager */
-        theHTMLManager = new HTMLSectionManager();
+        /* Create the report builder */
+        theBuilder = new ReportBuilder();
+
+        /* Create Report Manager */
+        theManager = new ReportManager();
 
         /* Create listener */
         ReportListener myListener = new ReportListener();
@@ -166,18 +175,18 @@ public class ReportTab
         HTMLEditorKit myDisplayKit = new HTMLEditorKit();
         StyleSheet myDisplayStyle = new StyleSheet();
         myDisplayStyle.addStyleSheet(myDisplayKit.getStyleSheet());
-        Report.buildDisplayStyleSheet(myDisplayStyle);
+        HTMLBuilder.buildDisplayStyleSheet(myDisplayStyle);
 
         /* Create print editorKit and styleSheet */
         HTMLEditorKit myPrintKit = new HTMLEditorKit();
         StyleSheet myPrintStyle = new StyleSheet();
         myPrintStyle.addStyleSheet(myPrintKit.getStyleSheet());
-        Report.buildPrintStyleSheet(myPrintStyle);
+        HTMLBuilder.buildPrintStyleSheet(myPrintStyle);
 
         /* Apply styleSheet to display window */
         myDisplayKit.setStyleSheet(myDisplayStyle);
         theEditor.setEditorKit(myDisplayKit);
-        Document myDoc = myDisplayKit.createDefaultDocument();
+        javax.swing.text.Document myDoc = myDisplayKit.createDefaultDocument();
         theEditor.setDocument(myDoc);
 
         /* Apply styleSheet to print window */
@@ -257,8 +266,7 @@ public class ReportTab
     private void buildReport() throws JDataException {
         AnalysisYear myAnalysis;
         EventAnalysis mySnapshot;
-        AnalysisReport myReport;
-        String myText = "";
+        Document myDoc;
 
         /* Access the values from the selection */
         ReportType myReportType = theSelect.getReportType();
@@ -277,52 +285,40 @@ public class ReportTab
         switch (myReportType) {
             case ASSET:
                 myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myReport = new AnalysisReport(myAnalysis);
-                myText = myReport.getYearReport();
+                myDoc = theBuilder.getAssetReport(myAnalysis.getAnalysis());
                 break;
 
             case INCOME:
                 myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myReport = new AnalysisReport(myAnalysis);
-                myText = myReport.getIncomeReport();
+                myDoc = theBuilder.getIncomeReport(myAnalysis.getAnalysis());
                 break;
 
             case EVENTCATEGORY:
                 myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myReport = new AnalysisReport(myAnalysis);
-                myText = myReport.getEventCategoryReport();
+                myDoc = theBuilder.getCategoryReport(myAnalysis.getAnalysis());
                 break;
 
             case TAXCATEGORY:
                 myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myReport = new AnalysisReport(myAnalysis);
-                myText = myReport.getTaxCategoryReport();
+                myDoc = theBuilder.getTaxCategoryReport(myAnalysis.getAnalysis());
                 break;
 
             case TAX:
                 myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myReport = new AnalysisReport(myAnalysis);
-                myText = myReport.getTaxReport();
-                break;
-
-            case BREAKDOWN:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myReport = new AnalysisReport(myAnalysis);
-                myText = myReport.getBreakdownReport();
+                myAnalysis.calculateTax();
+                myDoc = theBuilder.getTaxReport(myAnalysis.getAnalysis(), myAnalysis.getTaxYear());
                 break;
 
             case NETWORTH:
                 mySnapshot = new EventAnalysis(theView.getData(), myDate);
-                myReport = new AnalysisReport(mySnapshot);
-                myText = myReport.getNetWorthReport();
+                myDoc = theBuilder.getNetWorthReport(mySnapshot.getAnalysis());
                 theSpotEntry.setObject(mySnapshot);
                 theSpotEntry.showEntry();
                 break;
 
             case MARKET:
                 mySnapshot = new EventAnalysis(theView.getData(), myDate);
-                myReport = new AnalysisReport(mySnapshot);
-                myText = myReport.getMarketReport();
+                myDoc = theBuilder.getMarketReport(mySnapshot.getAnalysis());
                 theSpotEntry.setObject(mySnapshot);
                 theSpotEntry.showEntry();
                 break;
@@ -331,8 +327,8 @@ public class ReportTab
         }
 
         /* process the text to hide relevant sections */
-        theHTMLManager.setInitialText(myText);
-        myText = theHTMLManager.hideClassSections("hideDiv");
+        theManager.setDocument(myDoc);
+        String myText = theManager.hideClassSections("hideTable");
 
         /* Set the report text */
         theEditor.setText(myText);
@@ -387,11 +383,11 @@ public class ReportTab
         }
 
         @Override
-        public void mouseClicked(final MouseEvent e) {
+        public void mouseClicked(final MouseEvent evt) {
             /* If this is a right click event */
-            if (e.getButton() == MouseEvent.BUTTON3) {
+            if (evt.getButton() == MouseEvent.BUTTON3) {
                 /* Determine the document element that we right clicked on */
-                Element myElement = getHyperlinkElement(e);
+                Element myElement = getHyperlinkElement(evt);
                 if (myElement != null) {
                     /* Obtain the attributes */
                     Object myAttrs = myElement.getAttributes().getAttribute(HTML.Tag.A);
@@ -402,8 +398,12 @@ public class ReportTab
                         String myRef = (String) mySet.getAttribute(HTML.Attribute.HREF);
                         if (myRef != null) {
                             /* Toggle the myTest section */
-                            theEditor.setText(theHTMLManager.toggleSection("myTest"));
-                            theEditor.setCaretPosition(0);
+                            try {
+                                theEditor.setText(theManager.toggleSection("tableAssets:Shares"));
+                                theEditor.setCaretPosition(0);
+                            } catch (JDataException e) {
+                                theEditor.setText("");
+                            }
                         }
                     }
                 }

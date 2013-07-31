@@ -37,6 +37,7 @@ Private Const colEvtDilution As Integer = 12
 Private Const colEvtRef As Integer = 13
 Private Const colEvtYears As Integer = 14
 Private Const colEvtCharity As Integer = 15
+Private Const colEvtThirdParty As Integer = 16
 
 'Hidden categories
 Public Const catTransfer As String = "Transfer"
@@ -54,11 +55,13 @@ Public Type EventInfo
 	'Credit/debit accounts and category
 	acctDebit As AccountStats
 	acctCredit As AccountStats
+	acctThirdParty As AccountStats
 	catCategory As CategoryStats
 
 	'String versions
 	strDebit As String
 	strCredit As String
+	strThirdParty As String
 	strCategory As String
 		
 	'Values
@@ -71,7 +74,6 @@ Public Type EventInfo
 	evtCredUnits As Double
 	evtDilution As Double
 	evtYears As Integer
-	evtCashTakeover As Double
 		
 	'Additional three fields declared to fix bug in debugger which loses last three fields
 	idx1 As Integer
@@ -120,16 +122,18 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	Dim myDate As Date
 	Dim myDebit As String
 	Dim myCredit As String
+	Dim myThirdParty As String
 	Dim myCategory As String
 	
 	'Allocate the event
 	Set myEvent = allocateEvent()
 	
 	'Access key information	
-	myDate     = eventRow.getCellByPosition(colEvtDate, 0).getValue()
-	myDebit    = eventRow.getCellByPosition(colEvtDebit, 0).getString()
-	myCredit   = eventRow.getCellByPosition(colEvtCredit, 0).getString()
-	myCategory = eventRow.getCellByPosition(colEvtCategory, 0).getString()
+	myDate       = eventRow.getCellByPosition(colEvtDate, 0).getValue()
+	myDebit      = eventRow.getCellByPosition(colEvtDebit, 0).getString()
+	myCredit     = eventRow.getCellByPosition(colEvtCredit, 0).getString()
+	myThirdParty = eventRow.getCellByPosition(colEvtThirdParty, 0).getString()
+	myCategory   = eventRow.getCellByPosition(colEvtCategory, 0).getString()
 	
 	'If this is a split record
 	If (myDate = 0) And Not IsNull(lastEvent) Then 
@@ -148,14 +152,18 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	End If
 					
 	'Access the Values in the row
-	myEvent.dtDate  	 = myDate
-	myEvent.strDebit     = myDebit
-	myEvent.strCredit    = myCredit
-	myEvent.strCategory  = myCategory
+	myEvent.dtDate  	  = myDate
+	myEvent.strDebit      = myDebit
+	myEvent.strCredit     = myCredit
+	myEvent.strThirdParty = myThirdParty
+	myEvent.strCategory   = myCategory
 	
 	'Look up the values
 	Set myEvent.acctDebit  = getCachedAccount(Context, myDebit)
 	Set myEvent.acctCredit = getCachedAccount(Context, myCredit)
+	If (myThirdParty <> "") Then
+		Set myEvent.acctThirdParty = getCachedAccount(Context, myThirdParty)
+	End If
 
 	'Adjust the category if required
 	adjustCategory(Context, myEvent)
@@ -169,15 +177,6 @@ Public Function parseEventRow(ByRef Context As FinanceState, _
 	myEvent.evtBenefit   = eventRow.getCellByPosition(colEvtBenefit, 0).getValue()
 	myEvent.evtDilution  = eventRow.getCellByPosition(colEvtDilution, 0).getValue()
 	myEvent.evtCharity   = eventRow.getCellByPosition(colEvtCharity, 0).getValue()
-	
-	'If this is a stock takeover
-	If (myEvent.catCategory.isStockTakeover) And Not IsNull(lastEvent) Then
-		'If the last event was a transfer from the debit account
-		If (lastEvent.strDebit = myDebit) And (lastEvent.catCategory.isTransfer) Then
-			'Record Cash takeover value
-			myEvent.evtCashTakeover = lastEvent.evtValue
-		End If
-	End If
 	
 	'Return the event
 	Set parseEventRow = myEvent	

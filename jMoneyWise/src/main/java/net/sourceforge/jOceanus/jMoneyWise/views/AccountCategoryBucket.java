@@ -199,6 +199,17 @@ public final class AccountCategoryBucket
     }
 
     /**
+     * Set Attribute.
+     * @param pAttr the attribute
+     * @param pValue the value of the attribute
+     */
+    private void setAttribute(final AccountAttribute pAttr,
+                              final Integer pValue) {
+        /* Set the value into the list */
+        theAttributes.put(pAttr, pValue);
+    }
+
+    /**
      * Get an attribute value.
      * @param pAttr the attribute
      * @return the value to set
@@ -279,6 +290,16 @@ public final class AccountCategoryBucket
     }
 
     /**
+     * Obtain an integer attribute value.
+     * @param pAttr the attribute
+     * @return the value of the attribute or null
+     */
+    protected Integer getIntegerAttribute(final AccountAttribute pAttr) {
+        /* Obtain the attribute */
+        return Integer.class.cast(getAttribute(pAttr));
+    }
+
+    /**
      * Constructor.
      * @param pData the dataSet
      * @param pCategory the account category
@@ -305,6 +326,7 @@ public final class AccountCategoryBucket
         setAttribute(AccountAttribute.Profit, new JMoney());
         setAttribute(AccountAttribute.ValueDelta, new JMoney());
         setAttribute(AccountAttribute.IncomeDelta, new JMoney());
+        setAttribute(AccountAttribute.Children, Integer.valueOf(0));
     }
 
     /**
@@ -403,6 +425,9 @@ public final class AccountCategoryBucket
                 case ValueDelta:
                     pTarget.put(myAttr, new JMoney());
                     break;
+                case Children:
+                    pTarget.put(myAttr, Integer.valueOf(0));
+                    break;
                 default:
                     break;
             }
@@ -425,6 +450,13 @@ public final class AccountCategoryBucket
     protected void addValues(final AccountBucket pBucket) {
         /* Add underlying attributes */
         addValues(pBucket.getAttributes());
+
+        /* Increment child count */
+        Integer myCount = getIntegerAttribute(AccountAttribute.Children);
+        if ((pBucket.getCategoryType() != CategoryType.Priced)
+            || (pBucket.isRelevant())) {
+            setAttribute(AccountAttribute.Children, myCount + 1);
+        }
     }
 
     /**

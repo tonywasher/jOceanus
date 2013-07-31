@@ -655,6 +655,9 @@ public final class EventCategory
      * Resolve subCategory name.
      */
     private void resolveSubCategory() {
+        /* Set to null */
+        setValueSubCategory(null);
+
         /* Obtain the name */
         String myName = getName();
         if (myName != null) {

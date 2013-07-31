@@ -240,12 +240,8 @@ public class MainTab
         buildMainWindow(theView);
     }
 
-    /**
-     * Build the main panel.
-     * @return the main panel
-     */
     @Override
-    protected JComponent buildMainPanel() {
+    protected JComponent buildMainPanel() throws JDataException {
         /* Create the Tabbed Pane */
         theTabs = new JEnableTabbed();
 

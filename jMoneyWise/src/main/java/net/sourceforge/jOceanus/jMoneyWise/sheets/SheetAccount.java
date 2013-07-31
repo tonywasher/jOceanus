@@ -80,9 +80,14 @@ public class SheetAccount
     private static final int COL_TAXFREE = COL_CLOSED + 1;
 
     /**
+     * Gross Interest column.
+     */
+    private static final int COL_GROSS = COL_TAXFREE + 1;
+
+    /**
      * Currency column.
      */
-    private static final int COL_CURRENCY = COL_TAXFREE + 1;
+    private static final int COL_CURRENCY = COL_GROSS + 1;
 
     /**
      * Account data list.
@@ -156,12 +161,13 @@ public class SheetAccount
         /* Access the flags */
         Boolean isClosed = loadBoolean(COL_CLOSED);
         Boolean isTaxFree = loadBoolean(COL_TAXFREE);
+        Boolean isGross = loadBoolean(COL_GROSS);
 
         /* Access the binary values */
         byte[] myName = loadBytes(COL_NAME);
 
         /* Load the item */
-        theList.addSecureItem(pId, myControlId, myName, myCategoryId, isClosed, isTaxFree, myCurrencyId);
+        theList.addSecureItem(pId, myControlId, myName, myCategoryId, isClosed, isTaxFree, isGross, myCurrencyId);
     }
 
     @Override
@@ -174,9 +180,10 @@ public class SheetAccount
         /* Access the flags */
         Boolean isClosed = loadBoolean(COL_CLOSED);
         Boolean isTaxFree = loadBoolean(COL_TAXFREE);
+        Boolean isGross = loadBoolean(COL_GROSS);
 
         /* Load the item */
-        theList.addOpenItem(pId, myName, myCategory, isClosed, isTaxFree, myCurrency);
+        theList.addOpenItem(pId, myName, myCategory, isClosed, isTaxFree, isGross, myCurrency);
     }
 
     @Override
@@ -195,6 +202,7 @@ public class SheetAccount
         writeInteger(COL_ACCOUNTCAT, pItem.getAccountCategoryId());
         writeBoolean(COL_CLOSED, pItem.isClosed());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
+        writeBoolean(COL_GROSS, pItem.isGrossInterest());
         writeBytes(COL_NAME, pItem.getNameBytes());
         writeInteger(COL_CURRENCY, pItem.getAccountCurrencyId());
     }
@@ -206,6 +214,7 @@ public class SheetAccount
         writeString(COL_ACCOUNTCAT, pItem.getAccountCategoryName());
         writeBoolean(COL_CLOSED, pItem.isClosed());
         writeBoolean(COL_TAXFREE, pItem.isTaxFree());
+        writeBoolean(COL_GROSS, pItem.isGrossInterest());
         writeString(COL_CURRENCY, pItem.getAccountCurrencyName());
 
         /* Write infoSet fields */
@@ -219,6 +228,7 @@ public class SheetAccount
         writeHeader(COL_ACCOUNTCAT, AccountBase.FIELD_CATEGORY.getName());
         writeHeader(COL_CLOSED, AccountBase.FIELD_CLOSED.getName());
         writeHeader(COL_TAXFREE, AccountBase.FIELD_TAXFREE.getName());
+        writeHeader(COL_GROSS, AccountBase.FIELD_GROSS.getName());
         writeHeader(COL_CURRENCY, AccountBase.FIELD_CURRENCY.getName());
 
         /* prepare infoSet sheet */
@@ -232,6 +242,7 @@ public class SheetAccount
         setStringColumn(COL_ACCOUNTCAT);
         setBooleanColumn(COL_CLOSED);
         setBooleanColumn(COL_TAXFREE);
+        setBooleanColumn(COL_GROSS);
         setStringColumn(COL_CURRENCY);
 
         /* Set the name column range */
@@ -324,6 +335,13 @@ public class SheetAccount
                     isTaxFree = myCell.getBooleanValue();
                 }
 
+                /* Handle gross which may be missing */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                Boolean isGross = Boolean.FALSE;
+                if (myCell != null) {
+                    isGross = myCell.getBooleanValue();
+                }
+
                 /* Handle closed which may be missing */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 Boolean isClosed = Boolean.FALSE;
@@ -332,7 +350,7 @@ public class SheetAccount
                 }
 
                 /* Add the value into the finance tables */
-                myList.addOpenItem(0, myName, myAcType, isClosed, isTaxFree, myCurrency.getName());
+                myList.addOpenItem(0, myName, myAcType, isClosed, isTaxFree, isGross, myCurrency.getName());
 
                 /* Report the progress */
                 myCount++;
@@ -352,7 +370,8 @@ public class SheetAccount
                 String myName = myView.getRowCellByIndex(myRow, iAdjust++).getStringValue();
                 Account myAccount = myList.findItemByName(myName);
 
-                /* Skip three columns */
+                /* Skip four columns */
+                iAdjust++;
                 iAdjust++;
                 iAdjust++;
                 iAdjust++;

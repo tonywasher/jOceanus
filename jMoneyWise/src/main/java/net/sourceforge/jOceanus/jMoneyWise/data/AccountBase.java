@@ -77,6 +77,11 @@ public abstract class AccountBase
     public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField("isTaxFree");
 
     /**
+     * isGrossInterest Field Id.
+     */
+    public static final JDataField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField("isGrossInterest");
+
+    /**
      * Currency Field Id.
      */
     public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField("Currency");
@@ -173,6 +178,14 @@ public abstract class AccountBase
     }
 
     /**
+     * Is the account gross interest.
+     * @return true/false
+     */
+    public Boolean isGrossInterest() {
+        return isGrossInterest(getValueSet());
+    }
+
+    /**
      * Obtain Account Category.
      * @return the category
      */
@@ -257,6 +270,15 @@ public abstract class AccountBase
     }
 
     /**
+     * Is the account grossInterest.
+     * @param pValueSet the valueSet
+     * @return true/false
+     */
+    public static Boolean isGrossInterest(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_GROSS, Boolean.class);
+    }
+
+    /**
      * Obtain AccountCurrency.
      * @param pValueSet the valueSet
      * @return the AccountCurrency
@@ -336,6 +358,16 @@ public abstract class AccountBase
     }
 
     /**
+     * Set gross interest indication.
+     * @param pValue the value
+     */
+    private void setValueGrossInterest(final Boolean pValue) {
+        getValueSet().setValue(FIELD_GROSS, (pValue != null)
+                ? pValue
+                : Boolean.FALSE);
+    }
+
+    /**
      * Set account currency value.
      * @param pValue the value
      */
@@ -384,6 +416,7 @@ public abstract class AccountBase
      * @param uCategoryId the Account category id
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
+     * @param isGross is the account grossInterest?
      * @param uCurrencyId the Account currency id
      * @throws JDataException on error
      */
@@ -394,6 +427,7 @@ public abstract class AccountBase
                           final Integer uCategoryId,
                           final Boolean isClosed,
                           final Boolean isTaxFree,
+                          final Boolean isGross,
                           final Integer uCurrencyId) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
@@ -407,9 +441,10 @@ public abstract class AccountBase
             /* Set ControlId */
             setControlKey(uControlId);
 
-            /* Set the closed and tax free indications */
+            /* Set the flags */
             setValueClosed(isClosed);
             setValueTaxFree(isTaxFree);
+            setValueGrossInterest(isGross);
 
             /* Record the encrypted values */
             setValueName(pName);
@@ -429,6 +464,7 @@ public abstract class AccountBase
      * @param pCategory the Account category
      * @param isClosed is the account closed?
      * @param isTaxFree is the account taxFree?
+     * @param isGross is the account grossInterest?
      * @param pCurrency the Account currency
      * @throws JDataException on error
      */
@@ -438,6 +474,7 @@ public abstract class AccountBase
                           final String pCategory,
                           final Boolean isClosed,
                           final Boolean isTaxFree,
+                          final Boolean isGross,
                           final String pCurrency) throws JDataException {
         /* Initialise the item */
         super(pList, uId);
@@ -456,6 +493,7 @@ public abstract class AccountBase
             /* Set the closed and tax free indications */
             setValueClosed(isClosed);
             setValueTaxFree(isTaxFree);
+            setValueGrossInterest(isGross);
 
             /* Catch Exceptions */
         } catch (JDataException e) {

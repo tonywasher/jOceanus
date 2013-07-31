@@ -263,10 +263,9 @@ public final class JSvnManager {
      */
     private void runCheckOutWC() {
         /* Create and run createWorkingCopy thread */
-        Branch myBranch = theRepository.locateBranch("JFinanceApp", "v1.1.0");
+        Branch myBranch = theRepository.locateBranch("jMoneyWise", "v1.2.0");
         Branch[] myList = new Branch[] { myBranch };
-        CreateWorkingCopy myThread = new CreateWorkingCopy(myList, SVNRevision.HEAD, new File(
-                "c:\\Users\\Tony\\TestWC"), theStatusPanel);
+        CreateWorkingCopy myThread = new CreateWorkingCopy(myList, SVNRevision.HEAD, new File("c:\\Users\\Tony\\TestWC"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -276,10 +275,9 @@ public final class JSvnManager {
      */
     private void runCreateTagExtract() {
         /* Create and run createTagExtract thread */
-        Tag myTag = theRepository.locateTag("JFinanceApp", "v1.0.0", 1);
+        Tag myTag = theRepository.locateTag("jMoneyWise", "v1.1.0", 1);
         Tag[] myList = new Tag[] { myTag };
-        CreateTagExtract myThread = new CreateTagExtract(myList, new File("c:\\Users\\Tony\\TestXT"),
-                theStatusPanel);
+        CreateTagExtract myThread = new CreateTagExtract(myList, new File("c:\\Users\\Tony\\TestXT"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -309,10 +307,9 @@ public final class JSvnManager {
      */
     private void runCreateBranchTags() {
         /* Create and run createBranchTags thread */
-        Branch myBranch = theRepository.locateBranch("JFinanceApp", "v1.1.0");
+        Branch myBranch = theRepository.locateBranch("jMoneyWise", "v1.1.0");
         Branch[] myList = new Branch[] { myBranch };
-        CreateBranchTags myThread = new CreateBranchTags(myList, new File("c:\\Users\\Tony\\TestBT"),
-                theStatusPanel);
+        CreateBranchTags myThread = new CreateBranchTags(myList, new File("c:\\Users\\Tony\\TestBT"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -322,10 +319,9 @@ public final class JSvnManager {
      */
     private void runCreateNewBranch() {
         /* Create and run createBranchTags thread */
-        Tag myTag = theRepository.locateTag("JFinanceApp", "v1.0.0", 1);
+        Tag myTag = theRepository.locateTag("jMoneyWise", "v1.0.0", 1);
         Tag[] myList = new Tag[] { myTag };
-        CreateNewBranch myThread = new CreateNewBranch(myList, BranchOpType.MAJOR, new File(
-                "c:\\Users\\Tony\\TestNB"), theStatusPanel);
+        CreateNewBranch myThread = new CreateNewBranch(myList, BranchOpType.MAJOR, new File("c:\\Users\\Tony\\TestNB"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -333,7 +329,8 @@ public final class JSvnManager {
     /**
      * MenuListener class.
      */
-    private final class MenuListener implements ActionListener {
+    private final class MenuListener
+            implements ActionListener {
 
         @Override
         public void actionPerformed(final ActionEvent evt) {
@@ -389,7 +386,8 @@ public final class JSvnManager {
     /**
      * Window Close Adapter.
      */
-    private class WindowClose extends WindowAdapter {
+    private class WindowClose
+            extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {
             Object o = evt.getSource();

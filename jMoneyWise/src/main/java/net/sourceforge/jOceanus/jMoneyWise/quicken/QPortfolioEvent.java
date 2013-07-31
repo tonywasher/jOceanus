@@ -218,7 +218,6 @@ public class QPortfolioEvent
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        myValue.negate();
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
@@ -230,7 +229,6 @@ public class QPortfolioEvent
         if (hasUnits) {
             /* Add the Quantity (as a simple decimal) */
             JDecimal myUnitValue = new JDecimal(myUnits);
-            myUnitValue.negate();
             addDecimalLine(QPortLineType.Quantity, myUnitValue);
         }
 
@@ -261,7 +259,7 @@ public class QPortfolioEvent
         addDateLine(QPortLineType.Date, myEvent.getDate());
 
         /* Add the action */
-        addStringLine(QPortLineType.Action, "ShrsIn"); // TODO
+        addStringLine(QPortLineType.Action, "ShrsIn");
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
@@ -321,9 +319,6 @@ public class QPortfolioEvent
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myValue = new JDecimal(myUnits);
-        if (isDebit) {
-            myValue.negate();
-        }
         addDecimalLine(QPortLineType.Quantity, myValue);
 
         /* If we have a description */

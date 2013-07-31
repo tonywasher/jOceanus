@@ -217,9 +217,6 @@ public class MetaAnalysis {
             /* analyse the asset */
             myCurr.analyseBucket(theDate);
 
-            /* Access total bucket */
-            AccountCategoryBucket myTotal = myAccountTotals.getBucket(myCategory);
-
             /* If the bucket is priced */
             switch (myCurr.getCategoryType()) {
                 case Priced:
@@ -234,6 +231,9 @@ public class MetaAnalysis {
                     }
                     break;
             }
+
+            /* Access total bucket */
+            AccountCategoryBucket myTotal = myAccountTotals.getBucket(myCategory);
 
             /* Add values to the total */
             myTotal.addValues(myCurr);
@@ -521,10 +521,6 @@ public class MetaAnalysis {
                 break;
             case NatInsurance:
             case Benefit:
-                /* Adjust the Gross salary bucket */
-                myBucket = myTax.getBucket(TaxCategoryClass.GrossSalary);
-                myBucket.addIncome(pBucket);
-
                 /* Adjust the Virtual bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.Virtual);
                 myBucket.addIncome(pBucket);
@@ -535,10 +531,10 @@ public class MetaAnalysis {
                 myBucket.addIncome(pBucket);
                 break;
             case TaxCredit:
-            case TaxSettlement:
                 /* Adjust the Tax Paid bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.TaxPaid);
                 myBucket.addExpense(pBucket);
+                myBucket.subtractIncome(pBucket);
                 break;
             case TaxFreeInterest:
             case TaxFreeDividend:
