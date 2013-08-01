@@ -22,12 +22,10 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.views;
 
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import javax.swing.JEditorPane;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -41,18 +39,12 @@ import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
 
 /**
  * Provides functionality to hide and restore sections of an HTML document. This is useful for displaying HTML documents in a jEditorPane, allowing a click to
  * open/close sections of the document.
  */
 public class ReportManager {
-    /**
-     * The division element.
-     */
-    private static final String ELEMENT_ROW = HTMLBuilder.ELEMENT_ROW;
-
     /**
      * The id attribute.
      */
@@ -64,14 +56,9 @@ public class ReportManager {
     private static final String ATTR_CLASS = HTMLBuilder.ATTR_CLASS;
 
     /**
-     * The Document Builder.
-     */
-    private DocumentBuilder theBuilder;
-
-    /**
      * The Transformer.
      */
-    private Transformer theXformer;
+    private final Transformer theXformer;
 
     /**
      * The Current document.
@@ -84,24 +71,26 @@ public class ReportManager {
     private String theText = null;
 
     /**
-     * The element map.
+     * The hidden element map.
      */
-    private final HashMap<String, Element> theMap;
+    private final HashMap<String, HiddenElement> theHiddenMap;
+
+    /**
+     * The object element map.
+     */
+    private final HashMap<String, Object> theSelectionMap;
 
     /**
      * Constructor.
      * @throws JDataException on error
      */
     public ReportManager() throws JDataException {
-        /* Allocate the hashMap */
-        theMap = new HashMap<String, Element>();
+        /* Allocate the hashMaps */
+        theHiddenMap = new HashMap<String, HiddenElement>();
+        theSelectionMap = new HashMap<String, Object>();
 
         /* Protect against exceptions */
         try {
-            /* Create the document builder */
-            DocumentBuilderFactory myDocFactory = DocumentBuilderFactory.newInstance();
-            theBuilder = myDocFactory.newDocumentBuilder();
-
             /* Create the transformer */
             TransformerFactory myXformFactory = TransformerFactory.newInstance();
             theXformer = myXformFactory.newTransformer();
@@ -113,25 +102,12 @@ public class ReportManager {
     }
 
     /**
-     * Set Text.
-     * @param pText the text to parse
-     * @throws JDataException on error
+     * Clear maps.
      */
-    public void setInitialText(final String pText) throws JDataException {
-        /* Protect against exceptions */
-        try {
-            /* Store the text */
-            theText = pText;
-
-            /* Check for valid initialisation */
-            if (theBuilder != null) {
-                /* Access the XML document element */
-                theMap.clear();
-                theDocument = theBuilder.parse(new InputSource(new StringReader(pText)));
-            }
-        } catch (Exception e) {
-            throw new JDataException(ExceptionClass.XML, "Failed to parse text", e);
-        }
+    public void clearMaps() {
+        /* Clear the maps */
+        theHiddenMap.clear();
+        theSelectionMap.clear();
     }
 
     /**
@@ -141,7 +117,6 @@ public class ReportManager {
      */
     public void setDocument(final Document pDocument) throws JDataException {
         /* Store the document */
-        theMap.clear();
         theDocument = pDocument;
 
         /* Format the document */
@@ -149,34 +124,61 @@ public class ReportManager {
     }
 
     /**
-     * Toggle section.
-     * @param pId the id of the text to toggle.
-     * @return the modified text
-     * @throws JDataException on error
+     * Process link reference.
+     * @param pId the id of the reference.
+     * @param pWindow the window to update
      */
-    public String toggleSection(final String pId) throws JDataException {
-        /* If the section is hidden */
-        if (theMap.get(pId) != null) {
-            return restoreSection(pId);
+    public void processReference(final String pId,
+                                 final JEditorPane pWindow) {
+        /* Determine true id */
+        String myId = HTMLBuilder.REF_TAB
+                      + pId;
+        String myText = null;
+
+        try {
+            /* If the section is hidden */
+            if (theHiddenMap.get(myId) != null) {
+                /* Restore the section and access text */
+                myText = restoreSection(myId);
+
+                /* If the id section is hidden */
+            } else if (theSelectionMap.get(pId) != null) {
+                /* Restore the section and access text TODO */
+                // Object mySelect = theSelectionMap.get(pId);
+                return;
+
+                /* else try to hide the section */
+            } else {
+                myText = hideSection(myId);
+            }
+        } catch (JDataException e) {
+            myText = null;
         }
 
-        /* Hide the section */
-        return hideSection(pId);
+        /* If we have new text */
+        if (myText != null) {
+            /* Set it into the window and adjust the scroll */
+            pWindow.setText(myText);
+            pWindow.scrollToReference(HTMLBuilder.REF_ID
+                                      + pId);
+        }
     }
 
     /**
      * Hide all section of specified class.
-     * @param pClass the class of the sections to hide.
      * @return the modified text
      * @throws JDataException on error
      */
-    public String hideClassSections(final String pClass) throws JDataException {
+    public String hideClassSections() throws JDataException {
         /* Ignore if we have no document or transformer */
         if ((theDocument == null)
             || (theXformer == null)) {
             /* Return current text */
             return theText;
         }
+
+        /* Determine class sections */
+        String myClass = HTMLBuilder.CLASS_HIDE;
 
         /* Access root element */
         Element myElement = theDocument.getDocumentElement();
@@ -195,7 +197,7 @@ public class ReportManager {
             myNode = myNode.getNextSibling();
 
             /* hide any class sections */
-            hideClassSections(myChild, pClass);
+            hideClassSections(myChild, myClass);
         }
 
         /* Return the new text */
@@ -233,18 +235,13 @@ public class ReportManager {
             if (myId.length() == 0) {
                 return;
             }
-            /* Create a new placeholder section */
-            Element myReplacement = theDocument.createElement(ELEMENT_ROW);
-            myReplacement.setAttribute(ATTR_ID, myId);
 
-            /* Access parent node */
-            Node myParent = pElement.getParentNode();
-
-            /* Remove the child and replace with dummy */
-            myParent.replaceChild(myReplacement, pElement);
+            /* Hide the element */
+            HiddenElement myElement = new HiddenElement(pElement);
+            myElement.hide();
 
             /* Put the old element into the map */
-            theMap.put(myId, pElement);
+            theHiddenMap.put(myId, myElement);
         }
     }
 
@@ -254,41 +251,35 @@ public class ReportManager {
      * @return the modified text
      * @throws JDataException on error
      */
-    public String hideSection(final String pId) throws JDataException {
+    private String hideSection(final String pId) throws JDataException {
         /* Ignore if we have no document or transformer */
         if ((theDocument == null)
             || (theXformer == null)) {
-            /* Return current text */
-            return theText;
+            /* Return no change */
+            return null;
         }
 
         /* Ignore if section is already hidden */
-        if (theMap.get(pId) != null) {
-            return theText;
+        if (theHiddenMap.get(pId) != null) {
+            return null;
         }
 
         /* Locate the section */
         Element mySection = getElementById(pId);
         if (mySection != null) {
-            /* Access parent node */
-            Node myParent = mySection.getParentNode();
-
-            /* Create a new placeholder section */
-            Element myReplacement = theDocument.createElement(ELEMENT_ROW);
-            myReplacement.setAttribute(ATTR_ID, pId);
-
-            /* Remove the child and replace with dummy */
-            myParent.replaceChild(myReplacement, mySection);
+            /* Hide the element */
+            HiddenElement myElement = new HiddenElement(mySection);
+            myElement.hide();
 
             /* Put the old element into the map */
-            theMap.put(pId, mySection);
+            theHiddenMap.put(pId, myElement);
 
             /* Return the new text */
             return formatXML();
         }
 
-        /* Return the current text */
-        return theText;
+        /* Return no change */
+        return null;
     }
 
     /**
@@ -368,22 +359,13 @@ public class ReportManager {
         }
 
         /* Obtain the hidden element */
-        Element myHidden = theMap.get(pId);
+        HiddenElement myHidden = theHiddenMap.get(pId);
 
         /* If we have hidden an element */
         if (myHidden != null) {
-            /* Locate the section */
-            Element mySection = getElementById(pId);
-            if (mySection != null) {
-                /* Access parent node */
-                Node myParent = mySection.getParentNode();
-
-                /* Restore the child */
-                myParent.replaceChild(myHidden, mySection);
-
-                /* Remove the element from the map */
-                theMap.remove(pId);
-            }
+            /* Restore the element */
+            myHidden.restore();
+            theHiddenMap.remove(pId);
 
             /* Return the new text */
             return formatXML();
@@ -391,6 +373,17 @@ public class ReportManager {
 
         /* Just return the current text */
         return theText;
+    }
+
+    /**
+     * Record referenced selection.
+     * @param pId the id for the selection
+     * @param pSelect the selection object
+     */
+    protected void setSelectionForId(final String pId,
+                                     final Object pSelect) {
+        /* Record into selection map */
+        theSelectionMap.put(pId, pSelect);
     }
 
     /**
@@ -410,6 +403,53 @@ public class ReportManager {
             return theText;
         } catch (TransformerException e) {
             throw new JDataException(ExceptionClass.XML, "Failed to format", e);
+        }
+    }
+
+    /**
+     * Simple element class for hidden elements.
+     */
+    private static final class HiddenElement {
+        /**
+         * The element that is hidden.
+         */
+        private final Element theElement;
+
+        /**
+         * Its parent.
+         */
+        private final Node theParent;
+
+        /**
+         * Its previous sibling.
+         */
+        private final Node thePrevious;
+
+        /**
+         * Constructor.
+         * @param pElement the element.
+         */
+        private HiddenElement(final Element pElement) {
+            /* Store details */
+            theElement = pElement;
+            theParent = pElement.getParentNode();
+            thePrevious = pElement.getPreviousSibling();
+        }
+
+        /**
+         * Hide the element.
+         */
+        private void hide() {
+            /* Remove the child from the parent */
+            theParent.removeChild(theElement);
+        }
+
+        /**
+         * Restore the element.
+         */
+        private void restore() {
+            /* Restore the elementt */
+            theParent.insertBefore(theElement, thePrevious.getNextSibling());
         }
     }
 }

@@ -62,6 +62,11 @@ public final class AccountBucket
     protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucket.class.getSimpleName());
 
     /**
+     * Analysis Field Id.
+     */
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(Analysis.class.getSimpleName());
+
+    /**
      * Account Field Id.
      */
     private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(Account.class.getSimpleName());
@@ -90,6 +95,11 @@ public final class AccountBucket
      * FieldSet map.
      */
     private static final Map<JDataField, AccountAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, AccountAttribute.class);
+
+    /**
+     * The analysis.
+     */
+    private final Analysis theAnalysis;
 
     /**
      * The account.
@@ -138,6 +148,9 @@ public final class AccountBucket
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ANALYSIS.equals(pField)) {
+            return theAnalysis;
+        }
         if (FIELD_ACCOUNT.equals(pField)) {
             return theAccount;
         }
@@ -235,8 +248,16 @@ public final class AccountBucket
      * Obtain the dataSet.
      * @return the dataSet
      */
-    private FinanceData getDataSet() {
+    protected FinanceData getDataSet() {
         return theData;
+    }
+
+    /**
+     * Obtain the analysis.
+     * @return the analysis
+     */
+    protected Analysis getAnalysis() {
+        return theAnalysis;
     }
 
     /**
@@ -383,25 +404,26 @@ public final class AccountBucket
 
     /**
      * Constructor.
-     * @param pData the data
+     * @param pAnalysis the analysis
      * @param pAccount the account
      */
-    private AccountBucket(final FinanceData pData,
+    private AccountBucket(final Analysis pAnalysis,
                           final Account pAccount) {
-        /* Store the account */
+        /* Store the details */
         theAccount = pAccount;
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+        theBase = null;
 
         /* Obtain category, allowing for autoExpense */
         if (theAccount.getAutoExpense() != null) {
-            theCategory = pData.getAccountCategories().getSingularClass(AccountCategoryClass.Payee);
+            theCategory = theData.getAccountCategories().getSingularClass(AccountCategoryClass.Payee);
         } else {
             theCategory = theAccount.getAccountCategory();
         }
 
         /* Determine type based on category */
         theType = AccountCategoryBucket.determineCategoryType(theCategory);
-        theData = pData;
-        theBase = null;
 
         /* Create the attribute map and savePoint */
         theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
@@ -441,14 +463,17 @@ public final class AccountBucket
 
     /**
      * Constructor.
+     * @param pAnalysis the analysis
      * @param pBase the underlying bucket
      */
-    private AccountBucket(final AccountBucket pBase) {
+    private AccountBucket(final Analysis pAnalysis,
+                          final AccountBucket pBase) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theCategory = pBase.getAccountCategory();
         theType = pBase.getCategoryType();
-        theData = pBase.getDataSet();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
         theBase = pBase;
 
         /* Create a new attribute map and save point */
@@ -944,18 +969,12 @@ public final class AccountBucket
         private final Analysis theAnalysis;
 
         /**
-         * The data.
-         */
-        private final FinanceData theData;
-
-        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
         public AccountBucketList(final Analysis pAnalysis) {
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
         }
 
         /**
@@ -967,7 +986,6 @@ public final class AccountBucket
                                  final AccountBucketList pBase) {
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
 
             /* Access the iterator */
             Iterator<AccountBucket> myIterator = pBase.listIterator();
@@ -979,7 +997,7 @@ public final class AccountBucket
                 /* If the bucket is active */
                 if (myCurr.isActive()) {
                     /* Add a derived bucket to the list */
-                    AccountBucket myBucket = new AccountBucket(myCurr);
+                    AccountBucket myBucket = new AccountBucket(pAnalysis, myCurr);
                     add(myBucket);
                 }
             }
@@ -997,7 +1015,7 @@ public final class AccountBucket
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new AccountBucket(theData, pAccount);
+                myItem = new AccountBucket(theAnalysis, pAccount);
 
                 /* Add to the list */
                 add(myItem);

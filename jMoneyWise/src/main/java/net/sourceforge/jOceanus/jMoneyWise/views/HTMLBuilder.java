@@ -72,6 +72,11 @@ public class HTMLBuilder {
     protected static final String ATTR_ID = "id";
 
     /**
+     * The name attribute.
+     */
+    protected static final String ATTR_NAME = "name";
+
+    /**
      * The href attribute.
      */
     private static final String ATTR_HREF = "href";
@@ -209,7 +214,7 @@ public class HTMLBuilder {
     /**
      * The row element.
      */
-    protected static final String ELEMENT_ROW = "tr";
+    private static final String ELEMENT_ROW = "tr";
 
     /**
      * The cell element.
@@ -641,9 +646,10 @@ public class HTMLBuilder {
         /* Create the row */
         Element myRow = startRow(pParent, CLASS_CATROW);
         Element myCell = makeValueCell(myRow);
-        myCell.setAttribute(ATTR_ID, REF_ID
-                                     + pTitle);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_NAME, REF_ID
+                                       + pTitle);
         myCell.appendChild(myLink);
         myLink.setAttribute(ATTR_HREF, pTitle);
         myLink.setTextContent(pTitle);
@@ -661,9 +667,11 @@ public class HTMLBuilder {
         /* Create the row */
         Element myRow = startRow(pParent, CLASS_ALTCATROW);
         Element myCell = makeValueCell(myRow);
-        myCell.setAttribute(ATTR_ID, REF_ID
-                                     + pTitle);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_NAME, REF_ID
+                                       + pTitle);
+        myLink = theDocument.createElement(ELEMENT_LINK);
         myCell.appendChild(myLink);
         myLink.setAttribute(ATTR_HREF, pTitle);
         myLink.setTextContent(pTitle);
@@ -683,9 +691,11 @@ public class HTMLBuilder {
         /* Create the row */
         Element myRow = startRow(pParent, CLASS_SUBCATROW);
         Element myCell = makeValueCell(myRow);
-        myCell.setAttribute(ATTR_ID, REF_ID
-                                     + pTitle);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_NAME, REF_ID
+                                       + pTitle);
+        myLink = theDocument.createElement(ELEMENT_LINK);
         myCell.appendChild(myLink);
         myLink.setAttribute(ATTR_HREF, pTitle);
         myLink.setTextContent(pValue);
@@ -705,9 +715,11 @@ public class HTMLBuilder {
         /* Create the row */
         Element myRow = startRow(pParent, CLASS_ALTSUBCATROW);
         Element myCell = makeValueCell(myRow);
-        myCell.setAttribute(ATTR_ID, REF_ID
-                                     + pTitle);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_NAME, REF_ID
+                                       + pTitle);
+        myLink = theDocument.createElement(ELEMENT_LINK);
         myCell.appendChild(myLink);
         myLink.setAttribute(ATTR_HREF, pTitle);
         myLink.setTextContent(pValue);

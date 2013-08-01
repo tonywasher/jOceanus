@@ -56,6 +56,11 @@ public final class EventCategoryBucket
     protected static final JDataFields FIELD_DEFS = new JDataFields(EventCategoryBucket.class.getSimpleName());
 
     /**
+     * Analysis Field Id.
+     */
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(Analysis.class.getSimpleName());
+
+    /**
      * Event Category Field Id.
      */
     private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(EventCategory.class.getSimpleName());
@@ -74,6 +79,11 @@ public final class EventCategoryBucket
      * FieldSet map.
      */
     private static final Map<JDataField, EventAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, EventAttribute.class);
+
+    /**
+     * The analysis.
+     */
+    private final Analysis theAnalysis;
 
     /**
      * The event category.
@@ -102,6 +112,9 @@ public final class EventCategoryBucket
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ANALYSIS.equals(pField)) {
+            return theAnalysis;
+        }
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
         }
@@ -169,6 +182,14 @@ public final class EventCategoryBucket
      */
     public EventCategoryBucket getBase() {
         return theBase;
+    }
+
+    /**
+     * Obtain the analysis.
+     * @return the analysis
+     */
+    protected Analysis getAnalysis() {
+        return theAnalysis;
     }
 
     /**
@@ -275,10 +296,13 @@ public final class EventCategoryBucket
 
     /**
      * Constructor.
+     * @param pAnalysis the analysis
      * @param pCategory the event category
      */
-    private EventCategoryBucket(final EventCategory pCategory) {
-        /* Store the category */
+    private EventCategoryBucket(final Analysis pAnalysis,
+                                final EventCategory pCategory) {
+        /* Store the parameters */
+        theAnalysis = pAnalysis;
         theCategory = pCategory;
         theType = pCategory.getCategoryType();
         theBase = null;
@@ -576,7 +600,7 @@ public final class EventCategoryBucket
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new EventCategoryBucket(pCategory);
+                myItem = new EventCategoryBucket(theAnalysis, pCategory);
 
                 /* Add to the list */
                 add(myItem);
@@ -665,7 +689,7 @@ public final class EventCategoryBucket
                         /* If the bucket is completely new */
                         if (myTotal == null) {
                             /* Create the new bucket and add to new list */
-                            myTotal = new EventCategoryBucket(myParent);
+                            myTotal = new EventCategoryBucket(theAnalysis, myParent);
                             myTotals.add(myTotal);
                         }
                     }

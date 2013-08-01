@@ -27,21 +27,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.print.PrinterException;
-import java.io.IOException;
-import java.net.URL;
 
 import javax.swing.BoxLayout;
 import javax.swing.JEditorPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 import javax.swing.text.html.HTMLEditorKit;
-import javax.swing.text.html.HTMLFrameHyperlinkEvent;
 import javax.swing.text.html.StyleSheet;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -148,11 +143,11 @@ public class ReportTab
         theSpotEntry.addAsChildOf(theDataReport);
         theSpotEntry.hideEntry();
 
-        /* Create the report builder */
-        theBuilder = new ReportBuilder();
-
         /* Create Report Manager */
         theManager = new ReportManager();
+
+        /* Create the report builder */
+        theBuilder = new ReportBuilder(theManager);
 
         /* Create listener */
         ReportListener myListener = new ReportListener();
@@ -160,7 +155,6 @@ public class ReportTab
         /* Create the editor pane as non-editable */
         theEditor = new JEditorPane();
         theEditor.setEditable(false);
-        theEditor.addHyperlinkListener(myListener);
         theEditor.addMouseListener(myListener);
 
         /* Create the print pane for the window */
@@ -281,6 +275,9 @@ public class ReportTab
             return;
         }
 
+        /* Clear the maps */
+        theManager.clearMaps();
+
         /* Switch on report type */
         switch (myReportType) {
             case ASSET:
@@ -326,15 +323,20 @@ public class ReportTab
                 return;
         }
 
-        /* process the text to hide relevant sections */
+        /* Declare the document */
         theManager.setDocument(myDoc);
-        String myText = theManager.hideClassSections("hideTable");
 
-        /* Set the report text */
+        /* Create printable version */
+        String myText = theManager.formatXML();
+        thePrint.setText(myText);
+
+        /* Create initial display version */
+        myText = theManager.hideClassSections();
         theEditor.setText(myText);
+
+        /* Initialise the window */
         theEditor.setCaretPosition(0);
         theEditor.requestFocusInWindow();
-        thePrint.setText(myText);
     }
 
     /**
@@ -342,50 +344,12 @@ public class ReportTab
      */
     private class ReportListener
             extends MouseAdapter
-            implements ChangeListener, ActionListener, HyperlinkListener {
-        @Override
-        public void hyperlinkUpdate(final HyperlinkEvent e) {
-            /* If this is an activated event */
-            if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                /* If this is a frame hyper-link */
-                if (e instanceof HTMLFrameHyperlinkEvent) {
-                    /* Pass through to the document */
-                    HTMLFrameHyperlinkEvent myEvent = (HTMLFrameHyperlinkEvent) e;
-                    HTMLDocument myDoc = (HTMLDocument) theEditor.getDocument();
-                    myDoc.processHTMLFrameHyperlinkEvent(myEvent);
-
-                    /* else this is an interesting event */
-                } else {
-                    /* Protect against exceptions */
-                    try {
-                        /* Access the URL and description */
-                        URL myURL = e.getURL();
-                        String myDesc = e.getDescription();
-
-                        /* If this is an internal link */
-                        if ((myURL == null)
-                            && (myDesc.startsWith("#"))) {
-                            /* Scroll to requested link */
-                            theEditor.scrollToReference(myDesc.substring(1));
-
-                            /* else we should try the URL */
-                        } else {
-                            /* Set URL page */
-                            theEditor.setPage(e.getURL());
-                        }
-
-                        /* Catch and ignore exceptions */
-                    } catch (IOException t) {
-                        t = null;
-                    }
-                }
-            }
-        }
+            implements ChangeListener, ActionListener {
 
         @Override
         public void mouseClicked(final MouseEvent evt) {
-            /* If this is a right click event */
-            if (evt.getButton() == MouseEvent.BUTTON3) {
+            /* If this is a left click event */
+            if (evt.getButton() == MouseEvent.BUTTON1) {
                 /* Determine the document element that we right clicked on */
                 Element myElement = getHyperlinkElement(evt);
                 if (myElement != null) {
@@ -397,13 +361,8 @@ public class ReportTab
                         /* Access the reference name */
                         String myRef = (String) mySet.getAttribute(HTML.Attribute.HREF);
                         if (myRef != null) {
-                            /* Toggle the myTest section */
-                            try {
-                                theEditor.setText(theManager.toggleSection("tableAssets:Shares"));
-                                theEditor.setCaretPosition(0);
-                            } catch (JDataException e) {
-                                theEditor.setText("");
-                            }
+                            /* Process the link reference */
+                            theManager.processReference(myRef, theEditor);
                         }
                     }
                 }

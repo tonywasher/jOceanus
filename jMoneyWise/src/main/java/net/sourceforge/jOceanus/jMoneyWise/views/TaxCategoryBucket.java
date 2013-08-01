@@ -52,6 +52,11 @@ public final class TaxCategoryBucket
     protected static final JDataFields FIELD_DEFS = new JDataFields(TaxCategoryBucket.class.getSimpleName());
 
     /**
+     * Analysis Field Id.
+     */
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(Analysis.class.getSimpleName());
+
+    /**
      * Tax Category Field Id.
      */
     private static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(TaxCategory.class.getSimpleName());
@@ -78,6 +83,9 @@ public final class TaxCategoryBucket
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        if (FIELD_ANALYSIS.equals(pField)) {
+            return theAnalysis;
+        }
         if (FIELD_TAXCAT.equals(pField)) {
             return theTaxCategory;
         }
@@ -104,6 +112,11 @@ public final class TaxCategoryBucket
 
         return JDataFieldValue.UnknownField;
     }
+
+    /**
+     * The analysis.
+     */
+    private final Analysis theAnalysis;
 
     /**
      * Tax Category.
@@ -165,6 +178,14 @@ public final class TaxCategoryBucket
      */
     public TaxCategoryBucket getParent() {
         return theParent;
+    }
+
+    /**
+     * Obtain the analysis.
+     * @return the analysis
+     */
+    protected Analysis getAnalysis() {
+        return theAnalysis;
     }
 
     /**
@@ -248,11 +269,14 @@ public final class TaxCategoryBucket
 
     /**
      * Constructor.
+     * @param pAnalysis the analysis
      * @param pTaxCategory the category
      */
-    private TaxCategoryBucket(final TaxCategory pTaxCategory) {
-        /* Store the tax category */
+    private TaxCategoryBucket(final Analysis pAnalysis,
+                              final TaxCategory pTaxCategory) {
+        /* Store the parameters */
         theTaxCategory = pTaxCategory;
+        theAnalysis = pAnalysis;
 
         /* Determine the tax section */
         theTaxSection = theTaxCategory.getTaxClass().getClassSection();
@@ -491,7 +515,7 @@ public final class TaxCategoryBucket
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new TaxCategoryBucket(myCategory);
+                myItem = new TaxCategoryBucket(theAnalysis, myCategory);
 
                 /* Add to the list */
                 add(myItem);

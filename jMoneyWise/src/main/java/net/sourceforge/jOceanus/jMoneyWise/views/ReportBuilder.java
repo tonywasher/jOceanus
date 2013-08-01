@@ -87,9 +87,9 @@ public class ReportBuilder {
     private final HTMLBuilder theBuilder;
 
     /**
-     * The HTML Manager.
+     * The Report Manager.
      */
-    private final ReportManager theHTMLManager;
+    private final ReportManager theManager;
 
     /**
      * Data formatter.
@@ -98,15 +98,14 @@ public class ReportBuilder {
 
     /**
      * Constructor.
+     * @param pManager the report manager
      * @throws JDataException on error
      */
-    public ReportBuilder() throws JDataException {
+    public ReportBuilder(final ReportManager pManager) throws JDataException {
         /* Record the details */
         theBuilder = new HTMLBuilder();
         theFormatter = theBuilder.getDataFormatter();
-
-        /* Create report Manager */
-        theHTMLManager = new ReportManager();
+        theManager = pManager;
     }
 
     /**
@@ -130,10 +129,14 @@ public class ReportBuilder {
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
+        /* Determine number of columns */
+        int myColumns = 1;
+        myColumns++;
+
         /* Initialise the table */
         Element myTable = theBuilder.startTable(myBody);
         Element myTotal = theBuilder.startTableBody(myTable);
-        myTable = theBuilder.startEmbeddedTable(myTotal, TEXT_TOTAL, 2, true);
+        myTable = theBuilder.startEmbeddedTable(myTotal, TEXT_TOTAL, myColumns, true);
         Element myTBody = theBuilder.startTableBody(myTable);
 
         /* Loop through the SubTotal Buckets */
@@ -157,7 +160,7 @@ public class ReportBuilder {
             isOdd = !isOdd;
 
             /* Add the category report */
-            makeNetWorthCategoryReport(myTBody, myBucket);
+            makeNetWorthCategoryReport(myTBody, myColumns, myBucket);
         }
 
         /* Build the total row */
@@ -171,16 +174,18 @@ public class ReportBuilder {
     /**
      * Build a category report.
      * @param pBody the table body
+     * @param pNumColumns the number of table columns
      * @param pCategory the category bucket
      */
     private void makeNetWorthCategoryReport(final Element pBody,
+                                            final Integer pNumColumns,
                                             final AccountCategoryBucket pCategory) {
         /* Access the category */
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
         AccountCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), 2, true);
+        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), pNumColumns, true);
         Element myBody = theBuilder.startTableBody(myTable);
 
         /* Loop through the Category Buckets */
@@ -210,16 +215,18 @@ public class ReportBuilder {
             isOdd = !isOdd;
 
             /* Add the sub category report */
-            makeNetWorthSubCategoryReport(myBody, myBucket);
+            makeNetWorthSubCategoryReport(myBody, pNumColumns, myBucket);
         }
     }
 
     /**
      * Build a subCategory report.
      * @param pBody the table body
+     * @param pNumColumns the number of table columns
      * @param pSubCategory the subCategory bucket
      */
     private void makeNetWorthSubCategoryReport(final Element pBody,
+                                               final Integer pNumColumns,
                                                final AccountCategoryBucket pSubCategory) {
         /* Access the category and class */
         AccountBucketList myAccounts = theAnalysis.getAccounts();
@@ -227,7 +234,7 @@ public class ReportBuilder {
         AccountCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Create a new table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), 2, false);
+        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), pNumColumns, false);
         Element myHdr = theBuilder.startTableHeader(myTable);
         Element myRow;
 
@@ -279,6 +286,9 @@ public class ReportBuilder {
             }
             theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
 
+            /* Record the selection */
+            theManager.setSelectionForId(myBucket.getName(), myBucket);
+
             /* Flip row type */
             isOdd = !isOdd;
         }
@@ -306,6 +316,11 @@ public class ReportBuilder {
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
+        /* Determine number of columns */
+        int myColumns = 1;
+        myColumns++;
+        myColumns++;
+
         /* Initialise the table */
         Element myTable = theBuilder.startTable(myBody);
         Element myTHdr = theBuilder.startTableHeader(myTable);
@@ -313,7 +328,7 @@ public class ReportBuilder {
         theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDate.getYear()));
         theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDate.getYear() - 1));
         Element myTotal = theBuilder.startTableBody(myTable);
-        myTable = theBuilder.startEmbeddedTable(myTotal, TEXT_TOTAL, 3, true);
+        myTable = theBuilder.startEmbeddedTable(myTotal, TEXT_TOTAL, myColumns, true);
         Element myTBody = theBuilder.startTableBody(myTable);
 
         /* Loop through the SubTotal Buckets */
@@ -338,7 +353,7 @@ public class ReportBuilder {
             isOdd = !isOdd;
 
             /* Add the category report */
-            makeAssetCategoryReport(myTBody, myBucket);
+            makeAssetCategoryReport(myTBody, myColumns, myBucket);
         }
 
         /* Format the total */
@@ -358,16 +373,18 @@ public class ReportBuilder {
     /**
      * Build a category report.
      * @param pBody the table body
+     * @param pNumColumns the number of table columns
      * @param pCategory the category bucket
      */
     private void makeAssetCategoryReport(final Element pBody,
+                                         final Integer pNumColumns,
                                          final AccountCategoryBucket pCategory) {
         /* Access the category */
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
         AccountCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), 3, true);
+        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), pNumColumns, true);
         Element myBody = theBuilder.startTableBody(myTable);
 
         /* Loop through the Category Buckets */
@@ -398,23 +415,25 @@ public class ReportBuilder {
             isOdd = !isOdd;
 
             /* Add the sub category report */
-            makeAssetSubCategoryReport(myBody, myBucket);
+            makeAssetSubCategoryReport(myBody, pNumColumns, myBucket);
         }
     }
 
     /**
      * Build a subCategory report.
      * @param pBody the table body
+     * @param pNumColumns the number of table columns
      * @param pSubCategory the subCategory bucket
      */
     private void makeAssetSubCategoryReport(final Element pBody,
+                                            final Integer pNumColumns,
                                             final AccountCategoryBucket pSubCategory) {
         /* Access the category and class */
         AccountBucketList myAccounts = theAnalysis.getAccounts();
         AccountCategory myCategory = pSubCategory.getAccountCategory();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), 3, true);
+        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), pNumColumns, false);
         Element myBody = theBuilder.startTableBody(myTable);
 
         /* Loop through the Account Buckets */
@@ -440,6 +459,9 @@ public class ReportBuilder {
                     : theBuilder.startAlternateRow(myBody, myBucket.getName());
             theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theBuilder.makeValueCell(myRow, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
+
+            /* Record the selection */
+            theManager.setSelectionForId(myBucket.getName(), myBucket);
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -467,6 +489,11 @@ public class ReportBuilder {
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
+        /* Determine number of columns */
+        int myColumns = 1;
+        myColumns++;
+        myColumns++;
+
         /* Initialise the table */
         Element myTable = theBuilder.startTable(myBody);
         Element myTHdr = theBuilder.startTableHeader(myTable);
@@ -474,7 +501,7 @@ public class ReportBuilder {
         theBuilder.makeTitleCell(myRow, TEXT_INCOME);
         theBuilder.makeTitleCell(myRow, TEXT_EXPENSE);
         Element myTotal = theBuilder.startTableBody(myTable);
-        myTable = theBuilder.startEmbeddedTable(myTotal, TEXT_TOTAL, 3, true);
+        myTable = theBuilder.startEmbeddedTable(myTotal, TEXT_TOTAL, myColumns, true);
         Element myTBody = theBuilder.startTableBody(myTable);
 
         /* Loop through the SubTotal Buckets */
@@ -499,7 +526,7 @@ public class ReportBuilder {
             isOdd = !isOdd;
 
             /* Add the category report */
-            makeEventCategoryReport(myTBody, myBucket);
+            makeEventCategoryReport(myTBody, myColumns, myBucket);
         }
 
         /* Format the total */
@@ -519,16 +546,18 @@ public class ReportBuilder {
     /**
      * Build a category report.
      * @param pBody the table body
+     * @param pNumColumns the number of table columns
      * @param pCategory the category bucket
      */
     private void makeEventCategoryReport(final Element pBody,
+                                         final Integer pNumColumns,
                                          final EventCategoryBucket pCategory) {
         /* Access the category */
         EventCategoryBucketList myCategories = theAnalysis.getEventCategories();
         EventCategory myCategory = pCategory.getEventCategory();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), 3, true);
+        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), pNumColumns, false);
         Element myBody = theBuilder.startTableBody(myTable);
 
         /* Loop through the Category Buckets */
@@ -549,6 +578,9 @@ public class ReportBuilder {
                     : theBuilder.startAlternateRow(myBody, myCurr.getSubCategory(), myBucket.getName());
             theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(EventAttribute.Income));
             theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(EventAttribute.Expense));
+
+            /* Record the selection */
+            theManager.setSelectionForId(myBucket.getName(), myBucket);
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -599,6 +631,9 @@ public class ReportBuilder {
                                 ? theBuilder.startDetailRow(myTBody, myBucket.getName())
                                 : theBuilder.startAlternateRow(myTBody, myBucket.getName());
                         theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(TaxAttribute.Amount));
+
+                        /* Record the selection */
+                        theManager.setSelectionForId(myBucket.getName(), myBucket);
 
                         /* Flip row type */
                         isOdd = !isOdd;
@@ -664,6 +699,9 @@ public class ReportBuilder {
             theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Income));
             theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Expense));
 
+            /* Record the selection */
+            theManager.setSelectionForId(myBucket.getName(), myBucket);
+
             /* Flip row type */
             isOdd = !isOdd;
         }
@@ -704,6 +742,13 @@ public class ReportBuilder {
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
+        /* Determine number of columns */
+        int myColumns = 1;
+        myColumns++;
+        myColumns++;
+        myColumns++;
+        myColumns++;
+
         /* Initialise the table */
         Element myTable = theBuilder.startTable(myBody);
         Element myTHdr = theBuilder.startTableHeader(myTable);
@@ -742,7 +787,7 @@ public class ReportBuilder {
             /* If this is Capital */
             if (myBucket.getAccountCategory().getCategoryTypeClass().isCapital()) {
                 /* Format the detail */
-                makeCapitalEventReport(myTBody, myBucket);
+                makeCapitalEventReport(myTBody, myColumns, myBucket);
             }
         }
 
@@ -760,19 +805,21 @@ public class ReportBuilder {
     /**
      * Build a capital event report element.
      * @param pBody the table body
+     * @param pNumColumns the number of table columns
      * @param pAsset the asset to report on
      */
     public void makeCapitalEventReport(final Element pBody,
+                                       final Integer pNumColumns,
                                        final AccountBucket pAsset) {
         /* Access the event lists */
         CapitalEventList myList = pAsset.getCapitalEvents();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, pAsset.getName(), 5, false);
-        Element myHdr = theBuilder.startTableHeader(myTable);
+        Element myTable = theBuilder.startEmbeddedTable(pBody, pAsset.getName(), pNumColumns, false);
 
         /* Format the header */
-        Element myRow = theBuilder.startTotalRow(myHdr, "Date");
+        Element myBody = theBuilder.startTableBody(myTable);
+        Element myRow = theBuilder.startDetailRow(myBody, "Date");
         theBuilder.makeTitleCell(myRow, "Event");
         theBuilder.makeTitleCell(myRow, "DeltaUnits");
         theBuilder.makeTitleCell(myRow, "DeltaCost");
@@ -780,9 +827,8 @@ public class ReportBuilder {
         theBuilder.makeTitleCell(myRow, "Dividend");
 
         /* Access the iterator */
-        Element myBody = theBuilder.startTableBody(myTable);
         Iterator<CapitalEvent> myIterator = myList.iterator();
-        boolean isOdd = true;
+        boolean isOdd = false;
 
         /* Loop through the Events */
         while (myIterator.hasNext()) {
@@ -807,14 +853,6 @@ public class ReportBuilder {
             /* Flip row type */
             isOdd = !isOdd;
         }
-
-        /* Build Totals */
-        myRow = theBuilder.startTotalRow(myBody, TEXT_TOTAL);
-        theBuilder.makeTotalCell(myRow);
-        theBuilder.makeTotalCell(myRow, pAsset.getUnitsAttribute(AccountAttribute.Units));
-        theBuilder.makeTotalCell(myRow, pAsset.getMoneyAttribute(AccountAttribute.Cost));
-        theBuilder.makeTotalCell(myRow, pAsset.getMoneyAttribute(AccountAttribute.Gained));
-        theBuilder.makeTotalCell(myRow);
     }
 
     /**
@@ -839,6 +877,11 @@ public class ReportBuilder {
         myBuffer.append(theFormatter.formatObject(theAnalysis.getDate()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
+
+        /* Determine number of columns */
+        int myColumns = 1;
+        myColumns++;
+        myColumns++;
 
         /* Format the header */
         theBuilder.makeSubTitle(myBody, "Taxation Summary");
@@ -870,7 +913,7 @@ public class ReportBuilder {
             theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
 
             /* Format the detail */
-            makeTaxReport(myTBody, myBucket);
+            makeTaxReport(myTBody, myColumns, myBucket);
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -896,7 +939,7 @@ public class ReportBuilder {
 
         /* If we need a tax slice report */
         if (theAnalysis.hasGainsSlices()) {
-            makeTaxSliceReport(myBody);
+            makeTaxSliceReport(myBody, myColumns);
         }
 
         /* Format the tax parameters */
@@ -1051,15 +1094,17 @@ public class ReportBuilder {
     /**
      * Build a standard tax report element.
      * @param pBody the table body
+     * @param pNumColumns the number of table columns
      * @param pSummary the tax summary
      */
     public void makeTaxReport(final Element pBody,
+                              final Integer pNumColumns,
                               final TaxCategoryBucket pSummary) {
         /* Access the bucket lists */
         TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
 
         /* Format the detail */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, pSummary.getName(), 3, true);
+        Element myTable = theBuilder.startEmbeddedTable(pBody, pSummary.getName(), pNumColumns, true);
         Element myHdr = theBuilder.startTableHeader(myTable);
         Element myRow = theBuilder.startDetailTitleRow(myHdr, "Class");
         theBuilder.makeTitleCell(myRow, "Income");
@@ -1101,14 +1146,25 @@ public class ReportBuilder {
     /**
      * Build a tax slice report.
      * @param pBody the table body
+     * @param pNumColumns the number of table columns
      */
-    public void makeTaxSliceReport(final Element pBody) {
+    public void makeTaxSliceReport(final Element pBody,
+                                   final Integer pNumColumns) {
         /* Access the bucket lists */
         TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
         ChargeableEventList myCharges = theAnalysis.getCharges();
 
+        /* Determine number of columns */
+        int myColumns = 1;
+        myColumns++;
+        myColumns++;
+        myColumns++;
+        myColumns++;
+        myColumns++;
+        myColumns++;
+
         /* Format the detail */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, "ChargeableEvents", 3, false);
+        Element myTable = theBuilder.startEmbeddedTable(pBody, "ChargeableEvents", pNumColumns, false);
         Element myHdr = theBuilder.startTableHeader(myTable);
         Element myRow = theBuilder.startTotalRow(myHdr, "Date");
         theBuilder.makeTitleCell(myRow, "Description");
@@ -1156,6 +1212,6 @@ public class ReportBuilder {
         TaxCategoryBucket myTax = myList.getBucket(TaxCategoryClass.TaxDueSlice);
 
         /* Add the Slice taxation details */
-        makeTaxReport(myBody, myTax);
+        makeTaxReport(myBody, myColumns, myTax);
     }
 }
