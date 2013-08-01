@@ -336,8 +336,9 @@ public class Issue {
         theIssueType = theServer.getIssueType(pIssue.getType());
         theStatus = theServer.getStatus(pIssue.getStatus());
         thePriority = theServer.getPriority(pIssue.getPriority());
-        theResolution = (pIssue.getResolution() == null) ? null : theServer.getResolution(pIssue
-                .getResolution());
+        theResolution = (pIssue.getResolution() == null)
+                ? null
+                : theServer.getResolution(pIssue.getResolution());
 
         /* Determine the assignee and reporter */
         theAssignee = theServer.getUser(pIssue.getAssignee());
@@ -410,7 +411,8 @@ public class Issue {
         Component myNewComp = theProject.getComponentByName(pComponent);
         if (myNewComp == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Component does not exists " + pComponent);
+            throw new JDataException(ExceptionClass.JIRA, "Component does not exists "
+                                                          + pComponent);
         }
 
         /* Protect against exceptions */
@@ -465,7 +467,8 @@ public class Issue {
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Version does not exists " + pVersion);
+            throw new JDataException(ExceptionClass.JIRA, "Version does not exists "
+                                                          + pVersion);
         }
 
         /* Protect against exceptions */
@@ -520,7 +523,8 @@ public class Issue {
         Version myNewVers = theProject.getVersionByName(pVersion);
         if (myNewVers == null) {
             /* Pass the exception on */
-            throw new JDataException(ExceptionClass.JIRA, "Version does not exists " + pVersion);
+            throw new JDataException(ExceptionClass.JIRA, "Version does not exists "
+                                                          + pVersion);
         }
 
         /* Protect against exceptions */

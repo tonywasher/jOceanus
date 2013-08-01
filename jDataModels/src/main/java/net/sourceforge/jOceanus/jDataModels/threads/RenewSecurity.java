@@ -27,14 +27,14 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 
 /**
- * Thread to renew security in the data set. A new ControlKey will be created using the same password as the
- * existing security, together with a new set of encryption DataKeys. All encrypted fields in the data set
- * will then be re-encrypted with the new ControlKey, and finally the ControlData will be updated to use the
- * new controlKey. Data will be left in the Updated state ready for committing the change to the database.
+ * Thread to renew security in the data set. A new ControlKey will be created using the same password as the existing security, together with a new set of
+ * encryption DataKeys. All encrypted fields in the data set will then be re-encrypted with the new ControlKey, and finally the ControlData will be updated to
+ * use the new controlKey. Data will be left in the Updated state ready for committing the change to the database.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class RenewSecurity<T extends DataSet<T>> extends LoaderThread<T> {
+public class RenewSecurity<T extends DataSet<T>>
+        extends LoaderThread<T> {
     /**
      * Task description.
      */

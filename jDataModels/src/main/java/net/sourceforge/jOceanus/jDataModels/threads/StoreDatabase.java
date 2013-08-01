@@ -33,7 +33,8 @@ import net.sourceforge.jOceanus.jDataModels.views.DataControl;
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class StoreDatabase<T extends DataSet<T>> extends WorkerThread<Void> {
+public class StoreDatabase<T extends DataSet<T>>
+        extends WorkerThread<Void> {
     /**
      * Task description.
      */

@@ -38,7 +38,8 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
  * Save buttons panel.
  * @author Tony Washer
  */
-public class SaveButtons extends JEventPanel {
+public class SaveButtons
+        extends JEventPanel {
     /**
      * Serial Id.
      */
@@ -178,7 +179,8 @@ public class SaveButtons extends JEventPanel {
     /**
      * Listener class.
      */
-    private class SaveListener implements ActionListener {
+    private class SaveListener
+            implements ActionListener {
         @Override
         public void actionPerformed(final ActionEvent evt) {
             Object o = evt.getSource();

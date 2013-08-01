@@ -27,15 +27,14 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 
 /**
- * Thread to change the password. The user will be prompted for a new password and this will be used to create
- * a new Password Hash. The controlKey will be updated with this Hash and the encryption DataKeys will be
- * updated with their new wrapped format. Since the DataKeys do not themselves change there is no need to
- * re-encrypt and data fields. Data will be left in the Updated state ready for committing the change to the
- * database.
+ * Thread to change the password. The user will be prompted for a new password and this will be used to create a new Password Hash. The controlKey will be
+ * updated with this Hash and the encryption DataKeys will be updated with their new wrapped format. Since the DataKeys do not themselves change there is no
+ * need to re-encrypt and data fields. Data will be left in the Updated state ready for committing the change to the database.
  * @author Tony Washer
  * @param <T> the DataSet type
  */
-public class UpdatePassword<T extends DataSet<T>> extends LoaderThread<T> {
+public class UpdatePassword<T extends DataSet<T>>
+        extends LoaderThread<T> {
     /**
      * Task description.
      */

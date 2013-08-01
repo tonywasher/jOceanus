@@ -42,13 +42,13 @@ import net.sourceforge.jOceanus.jDataModels.data.DataItem;
  * @author Tony Washer
  * @param <T> the data type.
  */
-public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>> extends MouseAdapter
+public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>>
+        extends MouseAdapter
         implements ActionListener {
     /**
      * Resource Bundle.
      */
-    private static final ResourceBundle NLS_BUNDLE = ResourceBundle
-            .getBundle(JDataTableMouse.class.getName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(JDataTableMouse.class.getName());
 
     /**
      * Insert menu item.
@@ -152,7 +152,8 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
      */
     public void maybeShowPopup(final MouseEvent e) {
         /* If we can trigger a PopUp menu */
-        if ((e.isPopupTrigger()) && (theTable.isEnabled())) {
+        if ((e.isPopupTrigger())
+            && (theTable.isEnabled())) {
             /* Note if this is a header PopUp */
             Object o = e.getComponent();
             isHeader = (o instanceof JTableHeader);
@@ -188,7 +189,9 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
                 }
 
                 /* If we are on a valid row, ensure that this row is selected */
-                if ((!isHeader) && (theRow >= 0) && (!theTable.isRowSelected(myRow))) {
+                if ((!isHeader)
+                    && (theRow >= 0)
+                    && (!theTable.isRowSelected(myRow))) {
                     theTable.setRowSelectionInterval(myRow, myRow);
                 }
             }
@@ -240,7 +243,8 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
         /* Loop through the selected rows */
         for (DataItem myRow : theTable.cacheSelectedRows()) {
             /* Ignore locked rows */
-            if ((myRow == null) || (myRow.isLocked())) {
+            if ((myRow == null)
+                || (myRow.isLocked())) {
                 continue;
             }
 
@@ -255,9 +259,13 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
         }
 
         /* If there is something to add and there are already items in the menu */
-        boolean haveItems = enableIns || enableDel || enableDupl;
-        haveItems |= enableShow || enableRecov;
-        if ((haveItems) && (pMenu.getComponentCount() > 0)) {
+        boolean haveItems = enableIns
+                            || enableDel
+                            || enableDupl;
+        haveItems |= enableShow
+                     || enableRecov;
+        if ((haveItems)
+            && (pMenu.getComponentCount() > 0)) {
             /* Add a separator */
             pMenu.addSeparator();
         }
@@ -343,7 +351,9 @@ public abstract class JDataTableMouse<T extends DataItem & Comparable<? super T>
             /* Loop through the selected rows */
             for (DataItem myRow : theTable.cacheSelectedRows()) {
                 /* Ignore locked/deleted rows */
-                if ((myRow == null) || (myRow.isLocked()) || (myRow.isDeleted())) {
+                if ((myRow == null)
+                    || (myRow.isLocked())
+                    || (myRow.isDeleted())) {
                     continue;
                 }
 

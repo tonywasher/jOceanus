@@ -29,7 +29,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
  * Jira Preferences.
  * @author Tony Washer
  */
-public class JiraPreferences extends PreferenceSet {
+public class JiraPreferences
+        extends PreferenceSet {
     /**
      * Registry name for Jira Server.
      */

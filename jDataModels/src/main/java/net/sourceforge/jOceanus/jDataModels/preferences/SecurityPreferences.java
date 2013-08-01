@@ -32,7 +32,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
  * Security preferences.
  * @author Tony Washer
  */
-public class SecurityPreferences extends PreferenceSet {
+public class SecurityPreferences
+        extends PreferenceSet {
     /**
      * Registry name for Security Provider.
      */
@@ -121,8 +122,7 @@ public class SecurityPreferences extends PreferenceSet {
      * @return Security Manager for these preferences
      */
     public SecureManager getSecurity() {
-        return new SecureManager(getEnumValue(NAME_PROVIDER, SecurityProvider.class),
-                getBooleanValue(NAME_RESTRICTED), getIntegerValue(NAME_CIPHER_STEPS),
+        return new SecureManager(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getIntegerValue(NAME_CIPHER_STEPS),
                 getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
     }
 
@@ -131,8 +131,7 @@ public class SecurityPreferences extends PreferenceSet {
      * @return Security Generator for these preferences
      */
     public SecurityGenerator getGenerator() {
-        return new SecurityGenerator(getEnumValue(NAME_PROVIDER, SecurityProvider.class),
-                getBooleanValue(NAME_RESTRICTED), getIntegerValue(NAME_CIPHER_STEPS),
+        return new SecurityGenerator(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getIntegerValue(NAME_CIPHER_STEPS),
                 getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
     }
 

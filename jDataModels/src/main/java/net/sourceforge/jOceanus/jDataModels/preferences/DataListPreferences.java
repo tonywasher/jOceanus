@@ -29,7 +29,8 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
  * DataList preferences.
  * @author Tony Washer
  */
-public class DataListPreferences extends PreferenceSet {
+public class DataListPreferences
+        extends PreferenceSet {
     /**
      * Registry name for Granularity.
      */
