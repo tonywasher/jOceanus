@@ -166,6 +166,16 @@ public class Account
     }
 
     /**
+     * Obtain Portfolio.
+     * @return the portfolio
+     */
+    public Account getPortfolio() {
+        return hasInfoSet
+                ? theInfoSet.getAccount(AccountInfoClass.Portfolio)
+                : null;
+    }
+
+    /**
      * Obtain Holding.
      * @return the holding
      */
@@ -700,6 +710,15 @@ public class Account
      */
     public void setAlias(final Account pAlias) throws JDataException {
         setInfoSetValue(AccountInfoClass.Alias, pAlias);
+    }
+
+    /**
+     * Set a new portfolio.
+     * @param pPortfolio the new portfolio
+     * @throws JDataException on error
+     */
+    public void setPortfolio(final Account pPortfolio) throws JDataException {
+        setInfoSetValue(AccountInfoClass.Portfolio, pPortfolio);
     }
 
     /**

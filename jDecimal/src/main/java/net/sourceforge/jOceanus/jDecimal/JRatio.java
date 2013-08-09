@@ -47,6 +47,14 @@ public class JRatio
     }
 
     /**
+     * Construct a ratio from a dilution.
+     * @param pDilution the dilution
+     */
+    protected JRatio(final JDilution pDilution) {
+        super(pDilution.unscaledValue(), pDilution.scale());
+    }
+
+    /**
      * Constructor for ratio from a decimal string.
      * @param pSource The source decimal string
      * @throws IllegalArgumentException on invalidly formatted argument

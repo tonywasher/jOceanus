@@ -29,7 +29,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 /**
  * Quicken Price.
  */
-public class QPrice extends QElement {
+public class QPrice
+        extends QElement {
     /**
      * Item type.
      */
@@ -55,7 +56,8 @@ public class QPrice extends QElement {
      * @param pAnalysis the analysis
      * @param pPrice the account price
      */
-    protected QPrice(final QAnalysis pAnalysis, final AccountPrice pPrice) {
+    protected QPrice(final QAnalysis pAnalysis,
+                     final AccountPrice pPrice) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -87,7 +89,9 @@ public class QPrice extends QElement {
 
         /* Add the Price (as a simple decimal) */
         JDecimal myValue = new JDecimal(thePrice.getPrice());
-        addDecimal(myValue);
+        append(QIF_QUOTE);
+        addSimpleDecimal(myValue);
+        append(QIF_QUOTE);
         append(QIF_COMMA);
 
         /* Add the Date */

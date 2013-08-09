@@ -390,6 +390,13 @@ public class SheetAccount
                     myAlias = myCell.getStringValue();
                 }
 
+                /* Handle portfolio account which may be missing */
+                myCell = myView.getRowCellByIndex(myRow, iAdjust++);
+                String myPortfolio = null;
+                if (myCell != null) {
+                    myPortfolio = myCell.getStringValue();
+                }
+
                 /* Handle holding account which may be missing */
                 myCell = myView.getRowCellByIndex(myRow, iAdjust++);
                 String myHolding = null;
@@ -429,6 +436,7 @@ public class SheetAccount
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Maturity, myMaturity);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Parent, myParent);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Alias, myAlias);
+                myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Portfolio, myPortfolio);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Holding, myHolding);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.Symbol, mySymbol);
                 myInfoList.addOpenItem(0, myAccount, AccountInfoClass.OpeningBalance, myBalance);

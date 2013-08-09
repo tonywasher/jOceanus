@@ -44,13 +44,13 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory.QCategoryList;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference.QIFType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
 
 /**
  * Quicken analysis.
  */
-public class QAnalysis extends QElement {
+public class QAnalysis
+        extends QElement {
     /**
      * Set option.
      */
@@ -123,11 +123,20 @@ public class QAnalysis extends QElement {
     }
 
     /**
+     * Obtain data.
+     * @return the data
+     */
+    protected FinanceData getDataSet() {
+        return theData;
+    }
+
+    /**
      * Constructor.
      * @param pFormatter the data formatter
      * @param pType the QIF file type
      */
-    protected QAnalysis(final JDataFormatter pFormatter, final QIFType pType) {
+    protected QAnalysis(final JDataFormatter pFormatter,
+                        final QIFType pType) {
         /* Call the super-constructor */
         super(pFormatter, pType);
 
@@ -201,8 +210,8 @@ public class QAnalysis extends QElement {
             /* Register the security */
             theSecurities.registerSecurity(pAccount);
 
-            /* We need to use its parent */
-            myLookup = pAccount.getParent();
+            /* We need to use its portfolio */
+            myLookup = pAccount.getPortfolio();
 
             /* else ignore if the account is a non-Asset */
         } else if (!pAccount.hasValue()) {
@@ -256,11 +265,13 @@ public class QAnalysis extends QElement {
         theStartDate = myTaxYear.getRange().getStart();
 
         /* Update status bar */
-        boolean bContinue = ((pStatus.setNumStages(QIF_NUMLISTS)) && (pStatus.setNewStage("Analysing accounts")) && (pStatus.setNumSteps(myAccounts.size())));
+        boolean bContinue = ((pStatus.setNumStages(QIF_NUMLISTS))
+                             && (pStatus.setNewStage("Analysing accounts")) && (pStatus.setNumSteps(myAccounts.size())));
 
         /* Loop through the accounts */
         Iterator<Account> myActIterator = myAccounts.iterator();
-        while ((bContinue) && (myActIterator.hasNext())) {
+        while ((bContinue)
+               && (myActIterator.hasNext())) {
             Account myAccount = myActIterator.next();
 
             /* Ignore deleted accounts */
@@ -277,7 +288,8 @@ public class QAnalysis extends QElement {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0)
+                && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -290,7 +302,8 @@ public class QAnalysis extends QElement {
         /* Loop through the events */
         myCount = 0;
         Iterator<Event> myIterator = myEvents.iterator();
-        while ((bContinue) && (myIterator.hasNext())) {
+        while ((bContinue)
+               && (myIterator.hasNext())) {
             Event myEvent = myIterator.next();
 
             /* If the price is too late */
@@ -315,7 +328,7 @@ public class QAnalysis extends QElement {
                 theCategories.registerCategory(myCategory);
             }
 
-            /* Process event for debit and credit */
+            /* Process event for debit and credit (avoiding case where debit == credit) */
             processEvent(myEvent, myDebit, false);
             if (!myDebit.equals(myCredit)) {
                 processEvent(myEvent, myCredit, true);
@@ -323,14 +336,17 @@ public class QAnalysis extends QElement {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0)
+                && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
 
         /* Update status bar and analyse prices */
         AccountPriceList myPrices = pData.getPrices();
-        if ((bContinue) && (pStatus.setNewStage("Analysing prices")) && (pStatus.setNumSteps(myPrices.size()))) {
+        if ((bContinue)
+            && (pStatus.setNewStage("Analysing prices"))
+            && (pStatus.setNumSteps(myPrices.size()))) {
             /* Analyse prices for securities */
             theSecurities.buildPrices(pStatus, myPrices, pLastEvent);
         }
@@ -348,9 +364,6 @@ public class QAnalysis extends QElement {
         /* Access account */
         QAccount myAccount = getAccount(pAccount);
 
-        /* Determine whether we should ignore external interest */
-        boolean ignoreIntExternal = (getQIFType().hideBalancingTaxTransfer());
-
         /* If we should process the account */
         if (myAccount != null) {
             /* If the account is autoExpense */
@@ -362,12 +375,34 @@ public class QAnalysis extends QElement {
                     theNumEvents += 2;
                 }
 
-                /* Normal event (ignore external interest credits they will be handled at source) */
-            } else if ((!isCredit) || (!pEvent.isInterest()) || !(ignoreIntExternal)) {
+                /* If we should not ignore this event */
+            } else if (!ignoreEvent(pEvent, isCredit)) {
                 /* Process the event */
                 myAccount.processEvent(pEvent, isCredit);
                 theNumEvents++;
             }
+        }
+    }
+
+    /**
+     * Determine whether we should ignore the event.
+     * @param pEvent the event
+     * @return true/false
+     */
+    private boolean ignoreEvent(final Event pEvent,
+                                final boolean isCredit) {
+        /* Always process debit event */
+        if (!isCredit) {
+            return false;
+        }
+
+        /* Switch on category */
+        switch (pEvent.getCategoryClass()) {
+            case Interest:
+            case Dividend:
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -416,7 +451,8 @@ public class QAnalysis extends QElement {
 
         /* Loop through the accounts */
         Iterator<QAccount> myIterator = theAccounts.values().iterator();
-        while ((bContinue) && (myIterator.hasNext())) {
+        while ((bContinue)
+               && (myIterator.hasNext())) {
             QAccount myAccount = myIterator.next();
 
             /* If the account is active */
@@ -427,7 +463,8 @@ public class QAnalysis extends QElement {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0)
+                && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }
@@ -447,7 +484,8 @@ public class QAnalysis extends QElement {
         /* Loop through the accounts */
         myCount = 0;
         myIterator = theAccounts.values().iterator();
-        while ((bContinue) && (myIterator.hasNext())) {
+        while ((bContinue)
+               && (myIterator.hasNext())) {
             QAccount myAccount = myIterator.next();
 
             /* Output events */
@@ -455,7 +493,8 @@ public class QAnalysis extends QElement {
 
             /* Report the progress */
             myCount++;
-            if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+            if (((myCount % mySteps) == 0)
+                && (!pStatus.setStepsDone(myCount))) {
                 bContinue = false;
             }
         }

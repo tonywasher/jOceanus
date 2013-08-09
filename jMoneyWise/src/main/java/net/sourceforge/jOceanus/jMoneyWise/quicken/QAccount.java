@@ -37,7 +37,8 @@ import net.sourceforge.jOceanus.jMoneyWise.quicken.QPortfolioEvent.QPortfolioEve
 /**
  * Quicken Account.
  */
-public final class QAccount extends QElement {
+public final class QAccount
+        extends QElement {
     /**
      * Item type.
      */
@@ -85,6 +86,14 @@ public final class QAccount extends QElement {
     }
 
     /**
+     * Obtain the portfolio account.
+     * @return the portfolio account
+     */
+    protected Account getPortfolio() {
+        return theAccount.getPortfolio();
+    }
+
+    /**
      * Obtain the holding account.
      * @return the holding account
      */
@@ -105,7 +114,8 @@ public final class QAccount extends QElement {
      * @param pAnalysis the analysis
      * @param pAccount the account
      */
-    protected QAccount(final QAnalysis pAnalysis, final Account pAccount) {
+    protected QAccount(final QAnalysis pAnalysis,
+                       final Account pAccount) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -115,7 +125,9 @@ public final class QAccount extends QElement {
         isAutoExpense = (pAccount.getAutoExpense() != null);
         isPortfolio = pAccount.isCategoryClass(AccountCategoryClass.Portfolio);
 
-        theEvents = (isPortfolio) ? new QPortfolioEventList(pAnalysis, this) : new QEventList(pAnalysis, this);
+        theEvents = (isPortfolio)
+                ? new QPortfolioEventList(pAnalysis, this)
+                : new QEventList(pAnalysis, this);
     }
 
     /**

@@ -437,6 +437,20 @@ public enum AccountCategoryClass implements StaticInterface {
     }
 
     /**
+     * Determine whether the AccountCategoryType needs market as a parent.
+     * @return <code>true</code> if the account category type needs market as a parent, <code>false</code> otherwise.
+     */
+    public boolean needsMarketParent() {
+        switch (this) {
+            case Asset:
+            case Endowment:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
      * Determine whether the AccountCategoryType can be tax free.
      * @return <code>true</code> if the account category type can be tax free, <code>false</code> otherwise.
      */

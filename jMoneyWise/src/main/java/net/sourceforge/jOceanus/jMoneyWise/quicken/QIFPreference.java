@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * jMoneyWise: Finance Application
+ * Copyright 2012,2013 Tony Washer
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ------------------------------------------------------------
+ * SubVersion Revision Information:
+ * $URL$
+ * $Revision$
+ * $Author$
+ * $Date$
+ ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.quicken;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -9,11 +31,6 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceSet;
  */
 public class QIFPreference
         extends PreferenceSet {
-    /**
-     * Quicken suffix.
-     */
-    protected static final String QIF_SUFFIX = ".qif";
-
     /**
      * Registry name for QIF Directory.
      */
@@ -88,139 +105,5 @@ public class QIFPreference
             return DISPLAY_LASTEVENT;
         }
         return null;
-    }
-
-    /**
-     * Output types.
-     */
-    public enum QIFType {
-        /**
-         * AceMoney.
-         */
-        AceMoney,
-
-        /**
-         * BankTree.
-         */
-        BankTree,
-
-        /**
-         * GnuCash.
-         */
-        GnuCash,
-
-        /**
-         * MoneyDance.
-         */
-        MoneyDance,
-
-        /**
-         * YouNeedABudget.
-         */
-        YNAB;
-
-        /**
-         * Should we use a consolidated file?
-         * @return true/false
-         */
-        public boolean useConsolidated() {
-            switch (this) {
-                case AceMoney:
-                case BankTree:
-                case GnuCash:
-                case MoneyDance:
-                case YNAB:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-
-        /**
-         * Should we use simple transfer payee lines?
-         * @return true/false
-         */
-        public boolean useSimpleTransfer() {
-            switch (this) {
-                case BankTree:
-                case YNAB:
-                    return true;
-                case AceMoney:
-                case MoneyDance:
-                case GnuCash:
-                default:
-                    return false;
-            }
-        }
-
-        /**
-         * Should we hide balancing tax transfers?
-         * @return true/false
-         */
-        public boolean hideBalancingTaxTransfer() {
-            switch (this) {
-                case AceMoney:
-                case MoneyDance:
-                    return true;
-                case BankTree:
-                case GnuCash:
-                case YNAB:
-                default:
-                    return false;
-            }
-        }
-
-        /**
-         * do we support split transfer?
-         * @return true/false
-         */
-        public boolean supportsSplitTransfer() {
-            switch (this) {
-                case AceMoney:
-                case BankTree:
-                case MoneyDance:
-                case YNAB:
-                    return true;
-                case GnuCash:
-                default:
-                    return false;
-            }
-        }
-
-        /**
-         * Should we use Self-Opening Balance?
-         * @return true/false
-         */
-        public boolean selfOpeningBalance() {
-            switch (this) {
-                case AceMoney:
-                case BankTree:
-                case GnuCash:
-                case MoneyDance:
-                case YNAB:
-                    return false;
-                default:
-                    return true;
-            }
-        }
-
-        /**
-         * Obtain filename.
-         * @return true/false
-         */
-        public String getFileName() {
-            switch (this) {
-                case AceMoney:
-                    return "all accounts"
-                           + QIF_SUFFIX;
-                case BankTree:
-                case GnuCash:
-                case MoneyDance:
-                case YNAB:
-                default:
-                    return toString()
-                           + QIF_SUFFIX;
-            }
-        }
     }
 }

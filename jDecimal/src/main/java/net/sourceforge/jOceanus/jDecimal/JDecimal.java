@@ -173,8 +173,8 @@ public class JDecimal
         /* If the scale is not correct */
         if (theScale != pScale) {
             /* Adjust the value appropriately */
-            movePointRight(pScale
-                           - theScale);
+            movePointLeft(pScale
+                          - theScale);
         }
     }
 
@@ -282,7 +282,7 @@ public class JDecimal
             }
 
             /* Adjust the value appropriately */
-            movePointRight(-1);
+            movePointRight(1);
         }
     }
 
@@ -472,10 +472,10 @@ public class JDecimal
     }
 
     /**
-     * Move decimal point to the right.
+     * Move decimal point to the left.
      * @param pPlaces number of places to move the decimal point
      */
-    public final void movePointRight(final int pPlaces) {
+    public final void movePointLeft(final int pPlaces) {
         /* Calculate the new scale */
         int myNewScale = theScale
                          + pPlaces;
@@ -488,12 +488,12 @@ public class JDecimal
     }
 
     /**
-     * Move decimal point to the left.
+     * Move decimal point to the right.
      * @param pPlaces number of places to move the decimal point
      */
-    public void movePointLeft(final int pPlaces) {
-        /* Call movePointRight */
-        movePointRight(-pPlaces);
+    public void movePointRight(final int pPlaces) {
+        /* Call movePointLeft */
+        movePointLeft(-pPlaces);
     }
 
     @Override

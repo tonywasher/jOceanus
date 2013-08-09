@@ -117,4 +117,14 @@ public class JDilution
         /* Calculate the new dilution */
         return new JDilution(this, pDilution);
     }
+
+    /**
+     * obtain inverse ratio.
+     * @return the inverse ratio
+     */
+    public JRatio getInverseRatio() {
+        /* Calculate the new dilution */
+        JRatio myRatio = new JRatio(this);
+        return myRatio.getInverseRatio();
+    }
 }

@@ -111,111 +111,131 @@ public enum EventCategoryClass implements StaticInterface {
     StockRightsWaived(16, 15),
 
     /**
+     * Stock Options Granted.
+     */
+    OptionsGrant(17, 16),
+
+    /**
+     * Stock Options Vested.
+     */
+    OptionsVest(18, 17),
+
+    /**
+     * Stock Options Exercised.
+     */
+    OptionsExercise(19, 18),
+
+    /**
+     * Stock Options Expired.
+     */
+    OptionsExpire(20, 19),
+
+    /**
      * Expense.
      */
-    Expense(17, 16),
+    Expense(21, 20),
 
     /**
      * LocalTaxes.
      */
-    LocalTaxes(18, 17),
+    LocalTaxes(22, 21),
 
     /**
      * Write Off.
      */
-    WriteOff(19, 18),
+    WriteOff(23, 22),
 
     /**
      * Tax Relief.
      */
-    TaxRelief(20, 19),
+    TaxRelief(24, 23),
 
     /**
      * Tax Settlement.
      */
-    TaxSettlement(21, 20),
+    TaxSettlement(25, 24),
 
     /**
      * Opening Balance.
      */
-    OpeningBalance(22, 21),
+    OpeningBalance(26, 25),
 
     /**
      * Tax Free Interest.
      */
-    TaxFreeInterest(23, 22),
+    TaxFreeInterest(27, 26),
 
     /**
      * Tax Free Dividend.
      */
-    TaxFreeDividend(24, 23),
+    TaxFreeDividend(28, 27),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UnitTrustDividend(25, 24),
+    UnitTrustDividend(29, 28),
 
     /**
      * Taxable Gain.
      */
-    TaxableGain(26, 25),
+    TaxableGain(30, 29),
 
     /**
      * Capital Gain.
      */
-    CapitalGain(27, 26),
+    CapitalGain(31, 30),
 
     /**
      * Market Growth.
      */
-    MarketGrowth(28, 27),
+    MarketGrowth(32, 31),
 
     /**
      * CurrencyFluctuation.
      */
-    CurrencyFluctuation(29, 28),
+    CurrencyFluctuation(33, 32),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TaxCredit(30, 29),
+    TaxCredit(34, 33),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NatInsurance(31, 30),
+    NatInsurance(35, 34),
 
     /**
      * Benefit.
      * <p>
      * This is a singular category catching benefit payments associated with an event.
      */
-    Benefit(32, 31),
+    Benefit(36, 35),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CharityDonation(33, 32),
+    CharityDonation(37, 36),
 
     /**
      * Category.
      * <p>
      * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
      */
-    Category(34, 33),
+    Category(38, 37),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    Totals(35, 34);
+    Totals(39, 38);
 
     /**
      * Class Id.
@@ -404,6 +424,9 @@ public enum EventCategoryClass implements StaticInterface {
             case StockAdjust:
             case StockDeMerger:
             case StockTakeOver:
+            case OptionsGrant:
+            case OptionsVest:
+            case OptionsExpire:
                 return true;
             default:
                 return false;
@@ -419,6 +442,9 @@ public enum EventCategoryClass implements StaticInterface {
             case StockSplit:
             case StockAdjust:
             case StockDeMerger:
+            case OptionsGrant:
+            case OptionsVest:
+            case OptionsExpire:
                 return true;
             default:
                 return false;
@@ -452,6 +478,10 @@ public enum EventCategoryClass implements StaticInterface {
             case StockTakeOver:
             case StockRightsWaived:
             case StockRightsTaken:
+            case OptionsGrant:
+            case OptionsVest:
+            case OptionsExercise:
+            case OptionsExpire:
                 return true;
             default:
                 return false;

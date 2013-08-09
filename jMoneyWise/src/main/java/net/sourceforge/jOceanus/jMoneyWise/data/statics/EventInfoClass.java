@@ -99,7 +99,22 @@ public enum EventInfoClass implements DataInfoClass {
     /**
      * Comments.
      */
-    Comments(14, 13, DataType.STRING);
+    Comments(14, 13, DataType.STRING),
+
+    /**
+     * Price.
+     */
+    Price(15, 14, DataType.PRICE),
+
+    /**
+     * Comments.
+     */
+    Commission(16, 15, DataType.MONEY),
+
+    /**
+     * Grant.
+     */
+    OptionsGrant(17, 16);
 
     /**
      * Class Id.

@@ -380,10 +380,6 @@ public final class TaxCategoryBucket
         /* Adjust the value */
         JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
         myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Income));
-        myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.TaxCredit));
-        myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.NatInsurance));
-        myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Benefit));
-        myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Donation));
     }
 
     /**

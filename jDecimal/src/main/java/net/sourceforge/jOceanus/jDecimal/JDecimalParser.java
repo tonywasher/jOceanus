@@ -363,7 +363,7 @@ public class JDecimalParser {
             /* If we have too few decimals */
             if (myAdjust > 0) {
                 /* Adjust the value appropriately */
-                pValue.movePointRight(myAdjust);
+                pValue.movePointLeft(myAdjust);
 
                 /* else if we have too many */
             } else if (myAdjust < 0) {

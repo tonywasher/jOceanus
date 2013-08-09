@@ -219,7 +219,6 @@ public class ReportSelect
         theReportBox.addItem(ReportType.EVENTCATEGORY);
         theReportBox.addItem(ReportType.TAXCATEGORY);
         theReportBox.addItem(ReportType.TAX);
-        theReportBox.addItem(ReportType.BREAKDOWN);
         theReportBox.addItem(ReportType.MARKET);
         theReportBox.setSelectedItem(ReportType.NETWORTH);
 
@@ -581,11 +580,6 @@ public class ReportSelect
          * Net Worth Report.
          */
         NETWORTH("NetWorth"),
-
-        /**
-         * IncomeBreakdown Report.
-         */
-        BREAKDOWN("IncomeBreakdown"),
 
         /**
          * Market Report.

@@ -83,8 +83,7 @@ public class QInterestEvent
 
         /* Are we using splits */
         boolean useSplits = ((!isTaxFree) || (isDonation));
-        boolean xtraXfer = ((!isReinvested) && (!getQIFType().supportsSplitTransfer()));
-        useSplits |= ((!isReinvested) && (!xtraXfer));
+        useSplits |= (!isReinvested);
 
         /* Reset the builder */
         reset();
@@ -94,8 +93,7 @@ public class QInterestEvent
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        if ((!isReinvested)
-            && (!xtraXfer)) {
+        if (!isReinvested) {
             myValue.setZero();
         }
         addDecimalLine(QEvtLineType.Amount, myValue);
@@ -152,56 +150,12 @@ public class QInterestEvent
                 addCategoryLine(QEvtLineType.SplitCategory, myCategory);
                 addDecimalLine(QEvtLineType.SplitAmount, myValue);
             }
-            if ((!isReinvested)
-                && (!xtraXfer)) {
+            if (!isReinvested) {
                 myValue = new JDecimal(myAmount);
                 myValue.negate();
                 addXferAccountLine(QEvtLineType.SplitCategory, myEvent.getCredit());
                 addDecimalLine(QEvtLineType.SplitAmount, myValue);
             }
-        }
-
-        /* If we are producing an extra Transfer */
-        if (xtraXfer) {
-            /* End the item */
-            endItem();
-
-            /* Add the Date */
-            addDateLine(QEvtLineType.Date, myEvent.getDate());
-
-            /* Add the Amount (as a simple decimal) */
-            myValue = new JDecimal(myAmount);
-            myValue.negate();
-            addDecimalLine(QEvtLineType.Amount, myValue);
-
-            /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                    ? QIF_RECONCILED
-                    : QIF_OPEN);
-
-            /* If we have a reference */
-            if (myRef != null) {
-                /* Add the reference */
-                addStringLine(QEvtLineType.Reference, myRef);
-            }
-
-            /* Payee is the credit account */
-            addLineType(QEvtLineType.Payee);
-            append(QIF_XFER);
-            if (!getQIFType().useSimpleTransfer()) {
-                append(QIF_XFERTO);
-                addAccount(myEvent.getCredit());
-            }
-            endLine();
-
-            /* If we have a description */
-            if (myDesc != null) {
-                /* Add the Description */
-                addStringLine(QEvtLineType.Comment, myDesc);
-            }
-
-            /* Add the transfer details */
-            addXferAccountLine(QEvtLineType.Category, myEvent.getCredit());
         }
 
         /* Return the result */

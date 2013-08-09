@@ -230,6 +230,7 @@ public class AccountInfo
                         switch (myType.getInfoClass()) {
                             case Alias:
                             case Parent:
+                            case Portfolio:
                             case Holding:
                                 myLink = myAccounts.findItemById(getValue(Integer.class));
                                 break;
@@ -374,6 +375,7 @@ public class AccountInfo
             switch (myType.getInfoClass()) {
                 case Alias:
                 case Parent:
+                case Portfolio:
                 case Holding:
                     myNewLink = myAccounts.findItemById(myId);
                     break;
@@ -446,6 +448,7 @@ public class AccountInfo
                         switch (myType.getInfoClass()) {
                             case Alias:
                             case Parent:
+                            case Portfolio:
                             case Holding:
                                 myLink = myData.getAccounts().findItemByName(myName);
                                 break;
@@ -554,6 +557,7 @@ public class AccountInfo
         switch (getInfoClass()) {
             case Parent:
             case Alias:
+            case Portfolio:
             case Holding:
                 getAccount().touchItem(this);
                 break;

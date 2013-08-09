@@ -248,8 +248,8 @@ public class ReportBuilder {
             isOdd = false;
         } else if (!myClass.isLoan()) {
             myRow = theBuilder.startDetailTitleRow(myHdr, "Account");
-            theBuilder.makeValueCell(myRow, "Rate");
-            theBuilder.makeValueCell(myRow, "Maturity");
+            theBuilder.makeTitleCell(myRow, "Rate");
+            theBuilder.makeTitleCell(myRow, "Maturity");
             theBuilder.makeTitleCell(myRow, "Valuation");
             isOdd = false;
         }

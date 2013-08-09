@@ -455,15 +455,15 @@ public class HTMLBuilder {
         myBuilder.setLength(0);
 
         /* Define tables */
-        myBuilder.append("table { width: 100%; border-collapse: collapse; border: 1px solid black; }");
+        myBuilder.append("table { width: 100%; border-collapse: collapse; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
-        myBuilder.append("td { border: 1px solid black; }");
+        myBuilder.append("td { text-align: center; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define table headers */
-        myBuilder.append("th { font-weight:bold; text-align: center; border: 1px solid black; }");
+        myBuilder.append("th { font-weight:bold; text-align: center; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 

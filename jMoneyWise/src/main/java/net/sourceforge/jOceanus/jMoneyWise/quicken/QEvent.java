@@ -43,7 +43,7 @@ public class QEvent
     /**
      * Reconciled flag.
      */
-    protected static final String QIF_RECONCILED = "R";
+    protected static final String QIF_RECONCILED = "X";
 
     /**
      * Quicken Transfer.
@@ -192,7 +192,7 @@ public class QEvent
 
         /* Handle portfolio accounts */
         if (myPayee.hasUnits()) {
-            myPayee = myPayee.getParent();
+            myPayee = myPayee.getPortfolio();
         }
 
         /* If the payee is autoExpense */

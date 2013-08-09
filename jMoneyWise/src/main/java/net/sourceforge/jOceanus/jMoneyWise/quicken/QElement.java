@@ -27,7 +27,6 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference.QIFType;
 
 /**
  * Quicken item.
@@ -213,6 +212,14 @@ public abstract class QElement {
      */
     protected void addDecimal(final JDecimal pValue) {
         append(theFormatter.formatObject(pValue));
+    }
+
+    /**
+     * Add Simple Decimal.
+     * @param pValue the decimal value
+     */
+    protected void addSimpleDecimal(final JDecimal pValue) {
+        append(pValue.toString());
     }
 
     /**

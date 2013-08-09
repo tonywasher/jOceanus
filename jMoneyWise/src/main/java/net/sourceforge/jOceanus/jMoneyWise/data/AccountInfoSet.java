@@ -87,6 +87,7 @@ public class AccountInfoSet
         switch (pInfoClass) {
             case Parent:
             case Alias:
+            case Portfolio:
             case Holding:
                 /* Access account of object */
                 myValue = getAccount(pInfoClass);
@@ -244,6 +245,12 @@ public class AccountInfoSet
                         ? JDataFieldRequired.CanExist
                         : JDataFieldRequired.NotAllowed;
 
+                /* Handle Portfolio */
+            case Portfolio:
+                return (myClass.hasUnits())
+                        ? JDataFieldRequired.MustExist
+                        : JDataFieldRequired.NotAllowed;
+
                 /* Handle Holding */
             case Holding:
                 return (myClass == AccountCategoryClass.Portfolio)
@@ -346,8 +353,15 @@ public class AccountInfoSet
                     /* Access parent */
                     Account myParent = myInfo.getAccount();
 
+                    /* If the account needs a market parent */
+                    if (myAccount.getAccountCategoryClass().needsMarketParent()) {
+                        if (!myParent.isCategoryClass(AccountCategoryClass.Market)) {
+                            myAccount.addError("Parent account must be market", getFieldForClass(myClass));
+                        }
+                    }
+
                     /* check that any parent is owner */
-                    if (!myParent.getAccountCategoryClass().canParentAccount()) {
+                    else if (!myParent.getAccountCategoryClass().canParentAccount()) {
                         myAccount.addError("Parent account cannot have children", getFieldForClass(myClass));
                     }
 
@@ -355,12 +369,6 @@ public class AccountInfoSet
                     if (!myAccount.isClosed()
                         && myParent.isClosed()) {
                         myAccount.addError("Parent account must not be closed", getFieldForClass(myClass));
-                    }
-
-                    /* If we have Units then parent must be portfolio */
-                    if (myAccount.hasUnits()
-                        && (myParent.getAccountCategoryClass() != AccountCategoryClass.Portfolio)) {
-                        myAccount.addError("Parent account must be portfolio", getFieldForClass(myClass));
                     }
                     break;
                 case Alias:
@@ -404,8 +412,23 @@ public class AccountInfoSet
                         myAccount.addError("Alias account has no prices", getFieldForClass(myClass));
                     }
                     break;
+                case Portfolio:
+                    /* Access portfolio */
+                    Account myPortfolio = myInfo.getAccount();
+
+                    /* check that portfolio account is poprtfolio */
+                    if (!myPortfolio.isCategoryClass(AccountCategoryClass.Portfolio)) {
+                        myAccount.addError("Portfolio must be a portfolio account", getFieldForClass(myClass));
+                    }
+
+                    /* If we are open then portfolio must be open */
+                    if (!myAccount.isClosed()
+                        && myPortfolio.isClosed()) {
+                        myAccount.addError("Portfolio account must not be closed", getFieldForClass(myClass));
+                    }
+                    break;
                 case Holding:
-                    /* Access parent */
+                    /* Access holding account */
                     Account myHolding = myInfo.getAccount();
 
                     /* check that holding account is savings */
@@ -413,10 +436,10 @@ public class AccountInfoSet
                         myAccount.addError("Holding account must be a savings account", getFieldForClass(myClass));
                     }
 
-                    /* If we are open then parent must be open */
+                    /* If we are open then holding account must be open */
                     if (!myAccount.isClosed()
                         && myHolding.isClosed()) {
-                        myAccount.addError("Holding account must not be closed", getFieldForClass(myClass));
+                        myAccount.addError("Portfolio account must not be closed", getFieldForClass(myClass));
                     }
 
                     /* We must be parent of holding account */
