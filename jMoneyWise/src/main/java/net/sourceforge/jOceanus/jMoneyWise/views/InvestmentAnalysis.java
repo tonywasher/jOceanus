@@ -43,15 +43,15 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
 /**
- * Capital Events relating to asset movements.
+ * Investment Analysis relating to asset movements.
  * @author Tony Washer
  */
-public final class CapitalEvent
-        implements OrderedIdItem<Integer>, JDataContents, Comparable<CapitalEvent> {
+public final class InvestmentAnalysis
+        implements OrderedIdItem<Integer>, JDataContents, Comparable<InvestmentAnalysis> {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEvent.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(InvestmentAnalysis.class.getSimpleName());
 
     @Override
     public JDataFields getDataFields() {
@@ -66,7 +66,7 @@ public final class CapitalEvent
     /**
      * Attribute Map.
      */
-    private final Map<CapitalAttribute, JDecimal> theAttributes;
+    private final Map<InvestmentAttribute, JDecimal> theAttributes;
 
     /**
      * The account.
@@ -106,7 +106,7 @@ public final class CapitalEvent
     /**
      * FieldSet map.
      */
-    private static final Map<JDataField, CapitalAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, CapitalAttribute.class);
+    private static final Map<JDataField, InvestmentAttribute> FIELDSET_MAP = JDataFields.buildFieldMap(FIELD_DEFS, InvestmentAttribute.class);
 
     /**
      * Obtain the account.
@@ -171,7 +171,7 @@ public final class CapitalEvent
         }
 
         /* Handle Attribute fields */
-        CapitalAttribute myClass = getClassForField(pField);
+        InvestmentAttribute myClass = getClassForField(pField);
         if (myClass != null) {
             return getAttributeValue(myClass);
         }
@@ -185,7 +185,7 @@ public final class CapitalEvent
      * @param pAttr the attribute
      * @return the value to set
      */
-    private Object getAttributeValue(final CapitalAttribute pAttr) {
+    private Object getAttributeValue(final InvestmentAttribute pAttr) {
         /* Access value of object */
         Object myValue = getAttribute(pAttr);
 
@@ -200,7 +200,7 @@ public final class CapitalEvent
      * @param pField the field
      * @return the class
      */
-    private static CapitalAttribute getClassForField(final JDataField pField) {
+    private static InvestmentAttribute getClassForField(final JDataField pField) {
         /* Look up field in map */
         return FIELDSET_MAP.get(pField);
     }
@@ -210,7 +210,7 @@ public final class CapitalEvent
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setAttribute(final CapitalAttribute pAttr,
+    protected void setAttribute(final InvestmentAttribute pAttr,
                                 final JDecimal pValue) {
         /* Set the value into the list */
         theAttributes.put(pAttr, pValue);
@@ -223,7 +223,7 @@ public final class CapitalEvent
      * @param pClass the class of the attribute
      * @return the value of the attribute or null
      */
-    private <X extends JDecimal> X getAttribute(final CapitalAttribute pAttr,
+    private <X extends JDecimal> X getAttribute(final InvestmentAttribute pAttr,
                                                 final Class<X> pClass) {
         /* Obtain the attribute */
         return pClass.cast(getAttribute(pAttr));
@@ -234,7 +234,7 @@ public final class CapitalEvent
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JMoney getMoneyAttribute(final CapitalAttribute pAttr) {
+    public JMoney getMoneyAttribute(final InvestmentAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JMoney.class);
     }
@@ -244,7 +244,7 @@ public final class CapitalEvent
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JUnits getUnitsAttribute(final CapitalAttribute pAttr) {
+    public JUnits getUnitsAttribute(final InvestmentAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JUnits.class);
     }
@@ -254,7 +254,7 @@ public final class CapitalEvent
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getAttribute(final CapitalAttribute pAttr) {
+    private Object getAttribute(final InvestmentAttribute pAttr) {
         /* Obtain the attribute */
         return theAttributes.get(pAttr);
     }
@@ -264,10 +264,10 @@ public final class CapitalEvent
      * @param pAccount the owning account
      * @param pEvent the underlying event
      */
-    private CapitalEvent(final Account pAccount,
-                         final Event pEvent) {
+    private InvestmentAnalysis(final Account pAccount,
+                               final Event pEvent) {
         /* Create the attributes map */
-        theAttributes = new EnumMap<CapitalAttribute, JDecimal>(CapitalAttribute.class);
+        theAttributes = new EnumMap<InvestmentAttribute, JDecimal>(InvestmentAttribute.class);
 
         /* Store the values */
         theDate = pEvent.getDate();
@@ -280,10 +280,10 @@ public final class CapitalEvent
      * @param pAccount the owning account
      * @param pDate the date of the event
      */
-    private CapitalEvent(final Account pAccount,
-                         final JDateDay pDate) {
+    private InvestmentAnalysis(final Account pAccount,
+                               final JDateDay pDate) {
         /* Create the attributes map */
-        theAttributes = new EnumMap<CapitalAttribute, JDecimal>(CapitalAttribute.class);
+        theAttributes = new EnumMap<InvestmentAttribute, JDecimal>(InvestmentAttribute.class);
 
         /* Store the values */
         theDate = pDate;
@@ -292,7 +292,7 @@ public final class CapitalEvent
     }
 
     @Override
-    public int compareTo(final CapitalEvent pThat) {
+    public int compareTo(final InvestmentAnalysis pThat) {
         /* Handle the trivial cases */
         if (this == pThat) {
             return 0;
@@ -327,7 +327,7 @@ public final class CapitalEvent
         }
 
         /* Access as Capital Event */
-        CapitalEvent myThat = (CapitalEvent) pThat;
+        InvestmentAnalysis myThat = (InvestmentAnalysis) pThat;
 
         /* Check equality */
         return Difference.isEqual(getDate(), myThat.getDate())
@@ -351,12 +351,12 @@ public final class CapitalEvent
     protected void adjustCost(final JMoney pTotal,
                               final JMoney pDelta) {
         /* Record current and delta cost */
-        setAttribute(CapitalAttribute.InitialCost, new JMoney(pTotal));
-        setAttribute(CapitalAttribute.DeltaCost, pDelta);
+        setAttribute(InvestmentAttribute.InitialCost, new JMoney(pTotal));
+        setAttribute(InvestmentAttribute.DeltaCost, pDelta);
 
         /* Adjust the total cost */
         pTotal.addAmount(pDelta);
-        setAttribute(CapitalAttribute.FinalCost, new JMoney(pTotal));
+        setAttribute(InvestmentAttribute.FinalCost, new JMoney(pTotal));
     }
 
     /**
@@ -367,12 +367,12 @@ public final class CapitalEvent
     protected void adjustInvested(final JMoney pTotal,
                                   final JMoney pDelta) {
         /* Record current and delta invested */
-        setAttribute(CapitalAttribute.InitialInvested, new JMoney(pTotal));
-        setAttribute(CapitalAttribute.DeltaInvested, pDelta);
+        setAttribute(InvestmentAttribute.InitialInvested, new JMoney(pTotal));
+        setAttribute(InvestmentAttribute.DeltaInvested, pDelta);
 
         /* Adjust the total invested */
         pTotal.addAmount(pDelta);
-        setAttribute(CapitalAttribute.FinalInvested, new JMoney(pTotal));
+        setAttribute(InvestmentAttribute.FinalInvested, new JMoney(pTotal));
     }
 
     /**
@@ -383,12 +383,12 @@ public final class CapitalEvent
     protected void adjustDividend(final JMoney pTotal,
                                   final JMoney pDelta) {
         /* Record current and delta dividend */
-        setAttribute(CapitalAttribute.InitialDividend, new JMoney(pTotal));
-        setAttribute(CapitalAttribute.DeltaDividend, pDelta);
+        setAttribute(InvestmentAttribute.InitialDividend, new JMoney(pTotal));
+        setAttribute(InvestmentAttribute.DeltaDividend, pDelta);
 
         /* Adjust the total dividend */
         pTotal.addAmount(pDelta);
-        setAttribute(CapitalAttribute.FinalDividend, new JMoney(pTotal));
+        setAttribute(InvestmentAttribute.FinalDividend, new JMoney(pTotal));
     }
 
     /**
@@ -399,12 +399,12 @@ public final class CapitalEvent
     protected void adjustGains(final JMoney pTotal,
                                final JMoney pDelta) {
         /* Record current and delta gains */
-        setAttribute(CapitalAttribute.InitialGains, new JMoney(pTotal));
-        setAttribute(CapitalAttribute.DeltaGains, pDelta);
+        setAttribute(InvestmentAttribute.InitialGains, new JMoney(pTotal));
+        setAttribute(InvestmentAttribute.DeltaGains, pDelta);
 
         /* Adjust the total gains */
         pTotal.addAmount(pDelta);
-        setAttribute(CapitalAttribute.FinalGains, new JMoney(pTotal));
+        setAttribute(InvestmentAttribute.FinalGains, new JMoney(pTotal));
     }
 
     /**
@@ -415,24 +415,24 @@ public final class CapitalEvent
     protected void adjustUnits(final JUnits pTotal,
                                final JUnits pDelta) {
         /* Record current and delta units */
-        setAttribute(CapitalAttribute.InitialUnits, new JUnits(pTotal));
-        setAttribute(CapitalAttribute.DeltaUnits, pDelta);
+        setAttribute(InvestmentAttribute.InitialUnits, new JUnits(pTotal));
+        setAttribute(InvestmentAttribute.DeltaUnits, pDelta);
 
         /* Adjust the total units */
         pTotal.addUnits(pDelta);
-        setAttribute(CapitalAttribute.FinalUnits, new JUnits(pTotal));
+        setAttribute(InvestmentAttribute.FinalUnits, new JUnits(pTotal));
     }
 
     /**
      * The List of capital events.
      */
-    public static class CapitalEventList
-            extends OrderedIdList<Integer, CapitalEvent>
+    public static class InvestmentAnalysisList
+            extends OrderedIdList<Integer, InvestmentAnalysis>
             implements JDataContents {
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(CapitalEventList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(InvestmentAnalysisList.class.getSimpleName());
 
         @Override
         public JDataFields getDataFields() {
@@ -498,13 +498,13 @@ public final class CapitalEvent
         }
 
         /**
-         * Construct an empty Capital event list.
+         * Construct an empty Investment Analysis list.
          * @param pData the DataSet
          * @param pAccount the Account for the list
          */
-        protected CapitalEventList(final FinanceData pData,
-                                   final Account pAccount) {
-            super(CapitalEvent.class);
+        protected InvestmentAnalysisList(final FinanceData pData,
+                                         final Account pAccount) {
+            super(InvestmentAnalysis.class);
 
             /* Store the data */
             theData = pData;
@@ -514,11 +514,11 @@ public final class CapitalEvent
         /**
          * Add an event to the list.
          * @param pEvent the Event to add
-         * @return the Capital Event
+         * @return the Investment Analysis
          */
-        protected CapitalEvent addEvent(final Event pEvent) {
+        protected InvestmentAnalysis addAnalysis(final Event pEvent) {
             /* Create the Capital Event and add to list */
-            CapitalEvent myEvent = new CapitalEvent(theAccount, pEvent);
+            InvestmentAnalysis myEvent = new InvestmentAnalysis(theAccount, pEvent);
             append(myEvent);
 
             /* return the new event */
@@ -526,13 +526,13 @@ public final class CapitalEvent
         }
 
         /**
-         * Add a date event to the list.
+         * Add a date analysis to the list.
          * @param pDate the Date for the event
-         * @return the Capital Event
+         * @return the Investment Analysis
          */
-        protected CapitalEvent addEvent(final JDateDay pDate) {
-            /* Create the Capital Event and add to list */
-            CapitalEvent myEvent = new CapitalEvent(theAccount, pDate);
+        protected InvestmentAnalysis addAnalysis(final JDateDay pDate) {
+            /* Create the Analysis and add to list */
+            InvestmentAnalysis myEvent = new InvestmentAnalysis(theAccount, pDate);
             append(myEvent);
 
             /* return the new event */
@@ -540,16 +540,16 @@ public final class CapitalEvent
         }
 
         /**
-         * Purge events after date.
-         * @param pDate date from which to purge events
+         * Purge analyses after date.
+         * @param pDate date from which to purge analyses
          */
         protected void purgeAfterDate(final JDateDay pDate) {
             /* Access the iterator */
-            Iterator<CapitalEvent> myIterator = listIterator();
+            Iterator<InvestmentAnalysis> myIterator = listIterator();
 
-            /* Loop through the events */
+            /* Loop through the analyses */
             while (myIterator.hasNext()) {
-                CapitalEvent myEvent = myIterator.next();
+                InvestmentAnalysis myEvent = myIterator.next();
                 /* If this is past (or on) the date remove it */
                 if (pDate.compareTo(myEvent.getDate()) <= 0) {
                     myIterator.remove();
@@ -561,7 +561,7 @@ public final class CapitalEvent
     /**
      * Capital Event Attributes.
      */
-    public enum CapitalAttribute {
+    public enum InvestmentAttribute {
         /**
          * The Initial Cost Attribute.
          */

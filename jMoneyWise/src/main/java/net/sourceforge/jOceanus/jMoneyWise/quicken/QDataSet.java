@@ -35,6 +35,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
  * Quicken DataSet Representation.
@@ -61,11 +62,6 @@ public class QDataSet {
     private final QIFType theQIFType;
 
     /**
-     * Data Set.
-     */
-    private final FinanceData theData;
-
-    /**
      * Account List.
      */
     private final QAnalysis theAnalysis;
@@ -73,14 +69,13 @@ public class QDataSet {
     /**
      * Constructor.
      * @param pStatus the thread status
-     * @param pData the dataSet
+     * @param pView the dataView
      * @param pPreferences the preferences
      */
     public QDataSet(final ThreadStatus<FinanceData> pStatus,
-                    final FinanceData pData,
+                    final View pView,
                     final QIFPreference pPreferences) {
         /* Store parameters */
-        theData = pData;
         thePreferences = pPreferences;
 
         /* Analyse the data */
@@ -94,7 +89,7 @@ public class QDataSet {
         theAnalysis = new QAnalysis(theFormatter, theQIFType);
 
         /* Analyse the data */
-        theAnalysis.analyseData(pStatus, theData, myLastEvent);
+        theAnalysis.analyseData(pStatus, pView, myLastEvent);
     }
 
     /**
@@ -105,7 +100,7 @@ public class QDataSet {
      */
     public boolean outputData(final ThreadStatus<FinanceData> pStatus) throws JDataException {
         /* Determine whether to use consolidated file */
-        if (theQIFType.useConsolidated()) {
+        if (theQIFType.useConsolidatedFile()) {
             return outputSingleFile(pStatus);
         } else {
             return outputAccounts(pStatus);

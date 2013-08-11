@@ -358,10 +358,9 @@ public class AccountInfoSet
                         if (!myParent.isCategoryClass(AccountCategoryClass.Market)) {
                             myAccount.addError("Parent account must be market", getFieldForClass(myClass));
                         }
-                    }
 
-                    /* check that any parent is owner */
-                    else if (!myParent.getAccountCategoryClass().canParentAccount()) {
+                        /* else check that any parent is owner */
+                    } else if (!myParent.getAccountCategoryClass().canParentAccount()) {
                         myAccount.addError("Parent account cannot have children", getFieldForClass(myClass));
                     }
 

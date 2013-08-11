@@ -43,10 +43,10 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
-import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
@@ -277,18 +277,18 @@ public class MetaAnalysis {
         JPrice myPrice = pAsset.getPriceAttribute(AccountAttribute.Price);
         JMoney myBaseValue = pAsset.getBaseMoneyAttribute(AccountAttribute.Valuation);
 
-        /* Create a capital event */
-        CapitalEvent myEvent = pAsset.getCapitalEvents().addEvent(theDate);
+        /* Create an investment analysis for End Of Year */
+        InvestmentAnalysis myEvent = pAsset.getInvestmentAnalyses().addAnalysis(theDate);
 
         /* Add price and value */
-        myEvent.setAttribute(CapitalAttribute.FinalPrice, myPrice);
+        myEvent.setAttribute(InvestmentAttribute.FinalPrice, myPrice);
         if (myBaseValue != null) {
-            myEvent.setAttribute(CapitalAttribute.InitialValue, myBaseValue);
+            myEvent.setAttribute(InvestmentAttribute.InitialValue, myBaseValue);
         }
-        myEvent.setAttribute(CapitalAttribute.FinalValue, myValue);
-        myEvent.setAttribute(CapitalAttribute.FinalInvested, myInvested);
-        myEvent.setAttribute(CapitalAttribute.FinalGains, myGains);
-        myEvent.setAttribute(CapitalAttribute.FinalDividend, myDividend);
+        myEvent.setAttribute(InvestmentAttribute.FinalValue, myValue);
+        myEvent.setAttribute(InvestmentAttribute.FinalInvested, myInvested);
+        myEvent.setAttribute(InvestmentAttribute.FinalGains, myGains);
+        myEvent.setAttribute(InvestmentAttribute.FinalDividend, myDividend);
 
         /*
          * Calculate basic market movement which is defined as currentValue - previousValue - amountInvested
@@ -337,12 +337,12 @@ public class MetaAnalysis {
         myDeltaGained.addAmount(myDividend);
 
         /* Record initial and delta gained */
-        myEvent.setAttribute(CapitalAttribute.InitialGained, new JMoney(myGained));
-        myEvent.setAttribute(CapitalAttribute.DeltaGained, myDeltaGained);
+        myEvent.setAttribute(InvestmentAttribute.InitialGained, new JMoney(myGained));
+        myEvent.setAttribute(InvestmentAttribute.DeltaGained, myDeltaGained);
 
         /* Adjust the Gained Total and calculate the profit */
         myGained.addAmount(myDeltaGained);
-        myEvent.setAttribute(CapitalAttribute.FinalGained, myGained);
+        myEvent.setAttribute(InvestmentAttribute.FinalGained, myGained);
         pAsset.calculateProfit();
 
         /* If the market movement is positive */
@@ -359,7 +359,7 @@ public class MetaAnalysis {
         }
 
         /* Record market details */
-        myEvent.setAttribute(CapitalAttribute.MarketMovement, myMarket);
+        myEvent.setAttribute(InvestmentAttribute.MarketMovement, myMarket);
     }
 
     /**
@@ -531,6 +531,7 @@ public class MetaAnalysis {
                 myBucket.addIncome(pBucket);
                 break;
             case TaxCredit:
+            case TaxSettlement:
                 /* Adjust the Tax Paid bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.TaxPaid);
                 myBucket.addExpense(pBucket);
@@ -556,9 +557,11 @@ public class MetaAnalysis {
             case Expense:
             case LocalTaxes:
             case WriteOff:
+            case CharityDonation:
                 /* Adjust the Expense bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.Expense);
                 myBucket.addExpense(pBucket);
+                myBucket.subtractIncome(pBucket);
                 break;
             case TaxRelief:
                 /* Adjust the Expense bucket */
@@ -571,6 +574,7 @@ public class MetaAnalysis {
                 myBucket.subtractIncome(pBucket);
                 break;
             case MarketGrowth:
+            case CurrencyFluctuation:
                 /* Adjust the Market bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.Market);
                 myBucket.addIncome(pBucket);
@@ -586,6 +590,7 @@ public class MetaAnalysis {
             case StockDeMerger:
             case StockRightsTaken:
             case StockRightsWaived:
+            case OpeningBalance:
             case Transfer:
             default:
                 break;

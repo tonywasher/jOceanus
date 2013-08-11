@@ -36,7 +36,6 @@ import javax.swing.event.ChangeListener;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.MainWindow;
-import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
 import net.sourceforge.jOceanus.jEventManager.ActionDetailEvent;
 import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableTabbed;
@@ -46,6 +45,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.help.FinanceHelp;
+import net.sourceforge.jOceanus.jMoneyWise.threads.FinanceStatus;
 import net.sourceforge.jOceanus.jMoneyWise.threads.LoadArchive;
 import net.sourceforge.jOceanus.jMoneyWise.threads.WriteQIF;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ComboSelect;
@@ -356,7 +356,7 @@ public class MainTab
      */
     public void loadSpreadsheet() {
         /* Allocate the status */
-        ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
+        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
 
         /* Create the worker thread */
         LoadArchive myThread = new LoadArchive(myStatus);
@@ -369,7 +369,7 @@ public class MainTab
      */
     public void backupSubversion() {
         /* Allocate the status */
-        ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
+        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
 
         /* Create the worker thread */
         SubversionBackup<FinanceData> myThread = new SubversionBackup<FinanceData>(myStatus, theView.getPreferenceMgr());
@@ -382,7 +382,7 @@ public class MainTab
      */
     public void restoreSubversion() {
         /* Allocate the status */
-        ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
+        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
 
         /* Create the worker thread */
         SubversionRestore<FinanceData> myThread = new SubversionRestore<FinanceData>(myStatus, theView.getPreferenceMgr());
@@ -395,7 +395,7 @@ public class MainTab
      */
     public void createQIF() {
         /* Allocate the status */
-        ThreadStatus<FinanceData> myStatus = new ThreadStatus<FinanceData>(theView, getStatusBar());
+        FinanceStatus myStatus = new FinanceStatus(theView, getStatusBar());
 
         /* Create the worker thread */
         WriteQIF myThread = new WriteQIF(myStatus);

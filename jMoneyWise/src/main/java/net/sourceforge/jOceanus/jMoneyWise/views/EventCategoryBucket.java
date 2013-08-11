@@ -317,6 +317,7 @@ public final class EventCategoryBucket
         setAttribute(EventAttribute.NatInsurance, new JMoney());
         setAttribute(EventAttribute.Benefit, new JMoney());
         setAttribute(EventAttribute.Donation, new JMoney());
+        setAttribute(EventAttribute.IncomeDelta, new JMoney());
     }
 
     @Override
@@ -469,6 +470,10 @@ public final class EventCategoryBucket
                 case Expense:
                     JMoney myExpense = getMoneyAttribute(myAttr);
                     myExpense.addAmount(myObject);
+                    break;
+                case IncomeDelta:
+                    JMoney myDelta = getMoneyAttribute(myAttr);
+                    myDelta.addAmount(myObject);
                     break;
                 case TaxCredit:
                 case NatInsurance:
@@ -694,6 +699,12 @@ public final class EventCategoryBucket
                         }
                     }
 
+                    /* If this category is a base category */
+                    if (!myCurr.getEventCategory().getCategoryTypeClass().canParentCategory()) {
+                        /* Calculate the delta */
+                        myCurr.calculateDelta();
+                    }
+
                     /* Add the bucket to the totals */
                     myTotal.adjustValues(myCurr);
                 }
@@ -730,9 +741,6 @@ public final class EventCategoryBucket
                 /* Add it to the list */
                 add(myCurr);
             }
-
-            /* Calculate the income delta */
-            theTotals.calculateDelta();
         }
     }
 

@@ -334,7 +334,7 @@ public class HTMLBuilder {
         /* Define background colour for title row */
         myBuilder.append(SEP_DOT);
         myBuilder.append(CLASS_TOTROW);
-        myBuilder.append(" { background-color: #e8adaa; }"); // Rose
+        myBuilder.append(" { background-color: #c58917; }"); // Cinnamon
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 

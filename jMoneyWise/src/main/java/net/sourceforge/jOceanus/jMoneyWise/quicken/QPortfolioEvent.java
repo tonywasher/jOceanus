@@ -32,6 +32,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAttribute;
 
 /**
  * Quicken Portfolio Event Representation.
@@ -103,6 +105,10 @@ public class QPortfolioEvent
                 return buildStockAdjustQIF();
             case Dividend:
                 return buildDividendQIF();
+            case StockDeMerger:
+                return buildDeMergerQIF();
+            case StockTakeOver:
+                return buildTakeOverQIF();
             default:
                 break;
         }
@@ -124,6 +130,9 @@ public class QPortfolioEvent
         JUnits myUnits = myEvent.getCreditUnits();
         boolean useBuyX = !getQIFType().useInvestmentHolding4Category();
 
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
         /* Reset the builder */
         reset();
 
@@ -143,9 +152,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = new JDecimal(myUnits);
@@ -191,8 +198,11 @@ public class QPortfolioEvent
         JUnits myUnits = myEvent.getCreditUnits();
         if (myUnits == null) {
             myUnits = new JUnits();
-            autoCorrectZeroUnits = !getQIFType().canBuyZeroShares();
+            autoCorrectZeroUnits = !getQIFType().canInvestCapital();
         }
+
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
 
         /* Reset the builder */
         reset();
@@ -211,9 +221,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = (autoCorrectZeroUnits)
@@ -249,9 +257,7 @@ public class QPortfolioEvent
             addAccountLine(QPortLineType.Security, mySecurity);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                    ? QIF_RECONCILED
-                    : QIF_OPEN);
+            addStringLine(QEvtLineType.Cleared, myReconciled);
 
             /* Add the quantity */
             addDecimalLine(QPortLineType.Quantity, myUnitValue);
@@ -281,9 +287,12 @@ public class QPortfolioEvent
         boolean autoCorrectZeroUnits = false;
         boolean zeroUnits = false;
         if (myUnits == null) {
-            autoCorrectZeroUnits = !getQIFType().canSellZeroShares();
+            autoCorrectZeroUnits = !getQIFType().canReturnCapital();
             zeroUnits = !autoCorrectZeroUnits;
         }
+
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
 
         /* Reset the builder */
         reset();
@@ -297,16 +306,14 @@ public class QPortfolioEvent
                 : QActionType.RtrnCap);
 
         /* Add the Security */
-        addAccountLine(QPortLineType.Security, myEvent.getDebit());
+        addAccountLine(QPortLineType.Security, mySecurity);
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* If we have units */
         if (!zeroUnits) {
@@ -339,9 +346,7 @@ public class QPortfolioEvent
             addAccountLine(QPortLineType.Security, mySecurity);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                    ? QIF_RECONCILED
-                    : QIF_OPEN);
+            addStringLine(QEvtLineType.Cleared, myReconciled);
 
             /* Add the quantity */
             addDecimalLine(QPortLineType.Quantity, new JDecimal(1));
@@ -368,6 +373,9 @@ public class QPortfolioEvent
         JUnits myUnits = myEvent.getCreditUnits();
         boolean useSplits = getQIFType().useStockSplit();
 
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
         /* Reset the builder */
         reset();
 
@@ -388,9 +396,7 @@ public class QPortfolioEvent
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* Add quantity */
         if (useSplits) {
@@ -427,6 +433,9 @@ public class QPortfolioEvent
             myUnits = myEvent.getCreditUnits();
         }
 
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
         /* Reset the builder */
         reset();
 
@@ -442,9 +451,7 @@ public class QPortfolioEvent
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myValue = new JDecimal(myUnits);
@@ -468,17 +475,23 @@ public class QPortfolioEvent
     private String buildDividendQIF() {
         /* Access the event */
         Event myEvent = getEvent();
+        JDateDay myDate = myEvent.getDate();
+        Account mySecurity = myEvent.getDebit();
         JMoney myAmount = myEvent.getAmount();
         JMoney myTaxCredit = myEvent.getTaxCredit();
         JUnits myUnits = myEvent.getCreditUnits();
+        String myDesc = myEvent.getComments();
         boolean hasUnits = (myUnits != null);
-        boolean isReinvested = Difference.isEqual(myEvent.getDebit(), myEvent.getCredit());
+        boolean isReinvested = Difference.isEqual(mySecurity, myEvent.getCredit());
+
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
 
         /* Reset the builder */
         reset();
 
         /* Add the Date */
-        addDateLine(QPortLineType.Date, myEvent.getDate());
+        addDateLine(QPortLineType.Date, myDate);
 
         /* Add the action */
         addEnumLine(QPortLineType.Action, (isReinvested)
@@ -486,7 +499,7 @@ public class QPortfolioEvent
                 : QActionType.Div);
 
         /* Add the Security */
-        addAccountLine(QPortLineType.Security, myEvent.getDebit());
+        addAccountLine(QPortLineType.Security, mySecurity);
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
@@ -496,9 +509,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* If we have units */
         if (hasUnits) {
@@ -508,7 +519,279 @@ public class QPortfolioEvent
         }
 
         /* If we have a description */
+        if (myDesc != null) {
+            /* Add the Description */
+            addStringLine(QPortLineType.Comment, myDesc);
+        }
+
+        /* If we are re-investing and have a TaxCredit */
+        if ((isReinvested)
+            && (myTaxCredit != null)) {
+            /* End the main item */
+            endItem();
+
+            /* Add the Date */
+            addDateLine(QPortLineType.Date, myDate);
+
+            /* Add the action */
+            addEnumLine(QPortLineType.Action, QActionType.MiscInc);
+
+            /* Add the Security */
+            addAccountLine(QPortLineType.Security, mySecurity);
+
+            /* Add the Amount (as a simple decimal) */
+            myValue = new JDecimal(myTaxCredit);
+            addDecimalLine(QPortLineType.Amount, myValue);
+
+            /* Add the Cleared status */
+            addStringLine(QEvtLineType.Cleared, myReconciled);
+
+            /* Add description */
+            if (myDesc != null) {
+                /* Add the Description */
+                addStringLine(QPortLineType.Comment, myDesc);
+            }
+        }
+
+        /* Return the detail */
+        return completeItem();
+    }
+
+    /**
+     * Build DeMerger transaction.
+     * @return the QIF entry
+     */
+    private String buildDeMergerQIF() {
+        /* Access the event */
+        Event myEvent = getEvent();
+        JDateDay myDate = myEvent.getDate();
+        Account myDebit = myEvent.getDebit();
+        JUnits myDebitUnits = myEvent.getDebitUnits();
+        JUnits myCreditUnits = myEvent.getCreditUnits();
         String myDesc = myEvent.getComments();
+        boolean autoCorrectZeroUnits = false;
+        boolean zeroUnits = false;
+        if (myDebitUnits == null) {
+            autoCorrectZeroUnits = !getQIFType().canReturnCapital();
+            zeroUnits = !autoCorrectZeroUnits;
+        }
+
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
+        /* Reset the builder */
+        reset();
+
+        /* Access Investment Analysis for Debit */
+        InvestmentAnalysis myAnalysis = getInvestmentAnalysis(myEvent, myDebit);
+
+        /* Obtain the delta cost */
+        JMoney myDeltaCost = myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaCost);
+        myDeltaCost = new JMoney(myDeltaCost);
+        myDeltaCost.negate();
+
+        /* Add the Date */
+        addDateLine(QPortLineType.Date, myDate);
+
+        /* Add the action */
+        addEnumLine(QPortLineType.Action, (!zeroUnits)
+                ? QActionType.Sell
+                : QActionType.RtrnCap);
+
+        /* Add the Security */
+        addAccountLine(QPortLineType.Security, myDebit);
+
+        /* Add the Amount (as a simple decimal) */
+        JDecimal myValue = new JDecimal(myDeltaCost);
+        addDecimalLine(QPortLineType.Amount, myValue);
+
+        /* Add the Cleared status */
+        addStringLine(QEvtLineType.Cleared, myReconciled);
+
+        /* If we have units */
+        if (!zeroUnits) {
+            /* Add the Quantity (as a simple decimal) */
+            JDecimal myUnitValue = (autoCorrectZeroUnits)
+                    ? new JDecimal(1)
+                    : new JDecimal(myDebitUnits);
+            addDecimalLine(QPortLineType.Quantity, myUnitValue);
+        }
+
+        /* If we have a description */
+        if (myDesc != null) {
+            /* Add the Description */
+            addStringLine(QPortLineType.Comment, myDesc);
+        }
+
+        /* If we need to autoCorrect */
+        if (autoCorrectZeroUnits) {
+            /* End the main item */
+            endItem();
+
+            /* Add the Date */
+            addDateLine(QPortLineType.Date, myDate);
+
+            /* Add the action */
+            addEnumLine(QPortLineType.Action, QActionType.ShrsIn);
+
+            /* Add the Security */
+            addAccountLine(QPortLineType.Security, myDebit);
+
+            /* Add the Cleared status */
+            addStringLine(QEvtLineType.Cleared, myReconciled);
+
+            /* Add the quantity */
+            addDecimalLine(QPortLineType.Quantity, new JDecimal(1));
+
+            /* If we have a description */
+            if (myDesc != null) {
+                /* Add the Description */
+                addStringLine(QPortLineType.Comment, myDesc);
+            }
+        }
+
+        /* End the extra item */
+        endItem();
+
+        /* Add the Date */
+        addDateLine(QPortLineType.Date, myDate);
+
+        /* Add the action */
+        addEnumLine(QPortLineType.Action, QActionType.Buy);
+
+        /* Add the Security */
+        addAccountLine(QPortLineType.Security, myEvent.getCredit());
+
+        /* Add the Amount (as a simple decimal) */
+        addDecimalLine(QPortLineType.Amount, myValue);
+
+        /* Add the Cleared status */
+        addStringLine(QEvtLineType.Cleared, myReconciled);
+
+        /* Add the Quantity (as a simple decimal) */
+        myValue = new JDecimal(myCreditUnits);
+        addDecimalLine(QPortLineType.Quantity, myValue);
+
+        /* If we have a description */
+        if (myDesc != null) {
+            /* Add the Description */
+            addStringLine(QPortLineType.Comment, myDesc);
+        }
+
+        /* Return the detail */
+        return completeItem();
+    }
+
+    /**
+     * Build TakeOver transaction.
+     * @return the QIF entry
+     */
+    private String buildTakeOverQIF() {
+        /* Access the event */
+        Event myEvent = getEvent();
+        JDateDay myDate = myEvent.getDate();
+        JMoney myAmount = myEvent.getAmount();
+        Account myDebit = myEvent.getDebit();
+        Account myCredit = myEvent.getCredit();
+        String myDesc = myEvent.getComments();
+        Account myThirdParty = myEvent.getThirdParty();
+        JUnits myCreditUnits = myEvent.getCreditUnits();
+
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
+        /* Reset the builder */
+        reset();
+
+        /* Add the Date */
+        addDateLine(QPortLineType.Date, myDate);
+
+        /* Add the action */
+        addEnumLine(QPortLineType.Action, QActionType.Sell);
+
+        /* Add the Security */
+        addAccountLine(QPortLineType.Security, myDebit);
+
+        /* Access Investment Analysis for Debit */
+        InvestmentAnalysis myAnalysis = getInvestmentAnalysis(myEvent, myDebit);
+
+        /* Obtain total payment value for sale stock */
+        JMoney myStockValue = myAnalysis.getMoneyAttribute(InvestmentAttribute.TakeOverStockCost);
+        JMoney mySaleValue = new JMoney(myStockValue);
+        mySaleValue.addAmount(myAmount);
+
+        /* Add the Amount (as a simple decimal) */
+        JDecimal myValue = new JDecimal(mySaleValue);
+        addDecimalLine(QPortLineType.Amount, myValue);
+
+        /* Add the Cleared status */
+        addStringLine(QEvtLineType.Cleared, myReconciled);
+
+        /* Add the Quantity (as a simple decimal) */
+        myValue = new JDecimal(myAnalysis.getUnitsAttribute(InvestmentAttribute.InitialUnits));
+        addDecimalLine(QPortLineType.Quantity, myValue);
+
+        /* If we have a description */
+        if (myDesc != null) {
+            /* Add the Description */
+            addStringLine(QPortLineType.Comment, myDesc);
+        }
+
+        /* End the initial item */
+        endItem();
+
+        /* If we have a ThirdParty cash component */
+        if (myThirdParty != null) {
+            /* Add the Date */
+            addDateLine(QPortLineType.Date, myDate);
+
+            /* Add the action */
+            addEnumLine(QPortLineType.Action, QActionType.XOut);
+
+            /* Add the Amount (as a simple decimal) */
+            myValue = new JDecimal(myAmount);
+            addDecimalLine(QPortLineType.Amount, myValue);
+
+            /* Add the Cleared status */
+            addStringLine(QEvtLineType.Cleared, myReconciled);
+
+            /* Add the Transfer Account */
+            addXferAccountLine(QPortLineType.TransferAccount, myThirdParty);
+
+            /* Add the Transfer Amount */
+            addDecimalLine(QPortLineType.TransferAmount, myValue);
+
+            /* If we have a description */
+            if (myDesc != null) {
+                /* Add the Description */
+                addStringLine(QPortLineType.Comment, myDesc);
+            }
+
+            /* End the initial item */
+            endItem();
+        }
+
+        /* Add the Date */
+        addDateLine(QPortLineType.Date, myDate);
+
+        /* Add the action */
+        addEnumLine(QPortLineType.Action, QActionType.Buy);
+
+        /* Add the Security */
+        addAccountLine(QPortLineType.Security, myCredit);
+
+        /* Add the Amount (as a simple decimal) */
+        myValue = new JDecimal(myStockValue);
+        addDecimalLine(QPortLineType.Amount, myValue);
+
+        /* Add the Cleared status */
+        addStringLine(QEvtLineType.Cleared, myReconciled);
+
+        /* Add the Quantity (as a simple decimal) */
+        myValue = new JDecimal(myCreditUnits);
+        addDecimalLine(QPortLineType.Quantity, myValue);
+
+        /* If we have a description */
         if (myDesc != null) {
             /* Add the Description */
             addStringLine(QPortLineType.Comment, myDesc);
@@ -750,10 +1033,7 @@ public class QPortfolioEvent
          */
         private final String theSymbol;
 
-        /**
-         * Obtain the symbol.
-         * @return the symbol
-         */
+        @Override
         public String getSymbol() {
             return theSymbol;
         }

@@ -70,6 +70,9 @@ public class QSalaryEvent
         boolean isNatIns = (myNatIns != null);
         boolean isBenefit = (myBenefit != null);
 
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
         /* Reset the builder */
         reset();
 
@@ -81,9 +84,7 @@ public class QSalaryEvent
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();

@@ -34,6 +34,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
 
 /**
  * Quicken Standard event.
@@ -160,6 +161,9 @@ public class QEvent
      * @return the QIF format
      */
     protected String buildQIF() {
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
         /* Reset the builder */
         reset();
 
@@ -174,9 +178,7 @@ public class QEvent
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (theEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* If we have a reference */
         String myRef = theEvent.getReference();
@@ -355,6 +357,29 @@ public class QEvent
 
         /* Complete the item */
         endItem();
+    }
+
+    /**
+     * Obtain Investment Analysis for Investment Event.
+     * @param pEvent the event
+     * @param pSecurity the security for the event
+     * @return the analysis
+     */
+    protected InvestmentAnalysis getInvestmentAnalysis(final Event pEvent,
+                                                       final Account pSecurity) {
+        /* Locate the security bucket */
+        return theAnalysis.getInvestmentAnalysis(pEvent, pSecurity);
+    }
+
+    /**
+     * Obtain Reconciled indication.
+     * @return the reconciled flag
+     */
+    protected String getReconciledFlag() {
+        /* Return the correct flag */
+        return theEvent.isReconciled()
+                ? QIF_RECONCILED
+                : QIF_OPEN;
     }
 
     /**

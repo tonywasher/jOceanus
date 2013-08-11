@@ -47,7 +47,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAnalysisList;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
@@ -82,9 +82,9 @@ public final class AccountBucket
     private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(CategoryType.class.getSimpleName());
 
     /**
-     * Capital Events Field Id.
+     * Investment Analysis Field Id.
      */
-    private static final JDataField FIELD_CAPITAL = FIELD_DEFS.declareLocalField(CapitalEventList.class.getSimpleName());
+    private static final JDataField FIELD_INVEST = FIELD_DEFS.declareLocalField(InvestmentAnalysisList.class.getSimpleName());
 
     /**
      * Base Field Id.
@@ -127,9 +127,9 @@ public final class AccountBucket
     private final AccountBucket theBase;
 
     /**
-     * CapitalEvent list.
+     * InvestmentAnalyses list.
      */
-    private CapitalEventList theEvents = null;
+    private InvestmentAnalysisList theInvestmentAnalyses = null;
 
     /**
      * Attribute Map.
@@ -160,9 +160,9 @@ public final class AccountBucket
         if (FIELD_TYPE.equals(pField)) {
             return theType;
         }
-        if (FIELD_CAPITAL.equals(pField)) {
-            return (theEvents != null)
-                    ? theEvents
+        if (FIELD_INVEST.equals(pField)) {
+            return (theInvestmentAnalyses != null)
+                    ? theInvestmentAnalyses
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_BASE.equals(pField)) {
@@ -229,11 +229,11 @@ public final class AccountBucket
     }
 
     /**
-     * Obtain the capitalEventList.
-     * @return the capitalEventList
+     * Obtain the investmentAnalysisList.
+     * @return the investmentAnalysisList
      */
-    public CapitalEventList getCapitalEvents() {
-        return theEvents;
+    public InvestmentAnalysisList getInvestmentAnalyses() {
+        return theInvestmentAnalyses;
     }
 
     /**
@@ -455,8 +455,8 @@ public final class AccountBucket
                 setAttribute(AccountAttribute.Gained, new JMoney());
                 setAttribute(AccountAttribute.Dividend, new JMoney());
 
-                /* allocate the Capital events */
-                theEvents = new CapitalEventList(theData, pAccount);
+                /* allocate the InvestmentAnalysis list */
+                theInvestmentAnalyses = new InvestmentAnalysisList(theData, pAccount);
             }
         }
     }
@@ -480,8 +480,8 @@ public final class AccountBucket
         theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
         theSavePoint = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
 
-        /* Copy the Capital Events */
-        theEvents = pBase.getCapitalEvents();
+        /* Copy the Investment Analyses */
+        theInvestmentAnalyses = pBase.getInvestmentAnalyses();
 
         /* Clone the underlying map */
         cloneMap(theBase.getAttributes(), theAttributes);
@@ -667,11 +667,11 @@ public final class AccountBucket
         /* Copy attribute map to SavePoint */
         copyMap(theSavePoint, theAttributes);
 
-        /* If there are capital events */
-        if ((theEvents != null)
+        /* If there are investment analyses */
+        if ((theInvestmentAnalyses != null)
             && (pDate != null)) {
-            /* Trim back the capital events */
-            theEvents.purgeAfterDate(pDate);
+            /* Trim back the investment Analyses */
+            theInvestmentAnalyses.purgeAfterDate(pDate);
         }
     }
 
@@ -994,8 +994,9 @@ public final class AccountBucket
             while (myIterator.hasNext()) {
                 AccountBucket myCurr = myIterator.next();
 
-                /* If the bucket is active */
-                if (myCurr.isActive()) {
+                /* If the bucket is active and non-payee */
+                if (myCurr.isActive()
+                    && (myCurr.getCategoryType() != CategoryType.Payee)) {
                     /* Add a derived bucket to the list */
                     AccountBucket myBucket = new AccountBucket(pAnalysis, myCurr);
                     add(myBucket);

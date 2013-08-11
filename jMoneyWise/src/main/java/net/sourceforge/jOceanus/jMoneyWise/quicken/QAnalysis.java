@@ -45,6 +45,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory.QCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
+import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**
  * Quicken analysis.
@@ -105,6 +108,11 @@ public class QAnalysis
      * DataSet.
      */
     private FinanceData theData = null;
+
+    /**
+     * Analysis.
+     */
+    private Analysis theAnalysis = null;
 
     /**
      * Obtain account list iterator.
@@ -242,19 +250,20 @@ public class QAnalysis
     /**
      * Analyse the data.
      * @param pStatus the thread status
-     * @param pData the dataSet
+     * @param pView the dataView
      * @param pLastEvent the date of the last event to process
      */
     protected void analyseData(final ThreadStatus<FinanceData> pStatus,
-                               final FinanceData pData,
+                               final View pView,
                                final JDateDay pLastEvent) {
-        /* Store data */
-        theData = pData;
+        /* Store data and analysis */
+        theData = pView.getData();
+        theAnalysis = pView.getAnalysis().getAnalysis();
 
         /* Access lists */
-        EventList myEvents = pData.getEvents();
-        AccountList myAccounts = pData.getAccounts();
-        TaxYearList myTaxYears = pData.getTaxYears();
+        EventList myEvents = theData.getEvents();
+        AccountList myAccounts = theData.getAccounts();
+        TaxYearList myTaxYears = theData.getTaxYears();
 
         /* Access the number of reporting steps */
         int mySteps = pStatus.getReportingSteps();
@@ -343,7 +352,7 @@ public class QAnalysis
         }
 
         /* Update status bar and analyse prices */
-        AccountPriceList myPrices = pData.getPrices();
+        AccountPriceList myPrices = theData.getPrices();
         if ((bContinue)
             && (pStatus.setNewStage("Analysing prices"))
             && (pStatus.setNumSteps(myPrices.size()))) {
@@ -387,6 +396,7 @@ public class QAnalysis
     /**
      * Determine whether we should ignore the event.
      * @param pEvent the event
+     * @param isCredit is this the credit item?
      * @return true/false
      */
     private boolean ignoreEvent(final Event pEvent,
@@ -399,8 +409,11 @@ public class QAnalysis
         /* Switch on category */
         switch (pEvent.getCategoryClass()) {
             case Interest:
-            case Dividend:
+            case StockDeMerger:
+            case StockTakeOver:
                 return true;
+            case Dividend:
+                return (pEvent.getDebit().hasUnits());
             default:
                 return false;
         }
@@ -507,5 +520,17 @@ public class QAnalysis
 
         /* Return success */
         return bContinue;
+    }
+
+    /**
+     * Obtain Investment Analysis for Investment Event.
+     * @param pEvent the event
+     * @param pSecurity the security for the event
+     * @return the analysis
+     */
+    protected InvestmentAnalysis getInvestmentAnalysis(final Event pEvent,
+                                                       final Account pSecurity) {
+        /* Locate the security bucket */
+        return theAnalysis.getInvestmentAnalysis(pEvent, pSecurity);
     }
 }

@@ -22,6 +22,7 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.quicken;
 
+import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
@@ -76,6 +77,9 @@ public class QHoldingEvent
         JMoney myAmount = myEvent.getAmount();
         Account myPortfolio = myEvent.getCredit().getPortfolio();
 
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
         /* Reset the builder */
         reset();
 
@@ -88,9 +92,7 @@ public class QHoldingEvent
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
@@ -131,9 +133,14 @@ public class QHoldingEvent
         Event myEvent = getEvent();
         JMoney myAmount = myEvent.getAmount();
         Account mySecurity = myEvent.getDebit();
+        Account myXferAccount = myEvent.getCredit();
         Account myPortfolio = mySecurity.getPortfolio();
         JMoney myTaxCredit = myEvent.getTaxCredit();
         EventCategory myCategory = getAnalysis().getCategory(EventInfoClass.TaxCredit);
+        boolean isReinvested = Difference.isEqual(mySecurity, myXferAccount);
+
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
 
         /* Reset the builder */
         reset();
@@ -147,9 +154,7 @@ public class QHoldingEvent
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, (myEvent.isReconciled() == Boolean.TRUE)
-                ? QIF_RECONCILED
-                : QIF_OPEN);
+        addStringLine(QEvtLineType.Cleared, myReconciled);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
@@ -163,20 +168,27 @@ public class QHoldingEvent
                                           + mySecurity.getName());
 
         /* Determine the gross amount */
-        myValue = new JDecimal(myAmount);
-        if (myTaxCredit != null) {
-            myValue.addValue(myTaxCredit);
+        if (isReinvested) {
+            myValue = new JDecimal(myTaxCredit);
+        } else {
+            myValue = new JDecimal(myAmount);
+            if (myTaxCredit != null) {
+                myValue.addValue(myTaxCredit);
+            }
         }
 
         /* Add the gross amount */
         addXferAccountLine(QEvtLineType.SplitCategory, myPortfolio);
         addDecimalLine(QEvtLineType.SplitAmount, myValue);
 
-        /* Add the net amount */
-        myValue = new JDecimal(myAmount);
-        myValue.negate();
-        addXferAccountLine(QEvtLineType.SplitCategory, myEvent.getCredit());
-        addDecimalLine(QEvtLineType.SplitAmount, myValue);
+        /* If this is not a re-invest */
+        if (!isReinvested) {
+            /* Add the net amount */
+            myValue = new JDecimal(myAmount);
+            myValue.negate();
+            addXferAccountLine(QEvtLineType.SplitCategory, myEvent.getCredit());
+            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+        }
 
         /* If we have a tax credit */
         if (myTaxCredit != null) {

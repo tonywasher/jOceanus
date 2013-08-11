@@ -31,6 +31,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
@@ -40,6 +41,7 @@ import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAnalysisList;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
 
 /**
@@ -458,5 +460,26 @@ public class Analysis
 
         /* Add value value */
         myOpeningCategory.addIncome(myBalance);
+    }
+
+    /**
+     * Obtain Investment Analysis for Investment Event.
+     * @param pEvent the event
+     * @param pSecurity the security for the event
+     * @return the analysis
+     */
+    public InvestmentAnalysis getInvestmentAnalysis(final Event pEvent,
+                                                    final Account pSecurity) {
+        /* Locate the security bucket */
+        AccountBucket mySecurity = theAccounts.findItemById(pSecurity.getId());
+        if (mySecurity == null) {
+            return null;
+        }
+
+        /* Obtain the investment analysis for the event */
+        InvestmentAnalysisList myAnalyses = mySecurity.getInvestmentAnalyses();
+        return (myAnalyses == null)
+                ? null
+                : myAnalyses.findItemById(pEvent.getId());
     }
 }

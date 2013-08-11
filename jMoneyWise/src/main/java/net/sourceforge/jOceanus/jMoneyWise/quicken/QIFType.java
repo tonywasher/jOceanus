@@ -57,7 +57,7 @@ public enum QIFType {
      * This is required to handle programs who cannot handle a consolidated file.
      * @return true/false
      */
-    public boolean useConsolidated() {
+    public boolean useConsolidatedFile() {
         switch (this) {
             case AceMoney:
             case BankTree:
@@ -79,21 +79,21 @@ public enum QIFType {
         switch (this) {
             case BankTree:
             case YNAB:
+            case MoneyDance:
                 return true;
             case AceMoney:
-            case MoneyDance:
             default:
                 return false;
         }
     }
 
     /**
-     * Should we hide balancing tax transfers?
+     * Should we hide balancing split transfers?
      * <p>
      * This is required for those programs who fail to recognise balancing transfers when one side forms a split transaction.
      * @return true/false
      */
-    public boolean hideBalancingTaxTransfer() {
+    public boolean hideBalancingSplitTransfer() {
         switch (this) {
             case AceMoney:
             case MoneyDance:
@@ -162,12 +162,12 @@ public enum QIFType {
     }
 
     /**
-     * Can we buy zero shares?
+     * Can we invest capital?
      * <p>
      * Some programs do not allow you to buy zero shares, in order to directly add to the cost. In this case we must buy a single share and remove it.
      * @return true/false
      */
-    public boolean canBuyZeroShares() {
+    public boolean canInvestCapital() {
         switch (this) {
             case AceMoney:
                 return false;
@@ -180,13 +180,13 @@ public enum QIFType {
     }
 
     /**
-     * Can we sell zero shares?
+     * Can we return capital?
      * <p>
      * Some programs do not allow you to sell zero shares, treating such an event as a dividend as opposed to a return of capital. In this case we must sell a
      * single share and restore it.
      * @return true/false
      */
-    public boolean canSellZeroShares() {
+    public boolean canReturnCapital() {
         switch (this) {
             case MoneyDance:
             case AceMoney:

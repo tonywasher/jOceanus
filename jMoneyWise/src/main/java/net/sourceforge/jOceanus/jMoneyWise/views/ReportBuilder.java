@@ -40,11 +40,11 @@ import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
-import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalAttribute;
-import net.sourceforge.jOceanus.jMoneyWise.views.CapitalEvent.CapitalEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAnalysisList;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
 
@@ -318,15 +318,17 @@ public class ReportBuilder {
 
         /* Determine number of columns */
         int myColumns = 1;
-        myColumns++;
-        myColumns++;
 
         /* Initialise the table */
         Element myTable = theBuilder.startTable(myBody);
         Element myTHdr = theBuilder.startTableHeader(myTable);
         Element myRow = theBuilder.startTotalRow(myTHdr);
         theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDate.getYear()));
+        myColumns++;
         theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDate.getYear() - 1));
+        myColumns++;
+        theBuilder.makeTitleCell(myRow, TEXT_PROFIT);
+        myColumns++;
         Element myTotal = theBuilder.startTableBody(myTable);
         myTable = theBuilder.startEmbeddedTable(myTotal, TEXT_TOTAL, myColumns, true);
         Element myTBody = theBuilder.startTableBody(myTable);
@@ -348,6 +350,7 @@ public class ReportBuilder {
                     : theBuilder.startAlternateCatRow(myTBody, myBucket.getName());
             theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theBuilder.makeTotalCell(myCategory, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -360,11 +363,7 @@ public class ReportBuilder {
         myRow = theBuilder.startTotalRow(myTotal, TEXT_TOTAL);
         theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Valuation));
         theBuilder.makeTotalCell(myRow, myTotals.getBaseMoneyAttribute(AccountAttribute.Valuation));
-
-        /* Format the profit */
-        myRow = theBuilder.startTotalRow(myTotal, TEXT_PROFIT);
         theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.ValueDelta));
-        theBuilder.makeTotalCell(myRow);
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -410,6 +409,7 @@ public class ReportBuilder {
                     : theBuilder.startAlternateSubCatRow(myBody, myCurr.getSubCategory(), myBucket.getName());
             theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theBuilder.makeTotalCell(myRow, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -459,6 +459,7 @@ public class ReportBuilder {
                     : theBuilder.startAlternateRow(myBody, myBucket.getName());
             theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theBuilder.makeValueCell(myRow, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
 
             /* Record the selection */
             theManager.setSelectionForId(myBucket.getName(), myBucket);
@@ -491,15 +492,17 @@ public class ReportBuilder {
 
         /* Determine number of columns */
         int myColumns = 1;
-        myColumns++;
-        myColumns++;
 
         /* Initialise the table */
         Element myTable = theBuilder.startTable(myBody);
         Element myTHdr = theBuilder.startTableHeader(myTable);
         Element myRow = theBuilder.startTotalRow(myTHdr);
         theBuilder.makeTitleCell(myRow, TEXT_INCOME);
+        myColumns++;
         theBuilder.makeTitleCell(myRow, TEXT_EXPENSE);
+        myColumns++;
+        theBuilder.makeTitleCell(myRow, TEXT_PROFIT);
+        myColumns++;
         Element myTotal = theBuilder.startTableBody(myTable);
         myTable = theBuilder.startEmbeddedTable(myTotal, TEXT_TOTAL, myColumns, true);
         Element myTBody = theBuilder.startTableBody(myTable);
@@ -521,6 +524,7 @@ public class ReportBuilder {
                     : theBuilder.startAlternateCatRow(myTBody, myBucket.getName());
             theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(EventAttribute.Income));
             theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(EventAttribute.Expense));
+            theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(EventAttribute.IncomeDelta));
 
             /* Flip row type */
             isOdd = !isOdd;
@@ -533,11 +537,7 @@ public class ReportBuilder {
         myRow = theBuilder.startTotalRow(myTotal, TEXT_TOTAL);
         theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(EventAttribute.Income));
         theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(EventAttribute.Expense));
-
-        /* Format the profit */
-        myRow = theBuilder.startTotalRow(myTotal, TEXT_PROFIT);
         theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(EventAttribute.IncomeDelta));
-        theBuilder.makeTotalCell(myRow);
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -578,6 +578,7 @@ public class ReportBuilder {
                     : theBuilder.startAlternateRow(myBody, myCurr.getSubCategory(), myBucket.getName());
             theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(EventAttribute.Income));
             theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(EventAttribute.Expense));
+            theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(EventAttribute.IncomeDelta));
 
             /* Record the selection */
             theManager.setSelectionForId(myBucket.getName(), myBucket);
@@ -677,6 +678,7 @@ public class ReportBuilder {
         Element myRow = theBuilder.startTotalRow(myTHdr);
         theBuilder.makeTitleCell(myRow, TEXT_INCOME);
         theBuilder.makeTitleCell(myRow, TEXT_EXPENSE);
+        theBuilder.makeTitleCell(myRow, TEXT_PROFIT);
         Element myTBody = theBuilder.startTableBody(myTable);
 
         /* Create the bucket iterator */
@@ -698,6 +700,7 @@ public class ReportBuilder {
                     : theBuilder.startAlternateRow(myTBody, myBucket.getName());
             theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Income));
             theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Expense));
+            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.IncomeDelta));
 
             /* Record the selection */
             theManager.setSelectionForId(myBucket.getName(), myBucket);
@@ -710,11 +713,7 @@ public class ReportBuilder {
         myRow = theBuilder.startTotalRow(myTBody, TEXT_TOTAL);
         theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Income));
         theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Expense));
-
-        /* Format the profit */
-        myRow = theBuilder.startTotalRow(myTBody, TEXT_PROFIT);
         theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.IncomeDelta));
-        theBuilder.makeTotalCell(myRow);
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -784,11 +783,8 @@ public class ReportBuilder {
             /* Flip row type */
             isOdd = !isOdd;
 
-            /* If this is Capital */
-            if (myBucket.getAccountCategory().getCategoryTypeClass().isCapital()) {
-                /* Format the detail */
-                makeCapitalEventReport(myTBody, myColumns, myBucket);
-            }
+            /* Format the detail */
+            makeCapitalEventReport(myTBody, myColumns, myBucket);
         }
 
         /* Create the total row */
@@ -811,8 +807,8 @@ public class ReportBuilder {
     public void makeCapitalEventReport(final Element pBody,
                                        final Integer pNumColumns,
                                        final AccountBucket pAsset) {
-        /* Access the event lists */
-        CapitalEventList myList = pAsset.getCapitalEvents();
+        /* Access the investment analyses */
+        InvestmentAnalysisList myList = pAsset.getInvestmentAnalyses();
 
         /* Create an embedded table */
         Element myTable = theBuilder.startEmbeddedTable(pBody, pAsset.getName(), pNumColumns, false);
@@ -827,28 +823,28 @@ public class ReportBuilder {
         theBuilder.makeTitleCell(myRow, "Dividend");
 
         /* Access the iterator */
-        Iterator<CapitalEvent> myIterator = myList.iterator();
+        Iterator<InvestmentAnalysis> myIterator = myList.iterator();
         boolean isOdd = false;
 
-        /* Loop through the Events */
+        /* Loop through the Analyses */
         while (myIterator.hasNext()) {
-            CapitalEvent myEvent = myIterator.next();
+            InvestmentAnalysis myAnalysis = myIterator.next();
 
             /* Skip record if this is not based on an event (at present) */
-            if (myEvent.getEvent() == null) {
+            if (myAnalysis.getEvent() == null) {
                 continue;
             }
 
             /* Format the detail */
-            String myDate = theFormatter.formatObject(myEvent.getDate());
+            String myDate = theFormatter.formatObject(myAnalysis.getDate());
             myRow = (isOdd)
                     ? theBuilder.startDetailRow(myBody, myDate)
                     : theBuilder.startAlternateRow(myBody, myDate);
-            theBuilder.makeValueCell(myRow, myEvent.getCategory());
-            theBuilder.makeValueCell(myRow, myEvent.getUnitsAttribute(CapitalAttribute.DeltaUnits));
-            theBuilder.makeValueCell(myRow, myEvent.getMoneyAttribute(CapitalAttribute.DeltaCost));
-            theBuilder.makeValueCell(myRow, myEvent.getMoneyAttribute(CapitalAttribute.DeltaGains));
-            theBuilder.makeValueCell(myRow, myEvent.getMoneyAttribute(CapitalAttribute.DeltaDividend));
+            theBuilder.makeValueCell(myRow, myAnalysis.getCategory());
+            theBuilder.makeValueCell(myRow, myAnalysis.getUnitsAttribute(InvestmentAttribute.DeltaUnits));
+            theBuilder.makeValueCell(myRow, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaCost));
+            theBuilder.makeValueCell(myRow, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaGains));
+            theBuilder.makeValueCell(myRow, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaDividend));
 
             /* Flip row type */
             isOdd = !isOdd;

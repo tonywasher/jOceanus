@@ -26,10 +26,10 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jDataModels.threads.WorkerThread;
-import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QDataSet;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference;
+import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 
 /**
@@ -43,9 +43,9 @@ public class WriteQIF
     private static final String TASK_NAME = "QIF Creation";
 
     /**
-     * Data Control.
+     * Data View.
      */
-    private final DataControl<FinanceData> theControl;
+    private final View theView;
 
     /**
      * Thread Status.
@@ -56,13 +56,13 @@ public class WriteQIF
      * Constructor (Event Thread).
      * @param pStatus the thread status
      */
-    public WriteQIF(final ThreadStatus<FinanceData> pStatus) {
+    public WriteQIF(final FinanceStatus pStatus) {
         /* Call super-constructor */
         super(TASK_NAME, pStatus);
 
         /* Store passed parameters */
         theStatus = pStatus;
-        theControl = pStatus.getControl();
+        theView = pStatus.getView();
 
         /* Show the status window */
         showStatusBar();
@@ -76,11 +76,11 @@ public class WriteQIF
             theStatus.initTask("Analysing Data");
 
             /* Load configuration */
-            PreferenceManager myMgr = theControl.getPreferenceMgr();
+            PreferenceManager myMgr = theView.getPreferenceMgr();
             QIFPreference myPrefs = myMgr.getPreferenceSet(QIFPreference.class);
 
             /* Create QIF analysis */
-            QDataSet myQData = new QDataSet(theStatus, theControl.getData(), myPrefs);
+            QDataSet myQData = new QDataSet(theStatus, theView, myPrefs);
 
             /* Initialise the status window */
             theStatus.initTask("Writing QIF file");
