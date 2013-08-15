@@ -359,6 +359,11 @@ public class AccountRate
         return (AccountRate) super.getBase();
     }
 
+    @Override
+    public AccountRateList getList() {
+        return (AccountRateList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list
@@ -538,7 +543,7 @@ public class AccountRate
      */
     @Override
     public void validate() {
-        AccountRateList myList = (AccountRateList) getList();
+        AccountRateList myList = getList();
         FinanceData mySet = getDataSet();
         JDateDay myDate = getEndDate();
         JRate myRate = getRate();

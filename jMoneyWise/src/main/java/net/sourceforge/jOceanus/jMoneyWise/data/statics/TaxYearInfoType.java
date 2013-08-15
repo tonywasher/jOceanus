@@ -79,6 +79,11 @@ public class TaxYearInfoType
         return (TaxYearInfoType) super.getBase();
     }
 
+    @Override
+    public TaxYearInfoTypeList getList() {
+        return (TaxYearInfoTypeList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList The list to associate the TaxYear Info Type with

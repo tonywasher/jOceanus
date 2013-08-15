@@ -193,12 +193,12 @@ public class Event
     }
 
     /**
-     * Obtain Benefit.
+     * Obtain Deemed Benefit.
      * @return the Benefit
      */
-    public JMoney getBenefit() {
+    public JMoney getDeemedBenefit() {
         return hasInfoSet
-                ? theInfoSet.getValue(EventInfoClass.Benefit, JMoney.class)
+                ? theInfoSet.getValue(EventInfoClass.DeemedBenefit, JMoney.class)
                 : null;
     }
 
@@ -216,7 +216,7 @@ public class Event
      * Obtain Donation.
      * @return the Donation
      */
-    public JMoney getDonation() {
+    public JMoney getCharityDonation() {
         return hasInfoSet
                 ? theInfoSet.getValue(EventInfoClass.CharityDonation, JMoney.class)
                 : null;
@@ -374,6 +374,16 @@ public class Event
         super.setDeleted(bDeleted);
     }
 
+    @Override
+    public Event getBase() {
+        return (Event) super.getBase();
+    }
+
+    @Override
+    public BaseEventList<?> getList() {
+        return (BaseEventList<?>) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the event list
@@ -515,7 +525,7 @@ public class Event
         super.resolveDataSetLinks();
 
         /* Access Relevant lists */
-        EventList myEvents = (EventList) getList();
+        BaseEventList<?> myEvents = getList();
         ValueSet myValues = getValueSet();
 
         /* Adjust Parent */
@@ -697,7 +707,7 @@ public class Event
      * @throws JDataException on error
      */
     public void setBenefit(final JMoney pBenefit) throws JDataException {
-        setInfoSetValue(EventInfoClass.Benefit, pBenefit);
+        setInfoSetValue(EventInfoClass.DeemedBenefit, pBenefit);
     }
 
     /**

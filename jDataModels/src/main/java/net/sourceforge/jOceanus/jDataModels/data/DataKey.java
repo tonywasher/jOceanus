@@ -292,6 +292,11 @@ public class DataKey
         return (DataKey) super.getBase();
     }
 
+    @Override
+    public DataKeyList getList() {
+        return (DataKeyList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list to add to

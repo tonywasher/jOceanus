@@ -251,7 +251,9 @@ public class ViewPrice
                 return theAccount;
             }
             if (FIELD_DILUTIONS.equals(pField)) {
-                return (theDilutions.size() > 0) ? theDilutions : JDataFieldValue.SkipField;
+                return (theDilutions.size() > 0)
+                        ? theDilutions
+                        : JDataFieldValue.SkipField;
             }
             return super.getFieldValue(pField);
         }

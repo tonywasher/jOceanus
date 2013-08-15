@@ -107,6 +107,11 @@ public class AccountInfoType
         return (AccountInfoType) super.getBase();
     }
 
+    @Override
+    public AccountInfoTypeList getList() {
+        return (AccountInfoTypeList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList The list to associate the Account Info Type with

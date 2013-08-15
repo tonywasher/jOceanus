@@ -225,6 +225,11 @@ public class ControlKey
         return (ControlKey) super.getBase();
     }
 
+    @Override
+    public ControlKeyList getList() {
+        return (ControlKeyList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list the copy belongs to

@@ -949,11 +949,8 @@ public class EventAnalysis
 
             /* If the event is interest */
             if (pEvent.isInterest()) {
-                /* If the account is tax free */
-                if (myDebit.isTaxFree()) {
-                    /* The true transaction type is TaxFreeInterest */
-                    myCat = theCategories.getSingularClass(EventCategoryClass.TaxFreeInterest);
-                }
+                /* Obtain detailed category */
+                myCat = myDebit.getDetailedCategory(myCat);
 
                 /* True debit account is the parent */
                 myDebit = myDebit.getParent();
@@ -1160,21 +1157,12 @@ public class EventAnalysis
         /* The main account that we are interested in is the debit account */
         Account myAccount = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
-        EventCategory myCat = pEvent.getCategory();
         JMoney myAmount = pEvent.getAmount();
         JMoney myTaxCredit = pEvent.getTaxCredit();
         JUnits myDeltaUnits = pEvent.getCreditUnits();
 
-        /* If the account is tax free */
-        if (myAccount.isTaxFree()) {
-            /* The true category type is TaxFreeDividend */
-            myCat = theCategories.getSingularClass(EventCategoryClass.TaxFreeDividend);
-
-            /* else if the account is a unit trust */
-        } else if (myAccount.isCategoryClass(AccountCategoryClass.UnitTrust)) {
-            /* The true category type is UnitTrustDividend */
-            myCat = theCategories.getSingularClass(EventCategoryClass.UnitTrustDividend);
-        }
+        /* Obtain detailed category */
+        EventCategory myCat = myAccount.getDetailedCategory(pEvent.getCategory());
 
         /* True debit account is the parent */
         Account myDebit = myAccount.getParent();

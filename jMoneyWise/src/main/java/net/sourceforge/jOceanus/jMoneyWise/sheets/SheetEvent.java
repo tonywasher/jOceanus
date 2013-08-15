@@ -547,7 +547,7 @@ public class SheetEvent
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.Comments, myDesc);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.TaxCredit, myTaxCredit);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.NatInsurance, myNatInsurance);
-                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.Benefit, myBenefit);
+                    myInfoList.addOpenItem(0, myEvent, EventInfoClass.DeemedBenefit, myBenefit);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.DebitUnits, myDebitUnits);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.CreditUnits, myCreditUnits);
                     myInfoList.addOpenItem(0, myEvent, EventInfoClass.Dilution, myDilution);

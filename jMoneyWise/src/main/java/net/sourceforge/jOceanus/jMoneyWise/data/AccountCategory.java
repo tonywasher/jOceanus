@@ -442,6 +442,16 @@ public class AccountCategory
         return (getCategoryTypeClass() == pClass);
     }
 
+    @Override
+    public AccountCategory getBase() {
+        return (AccountCategory) super.getBase();
+    }
+
+    @Override
+    public AccountCategoryList getList() {
+        return (AccountCategoryList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list
@@ -696,7 +706,7 @@ public class AccountCategory
 
     @Override
     public void validate() {
-        AccountCategoryList myList = (AccountCategoryList) getList();
+        AccountCategoryList myList = getList();
         AccountCategoryType myCatType = getCategoryType();
         AccountCategory myParent = getParentCategory();
         String myName = getName();

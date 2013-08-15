@@ -161,81 +161,96 @@ public enum EventCategoryClass implements StaticInterface {
     OpeningBalance(26, 25),
 
     /**
-     * Tax Free Interest.
+     * Taxed Interest.
      */
-    TaxFreeInterest(27, 26),
+    TaxedInterest(27, 26),
 
     /**
-     * Tax Free Dividend.
+     * Gross Interest.
      */
-    TaxFreeDividend(28, 27),
+    GrossInterest(28, 27),
+
+    /**
+     * Tax Free Interest.
+     */
+    TaxFreeInterest(29, 28),
+
+    /**
+     * Share Dividend Income.
+     */
+    ShareDividend(30, 29),
 
     /**
      * Unit Trust Dividend Income.
      */
-    UnitTrustDividend(29, 28),
+    UnitTrustDividend(31, 30),
+
+    /**
+     * Tax Free Dividend.
+     */
+    TaxFreeDividend(32, 31),
 
     /**
      * Taxable Gain.
      */
-    TaxableGain(30, 29),
+    TaxableGain(33, 32),
 
     /**
      * Capital Gain.
      */
-    CapitalGain(31, 30),
+    CapitalGain(34, 33),
 
     /**
      * Market Growth.
      */
-    MarketGrowth(32, 31),
+    MarketGrowth(35, 34),
 
     /**
      * CurrencyFluctuation.
      */
-    CurrencyFluctuation(33, 32),
+    CurrencyFluctuation(36, 35),
 
     /**
      * Tax Credit.
      * <p>
      * This is a singular category catching tax credits associated with an event.
      */
-    TaxCredit(34, 33),
+    TaxCredit(37, 36),
 
     /**
      * National Insurance.
      * <p>
      * This is a singular category catching national insurance payments associated with an event.
      */
-    NatInsurance(35, 34),
+    NatInsurance(38, 37),
 
     /**
-     * Benefit.
+     * Deemed Benefit.
      * <p>
-     * This is a singular category catching benefit payments associated with an event.
+     * This is a singular category catching deemed benefit payments associated with an event.
      */
-    Benefit(36, 35),
+    DeemedBenefit(39, 38),
 
     /**
      * CharityDonation.
      * <p>
      * This is a singular category catching charity donations associated with an event.
      */
-    CharityDonation(37, 36),
+    CharityDonation(40, 39),
 
     /**
      * Category.
      * <p>
      * This is used for categories which simply own a set of sub-categories and is used purely for reporting purposes.
      */
-    Category(38, 37),
+    Category(41, 40),
 
     /**
      * Totals.
      * <p>
      * This is used for the total of all non-transfer categories and is used purely for reporting purposes.
      */
-    Totals(39, 38);
+    Totals(42, 41);
 
     /**
      * Class Id.
@@ -290,18 +305,35 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isHiddenType() {
         switch (this) {
+            case ShareDividend:
             case UnitTrustDividend:
             case TaxFreeDividend:
+            case TaxedInterest:
+            case GrossInterest:
             case TaxFreeInterest:
             case MarketGrowth:
             case CurrencyFluctuation:
             case TaxCredit:
             case NatInsurance:
-            case Benefit:
+            case DeemedBenefit:
             case CapitalGain:
             case OpeningBalance:
             case Category:
             case Totals:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Determine whether the CategoryType uses parent as payee.
+     * @return <code>true</code> if the category uses parent payee, <code>false</code> otherwise.
+     */
+    public boolean isParentPayee() {
+        switch (this) {
+            case Interest:
+            case Dividend:
                 return true;
             default:
                 return false;
@@ -314,15 +346,18 @@ public enum EventCategoryClass implements StaticInterface {
      */
     public boolean isSingular() {
         switch (this) {
+            case ShareDividend:
             case UnitTrustDividend:
             case TaxFreeDividend:
+            case TaxedInterest:
+            case GrossInterest:
             case TaxFreeInterest:
             case OpeningBalance:
             case MarketGrowth:
             case CurrencyFluctuation:
             case TaxCredit:
             case NatInsurance:
-            case Benefit:
+            case DeemedBenefit:
             case CharityDonation:
             case CapitalGain:
             case Totals:
@@ -341,7 +376,9 @@ public enum EventCategoryClass implements StaticInterface {
             case TaxedIncome:
             case BenefitIncome:
             case Interest:
+            case TaxedInterest:
             case Dividend:
+            case ShareDividend:
             case UnitTrustDividend:
                 return true;
             default:
@@ -392,6 +429,7 @@ public enum EventCategoryClass implements StaticInterface {
     public boolean isDividend() {
         switch (this) {
             case Dividend:
+            case ShareDividend:
             case UnitTrustDividend:
             case TaxFreeDividend:
                 return true;
@@ -407,6 +445,8 @@ public enum EventCategoryClass implements StaticInterface {
     public boolean isInterest() {
         switch (this) {
             case Interest:
+            case TaxedInterest:
+            case GrossInterest:
             case TaxFreeInterest:
                 return true;
             default:

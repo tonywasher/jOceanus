@@ -108,6 +108,11 @@ public class AccountCurrency
         return (AccountCurrency) super.getBase();
     }
 
+    @Override
+    public AccountCurrencyList getList() {
+        return (AccountCurrencyList) super.getList();
+    }
+
     /**
      * Return the Currency of the AccountCurrency.
      * @return the currency
@@ -210,7 +215,7 @@ public class AccountCurrency
 
     @Override
     public void validate() {
-        AccountCurrencyList myList = (AccountCurrencyList) getList();
+        AccountCurrencyList myList = getList();
 
         /* Check that default is non-null */
         if (isDefault() == null) {

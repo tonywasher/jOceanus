@@ -69,6 +69,11 @@ public class Frequency
         return (Frequency) super.getBase();
     }
 
+    @Override
+    public FrequencyList getList() {
+        return (FrequencyList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList The list to associate the Frequency with

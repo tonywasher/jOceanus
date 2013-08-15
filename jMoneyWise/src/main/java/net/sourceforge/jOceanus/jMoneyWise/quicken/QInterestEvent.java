@@ -52,7 +52,7 @@ public class QInterestEvent
         if (pEvent.getTaxCredit() != null) {
             getAnalysis().getCategory(EventInfoClass.TaxCredit);
         }
-        if (pEvent.getDonation() != null) {
+        if (pEvent.getCharityDonation() != null) {
             getAnalysis().getCategory(EventInfoClass.CharityDonation);
         }
     }
@@ -73,7 +73,7 @@ public class QInterestEvent
         Event myEvent = getEvent();
         JMoney myAmount = myEvent.getAmount();
         JMoney myTaxCredit = myEvent.getTaxCredit();
-        JMoney myDonation = myEvent.getDonation();
+        JMoney myDonation = myEvent.getCharityDonation();
         EventCategory myCategory = getAnalysis().getInterestCategory(myEvent);
 
         /* Determine type of event */

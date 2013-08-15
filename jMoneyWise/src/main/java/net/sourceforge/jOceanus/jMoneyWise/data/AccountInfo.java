@@ -151,6 +151,11 @@ public class AccountInfo
         return (AccountInfo) super.getBase();
     }
 
+    @Override
+    public AccountInfoList getList() {
+        return (AccountInfoList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list

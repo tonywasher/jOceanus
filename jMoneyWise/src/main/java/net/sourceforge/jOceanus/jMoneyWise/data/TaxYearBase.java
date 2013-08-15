@@ -198,6 +198,11 @@ public abstract class TaxYearBase
         return (FinanceData) super.getDataSet();
     }
 
+    @Override
+    public TaxYearBaseList<?> getList() {
+        return (TaxYearBaseList<?>) super.getList();
+    }
+
     /**
      * Copy constructor.
      * @param pList The List to build into
@@ -313,7 +318,7 @@ public abstract class TaxYearBase
         /* Access details */
         JDateDay myDate = getTaxYear();
         TaxRegime myTaxRegime = getTaxRegime();
-        TaxYearBaseList<?> myList = (TaxYearBaseList<?>) getList();
+        TaxYearBaseList<?> myList = getList();
 
         /* The date must not be null */
         if (myDate == null) {

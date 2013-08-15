@@ -656,6 +656,11 @@ public class TaxYear
         return (TaxYear) super.getBase();
     }
 
+    @Override
+    public TaxYearList getList() {
+        return (TaxYearList) super.getList();
+    }
+
     /**
      * Construct a copy of a TaxYear.
      * @param pList The List to build into
@@ -741,7 +746,7 @@ public class TaxYear
         /* Access TaxYear details */
         JDateDay myDate = getTaxYear();
         TaxRegime myTaxRegime = getTaxRegime();
-        TaxYearList myList = (TaxYearList) getList();
+        TaxYearList myList = getList();
 
         /* Check underlying fields */
         if (myDate != null) {

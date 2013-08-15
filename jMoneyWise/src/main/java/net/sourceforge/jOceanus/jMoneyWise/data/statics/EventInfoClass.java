@@ -42,9 +42,9 @@ public enum EventInfoClass implements DataInfoClass {
     NatInsurance(2, 1, DataType.MONEY),
 
     /**
-     * Benefit.
+     * Deemed Benefit.
      */
-    Benefit(3, 2, DataType.MONEY),
+    DeemedBenefit(3, 2, DataType.MONEY),
 
     /**
      * Pension.

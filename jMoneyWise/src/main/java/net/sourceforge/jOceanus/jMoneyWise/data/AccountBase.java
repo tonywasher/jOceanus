@@ -35,9 +35,11 @@ import net.sourceforge.jOceanus.jDataModels.data.EncryptedItem;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedString;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedValueSet;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory.AccountCategoryList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency.AccountCurrencyList;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 
 /**
  * Account data type.
@@ -396,6 +398,11 @@ public abstract class AccountBase
         return (FinanceData) super.getDataSet();
     }
 
+    @Override
+    public AccountBaseList<?> getList() {
+        return (AccountBaseList<?>) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list
@@ -595,6 +602,28 @@ public abstract class AccountBase
     }
 
     /**
+     * Determines whether an account is an asset.
+     * @return true/false
+     */
+    public boolean isAsset() {
+        /* Check for asset */
+        AccountCategory myCat = getAccountCategory();
+        return (myCat != null)
+               && (myCat.getCategoryTypeClass().isAsset());
+    }
+
+    /**
+     * Determines whether an account is a non-asset.
+     * @return true/false
+     */
+    public boolean isNonAsset() {
+        /* Check for non asset */
+        AccountCategory myCat = getAccountCategory();
+        return (myCat != null)
+               && (myCat.getCategoryTypeClass().isNonAsset());
+    }
+
+    /**
      * Determines whether an account has units.
      * @return priced true/false
      */
@@ -649,6 +678,36 @@ public abstract class AccountBase
     }
 
     /**
+     * Obtain detailed category.
+     * @param pCategory current category
+     * @return detailed category
+     */
+    public EventCategory getDetailedCategory(final EventCategory pCategory) {
+        /* Access category list */
+        EventCategoryList myCategories = getDataSet().getEventCategories();
+
+        /* Switch on category type */
+        switch (pCategory.getCategoryTypeClass()) {
+            case Interest:
+                if (isTaxFree()) {
+                    return myCategories.getSingularClass(EventCategoryClass.TaxFreeInterest);
+                }
+                return myCategories.getSingularClass((isGrossInterest())
+                        ? EventCategoryClass.GrossInterest
+                        : EventCategoryClass.TaxedInterest);
+            case Dividend:
+                if (isTaxFree()) {
+                    return myCategories.getSingularClass(EventCategoryClass.TaxFreeDividend);
+                }
+                return myCategories.getSingularClass(isCategoryClass(AccountCategoryClass.UnitTrust)
+                        ? EventCategoryClass.UnitTrustDividend
+                        : EventCategoryClass.ShareDividend);
+            default:
+                return pCategory;
+        }
+    }
+
+    /**
      * Validate the account.
      */
     @Override
@@ -656,7 +715,7 @@ public abstract class AccountBase
         AccountCategory myCategory = getAccountCategory();
         AccountCurrency myCurrency = getAccountCurrency();
         String myName = getName();
-        AccountBaseList<?> myList = (AccountBaseList<?>) getList();
+        AccountBaseList<?> myList = getList();
 
         /* AccountCategoryType must be non-null */
         if (myCategory == null) {

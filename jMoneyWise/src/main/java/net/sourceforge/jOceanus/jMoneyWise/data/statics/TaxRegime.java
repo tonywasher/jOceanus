@@ -70,6 +70,11 @@ public class TaxRegime
         return (TaxRegime) super.getBase();
     }
 
+    @Override
+    public TaxRegimeList getList() {
+        return (TaxRegimeList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList The list to associate the TaxRegime with

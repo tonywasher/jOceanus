@@ -145,6 +145,11 @@ public class ControlData
         return (ControlData) super.getBase();
     }
 
+    @Override
+    public ControlDataList getList() {
+        return (ControlDataList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the associated list

@@ -70,6 +70,11 @@ public class TaxCategory
     }
 
     @Override
+    public TaxCategoryList getList() {
+        return (TaxCategoryList) super.getList();
+    }
+
+    @Override
     public boolean isActive() {
         return true;
     }

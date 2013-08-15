@@ -109,6 +109,11 @@ public class TaxYearInfo
         return (TaxYearInfo) super.getBase();
     }
 
+    @Override
+    public TaxInfoList getList() {
+        return (TaxInfoList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list

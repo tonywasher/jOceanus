@@ -281,7 +281,7 @@ public class IncomeBreakdown
                 myRecord.processEvent(pEvent);
                 break;
             case TaxedIncome:
-            case Benefit:
+            case DeemedBenefit:
             case NatInsurance:
                 myRecord = theSalary.findAccountRecord(myDebit);
                 myRecord.processEvent(pEvent);
@@ -568,7 +568,7 @@ public class IncomeBreakdown
 
             /* If we are NatInsurance/Benefit */
             if ((myCategory.getCategoryTypeClass() == EventCategoryClass.NatInsurance)
-                || (myCategory.getCategoryTypeClass() == EventCategoryClass.Benefit)) {
+                || (myCategory.getCategoryTypeClass() == EventCategoryClass.DeemedBenefit)) {
                 /* Just add to gross */
                 theTotals.theGrossIncome.addAmount(myAmount);
                 theListTotals.theGrossIncome.addAmount(myAmount);

@@ -76,6 +76,11 @@ public class EventCategoryType
         return (EventCategoryType) super.getBase();
     }
 
+    @Override
+    public EventCategoryTypeList getList() {
+        return (EventCategoryTypeList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList The list to associate the Category Type with

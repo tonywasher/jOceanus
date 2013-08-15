@@ -203,7 +203,7 @@ public class EventInfoSet
 
                 /* NatInsurance and benefit can only occur on salary */
             case NatInsurance:
-            case Benefit:
+            case DeemedBenefit:
                 return (myClass == EventCategoryClass.TaxedIncome)
                         ? JDataFieldRequired.CanExist
                         : JDataFieldRequired.NotAllowed;
@@ -229,6 +229,9 @@ public class EventInfoSet
                     case GrantIncome:
                         return JDataFieldRequired.CanExist;
                     case Interest:
+                        return ((myDebit.isTaxFree()) || (myDebit.isGrossInterest()))
+                                ? JDataFieldRequired.NotAllowed
+                                : JDataFieldRequired.MustExist;
                     case Dividend:
                         return (myDebit.isTaxFree())
                                 ? JDataFieldRequired.NotAllowed
@@ -368,7 +371,7 @@ public class EventInfoSet
                     }
                     break;
                 case NatInsurance:
-                case Benefit:
+                case DeemedBenefit:
                 case CharityDonation:
                     /* Check value */
                     myAmount = myInfo.getValue(JMoney.class);

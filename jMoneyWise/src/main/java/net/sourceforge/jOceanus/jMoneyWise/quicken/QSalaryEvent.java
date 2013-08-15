@@ -52,8 +52,8 @@ public class QSalaryEvent
         if (pEvent.getNatInsurance() != null) {
             getAnalysis().getCategory(EventInfoClass.NatInsurance);
         }
-        if (pEvent.getBenefit() != null) {
-            getAnalysis().getCategory(EventInfoClass.Benefit);
+        if (pEvent.getDeemedBenefit() != null) {
+            getAnalysis().getCategory(EventInfoClass.DeemedBenefit);
         }
     }
 
@@ -64,7 +64,7 @@ public class QSalaryEvent
         JMoney myAmount = myEvent.getAmount();
         JMoney myTaxCredit = myEvent.getTaxCredit();
         JMoney myNatIns = myEvent.getNatInsurance();
-        JMoney myBenefit = myEvent.getBenefit();
+        JMoney myBenefit = myEvent.getDeemedBenefit();
         EventCategory myCategory = myEvent.getCategory();
         boolean isTaxCredit = (myTaxCredit != null);
         boolean isNatIns = (myNatIns != null);
@@ -140,7 +140,7 @@ public class QSalaryEvent
             if (isBenefit) {
                 myValue = new JDecimal(myBenefit);
                 myValue.negate();
-                myCategory = getAnalysis().getCategory(EventInfoClass.Benefit);
+                myCategory = getAnalysis().getCategory(EventInfoClass.DeemedBenefit);
                 addCategoryLine(QEvtLineType.SplitCategory, myCategory);
                 addDecimalLine(QEvtLineType.SplitAmount, myValue);
             }

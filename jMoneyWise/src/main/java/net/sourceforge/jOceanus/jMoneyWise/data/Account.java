@@ -512,6 +512,11 @@ public class Account
     }
 
     @Override
+    public AccountList getList() {
+        return (AccountList) super.getList();
+    }
+
+    @Override
     public boolean isLocked() {
         return isClosed();
     }

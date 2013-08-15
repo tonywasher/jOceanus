@@ -70,6 +70,11 @@ public class AccountCategoryType
         return (AccountCategoryType) super.getBase();
     }
 
+    @Override
+    public AccountCategoryTypeList getList() {
+        return (AccountCategoryTypeList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList The list to associate the Account Category Type with

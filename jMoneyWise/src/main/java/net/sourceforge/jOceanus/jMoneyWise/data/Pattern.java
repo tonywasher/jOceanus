@@ -174,13 +174,13 @@ public class Pattern
     }
 
     @Override
-    public PatternList getList() {
-        return (PatternList) super.getList();
+    public Pattern getBase() {
+        return (Pattern) super.getBase();
     }
 
     @Override
-    public Pattern getBase() {
-        return (Pattern) super.getBase();
+    public PatternList getList() {
+        return (PatternList) super.getList();
     }
 
     /**
@@ -304,7 +304,7 @@ public class Pattern
         /* Access Relevant lists */
         FinanceData myData = getDataSet();
         FrequencyList myFrequencies = myData.getFrequencys();
-        PatternList myPatterns = (PatternList) getList();
+        PatternList myPatterns = getList();
         ValueSet myValues = getValueSet();
 
         /* Adjust Frequency */

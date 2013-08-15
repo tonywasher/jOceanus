@@ -191,7 +191,7 @@ public enum TransactionType {
             case TaxSettlement:
             case TaxCredit:
             case NatInsurance:
-            case Benefit:
+            case DeemedBenefit:
             case CharityDonation:
             case LoanInterest:
             default:

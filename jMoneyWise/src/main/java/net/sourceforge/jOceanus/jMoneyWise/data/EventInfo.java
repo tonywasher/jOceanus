@@ -132,6 +132,11 @@ public class EventInfo
         return (EventInfo) super.getBase();
     }
 
+    @Override
+    public EventInfoList getList() {
+        return (EventInfoList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list

@@ -97,6 +97,11 @@ public class EventInfoType
         return (EventInfoType) super.getBase();
     }
 
+    @Override
+    public EventInfoTypeList getList() {
+        return (EventInfoTypeList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList The list to associate the EventInfoType with

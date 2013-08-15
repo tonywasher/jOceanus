@@ -402,8 +402,8 @@ public final class EventCategoryBucket
             /* Access subValues */
             JMoney myTaxCredit = pEvent.getTaxCredit();
             JMoney myNatIns = pEvent.getNatInsurance();
-            JMoney myBenefit = pEvent.getBenefit();
-            JMoney myDonation = pEvent.getDonation();
+            JMoney myBenefit = pEvent.getDeemedBenefit();
+            JMoney myDonation = pEvent.getCharityDonation();
 
             /* If there is a tax credit */
             if (myTaxCredit != null) {
@@ -649,7 +649,7 @@ public final class EventCategoryBucket
             EventCategoryList myList = theData.getEventCategories();
             EventCategoryBucket myTaxCredit = getBucket(myList.getEventInfoCategory(EventInfoClass.TaxCredit));
             EventCategoryBucket myNatInsurance = getBucket(myList.getEventInfoCategory(EventInfoClass.NatInsurance));
-            EventCategoryBucket myBenefit = getBucket(myList.getEventInfoCategory(EventInfoClass.Benefit));
+            EventCategoryBucket myBenefit = getBucket(myList.getEventInfoCategory(EventInfoClass.DeemedBenefit));
             EventCategoryBucket myDonation = getBucket(myList.getEventInfoCategory(EventInfoClass.CharityDonation));
 
             /* Loop through the buckets */
@@ -676,6 +676,12 @@ public final class EventCategoryBucket
                 myMoney = myCurr.getMoneyAttribute(EventAttribute.Donation);
                 myCurr.addIncome(myMoney);
                 myDonation.addExpense(myMoney);
+            }
+
+            /* Loop through the buckets again */
+            myIterator = iterator();
+            while (myIterator.hasNext()) {
+                EventCategoryBucket myCurr = myIterator.next();
 
                 /* Obtain category and parent category */
                 EventCategory myCategory = myCurr.getEventCategory();

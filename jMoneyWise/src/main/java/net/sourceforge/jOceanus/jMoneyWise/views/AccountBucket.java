@@ -560,7 +560,7 @@ public final class AccountBucket
                 }
 
                 /* If there is Charity Donation */
-                JMoney myDonation = pEvent.getDonation();
+                JMoney myDonation = pEvent.getCharityDonation();
                 if (myDonation != null) {
                     /* Adjust for Charity Donation */
                     myIncome.addAmount(myDonation);

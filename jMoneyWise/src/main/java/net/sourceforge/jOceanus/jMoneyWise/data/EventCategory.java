@@ -438,6 +438,16 @@ public final class EventCategory
         return (FinanceData) super.getDataSet();
     }
 
+    @Override
+    public EventCategory getBase() {
+        return (EventCategory) super.getBase();
+    }
+
+    @Override
+    public EventCategoryList getList() {
+        return (EventCategoryList) super.getList();
+    }
+
     /**
      * Is this event category the required class.
      * @param pClass the required category class.
@@ -722,7 +732,7 @@ public final class EventCategory
 
     @Override
     public void validate() {
-        EventCategoryList myList = (EventCategoryList) getList();
+        EventCategoryList myList = getList();
         EventCategoryType myCatType = getCategoryType();
         EventCategory myParent = getParentCategory();
         String myName = getName();
@@ -903,7 +913,7 @@ public final class EventCategory
          * Construct an empty CORE Event Category list.
          * @param pData the DataSet for the list
          */
-        protected EventCategoryList(final FinanceData pData) {
+        public EventCategoryList(final FinanceData pData) {
             super(EventCategory.class, pData, ListStyle.CORE);
         }
 
@@ -1063,8 +1073,8 @@ public final class EventCategory
                     return getSingularClass(EventCategoryClass.TaxCredit);
                 case NatInsurance:
                     return getSingularClass(EventCategoryClass.NatInsurance);
-                case Benefit:
-                    return getSingularClass(EventCategoryClass.Benefit);
+                case DeemedBenefit:
+                    return getSingularClass(EventCategoryClass.DeemedBenefit);
                 case CharityDonation:
                     return getSingularClass(EventCategoryClass.CharityDonation);
                 default:

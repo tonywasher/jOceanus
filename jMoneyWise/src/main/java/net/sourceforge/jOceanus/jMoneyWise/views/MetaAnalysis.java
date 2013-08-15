@@ -520,7 +520,7 @@ public class MetaAnalysis {
                 myBucket.subtractExpense(pBucket);
                 break;
             case NatInsurance:
-            case Benefit:
+            case DeemedBenefit:
                 /* Adjust the Virtual bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.Virtual);
                 myBucket.addIncome(pBucket);
