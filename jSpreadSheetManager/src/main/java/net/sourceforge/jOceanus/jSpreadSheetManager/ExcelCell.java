@@ -127,17 +127,13 @@ public class ExcelCell
         switch (theExcelCell.getCellType()) {
             case HSSFCell.CELL_TYPE_NUMERIC:
                 Double myValue = theExcelCell.getNumericCellValue();
-                return (myValue == null)
-                        ? null
-                        : myValue.intValue();
+                return myValue.intValue();
             case HSSFCell.CELL_TYPE_FORMULA:
                 CellValue myCellValue = theExcelRow.evaluateFormula(theExcelCell);
                 switch (myCellValue.getCellType()) {
                     case HSSFCell.CELL_TYPE_NUMERIC:
                         Double myDouble = myCellValue.getNumberValue();
-                        return (myDouble == null)
-                                ? null
-                                : myDouble.intValue();
+                        return myDouble.intValue();
                     default:
                         return null;
                 }

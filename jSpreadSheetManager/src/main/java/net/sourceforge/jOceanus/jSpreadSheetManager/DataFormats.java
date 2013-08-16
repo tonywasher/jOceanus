@@ -58,6 +58,11 @@ public final class DataFormats {
     private static final String STR_ZERO = "0";
 
     /**
+     * The Null string.
+     */
+    private static final String STR_NULL = "";
+
+    /**
      * Oasis date format.
      */
     protected static final String OASIS_DATE = "yyyy-MM-dd";
@@ -241,7 +246,7 @@ public final class DataFormats {
             case Boolean:
                 return getDataFormatString(Boolean.TRUE);
             case Integer:
-                return getDataFormatString(new Integer(0));
+                return getDataFormatString(Integer.valueOf(0));
             case Money:
                 return getDataFormatString(new JMoney(STR_ZERO));
             case Price:
@@ -319,15 +324,15 @@ public final class DataFormats {
     protected static String getFormatName(final CellStyleType pType) {
         switch (pType) {
             case Header:
-                return getAlternateFormatName(new String());
+                return getAlternateFormatName(STR_NULL);
             case String:
-                return getFormatName(new String());
+                return getFormatName(STR_NULL);
             case Date:
                 return getFormatName(new JDateDay());
             case Boolean:
                 return getFormatName(Boolean.TRUE);
             case Integer:
-                return getFormatName(new Integer(0));
+                return getFormatName(Integer.valueOf(0));
             case Money:
                 return getFormatName(new JMoney(STR_ZERO));
             case Price:

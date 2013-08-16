@@ -501,6 +501,24 @@ public final class AccountBucket
         return getAccount().compareTo(pThat.getAccount());
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+        if (!(pThat instanceof AccountBucket)) {
+            return false;
+        }
+
+        /* Compare the Accounts */
+        AccountBucket myThat = (AccountBucket) pThat;
+        return getAccount().equals(myThat.getAccount());
+    }
+
     /**
      * Set opening balance.
      * @param pBalance the opening balance

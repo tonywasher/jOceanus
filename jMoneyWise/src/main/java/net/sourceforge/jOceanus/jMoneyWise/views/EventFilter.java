@@ -148,22 +148,22 @@ public class EventFilter
     private final AccountList theAccounts;
 
     /**
-     * Filtered Event Category List
+     * Filtered Event Category List.
      */
     private EventCategoryList theFilteredEventCategories;
 
     /**
-     * Event Category List
+     * Event Category List.
      */
     private final EventCategoryList theEventCategories;
 
     /**
-     * Filtered Tax Category List
+     * Filtered Tax Category List.
      */
     private TaxCategoryList theFilteredTaxCategories;
 
     /**
-     * Tax Category List
+     * Tax Category List.
      */
     private final TaxCategoryList theTaxCategories;
 
@@ -236,7 +236,7 @@ public class EventFilter
     }
 
     /**
-     * Migrate filter to a new dataSet
+     * Migrate filter to a new dataSet.
      * @param pData the new dataSet
      */
     public void setDataSet(final FinanceData pData) {
@@ -296,7 +296,7 @@ public class EventFilter
     }
 
     /**
-     * Set filter for an AccountBucket
+     * Set filter for an AccountBucket.
      * @param pBucket the Account Bucket.
      */
     public void setFilter(final AccountBucket pBucket) {
@@ -325,7 +325,7 @@ public class EventFilter
     }
 
     /**
-     * Set filter for an EventCategoryBucket
+     * Set filter for an EventCategoryBucket.
      * @param pBucket the EventCategory Bucket.
      */
     public void setFilter(final EventCategoryBucket pBucket) {
@@ -349,7 +349,7 @@ public class EventFilter
     }
 
     /**
-     * Set filter for a TaxCategoryBucket
+     * Set filter for a TaxCategoryBucket.
      * @param pBucket the TaxCategory Bucket.
      */
     public void setFilter(final TaxCategoryBucket pBucket) {
@@ -541,7 +541,7 @@ public class EventFilter
     }
 
     /**
-     * Should we filter this event out
+     * Should we filter this event out?
      * @param pEvent the event to check
      * @return true/false
      */
@@ -577,7 +577,7 @@ public class EventFilter
     }
 
     /**
-     * Should we filter this event out
+     * Should we filter this event out?
      * @param pEvent the event to check
      * @return true/false
      */
@@ -605,7 +605,7 @@ public class EventFilter
     }
 
     /**
-     * Should we filter this event out based on account
+     * Should we filter this event out based on account?
      * @param pEvent the event to check
      * @return true/false
      */
@@ -646,7 +646,7 @@ public class EventFilter
     }
 
     /**
-     * Should we filter this event out based on account
+     * Should we filter this event out based on account?
      * @param pAccount the account to check
      * @return true/false
      */
@@ -656,7 +656,7 @@ public class EventFilter
     }
 
     /**
-     * Should we filter this event out based on payee
+     * Should we filter this event out based on payee?
      * @param pEvent the event to check
      * @return true/false
      */
@@ -704,7 +704,7 @@ public class EventFilter
     }
 
     /**
-     * Should we filter this event out based on payee
+     * Should we filter this event out based on payee?
      * @param pPayee the payee to check
      * @return true/false
      */
@@ -714,7 +714,7 @@ public class EventFilter
     }
 
     /**
-     * Should we filter this event out based on event category
+     * Should we filter this event out based on event category?
      * @param pEvent the event to check
      * @return true/false
      */
@@ -779,7 +779,7 @@ public class EventFilter
     }
 
     /**
-     * Should we filter this event out based on base category
+     * Should we filter this event out based on base category?
      * @param pCategory the category to check
      * @return true/false
      */

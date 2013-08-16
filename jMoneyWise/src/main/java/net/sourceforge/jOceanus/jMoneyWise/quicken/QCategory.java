@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
@@ -35,7 +36,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
 /**
  * Quicken Category.
  */
-public final class QCategory extends QElement {
+public final class QCategory
+        extends QElement {
     /**
      * Item type.
      */
@@ -51,7 +53,8 @@ public final class QCategory extends QElement {
      * @param pAnalysis the analysis
      * @param pCategory the category
      */
-    private QCategory(final QAnalysis pAnalysis, final EventCategory pCategory) {
+    private QCategory(final QAnalysis pAnalysis,
+                      final EventCategory pCategory) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -79,7 +82,9 @@ public final class QCategory extends QElement {
 
         /* Determine Income/Expense flag */
         TransactionType myTranType = TransactionType.deriveType(theCategory);
-        addFlag((myTranType.isIncome()) ? QCatLineType.Income : QCatLineType.Expense);
+        addFlag((myTranType.isIncome())
+                ? QCatLineType.Income
+                : QCatLineType.Expense);
 
         /* Return the result */
         return completeItem();
@@ -93,16 +98,17 @@ public final class QCategory extends QElement {
     /**
      * Category List class.
      */
-    protected static class QCategoryList extends QElement {
+    protected static class QCategoryList
+            extends QElement {
         /**
          * Parent Category Map.
          */
-        private final HashMap<EventCategory, QCategory> theParents;
+        private final Map<EventCategory, QCategory> theParents;
 
         /**
          * Security Map.
          */
-        private final HashMap<EventCategory, QCategory> theCategories;
+        private final Map<EventCategory, QCategory> theCategories;
 
         /**
          * The analysis.
@@ -114,7 +120,8 @@ public final class QCategory extends QElement {
          * @return the size
          */
         protected int size() {
-            return theParents.size() + theCategories.size();
+            return theParents.size()
+                   + theCategories.size();
         }
 
         /**
@@ -170,7 +177,8 @@ public final class QCategory extends QElement {
         protected boolean outputCategories(final ThreadStatus<FinanceData> pStatus,
                                            final OutputStreamWriter pStream) throws IOException {
             /* If we have no categories */
-            if ((theParents.size() == 0) && (theCategories.size() == 0)) {
+            if ((theParents.size() == 0)
+                && (theCategories.size() == 0)) {
                 return true;
             }
 
@@ -192,7 +200,8 @@ public final class QCategory extends QElement {
 
             /* Loop through the parents */
             Iterator<QCategory> myIterator = theParents.values().iterator();
-            while ((bContinue) && (myIterator.hasNext())) {
+            while ((bContinue)
+                   && (myIterator.hasNext())) {
                 QCategory myCategory = myIterator.next();
 
                 /* Write Category details */
@@ -200,14 +209,16 @@ public final class QCategory extends QElement {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }
 
             /* Loop through the categories */
             myIterator = theCategories.values().iterator();
-            while ((bContinue) && (myIterator.hasNext())) {
+            while ((bContinue)
+                   && (myIterator.hasNext())) {
                 QCategory myCategory = myIterator.next();
 
                 /* Write Category details */
@@ -215,7 +226,8 @@ public final class QCategory extends QElement {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }

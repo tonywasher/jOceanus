@@ -60,14 +60,19 @@ public enum JDatePeriod {
     OneYear(Calendar.YEAR, 1),
 
     /**
+     * Financial Year.
+     */
+    // FinancialYear(Calendar.YEAR, 1),
+
+    /**
      * Custom.
      */
     Custom(-1, -1),
 
     /**
-     * Unlimited.
+     * All.
      */
-    Unlimited(-1, -1);
+    AllDates(-1, -1);
 
     /**
      * The calendar field.

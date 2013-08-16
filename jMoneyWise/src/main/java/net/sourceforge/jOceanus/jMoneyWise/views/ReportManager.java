@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.views;
 
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JEditorPane;
 import javax.xml.transform.OutputKeys;
@@ -73,12 +74,12 @@ public class ReportManager {
     /**
      * The hidden element map.
      */
-    private final HashMap<String, HiddenElement> theHiddenMap;
+    private final Map<String, HiddenElement> theHiddenMap;
 
     /**
      * The object element map.
      */
-    private final HashMap<String, Object> theSelectionMap;
+    private final Map<String, Object> theSelectionMap;
 
     /**
      * Constructor.

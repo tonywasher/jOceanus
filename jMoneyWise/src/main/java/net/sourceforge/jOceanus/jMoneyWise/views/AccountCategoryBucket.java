@@ -361,6 +361,24 @@ public final class AccountCategoryBucket
         return getAccountCategory().compareTo(pThat.getAccountCategory());
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+        if (!(pThat instanceof AccountCategoryBucket)) {
+            return false;
+        }
+
+        /* Compare the Account Categories */
+        AccountCategoryBucket myThat = (AccountCategoryBucket) pThat;
+        return getAccountCategory().equals(myThat.getAccountCategory());
+    }
+
     /**
      * Determine category type.
      * @param pCategory the category

@@ -94,12 +94,10 @@ public class WriteQIF
             }
 
             /* Catch any exceptions */
-        } catch (JDataException e) {
-            /* Report the failure */
-            throw e;
-
-            /* Catch any exceptions */
         } catch (Exception e) {
+            if (e instanceof JDataException) {
+                throw (JDataException) e;
+            }
             throw new JDataException(ExceptionClass.LOGIC, "Failed", e);
         }
 

@@ -31,10 +31,11 @@ import java.util.Locale;
 import net.sourceforge.JDateButton.JDateConfig;
 
 /**
- * Represents a Date object that is fixed to a particular day. There is no concept of time within the day
- * Calendar objects that are built to represent the Date are set to noon on the day in question.
+ * Represents a Date object that is fixed to a particular day. There is no concept of time within the day Calendar objects that are built to represent the Date
+ * are set to noon on the day in question.
  */
-public class JDateDay implements Comparable<JDateDay> {
+public class JDateDay
+        implements Comparable<JDateDay> {
     /**
      * The Hash prime.
      */
@@ -120,8 +121,7 @@ public class JDateDay implements Comparable<JDateDay> {
     }
 
     /**
-     * Get the id of the date. This is a unique integer representation of the date usable as an id for the
-     * date.
+     * Get the id of the date. This is a unique integer representation of the date usable as an id for the date.
      * @return the id of the date
      */
     public int getId() {
@@ -206,8 +206,7 @@ public class JDateDay implements Comparable<JDateDay> {
         }
 
         /* Create the Date */
-        buildDateDay(pDate.get(Calendar.YEAR), pDate.get(Calendar.MONTH), pDate.get(Calendar.DAY_OF_MONTH),
-                     pLocale);
+        buildDateDay(pDate.get(Calendar.YEAR), pDate.get(Calendar.MONTH), pDate.get(Calendar.DAY_OF_MONTH), pLocale);
     }
 
     /**
@@ -287,7 +286,8 @@ public class JDateDay implements Comparable<JDateDay> {
             Date myDate = theDateFormat.parse(pValue);
             buildDateDay(myDate, pLocale);
         } catch (ParseException e) {
-            throw new IllegalArgumentException("Invalid Date string " + pValue, e);
+            throw new IllegalArgumentException("Invalid Date string "
+                                               + pValue, e);
         }
     }
 
@@ -308,8 +308,7 @@ public class JDateDay implements Comparable<JDateDay> {
         myDate.setTime(pDate);
 
         /* Create the Date */
-        buildDateDay(myDate.get(Calendar.YEAR), myDate.get(Calendar.MONTH),
-                     myDate.get(Calendar.DAY_OF_MONTH), pLocale);
+        buildDateDay(myDate.get(Calendar.YEAR), myDate.get(Calendar.MONTH), myDate.get(Calendar.DAY_OF_MONTH), pLocale);
     }
 
     /**
@@ -407,7 +406,7 @@ public class JDateDay implements Comparable<JDateDay> {
      * @param pPeriod the period to adjust by
      */
     public void adjustForwardByPeriod(final JDatePeriod pPeriod) {
-        if (pPeriod == JDatePeriod.Unlimited) {
+        if (pPeriod == JDatePeriod.AllDates) {
             return;
         }
         adjustField(pPeriod.getField(), pPeriod.getAmount(true));
@@ -418,7 +417,7 @@ public class JDateDay implements Comparable<JDateDay> {
      * @param pPeriod the period to adjust by
      */
     public void adjustBackwardByPeriod(final JDatePeriod pPeriod) {
-        if (pPeriod == JDatePeriod.Unlimited) {
+        if (pPeriod == JDatePeriod.AllDates) {
             return;
         }
         adjustField(pPeriod.getField(), pPeriod.getAmount(false));
@@ -477,7 +476,8 @@ public class JDateDay implements Comparable<JDateDay> {
         theDay = theDate.get(Calendar.DAY_OF_MONTH);
 
         /* Calculate the id (512*year + dayofYear) */
-        theId = (theYear << SHIFT_ID_YEAR) + theDate.get(Calendar.DAY_OF_YEAR);
+        theId = (theYear << SHIFT_ID_YEAR)
+                + theDate.get(Calendar.DAY_OF_YEAR);
 
         /* Reset formatted date */
         theFormattedDate = null;
@@ -513,11 +513,13 @@ public class JDateDay implements Comparable<JDateDay> {
         }
 
         /* Compare the year, month and date */
-        int iDiff = theYear - pThat.theYear;
+        int iDiff = theYear
+                    - pThat.theYear;
         if (iDiff != 0) {
             return iDiff;
         }
-        iDiff = theMonth - pThat.theMonth;
+        iDiff = theMonth
+                - pThat.theMonth;
         if (iDiff != 0) {
             return iDiff;
         }

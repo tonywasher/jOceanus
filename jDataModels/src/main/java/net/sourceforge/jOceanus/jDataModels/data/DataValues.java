@@ -432,7 +432,7 @@ public class DataValues {
     /**
      * InfoItem class.
      */
-    public final class InfoItem {
+    public static final class InfoItem {
         /**
          * Name of item.
          */

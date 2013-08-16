@@ -449,7 +449,7 @@ public class Register
         addMouseListener(myMouse);
 
         /* Create the sub panels */
-        theSelect = new JDateDayRangeSelect();
+        theSelect = new JDateDayRangeSelect(false);
         theSaveButtons = new SaveButtons(theUpdateSet);
 
         /* Create the error panel for this view */

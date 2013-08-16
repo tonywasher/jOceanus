@@ -334,6 +334,24 @@ public final class EventCategoryBucket
         return getEventCategory().compareTo(pThat.getEventCategory());
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+        if (!(pThat instanceof EventCategoryBucket)) {
+            return false;
+        }
+
+        /* Compare the Event Categories */
+        EventCategoryBucket myThat = (EventCategoryBucket) pThat;
+        return getEventCategory().equals(myThat.getEventCategory());
+    }
+
     /**
      * Add income value.
      * @param pValue the value to add

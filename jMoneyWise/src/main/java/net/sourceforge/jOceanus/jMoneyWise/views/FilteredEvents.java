@@ -32,7 +32,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 
 /**
- * A list of filter-able events
+ * A list of filter-able events.
  */
 public class FilteredEvents
         extends EventList {
@@ -80,7 +80,7 @@ public class FilteredEvents
     }
 
     /**
-     * Constructor
+     * Constructor.
      * @param pFilter the event filter
      * @param pSource the source event list
      * @param pRange the date range

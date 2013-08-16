@@ -67,7 +67,8 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
  * Provides a simple application that illustrates the features of JDateDay.
  * @author Tony Washer
  */
-public class JDateDayExample extends JApplet {
+public class JDateDayExample
+        extends JApplet {
     /**
      * Serial Id.
      */
@@ -426,7 +427,8 @@ public class JDateDayExample extends JApplet {
     /**
      * Table Model.
      */
-    private static class DateTable extends AbstractTableModel {
+    private static class DateTable
+            extends AbstractTableModel {
         /**
          * Serial Id.
          */
@@ -440,8 +442,8 @@ public class JDateDayExample extends JApplet {
         /**
          * Data for table.
          */
-        private final Object[][] theData = { { DATE_FIRST, "First Entry" }, { DATE_SECOND, "Second Entry" },
-                { DATE_THIRD, "Third Entry" }, { DATE_FOURTH, "Fourth Entry" }, { DATE_FIFTH, "Fifth Entry" } };
+        private final Object[][] theData = { { DATE_FIRST, "First Entry" }, { DATE_SECOND, "Second Entry" }, { DATE_THIRD, "Third Entry" },
+                { DATE_FOURTH, "Fourth Entry" }, { DATE_FIFTH, "Fifth Entry" } };
 
         @Override
         public int getColumnCount() {
@@ -561,7 +563,7 @@ public class JDateDayExample extends JApplet {
         theEndDate = new JDateDayButton(theFormatter);
 
         /* Create the range selection */
-        theRangeSelect = new JDateDayRangeSelect(theFormatter);
+        theRangeSelect = new JDateDayRangeSelect(theFormatter, false);
         theRangeSelect.addPropertyChangeListener(JDateDayRangeSelect.PROPERTY_RANGE, theListener);
 
         /* Initialise the values */
@@ -670,14 +672,16 @@ public class JDateDayExample extends JApplet {
     /**
      * Listener class.
      */
-    private class DateListener implements PropertyChangeListener, ItemListener {
+    private class DateListener
+            implements PropertyChangeListener, ItemListener {
         @Override
         public void propertyChange(final PropertyChangeEvent evt) {
             /* Access source object */
             Object o = evt.getSource();
 
             /* If this is the start/end date */
-            if ((theStartDate.equals(o)) || (theEndDate.equals(o))) {
+            if ((theStartDate.equals(o))
+                || (theEndDate.equals(o))) {
                 /* Apply the new range */
                 applyRange();
 
@@ -728,8 +732,7 @@ public class JDateDayExample extends JApplet {
      */
     private enum ShortLocale {
         /**
-         * China (shorten day names to one character, and shrink from the right to make sure they are
-         * different).
+         * China (shorten day names to one character, and shrink from the right to make sure they are different).
          */
         China(Locale.CHINA, 1, false),
 

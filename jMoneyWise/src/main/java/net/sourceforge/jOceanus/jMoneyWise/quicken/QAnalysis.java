@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
@@ -82,7 +83,7 @@ public class QAnalysis
     /**
      * Account Map.
      */
-    private final HashMap<Account, QAccount> theAccounts;
+    private final Map<Account, QAccount> theAccounts;
 
     /**
      * Category List.

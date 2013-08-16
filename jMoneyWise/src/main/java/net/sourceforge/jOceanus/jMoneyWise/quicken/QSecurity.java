@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
@@ -39,7 +40,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 /**
  * Quicken Security.
  */
-public final class QSecurity extends QElement {
+public final class QSecurity
+        extends QElement {
     /**
      * Item type.
      */
@@ -65,7 +67,8 @@ public final class QSecurity extends QElement {
      * @param pAnalysis the analysis
      * @param pAccount the security account
      */
-    private QSecurity(final QAnalysis pAnalysis, final Account pAccount) {
+    private QSecurity(final QAnalysis pAnalysis,
+                      final Account pAccount) {
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
@@ -159,11 +162,12 @@ public final class QSecurity extends QElement {
     /**
      * Security List class.
      */
-    protected static class QSecurityList extends QElement {
+    protected static class QSecurityList
+            extends QElement {
         /**
          * Security Map.
          */
-        private final HashMap<Account, QSecurity> theSecurities;
+        private final Map<Account, QSecurity> theSecurities;
 
         /**
          * The analysis.
@@ -247,7 +251,8 @@ public final class QSecurity extends QElement {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pStatus.setStepsDone(myCount))) {
                     break;
                 }
             }
@@ -283,7 +288,8 @@ public final class QSecurity extends QElement {
 
             /* Loop through the securities */
             Iterator<QSecurity> myIterator = theSecurities.values().iterator();
-            while ((bContinue) && (myIterator.hasNext())) {
+            while ((bContinue)
+                   && (myIterator.hasNext())) {
                 QSecurity mySecurity = myIterator.next();
 
                 /* Write Security details */
@@ -291,7 +297,8 @@ public final class QSecurity extends QElement {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }
@@ -325,7 +332,8 @@ public final class QSecurity extends QElement {
 
             /* Loop through the securities */
             Iterator<QSecurity> myIterator = theSecurities.values().iterator();
-            while ((bContinue) && (myIterator.hasNext())) {
+            while ((bContinue)
+                   && (myIterator.hasNext())) {
                 QSecurity mySecurity = myIterator.next();
 
                 /* Write price details */
@@ -333,7 +341,8 @@ public final class QSecurity extends QElement {
 
                 /* Report the progress */
                 myCount++;
-                if (((myCount % mySteps) == 0) && (!pStatus.setStepsDone(myCount))) {
+                if (((myCount % mySteps) == 0)
+                    && (!pStatus.setStepsDone(myCount))) {
                     bContinue = false;
                 }
             }

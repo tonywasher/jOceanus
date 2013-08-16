@@ -118,12 +118,12 @@ public class ReportTab
     /**
      * The Report Manager.
      */
-    private final ReportManager theManager;
+    private final transient ReportManager theManager;
 
     /**
      * The ReportBuilder.
      */
-    private final ReportBuilder theBuilder;
+    private final transient ReportBuilder theBuilder;
 
     /**
      * Constructor for Report Window.

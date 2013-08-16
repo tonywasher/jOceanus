@@ -468,7 +468,7 @@ public class AccountStatement
         addMouseListener(myMouse);
 
         /* Create the sub panels */
-        theSelect = new JDateDayRangeSelect();
+        theSelect = new JDateDayRangeSelect(false);
         theStateBox = new StatementSelect();
 
         /* Create listeners */

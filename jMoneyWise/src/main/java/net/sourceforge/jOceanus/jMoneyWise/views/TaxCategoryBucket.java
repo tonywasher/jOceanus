@@ -302,6 +302,24 @@ public final class TaxCategoryBucket
         return getTaxCategory().compareTo(pThat.getTaxCategory());
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle the trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+        if (!(pThat instanceof TaxCategoryBucket)) {
+            return false;
+        }
+
+        /* Compare the Tax Categories */
+        TaxCategoryBucket myThat = (TaxCategoryBucket) pThat;
+        return getTaxCategory().equals(myThat.getTaxCategory());
+    }
+
     /**
      * Is the bucket active?
      * @return true/false
