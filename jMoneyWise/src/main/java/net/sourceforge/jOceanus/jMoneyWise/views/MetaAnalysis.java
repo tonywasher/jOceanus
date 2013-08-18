@@ -27,6 +27,7 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
@@ -88,9 +89,9 @@ public class MetaAnalysis {
     private final ChargeableEventList theCharges;
 
     /**
-     * The date of the analysis.
+     * The date range of the analysis.
      */
-    private final JDateDay theDate;
+    private final JDateDayRange theDateRange;
 
     /**
      * The TaxYear of the analysis.
@@ -120,17 +121,17 @@ public class MetaAnalysis {
     /**
      * Do we have Gains slices?
      */
-    private boolean hasGainsSlices = false;
+    private Boolean hasGainsSlices = false;
 
     /**
      * Do we have a reduced allowance?
      */
-    private boolean hasReducedAllow = false;
+    private Boolean hasReducedAllow = false;
 
     /**
      * Age of User.
      */
-    private int theAge = 0;
+    private Integer theAge = 0;
 
     /**
      * Taxation Preferences.
@@ -183,9 +184,14 @@ public class MetaAnalysis {
     protected MetaAnalysis(final Analysis pAnalysis) {
         /* Store the analysis */
         theAnalysis = pAnalysis;
-        theDate = theAnalysis.getDate();
-        theYear = theAnalysis.getTaxYear();
+        theDateRange = theAnalysis.getDateRange();
         theCharges = theAnalysis.getCharges();
+
+        /* Determine tax details */
+        TaxCategoryBucketList myTax = theAnalysis.getTaxCategories();
+        theYear = (myTax != null)
+                ? myTax.getTaxYear()
+                : null;
 
         /* Access key accounts */
         FinanceData myData = theAnalysis.getData();
@@ -215,7 +221,7 @@ public class MetaAnalysis {
             AccountCategory myCategory = myCurr.getAccountCategory();
 
             /* analyse the asset */
-            myCurr.analyseBucket(theDate);
+            myCurr.analyseBucket(theDateRange.getEnd());
 
             /* If the bucket is priced */
             switch (myCurr.getCategoryType()) {
@@ -278,7 +284,7 @@ public class MetaAnalysis {
         JMoney myBaseValue = pAsset.getBaseMoneyAttribute(AccountAttribute.Valuation);
 
         /* Create an investment analysis for End Of Year */
-        InvestmentAnalysis myEvent = pAsset.getInvestmentAnalyses().addAnalysis(theDate);
+        InvestmentAnalysis myEvent = pAsset.getInvestmentAnalyses().addAnalysis(theDateRange.getEnd());
 
         /* Add price and value */
         myEvent.setAttribute(InvestmentAttribute.FinalPrice, myPrice);
@@ -428,9 +434,9 @@ public class MetaAnalysis {
         myList.prune();
 
         /* Set the state to taxed and record values */
-        theAnalysis.setHasReducedAllow(hasReducedAllow);
-        theAnalysis.setHasGainsSlices(hasGainsSlices);
-        theAnalysis.setAge(theAge);
+        myList.setHasReducedAllow(hasReducedAllow);
+        myList.setHasGainsSlices(hasGainsSlices);
+        myList.setAge(theAge);
     }
 
     /**
@@ -494,11 +500,14 @@ public class MetaAnalysis {
                 myBucket.addIncome(pBucket);
                 break;
             case Interest:
+            case TaxedInterest:
+            case GrossInterest:
                 /* Adjust the Gross interest bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.GrossInterest);
                 myBucket.addIncome(pBucket);
                 break;
             case Dividend:
+            case ShareDividend:
                 /* Adjust the Gross dividend bucket */
                 myBucket = myTax.getBucket(TaxCategoryClass.GrossDividend);
                 myBucket.addIncome(pBucket);

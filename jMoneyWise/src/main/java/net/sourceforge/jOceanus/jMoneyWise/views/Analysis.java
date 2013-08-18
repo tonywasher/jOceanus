@@ -29,6 +29,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
@@ -91,14 +92,9 @@ public class Analysis
     public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
     /**
-     * TaxYear Field Id.
+     * DateRange Field Id.
      */
-    public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField("TaxYear");
-
-    /**
-     * Date Field Id.
-     */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareLocalField("DateRange");
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -127,13 +123,8 @@ public class Analysis
                     ? theCharges
                     : JDataFieldValue.SkipField;
         }
-        if (FIELD_TAXYEAR.equals(pField)) {
-            return (theYear == null)
-                    ? JDataFieldValue.SkipField
-                    : theYear;
-        }
-        if (FIELD_DATE.equals(pField)) {
-            return theDate;
+        if (FIELD_DATERANGE.equals(pField)) {
+            return theDateRange;
         }
         if (FIELD_ACCOUNT.equals(pField)) {
             return (theAccount == null)
@@ -181,34 +172,14 @@ public class Analysis
     private final ChargeableEventList theCharges;
 
     /**
-     * The taxYear.
-     */
-    private final TaxYear theYear;
-
-    /**
      * The account.
      */
     private final Account theAccount;
 
     /**
-     * The Date.
+     * The Date Range.
      */
-    private final JDateDay theDate;
-
-    /**
-     * Are there Gains slices.
-     */
-    private boolean hasGainsSlices = false;
-
-    /**
-     * Is there a reduced allowance?
-     */
-    private boolean hasReducedAllow = false;
-
-    /**
-     * User age.
-     */
-    private int theAge = 0;
+    private final JDateDayRange theDateRange;
 
     /**
      * Obtain the data.
@@ -251,14 +222,6 @@ public class Analysis
     }
 
     /**
-     * Obtain the taxYear.
-     * @return the year
-     */
-    public TaxYear getTaxYear() {
-        return theYear;
-    }
-
-    /**
      * Obtain the account.
      * @return the account
      */
@@ -267,11 +230,11 @@ public class Analysis
     }
 
     /**
-     * Obtain the date.
-     * @return the date
+     * Obtain the date range.
+     * @return the date range
      */
-    public JDateDay getDate() {
-        return theDate;
+    public JDateDayRange getDateRange() {
+        return theDateRange;
     }
 
     /**
@@ -283,54 +246,6 @@ public class Analysis
     }
 
     /**
-     * Have we a reduced allowance?
-     * @return true/false
-     */
-    public boolean hasReducedAllow() {
-        return hasReducedAllow;
-    }
-
-    /**
-     * Do we have gains slices?
-     * @return true/false
-     */
-    public boolean hasGainsSlices() {
-        return hasGainsSlices;
-    }
-
-    /**
-     * Obtain the user age.
-     * @return the age
-     */
-    public int getAge() {
-        return theAge;
-    }
-
-    /**
-     * Set the age.
-     * @param pAge the age
-     */
-    protected void setAge(final int pAge) {
-        theAge = pAge;
-    }
-
-    /**
-     * Set whether the allowance is reduced.
-     * @param hasReduced true/false
-     */
-    protected void setHasReducedAllow(final boolean hasReduced) {
-        hasReducedAllow = hasReduced;
-    }
-
-    /**
-     * Set whether we have gains slices.
-     * @param hasSlices true/false
-     */
-    protected void setHasGainsSlices(final boolean hasSlices) {
-        hasGainsSlices = hasSlices;
-    }
-
-    /**
      * Constructor for a dated analysis.
      * @param pData the data to analyse events for
      * @param pDate the Date for the analysis
@@ -339,9 +254,11 @@ public class Analysis
                     final JDateDay pDate) {
         /* Store the data */
         theData = pData;
-        theDate = pDate;
-        theYear = null;
         theAccount = null;
+
+        /* Access start date */
+        JDateDay myStart = pData.getDateRange().getStart();
+        theDateRange = new JDateDayRange(myStart, pDate);
 
         /* Create a new set of buckets */
         theAccounts = new AccountBucketList(this);
@@ -365,13 +282,12 @@ public class Analysis
                     final Analysis pAnalysis) {
         /* Store the data */
         theData = pData;
-        theYear = pYear;
-        theDate = pYear.getTaxYear();
+        theDateRange = pYear.getDateRange();
         theAccount = null;
 
         /* Create a new list */
         theCharges = new ChargeableEventList();
-        theTaxCategories = new TaxCategoryBucketList(this);
+        theTaxCategories = new TaxCategoryBucketList(this, pYear);
 
         /* Build new bucket lists */
         if (pAnalysis != null) {
@@ -401,8 +317,10 @@ public class Analysis
         /* Store the data */
         theData = pData;
         theAccount = pAccount;
-        theDate = pDate;
-        theYear = null;
+
+        /* Access start date */
+        JDateDay myStart = pData.getDateRange().getStart();
+        theDateRange = new JDateDayRange(myStart, pDate);
 
         /* Create a new set of buckets */
         theAccounts = new AccountBucketList(this);

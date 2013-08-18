@@ -255,7 +255,7 @@ public class AccountCurrency
         applyBasicChanges(myData);
 
         /* Update the default indication if required */
-        if (isDefault() != myData.isDefault()) {
+        if (!isDefault().equals(myData.isDefault())) {
             setDefault(myData.isDefault());
         }
 

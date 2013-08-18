@@ -34,6 +34,7 @@ import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategorySection;
@@ -320,6 +321,11 @@ public final class TaxCategoryBucket
         return getTaxCategory().equals(myThat.getTaxCategory());
     }
 
+    @Override
+    public int hashCode() {
+        return getTaxCategory().hashCode();
+    }
+
     /**
      * Is the bucket active?
      * @return true/false
@@ -485,6 +491,26 @@ public final class TaxCategoryBucket
          */
         public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
 
+        /**
+         * TaxYear Field Id.
+         */
+        public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField("TaxYear");
+
+        /**
+         * Age Field Id.
+         */
+        public static final JDataField FIELD_AGE = FIELD_DEFS.declareLocalField("Age");
+
+        /**
+         * GainsSlices Field Id.
+         */
+        public static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField("GainsSlices");
+
+        /**
+         * ReducedAllowance Field Id.
+         */
+        public static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField("ReducedAllowances");
+
         @Override
         public Object getFieldValue(final JDataField pField) {
             if (FIELD_SIZE.equals(pField)) {
@@ -492,6 +518,22 @@ public final class TaxCategoryBucket
             }
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
+            }
+            if (FIELD_TAXYEAR.equals(pField)) {
+                return theYear;
+            }
+            if (FIELD_AGE.equals(pField)) {
+                return theAge;
+            }
+            if (FIELD_GAINS.equals(pField)) {
+                return (hasGainsSlices)
+                        ? hasGainsSlices
+                        : JDataFieldValue.SkipField;
+            }
+            if (FIELD_ALLOW.equals(pField)) {
+                return (hasReducedAllow)
+                        ? hasReducedAllow
+                        : JDataFieldValue.SkipField;
             }
             return JDataFieldValue.UnknownField;
         }
@@ -502,17 +544,96 @@ public final class TaxCategoryBucket
         private final Analysis theAnalysis;
 
         /**
+         * The taxYear.
+         */
+        private final TaxYear theYear;
+
+        /**
          * The data.
          */
         private final FinanceData theData;
 
         /**
+         * Obtain the taxYear.
+         * @return the year
+         */
+        public TaxYear getTaxYear() {
+            return theYear;
+        }
+
+        /**
+         * User age.
+         */
+        private Integer theAge = 0;
+
+        /**
+         * Are there Gains slices.
+         */
+        private Boolean hasGainsSlices = Boolean.FALSE;
+
+        /**
+         * Is there a reduced allowance?
+         */
+        private Boolean hasReducedAllow = Boolean.FALSE;
+
+        /**
+         * Obtain the user age.
+         * @return the age
+         */
+        public Integer getAge() {
+            return theAge;
+        }
+
+        /**
+         * Have we a reduced allowance?
+         * @return true/false
+         */
+        public Boolean hasReducedAllow() {
+            return hasReducedAllow;
+        }
+
+        /**
+         * Do we have gains slices?
+         * @return true/false
+         */
+        public Boolean hasGainsSlices() {
+            return hasGainsSlices;
+        }
+
+        /**
+         * Set the age.
+         * @param pAge the age
+         */
+        protected void setAge(final Integer pAge) {
+            theAge = pAge;
+        }
+
+        /**
+         * Set whether the allowance is reduced.
+         * @param hasReduced true/false
+         */
+        protected void setHasReducedAllow(final Boolean hasReduced) {
+            hasReducedAllow = hasReduced;
+        }
+
+        /**
+         * Set whether we have gains slices.
+         * @param hasSlices true/false
+         */
+        protected void setHasGainsSlices(final Boolean hasSlices) {
+            hasGainsSlices = hasSlices;
+        }
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
+         * @param pYear the TaxYear
          */
-        public TaxCategoryBucketList(final Analysis pAnalysis) {
+        public TaxCategoryBucketList(final Analysis pAnalysis,
+                                     final TaxYear pYear) {
             super(TaxCategoryBucket.class);
             theAnalysis = pAnalysis;
+            theYear = pYear;
             theData = theAnalysis.getData();
         }
 

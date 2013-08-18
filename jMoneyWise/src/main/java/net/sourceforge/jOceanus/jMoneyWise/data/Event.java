@@ -1055,7 +1055,7 @@ public class Event
         public EventList deriveEditList(final TaxYear pTaxYear) throws JDataException {
             /* Build an empty List */
             EventList myList = getEmptyList(ListStyle.EDIT);
-            myList.setRange(pTaxYear.getRange());
+            myList.setRange(pTaxYear.getDateRange());
 
             /* Store InfoType list */
             myList.setEventInfoTypes(getEventInfoTypes());

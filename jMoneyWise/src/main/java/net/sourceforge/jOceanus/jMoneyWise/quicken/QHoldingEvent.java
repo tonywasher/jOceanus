@@ -138,6 +138,7 @@ public class QHoldingEvent
         JMoney myTaxCredit = myEvent.getTaxCredit();
         EventCategory myCategory = getAnalysis().getCategory(EventInfoClass.TaxCredit);
         boolean isReinvested = Difference.isEqual(mySecurity, myXferAccount);
+        boolean isHolding = Difference.isEqual(myPortfolio.getHolding(), myXferAccount);
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
@@ -150,7 +151,9 @@ public class QHoldingEvent
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        myValue.setZero();
+        if (!isHolding) {
+            myValue.setZero();
+        }
         addDecimalLine(QEvtLineType.Amount, myValue);
 
         /* Add the Cleared status */
@@ -181,8 +184,9 @@ public class QHoldingEvent
         addXferAccountLine(QEvtLineType.SplitCategory, myPortfolio);
         addDecimalLine(QEvtLineType.SplitAmount, myValue);
 
-        /* If this is not a re-invest */
-        if (!isReinvested) {
+        /* If this is not a re-invest and not a holding */
+        if ((!isReinvested)
+            && (!isHolding)) {
             /* Add the net amount */
             myValue = new JDecimal(myAmount);
             myValue.negate();

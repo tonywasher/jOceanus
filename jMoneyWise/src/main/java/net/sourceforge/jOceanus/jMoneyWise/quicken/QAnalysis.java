@@ -272,7 +272,7 @@ public class QAnalysis
 
         /* Determine start date */
         TaxYear myTaxYear = myTaxYears.get(0);
-        theStartDate = myTaxYear.getRange().getStart();
+        theStartDate = myTaxYear.getDateRange().getStart();
 
         /* Update status bar */
         boolean bContinue = ((pStatus.setNumStages(QIF_NUMLISTS))
@@ -414,7 +414,8 @@ public class QAnalysis
             case StockTakeOver:
                 return true;
             case Dividend:
-                return (pEvent.getDebit().hasUnits());
+                Account mySource = pEvent.getDebit();
+                return (mySource.hasUnits());
             default:
                 return false;
         }

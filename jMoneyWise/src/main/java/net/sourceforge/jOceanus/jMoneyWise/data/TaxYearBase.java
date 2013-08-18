@@ -67,6 +67,11 @@ public abstract class TaxYearBase
     public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityValueField("TaxYear");
 
     /**
+     * DateRange field Id.
+     */
+    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField("DateRange");
+
+    /**
      * TaxRegime field Id.
      */
     public static final JDataField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField(TaxRegime.class.getSimpleName());
@@ -87,6 +92,14 @@ public abstract class TaxYearBase
      */
     public JDateDay getTaxYear() {
         return getTaxYear(getValueSet());
+    }
+
+    /**
+     * Obtain Date range.
+     * @return the taxYear range
+     */
+    public JDateDayRange getDateRange() {
+        return getDateRange(getValueSet());
     }
 
     /**
@@ -129,6 +142,15 @@ public abstract class TaxYearBase
     }
 
     /**
+     * Obtain date range.
+     * @param pValueSet the valueSet
+     * @return the date range
+     */
+    public static JDateDayRange getDateRange(final ValueSet pValueSet) {
+        return pValueSet.getValue(FIELD_DATERANGE, JDateDayRange.class);
+    }
+
+    /**
      * Obtain TaxRegime.
      * @param pValueSet the valueSet
      * @return the regime
@@ -167,6 +189,10 @@ public abstract class TaxYearBase
      */
     private void setValueTaxYear(final JDateDay pValue) {
         getValueSet().setValue(FIELD_TAXYEAR, pValue);
+        JDateDayRange myRange = (pValue != null)
+                ? deriveRange(pValue)
+                : null;
+        getValueSet().setValue(FIELD_DATERANGE, myRange);
     }
 
     /**
@@ -201,6 +227,23 @@ public abstract class TaxYearBase
     @Override
     public TaxYearBaseList<?> getList() {
         return (TaxYearBaseList<?>) super.getList();
+    }
+
+    /**
+     * Derive range for a Tax Year.
+     * @param pLastDate the last date of the tax year
+     * @return the range for the tax year
+     */
+    private JDateDayRange deriveRange(final JDateDay pLastDate) {
+        /* Access start date */
+        JDateDay myStart = new JDateDay(pLastDate);
+
+        /* Move back to start of year */
+        myStart.adjustYear(-1);
+        myStart.adjustDay(1);
+
+        /* Create the range */
+        return new JDateDayRange(myStart, pLastDate);
     }
 
     /**
@@ -347,25 +390,6 @@ public abstract class TaxYearBase
     }
 
     /**
-     * Extract the date range represented by the tax years.
-     * @return the range of tax years
-     */
-    public JDateDayRange getRange() {
-        /* Access start date */
-        JDateDay myStart = new JDateDay(getTaxYear());
-
-        /* Move back to start of year */
-        myStart.adjustYear(-1);
-        myStart.adjustDay(1);
-
-        /* Access last date */
-        JDateDay myEnd = getTaxYear();
-
-        /* Create the range */
-        return new JDateDayRange(myStart, myEnd);
-    }
-
-    /**
      * Set a new tax regime.
      * @param pTaxYear the TaxYear
      */
@@ -463,7 +487,7 @@ public abstract class TaxYearBase
                 myCurr = myIterator.next();
 
                 /* Access the range for this tax year */
-                JDateDayRange myRange = myCurr.getRange();
+                JDateDayRange myRange = myCurr.getDateRange();
 
                 /* Determine whether the date is owned by the tax year */
                 int iDiff = myRange.compareTo(pDate);
@@ -513,11 +537,7 @@ public abstract class TaxYearBase
             T myCurr = myIterator.peekFirst();
             if (myCurr != null) {
                 /* Access start date */
-                myStart = new JDateDay(myCurr.getTaxYear());
-
-                /* Move back to start of year */
-                myStart.adjustYear(-1);
-                myStart.adjustDay(1);
+                myStart = myCurr.getDateRange().getStart();
 
                 /* Extract the last item */
                 myCurr = myIterator.peekLast();

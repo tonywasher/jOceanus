@@ -200,6 +200,9 @@ public class QPortfolioEvent
             myUnits = new JUnits();
             autoCorrectZeroUnits = !getQIFType().canInvestCapital();
         }
+        if (mySecurity.getAlias() != null) {
+            mySecurity = mySecurity.getAlias();
+        }
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
@@ -545,6 +548,33 @@ public class QPortfolioEvent
 
             /* Add the Cleared status */
             addStringLine(QEvtLineType.Cleared, myReconciled);
+
+            /* Add description */
+            if (myDesc != null) {
+                /* Add the Description */
+                addStringLine(QPortLineType.Comment, myDesc);
+            }
+            /* If we are not re-investing a tax free dividend */
+        } else if ((!isReinvested)
+                   && (myTaxCredit == null)) {
+            /* End the main item */
+            endItem();
+
+            /* Add the Date */
+            addDateLine(QPortLineType.Date, myDate);
+
+            /* Add the action */
+            addEnumLine(QPortLineType.Action, QActionType.XOut);
+
+            /* Add the Amount (as a simple decimal) */
+            myValue = new JDecimal(myAmount);
+            addDecimalLine(QPortLineType.Amount, myValue);
+
+            /* Add the Cleared status */
+            addStringLine(QEvtLineType.Cleared, myReconciled);
+
+            /* Add the transfer line */
+            addXferAccountLine(QEvtLineType.Category, myEvent.getCredit());
 
             /* Add description */
             if (myDesc != null) {

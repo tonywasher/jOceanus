@@ -415,11 +415,21 @@ public class AccountStatus
      * @return true/false
      */
     protected boolean isDeletable(final DataState pState) {
-        return ((theLatest == null)
-                && (!isParent)
-                && (!hasRates)
-                && ((!hasPrices) || (pState == DataState.NEW))
-                && (!hasPatterns) && (!isAliasedTo));
+        /* First of all we cannot delete if we are referenced by events */
+        boolean canDelete = (theLatest == null);
+
+        /* Next we cannot delete if we are referenced by another account */
+        canDelete &= ((!isParent) && (!isAliasedTo));
+        canDelete &= ((!isPortfolio) && (!isHolding));
+
+        /* Next we cannot delete if we are referenced by rates/patterns */
+        canDelete &= ((!hasRates) && (!hasPatterns));
+
+        /* Next we cannot delete if we are referenced by prices (except for auto-price) */
+        canDelete &= ((!hasPrices) || (pState == DataState.NEW));
+
+        /* Finally we can only delete if we are new */
+        return canDelete;
     }
 
     /**

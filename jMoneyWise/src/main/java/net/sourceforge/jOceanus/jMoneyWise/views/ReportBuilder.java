@@ -27,7 +27,7 @@ import java.util.Iterator;
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
@@ -125,7 +125,7 @@ public class ReportBuilder {
         /* Start the report */
         Element myBody = theBuilder.startReport();
         myBuffer.append("Net Worth Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDate()));
+        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange().getEnd()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
@@ -304,15 +304,15 @@ public class ReportBuilder {
         theAnalysis = pAnalysis;
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
         StringBuilder myBuffer = new StringBuilder();
-        JDateDay myDate = theAnalysis.getDate();
+        JDateDayRange myDateRange = theAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         AccountCategoryBucket myTotals = myCategories.getTotalsBucket();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Yearly Asset Report for ");
-        myBuffer.append(theFormatter.formatObject(myDate.getYear()));
+        myBuffer.append("Asset Report for ");
+        myBuffer.append(theFormatter.formatObject(myDateRange));
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
@@ -323,9 +323,9 @@ public class ReportBuilder {
         Element myTable = theBuilder.startTable(myBody);
         Element myTHdr = theBuilder.startTableHeader(myTable);
         Element myRow = theBuilder.startTotalRow(myTHdr);
-        theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDate.getYear()));
+        theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDateRange.getEnd()));
         myColumns++;
-        theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDate.getYear() - 1));
+        theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDateRange.getStart()));
         myColumns++;
         theBuilder.makeTitleCell(myRow, TEXT_PROFIT);
         myColumns++;
@@ -485,8 +485,8 @@ public class ReportBuilder {
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Yearly Category Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDate().getYear()));
+        myBuffer.append("Event Category Report for ");
+        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
@@ -601,8 +601,8 @@ public class ReportBuilder {
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Yearly Tax Category Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDate().getYear()));
+        myBuffer.append("Tax Category Report for ");
+        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
@@ -659,7 +659,7 @@ public class ReportBuilder {
         theAnalysis = pAnalysis;
         AccountBucketList myList = theAnalysis.getAccounts();
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
-        JDateDay myDate = theAnalysis.getDate();
+        JDateDayRange myRange = theAnalysis.getDateRange();
         StringBuilder myBuffer = new StringBuilder();
 
         /* Obtain the totals bucket */
@@ -667,8 +667,8 @@ public class ReportBuilder {
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Yearly Income/Expense Report for ");
-        myBuffer.append(theFormatter.formatObject(myDate.getYear()));
+        myBuffer.append("Income/Expense Report for ");
+        myBuffer.append(theFormatter.formatObject(myRange));
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
@@ -737,7 +737,7 @@ public class ReportBuilder {
         /* Start the report */
         Element myBody = theBuilder.startReport();
         myBuffer.append("Market Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDate()));
+        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange().getEnd()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
@@ -870,7 +870,7 @@ public class ReportBuilder {
         /* Start the report */
         Element myBody = theBuilder.startReport();
         myBuffer.append("Taxation Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDate()));
+        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
         myBuffer.setLength(0);
 
@@ -934,7 +934,7 @@ public class ReportBuilder {
         theBuilder.makeTotalCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Taxation));
 
         /* If we need a tax slice report */
-        if (theAnalysis.hasGainsSlices()) {
+        if (myList.hasGainsSlices()) {
             makeTaxSliceReport(myBody, myColumns);
         }
 
@@ -1042,7 +1042,7 @@ public class ReportBuilder {
         theBuilder.makeTitleCell(myRow, "Value");
         myBody = theBuilder.startTableBody(myTable);
         myRow = theBuilder.startAlternateRow(myRow, "Age for Tax Year");
-        theBuilder.makeValueCell(myRow, theAnalysis.getAge());
+        theBuilder.makeValueCell(myRow, myList.getAge());
 
         /* Access the original allowance */
         TaxCategoryBucket myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
@@ -1050,7 +1050,7 @@ public class ReportBuilder {
         theBuilder.makeValueCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Amount));
 
         /* if we have adjusted the allowance */
-        if (theAnalysis.hasReducedAllow()) {
+        if (myList.hasReducedAllow()) {
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.GrossIncome);
             myRow = theBuilder.startAlternateRow(myBody, "Gross Taxable Income");

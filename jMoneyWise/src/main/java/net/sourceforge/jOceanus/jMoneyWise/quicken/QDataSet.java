@@ -103,17 +103,16 @@ public class QDataSet {
         if (theQIFType.useConsolidatedFile()) {
             return outputSingleFile(pStatus);
         } else {
-            return outputAccounts(pStatus);
+            return outputAccounts();
         }
     }
 
     /**
      * Output all accounts.
-     * @param pStatus the thread status
      * @return success true/false
      * @throws JDataException on error
      */
-    private boolean outputAccounts(final ThreadStatus<FinanceData> pStatus) throws JDataException {
+    private boolean outputAccounts() throws JDataException {
         boolean bContinue = true;
         /* Loop through the accounts */
         Iterator<QAccount> myIterator = theAnalysis.getAccountIterator();
@@ -122,7 +121,7 @@ public class QDataSet {
             QAccount myAccount = myIterator.next();
 
             /* Output the file */
-            bContinue = outputIndividualFile(pStatus, myAccount);
+            bContinue = outputIndividualFile(myAccount);
         }
 
         /* Return to the caller */
@@ -187,13 +186,11 @@ public class QDataSet {
 
     /**
      * Output data to individual file.
-     * @param pStatus the thread status
      * @param pAccount the account to dump
      * @return success true/false
      * @throws JDataException on error
      */
-    private boolean outputIndividualFile(final ThreadStatus<FinanceData> pStatus,
-                                         final QAccount pAccount) throws JDataException {
+    private boolean outputIndividualFile(final QAccount pAccount) throws JDataException {
         FileOutputStream myOutput = null;
         boolean doDelete = true;
 

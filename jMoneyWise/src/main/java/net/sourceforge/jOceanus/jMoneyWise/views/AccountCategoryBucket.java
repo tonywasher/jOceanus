@@ -379,6 +379,11 @@ public final class AccountCategoryBucket
         return getAccountCategory().equals(myThat.getAccountCategory());
     }
 
+    @Override
+    public int hashCode() {
+        return getAccountCategory().hashCode();
+    }
+
     /**
      * Determine category type.
      * @param pCategory the category

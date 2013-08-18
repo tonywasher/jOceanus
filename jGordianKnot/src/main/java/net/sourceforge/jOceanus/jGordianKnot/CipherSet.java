@@ -104,7 +104,7 @@ public class CipherSet {
                      final AsymKeyMode pKeyMode) {
         /* Store parameters */
         theGenerator = pGenerator;
-        theSaltBytes = pSaltBytes;
+        theSaltBytes = Arrays.copyOf(pSaltBytes, pSaltBytes.length);
         theRandom = theGenerator.getRandom();
         useRestricted = pKeyMode.useRestricted();
         theDigest = pKeyMode.getCipherDigest();
@@ -127,7 +127,7 @@ public class CipherSet {
                      final HashMode pHashMode) {
         /* Store parameters */
         theGenerator = pGenerator;
-        theSaltBytes = pSaltBytes;
+        theSaltBytes = Arrays.copyOf(pSaltBytes, pSaltBytes.length);
         theRandom = theGenerator.getRandom();
         useRestricted = pHashMode.useRestricted();
         theDigest = pHashMode.getCipherDigest();

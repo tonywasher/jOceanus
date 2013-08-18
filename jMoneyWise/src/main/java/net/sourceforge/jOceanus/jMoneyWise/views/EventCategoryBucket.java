@@ -352,6 +352,11 @@ public final class EventCategoryBucket
         return getEventCategory().equals(myThat.getEventCategory());
     }
 
+    @Override
+    public int hashCode() {
+        return getEventCategory().hashCode();
+    }
+
     /**
      * Add income value.
      * @param pValue the value to add

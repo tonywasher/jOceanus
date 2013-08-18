@@ -519,6 +519,11 @@ public final class AccountBucket
         return getAccount().equals(myThat.getAccount());
     }
 
+    @Override
+    public int hashCode() {
+        return getAccount().hashCode();
+    }
+
     /**
      * Set opening balance.
      * @param pBalance the opening balance
@@ -1012,9 +1017,14 @@ public final class AccountBucket
             while (myIterator.hasNext()) {
                 AccountBucket myCurr = myIterator.next();
 
-                /* If the bucket is active and non-payee */
-                if (myCurr.isActive()
-                    && (myCurr.getCategoryType() != CategoryType.Payee)) {
+                /* Ignore payees */
+                if (myCurr.getCategoryType() == CategoryType.Payee) {
+                    continue;
+                }
+
+                /* If the bucket is active or has Units */
+                if ((myCurr.isActive())
+                    || (myCurr.getCategoryType() == CategoryType.Priced)) {
                     /* Add a derived bucket to the list */
                     AccountBucket myBucket = new AccountBucket(pAnalysis, myCurr);
                     add(myBucket);

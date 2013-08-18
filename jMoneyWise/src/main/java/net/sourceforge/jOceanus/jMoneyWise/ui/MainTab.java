@@ -476,6 +476,13 @@ public class MainTab
         /* Note whether we have a worker thread */
         boolean hasWorker = hasWorker();
 
+        /* Note whether we have data */
+        boolean hasControl = (theView.getData().getControl() != null);
+
+        /* Disable menus if we have no data */
+        theCreateQIF.setEnabled(!hasWorker
+                                && hasControl);
+
         /* Access the Register panel and determine its status */
         int iIndex = theTabs.indexOfTab(TITLE_REGISTER);
         boolean showTab = (!hasWorker && (!hasUpdates || theRegister.hasUpdates()));
