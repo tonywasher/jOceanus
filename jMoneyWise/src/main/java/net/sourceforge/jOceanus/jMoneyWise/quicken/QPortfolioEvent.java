@@ -74,7 +74,18 @@ public class QPortfolioEvent
             case Inherited:
                 return true;
             case Dividend:
-                return (!myEvent.getDebit().isTaxFree());
+                if ((!myEvent.getDebit().isTaxFree())) {
+                    return true;
+                }
+                if (Difference.isEqual(myEvent.getDebit(), myEvent.getCredit())) {
+                    return false;
+                }
+                return !((myType.canXferPortfolioLinked() || myType.canXferPortfolioDirect()));
+            case StockTakeOver:
+                if (myEvent.getThirdParty() == null) {
+                    return false;
+                }
+                return !myType.canXferPortfolioDirect();
             default:
                 return false;
         }
@@ -152,7 +163,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = new JDecimal(myUnits);
@@ -193,6 +204,7 @@ public class QPortfolioEvent
         Event myEvent = getEvent();
         JDateDay myDate = myEvent.getDate();
         JMoney myAmount = myEvent.getAmount();
+        Account myDebit = myEvent.getDebit();
         Account mySecurity = myEvent.getCredit();
         boolean autoCorrectZeroUnits = false;
         JUnits myUnits = myEvent.getCreditUnits();
@@ -207,6 +219,9 @@ public class QPortfolioEvent
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
 
+        /* Determine additional features */
+        boolean useBuyX4Event = ((myDebit.hasValue()) && (getQIFType().canXferPortfolioLinked()));
+
         /* Reset the builder */
         reset();
 
@@ -214,7 +229,9 @@ public class QPortfolioEvent
         addDateLine(QPortLineType.Date, myDate);
 
         /* Add the action */
-        addEnumLine(QPortLineType.Action, QActionType.Buy);
+        addEnumLine(QPortLineType.Action, (useBuyX4Event)
+                ? QActionType.BuyX
+                : QActionType.Buy);
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, mySecurity);
@@ -224,7 +241,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myUnitValue = (autoCorrectZeroUnits)
@@ -245,6 +262,16 @@ public class QPortfolioEvent
             addStringLine(QPortLineType.Comment, myDesc);
         }
 
+        /* If we are using BuyX */
+        if (useBuyX4Event) {
+            /* Add the account */
+            addXferAccountLine(QPortLineType.TransferAccount, myDebit);
+
+            /* Add the value */
+            myValue = new JDecimal(myAmount);
+            addDecimalLine(QPortLineType.TransferAmount, myValue);
+        }
+
         /* If we need to autoCorrect */
         if (autoCorrectZeroUnits) {
             /* End the main item */
@@ -260,7 +287,7 @@ public class QPortfolioEvent
             addAccountLine(QPortLineType.Security, mySecurity);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, myReconciled);
+            addStringLine(QPortLineType.Cleared, myReconciled);
 
             /* Add the quantity */
             addDecimalLine(QPortLineType.Quantity, myUnitValue);
@@ -286,6 +313,7 @@ public class QPortfolioEvent
         JDateDay myDate = myEvent.getDate();
         JMoney myAmount = myEvent.getAmount();
         Account mySecurity = myEvent.getDebit();
+        Account myCredit = myEvent.getCredit();
         JUnits myUnits = myEvent.getDebitUnits();
         boolean autoCorrectZeroUnits = false;
         boolean zeroUnits = false;
@@ -297,6 +325,9 @@ public class QPortfolioEvent
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
 
+        /* Determine additional flags */
+        boolean useSellX4Event = ((myCredit.hasValue()) && (getQIFType().canXferPortfolioLinked()));
+
         /* Reset the builder */
         reset();
 
@@ -304,9 +335,13 @@ public class QPortfolioEvent
         addDateLine(QPortLineType.Date, myDate);
 
         /* Add the action */
-        addEnumLine(QPortLineType.Action, (!zeroUnits)
-                ? QActionType.Sell
-                : QActionType.RtrnCap);
+        addEnumLine(QPortLineType.Action, (zeroUnits)
+                ? ((useSellX4Event)
+                        ? QActionType.RtrnCapX
+                        : QActionType.RtrnCap)
+                : ((useSellX4Event)
+                        ? QActionType.SellX
+                        : QActionType.Sell));
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, mySecurity);
@@ -316,7 +351,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* If we have units */
         if (!zeroUnits) {
@@ -334,6 +369,16 @@ public class QPortfolioEvent
             addStringLine(QPortLineType.Comment, myDesc);
         }
 
+        /* If we are using SellX/RtrnCapX */
+        if (useSellX4Event) {
+            /* Add the account */
+            addXferAccountLine(QPortLineType.TransferAccount, myCredit);
+
+            /* Add the value */
+            myValue = new JDecimal(myAmount);
+            addDecimalLine(QPortLineType.TransferAmount, myValue);
+        }
+
         /* If we need to autoCorrect */
         if (autoCorrectZeroUnits) {
             /* End the main item */
@@ -349,7 +394,7 @@ public class QPortfolioEvent
             addAccountLine(QPortLineType.Security, mySecurity);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, myReconciled);
+            addStringLine(QPortLineType.Cleared, myReconciled);
 
             /* Add the quantity */
             addDecimalLine(QPortLineType.Quantity, new JDecimal(1));
@@ -399,7 +444,7 @@ public class QPortfolioEvent
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* Add quantity */
         if (useSplits) {
@@ -454,7 +499,7 @@ public class QPortfolioEvent
         addAccountLine(QPortLineType.Security, myEvent.getDebit());
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         JDecimal myValue = new JDecimal(myUnits);
@@ -480,12 +525,28 @@ public class QPortfolioEvent
         Event myEvent = getEvent();
         JDateDay myDate = myEvent.getDate();
         Account mySecurity = myEvent.getDebit();
+        Account myCredit = myEvent.getCredit();
         JMoney myAmount = myEvent.getAmount();
         JMoney myTaxCredit = myEvent.getTaxCredit();
-        JUnits myUnits = myEvent.getCreditUnits();
         String myDesc = myEvent.getComments();
-        boolean hasUnits = (myUnits != null);
-        boolean isReinvested = Difference.isEqual(mySecurity, myEvent.getCredit());
+        QIFType myQIFType = getQIFType();
+        // boolean hasUnits = (myUnits != null);
+        boolean isReinvested = Difference.isEqual(mySecurity, myCredit);
+
+        /* Check for auto-correction of zero units */
+        boolean autoCorrectZeroUnits = false;
+        JUnits myUnits = myEvent.getCreditUnits();
+        if (myUnits == null) {
+            myUnits = new JUnits();
+            autoCorrectZeroUnits = !myQIFType.canInvestCapital();
+        }
+
+        /* Determine additional features */
+        boolean useMiscIncTax = ((isReinvested) && (myTaxCredit != null));
+        boolean isTaxFreeDiv = ((!isReinvested) && (myTaxCredit == null));
+        boolean useDivX4Event = ((isTaxFreeDiv) && (myQIFType.canXferPortfolioLinked()));
+        boolean useXOut4Event = ((isTaxFreeDiv)
+                                 && (!useDivX4Event) && (myQIFType.canXferPortfolioDirect()));
 
         /* Determine reconciled flag */
         String myReconciled = getReconciledFlag();
@@ -499,7 +560,9 @@ public class QPortfolioEvent
         /* Add the action */
         addEnumLine(QPortLineType.Action, (isReinvested)
                 ? QActionType.ReinvDiv
-                : QActionType.Div);
+                : (useDivX4Event)
+                        ? QActionType.DivX
+                        : QActionType.Div);
 
         /* Add the Security */
         addAccountLine(QPortLineType.Security, mySecurity);
@@ -512,14 +575,13 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
-        /* If we have units */
-        if (hasUnits) {
-            /* Add the Quantity (as a simple decimal) */
-            myValue = new JDecimal(myUnits);
-            addDecimalLine(QPortLineType.Quantity, myValue);
-        }
+        /* Add the Quantity (as a simple decimal) */
+        JDecimal myUnitValue = (autoCorrectZeroUnits)
+                ? new JDecimal(1)
+                : new JDecimal(myUnits);
+        addDecimalLine(QPortLineType.Quantity, myUnitValue);
 
         /* If we have a description */
         if (myDesc != null) {
@@ -527,9 +589,45 @@ public class QPortfolioEvent
             addStringLine(QPortLineType.Comment, myDesc);
         }
 
-        /* If we are re-investing and have a TaxCredit */
-        if ((isReinvested)
-            && (myTaxCredit != null)) {
+        /* If we are using DivX */
+        if (useDivX4Event) {
+            /* Add the account */
+            addXferAccountLine(QPortLineType.TransferAccount, myCredit);
+
+            /* Add the value */
+            myValue = new JDecimal(myAmount);
+            addDecimalLine(QPortLineType.TransferAmount, myValue);
+        }
+
+        /* If we need to autoCorrect */
+        if (autoCorrectZeroUnits) {
+            /* End the main item */
+            endItem();
+
+            /* Add the Date */
+            addDateLine(QPortLineType.Date, myDate);
+
+            /* Add the action */
+            addEnumLine(QPortLineType.Action, QActionType.ShrsOut);
+
+            /* Add the Security */
+            addAccountLine(QPortLineType.Security, mySecurity);
+
+            /* Add the Cleared status */
+            addStringLine(QPortLineType.Cleared, myReconciled);
+
+            /* Add the quantity */
+            addDecimalLine(QPortLineType.Quantity, myUnitValue);
+
+            /* If we have a description */
+            if (myDesc != null) {
+                /* Add the Description */
+                addStringLine(QPortLineType.Comment, myDesc);
+            }
+        }
+
+        /* If we need to use a miscellaneous income for the tax credit */
+        if (useMiscIncTax) {
             /* End the main item */
             endItem();
 
@@ -547,16 +645,17 @@ public class QPortfolioEvent
             addDecimalLine(QPortLineType.Amount, myValue);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, myReconciled);
+            addStringLine(QPortLineType.Cleared, myReconciled);
 
             /* Add description */
             if (myDesc != null) {
                 /* Add the Description */
                 addStringLine(QPortLineType.Comment, myDesc);
             }
-            /* If we are not re-investing a tax free dividend */
-        } else if ((!isReinvested)
-                   && (myTaxCredit == null)) {
+        }
+
+        /* If should use XOut for the tax free dividend */
+        if (useXOut4Event) {
             /* End the main item */
             endItem();
 
@@ -571,10 +670,10 @@ public class QPortfolioEvent
             addDecimalLine(QPortLineType.Amount, myValue);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, myReconciled);
+            addStringLine(QPortLineType.Cleared, myReconciled);
 
             /* Add the transfer line */
-            addXferAccountLine(QEvtLineType.Category, myEvent.getCredit());
+            addXferAccountLine(QPortLineType.TransferAccount, myCredit);
 
             /* Add description */
             if (myDesc != null) {
@@ -636,7 +735,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* If we have units */
         if (!zeroUnits) {
@@ -668,7 +767,7 @@ public class QPortfolioEvent
             addAccountLine(QPortLineType.Security, myDebit);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, myReconciled);
+            addStringLine(QPortLineType.Cleared, myReconciled);
 
             /* Add the quantity */
             addDecimalLine(QPortLineType.Quantity, new JDecimal(1));
@@ -696,7 +795,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         myValue = new JDecimal(myCreditUnits);
@@ -755,7 +854,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         myValue = new JDecimal(myAnalysis.getUnitsAttribute(InvestmentAttribute.InitialUnits));
@@ -770,8 +869,9 @@ public class QPortfolioEvent
         /* End the initial item */
         endItem();
 
-        /* If we have a ThirdParty cash component */
-        if (myThirdParty != null) {
+        /* If we have a ThirdParty cash component that we can use XOut on */
+        if ((myThirdParty != null)
+            && (getQIFType().canXferPortfolioDirect())) {
             /* Add the Date */
             addDateLine(QPortLineType.Date, myDate);
 
@@ -783,7 +883,7 @@ public class QPortfolioEvent
             addDecimalLine(QPortLineType.Amount, myValue);
 
             /* Add the Cleared status */
-            addStringLine(QEvtLineType.Cleared, myReconciled);
+            addStringLine(QPortLineType.Cleared, myReconciled);
 
             /* Add the Transfer Account */
             addXferAccountLine(QPortLineType.TransferAccount, myThirdParty);
@@ -815,7 +915,7 @@ public class QPortfolioEvent
         addDecimalLine(QPortLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QPortLineType.Cleared, myReconciled);
 
         /* Add the Quantity (as a simple decimal) */
         myValue = new JDecimal(myCreditUnits);

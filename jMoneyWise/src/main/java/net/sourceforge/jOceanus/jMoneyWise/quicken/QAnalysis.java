@@ -402,20 +402,46 @@ public class QAnalysis
      */
     private boolean ignoreEvent(final Event pEvent,
                                 final boolean isCredit) {
-        /* Always process debit event */
+        /* Switch on category */
+        QIFType myType = getQIFType();
+        Account mySource = pEvent.getDebit();
+        Account myTarget = pEvent.getCredit();
+
+        /* If this is a debit event */
         if (!isCredit) {
-            return false;
+            switch (pEvent.getCategoryClass()) {
+                case Transfer:
+                    /* Transfer from Money to Units */
+                    if ((!mySource.hasUnits())
+                        && (myTarget.hasUnits())) {
+                        /* Needs a debit line if we cannot use BuyX */
+                        return myType.canXferPortfolioLinked();
+                    }
+                    /* All other elements need a debit line */
+                    return false;
+
+                default:
+                    return false;
+            }
         }
 
-        /* Switch on category */
         switch (pEvent.getCategoryClass()) {
             case Interest:
             case StockDeMerger:
             case StockTakeOver:
                 return true;
             case Dividend:
-                Account mySource = pEvent.getDebit();
                 return (mySource.hasUnits());
+            case Transfer:
+                /* Transfer from Units to Money */
+                if ((mySource.hasUnits())
+                    && (!myTarget.hasUnits())) {
+                    /* Needs a credit line if we cannot use SellX */
+                    return myType.canXferPortfolioLinked();
+                }
+
+                /* All other elements need a credit line */
+                return false;
             default:
                 return false;
         }

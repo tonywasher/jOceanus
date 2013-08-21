@@ -1704,6 +1704,9 @@ public class EventAnalysis
         } else {
             /* Determine the cost of the new stock */
             myStockCost = myDebitAsset.getMoneyAttribute(AccountAttribute.Cost);
+
+            /* Record it as the takeOver cost */
+            myDebitAnalysis.setAttribute(InvestmentAttribute.TakeOverStockCost, new JMoney(myStockCost));
         }
 
         /* Adjust cost/units/invested of the credit account */

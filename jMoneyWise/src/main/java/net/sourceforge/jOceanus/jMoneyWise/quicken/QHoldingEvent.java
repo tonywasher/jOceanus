@@ -59,6 +59,8 @@ public class QHoldingEvent
                 return buildIncomeQIF();
             case Dividend:
                 return buildDividendQIF();
+            case StockTakeOver:
+                return buildTakeOverQIF();
             default:
                 break;
         }
@@ -190,7 +192,7 @@ public class QHoldingEvent
             /* Add the net amount */
             myValue = new JDecimal(myAmount);
             myValue.negate();
-            addXferAccountLine(QEvtLineType.SplitCategory, myEvent.getCredit());
+            addXferAccountLine(QEvtLineType.SplitCategory, myXferAccount);
             addDecimalLine(QEvtLineType.SplitAmount, myValue);
         }
 
@@ -201,6 +203,74 @@ public class QHoldingEvent
             myValue.negate();
             addCategoryLine(QEvtLineType.SplitCategory, myCategory);
             addDecimalLine(QEvtLineType.SplitAmount, myValue);
+        }
+
+        /* Return the detail */
+        return completeItem();
+    }
+
+    /**
+     * Build takeOver holding transaction.
+     * @return the QIF entry
+     */
+    protected String buildTakeOverQIF() {
+        /* Access the event */
+        Event myEvent = getEvent();
+        JMoney myAmount = myEvent.getAmount();
+        Account mySecurity = myEvent.getDebit();
+        Account myXferAccount = myEvent.getThirdParty();
+        Account myPortfolio = mySecurity.getPortfolio();
+        boolean isHolding = Difference.isEqual(myPortfolio.getHolding(), myXferAccount);
+
+        /* Determine reconciled flag */
+        String myReconciled = getReconciledFlag();
+
+        /* Reset the builder */
+        reset();
+
+        /* Add the Date */
+        addDateLine(QEvtLineType.Date, myEvent.getDate());
+
+        /* Add the Amount (as a simple decimal) */
+        JDecimal myValue = new JDecimal(myAmount);
+        if (!isHolding) {
+            myValue.setZero();
+        }
+        addDecimalLine(QEvtLineType.Amount, myValue);
+
+        /* Add the Cleared status */
+        addStringLine(QEvtLineType.Cleared, myReconciled);
+
+        /* If we have a description */
+        String myDesc = myEvent.getComments();
+        if (myDesc != null) {
+            /* Add the Description */
+            addStringLine(QEvtLineType.Comment, myDesc);
+        }
+
+        /* Add the Payee */
+        addStringLine(QEvtLineType.Payee, "TakeOver of "
+                                          + mySecurity.getName());
+
+        /* If we are not transferring to the holding account */
+        if (!isHolding) {
+            /* Determine the gross amount */
+            myValue = new JDecimal(myAmount);
+
+            /* Add the gross amount */
+            addXferAccountLine(QEvtLineType.SplitCategory, myPortfolio);
+            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+
+            /* Add the net amount */
+            myValue.negate();
+            addXferAccountLine(QEvtLineType.SplitCategory, myXferAccount);
+            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+
+            /* else just transfer from the portfolio */
+        } else {
+
+            /* Add the portfolio Xfer */
+            addXferAccountLine(QEvtLineType.Category, myPortfolio);
         }
 
         /* Return the detail */

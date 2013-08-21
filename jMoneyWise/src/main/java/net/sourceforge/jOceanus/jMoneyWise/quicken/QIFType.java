@@ -199,6 +199,43 @@ public enum QIFType {
     }
 
     /**
+     * Can we transfer directly to/from the portfolio account?
+     * <p>
+     * Some programs do not allow you to use the investment transfer types XIn and XOut. In this case the transfer has to be driven from the partner account.
+     * @return true/false
+     */
+    public boolean canXferPortfolioDirect() {
+        switch (this) {
+            case AceMoney:
+                return false;
+            case MoneyDance:
+            case BankTree:
+            case YNAB:
+            default:
+                return true;
+        }
+    }
+
+    /**
+     * Can we transfer to/from the portfolio account as part of an investment transaction?
+     * <p>
+     * Some programs do not allow you to use the investment transfer types BuyX, SellX, RtrnCapX and DivX, which allow a linked transfer. In this case the
+     * transfer has to be specified separately by the partner account.
+     * @return true/false
+     */
+    public boolean canXferPortfolioLinked() {
+        switch (this) {
+            case AceMoney:
+                return false;
+            case MoneyDance:
+            case BankTree:
+            case YNAB:
+            default:
+                return true;
+        }
+    }
+
+    /**
      * Obtain filename.
      * @return true/false
      */
