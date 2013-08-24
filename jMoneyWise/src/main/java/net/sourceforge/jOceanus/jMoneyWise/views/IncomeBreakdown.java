@@ -34,7 +34,6 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
@@ -68,6 +67,11 @@ public class IncomeBreakdown
      * Interest Field Id.
      */
     public static final JDataField FIELD_INTEREST = FIELD_DEFS.declareLocalField("TaxedInterest");
+
+    /**
+     * Gross Interest Field Id.
+     */
+    public static final JDataField FIELD_GRINTEREST = FIELD_DEFS.declareLocalField("GrossInterest");
 
     /**
      * Tax Free Interest Field Id.
@@ -109,6 +113,11 @@ public class IncomeBreakdown
         if (FIELD_INTEREST.equals(pField)) {
             return (theTaxedInterest.size() > 0)
                     ? theTaxedInterest
+                    : JDataFieldValue.SkipField;
+        }
+        if (FIELD_GRINTEREST.equals(pField)) {
+            return (theGrossInterest.size() > 0)
+                    ? theGrossInterest
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_TFINTEREST.equals(pField)) {
@@ -155,6 +164,11 @@ public class IncomeBreakdown
     private final RecordList theTaxedInterest;
 
     /**
+     * The Gross Interest analysis.
+     */
+    private final RecordList theGrossInterest;
+
+    /**
      * The TaxFree Interest analysis.
      */
     private final RecordList theTaxFreeInterest;
@@ -199,6 +213,14 @@ public class IncomeBreakdown
     }
 
     /**
+     * Obtain Gross interest totals.
+     * @return the totals
+     */
+    public RecordList getGrossInterest() {
+        return theGrossInterest;
+    }
+
+    /**
      * Obtain Tax Free interest totals.
      * @return the totals
      */
@@ -236,13 +258,14 @@ public class IncomeBreakdown
      */
     protected IncomeBreakdown(final FinanceData pData) {
         /* Allocate lists */
-        theSalary = new RecordList(pData, "Salary");
-        theRental = new RecordList(pData, "Rental");
-        theTaxedInterest = new RecordList(pData, "TaxedInterest");
-        theTaxFreeInterest = new RecordList(pData, "TaxFreeInterest");
-        theTaxedDividend = new RecordList(pData, "TaxedDividend");
-        theTaxFreeDividend = new RecordList(pData, "TaxFreeDividend");
-        theUnitTrustDividend = new RecordList(pData, "UnitTrustDividend");
+        theSalary = new RecordList(pData, FIELD_SALARY.getName());
+        theRental = new RecordList(pData, FIELD_RENTAL.getName());
+        theTaxedInterest = new RecordList(pData, FIELD_INTEREST.getName());
+        theGrossInterest = new RecordList(pData, FIELD_GRINTEREST.getName());
+        theTaxFreeInterest = new RecordList(pData, FIELD_TFINTEREST.getName());
+        theTaxedDividend = new RecordList(pData, FIELD_DIVIDEND.getName());
+        theTaxFreeDividend = new RecordList(pData, FIELD_TFDIVIDEND.getName());
+        theUnitTrustDividend = new RecordList(pData, FIELD_UTDIVIDEND.getName());
     }
 
     /**
@@ -259,6 +282,8 @@ public class IncomeBreakdown
             case Interest:
                 if (myDebit.isTaxFree()) {
                     myRecord = theTaxFreeInterest.findAccountRecord(myDebit.getParent());
+                } else if (myDebit.isGrossInterest()) {
+                    myRecord = theGrossInterest.findAccountRecord(myDebit.getParent());
                 } else {
                     myRecord = theTaxedInterest.findAccountRecord(myDebit.getParent());
                 }
@@ -281,8 +306,7 @@ public class IncomeBreakdown
                 myRecord.processEvent(pEvent);
                 break;
             case TaxedIncome:
-            case DeemedBenefit:
-            case NatInsurance:
+            case BenefitIncome:
                 myRecord = theSalary.findAccountRecord(myDebit);
                 myRecord.processEvent(pEvent);
                 break;
@@ -563,30 +587,45 @@ public class IncomeBreakdown
             /* Access values */
             JMoney myAmount = pEvent.getAmount();
             JMoney myTax = pEvent.getTaxCredit();
+            JMoney myNatIns = pEvent.getNatInsurance();
+            JMoney myBenefit = pEvent.getDeemedBenefit();
+            JMoney myDonation = pEvent.getCharityDonation();
             Account myDebit = pEvent.getDebit();
-            EventCategory myCategory = pEvent.getCategory();
 
-            /* If we are NatInsurance/Benefit */
-            if ((myCategory.getCategoryTypeClass() == EventCategoryClass.NatInsurance)
-                || (myCategory.getCategoryTypeClass() == EventCategoryClass.DeemedBenefit)) {
-                /* Just add to gross */
-                theTotals.theGrossIncome.addAmount(myAmount);
-                theListTotals.theGrossIncome.addAmount(myAmount);
-            } else {
-                /* Add to gross and net */
-                theTotals.theGrossIncome.addAmount(myAmount);
-                theTotals.theNetIncome.addAmount(myAmount);
-                theListTotals.theGrossIncome.addAmount(myAmount);
-                theListTotals.theNetIncome.addAmount(myAmount);
+            /* Add to gross and net */
+            theTotals.theGrossIncome.addAmount(myAmount);
+            theTotals.theNetIncome.addAmount(myAmount);
+            theListTotals.theGrossIncome.addAmount(myAmount);
+            theListTotals.theNetIncome.addAmount(myAmount);
 
-                /* If we have a tax credit */
-                if (myTax != null) {
-                    /* Add to gross and tax */
-                    theTotals.theGrossIncome.addAmount(myTax);
-                    theTotals.theTaxCredit.addAmount(myTax);
-                    theListTotals.theGrossIncome.addAmount(myTax);
-                    theListTotals.theTaxCredit.addAmount(myTax);
-                }
+            /* If we have a tax credit */
+            if (myTax != null) {
+                /* Add to gross and tax */
+                theTotals.theGrossIncome.addAmount(myTax);
+                theTotals.theTaxCredit.addAmount(myTax);
+                theListTotals.theGrossIncome.addAmount(myTax);
+                theListTotals.theTaxCredit.addAmount(myTax);
+            }
+
+            /* If we have national insurance */
+            if (myNatIns != null) {
+                /* Add to gross */
+                theTotals.theGrossIncome.addAmount(myNatIns);
+                theListTotals.theGrossIncome.addAmount(myNatIns);
+            }
+
+            /* If we have deemed benefit */
+            if (myBenefit != null) {
+                /* Add to gross */
+                theTotals.theGrossIncome.addAmount(myBenefit);
+                theListTotals.theGrossIncome.addAmount(myBenefit);
+            }
+
+            /* If we have charity donation */
+            if (myDonation != null) {
+                /* Add to gross */
+                theTotals.theGrossIncome.addAmount(myDonation);
+                theListTotals.theGrossIncome.addAmount(myDonation);
             }
 
             /* If the debit account is a child */

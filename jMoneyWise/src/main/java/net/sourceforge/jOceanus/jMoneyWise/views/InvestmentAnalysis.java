@@ -512,6 +512,19 @@ public final class InvestmentAnalysis
         }
 
         /**
+         * Clone an Investment Analysis list.
+         * @param pData the DataSet
+         * @param pAccount the Account for the list
+         */
+        protected InvestmentAnalysisList(final InvestmentAnalysisList pSource) {
+            super(InvestmentAnalysis.class, pSource);
+
+            /* Store the data */
+            theData = pSource.getData();
+            theAccount = pSource.getAccount();
+        }
+
+        /**
          * Add an event to the list.
          * @param pEvent the Event to add
          * @return the Investment Analysis

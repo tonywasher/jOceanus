@@ -92,9 +92,9 @@ public class EventAnalysis
     private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
 
     /**
-     * Date field Id.
+     * Date Range field Id.
      */
-    private static final JDataField FIELD_DATE = FIELD_DEFS.declareLocalField("Date");
+    private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField("DateRange");
 
     /**
      * Dilutions field Id.
@@ -123,10 +123,10 @@ public class EventAnalysis
                     ? JDataFieldValue.SkipField
                     : theAccount;
         }
-        if (FIELD_DATE.equals(pField)) {
-            return (theDate == null)
+        if (FIELD_RANGE.equals(pField)) {
+            return (theDateRange == null)
                     ? JDataFieldValue.SkipField
-                    : theDate;
+                    : theDateRange;
         }
         if (FIELD_DILUTIONS.equals(pField)) {
             return (theDilutions == null)
@@ -199,9 +199,9 @@ public class EventAnalysis
     private AccountBucket theAccount = null;
 
     /**
-     * The date for the analysis.
+     * The date range for the analysis.
      */
-    private JDateDay theDate = null;
+    private JDateDayRange theDateRange = null;
 
     /**
      * The dilutions.
@@ -261,14 +261,17 @@ public class EventAnalysis
                          final JDateDay pDate) throws JDataException {
         /* Store the parameters */
         theData = pData;
-        theDate = pDate;
+
+        /* Determine date range */
+        JDateDay myStart = theData.getDateRange().getStart();
+        theDateRange = new JDateDayRange(myStart, pDate);
 
         /* Access event categories and taxMan */
         theCategories = theData.getEventCategories();
         Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
 
         /* Create the analysis */
-        theAnalysis = new Analysis(theData, theDate);
+        theAnalysis = new Analysis(theData, theDateRange);
 
         /* Access details from the analysis */
         theAccountBuckets = theAnalysis.getAccounts();
@@ -292,7 +295,61 @@ public class EventAnalysis
             }
 
             /* Check the range and exit loop if necessary */
-            int myResult = theDate.compareTo(myCurr.getDate());
+            int myResult = pDate.compareTo(myCurr.getDate());
+            if (myResult < 0) {
+                break;
+            }
+
+            /* Process the event in the asset report */
+            processEvent(myCurr);
+        }
+
+        /* Analyse accounts */
+        theMetaAnalysis.analyseAccounts();
+    }
+
+    /**
+     * Constructor for a ranged analysis.
+     * @param pData the data to analyse events for
+     * @param pDateRange the Range for the analysis
+     * @throws JDataException on error
+     */
+    public EventAnalysis(final FinanceData pData,
+                         final JDateDayRange pDateRange) throws JDataException {
+        /* Store the parameters */
+        theData = pData;
+        theDateRange = pDateRange;
+
+        /* Access event categories and taxMan */
+        theCategories = theData.getEventCategories();
+        Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
+
+        /* Create the analysis */
+        theAnalysis = new Analysis(theData, theDateRange);
+
+        /* Access details from the analysis */
+        theAccountBuckets = theAnalysis.getAccounts();
+        theCategoryBuckets = theAnalysis.getEventCategories();
+        theTaxMan = theAccountBuckets.getBucket(myTaxMan);
+
+        /* Create associated MetaAnalyser */
+        theMetaAnalysis = new MetaAnalysis(theAnalysis);
+
+        /* Access the events and the iterator */
+        EventList myEvents = pData.getEvents();
+        Iterator<Event> myIterator = myEvents.iterator();
+
+        /* Loop through the Events extracting relevant elements */
+        while (myIterator.hasNext()) {
+            Event myCurr = myIterator.next();
+
+            /* Ignore deleted events */
+            if (myCurr.isDeleted()) {
+                continue;
+            }
+
+            /* Check the range and exit loop if necessary */
+            int myResult = theDateRange.compareTo(myCurr.getDate());
             if (myResult < 0) {
                 break;
             }
@@ -320,14 +377,14 @@ public class EventAnalysis
 
         /* Store the parameters */
         theData = pData;
-        theDate = myRange.getStart();
+        theDateRange = new JDateDayRange(null, myRange.getStart());
 
         /* Access event categories and taxMan */
         theCategories = theData.getEventCategories();
         Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
 
         /* Create the analysis */
-        theAnalysis = new Analysis(theData, theDate);
+        theAnalysis = new Analysis(theData, theDateRange);
 
         /* Access details from the analysis */
         theAccountBuckets = theAnalysis.getAccounts();
@@ -451,7 +508,7 @@ public class EventAnalysis
         Iterator<StatementLine> myIterator = pStatement.getIterator();
 
         /* Restore the SavePoint */
-        theAccount.restoreSavePoint(theDate);
+        theAccount.restoreSavePoint(theDateRange.getEnd());
 
         /* Loop through the lines adjusting the balance */
         while (myIterator.hasNext()) {

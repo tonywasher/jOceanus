@@ -815,8 +815,8 @@ public class ReportBuilder {
 
         /* Format the header */
         Element myBody = theBuilder.startTableBody(myTable);
-        Element myRow = theBuilder.startDetailRow(myBody, "Date");
-        theBuilder.makeTitleCell(myRow, "Event");
+        Element myRow = theBuilder.startDetailTitleRow(myBody, "Date");
+        theBuilder.makeTitleCell(myRow, "Category");
         theBuilder.makeTitleCell(myRow, "DeltaUnits");
         theBuilder.makeTitleCell(myRow, "DeltaCost");
         theBuilder.makeTitleCell(myRow, "DeltaGains");

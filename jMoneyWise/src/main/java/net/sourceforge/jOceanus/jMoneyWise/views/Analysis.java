@@ -248,17 +248,14 @@ public class Analysis
     /**
      * Constructor for a dated analysis.
      * @param pData the data to analyse events for
-     * @param pDate the Date for the analysis
+     * @param pDateRange the Date for the analysis
      */
     public Analysis(final FinanceData pData,
-                    final JDateDay pDate) {
+                    final JDateDayRange pDateRange) {
         /* Store the data */
         theData = pData;
+        theDateRange = pDateRange;
         theAccount = null;
-
-        /* Access start date */
-        JDateDay myStart = pData.getDateRange().getStart();
-        theDateRange = new JDateDayRange(myStart, pDate);
 
         /* Create a new set of buckets */
         theAccounts = new AccountBucketList(this);

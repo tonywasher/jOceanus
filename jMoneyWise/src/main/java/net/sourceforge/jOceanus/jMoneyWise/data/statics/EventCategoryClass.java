@@ -397,7 +397,13 @@ public enum EventCategoryClass implements StaticInterface {
             case GrantIncome:
             case OtherIncome:
             case Interest:
+            case TaxedInterest:
+            case GrossInterest:
+            case TaxFreeInterest:
             case Dividend:
+            case ShareDividend:
+            case UnitTrustDividend:
+            case TaxFreeDividend:
             case Inherited:
             case RentalIncome:
                 return true;

@@ -481,7 +481,10 @@ public final class AccountBucket
         theSavePoint = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
 
         /* Copy the Investment Analyses */
-        theInvestmentAnalyses = pBase.getInvestmentAnalyses();
+        InvestmentAnalysisList myBase = pBase.getInvestmentAnalyses();
+        theInvestmentAnalyses = (myBase != null)
+                ? new InvestmentAnalysisList(myBase)
+                : null;
 
         /* Clone the underlying map */
         cloneMap(theBase.getAttributes(), theAttributes);
