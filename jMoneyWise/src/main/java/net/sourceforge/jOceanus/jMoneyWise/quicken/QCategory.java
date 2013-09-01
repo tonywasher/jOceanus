@@ -24,14 +24,16 @@ package net.sourceforge.jOceanus.jMoneyWise.quicken;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QCategoryLineType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFFile;
 
 /**
  * Quicken Category.
@@ -49,6 +51,35 @@ public final class QCategory
     private final EventCategory theCategory;
 
     /**
+     * The transaction type.
+     */
+    private final TransactionType theType;
+
+    /**
+     * Obtain the name of the category.
+     * @return the name
+     */
+    public String getName() {
+        return theCategory.getName();
+    }
+
+    /**
+     * Obtain the description of the category.
+     * @return the description
+     */
+    public String getDesc() {
+        return theCategory.getDesc();
+    }
+
+    /**
+     * Obtain the type of the category.
+     * @return the description
+     */
+    public TransactionType getType() {
+        return theType;
+    }
+
+    /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pCategory the category
@@ -58,8 +89,9 @@ public final class QCategory
         /* Call super constructor */
         super(pAnalysis.getFormatter(), pAnalysis.getQIFType());
 
-        /* Store the category */
+        /* Store the category and type */
         theCategory = pCategory;
+        theType = TransactionType.deriveType(theCategory);
     }
 
     /**
@@ -71,20 +103,19 @@ public final class QCategory
         reset();
 
         /* Add the Category name */
-        addCategoryLine(QCatLineType.Name, theCategory);
+        addCategoryLine(QCategoryLineType.Name, theCategory);
 
         /* If we have a description */
         String myDesc = theCategory.getDesc();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QCatLineType.Description, myDesc);
+            addStringLine(QCategoryLineType.Description, myDesc);
         }
 
         /* Determine Income/Expense flag */
-        TransactionType myTranType = TransactionType.deriveType(theCategory);
-        addFlag((myTranType.isIncome())
-                ? QCatLineType.Income
-                : QCatLineType.Expense);
+        addFlag((theType.isIncome())
+                ? QCategoryLineType.Income
+                : QCategoryLineType.Expense);
 
         /* Return the result */
         return completeItem();
@@ -98,7 +129,7 @@ public final class QCategory
     /**
      * Category List class.
      */
-    protected static class QCategoryList
+    public static class QCategoryList
             extends QElement {
         /**
          * Parent Category Map.
@@ -136,8 +167,8 @@ public final class QCategory
             theAnalysis = pAnalysis;
 
             /* Create the map */
-            theParents = new HashMap<EventCategory, QCategory>();
-            theCategories = new HashMap<EventCategory, QCategory>();
+            theParents = new LinkedHashMap<EventCategory, QCategory>();
+            theCategories = new LinkedHashMap<EventCategory, QCategory>();
         }
 
         /**
@@ -235,54 +266,29 @@ public final class QCategory
             /* Return success */
             return bContinue;
         }
-    }
-
-    /**
-     * Quicken Category Line Types.
-     */
-    public enum QCatLineType implements QLineType {
-        /**
-         * Name.
-         */
-        Name("N"),
 
         /**
-         * Description.
+         * Build QIF File from list.
+         * @param pFile the QIF File
          */
-        Description("D"),
+        protected void buildQIFFile(final QIFFile pFile) {
+            /* Loop through the parents */
+            Iterator<QCategory> myIterator = theParents.values().iterator();
+            while (myIterator.hasNext()) {
+                QCategory myCategory = myIterator.next();
 
-        /**
-         * Income flag.
-         */
-        Income("I"),
+                /* Register Category details */
+                pFile.registerCategory(myCategory);
+            }
 
-        /**
-         * Expense flag.
-         */
-        Expense("E"),
+            /* Loop through the categories */
+            myIterator = theCategories.values().iterator();
+            while (myIterator.hasNext()) {
+                QCategory myCategory = myIterator.next();
 
-        /**
-         * Tax flag.
-         */
-        Tax("T");
-
-        /**
-         * The symbol.
-         */
-        private final String theSymbol;
-
-        @Override
-        public String getSymbol() {
-            return theSymbol;
-        }
-
-        /**
-         * Constructor.
-         * @param pSymbol the symbol
-         */
-        private QCatLineType(final String pSymbol) {
-            /* Store symbol */
-            theSymbol = pSymbol;
+                /* Register Category details */
+                pFile.registerCategory(myCategory);
+            }
         }
     }
 }

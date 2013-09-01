@@ -34,6 +34,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QEventLineType;
 import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
 
 /**
@@ -168,23 +169,23 @@ public class QEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEvtLineType.Date, theEvent.getDate());
+        addDateLine(QEventLineType.Date, theEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(theEvent.getAmount());
         if (!isCredit) {
             myValue.negate();
         }
-        addDecimalLine(QEvtLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.Cleared, myReconciled);
 
         /* If we have a reference */
         String myRef = theEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            addStringLine(QEvtLineType.Reference, myRef);
+            addStringLine(QEventLineType.Reference, myRef);
         }
 
         /* Determine partner account */
@@ -201,10 +202,10 @@ public class QEvent
         EventCategory myAutoExpense = myPayee.getAutoExpense();
         if (myAutoExpense != null) {
             /* Add the autoExpense payee */
-            addAutoAccountLine(QEvtLineType.Payee, myPayee);
+            addAutoAccountLine(QEventLineType.Payee, myPayee);
         } else {
             /* Add standard payee */
-            addLineType(QEvtLineType.Payee);
+            addLineType(QEventLineType.Payee);
 
             /* If this is a transfer */
             if (isTransfer) {
@@ -232,19 +233,19 @@ public class QEvent
         String myDesc = theEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEvtLineType.Comment, myDesc);
+            addStringLine(QEventLineType.Comment, myDesc);
         }
 
         /* If the payee is autoExpense */
         if (myAutoExpense != null) {
             /* Add the autoExpense */
-            addCategoryLine(QEvtLineType.Category, myAutoExpense);
+            addCategoryLine(QEventLineType.Category, myAutoExpense);
             /* else if its a transfer */
         } else if (isTransfer) {
-            addXferAccountLine(QEvtLineType.Category, myPayee);
+            addXferAccountLine(QEventLineType.Category, myPayee);
             /* else standard category */
         } else {
-            addCategoryLine(QEvtLineType.Category, theEvent.getCategory());
+            addCategoryLine(QEventLineType.Category, theEvent.getCategory());
         }
 
         /* Return the result */
@@ -276,24 +277,24 @@ public class QEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEvtLineType.Date, pStartDate);
+        addDateLine(QEventLineType.Date, pStartDate);
 
         /* Add the Amount (as a simple decimal) */
-        addDecimalLine(QEvtLineType.Amount, new JDecimal(pBalance));
+        addDecimalLine(QEventLineType.Amount, new JDecimal(pBalance));
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, QIF_RECONCILED);
+        addStringLine(QEventLineType.Cleared, QIF_RECONCILED);
 
         /* Add the payee */
-        addStringLine(QEvtLineType.Payee, "Opening Balance");
+        addStringLine(QEventLineType.Payee, "Opening Balance");
 
         if (getQIFType().selfOpeningBalance()) {
             /* Add the category as self-Opening */
-            addXferAccountLine(QEvtLineType.Category, pAccount);
+            addXferAccountLine(QEventLineType.Category, pAccount);
         } else {
             /* Add the explicit category */
             EventCategory myCat = getAnalysis().getCategory(EventCategoryClass.OpeningBalance);
-            addCategoryLine(QEvtLineType.Category, myCat);
+            addCategoryLine(QEventLineType.Category, myCat);
         }
 
         /* Return the result */
@@ -306,23 +307,23 @@ public class QEvent
      */
     protected void buildAutoExpenseCorrectionQIF(final boolean doCredit) {
         /* Add the Date */
-        addDateLine(QEvtLineType.Date, theEvent.getDate());
+        addDateLine(QEventLineType.Date, theEvent.getDate());
 
         /* Add the Amount */
         JDecimal myValue = new JDecimal(theEvent.getAmount());
         if (!doCredit) {
             myValue.negate();
         }
-        addDecimalLine(QEvtLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, QIF_RECONCILED);
+        addStringLine(QEventLineType.Cleared, QIF_RECONCILED);
 
         /* If we have a reference */
         String myRef = theEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            addStringLine(QEvtLineType.Reference, myRef);
+            addStringLine(QEventLineType.Reference, myRef);
         }
 
         /* Determine this account and partner account */
@@ -338,20 +339,20 @@ public class QEvent
 
         /* Add the payee */
         if (isCredit == doCredit) {
-            addAccountLine(QEvtLineType.Payee, myPayee);
+            addAccountLine(QEventLineType.Payee, myPayee);
         } else {
-            addAutoAccountLine(QEvtLineType.Payee, myAccount);
+            addAutoAccountLine(QEventLineType.Payee, myAccount);
         }
 
         /* If we have a description */
         String myDesc = theEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEvtLineType.Comment, myDesc);
+            addStringLine(QEventLineType.Comment, myDesc);
         }
 
         /* Set the category */
-        addCategoryLine(QEvtLineType.Category, (isCredit == doCredit)
+        addCategoryLine(QEventLineType.Category, (isCredit == doCredit)
                 ? theEvent.getCategory()
                 : myAutoExpense);
 
@@ -557,80 +558,6 @@ public class QEvent
             /* Allocate the event */
             QHoldingEvent myEvent = new QHoldingEvent(getAnalysis(), pEvent, isCredit);
             addEvent(myEvent);
-        }
-    }
-
-    /**
-     * Quicken Event Line Types.
-     */
-    public enum QEvtLineType implements QLineType {
-        /**
-         * Date.
-         */
-        Date("D"),
-
-        /**
-         * Amount.
-         */
-        Amount("T"),
-
-        /**
-         * Cleared Status.
-         */
-        Cleared("C"),
-
-        /**
-         * Comment.
-         */
-        Comment("M"),
-
-        /**
-         * Reference.
-         */
-        Reference("N"),
-
-        /**
-         * Payee.
-         */
-        Payee("P"),
-
-        /**
-         * Category.
-         */
-        Category("L"),
-
-        /**
-         * SplitCategory.
-         */
-        SplitCategory("S"),
-
-        /**
-         * SplitComment.
-         */
-        SplitComment("E"),
-
-        /**
-         * SplitAmount.
-         */
-        SplitAmount("$");
-
-        /**
-         * The symbol.
-         */
-        private final String theSymbol;
-
-        @Override
-        public String getSymbol() {
-            return theSymbol;
-        }
-
-        /**
-         * Constructor.
-         * @param pSymbol the symbol
-         */
-        private QEvtLineType(final String pSymbol) {
-            /* Store symbol */
-            theSymbol = pSymbol;
         }
     }
 }

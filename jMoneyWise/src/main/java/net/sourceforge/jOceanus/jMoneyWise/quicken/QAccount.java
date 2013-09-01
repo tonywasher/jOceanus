@@ -33,6 +33,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventBaseList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QPortfolioEvent.QPortfolioEventList;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QAccountLineType;
 
 /**
  * Quicken Account.
@@ -73,8 +74,24 @@ public final class QAccount
      * Obtain the account name.
      * @return the account name
      */
-    protected String getName() {
+    public String getName() {
         return theAccount.getName();
+    }
+
+    /**
+     * Obtain the account description.
+     * @return the account name
+     */
+    public String getDesc() {
+        return theAccount.getComments();
+    }
+
+    /**
+     * Obtain the account class.
+     * @return the account name
+     */
+    public AccountCategoryClass getAccountClass() {
+        return theAccount.getAccountCategoryClass();
     }
 
     /**
@@ -139,16 +156,16 @@ public final class QAccount
         reset();
 
         /* Add the Account name */
-        addAccountLine(QActLineType.Name, theAccount);
+        addAccountLine(QAccountLineType.Name, theAccount);
 
         /* Add the AccountType */
-        addStringLine(QActLineType.Type, getAccountType());
+        addStringLine(QAccountLineType.Type, getAccountType());
 
         /* If we have a description */
         String myDesc = theAccount.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QActLineType.Description, myDesc);
+            addStringLine(QAccountLineType.Description, myDesc);
         }
 
         /* Return the result */
@@ -177,17 +194,17 @@ public final class QAccount
         endLine();
 
         /* Add the Account name */
-        addAccountLine(QActLineType.Name, theAccount);
+        addAccountLine(QAccountLineType.Name, theAccount);
 
         /* If we have a description */
         String myDesc = theAccount.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QActLineType.Description, myDesc);
+            addStringLine(QAccountLineType.Description, myDesc);
         }
 
         /* Add the Account type */
-        addStringLine(QActLineType.Type, myType);
+        addStringLine(QAccountLineType.Type, myType);
 
         /* Add the End indicator */
         endItem();
@@ -280,50 +297,6 @@ public final class QAccount
             } else {
                 theEvents.outputEvents(pStream, pStartDate);
             }
-        }
-    }
-
-    /**
-     * Quicken Account Line Types.
-     */
-    public enum QActLineType implements QLineType {
-        /**
-         * Name.
-         */
-        Name("N"),
-
-        /**
-         * Account Type.
-         */
-        Type("T"),
-
-        /**
-         * Description.
-         */
-        Description("D"),
-
-        /**
-         * Credit Limit.
-         */
-        CreditLimit("L");
-
-        /**
-         * The symbol.
-         */
-        private final String theSymbol;
-
-        @Override
-        public String getSymbol() {
-            return theSymbol;
-        }
-
-        /**
-         * Constructor.
-         * @param pSymbol the symbol
-         */
-        private QActLineType(final String pSymbol) {
-            /* Store symbol */
-            theSymbol = pSymbol;
         }
     }
 }

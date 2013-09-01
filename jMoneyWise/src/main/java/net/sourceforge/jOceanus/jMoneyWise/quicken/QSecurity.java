@@ -25,8 +25,8 @@ package net.sourceforge.jOceanus.jMoneyWise.quicken;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +36,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFFile;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QSecurityLineType;
 
 /**
  * Quicken Security.
@@ -61,6 +64,30 @@ public final class QSecurity
      * The prices for this security.
      */
     private final List<QPrice> thePrices;
+
+    /**
+     * Obtain the security name.
+     * @return the security name
+     */
+    public String getName() {
+        return theSecurity.getName();
+    }
+
+    /**
+     * Obtain the security symbol.
+     * @return the security symbol
+     */
+    public String getSymbol() {
+        return theSecurity.getSymbol();
+    }
+
+    /**
+     * Obtain the security class.
+     * @return the security class
+     */
+    public AccountCategoryClass getAccountClass() {
+        return theSecurity.getAccountCategoryClass();
+    }
 
     /**
      * Constructor.
@@ -94,17 +121,17 @@ public final class QSecurity
         endLine();
 
         /* Add the Security name */
-        addStringLine(QSecLineType.Name, theSecurity.getName());
+        addStringLine(QSecurityLineType.Name, theSecurity.getName());
 
         /* If we have a symbol */
         String mySymbol = theSecurity.getSymbol();
         if (mySymbol != null) {
             /* Add the Security symbol */
-            addStringLine(QSecLineType.Symbol, mySymbol);
+            addStringLine(QSecurityLineType.Symbol, mySymbol);
         }
 
         /* Add the Security type */
-        addStringLine(QSecLineType.SecType, getSecurityType());
+        addStringLine(QSecurityLineType.SecType, getSecurityType());
 
         /* Return the result */
         return completeItem();
@@ -136,6 +163,14 @@ public final class QSecurity
             /* Write price details */
             pStream.write(myPrice.buildQIF());
         }
+    }
+
+    /**
+     * Obtain price iterator.
+     * @return the iterator
+     */
+    public Iterator<QPrice> priceIterator() {
+        return thePrices.iterator();
     }
 
     /**
@@ -191,7 +226,7 @@ public final class QSecurity
             theAnalysis = pAnalysis;
 
             /* Create the map */
-            theSecurities = new HashMap<Account, QSecurity>();
+            theSecurities = new LinkedHashMap<Account, QSecurity>();
         }
 
         /**
@@ -350,44 +385,20 @@ public final class QSecurity
             /* Return success */
             return bContinue;
         }
-    }
-
-    /**
-     * Quicken Security Line Types.
-     */
-    public enum QSecLineType implements QLineType {
-        /**
-         * Name.
-         */
-        Name("N"),
 
         /**
-         * Symbol.
+         * Build QIF File from list.
+         * @param pFile the QIF File
          */
-        Symbol("S"),
+        protected void buildQIFFile(final QIFFile pFile) {
+            /* Loop through the securities */
+            Iterator<QSecurity> myIterator = theSecurities.values().iterator();
+            while (myIterator.hasNext()) {
+                QSecurity mySecurity = myIterator.next();
 
-        /**
-         * Security Type.
-         */
-        SecType("T");
-
-        /**
-         * The symbol.
-         */
-        private final String theSymbol;
-
-        @Override
-        public String getSymbol() {
-            return theSymbol;
-        }
-
-        /**
-         * Constructor.
-         * @param pSymbol the symbol
-         */
-        private QSecLineType(final String pSymbol) {
-            /* Store symbol */
-            theSymbol = pSymbol;
+                /* Register Security details */
+                pFile.registerSecurity(mySecurity);
+            }
         }
     }
 }

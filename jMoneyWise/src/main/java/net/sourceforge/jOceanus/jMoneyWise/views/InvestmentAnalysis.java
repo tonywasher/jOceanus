@@ -513,8 +513,7 @@ public final class InvestmentAnalysis
 
         /**
          * Clone an Investment Analysis list.
-         * @param pData the DataSet
-         * @param pAccount the Account for the list
+         * @param pSource the Source
          */
         protected InvestmentAnalysisList(final InvestmentAnalysisList pSource) {
             super(InvestmentAnalysis.class, pSource);

@@ -27,6 +27,7 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QLineType;
 
 /**
  * Quicken item.
@@ -321,16 +322,5 @@ public abstract class QElement {
     protected void addEnumLine(final QLineType pType,
                                final Enum<?> pEnum) {
         addStringLine(pType, pEnum.toString());
-    }
-
-    /**
-     * The QLineType interface.
-     */
-    protected interface QLineType {
-        /**
-         * Get line symbol.
-         * @return the symbol
-         */
-        String getSymbol();
     }
 }

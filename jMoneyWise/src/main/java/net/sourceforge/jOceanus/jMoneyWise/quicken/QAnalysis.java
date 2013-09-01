@@ -24,8 +24,8 @@ package net.sourceforge.jOceanus.jMoneyWise.quicken;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
@@ -46,6 +46,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory.QCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFFile;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
@@ -150,7 +151,7 @@ public class QAnalysis
         super(pFormatter, pType);
 
         /* Create the maps */
-        theAccounts = new HashMap<Account, QAccount>();
+        theAccounts = new LinkedHashMap<Account, QAccount>();
         theCategories = new QCategoryList(this);
         theSecurities = new QSecurityList(this);
     }
@@ -560,5 +561,32 @@ public class QAnalysis
                                                        final Account pSecurity) {
         /* Locate the security bucket */
         return theAnalysis.getInvestmentAnalysis(pEvent, pSecurity);
+    }
+
+    /**
+     * Build QIF File from list.
+     * @return the QIF File
+     */
+    protected QIFFile buildQIFFile() {
+        /* Create the new file */
+        QIFFile myFile = new QIFFile();
+
+        /* Register the categories */
+        theCategories.buildQIFFile(myFile);
+
+        /* Loop through the parents */
+        Iterator<QAccount> myIterator = theAccounts.values().iterator();
+        while (myIterator.hasNext()) {
+            QAccount myAccount = myIterator.next();
+
+            /* Register Account details */
+            myFile.registerAccount(myAccount);
+        }
+
+        /* Register the securities */
+        theSecurities.buildQIFFile(myFile);
+
+        /* Return the QIF File */
+        return myFile;
     }
 }

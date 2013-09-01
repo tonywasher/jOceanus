@@ -22,7 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.quicken;
 
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
+import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 
@@ -50,6 +52,30 @@ public class QPrice
      * The Price.
      */
     private final AccountPrice thePrice;
+
+    /**
+     * Obtain Security Name.
+     * @return the security name
+     */
+    public String getSecurity() {
+        return thePrice.getAccountName();
+    }
+
+    /**
+     * Obtain Price Date.
+     * @return the date
+     */
+    public JDateDay getDate() {
+        return thePrice.getDate();
+    }
+
+    /**
+     * Obtain Price.
+     * @return the price
+     */
+    public JPrice getPrice() {
+        return thePrice.getPrice();
+    }
 
     /**
      * Constructor.

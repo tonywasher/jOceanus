@@ -27,6 +27,7 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QEventLineType;
 
 /**
  * Quicken Salary Event.
@@ -77,30 +78,30 @@ public class QSalaryEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEvtLineType.Date, myEvent.getDate());
+        addDateLine(QEventLineType.Date, myEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
-        addDecimalLine(QEvtLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.Cleared, myReconciled);
 
         /* If we have a reference */
         String myRef = myEvent.getReference();
         if (myRef != null) {
             /* Add the reference */
-            addStringLine(QEvtLineType.Reference, myRef);
+            addStringLine(QEventLineType.Reference, myRef);
         }
 
         /* Payee is the debit account */
-        addAccountLine(QEvtLineType.Payee, myEvent.getDebit());
+        addAccountLine(QEventLineType.Payee, myEvent.getDebit());
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEvtLineType.Comment, myDesc);
+            addStringLine(QEventLineType.Comment, myDesc);
         }
 
         /* If no split is necessary */
@@ -108,7 +109,7 @@ public class QSalaryEvent
             && (!isNatIns)
             && (!isBenefit)) {
             /* Add the standard category */
-            addCategoryLine(QEvtLineType.Category, myCategory);
+            addCategoryLine(QEventLineType.Category, myCategory);
         } else {
             /* Add a Split */
             myValue = new JDecimal(myAmount);
@@ -121,28 +122,28 @@ public class QSalaryEvent
             if (isBenefit) {
                 myValue.addValue(myBenefit);
             }
-            addCategoryLine(QEvtLineType.SplitCategory, myCategory);
-            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+            addCategoryLine(QEventLineType.SplitCategory, myCategory);
+            addDecimalLine(QEventLineType.SplitAmount, myValue);
             if (isTaxCredit) {
                 myValue = new JDecimal(myTaxCredit);
                 myValue.negate();
                 myCategory = getAnalysis().getCategory(EventInfoClass.TaxCredit);
-                addCategoryLine(QEvtLineType.SplitCategory, myCategory);
-                addDecimalLine(QEvtLineType.SplitAmount, myValue);
+                addCategoryLine(QEventLineType.SplitCategory, myCategory);
+                addDecimalLine(QEventLineType.SplitAmount, myValue);
             }
             if (isNatIns) {
                 myValue = new JDecimal(myNatIns);
                 myValue.negate();
                 myCategory = getAnalysis().getCategory(EventInfoClass.NatInsurance);
-                addCategoryLine(QEvtLineType.SplitCategory, myCategory);
-                addDecimalLine(QEvtLineType.SplitAmount, myValue);
+                addCategoryLine(QEventLineType.SplitCategory, myCategory);
+                addDecimalLine(QEventLineType.SplitAmount, myValue);
             }
             if (isBenefit) {
                 myValue = new JDecimal(myBenefit);
                 myValue.negate();
                 myCategory = getAnalysis().getCategory(EventInfoClass.DeemedBenefit);
-                addCategoryLine(QEvtLineType.SplitCategory, myCategory);
-                addDecimalLine(QEvtLineType.SplitAmount, myValue);
+                addCategoryLine(QEventLineType.SplitCategory, myCategory);
+                addDecimalLine(QEventLineType.SplitAmount, myValue);
             }
         }
 

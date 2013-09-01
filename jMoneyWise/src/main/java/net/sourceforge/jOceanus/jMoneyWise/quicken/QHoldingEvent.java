@@ -29,6 +29,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QEventLineType;
 
 /**
  * Quicken Interest Event.
@@ -86,41 +87,41 @@ public class QHoldingEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEvtLineType.Date, myEvent.getDate());
+        addDateLine(QEventLineType.Date, myEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
         myValue.setZero();
-        addDecimalLine(QEvtLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.Cleared, myReconciled);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEvtLineType.Comment, myDesc);
+            addStringLine(QEventLineType.Comment, myDesc);
         }
 
         /* Add the Payee */
-        addAccountLine(QEvtLineType.Payee, myEvent.getDebit());
+        addAccountLine(QEventLineType.Payee, myEvent.getDebit());
 
         /* Add the category */
-        addCategoryLine(QEvtLineType.SplitCategory, myEvent.getCategory());
+        addCategoryLine(QEventLineType.SplitCategory, myEvent.getCategory());
 
         /* Access the Amount again */
         myValue = new JDecimal(myAmount);
 
         /* Add the Amount again */
-        addDecimalLine(QEvtLineType.SplitAmount, myValue);
+        addDecimalLine(QEventLineType.SplitAmount, myValue);
 
         /* Add the portfolio account */
-        addXferAccountLine(QEvtLineType.SplitCategory, myPortfolio);
+        addXferAccountLine(QEventLineType.SplitCategory, myPortfolio);
 
         /* Add the Amount again (negative) */
         myValue.negate();
-        addDecimalLine(QEvtLineType.SplitAmount, myValue);
+        addDecimalLine(QEventLineType.SplitAmount, myValue);
 
         /* Return the detail */
         return completeItem();
@@ -149,28 +150,28 @@ public class QHoldingEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEvtLineType.Date, myEvent.getDate());
+        addDateLine(QEventLineType.Date, myEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
         if (!isHolding) {
             myValue.setZero();
         }
-        addDecimalLine(QEvtLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.Cleared, myReconciled);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEvtLineType.Comment, myDesc);
+            addStringLine(QEventLineType.Comment, myDesc);
         }
 
         /* Add the Payee */
-        addStringLine(QEvtLineType.Payee, "Dividend from "
-                                          + mySecurity.getName());
+        addStringLine(QEventLineType.Payee, "Dividend from "
+                                            + mySecurity.getName());
 
         /* Determine the gross amount */
         if (isReinvested) {
@@ -183,8 +184,8 @@ public class QHoldingEvent
         }
 
         /* Add the gross amount */
-        addXferAccountLine(QEvtLineType.SplitCategory, myPortfolio);
-        addDecimalLine(QEvtLineType.SplitAmount, myValue);
+        addXferAccountLine(QEventLineType.SplitCategory, myPortfolio);
+        addDecimalLine(QEventLineType.SplitAmount, myValue);
 
         /* If this is not a re-invest and not a holding */
         if ((!isReinvested)
@@ -192,8 +193,8 @@ public class QHoldingEvent
             /* Add the net amount */
             myValue = new JDecimal(myAmount);
             myValue.negate();
-            addXferAccountLine(QEvtLineType.SplitCategory, myXferAccount);
-            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+            addXferAccountLine(QEventLineType.SplitCategory, myXferAccount);
+            addDecimalLine(QEventLineType.SplitAmount, myValue);
         }
 
         /* If we have a tax credit */
@@ -201,8 +202,8 @@ public class QHoldingEvent
             /* Add the tax credit */
             myValue = new JDecimal(myTaxCredit);
             myValue.negate();
-            addCategoryLine(QEvtLineType.SplitCategory, myCategory);
-            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+            addCategoryLine(QEventLineType.SplitCategory, myCategory);
+            addDecimalLine(QEventLineType.SplitAmount, myValue);
         }
 
         /* Return the detail */
@@ -229,28 +230,28 @@ public class QHoldingEvent
         reset();
 
         /* Add the Date */
-        addDateLine(QEvtLineType.Date, myEvent.getDate());
+        addDateLine(QEventLineType.Date, myEvent.getDate());
 
         /* Add the Amount (as a simple decimal) */
         JDecimal myValue = new JDecimal(myAmount);
         if (!isHolding) {
             myValue.setZero();
         }
-        addDecimalLine(QEvtLineType.Amount, myValue);
+        addDecimalLine(QEventLineType.Amount, myValue);
 
         /* Add the Cleared status */
-        addStringLine(QEvtLineType.Cleared, myReconciled);
+        addStringLine(QEventLineType.Cleared, myReconciled);
 
         /* If we have a description */
         String myDesc = myEvent.getComments();
         if (myDesc != null) {
             /* Add the Description */
-            addStringLine(QEvtLineType.Comment, myDesc);
+            addStringLine(QEventLineType.Comment, myDesc);
         }
 
         /* Add the Payee */
-        addStringLine(QEvtLineType.Payee, "TakeOver of "
-                                          + mySecurity.getName());
+        addStringLine(QEventLineType.Payee, "TakeOver of "
+                                            + mySecurity.getName());
 
         /* If we are not transferring to the holding account */
         if (!isHolding) {
@@ -258,19 +259,19 @@ public class QHoldingEvent
             myValue = new JDecimal(myAmount);
 
             /* Add the gross amount */
-            addXferAccountLine(QEvtLineType.SplitCategory, myPortfolio);
-            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+            addXferAccountLine(QEventLineType.SplitCategory, myPortfolio);
+            addDecimalLine(QEventLineType.SplitAmount, myValue);
 
             /* Add the net amount */
             myValue.negate();
-            addXferAccountLine(QEvtLineType.SplitCategory, myXferAccount);
-            addDecimalLine(QEvtLineType.SplitAmount, myValue);
+            addXferAccountLine(QEventLineType.SplitCategory, myXferAccount);
+            addDecimalLine(QEventLineType.SplitAmount, myValue);
 
             /* else just transfer from the portfolio */
         } else {
 
             /* Add the portfolio Xfer */
-            addXferAccountLine(QEvtLineType.Category, myPortfolio);
+            addXferAccountLine(QEventLineType.Category, myPortfolio);
         }
 
         /* Return the detail */
