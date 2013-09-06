@@ -20,36 +20,16 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
 
 /**
- * Quicken Portfolio Event Line Types.
+ * Quicken Event Line Types.
  */
-public enum QPortfolioLineType implements QLineType {
+public enum QEventLineType implements QLineType {
     /**
      * Date.
      */
     Date("D"),
-
-    /**
-     * Action.
-     */
-    Action("N"),
-
-    /**
-     * Security.
-     */
-    Security("Y"),
-
-    /**
-     * Price.
-     */
-    Price("I"),
-
-    /**
-     * Quantity.
-     */
-    Quantity("Q"),
 
     /**
      * Amount.
@@ -67,24 +47,34 @@ public enum QPortfolioLineType implements QLineType {
     Comment("M"),
 
     /**
+     * Reference.
+     */
+    Reference("N"),
+
+    /**
      * Payee.
      */
     Payee("P"),
 
     /**
-     * Commission.
+     * Category.
      */
-    Commission("O"),
+    Category("L"),
 
     /**
-     * TransferAccount.
+     * SplitCategory.
      */
-    TransferAccount("L"),
+    SplitCategory("S"),
 
     /**
-     * TransferAmount.
+     * SplitComment.
      */
-    TransferAmount("$");
+    SplitComment("E"),
+
+    /**
+     * SplitAmount.
+     */
+    SplitAmount("$");
 
     /**
      * The symbol.
@@ -100,24 +90,21 @@ public enum QPortfolioLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QPortfolioLineType(final String pSymbol) {
+    private QEventLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }
 
     /**
-     * Parse a line to find the portfolio line type.
+     * Parse a line to find the event line type.
      * @param pLine the line to parse
-     * @return the Portfolio Line type (or null if no match)
+     * @return the Event Line type (or null if no match)
      */
-    public static QPortfolioLineType parseLine(final String pLine) {
-        /* Access first character of line */
-        String myChar = pLine.substring(0, 1);
-
+    public static QEventLineType parseLine(final String pLine) {
         /* Loop through the values */
-        for (QPortfolioLineType myType : values()) {
+        for (QEventLineType myType : values()) {
             /* Look for match */
-            if (myChar.equals(myType)) {
+            if (pLine.startsWith(myType.getSymbol())) {
                 /* Return match if found */
                 return myType;
             }

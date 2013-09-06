@@ -22,8 +22,15 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
 
+import java.util.Iterator;
+import java.util.List;
+
+import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QEventLineType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFCategoryLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFClearedLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFDateLine;
@@ -35,7 +42,280 @@ import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFXferAccountLi
 /**
  * Class representing a QIF Event record.
  */
-public class QIFEvent {
+public class QIFEvent
+        extends QIFRecord<QEventLineType> {
+    /**
+     * The Date.
+     */
+    private final JDateDay theDate;
+
+    /**
+     * The Cleared Flag.
+     */
+    private final Boolean isCleared;
+
+    /**
+     * The Amount.
+     */
+    private final JMoney theAmount;
+
+    /**
+     * The Comment.
+     */
+    private final String theComment;
+
+    /**
+     * The Reference.
+     */
+    private final String theReference;
+
+    /**
+     * Obtain the date.
+     * @return the date.
+     */
+    public JDateDay getDate() {
+        return theDate;
+    }
+
+    /**
+     * Is the record cleared.
+     * @return true/false.
+     */
+    public Boolean isCleared() {
+        return isCleared;
+    }
+
+    /**
+     * Obtain the amount.
+     * @return the amount.
+     */
+    public JMoney getAmount() {
+        return theAmount;
+    }
+
+    /**
+     * Obtain the reference.
+     * @return the reference.
+     */
+    public String getReference() {
+        return theReference;
+    }
+
+    /**
+     * Obtain the comment.
+     * @return the comment.
+     */
+    public String getComment() {
+        return theComment;
+    }
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pDate the Date of the event
+     * @param pCleared is the event cleared?
+     * @param pAmount the amount
+     * @param pReference the reference
+     * @param pComment the comment
+     */
+    protected QIFEvent(final QIFFile pFile,
+                       final JDateDay pDate,
+                       final Boolean pCleared,
+                       final JMoney pAmount,
+                       final String pReference,
+                       final String pComment) {
+        /* Call super-constructor */
+        super(pFile, QEventLineType.class);
+
+        /* Store values */
+        theDate = pDate;
+        isCleared = pCleared;
+        theAmount = pAmount;
+        theComment = pComment;
+        theReference = pReference;
+
+        /* Add the lines */
+        addLine(new QIFEventDateLine(pDate));
+        addLine(new QIFEventClearedLine(pCleared));
+        addLine(new QIFEventAmountLine(pAmount));
+        if (pReference != null) {
+            addLine(new QIFEventReferenceLine(pReference));
+        }
+        if (pComment != null) {
+            addLine(new QIFEventCommentLine(pComment));
+        }
+    }
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pFormatter the Data Formatter
+     * @param pLines the data lines
+     */
+    protected QIFEvent(final QIFFile pFile,
+                       final JDataFormatter pFormatter,
+                       final List<String> pLines) {
+        /* Call super-constructor */
+        super(pFile, QEventLineType.class);
+
+        /* Determine details */
+        JDateDay myDate = null;
+        Boolean myCleared = null;
+        JMoney myAmount = null;
+        String myComment = null;
+        String myReference = null;
+
+        /* Current split record */
+        QIFSplitEvent mySplit = null;
+
+        /* Loop through the lines */
+        Iterator<String> myIterator = pLines.iterator();
+        while (myIterator.hasNext()) {
+            String myLine = myIterator.next();
+
+            /* Determine the category */
+            QEventLineType myType = QEventLineType.parseLine(myLine);
+            if (myType != null) {
+                /* Access data */
+                String myData = myLine.substring(myType.getSymbol().length());
+
+                /* Switch on line type */
+                switch (myType) {
+                    case Date:
+                        JDateDay myDateDay = pFormatter.getDateFormatter().parseDateDay(myData);
+                        addLine(new QIFEventDateLine(myDateDay));
+                        myDate = myDateDay;
+                        break;
+                    case Cleared:
+                        Boolean myFlag = Boolean.parseBoolean(myData);
+                        addLine(new QIFEventClearedLine(myFlag));
+                        myCleared = myFlag;
+                        break;
+                    case Amount:
+                        JMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        addLine(new QIFEventAmountLine(myMoney));
+                        myAmount = myMoney;
+                        break;
+                    case Comment:
+                        addLine(new QIFEventCommentLine(myData));
+                        myComment = myData;
+                        break;
+                    case Reference:
+                        addLine(new QIFEventReferenceLine(myData));
+                        myReference = myData;
+                        break;
+                    case Payee:
+                        addLine(new QIFEventPayeeDescLine(myData));
+                        break;
+                    case Category:
+                        /* Check for account */
+                        String myAccount = QIFXferAccountLine.parseAccount(myData);
+                        if (myAccount != null) {
+                            addLine(new QIFEventAccountLine(pFile.getAccount(myAccount)));
+                        } else {
+                            addLine(new QIFEventCategoryLine(pFile.getCategory(myData)));
+                        }
+                        break;
+                    case SplitCategory:
+                        /* Check for account */
+                        myAccount = QIFXferAccountLine.parseAccount(myData);
+                        if (myAccount != null) {
+                            mySplit = new QIFSplitEvent(pFile, pFile.getAccount(myAccount));
+                        } else {
+                            mySplit = new QIFSplitEvent(pFile, pFile.getCategory(myData));
+                        }
+
+                        /* Record new split record */
+                        addRecord(mySplit);
+                        break;
+                    case SplitAmount:
+                        myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        mySplit.setSplitAmount(myMoney);
+                        break;
+                    case SplitComment:
+                        mySplit.setSplitComment(myData);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        /* Build details */
+        theDate = myDate;
+        isCleared = myCleared;
+        theAmount = myAmount;
+        theComment = myComment;
+        theReference = myReference;
+    }
+
+    /**
+     * record payee.
+     * @param pPayee the payee
+     */
+    protected void recordPayee(final String pPayee) {
+        /* Add payee line */
+        addLine(new QIFEventPayeeDescLine(pPayee));
+    }
+
+    /**
+     * record transfer account.
+     * @param pAccount the account
+     */
+    protected void recordAccount(final Account pAccount) {
+        /* Add account line */
+        QIFFile myFile = getFile();
+        addLine(new QIFEventAccountLine(myFile.getAccount(pAccount.getName())));
+    }
+
+    /**
+     * record category.
+     * @param pCategory the category
+     */
+    protected void recordCategory(final EventCategory pCategory) {
+        /* Add category line */
+        QIFFile myFile = getFile();
+        addLine(new QIFEventCategoryLine(myFile.getCategory(pCategory.getName())));
+    }
+
+    /**
+     * record new Split record for transfer.
+     * @param pAccount the account
+     * @param pAmount the amount
+     * @param pComment the comment
+     */
+    protected void recordSplitRecord(final Account pAccount,
+                                     final JMoney pAmount,
+                                     final String pComment) {
+        /* Create new split and add it */
+        QIFFile myFile = getFile();
+        QIFSplitEvent mySplit = new QIFSplitEvent(myFile, myFile.getAccount(pAccount.getName()));
+        mySplit.setSplitAmount(pAmount);
+        if (pComment != null) {
+            mySplit.setSplitComment(pComment);
+        }
+        addRecord(mySplit);
+    }
+
+    /**
+     * record new Split record for category.
+     * @param pCategory the category
+     * @param pAmount the amount
+     * @param pComment the comment
+     */
+    protected void recordSplitRecord(final EventCategory pCategory,
+                                     final JMoney pAmount,
+                                     final String pComment) {
+        /* Create new split and add it */
+        QIFFile myFile = getFile();
+        QIFSplitEvent mySplit = new QIFSplitEvent(myFile, myFile.getCategory(pCategory.getName()));
+        mySplit.setSplitAmount(pAmount);
+        if (pComment != null) {
+            mySplit.setSplitComment(pComment);
+        }
+        addRecord(mySplit);
+    }
+
     /**
      * The Event Date line.
      */
@@ -59,7 +339,7 @@ public class QIFEvent {
     /**
      * The Event Reference line.
      */
-    public static class QIFEventReferenceLine
+    public class QIFEventReferenceLine
             extends QIFStringLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
@@ -87,7 +367,7 @@ public class QIFEvent {
     /**
      * The Event Comment line.
      */
-    public static class QIFEventCommentLine
+    public class QIFEventCommentLine
             extends QIFStringLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
@@ -115,7 +395,7 @@ public class QIFEvent {
     /**
      * The Event Cleared line.
      */
-    public static class QIFEventClearedLine
+    public class QIFEventClearedLine
             extends QIFClearedLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
@@ -135,7 +415,7 @@ public class QIFEvent {
     /**
      * The Event Payee Account line.
      */
-    public static class QIFEventPayeeAccountLine
+    public class QIFEventPayeeAccountLine
             extends QIFPayeeLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
@@ -155,7 +435,7 @@ public class QIFEvent {
     /**
      * The Event Payee Description line.
      */
-    public static class QIFEventPayeeDescLine
+    public class QIFEventPayeeDescLine
             extends QIFStringLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
@@ -175,7 +455,7 @@ public class QIFEvent {
     /**
      * The Event Amount line.
      */
-    public static class QIFEventAmountLine
+    public class QIFEventAmountLine
             extends QIFMoneyLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
@@ -203,7 +483,7 @@ public class QIFEvent {
     /**
      * The Event Account line.
      */
-    public static class QIFEventAccountLine
+    public class QIFEventAccountLine
             extends QIFXferAccountLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
@@ -223,7 +503,7 @@ public class QIFEvent {
     /**
      * The Event Category line.
      */
-    public static class QIFEventCategoryLine
+    public class QIFEventCategoryLine
             extends QIFCategoryLine<QEventLineType> {
         @Override
         public QEventLineType getLineType() {
@@ -237,102 +517,6 @@ public class QIFEvent {
         protected QIFEventCategoryLine(final QIFEventCategory pCategory) {
             /* Call super-constructor */
             super(pCategory);
-        }
-    }
-
-    /**
-     * The Event Split Account line.
-     */
-    public static class QIFEventSplitAccountLine
-            extends QIFXferAccountLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.SplitCategory;
-        }
-
-        /**
-         * Constructor.
-         * @param pAccount the account
-         */
-        protected QIFEventSplitAccountLine(final QIFAccount pAccount) {
-            /* Call super-constructor */
-            super(pAccount);
-        }
-    }
-
-    /**
-     * The Event Split Category line.
-     */
-    public static class QIFEventSplitCategoryLine
-            extends QIFCategoryLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.SplitCategory;
-        }
-
-        /**
-         * Constructor.
-         * @param pCategory the category
-         */
-        protected QIFEventSplitCategoryLine(final QIFEventCategory pCategory) {
-            /* Call super-constructor */
-            super(pCategory);
-        }
-    }
-
-    /**
-     * The Event Split Amount line.
-     */
-    public static class QIFEventSplitAmountLine
-            extends QIFMoneyLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.SplitAmount;
-        }
-
-        /**
-         * Obtain Amount.
-         * @return the amount
-         */
-        public JMoney getAmount() {
-            return getMoney();
-        }
-
-        /**
-         * Constructor.
-         * @param pAmount the amount
-         */
-        protected QIFEventSplitAmountLine(final JMoney pAmount) {
-            /* Call super-constructor */
-            super(pAmount);
-        }
-    }
-
-    /**
-     * The Event Split Comment line.
-     */
-    public static class QIFEventSplitCommentLine
-            extends QIFStringLine<QEventLineType> {
-        @Override
-        public QEventLineType getLineType() {
-            return QEventLineType.SplitComment;
-        }
-
-        /**
-         * Obtain Comment.
-         * @return the comment
-         */
-        public String getComment() {
-            return getValue();
-        }
-
-        /**
-         * Constructor.
-         * @param pComment the comment
-         */
-        protected QIFEventSplitCommentLine(final String pComment) {
-            /* Call super-constructor */
-            super(pComment);
         }
     }
 }

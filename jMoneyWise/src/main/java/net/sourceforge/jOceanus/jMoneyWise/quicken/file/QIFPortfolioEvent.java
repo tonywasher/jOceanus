@@ -22,12 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
 
+import java.util.Iterator;
+import java.util.List;
+
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QActionType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QPortfolioLineType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFClearedLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFDateLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFMoneyLine;
@@ -42,7 +48,264 @@ import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFXferAccountLi
 /**
  * Class representing a QIF Portfolio Event record.
  */
-public class QIFPortfolioEvent {
+public class QIFPortfolioEvent
+        extends QIFRecord<QPortfolioLineType> {
+    /**
+     * The Date.
+     */
+    private final JDateDay theDate;
+
+    /**
+     * The Cleared Flag.
+     */
+    private final Boolean isCleared;
+
+    /**
+     * The Action.
+     */
+    private final QActionType theAction;
+
+    /**
+     * The Amount.
+     */
+    private final JMoney theAmount;
+
+    /**
+     * The Comment.
+     */
+    private final String theComment;
+
+    /**
+     * Obtain the date.
+     * @return the date.
+     */
+    public JDateDay getDate() {
+        return theDate;
+    }
+
+    /**
+     * Is the record cleared.
+     * @return true/false.
+     */
+    public Boolean isCleared() {
+        return isCleared;
+    }
+
+    /**
+     * Obtain the action.
+     * @return the action.
+     */
+    public QActionType getAction() {
+        return theAction;
+    }
+
+    /**
+     * Obtain the amount.
+     * @return the amount.
+     */
+    public JMoney getAmount() {
+        return theAmount;
+    }
+
+    /**
+     * Obtain the comment.
+     * @return the comment.
+     */
+    public String getComment() {
+        return theComment;
+    }
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pDate the Date of the event
+     * @param pAction the action
+     * @param pCleared is the event cleared?
+     * @param pAmount the amount
+     * @param pComment the comment
+     */
+    protected QIFPortfolioEvent(final QIFFile pFile,
+                                final JDateDay pDate,
+                                final QActionType pAction,
+                                final Boolean pCleared,
+                                final JMoney pAmount,
+                                final String pComment) {
+        /* Call super-constructor */
+        super(pFile, QPortfolioLineType.class);
+
+        /* Store values */
+        theDate = pDate;
+        isCleared = pCleared;
+        theAmount = pAmount;
+        theComment = pComment;
+        theAction = pAction;
+
+        /* Add the lines */
+        addLine(new QIFPortfolioDateLine(pDate));
+        addLine(new QIFPortfolioActionLine(pAction));
+        addLine(new QIFPortfolioClearedLine(pCleared));
+        addLine(new QIFPortfolioAmountLine(pAmount));
+        if (pComment != null) {
+            addLine(new QIFPortfolioCommentLine(pComment));
+        }
+    }
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pFormatter the Data Formatter
+     * @param pLines the data lines
+     */
+    protected QIFPortfolioEvent(final QIFFile pFile,
+                                final JDataFormatter pFormatter,
+                                final List<String> pLines) {
+        /* Call super-constructor */
+        super(pFile, QPortfolioLineType.class);
+
+        /* Determine details */
+        JDateDay myDate = null;
+        QActionType myAction = null;
+        Boolean myCleared = null;
+        JMoney myAmount = null;
+        String myComment = null;
+
+        /* Loop through the lines */
+        Iterator<String> myIterator = pLines.iterator();
+        while (myIterator.hasNext()) {
+            String myLine = myIterator.next();
+
+            /* Determine the category */
+            QPortfolioLineType myType = QPortfolioLineType.parseLine(myLine);
+            if (myType != null) {
+                /* Access data */
+                String myData = myLine.substring(myType.getSymbol().length());
+
+                /* Switch on line type */
+                switch (myType) {
+                    case Date:
+                        JDateDay myDateDay = pFormatter.getDateFormatter().parseDateDay(myData);
+                        addLine(new QIFPortfolioDateLine(myDateDay));
+                        myDate = myDateDay;
+                        break;
+                    case Cleared:
+                        Boolean myFlag = Boolean.parseBoolean(myData);
+                        addLine(new QIFPortfolioClearedLine(myFlag));
+                        myCleared = myFlag;
+                        break;
+                    case Amount:
+                        JMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        addLine(new QIFPortfolioAmountLine(myMoney));
+                        myAmount = myMoney;
+                        break;
+                    case Comment:
+                        addLine(new QIFPortfolioCommentLine(myData));
+                        myComment = myData;
+                        break;
+                    case Action:
+                        myAction = QActionType.parseLine(myData);
+                        addLine(new QIFPortfolioActionLine(myAction));
+                        break;
+                    case Price:
+                        JPrice myPrice = pFormatter.getDecimalParser().parsePriceValue(myData);
+                        addLine(new QIFPortfolioPriceLine(myPrice));
+                        break;
+                    case Commission:
+                        myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        addLine(new QIFPortfolioCommissionLine(myMoney));
+                        break;
+                    case Payee:
+                        addLine(new QIFPortfolioPayeeDescLine(myData));
+                        break;
+                    case Quantity:
+                        JUnits myUnits = pFormatter.getDecimalParser().parseUnitsValue(myData);
+                        addLine(new QIFPortfolioQuantityLine(myUnits));
+                        break;
+                    case Security:
+                        addLine(new QIFPortfolioSecurityLine(pFile.getSecurity(myData)));
+                        break;
+                    case TransferAccount:
+                        /* Look for account */
+                        String myAccount = QIFXferAccountLine.parseAccount(myData);
+                        addLine(new QIFPortfolioAccountLine(pFile.getAccount(myAccount)));
+                        break;
+                    case TransferAmount:
+                        myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        addLine(new QIFPortfolioXferAmountLine(myMoney));
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        /* Build details */
+        theDate = myDate;
+        theAction = myAction;
+        isCleared = myCleared;
+        theAmount = myAmount;
+        theComment = myComment;
+    }
+
+    /**
+     * record security.
+     * @param pSecurity the security
+     */
+    protected void recordSecurity(final Account pSecurity) {
+        /* Add security line */
+        addLine(new QIFPortfolioSecurityLine(getFile().getSecurity(pSecurity.getName())));
+    }
+
+    /**
+     * record payee.
+     * @param pPayee the payee
+     */
+    protected void recordPayee(final String pPayee) {
+        /* Add payee line */
+        addLine(new QIFPortfolioPayeeDescLine(pPayee));
+    }
+
+    /**
+     * record transfer.
+     * @param pAccount the transfer account
+     * @param pAmount the transfer amount
+     */
+    protected void recordXfer(final Account pAccount,
+                              final JMoney pAmount) {
+        /* Add transfer lines */
+        addLine(new QIFPortfolioAccountLine(getFile().getAccount(pAccount.getName())));
+        addLine(new QIFPortfolioXferAmountLine(pAmount));
+    }
+
+    /**
+     * record quantity.
+     * @param pQuantity the units quantity
+     */
+    protected void recordQuantity(final JUnits pQuantity) {
+        /* Add quantity line */
+        addLine(new QIFPortfolioQuantityLine(pQuantity));
+    }
+
+    /**
+     * record quantity.
+     * @param pRatio the split ratio
+     */
+    protected void recordQuantity(final JRatio pRatio) {
+        /* Add quantity line */
+        addLine(new QIFPortfolioSplitRatioLine(pRatio));
+    }
+
+    /**
+     * record price.
+     * @param pPrice the price
+     * @param pCommission the commission
+     */
+    protected void recordPrice(final JPrice pPrice,
+                               final JMoney pCommission) {
+        /* Add price and commission lines */
+        addLine(new QIFPortfolioPriceLine(pPrice));
+        addLine(new QIFPortfolioCommissionLine(pCommission));
+    }
+
     /**
      * The Portfolio Date line.
      */
@@ -66,7 +329,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Comment line.
      */
-    public static class QIFPortfolioCommentLine
+    public class QIFPortfolioCommentLine
             extends QIFStringLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -94,7 +357,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Cleared line.
      */
-    public static class QIFPortfolioClearedLine
+    public class QIFPortfolioClearedLine
             extends QIFClearedLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -114,7 +377,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Amount line.
      */
-    public static class QIFPortfolioAmountLine
+    public class QIFPortfolioAmountLine
             extends QIFMoneyLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -142,7 +405,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Commission line.
      */
-    public static class QIFPortfolioCommissionLine
+    public class QIFPortfolioCommissionLine
             extends QIFMoneyLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -170,7 +433,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Price line.
      */
-    public static class QIFPortfolioPriceLine
+    public class QIFPortfolioPriceLine
             extends QIFPriceLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -195,7 +458,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Quantity line.
      */
-    public static class QIFPortfolioQuantityLine
+    public class QIFPortfolioQuantityLine
             extends QIFUnitsLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -220,7 +483,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Split Ratio line.
      */
-    public static class QIFPortfolioSplitRatioLine
+    public class QIFPortfolioSplitRatioLine
             extends QIFRatioLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -245,7 +508,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Action line.
      */
-    public static class QIFPortfolioActionLine
+    public class QIFPortfolioActionLine
             extends QIFLine<QPortfolioLineType> {
         /**
          * The action type.
@@ -285,7 +548,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Security line.
      */
-    public static class QIFPortfolioSecurityLine
+    public class QIFPortfolioSecurityLine
             extends QIFSecurityLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -305,7 +568,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Payee Account line.
      */
-    public static class QIFPortfolioPayeeAccountLine
+    public class QIFPortfolioPayeeAccountLine
             extends QIFPayeeLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -325,7 +588,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Payee Description line.
      */
-    public static class QIFPortfolioPayeeDescLine
+    public class QIFPortfolioPayeeDescLine
             extends QIFStringLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -345,7 +608,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Account line.
      */
-    public static class QIFPortfolioAccountLine
+    public class QIFPortfolioAccountLine
             extends QIFXferAccountLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {
@@ -365,7 +628,7 @@ public class QIFPortfolioEvent {
     /**
      * The Portfolio Transfer Amount line.
      */
-    public static class QIFPortfolioXferAmountLine
+    public class QIFPortfolioXferAmountLine
             extends QIFMoneyLine<QPortfolioLineType> {
         @Override
         public QPortfolioLineType getLineType() {

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken;
+package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;

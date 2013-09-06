@@ -32,11 +32,10 @@ import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account;
+import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QAccount;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QPrice;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity;
 
 /**
  * QIF File representation.
@@ -96,9 +95,9 @@ public class QIFFile {
      * Register category.
      * @param pCategory the category
      */
-    public void registerCategory(final QCategory pCategory) {
+    public void registerCategory(final EventCategory pCategory) {
         /* Create the new Category and add to the map */
-        QIFEventCategory myCat = new QIFEventCategory(pCategory);
+        QIFEventCategory myCat = new QIFEventCategory(this, pCategory);
         theCategories.put(myCat.getName(), myCat);
     }
 
@@ -106,9 +105,9 @@ public class QIFFile {
      * Register account.
      * @param pAccount the account
      */
-    public void registerAccount(final QAccount pAccount) {
+    public void registerAccount(final Account pAccount) {
         /* Create the new Account and add to the map */
-        QIFAccount myAct = new QIFAccount(pAccount);
+        QIFAccount myAct = new QIFAccount(this, pAccount);
         theAccounts.put(myAct.getName(), myAct);
     }
 
@@ -116,20 +115,20 @@ public class QIFFile {
      * Register security.
      * @param pSecurity the security
      */
-    public void registerSecurity(final QSecurity pSecurity) {
+    public void registerSecurity(final Account pSecurity) {
         /* Create the new Security and add to the map */
-        QIFSecurity mySec = new QIFSecurity(pSecurity);
+        QIFSecurity mySec = new QIFSecurity(this, pSecurity);
         theSecurities.put(mySec.getName(), mySec);
+    }
 
-        /* Obtain the price iterator */
-        Iterator<QPrice> myIterator = pSecurity.priceIterator();
-        while (myIterator.hasNext()) {
-            QPrice myCurr = myIterator.next();
-
-            /* Allocate price and add to list */
-            QIFPrice myPrice = new QIFPrice(this, myCurr);
-            thePrices.add(myPrice);
-        }
+    /**
+     * Register price.
+     * @param pPrice the price
+     */
+    public void registerPrice(final AccountPrice pPrice) {
+        /* Allocate price and add to list */
+        QIFPrice myPrice = new QIFPrice(this, pPrice);
+        thePrices.add(myPrice);
     }
 
     /**

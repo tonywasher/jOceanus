@@ -57,7 +57,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxRegime.TaxRegimeList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearInfoTypeList;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFPreference;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jPreferenceSet.MaintPreferences;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;

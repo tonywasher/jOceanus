@@ -46,6 +46,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory.QCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFFile;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
@@ -138,6 +139,30 @@ public class QAnalysis
      */
     protected FinanceData getDataSet() {
         return theData;
+    }
+
+    /**
+     * Obtain categories iterator.
+     * @return the iterator
+     */
+    public Iterator<QCategory> categoryIterator() {
+        return theCategories.categoryIterator();
+    }
+
+    /**
+     * Obtain accounts iterator.
+     * @return the iterator
+     */
+    public Iterator<QAccount> accountIterator() {
+        return theAccounts.values().iterator();
+    }
+
+    /**
+     * Obtain securities iterator.
+     * @return the iterator
+     */
+    public Iterator<QSecurity> securityIterator() {
+        return theSecurities.securityIterator();
     }
 
     /**
@@ -568,23 +593,44 @@ public class QAnalysis
      * @return the QIF File
      */
     protected QIFFile buildQIFFile() {
-        /* Create the new file */
+        /* Create new QIF File */
         QIFFile myFile = new QIFFile();
 
-        /* Register the categories */
-        theCategories.buildQIFFile(myFile);
+        /* Loop through the categories */
+        Iterator<QCategory> myCatIterator = categoryIterator();
+        while (myCatIterator.hasNext()) {
+            QCategory myCategory = myCatIterator.next();
+
+            /* Register Category details */
+            myFile.registerCategory(myCategory.getCategory());
+        }
 
         /* Loop through the parents */
-        Iterator<QAccount> myIterator = theAccounts.values().iterator();
+        Iterator<QAccount> myIterator = accountIterator();
         while (myIterator.hasNext()) {
             QAccount myAccount = myIterator.next();
 
             /* Register Account details */
-            myFile.registerAccount(myAccount);
+            myFile.registerAccount(myAccount.getAccount());
         }
 
-        /* Register the securities */
-        theSecurities.buildQIFFile(myFile);
+        /* Loop through the securities */
+        Iterator<QSecurity> mySecIterator = securityIterator();
+        while (mySecIterator.hasNext()) {
+            QSecurity mySecurity = mySecIterator.next();
+
+            /* Register Security details */
+            myFile.registerSecurity(mySecurity.getSecurity());
+
+            /* Obtain the price iterator */
+            Iterator<QPrice> myPrcIterator = mySecurity.priceIterator();
+            while (myPrcIterator.hasNext()) {
+                QPrice myCurr = myPrcIterator.next();
+
+                /* Register price details */
+                myFile.registerPrice(myCurr.getPrice());
+            }
+        }
 
         /* Return the QIF File */
         return myFile;

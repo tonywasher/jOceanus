@@ -32,8 +32,9 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QActionType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QPortfolioLineType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QActionType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QPortfolioLineType;
 import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAttribute;
 

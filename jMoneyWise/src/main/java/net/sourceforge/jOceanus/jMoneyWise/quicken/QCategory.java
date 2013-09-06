@@ -32,8 +32,7 @@ import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QCategoryLineType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFFile;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QCategoryLineType;
 
 /**
  * Quicken Category.
@@ -54,6 +53,14 @@ public final class QCategory
      * The transaction type.
      */
     private final TransactionType theType;
+
+    /**
+     * Obtain the category.
+     * @return the name
+     */
+    public EventCategory getCategory() {
+        return theCategory;
+    }
 
     /**
      * Obtain the name of the category.
@@ -268,26 +275,70 @@ public final class QCategory
         }
 
         /**
-         * Build QIF File from list.
-         * @param pFile the QIF File
+         * Obtain category iterator.
+         * @return the iterator
          */
-        protected void buildQIFFile(final QIFFile pFile) {
-            /* Loop through the parents */
-            Iterator<QCategory> myIterator = theParents.values().iterator();
-            while (myIterator.hasNext()) {
-                QCategory myCategory = myIterator.next();
+        protected Iterator<QCategory> categoryIterator() {
+            return new CategoryIterator();
+        }
 
-                /* Register Category details */
-                pFile.registerCategory(myCategory);
+        /**
+         * Category Iterator class.
+         */
+        private final class CategoryIterator
+                implements Iterator<QCategory> {
+            /**
+             * Parents iterator.
+             */
+            private final Iterator<QCategory> theParentIterator;
+
+            /**
+             * Category iterator.
+             */
+            private final Iterator<QCategory> theCategoryIterator;
+
+            /**
+             * Use parents.
+             */
+            private boolean useParents = true;
+
+            /**
+             * Constructor.
+             */
+            private CategoryIterator() {
+                /* Allocate iterators */
+                theParentIterator = theParents.values().iterator();
+                theCategoryIterator = theCategories.values().iterator();
             }
 
-            /* Loop through the categories */
-            myIterator = theCategories.values().iterator();
-            while (myIterator.hasNext()) {
-                QCategory myCategory = myIterator.next();
+            @Override
+            public boolean hasNext() {
+                /* If we are looking for parents */
+                if (useParents) {
+                    /* Check parents */
+                    if (theParentIterator.hasNext()) {
+                        return true;
+                    }
 
-                /* Register Category details */
-                pFile.registerCategory(myCategory);
+                    /* Note parents are finished */
+                    useParents = false;
+                }
+
+                /* Handle call here */
+                return theCategoryIterator.hasNext();
+            }
+
+            @Override
+            public QCategory next() {
+                /* Check for parents entry */
+                return (useParents)
+                        ? theParentIterator.next()
+                        : theCategoryIterator.next();
+            }
+
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException();
             }
         }
     }

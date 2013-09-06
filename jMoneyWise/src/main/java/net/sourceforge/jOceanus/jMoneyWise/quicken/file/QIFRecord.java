@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QLineType;
 
 /**
  * QIF File record representation.
@@ -61,6 +62,11 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
     protected static final char QIF_EOL = '\n';
 
     /**
+     * The QIF File.
+     */
+    private final QIFFile theFile;
+
+    /**
      * Class of lines.
      */
     private final Class<T> theClass;
@@ -76,14 +82,25 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
     private final List<QIFRecord<T>> theSubList;
 
     /**
+     * Obtain file.
+     * @return the file
+     */
+    protected QIFFile getFile() {
+        return theFile;
+    }
+
+    /**
      * Constructor.
+     * @param pFile the QIF File
      * @param pClass the class of the lines
      * @param hasSubRecords does the record have subRecords?
      */
-    protected QIFRecord(final Class<T> pClass,
+    protected QIFRecord(final QIFFile pFile,
+                        final Class<T> pClass,
                         final boolean hasSubRecords) {
-        /* Record the class */
+        /* Record the class and file */
         theClass = pClass;
+        theFile = pFile;
 
         /* Create the map */
         theMap = new HashMap<T, QIFLine<T>>();
@@ -96,11 +113,13 @@ public abstract class QIFRecord<T extends Enum<T> & QLineType> {
 
     /**
      * Constructor.
+     * @param pFile the QIF File
      * @param pClass the class of the lines
      */
-    protected QIFRecord(final Class<T> pClass) {
+    protected QIFRecord(final QIFFile pFile,
+                        final Class<T> pClass) {
         /* Record the class */
-        this(pClass, false);
+        this(pFile, pClass, false);
     }
 
     /**

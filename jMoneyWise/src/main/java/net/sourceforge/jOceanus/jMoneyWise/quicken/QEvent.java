@@ -34,7 +34,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QEventLineType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QEventLineType;
 import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
 
 /**

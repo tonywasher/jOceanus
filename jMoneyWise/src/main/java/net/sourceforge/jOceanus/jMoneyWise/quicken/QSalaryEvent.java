@@ -27,7 +27,7 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QEventLineType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QEventLineType;
 
 /**
  * Quicken Salary Event.

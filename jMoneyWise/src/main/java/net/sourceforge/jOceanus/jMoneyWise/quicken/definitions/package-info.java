@@ -20,15 +20,8 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
-
 /**
- * Interface for line types.
+ * Quicken definitions for jMoneyWise.
  */
-public interface QLineType {
-    /**
-     * Get line symbol.
-     * @return the symbol
-     */
-    String getSymbol();
-}
+package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
+

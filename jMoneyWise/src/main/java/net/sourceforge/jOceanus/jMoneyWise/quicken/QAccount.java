@@ -33,7 +33,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventBaseList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QEvent.QEventList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QPortfolioEvent.QPortfolioEventList;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QAccountLineType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QAccountLineType;
 
 /**
  * Quicken Account.

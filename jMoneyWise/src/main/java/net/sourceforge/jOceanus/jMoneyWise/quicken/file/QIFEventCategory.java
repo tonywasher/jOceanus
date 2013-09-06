@@ -26,8 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.TransactionType;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QCategoryLineType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
 
 /**
@@ -89,16 +90,18 @@ public class QIFEventCategory
 
     /**
      * Constructor.
+     * @param pFile the QIF File
      * @param pCategory the Event Category
      */
-    public QIFEventCategory(final QCategory pCategory) {
+    public QIFEventCategory(final QIFFile pFile,
+                            final EventCategory pCategory) {
         /* Call super-constructor */
-        super(QCategoryLineType.class);
+        super(pFile, QCategoryLineType.class);
 
         /* Store data */
         theName = pCategory.getName();
         theDesc = pCategory.getDesc();
-        theType = pCategory.getType();
+        theType = TransactionType.deriveType(pCategory);
 
         /* Build lines */
         addLine(new QIFCategoryNameLine(theName));
@@ -114,11 +117,13 @@ public class QIFEventCategory
 
     /**
      * Constructor.
+     * @param pFile the QIF File
      * @param pLines the data lines
      */
-    protected QIFEventCategory(final List<String> pLines) {
+    protected QIFEventCategory(final QIFFile pFile,
+                               final List<String> pLines) {
         /* Call super-constructor */
-        super(QCategoryLineType.class);
+        super(pFile, QCategoryLineType.class);
 
         /* Determine details */
         String myName = null;
@@ -156,6 +161,7 @@ public class QIFEventCategory
                         break;
                     case Tax:
                     default:
+                        break;
                 }
             }
         }

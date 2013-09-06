@@ -28,7 +28,7 @@ import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jDataModels.threads.WorkerThread;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QDataSet;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QIFPreference;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFPreference;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 

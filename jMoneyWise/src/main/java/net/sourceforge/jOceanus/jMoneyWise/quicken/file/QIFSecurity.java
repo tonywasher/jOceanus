@@ -27,9 +27,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QSecurityLineType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
 
 /**
@@ -99,16 +99,18 @@ public class QIFSecurity
 
     /**
      * Constructor.
+     * @param pFile the QIF File
      * @param pSecurity the Security
      */
-    public QIFSecurity(final QSecurity pSecurity) {
+    public QIFSecurity(final QIFFile pFile,
+                       final Account pSecurity) {
         /* Call super-constructor */
-        super(QSecurityLineType.class);
+        super(pFile, QSecurityLineType.class);
 
         /* Store data */
         theName = pSecurity.getName();
         theSymbol = pSecurity.getSymbol();
-        theClass = pSecurity.getAccountClass();
+        theClass = pSecurity.getAccountCategoryClass();
 
         /* Build lines */
         addLine(new QIFSecurityNameLine(theName));
@@ -118,13 +120,13 @@ public class QIFSecurity
 
     /**
      * Constructor.
-     * @param pFormatter the formatter
+     * @param pFile the QIF File
      * @param pLines the data lines
      */
-    protected QIFSecurity(final JDataFormatter pFormatter,
+    protected QIFSecurity(final QIFFile pFile,
                           final List<String> pLines) {
         /* Call super-constructor */
-        super(QSecurityLineType.class);
+        super(pFile, QSecurityLineType.class);
 
         /* Determine details */
         String myName = null;

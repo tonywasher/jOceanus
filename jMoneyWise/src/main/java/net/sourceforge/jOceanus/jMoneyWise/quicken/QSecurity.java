@@ -37,8 +37,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFFile;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QSecurityLineType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QSecurityLineType;
 
 /**
  * Quicken Security.
@@ -64,6 +63,14 @@ public final class QSecurity
      * The prices for this security.
      */
     private final List<QPrice> thePrices;
+
+    /**
+     * Obtain the security.
+     * @return the security
+     */
+    public Account getSecurity() {
+        return theSecurity;
+    }
 
     /**
      * Obtain the security name.
@@ -387,18 +394,11 @@ public final class QSecurity
         }
 
         /**
-         * Build QIF File from list.
-         * @param pFile the QIF File
+         * Obtain securities iterator.
+         * @return the iterator
          */
-        protected void buildQIFFile(final QIFFile pFile) {
-            /* Loop through the securities */
-            Iterator<QSecurity> myIterator = theSecurities.values().iterator();
-            while (myIterator.hasNext()) {
-                QSecurity mySecurity = myIterator.next();
-
-                /* Register Security details */
-                pFile.registerSecurity(mySecurity);
-            }
+        public Iterator<QSecurity> securityIterator() {
+            return theSecurities.values().iterator();
         }
     }
 }

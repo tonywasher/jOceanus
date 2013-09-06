@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
 
 /**
  * Quicken Action Types.
@@ -137,14 +137,34 @@ public enum QActionType {
     Exercise,
 
     /**
-     * Options ExerciseX.
+     * Options ExercisX.
      */
-    ExerciseX,
+    ExercisX,
 
     /**
      * Options Expire.
      */
-    Expire;
+    Expire,
+
+    /**
+     * Short Sell.
+     */
+    ShtSell,
+
+    /**
+     * Short SellX.
+     */
+    ShtSellX,
+
+    /**
+     * Cover ShortSell.
+     */
+    CvrShrt,
+
+    /**
+     * Cover ShortSellX.
+     */
+    CvrShrtX;
 
     /**
      * Parse a line to find the portfolio action type.
@@ -155,7 +175,7 @@ public enum QActionType {
         /* Loop through the values */
         for (QActionType myType : values()) {
             /* Look for match */
-            if (pLine.equals(myType)) {
+            if (pLine.equals(myType.toString())) {
                 /* Return match if found */
                 return myType;
             }

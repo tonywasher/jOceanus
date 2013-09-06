@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken;
+package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
 
 /**
  * Output types.
@@ -49,7 +49,7 @@ public enum QIFType {
     /**
      * Quicken suffix.
      */
-    protected static final String QIF_SUFFIX = ".qif";
+    public static final String QIF_SUFFIX = ".qif";
 
     /**
      * Should we use a consolidated file?

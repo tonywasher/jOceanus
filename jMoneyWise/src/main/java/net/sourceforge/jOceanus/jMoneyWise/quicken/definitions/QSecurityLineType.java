@@ -20,31 +20,26 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
 
 /**
- * Quicken Account Line Types.
+ * Quicken Security Line Types.
  */
-public enum QAccountLineType implements QLineType {
+public enum QSecurityLineType implements QLineType {
     /**
      * Name.
      */
     Name("N"),
 
     /**
-     * Account Type.
+     * Symbol.
      */
-    Type("T"),
+    Symbol("S"),
 
     /**
-     * Description.
+     * Security Type.
      */
-    Description("D"),
-
-    /**
-     * Credit Limit.
-     */
-    CreditLimit("L");
+    SecType("T");
 
     /**
      * The symbol.
@@ -60,24 +55,21 @@ public enum QAccountLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QAccountLineType(final String pSymbol) {
+    private QSecurityLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }
 
     /**
-     * Parse a line to find the account line type.
+     * Parse a line to find the security line type.
      * @param pLine the line to parse
-     * @return the Account Line type (or null if no match)
+     * @return the Security Line type (or null if no match)
      */
-    public static QAccountLineType parseLine(final String pLine) {
-        /* Access first character of line */
-        String myChar = pLine.substring(0, 1);
-
+    public static QSecurityLineType parseLine(final String pLine) {
         /* Loop through the values */
-        for (QAccountLineType myType : values()) {
+        for (QSecurityLineType myType : values()) {
             /* Look for match */
-            if (myChar.equals(myType)) {
+            if (pLine.startsWith(myType.getSymbol())) {
                 /* Return match if found */
                 return myType;
             }

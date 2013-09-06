@@ -27,7 +27,8 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QLineType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QLineType;
 
 /**
  * Quicken item.

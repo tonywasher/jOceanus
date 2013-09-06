@@ -35,6 +35,8 @@ import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFPreference;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFType;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 /**

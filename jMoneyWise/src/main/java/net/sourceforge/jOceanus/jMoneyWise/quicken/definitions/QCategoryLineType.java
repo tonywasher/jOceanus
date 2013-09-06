@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
+package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
 
 /**
  * Quicken Category Line Types.
@@ -76,13 +76,10 @@ public enum QCategoryLineType implements QLineType {
      * @return the Category Line type (or null if no match)
      */
     public static QCategoryLineType parseLine(final String pLine) {
-        /* Access first character of line */
-        String myChar = pLine.substring(0, 1);
-
         /* Loop through the values */
         for (QCategoryLineType myType : values()) {
             /* Look for match */
-            if (myChar.equals(myType)) {
+            if (pLine.startsWith(myType.getSymbol())) {
                 /* Return match if found */
                 return myType;
             }

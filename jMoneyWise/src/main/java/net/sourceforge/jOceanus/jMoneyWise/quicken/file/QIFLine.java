@@ -29,6 +29,7 @@ import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QLineType;
 
 /**
  * A standard event line in the QIF file.
@@ -43,12 +44,12 @@ public abstract class QIFLine<T extends QLineType> {
     /**
      * Transfer begin char.
      */
-    private static final char QIF_XFERSTART = '[';
+    private static final String QIF_XFERSTART = "[";
 
     /**
      * Transfer end char.
      */
-    private static final char QIF_XFEREND = ']';
+    private static final String QIF_XFEREND = "]";
 
     /**
      * Obtain line type.
@@ -435,6 +436,22 @@ public abstract class QIFLine<T extends QLineType> {
             pBuilder.append(QIF_XFERSTART);
             pBuilder.append(theAccount.getName());
             pBuilder.append(QIF_XFEREND);
+        }
+
+        /**
+         * Parse account line.
+         * @param pLine the line.
+         * @return the account name (or null)
+         */
+        protected static String parseAccount(final String pLine) {
+            /* If we have the account delimiters */
+            if (pLine.startsWith(QIF_XFERSTART)) {
+                int i = pLine.indexOf(QIF_XFEREND);
+                return (i != -1)
+                        ? pLine.substring(QIF_XFERSTART.length(), i)
+                        : null;
+            }
+            return null;
         }
     }
 

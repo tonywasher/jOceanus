@@ -29,8 +29,9 @@ import java.util.Map;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.quicken.QAccount;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QAccountLineType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFMoneyLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
 
@@ -103,16 +104,18 @@ public class QIFAccount
 
     /**
      * Constructor.
+     * @param pFile the QIF File
      * @param pAccount the Account
      */
-    public QIFAccount(final QAccount pAccount) {
+    public QIFAccount(final QIFFile pFile,
+                      final Account pAccount) {
         /* Call super-constructor */
-        super(QAccountLineType.class);
+        super(pFile, QAccountLineType.class);
 
         /* Store data */
         theName = pAccount.getName();
-        theDesc = pAccount.getDesc();
-        theClass = pAccount.getAccountClass();
+        theDesc = pAccount.getComments();
+        theClass = pAccount.getAccountCategoryClass();
 
         /* Build lines */
         addLine(new QIFAccountNameLine(theName));
@@ -124,13 +127,15 @@ public class QIFAccount
 
     /**
      * Constructor.
+     * @param pFile the QIF File
      * @param pFormatter the formatter
      * @param pLines the data lines
      */
-    protected QIFAccount(final JDataFormatter pFormatter,
+    protected QIFAccount(final QIFFile pFile,
+                         final JDataFormatter pFormatter,
                          final List<String> pLines) {
         /* Call super-constructor */
-        super(QAccountLineType.class);
+        super(pFile, QAccountLineType.class);
 
         /* Determine details */
         String myName = null;

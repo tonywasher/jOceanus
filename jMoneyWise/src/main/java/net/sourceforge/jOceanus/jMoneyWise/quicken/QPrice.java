@@ -73,8 +73,16 @@ public class QPrice
      * Obtain Price.
      * @return the price
      */
-    public JPrice getPrice() {
+    public JPrice getSpotPrice() {
         return thePrice.getPrice();
+    }
+
+    /**
+     * Obtain Price.
+     * @return the price
+     */
+    public AccountPrice getPrice() {
+        return thePrice;
     }
 
     /**
