@@ -518,7 +518,7 @@ public final class Branch
         }
 
         /* Check that the classes are the same */
-        if ((pThat instanceof Component)) {
+        if ((pThat instanceof Branch)) {
             return false;
         }
         Branch myThat = (Branch) pThat;
