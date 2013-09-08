@@ -71,6 +71,11 @@ public final class Branch
     private static final int BUFFER_LEN = 100;
 
     /**
+     * The version shift.
+     */
+    private static final int VERSION_SHIFT = 10;
+
+    /**
      * Number of version parts.
      */
     private static final int NUM_VERS_PARTS = 3;
@@ -148,13 +153,17 @@ public final class Branch
             return getBranchName();
         }
         if (FIELD_TAGS.equals(pField)) {
-            return theTags.size() > 0 ? theTags : JDataFieldValue.SkipField;
+            return theTags.size() > 0
+                    ? theTags
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_PROJECT.equals(pField)) {
             return theProject;
         }
         if (FIELD_DEPENDS.equals(pField)) {
-            return (theDependencies.size() > 0) ? theDependencies : JDataFieldValue.SkipField;
+            return (theDependencies.size() > 0)
+                    ? theDependencies
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_NUMEL.equals(pField)) {
             return theNumElements;
@@ -164,7 +173,9 @@ public final class Branch
         }
         if (FIELD_LTREV.equals(pField)) {
             long myRev = theTags.getLastRevision();
-            return (myRev < theLastRevision) ? myRev : JDataFieldValue.SkipField;
+            return (myRev < theLastRevision)
+                    ? myRev
+                    : JDataFieldValue.SkipField;
         }
 
         /* Unknown */
@@ -324,7 +335,8 @@ public final class Branch
         theRepository = pParent.getRepository();
 
         /* Parse the version */
-        String[] myParts = pVersion.split("\\" + BRANCH_SEP);
+        String[] myParts = pVersion.split("\\"
+                                          + BRANCH_SEP);
 
         /* If we do not have three parts reject it */
         if (myParts.length != NUM_VERS_PARTS) {
@@ -495,6 +507,54 @@ public final class Branch
         return 0;
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check that the classes are the same */
+        if ((pThat instanceof Component)) {
+            return false;
+        }
+        Branch myThat = (Branch) pThat;
+
+        /* Compare fields */
+        if (!theComponent.equals(myThat.theComponent)) {
+            return false;
+        }
+        if (theMajorVersion != myThat.theMajorVersion) {
+            return false;
+        }
+        if (theMinorVersion != myThat.theMinorVersion) {
+            return false;
+        }
+        return theDeltaVersion == myThat.theDeltaVersion;
+    }
+
+    @Override
+    public int hashCode() {
+        return (theComponent.hashCode() * Repository.HASH_PRIME)
+               + getVersionHash();
+    }
+
+    /**
+     * Obtain hash of version #.
+     * @return the version hash
+     */
+    private int getVersionHash() {
+        int myVers = theMajorVersion
+                     * VERSION_SHIFT;
+        myVers += theMinorVersion;
+        myVers *= VERSION_SHIFT;
+        return myVers
+               + theDeltaVersion;
+    }
+
     /**
      * Clone the definition.
      * @param pDefinition the definition to clone
@@ -579,7 +639,8 @@ public final class Branch
             /* List the members directories */
             myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.INFINITY, SVNDirEntry.DIRENT_ALL, new BranchDirHandler());
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover lastRevision for " + getBranchName(), e);
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover lastRevision for "
+                                                                + getBranchName(), e);
         } finally {
             theRepository.releaseClientManager(myMgr);
         }
@@ -735,7 +796,9 @@ public final class Branch
 
         @Override
         public String formatObject() {
-            return "BranchList(" + size() + ")";
+            return "BranchList("
+                   + size()
+                   + ")";
         }
 
         @Override
@@ -812,7 +875,8 @@ public final class Branch
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
 
             } catch (SVNException e) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover branches for " + theComponent.getName(), e);
+                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover branches for "
+                                                                    + theComponent.getName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -826,7 +890,8 @@ public final class Branch
                 Branch myBranch = myIterator.next();
 
                 /* Report stage */
-                pReport.setNewStage("Analysing branch " + myBranch.getBranchName());
+                pReport.setNewStage("Analysing branch "
+                                    + myBranch.getBranchName());
 
                 /* Parse project file */
                 ProjectDefinition myProject = myRepo.parseProjectURL(myBranch.getURLPath());
@@ -931,7 +996,9 @@ public final class Branch
                 SVNURL myBranchURL = myBranch.getURL();
 
                 /* If this is parent of the passed URL */
-                if ((pURL.getPath().equals(myBranchURL.getPath())) || (pURL.getPath().startsWith(myBranchURL.getPath() + "/"))) {
+                if ((pURL.getPath().equals(myBranchURL.getPath()))
+                    || (pURL.getPath().startsWith(myBranchURL.getPath()
+                                                  + "/"))) {
                     /* This is the correct branch */
                     return myBranch;
                 }
@@ -1058,7 +1125,9 @@ public final class Branch
             }
 
             /* Determine the largest current major version */
-            int myMajor = (myBranch == null) ? 0 : myBranch.theMajorVersion;
+            int myMajor = (myBranch == null)
+                    ? 0
+                    : myBranch.theMajorVersion;
 
             /* Create the major revision */
             return new Branch(theComponent, myMajor + 1, 0, 0);
@@ -1095,7 +1164,9 @@ public final class Branch
             }
 
             /* Determine the largest current minor version */
-            int myMinor = (myBranch == null) ? 0 : myBranch.theMinorVersion;
+            int myMinor = (myBranch == null)
+                    ? 0
+                    : myBranch.theMinorVersion;
 
             /* Create the minor revision */
             return new Branch(theComponent, myMajor, myMinor + 1, 0);
@@ -1139,7 +1210,9 @@ public final class Branch
             }
 
             /* Determine the largest current revision */
-            int myDelta = (myBranch == null) ? 0 : myBranch.theDeltaVersion;
+            int myDelta = (myBranch == null)
+                    ? 0
+                    : myBranch.theDeltaVersion;
 
             /* Create the minor revision */
             return new Branch(theComponent, myMajor, myMinor, myDelta + 1);

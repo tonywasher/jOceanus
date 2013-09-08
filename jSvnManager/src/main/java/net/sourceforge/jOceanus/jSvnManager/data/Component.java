@@ -282,6 +282,35 @@ public final class Component
         return theName.compareTo(pThat.theName);
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check that the classes are the same */
+        if ((pThat instanceof Component)) {
+            return false;
+        }
+        Component myThat = (Component) pThat;
+
+        /* Compare fields */
+        if (!theRepository.equals(myThat.theRepository)) {
+            return false;
+        }
+        return theName.equals(myThat.theName);
+    }
+
+    @Override
+    public int hashCode() {
+        return (theRepository.hashCode() * Repository.HASH_PRIME)
+               + theName.hashCode();
+    }
+
     /**
      * List of components.
      */
@@ -300,7 +329,9 @@ public final class Component
 
         @Override
         public String formatObject() {
-            return "ComponentList(" + size() + ")";
+            return "ComponentList("
+                   + size()
+                   + ")";
         }
 
         @Override
@@ -357,7 +388,8 @@ public final class Component
                 /* List the component directories */
                 myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
-                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover components for " + theRepository.getName(), e);
+                throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover components for "
+                                                                    + theRepository.getName(), e);
             } finally {
                 theRepository.releaseClientManager(myMgr);
             }
@@ -375,7 +407,8 @@ public final class Component
                 BranchList myBranches = myComponent.getBranchList();
 
                 /* Report discovery of component */
-                pReport.setNewStage("Analysing component " + myComponent.getName());
+                pReport.setNewStage("Analysing component "
+                                    + myComponent.getName());
 
                 /* Discover branches for the component */
                 myBranches.discover(pReport);

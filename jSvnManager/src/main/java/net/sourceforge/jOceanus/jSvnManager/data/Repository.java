@@ -52,7 +52,13 @@ import org.tmatesoft.svn.core.wc.SVNWCClient;
  * Represents a repository.
  * @author Tony Washer
  */
-public class Repository implements JDataContents, Comparable<Repository> {
+public class Repository
+        implements JDataContents, Comparable<Repository> {
+    /**
+     * The Hash Prime.
+     */
+    protected static final int HASH_PRIME = 17;
+
     /**
      * URL separator character.
      */
@@ -321,6 +327,35 @@ public class Repository implements JDataContents, Comparable<Repository> {
         return theName.compareTo(pThat.theName);
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check that the classes are the same */
+        if ((pThat instanceof Repository)) {
+            return false;
+        }
+        Repository myThat = (Repository) pThat;
+
+        /* Compare fields */
+        if (!theBase.equals(myThat.theBase)) {
+            return false;
+        }
+        return theName.equals(myThat.theName);
+    }
+
+    @Override
+    public int hashCode() {
+        return (theBase.hashCode() * HASH_PRIME)
+               + theName.hashCode();
+    }
+
     /**
      * Locate Component.
      * @param pName the component to locate
@@ -445,8 +480,8 @@ public class Repository implements JDataContents, Comparable<Repository> {
             return myProject;
 
         } catch (SVNException e) {
-            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to parse project file for " + pPath,
-                    e);
+            throw new JDataException(ExceptionClass.SUBVERSION, "Failed to parse project file for "
+                                                                + pPath, e);
         } finally {
             if (myInput != null) {
                 try {

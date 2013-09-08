@@ -41,6 +41,7 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 import net.sourceforge.jOceanus.jSvnManager.data.Branch;
 import net.sourceforge.jOceanus.jSvnManager.data.Branch.BranchOpType;
 import net.sourceforge.jOceanus.jSvnManager.data.Repository;
+import net.sourceforge.jOceanus.jSvnManager.data.SubVersionPreferences;
 import net.sourceforge.jOceanus.jSvnManager.data.Tag;
 import net.sourceforge.jOceanus.jSvnManager.data.WorkingCopy.WorkingCopySet;
 import net.sourceforge.jOceanus.jSvnManager.threads.CreateBranchTags;
@@ -55,9 +56,13 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 
 /**
  * Top level JSvnManager window.
- * @author Tony
  */
 public final class JSvnManager {
+    /**
+     * The Base component.
+     */
+    private static final String BASE_COMP = "jMoneyWise";
+
     /**
      * The Frame.
      */
@@ -74,9 +79,9 @@ public final class JSvnManager {
     private final PreferenceManager thePreferenceMgr = new PreferenceManager();
 
     /**
-     * The Render Manager.
+     * Preferences.
      */
-    // private final RenderManager theRenderMgr = new RenderManager(theDataMgr, new RenderConfig());
+    private final SubVersionPreferences thePreferences = thePreferenceMgr.getPreferenceSet(SubVersionPreferences.class);
 
     /**
      * The DataManager menuItem.
@@ -262,10 +267,15 @@ public final class JSvnManager {
      * Create and run the CheckOutWC thread.
      */
     private void runCheckOutWC() {
+        /* Access work directory */
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD)
+                        + File.pathSeparator;
+
         /* Create and run createWorkingCopy thread */
-        Branch myBranch = theRepository.locateBranch("jMoneyWise", "v1.2.0");
+        Branch myBranch = theRepository.locateBranch(BASE_COMP, "v1.2.0");
         Branch[] myList = new Branch[] { myBranch };
-        CreateWorkingCopy myThread = new CreateWorkingCopy(myList, SVNRevision.HEAD, new File("c:\\Users\\Tony\\TestWC"), theStatusPanel);
+        CreateWorkingCopy myThread = new CreateWorkingCopy(myList, SVNRevision.HEAD, new File(myPath
+                                                                                              + "TestWC"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -274,10 +284,15 @@ public final class JSvnManager {
      * Create and run the TagExtract thread.
      */
     private void runCreateTagExtract() {
+        /* Access work directory */
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD)
+                        + File.pathSeparator;
+
         /* Create and run createTagExtract thread */
-        Tag myTag = theRepository.locateTag("jMoneyWise", "v1.1.0", 1);
+        Tag myTag = theRepository.locateTag(BASE_COMP, "v1.1.0", 1);
         Tag[] myList = new Tag[] { myTag };
-        CreateTagExtract myThread = new CreateTagExtract(myList, new File("c:\\Users\\Tony\\TestXT"), theStatusPanel);
+        CreateTagExtract myThread = new CreateTagExtract(myList, new File(myPath
+                                                                          + "TestXT"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -306,10 +321,15 @@ public final class JSvnManager {
      * Create and run the CreateBranchTags thread.
      */
     private void runCreateBranchTags() {
+        /* Access work directory */
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD)
+                        + File.pathSeparator;
+
         /* Create and run createBranchTags thread */
-        Branch myBranch = theRepository.locateBranch("jMoneyWise", "v1.1.0");
+        Branch myBranch = theRepository.locateBranch(BASE_COMP, "v1.1.0");
         Branch[] myList = new Branch[] { myBranch };
-        CreateBranchTags myThread = new CreateBranchTags(myList, new File("c:\\Users\\Tony\\TestBT"), theStatusPanel);
+        CreateBranchTags myThread = new CreateBranchTags(myList, new File(myPath
+                                                                          + "TestBT"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }
@@ -318,10 +338,15 @@ public final class JSvnManager {
      * Create and run the CreateNewBranch thread.
      */
     private void runCreateNewBranch() {
+        /* Access work directory */
+        String myPath = thePreferences.getStringValue(SubVersionPreferences.NAME_SVN_BUILD)
+                        + File.pathSeparator;
+
         /* Create and run createBranchTags thread */
-        Tag myTag = theRepository.locateTag("jMoneyWise", "v1.0.0", 1);
+        Tag myTag = theRepository.locateTag(BASE_COMP, "v1.0.0", 1);
         Tag[] myList = new Tag[] { myTag };
-        CreateNewBranch myThread = new CreateNewBranch(myList, BranchOpType.MAJOR, new File("c:\\Users\\Tony\\TestNB"), theStatusPanel);
+        CreateNewBranch myThread = new CreateNewBranch(myList, BranchOpType.MAJOR, new File(myPath
+                                                                                            + "TestNB"), theStatusPanel);
         theTasks.setEnabled(false);
         theStatusPanel.runThread(myThread);
     }

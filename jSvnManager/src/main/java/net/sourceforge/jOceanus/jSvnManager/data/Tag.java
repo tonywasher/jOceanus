@@ -52,7 +52,8 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
  * Represents a tag of a branch.
  * @author Tony
  */
-public final class Tag implements JDataContents, Comparable<Tag> {
+public final class Tag
+        implements JDataContents, Comparable<Tag> {
     /**
      * The tag prefix.
      */
@@ -132,7 +133,9 @@ public final class Tag implements JDataContents, Comparable<Tag> {
             return theProject;
         }
         if (FIELD_DEPENDS.equals(pField)) {
-            return (theDependencies.size() > 0) ? theDependencies : JDataFieldValue.SkipField;
+            return (theDependencies.size() > 0)
+                    ? theDependencies
+                    : JDataFieldValue.SkipField;
         }
         if (FIELD_LREV.equals(pField)) {
             return theRevision;
@@ -205,7 +208,9 @@ public final class Tag implements JDataContents, Comparable<Tag> {
      * @return the tag name
      */
     public String getTagName() {
-        return theBranch.getBranchName() + PREFIX_TAG + theTag;
+        return theBranch.getBranchName()
+               + PREFIX_TAG
+               + theTag;
     }
 
     /**
@@ -314,6 +319,35 @@ public final class Tag implements JDataContents, Comparable<Tag> {
             return 1;
         }
         return 0;
+    }
+
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check that the classes are the same */
+        if ((pThat instanceof Tag)) {
+            return false;
+        }
+        Tag myThat = (Tag) pThat;
+
+        /* Compare fields */
+        if (!theBranch.equals(myThat.theBranch)) {
+            return false;
+        }
+        return theTag == myThat.theTag;
+    }
+
+    @Override
+    public int hashCode() {
+        return (theBranch.hashCode() * Repository.HASH_PRIME)
+               + theTag;
     }
 
     /**
@@ -460,7 +494,9 @@ public final class Tag implements JDataContents, Comparable<Tag> {
     /**
      * List of tags.
      */
-    public static final class TagList extends OrderedList<Tag> implements JDataContents {
+    public static final class TagList
+            extends OrderedList<Tag>
+            implements JDataContents {
         /**
          * Report fields.
          */
@@ -478,7 +514,9 @@ public final class Tag implements JDataContents, Comparable<Tag> {
 
         @Override
         public String formatObject() {
-            return "TagList(" + size() + ")";
+            return "TagList("
+                   + size()
+                   + ")";
         }
 
         @Override
@@ -538,10 +576,15 @@ public final class Tag implements JDataContents, Comparable<Tag> {
 
             /* Store parent for use by entry handler */
             theBranch = pParent;
-            theComponent = (pParent == null) ? null : pParent.getComponent();
+            theComponent = (pParent == null)
+                    ? null
+                    : pParent.getComponent();
 
             /* Build prefix */
-            thePrefix = (pParent == null) ? null : theBranch.getBranchName() + PREFIX_TAG;
+            thePrefix = (pParent == null)
+                    ? null
+                    : theBranch.getBranchName()
+                      + PREFIX_TAG;
         }
 
         /**
@@ -564,11 +607,10 @@ public final class Tag implements JDataContents, Comparable<Tag> {
                 SVNURL myURL = SVNURL.parseURIEncoded(theComponent.getTagsPath());
 
                 /* List the tag directories */
-                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES,
-                                SVNDirEntry.DIRENT_ALL, new ListDirHandler());
+                myClient.doList(myURL, SVNRevision.HEAD, SVNRevision.HEAD, false, SVNDepth.IMMEDIATES, SVNDirEntry.DIRENT_ALL, new ListDirHandler());
             } catch (SVNException e) {
                 throw new JDataException(ExceptionClass.SUBVERSION, "Failed to discover tags for "
-                        + theBranch.getBranchName(), e);
+                                                                    + theBranch.getBranchName(), e);
             } finally {
                 myRepo.releaseClientManager(myMgr);
             }
@@ -582,7 +624,8 @@ public final class Tag implements JDataContents, Comparable<Tag> {
                 Tag myTag = myIterator.next();
 
                 /* Report stage */
-                pReport.setNewStage("Analysing tag " + myTag.getTagName());
+                pReport.setNewStage("Analysing tag "
+                                    + myTag.getTagName());
 
                 /* Parse project file */
                 ProjectDefinition myProject = myRepo.parseProjectURL(myTag.getURLPath());
@@ -632,8 +675,7 @@ public final class Tag implements JDataContents, Comparable<Tag> {
                                 myDependencies.put(myComponent, myDependency);
                             } else {
                                 /* Throw exception */
-                                throw new JDataException(ExceptionClass.DATA, myTag,
-                                        "Duplicate component dependency");
+                                throw new JDataException(ExceptionClass.DATA, myTag, "Duplicate component dependency");
                             }
                         }
                     }
@@ -740,7 +782,9 @@ public final class Tag implements JDataContents, Comparable<Tag> {
             Tag myTag = latestTag();
 
             /* Determine the largest current tag */
-            int myTagNo = (myTag == null) ? 0 : myTag.theTag;
+            int myTagNo = (myTag == null)
+                    ? 0
+                    : myTag.theTag;
 
             /* Create the tag */
             return new Tag(theBranch, myTagNo + 1, -1);
@@ -749,7 +793,8 @@ public final class Tag implements JDataContents, Comparable<Tag> {
         /**
          * The Directory Entry Handler.
          */
-        private final class ListDirHandler implements ISVNDirEntryHandler {
+        private final class ListDirHandler
+                implements ISVNDirEntryHandler {
 
             @Override
             public void handleDirEntry(final SVNDirEntry pEntry) throws SVNException {

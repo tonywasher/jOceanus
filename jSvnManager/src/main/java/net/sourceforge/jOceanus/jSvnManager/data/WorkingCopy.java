@@ -51,7 +51,8 @@ import org.tmatesoft.svn.core.wc.SVNStatusClient;
  * Represents a Working extract copy of subversion.
  * @author Tony Washer
  */
-public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy> {
+public final class WorkingCopy
+        implements JDataContents, Comparable<WorkingCopy> {
     /**
      * Report fields.
      */
@@ -101,7 +102,9 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
     public Object getFieldValue(final JDataField pField) {
         /* Handle standard fields */
         if (FIELD_ALIAS.equals(pField)) {
-            return getComponentName().equals(theAlias) ? JDataFieldValue.SkipField : theAlias;
+            return getComponentName().equals(theAlias)
+                    ? JDataFieldValue.SkipField
+                    : theAlias;
         }
         if (FIELD_BRAN.equals(pField)) {
             return theBranch;
@@ -116,7 +119,9 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
             return theRevision;
         }
         if (FIELD_UPDATES.equals(pField)) {
-            return (theUpdates.size() == 0) ? JDataFieldValue.SkipField : theUpdates;
+            return (theUpdates.size() == 0)
+                    ? JDataFieldValue.SkipField
+                    : theUpdates;
         }
 
         /* Unknown */
@@ -174,7 +179,9 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
      * @return the full name
      */
     public String getFullName() {
-        return getComponentName() + "_" + theBranch.getBranchName();
+        return getComponentName()
+               + "_"
+               + theBranch.getBranchName();
     }
 
     /**
@@ -247,8 +254,7 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
         /* Protect against exceptions */
         try {
             /* Access status of the directory */
-            myClient.doStatus(theLocation, SVNRevision.HEAD, SVNDepth.INFINITY, false, false, false, false,
-                              new UpdateHandler(this), null);
+            myClient.doStatus(theLocation, SVNRevision.HEAD, SVNDepth.INFINITY, false, false, false, false, new UpdateHandler(this), null);
         } catch (SVNException e) {
             throw new JDataException(ExceptionClass.SUBVERSION, "Unable to get status", e);
         } finally {
@@ -259,7 +265,8 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
     /**
      * Status Handler.
      */
-    private final class UpdateHandler implements ISVNStatusHandler {
+    private final class UpdateHandler
+            implements ISVNStatusHandler {
         /**
          * The Working copy.
          */
@@ -295,6 +302,31 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
         return theBranch.compareTo(pThat.theBranch);
     }
 
+    @Override
+    public boolean equals(final Object pThat) {
+        /* Handle trivial cases */
+        if (this == pThat) {
+            return true;
+        }
+        if (pThat == null) {
+            return false;
+        }
+
+        /* Check that the classes are the same */
+        if ((pThat instanceof WorkingCopy)) {
+            return false;
+        }
+        WorkingCopy myThat = (WorkingCopy) pThat;
+
+        /* Compare fields */
+        return theBranch.equals(myThat.theBranch);
+    }
+
+    @Override
+    public int hashCode() {
+        return theBranch.hashCode();
+    }
+
     /**
      * Get status for a file in a working copy.
      * @param pRepo the repository
@@ -325,7 +357,8 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
             SVNErrorCode myCode = e.getErrorMessage().getErrorCode();
 
             /* Allow file/directory exists but is not WC */
-            if ((myCode != SVNErrorCode.WC_NOT_FILE) && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
+            if ((myCode != SVNErrorCode.WC_NOT_FILE)
+                && (myCode != SVNErrorCode.WC_NOT_DIRECTORY)) {
                 throw new JDataException(ExceptionClass.SUBVERSION, "Unable to get status", e);
             }
 
@@ -341,7 +374,9 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
     /**
      * Working Copy Set.
      */
-    public static final class WorkingCopySet extends OrderedList<WorkingCopy> implements JDataContents {
+    public static final class WorkingCopySet
+            extends OrderedList<WorkingCopy>
+            implements JDataContents {
         /**
          * Report fields.
          */
@@ -364,7 +399,9 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
 
         @Override
         public String formatObject() {
-            return "WorkingCopySet(" + size() + ")";
+            return "WorkingCopySet("
+                   + size()
+                   + ")";
         }
 
         @Override
@@ -483,7 +520,8 @@ public final class WorkingCopy implements JDataContents, Comparable<WorkingCopy>
                 WorkingCopy myCopy = myIterator.next();
 
                 /* Report stage of analysis */
-                pReport.setNewStage("Analysing WC at " + myCopy.getLocation().getName());
+                pReport.setNewStage("Analysing WC at "
+                                    + myCopy.getLocation().getName());
 
                 /* Discover updates */
                 myCopy.discoverUpdates(pReport);
