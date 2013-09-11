@@ -22,11 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
+import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jDecimal.JRatio;
 import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QLineType;
@@ -50,6 +55,21 @@ public abstract class QIFLine<T extends QLineType> {
      * Transfer end char.
      */
     private static final String QIF_XFEREND = "]";
+
+    /**
+     * Class indicator.
+     */
+    private static final String QIF_CLASS = "/";
+
+    /**
+     * Class separator.
+     */
+    private static final String QIF_CLASSSEP = "-";
+
+    /**
+     * Category separator.
+     */
+    private static final String QIF_CATSEP = "!";
 
     /**
      * Obtain line type.
@@ -330,6 +350,42 @@ public abstract class QIFLine<T extends QLineType> {
     }
 
     /**
+     * The Rate line.
+     * @param <X> the line type
+     */
+    protected abstract static class QIFRateLine<X extends QLineType>
+            extends QIFLine<X> {
+        /**
+         * The Rate.
+         */
+        private final JRate theRate;
+
+        /**
+         * Obtain rate.
+         * @return the rate
+         */
+        protected JRate getRate() {
+            return theRate;
+        }
+
+        /**
+         * Constructor.
+         * @param pPercent the percentage
+         */
+        protected QIFRateLine(final JRate pPercent) {
+            /* Store data */
+            theRate = pPercent;
+        }
+
+        @Override
+        protected void formatData(final JDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+            pBuilder.append(pFormatter.formatObject(theRate));
+        }
+    }
+
+    /**
      * The Ratio line.
      * @param <X> the line type
      */
@@ -413,6 +469,11 @@ public abstract class QIFLine<T extends QLineType> {
         private final QIFAccount theAccount;
 
         /**
+         * The class list.
+         */
+        private final List<QIFClass> theClasses;
+
+        /**
          * Obtain account.
          * @return the account
          */
@@ -421,12 +482,31 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         /**
+         * Obtain class list.
+         * @return the class list
+         */
+        public List<QIFClass> getClassList() {
+            return theClasses;
+        }
+
+        /**
          * Constructor.
          * @param pAccount the Account
          */
         protected QIFXferAccountLine(final QIFAccount pAccount) {
+            this(pAccount, null);
+        }
+
+        /**
+         * Constructor.
+         * @param pAccount the Account
+         * @param pClasses the classes
+         */
+        protected QIFXferAccountLine(final QIFAccount pAccount,
+                                     final List<QIFClass> pClasses) {
             /* Store data */
             theAccount = pAccount;
+            theClasses = pClasses;
         }
 
         @Override
@@ -436,27 +516,109 @@ public abstract class QIFLine<T extends QLineType> {
             pBuilder.append(QIF_XFERSTART);
             pBuilder.append(theAccount.getName());
             pBuilder.append(QIF_XFEREND);
+
+            /* If we have classes */
+            if (theClasses != null) {
+                /* Add class indicator */
+                pBuilder.append(QIF_CLASS);
+
+                /* Iterate through the list */
+                Iterator<QIFClass> myIterator = theClasses.iterator();
+                while (myIterator.hasNext()) {
+                    QIFClass myClass = myIterator.next();
+
+                    /* Add to the list */
+                    pBuilder.append(myClass.getName());
+                    if (myIterator.hasNext()) {
+                        pBuilder.append(QIF_CLASSSEP);
+                    }
+                }
+            }
         }
 
         /**
          * Parse account line.
+         * @param pFile the QIF File definitions
          * @param pLine the line.
          * @return the account name (or null)
          */
-        protected static String parseAccount(final String pLine) {
-            /* If we have the account delimiters */
-            if (pLine.startsWith(QIF_XFERSTART)) {
-                int i = pLine.indexOf(QIF_XFEREND);
-                return (i != -1)
-                        ? pLine.substring(QIF_XFERSTART.length(), i)
-                        : null;
+        protected static QIFAccount parseAccount(final QIFFile pFile,
+                                                 final String pLine) {
+            /* Determine line to use */
+            String myLine = pLine;
+
+            /* If the line contains a category separator */
+            if (pLine.contains(QIF_CATSEP)) {
+                /* Move to data following separator */
+                int i = pLine.indexOf(QIF_CATSEP);
+                myLine = pLine.substring(i + 1);
             }
+
+            /* If the line contains classes */
+            if (myLine.contains(QIF_CLASS)) {
+                /* drop class data */
+                int i = myLine.indexOf(QIF_CLASS);
+                myLine = myLine.substring(0, i);
+            }
+
+            /* If we have the account delimiters */
+            if ((myLine.startsWith(QIF_XFERSTART))
+                && (myLine.endsWith(QIF_XFEREND))) {
+                /* Remove account delimiters */
+                int i = QIF_XFERSTART.length();
+                int j = QIF_XFEREND.length();
+                String myAccount = myLine.substring(i, myLine.length()
+                                                       - i
+                                                       - j);
+                return pFile.getAccount(myAccount);
+            }
+
+            /* Return no account */
+            return null;
+        }
+
+        /**
+         * Parse account classes.
+         * @param pFile the QIF File
+         * @param pLine the line.
+         * @return the account name (or null)
+         */
+        protected static List<QIFClass> parseAccountClasses(final QIFFile pFile,
+                                                            final String pLine) {
+            /* Determine line to use */
+            String myLine = pLine;
+
+            /* If the line contains a category separator */
+            if (pLine.contains(QIF_CATSEP)) {
+                /* Move to data following separator */
+                int i = pLine.indexOf(QIF_CATSEP);
+                myLine = pLine.substring(i + 1);
+            }
+
+            /* If the line contains classes */
+            if (myLine.contains(QIF_CLASS)) {
+                /* drop preceding data */
+                int i = myLine.indexOf(QIF_CLASS);
+                myLine = myLine.substring(i + 1);
+
+                /* Build list of classes */
+                String[] myClasses = myLine.split(QIF_CLASSSEP);
+                List<QIFClass> myList = new ArrayList<QIFClass>();
+                for (String myClass : myClasses) {
+                    myList.add(pFile.getClass(myClass));
+                }
+
+                /* Return the classes */
+                return myList;
+            }
+
+            /* Return no classes */
             return null;
         }
     }
 
     /**
-     * The Account line.
+     * The Payee line.
      * @param <X> the line type
      */
     public abstract static class QIFPayeeLine<X extends QLineType>
@@ -503,6 +665,11 @@ public abstract class QIFLine<T extends QLineType> {
         private final QIFEventCategory theCategory;
 
         /**
+         * The class list.
+         */
+        private final List<QIFClass> theClasses;
+
+        /**
          * Obtain event category.
          * @return the event category
          */
@@ -511,12 +678,31 @@ public abstract class QIFLine<T extends QLineType> {
         }
 
         /**
+         * Obtain class list.
+         * @return the class list
+         */
+        public List<QIFClass> getClassList() {
+            return theClasses;
+        }
+
+        /**
          * Constructor.
          * @param pCategory the Event Category
          */
         protected QIFCategoryLine(final QIFEventCategory pCategory) {
+            this(pCategory, null);
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the Event Category
+         * @param pClasses the classes
+         */
+        protected QIFCategoryLine(final QIFEventCategory pCategory,
+                                  final List<QIFClass> pClasses) {
             /* Store data */
             theCategory = pCategory;
+            theClasses = pClasses;
         }
 
         @Override
@@ -524,6 +710,199 @@ public abstract class QIFLine<T extends QLineType> {
                                   final StringBuilder pBuilder) {
             /* Append the string data */
             pBuilder.append(theCategory.getName());
+
+            /* If we have classes */
+            if (theClasses != null) {
+                /* Add class indicator */
+                pBuilder.append(QIF_CLASS);
+
+                /* Iterate through the list */
+                Iterator<QIFClass> myIterator = theClasses.iterator();
+                while (myIterator.hasNext()) {
+                    QIFClass myClass = myIterator.next();
+
+                    /* Add to the list */
+                    pBuilder.append(myClass.getName());
+                    if (myIterator.hasNext()) {
+                        pBuilder.append(QIF_CLASSSEP);
+                    }
+                }
+            }
+        }
+
+        /**
+         * Parse category line.
+         * @param pFile the QIF File
+         * @param pLine the line.
+         * @return the account name (or null)
+         */
+        protected static QIFEventCategory parseCategory(final QIFFile pFile,
+                                                        final String pLine) {
+            /* Determine line to use */
+            String myLine = pLine;
+
+            /* If the line contains a category separator */
+            if (pLine.contains(QIF_CATSEP)) {
+                /* Drop data after separator */
+                int i = pLine.indexOf(QIF_CATSEP);
+                myLine = pLine.substring(0, i);
+            }
+
+            /* If the line contains classes */
+            if (myLine.contains(QIF_CLASS)) {
+                /* drop class data */
+                int i = myLine.indexOf(QIF_CLASS);
+                myLine = myLine.substring(0, i);
+            }
+
+            /* If we have the account delimiters */
+            if ((myLine.startsWith(QIF_XFERSTART))
+                && (myLine.endsWith(QIF_XFEREND))) {
+                /* This is an account */
+                return null;
+            }
+
+            /* Return category */
+            return pFile.getCategory(myLine);
+        }
+
+        /**
+         * Parse category classes.
+         * @param pFile the QIF File
+         * @param pLine the line.
+         * @return the account name (or null)
+         */
+        protected static List<QIFClass> parseCategoryClasses(final QIFFile pFile,
+                                                             final String pLine) {
+            /* Determine line to use */
+            String myLine = pLine;
+
+            /* If the line contains a category separator */
+            if (pLine.contains(QIF_CATSEP)) {
+                /* Drop data after separator */
+                int i = pLine.indexOf(QIF_CATSEP);
+                myLine = pLine.substring(0, i);
+            }
+
+            /* If the line contains classes */
+            if (myLine.contains(QIF_CLASS)) {
+                /* drop preceding data */
+                int i = myLine.indexOf(QIF_CLASS);
+                myLine = myLine.substring(i + 1);
+
+                /* Build list of classes */
+                String[] myClasses = myLine.split(QIF_CLASSSEP);
+                List<QIFClass> myList = new ArrayList<QIFClass>();
+                for (String myClass : myClasses) {
+                    myList.add(pFile.getClass(myClass));
+                }
+
+                /* Return the classes */
+                return myList;
+            }
+
+            /* Return no classes */
+            return null;
+        }
+    }
+
+    /**
+     * The Event Category line.
+     * @param <X> the line type
+     */
+    public abstract static class QIFCategoryAccountLine<X extends QLineType>
+            extends QIFLine<X> {
+        /**
+         * The event category.
+         */
+        private final QIFEventCategory theCategory;
+
+        /**
+         * The account.
+         */
+        private final QIFAccount theAccount;
+
+        /**
+         * The class list.
+         */
+        private final List<QIFClass> theClasses;
+
+        /**
+         * Obtain event category.
+         * @return the event category
+         */
+        public QIFEventCategory getEventCategory() {
+            return theCategory;
+        }
+
+        /**
+         * Obtain account.
+         * @return the account
+         */
+        public QIFAccount getAccount() {
+            return theAccount;
+        }
+
+        /**
+         * Obtain class list.
+         * @return the class list
+         */
+        public List<QIFClass> getClassList() {
+            return theClasses;
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the Event Category
+         * @param pAccount the Account
+         */
+        protected QIFCategoryAccountLine(final QIFEventCategory pCategory,
+                                         final QIFAccount pAccount) {
+            this(pCategory, pAccount, null);
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the Event Category
+         * @param pAccount the Account
+         * @param pClasses the classes
+         */
+        protected QIFCategoryAccountLine(final QIFEventCategory pCategory,
+                                         final QIFAccount pAccount,
+                                         final List<QIFClass> pClasses) {
+            /* Store data */
+            theCategory = pCategory;
+            theAccount = pAccount;
+            theClasses = pClasses;
+        }
+
+        @Override
+        protected void formatData(final JDataFormatter pFormatter,
+                                  final StringBuilder pBuilder) {
+            /* Append the string data */
+            pBuilder.append(theCategory.getName());
+            pBuilder.append(QIF_CATSEP);
+            pBuilder.append(QIF_XFERSTART);
+            pBuilder.append(theAccount.getName());
+            pBuilder.append(QIF_XFEREND);
+
+            /* If we have classes */
+            if (theClasses != null) {
+                /* Add class indicator */
+                pBuilder.append(QIF_CLASS);
+
+                /* Iterate through the list */
+                Iterator<QIFClass> myIterator = theClasses.iterator();
+                while (myIterator.hasNext()) {
+                    QIFClass myClass = myIterator.next();
+
+                    /* Add to the list */
+                    pBuilder.append(myClass.getName());
+                    if (myIterator.hasNext()) {
+                        pBuilder.append(QIF_CLASSSEP);
+                    }
+                }
+            }
         }
     }
 }

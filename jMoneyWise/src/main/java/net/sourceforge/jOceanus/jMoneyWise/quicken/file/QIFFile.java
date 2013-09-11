@@ -72,6 +72,11 @@ public class QIFFile {
     private final Map<String, QIFEventCategory> theCategories;
 
     /**
+     * Map of Classes.
+     */
+    private final Map<String, QIFClass> theClasses;
+
+    /**
      * List of prices.
      */
     private final List<QIFPrice> thePrices;
@@ -84,6 +89,7 @@ public class QIFFile {
         theAccounts = new LinkedHashMap<String, QIFAccount>();
         theSecurities = new LinkedHashMap<String, QIFSecurity>();
         theCategories = new LinkedHashMap<String, QIFEventCategory>();
+        theClasses = new LinkedHashMap<String, QIFClass>();
         thePrices = new ArrayList<QIFPrice>();
 
         /* Allocate the formatter and set date format */
@@ -162,6 +168,16 @@ public class QIFFile {
     }
 
     /**
+     * Obtain class.
+     * @param pName the name of the class
+     * @return the class
+     */
+    protected QIFClass getClass(final String pName) {
+        /* Lookup the class */
+        return theClasses.get(pName);
+    }
+
+    /**
      * Write File.
      * @param pStatus the thread status
      * @param pStream the output stream
@@ -170,8 +186,13 @@ public class QIFFile {
      */
     public boolean writeFile(final ThreadStatus<FinanceData> pStatus,
                              final OutputStreamWriter pStream) throws IOException {
+        /* Write the classes */
+        boolean bContinue = writeClasses(pStatus, pStream);
+
         /* Write the categories */
-        boolean bContinue = writeCategories(pStatus, pStream);
+        if (bContinue) {
+            bContinue = writeCategories(pStatus, pStream);
+        }
 
         /* Write the accounts */
         if (bContinue) {
@@ -186,6 +207,61 @@ public class QIFFile {
         /* Write the prices */
         if (bContinue) {
             bContinue = writePrices(pStatus, pStream);
+        }
+
+        /* Return success */
+        return bContinue;
+    }
+
+    /**
+     * Write Classes.
+     * @param pStatus the thread status
+     * @param pStream the output stream
+     * @return continue true/false
+     * @throws IOException on error
+     */
+    private boolean writeClasses(final ThreadStatus<FinanceData> pStatus,
+                                 final OutputStreamWriter pStream) throws IOException {
+        /* Create string builder */
+        StringBuilder myBuilder = new StringBuilder();
+
+        /* Access the number of reporting steps */
+        int mySteps = pStatus.getReportingSteps();
+        int myCount = 0;
+
+        /* Update status bar */
+        boolean bContinue = ((pStatus.setNewStage("Writing classes")) && (pStatus.setNumSteps(theClasses.size())));
+
+        /* Skip step if we have no classes */
+        if (theClasses.size() == 0) {
+            return true;
+        }
+
+        /* Format Item Type header */
+        QIFRecord.formatItemType(QIFClass.QIF_ITEM, myBuilder);
+
+        /* Write Class header */
+        pStream.write(myBuilder.toString());
+        myBuilder.setLength(0);
+
+        /* Loop through the categories */
+        Iterator<QIFClass> myIterator = theClasses.values().iterator();
+        while (myIterator.hasNext()) {
+            QIFClass myClass = myIterator.next();
+
+            /* Format the record */
+            myClass.formatRecord(theFormatter, myBuilder);
+
+            /* Write Category record */
+            pStream.write(myBuilder.toString());
+            myBuilder.setLength(0);
+
+            /* Report the progress */
+            myCount++;
+            if (((myCount % mySteps) == 0)
+                && (!pStatus.setStepsDone(myCount))) {
+                bContinue = false;
+            }
         }
 
         /* Return success */

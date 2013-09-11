@@ -27,7 +27,10 @@ import java.util.List;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
+import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QEventLineType;
@@ -168,6 +171,10 @@ public class QIFEvent
         /* Current split record */
         QIFSplitEvent mySplit = null;
 
+        /* Obtain parsers */
+        JDateDayFormatter myDateParser = pFormatter.getDateFormatter();
+        JDecimalParser myDecParser = pFormatter.getDecimalParser();
+
         /* Loop through the lines */
         Iterator<String> myIterator = pLines.iterator();
         while (myIterator.hasNext()) {
@@ -182,7 +189,7 @@ public class QIFEvent
                 /* Switch on line type */
                 switch (myType) {
                     case Date:
-                        JDateDay myDateDay = pFormatter.getDateFormatter().parseDateDay(myData);
+                        JDateDay myDateDay = myDateParser.parseDateDay(myData);
                         addLine(new QIFEventDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
@@ -192,7 +199,7 @@ public class QIFEvent
                         myCleared = myFlag;
                         break;
                     case Amount:
-                        JMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        JMoney myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFEventAmountLine(myMoney));
                         myAmount = myMoney;
                         break;
@@ -208,29 +215,43 @@ public class QIFEvent
                         addLine(new QIFEventPayeeDescLine(myData));
                         break;
                     case Category:
-                        /* Check for account */
-                        String myAccount = QIFXferAccountLine.parseAccount(myData);
+                        /* Check for account and category */
+                        QIFAccount myAccount = QIFXferAccountLine.parseAccount(pFile, myData);
+                        QIFEventCategory myCategory = QIFEventCategoryLine.parseCategory(pFile, myData);
                         if (myAccount != null) {
-                            addLine(new QIFEventAccountLine(pFile.getAccount(myAccount)));
+                            /* Look for account classes */
+                            List<QIFClass> myClasses = QIFXferAccountLine.parseAccountClasses(pFile, myData);
+                            addLine(new QIFEventAccountLine(myAccount, myClasses));
                         } else {
-                            addLine(new QIFEventCategoryLine(pFile.getCategory(myData)));
+                            /* Look for category classes */
+                            List<QIFClass> myClasses = QIFEventCategoryLine.parseCategoryClasses(pFile, myData);
+                            addLine(new QIFEventCategoryLine(myCategory, myClasses));
                         }
                         break;
                     case SplitCategory:
                         /* Check for account */
-                        myAccount = QIFXferAccountLine.parseAccount(myData);
+                        myAccount = QIFXferAccountLine.parseAccount(pFile, myData);
+                        myCategory = QIFEventCategoryLine.parseCategory(pFile, myData);
                         if (myAccount != null) {
-                            mySplit = new QIFSplitEvent(pFile, pFile.getAccount(myAccount));
+                            /* Look for account classes */
+                            List<QIFClass> myClasses = QIFXferAccountLine.parseAccountClasses(pFile, myData);
+                            mySplit = new QIFSplitEvent(pFile, myAccount, myClasses);
                         } else {
-                            mySplit = new QIFSplitEvent(pFile, pFile.getCategory(myData));
+                            /* Look for category classes */
+                            List<QIFClass> myClasses = QIFEventCategoryLine.parseCategoryClasses(pFile, myData);
+                            mySplit = new QIFSplitEvent(pFile, myCategory, myClasses);
                         }
 
                         /* Record new split record */
                         addRecord(mySplit);
                         break;
                     case SplitAmount:
-                        myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        myMoney = myDecParser.parseMoneyValue(myData);
                         mySplit.setSplitAmount(myMoney);
+                        break;
+                    case SplitPercent:
+                        JRate myRate = myDecParser.parseRateValue(myData);
+                        mySplit.setSplitPercentage(myRate);
                         break;
                     case SplitComment:
                         mySplit.setSplitComment(myData);
@@ -498,6 +519,17 @@ public class QIFEvent
             /* Call super-constructor */
             super(pAccount);
         }
+
+        /**
+         * Constructor.
+         * @param pAccount the account
+         * @param pClasses the classes
+         */
+        protected QIFEventAccountLine(final QIFAccount pAccount,
+                                      final List<QIFClass> pClasses) {
+            /* Call super-constructor */
+            super(pAccount, pClasses);
+        }
     }
 
     /**
@@ -517,6 +549,17 @@ public class QIFEvent
         protected QIFEventCategoryLine(final QIFEventCategory pCategory) {
             /* Call super-constructor */
             super(pCategory);
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the category
+         * @param pClasses the classes
+         */
+        protected QIFEventCategoryLine(final QIFEventCategory pCategory,
+                                       final List<QIFClass> pClasses) {
+            /* Call super-constructor */
+            super(pCategory, pClasses);
         }
     }
 }

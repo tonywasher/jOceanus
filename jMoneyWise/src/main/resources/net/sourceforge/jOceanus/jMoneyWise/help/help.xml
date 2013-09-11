@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<HelpContents title="jMoneyWise Help" initial="First" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:noNamespaceSchemaLocation="help.xsd">
+<HelpContents title="jMoneyWise Help" initial="First" xmlns="http://www.jMoneyWise.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.jMoneyWise.com help.xsd">
   <HelpElement title="Chapter One" name="StaticData">
     <HelpElement name="AccountTypes" file="AccountTypes.html" title="AccountTypes"/>	
   </HelpElement>

@@ -152,11 +152,6 @@ public enum QActionType {
     ShtSell,
 
     /**
-     * Short SellX.
-     */
-    ShtSellX,
-
-    /**
      * Cover ShortSell.
      */
     CvrShrt,

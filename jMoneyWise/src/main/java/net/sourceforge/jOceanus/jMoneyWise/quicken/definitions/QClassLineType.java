@@ -23,68 +23,18 @@
 package net.sourceforge.jOceanus.jMoneyWise.quicken.definitions;
 
 /**
- * Quicken Event Line Types.
+ * Quicken Class Line Types.
  */
-public enum QEventLineType implements QLineType {
+public enum QClassLineType implements QLineType {
     /**
-     * Date.
+     * Name.
      */
-    Date("D"),
+    Name("N"),
 
     /**
-     * Amount.
+     * Description.
      */
-    Amount("T"),
-
-    /**
-     * Cleared Status.
-     */
-    Cleared("C"),
-
-    /**
-     * Comment.
-     */
-    Comment("M"),
-
-    /**
-     * Reference.
-     */
-    Reference("N"),
-
-    /**
-     * Address.
-     */
-    Address("A"),
-
-    /**
-     * Payee.
-     */
-    Payee("P"),
-
-    /**
-     * Category.
-     */
-    Category("L"),
-
-    /**
-     * SplitCategory.
-     */
-    SplitCategory("S"),
-
-    /**
-     * SplitComment.
-     */
-    SplitComment("E"),
-
-    /**
-     * SplitAmount.
-     */
-    SplitAmount("$"),
-
-    /**
-     * SplitPercent.
-     */
-    SplitPercent("%");
+    Description("D");
 
     /**
      * The symbol.
@@ -100,19 +50,19 @@ public enum QEventLineType implements QLineType {
      * Constructor.
      * @param pSymbol the symbol
      */
-    private QEventLineType(final String pSymbol) {
+    private QClassLineType(final String pSymbol) {
         /* Store symbol */
         theSymbol = pSymbol;
     }
 
     /**
-     * Parse a line to find the event line type.
+     * Parse a line to find the class line type.
      * @param pLine the line to parse
-     * @return the Event Line type (or null if no match)
+     * @return the Class Line type (or null if no match)
      */
-    public static QEventLineType parseLine(final String pLine) {
+    public static QClassLineType parseLine(final String pLine) {
         /* Loop through the values */
-        for (QEventLineType myType : values()) {
+        for (QClassLineType myType : values()) {
             /* Look for match */
             if (pLine.startsWith(myType.getSymbol())) {
                 /* Return match if found */

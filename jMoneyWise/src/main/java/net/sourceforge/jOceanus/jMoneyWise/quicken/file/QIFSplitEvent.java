@@ -22,10 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
 
+import java.util.List;
+
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jDecimal.JRate;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QEventLineType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFCategoryLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFMoneyLine;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFRateLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFXferAccountLine;
 
@@ -48,6 +52,11 @@ public class QIFSplitEvent
      * The Amount.
      */
     private JMoney theAmount;
+
+    /**
+     * The Percentage.
+     */
+    private JRate thePercentage;
 
     /**
      * The Comment.
@@ -79,6 +88,14 @@ public class QIFSplitEvent
     }
 
     /**
+     * Obtain the percentage.
+     * @return the percentage.
+     */
+    public JRate getPercentage() {
+        return thePercentage;
+    }
+
+    /**
      * Obtain the comment.
      * @return the comment.
      */
@@ -93,6 +110,18 @@ public class QIFSplitEvent
      */
     protected QIFSplitEvent(final QIFFile pFile,
                             final QIFEventCategory pCategory) {
+        this(pFile, pCategory, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pCategory the category
+     * @param pClasses the classes
+     */
+    protected QIFSplitEvent(final QIFFile pFile,
+                            final QIFEventCategory pCategory,
+                            final List<QIFClass> pClasses) {
         /* Call Super-constructor */
         super(pFile, QEventLineType.class);
 
@@ -100,10 +129,11 @@ public class QIFSplitEvent
         theCategory = pCategory;
         theAccount = null;
         theAmount = null;
+        thePercentage = null;
         theComment = null;
 
         /* Add the line */
-        addLine(new QIFEventSplitCategoryLine(theCategory));
+        addLine(new QIFEventSplitCategoryLine(theCategory, pClasses));
     }
 
     /**
@@ -114,16 +144,30 @@ public class QIFSplitEvent
     protected QIFSplitEvent(final QIFFile pFile,
                             final QIFAccount pAccount) {
         /* Call Super-constructor */
+        this(pFile, pAccount, null);
+    }
+
+    /**
+     * Constructor.
+     * @param pFile the QIF File
+     * @param pAccount the transfer account
+     * @param pClasses the classes
+     */
+    protected QIFSplitEvent(final QIFFile pFile,
+                            final QIFAccount pAccount,
+                            final List<QIFClass> pClasses) {
+        /* Call Super-constructor */
         super(pFile, QEventLineType.class);
 
         /* Set values */
         theCategory = null;
         theAccount = pAccount;
         theAmount = null;
+        thePercentage = null;
         theComment = null;
 
         /* Add the line */
-        addLine(new QIFEventSplitAccountLine(pAccount));
+        addLine(new QIFEventSplitAccountLine(pAccount, pClasses));
     }
 
     /**
@@ -134,6 +178,16 @@ public class QIFSplitEvent
         /* Add the line */
         addLine(new QIFEventSplitAmountLine(pAmount));
         theAmount = pAmount;
+    }
+
+    /**
+     * Set the split percentage.
+     * @param pPercent the percentage
+     */
+    protected void setSplitPercentage(final JRate pPercent) {
+        /* Add the line */
+        addLine(new QIFEventSplitPercentLine(pPercent));
+        thePercentage = pPercent;
     }
 
     /**
@@ -164,6 +218,17 @@ public class QIFSplitEvent
             /* Call super-constructor */
             super(pAccount);
         }
+
+        /**
+         * Constructor.
+         * @param pAccount the account
+         * @param pClasses the classes
+         */
+        protected QIFEventSplitAccountLine(final QIFAccount pAccount,
+                                           final List<QIFClass> pClasses) {
+            /* Call super-constructor */
+            super(pAccount, pClasses);
+        }
     }
 
     /**
@@ -183,6 +248,17 @@ public class QIFSplitEvent
         protected QIFEventSplitCategoryLine(final QIFEventCategory pCategory) {
             /* Call super-constructor */
             super(pCategory);
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the category
+         * @param pClasses the classes
+         */
+        protected QIFEventSplitCategoryLine(final QIFEventCategory pCategory,
+                                            final List<QIFClass> pClasses) {
+            /* Call super-constructor */
+            super(pCategory, pClasses);
         }
     }
 
@@ -211,6 +287,34 @@ public class QIFSplitEvent
         protected QIFEventSplitAmountLine(final JMoney pAmount) {
             /* Call super-constructor */
             super(pAmount);
+        }
+    }
+
+    /**
+     * The Event Split Percent line.
+     */
+    public class QIFEventSplitPercentLine
+            extends QIFRateLine<QEventLineType> {
+        @Override
+        public QEventLineType getLineType() {
+            return QEventLineType.SplitPercent;
+        }
+
+        /**
+         * Obtain Percentage.
+         * @return the percentage
+         */
+        public JRate getPercentage() {
+            return getRate();
+        }
+
+        /**
+         * Constructor.
+         * @param pPercent the percentage
+         */
+        protected QIFEventSplitPercentLine(final JRate pPercent) {
+            /* Call super-constructor */
+            super(pPercent);
         }
     }
 

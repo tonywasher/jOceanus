@@ -27,6 +27,8 @@ import java.util.List;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
+import net.sourceforge.jOceanus.jDecimal.JDecimalParser;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
 import net.sourceforge.jOceanus.jDecimal.JRatio;
@@ -34,6 +36,8 @@ import net.sourceforge.jOceanus.jDecimal.JUnits;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QActionType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QPortfolioLineType;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFCategoryAccountLine;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFCategoryLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFClearedLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFDateLine;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFMoneyLine;
@@ -169,6 +173,10 @@ public class QIFPortfolioEvent
         JMoney myAmount = null;
         String myComment = null;
 
+        /* Obtain parsers */
+        JDateDayFormatter myDateParser = pFormatter.getDateFormatter();
+        JDecimalParser myDecParser = pFormatter.getDecimalParser();
+
         /* Loop through the lines */
         Iterator<String> myIterator = pLines.iterator();
         while (myIterator.hasNext()) {
@@ -183,7 +191,7 @@ public class QIFPortfolioEvent
                 /* Switch on line type */
                 switch (myType) {
                     case Date:
-                        JDateDay myDateDay = pFormatter.getDateFormatter().parseDateDay(myData);
+                        JDateDay myDateDay = myDateParser.parseDateDay(myData);
                         addLine(new QIFPortfolioDateLine(myDateDay));
                         myDate = myDateDay;
                         break;
@@ -193,7 +201,7 @@ public class QIFPortfolioEvent
                         myCleared = myFlag;
                         break;
                     case Amount:
-                        JMoney myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        JMoney myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFPortfolioAmountLine(myMoney));
                         myAmount = myMoney;
                         break;
@@ -206,30 +214,39 @@ public class QIFPortfolioEvent
                         addLine(new QIFPortfolioActionLine(myAction));
                         break;
                     case Price:
-                        JPrice myPrice = pFormatter.getDecimalParser().parsePriceValue(myData);
+                        JPrice myPrice = myDecParser.parsePriceValue(myData);
                         addLine(new QIFPortfolioPriceLine(myPrice));
                         break;
                     case Commission:
-                        myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFPortfolioCommissionLine(myMoney));
                         break;
                     case Payee:
                         addLine(new QIFPortfolioPayeeDescLine(myData));
                         break;
                     case Quantity:
-                        JUnits myUnits = pFormatter.getDecimalParser().parseUnitsValue(myData);
+                        JUnits myUnits = myDecParser.parseUnitsValue(myData);
                         addLine(new QIFPortfolioQuantityLine(myUnits));
                         break;
                     case Security:
                         addLine(new QIFPortfolioSecurityLine(pFile.getSecurity(myData)));
                         break;
                     case TransferAccount:
-                        /* Look for account */
-                        String myAccount = QIFXferAccountLine.parseAccount(myData);
-                        addLine(new QIFPortfolioAccountLine(pFile.getAccount(myAccount)));
+                        /* Look for account, category and classes */
+                        QIFAccount myAccount = QIFXferAccountLine.parseAccount(pFile, myData);
+                        QIFEventCategory myCategory = QIFCategoryLine.parseCategory(pFile, myData);
+                        List<QIFClass> myClasses = QIFXferAccountLine.parseAccountClasses(pFile, myData);
+                        if (myAccount == null) {
+                            myClasses = QIFCategoryLine.parseCategoryClasses(pFile, myData);
+                            addLine(new QIFPortfolioCategoryLine(myCategory, myClasses));
+                        } else if (myCategory == null) {
+                            addLine(new QIFPortfolioAccountLine(myAccount, myClasses));
+                        } else {
+                            addLine(new QIFPortfolioCategoryAccountLine(myCategory, myAccount, myClasses));
+                        }
                         break;
                     case TransferAmount:
-                        myMoney = pFormatter.getDecimalParser().parseMoneyValue(myData);
+                        myMoney = myDecParser.parseMoneyValue(myData);
                         addLine(new QIFPortfolioXferAmountLine(myMoney));
                         break;
                     default:
@@ -622,6 +639,83 @@ public class QIFPortfolioEvent
         protected QIFPortfolioAccountLine(final QIFAccount pAccount) {
             /* Call super-constructor */
             super(pAccount);
+        }
+
+        /**
+         * Constructor.
+         * @param pAccount the account
+         * @param pClasses the account classes
+         */
+        protected QIFPortfolioAccountLine(final QIFAccount pAccount,
+                                          final List<QIFClass> pClasses) {
+            /* Call super-constructor */
+            super(pAccount, pClasses);
+        }
+    }
+
+    /**
+     * The Portfolio Category line.
+     */
+    public class QIFPortfolioCategoryLine
+            extends QIFCategoryLine<QPortfolioLineType> {
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.TransferAccount;
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the category
+         */
+        protected QIFPortfolioCategoryLine(final QIFEventCategory pCategory) {
+            /* Call super-constructor */
+            super(pCategory);
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the category
+         * @param pClasses the account classes
+         */
+        protected QIFPortfolioCategoryLine(final QIFEventCategory pCategory,
+                                           final List<QIFClass> pClasses) {
+            /* Call super-constructor */
+            super(pCategory, pClasses);
+        }
+    }
+
+    /**
+     * The Portfolio Category line.
+     */
+    public class QIFPortfolioCategoryAccountLine
+            extends QIFCategoryAccountLine<QPortfolioLineType> {
+        @Override
+        public QPortfolioLineType getLineType() {
+            return QPortfolioLineType.TransferAccount;
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the category
+         * @param pAccount the account
+         */
+        protected QIFPortfolioCategoryAccountLine(final QIFEventCategory pCategory,
+                                                  final QIFAccount pAccount) {
+            /* Call super-constructor */
+            super(pCategory, pAccount);
+        }
+
+        /**
+         * Constructor.
+         * @param pCategory the category
+         * @param pAccount the account
+         * @param pClasses the account classes
+         */
+        protected QIFPortfolioCategoryAccountLine(final QIFEventCategory pCategory,
+                                                  final QIFAccount pAccount,
+                                                  final List<QIFClass> pClasses) {
+            /* Call super-constructor */
+            super(pCategory, pAccount, pClasses);
         }
     }
 
