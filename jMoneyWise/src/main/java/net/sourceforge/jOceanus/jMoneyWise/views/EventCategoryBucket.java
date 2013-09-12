@@ -264,7 +264,7 @@ public final class EventCategoryBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JMoney getMoneyAttribute(final EventAttribute pAttr) {
+    public JMoney getMoneyAttribute(final EventAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JMoney.class);
     }
@@ -289,7 +289,7 @@ public final class EventCategoryBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JMoney getBaseMoneyAttribute(final EventAttribute pAttr) {
+    public JMoney getBaseMoneyAttribute(final EventAttribute pAttr) {
         /* Obtain the attribute */
         return getBaseAttribute(pAttr, JMoney.class);
     }
@@ -601,7 +601,7 @@ public final class EventCategoryBucket
          * Obtain the Totals EventCategoryBucket.
          * @return the bucket
          */
-        protected EventCategoryBucket getTotalsBucket() {
+        public EventCategoryBucket getTotalsBucket() {
             return theTotals;
         }
 

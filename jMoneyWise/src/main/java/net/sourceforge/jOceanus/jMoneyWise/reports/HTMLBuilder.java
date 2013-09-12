@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.views;
+package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.awt.Color;
 

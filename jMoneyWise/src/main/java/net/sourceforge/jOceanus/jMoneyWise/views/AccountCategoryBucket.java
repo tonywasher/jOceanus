@@ -262,7 +262,7 @@ public final class AccountCategoryBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JMoney getMoneyAttribute(final AccountAttribute pAttr) {
+    public JMoney getMoneyAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JMoney.class);
     }
@@ -284,7 +284,7 @@ public final class AccountCategoryBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JMoney getBaseMoneyAttribute(final AccountAttribute pAttr) {
+    public JMoney getBaseMoneyAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return JMoney.class.cast(getBaseAttribute(pAttr));
     }
@@ -294,7 +294,7 @@ public final class AccountCategoryBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected Integer getIntegerAttribute(final AccountAttribute pAttr) {
+    public Integer getIntegerAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return Integer.class.cast(getAttribute(pAttr));
     }
@@ -625,7 +625,7 @@ public final class AccountCategoryBucket
          * Obtain the Totals AccountCategoryBucket.
          * @return the bucket
          */
-        protected AccountCategoryBucket getTotalsBucket() {
+        public AccountCategoryBucket getTotalsBucket() {
             return theTotals;
         }
 
@@ -777,7 +777,7 @@ public final class AccountCategoryBucket
     /**
      * Category type.
      */
-    protected enum CategoryType {
+    public enum CategoryType {
         /**
          * Money.
          */

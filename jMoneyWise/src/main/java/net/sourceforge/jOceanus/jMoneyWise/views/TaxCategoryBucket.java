@@ -169,7 +169,7 @@ public final class TaxCategoryBucket
      * Obtain the tax section.
      * @return the tax section
      */
-    protected TaxCategorySection getCategorySection() {
+    public TaxCategorySection getCategorySection() {
         return theTaxSection;
     }
 
@@ -253,7 +253,7 @@ public final class TaxCategoryBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JMoney getMoneyAttribute(final TaxAttribute pAttr) {
+    public JMoney getMoneyAttribute(final TaxAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JMoney.class);
     }
@@ -263,7 +263,7 @@ public final class TaxCategoryBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JRate getRateAttribute(final TaxAttribute pAttr) {
+    public JRate getRateAttribute(final TaxAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JRate.class);
     }
@@ -642,7 +642,7 @@ public final class TaxCategoryBucket
          * @param pClass the event category class
          * @return the bucket
          */
-        protected TaxCategoryBucket getBucket(final TaxCategoryClass pClass) {
+        public TaxCategoryBucket getBucket(final TaxCategoryClass pClass) {
             /* Locate the bucket in the list */
             TaxCategory myCategory = theData.getTaxCategories().findItemByClass(pClass);
             TaxCategoryBucket myItem = findItemById(myCategory.getId());

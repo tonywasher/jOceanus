@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jMoneyWise.views;
+package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.Iterator;
 
@@ -36,15 +36,22 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategorySection;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
+import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAnalysisList;
 import net.sourceforge.jOceanus.jMoneyWise.views.InvestmentAnalysis.InvestmentAttribute;
+import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
 

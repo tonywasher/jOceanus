@@ -49,13 +49,13 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jEventManager.JEnableWrapper.JEnableScroll;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder;
+import net.sourceforge.jOceanus.jMoneyWise.reports.ReportBuilder;
+import net.sourceforge.jOceanus.jMoneyWise.reports.ReportManager;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect.ReportType;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
-import net.sourceforge.jOceanus.jMoneyWise.views.HTMLBuilder;
-import net.sourceforge.jOceanus.jMoneyWise.views.ReportBuilder;
-import net.sourceforge.jOceanus.jMoneyWise.views.ReportManager;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 import org.w3c.dom.Document;

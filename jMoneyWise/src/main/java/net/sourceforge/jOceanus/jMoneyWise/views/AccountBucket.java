@@ -332,7 +332,7 @@ public final class AccountBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JPrice getPriceAttribute(final AccountAttribute pAttr) {
+    public JPrice getPriceAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JPrice.class);
     }
@@ -342,7 +342,7 @@ public final class AccountBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JMoney getMoneyAttribute(final AccountAttribute pAttr) {
+    public JMoney getMoneyAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JMoney.class);
     }
@@ -352,7 +352,7 @@ public final class AccountBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JUnits getUnitsAttribute(final AccountAttribute pAttr) {
+    public JUnits getUnitsAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JUnits.class);
     }
@@ -362,7 +362,7 @@ public final class AccountBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JRate getRateAttribute(final AccountAttribute pAttr) {
+    public JRate getRateAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JRate.class);
     }
@@ -372,7 +372,7 @@ public final class AccountBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JDateDay getDateAttribute(final AccountAttribute pAttr) {
+    public JDateDay getDateAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return getAttribute(pAttr, JDateDay.class);
     }
@@ -397,7 +397,7 @@ public final class AccountBucket
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    protected JMoney getBaseMoneyAttribute(final AccountAttribute pAttr) {
+    public JMoney getBaseMoneyAttribute(final AccountAttribute pAttr) {
         /* Obtain the attribute */
         return getBaseAttribute(pAttr, JMoney.class);
     }
@@ -934,7 +934,7 @@ public final class AccountBucket
      * Is the bucket relevant? That is to say is either this bucket or it's base active?
      * @return true/false
      */
-    protected boolean isRelevant() {
+    public boolean isRelevant() {
         /* Relevant if this value or the previous value is non-zero */
         if (isActive()) {
             return true;
