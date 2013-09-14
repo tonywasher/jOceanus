@@ -58,6 +58,7 @@ public class FinanceWriter
         addSheet(new SheetTaxYearInfoType(this));
         addSheet(new SheetAccountInfoType(this));
         addSheet(new SheetEventInfoType(this));
+        addSheet(new SheetEventClass(this));
         addSheet(new SheetAccountCategory(this));
         addSheet(new SheetEventCategory(this));
         addSheet(new SheetTaxYear(this));
@@ -74,6 +75,7 @@ public class FinanceWriter
         addSheet(new SheetEvent(this));
         if (isBackup()) {
             addSheet(new SheetEventInfo(this));
+            addSheet(new SheetEventClassLink(this));
         }
         addSheet(new SheetPattern(this));
     }

@@ -38,7 +38,7 @@ public class SheetExchangeRate
     /**
      * NamedArea for Rates.
      */
-    protected static final String AREA_XCHGRATES = "ExchangeRates";
+    protected static final String AREA_XCHGRATES = ExchangeRate.LIST_NAME;
 
     /**
      * Date column.

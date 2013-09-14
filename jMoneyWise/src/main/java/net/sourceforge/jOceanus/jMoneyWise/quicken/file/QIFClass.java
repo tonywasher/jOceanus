@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jMoneyWise.quicken.file;
 import java.util.Iterator;
 import java.util.List;
 
+import net.sourceforge.jOceanus.jMoneyWise.data.EventClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QClassLineType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFLine.QIFStringLine;
 
@@ -67,22 +68,22 @@ public class QIFClass
     /**
      * Constructor.
      * @param pFile the QIF File
-     * @param pName the Class name
+     * @param pTag the Event Tag
      */
     public QIFClass(final QIFFile pFile,
-                    final String pName) {
+                    final EventClass pTag) {
         /* Call super-constructor */
         super(pFile, QClassLineType.class);
 
         /* Store data */
-        theName = pName;
-        theDesc = null;
+        theName = pTag.getName();
+        theDesc = pTag.getDesc();
 
         /* Build lines */
         addLine(new QIFClassNameLine(theName));
-        // if (theDesc != null) {
-        // addLine(new QIFClassDescLine(theDesc));
-        // }
+        if (theDesc != null) {
+            addLine(new QIFClassDescLine(theDesc));
+        }
     }
 
     /**

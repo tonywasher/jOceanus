@@ -296,6 +296,16 @@ public final class ExchangeRate
         return (FinanceData) super.getDataSet();
     }
 
+    @Override
+    public ExchangeRate getBase() {
+        return (ExchangeRate) super.getBase();
+    }
+
+    @Override
+    public ExchangeRateList getList() {
+        return (ExchangeRateList) super.getList();
+    }
+
     /**
      * Copy Constructor.
      * @param pList the list

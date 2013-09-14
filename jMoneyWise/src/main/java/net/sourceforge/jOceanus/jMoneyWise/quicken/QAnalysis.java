@@ -45,6 +45,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoClass;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QCategory.QCategoryList;
+import net.sourceforge.jOceanus.jMoneyWise.quicken.QClass.QClassList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.QSecurity.QSecurityList;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.definitions.QIFType;
 import net.sourceforge.jOceanus.jMoneyWise.quicken.file.QIFFile;
@@ -80,7 +81,12 @@ public class QAnalysis
     /**
      * Number of output stages.
      */
-    protected static final int QIF_NUMOUTS = 5;
+    protected static final int QIF_NUMOUTS = 6;
+
+    /**
+     * Class List.
+     */
+    private final QClassList theClasses;
 
     /**
      * Account Map.
@@ -142,6 +148,14 @@ public class QAnalysis
     }
 
     /**
+     * Obtain class iterator.
+     * @return the iterator
+     */
+    public Iterator<QClass> classIterator() {
+        return theClasses.classIterator();
+    }
+
+    /**
      * Obtain categories iterator.
      * @return the iterator
      */
@@ -176,6 +190,7 @@ public class QAnalysis
         super(pFormatter, pType);
 
         /* Create the maps */
+        theClasses = new QClassList(this);
         theAccounts = new LinkedHashMap<Account, QAccount>();
         theCategories = new QCategoryList(this);
         theSecurities = new QSecurityList(this);
@@ -491,6 +506,12 @@ public class QAnalysis
 
         /* If we should continue */
         if (bContinue) {
+            /* Output the classes */
+            bContinue = theClasses.outputClasses(pStatus, pStream);
+        }
+
+        /* If we should continue */
+        if (bContinue) {
             /* Output the categories */
             bContinue = theCategories.outputCategories(pStatus, pStream);
         }
@@ -595,6 +616,15 @@ public class QAnalysis
     protected QIFFile buildQIFFile() {
         /* Create new QIF File */
         QIFFile myFile = new QIFFile();
+
+        /* Loop through the classes */
+        Iterator<QClass> myClassIterator = classIterator();
+        while (myClassIterator.hasNext()) {
+            QClass myClass = myClassIterator.next();
+
+            /* Register Class details */
+            myFile.registerClass(myClass.getEventClass());
+        }
 
         /* Loop through the categories */
         Iterator<QCategory> myCatIterator = categoryIterator();

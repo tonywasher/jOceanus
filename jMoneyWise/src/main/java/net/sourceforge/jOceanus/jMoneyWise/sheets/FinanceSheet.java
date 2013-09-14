@@ -55,9 +55,9 @@ import net.sourceforge.jOceanus.jSpreadSheetManager.DataWorkBook.WorkBookType;
 public class FinanceSheet
         extends SpreadSheet<FinanceData> {
     /**
-     * Number of base archive load areas. 9xStatic,2*Category,Pattern,Rate,Price,Account,TaxYear,Range+Event.
+     * Number of base archive load areas. 9xStatic,EventClasses,2*Category,Pattern,Rate,Price,Account,TaxYear,Range+Event.
      */
-    private static final int NUM_ARCHIVE_AREAS = 18;
+    private static final int NUM_ARCHIVE_AREAS = 19;
 
     /**
      * Year boundary.
@@ -347,6 +347,10 @@ public class FinanceSheet
             }
             if (bContinue) {
                 bContinue = SheetEventInfoType.loadArchive(pTask, myWorkbook, myData);
+            }
+
+            if (bContinue) {
+                bContinue = SheetEventClass.loadArchive(pTask, myWorkbook, myData);
             }
 
             if (bContinue) {

@@ -38,6 +38,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate.AccountRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventClass.EventClassList;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventClassLink.EventClassLinkList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventInfo.EventInfoList;
 import net.sourceforge.jOceanus.jMoneyWise.data.ExchangeRate.ExchangeRateList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Pattern.PatternList;
@@ -112,6 +114,11 @@ public class FinanceData
     public static final JDataField FIELD_EVTINFOTYPES = FIELD_DEFS.declareLocalField("EventInfoTypes");
 
     /**
+     * EventClasses Field Id.
+     */
+    public static final JDataField FIELD_EVENTCLASSES = FIELD_DEFS.declareLocalField("EventClasses");
+
+    /**
      * AccountCategories Field Id.
      */
     public static final JDataField FIELD_ACTCATEGORIES = FIELD_DEFS.declareLocalField("AccountCategories");
@@ -171,6 +178,11 @@ public class FinanceData
      */
     public static final JDataField FIELD_EVENTINFO = FIELD_DEFS.declareLocalField("EventInfo");
 
+    /**
+     * EventClassLinks Field Id.
+     */
+    public static final JDataField FIELD_EVTCLSLINKS = FIELD_DEFS.declareLocalField("EventClassLinks");
+
     @Override
     public JDataFields getDataFields() {
         return FIELD_DEFS;
@@ -221,6 +233,11 @@ public class FinanceData
         if (FIELD_EVTINFOTYPES.equals(pField)) {
             return (theEventInfoTypes.size() > 0)
                     ? theEventInfoTypes
+                    : JDataFieldValue.SkipField;
+        }
+        if (FIELD_EVENTCLASSES.equals(pField)) {
+            return (theEventClasses.size() > 0)
+                    ? theEventClasses
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_ACTCATEGORIES.equals(pField)) {
@@ -283,6 +300,11 @@ public class FinanceData
                     ? theEventInfo
                     : JDataFieldValue.SkipField;
         }
+        if (FIELD_EVTCLSLINKS.equals(pField)) {
+            return (theEventClassLinks.size() > 0)
+                    ? theEventClassLinks
+                    : JDataFieldValue.SkipField;
+        }
         return super.getFieldValue(pField);
     }
 
@@ -335,6 +357,11 @@ public class FinanceData
      * EventInfoTypes.
      */
     private EventInfoTypeList theEventInfoTypes = null;
+
+    /**
+     * EventTags.
+     */
+    private EventClassList theEventClasses = null;
 
     /**
      * AccountCategories.
@@ -395,6 +422,11 @@ public class FinanceData
      * Events.
      */
     private EventList theEvents = null;
+
+    /**
+     * EventClassLinks.
+     */
+    private EventClassLinkList theEventClassLinks = null;
 
     /**
      * DataSet range.
@@ -476,6 +508,14 @@ public class FinanceData
      */
     public EventInfoTypeList getEventInfoTypes() {
         return theEventInfoTypes;
+    }
+
+    /**
+     * Obtain EventClasses.
+     * @return the EventClasses
+     */
+    public EventClassList getEventClasses() {
+        return theEventClasses;
     }
 
     /**
@@ -575,6 +615,14 @@ public class FinanceData
     }
 
     /**
+     * Obtain EventClass Links.
+     * @return the EventClass Links
+     */
+    public EventClassLinkList getEventClassLinks() {
+        return theEventClassLinks;
+    }
+
+    /**
      * Obtain Date range.
      * @return the Date Range
      */
@@ -612,6 +660,7 @@ public class FinanceData
         theTaxInfoTypes = new TaxYearInfoTypeList(this);
         theActInfoTypes = new AccountInfoTypeList(this);
         theEventInfoTypes = new EventInfoTypeList(this);
+        theEventClasses = new EventClassList(this);
         theActCategories = new AccountCategoryList(this);
         theEvtCategories = new EventCategoryList(this);
         theTaxYears = new TaxYearList(this);
@@ -624,6 +673,7 @@ public class FinanceData
         theAccountInfo = new AccountInfoList(this);
         theEvents = new EventList(this);
         theEventInfo = new EventInfoList(this);
+        theEventClassLinks = new EventClassLinkList(this);
 
         /* Declare the lists */
         declareLists();
@@ -657,6 +707,7 @@ public class FinanceData
         myExtract.theEventInfoTypes = theEventInfoTypes.deriveList(ListStyle.UPDATE);
 
         /* Build the data extract */
+        myExtract.theEventClasses = theEventClasses.deriveList(ListStyle.UPDATE);
         myExtract.theActCategories = theActCategories.deriveList(ListStyle.UPDATE);
         myExtract.theEvtCategories = theEvtCategories.deriveList(ListStyle.UPDATE);
         myExtract.theTaxYears = theTaxYears.deriveList(ListStyle.UPDATE);
@@ -669,6 +720,7 @@ public class FinanceData
         myExtract.theAccountInfo = theAccountInfo.deriveList(ListStyle.UPDATE);
         myExtract.theEvents = theEvents.deriveList(ListStyle.UPDATE);
         myExtract.theEventInfo = theEventInfo.deriveList(ListStyle.UPDATE);
+        myExtract.theEventClassLinks = theEventClassLinks.deriveList(ListStyle.UPDATE);
 
         /* Declare the lists */
         myExtract.declareLists();
@@ -697,6 +749,7 @@ public class FinanceData
         myExtract.theEventInfoTypes = theEventInfoTypes.cloneList(this);
 
         /* Build the data extract */
+        myExtract.theEventClasses = theEventClasses.cloneList(this);
         myExtract.theActCategories = theActCategories.cloneList(this);
         myExtract.theEvtCategories = theEvtCategories.cloneList(this);
         myExtract.theTaxYears = theTaxYears.cloneList(this);
@@ -709,6 +762,7 @@ public class FinanceData
         myExtract.theAccountInfo = theAccountInfo.cloneList(this);
         myExtract.theEvents = theEvents.cloneList(this);
         myExtract.theEventInfo = theEventInfo.cloneList(this);
+        myExtract.theEventClassLinks = theEventClassLinks.cloneList(this);
 
         /* Declare the lists */
         myExtract.declareLists();
@@ -745,6 +799,7 @@ public class FinanceData
         myDiffers.theEventInfoTypes = theEventInfoTypes.deriveDifferences(pOld.getEventInfoTypes());
 
         /* Build the data differences */
+        myDiffers.theEventClasses = theEventClasses.deriveDifferences(pOld.getEventClasses());
         myDiffers.theActCategories = theActCategories.deriveDifferences(pOld.getAccountCategories());
         myDiffers.theEvtCategories = theEvtCategories.deriveDifferences(pOld.getEventCategories());
         myDiffers.theTaxYears = theTaxYears.deriveDifferences(pOld.getTaxYears());
@@ -757,6 +812,7 @@ public class FinanceData
         myDiffers.theAccountInfo = theAccountInfo.deriveDifferences(pOld.getAccountInfo());
         myDiffers.theEvents = theEvents.deriveDifferences(pOld.getEvents());
         myDiffers.theEventInfo = theEventInfo.deriveDifferences(pOld.getEventInfo());
+        myDiffers.theEventClassLinks = theEventClassLinks.deriveDifferences(pOld.getEventClassLinks());
 
         /* Declare the lists */
         myDiffers.declareLists();
@@ -787,6 +843,7 @@ public class FinanceData
         theEventInfoTypes.reBase(pOld.getEventInfoTypes());
 
         /* ReBase the data items */
+        theEventClasses.reBase(pOld.getEventClasses());
         theActCategories.reBase(pOld.getAccountCategories());
         theEvtCategories.reBase(pOld.getEventCategories());
         theTaxYears.reBase(pOld.getTaxYears());
@@ -799,6 +856,7 @@ public class FinanceData
         theAccountInfo.reBase(pOld.getAccountInfo());
         theEvents.reBase(pOld.getEvents());
         theEventInfo.reBase(pOld.getEventInfo());
+        theEventClassLinks.reBase(pOld.getEventClassLinks());
     }
 
     /**
@@ -815,6 +873,7 @@ public class FinanceData
         addList(theTaxInfoTypes);
         addList(theActInfoTypes);
         addList(theEventInfoTypes);
+        addList(theEventClasses);
         addList(theActCategories);
         addList(theEvtCategories);
         addList(theTaxYears);
@@ -827,6 +886,7 @@ public class FinanceData
         addList(theAccountInfo);
         addList(theEvents);
         addList(theEventInfo);
+        addList(theEventClassLinks);
     }
 
     /**
@@ -853,7 +913,8 @@ public class FinanceData
         theActInfoTypes.clearActive();
         theEventInfoTypes.clearActive();
 
-        /* Reset the flags on the categories, taxYears and accounts */
+        /* Reset the flags on the classes, categories, taxYears and accounts */
+        theEventClasses.clearActive();
         theActCategories.clearActive();
         theEvtCategories.clearActive();
         theTaxYears.clearActive();

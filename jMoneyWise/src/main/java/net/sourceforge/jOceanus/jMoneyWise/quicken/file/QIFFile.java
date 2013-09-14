@@ -35,6 +35,7 @@ import net.sourceforge.jOceanus.jDataModels.threads.ThreadStatus;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
+import net.sourceforge.jOceanus.jMoneyWise.data.EventClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 
 /**
@@ -95,6 +96,16 @@ public class QIFFile {
         /* Allocate the formatter and set date format */
         theFormatter = new JDataFormatter();
         theFormatter.setFormat(QIF_DATEFORMAT);
+    }
+
+    /**
+     * Register class.
+     * @param pClass the class
+     */
+    public void registerClass(final EventClass pClass) {
+        /* Create the new Category and add to the map */
+        QIFClass myClass = new QIFClass(this, pClass);
+        theClasses.put(myClass.getName(), myClass);
     }
 
     /**
