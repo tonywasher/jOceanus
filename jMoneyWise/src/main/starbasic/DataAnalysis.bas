@@ -144,6 +144,13 @@ Sub analyseYear(ByRef Context As FinanceState, _
 					myAutoExpense = myCredInfo.catAutoExpense
 					myAutoExpense.catValue = myAutoExpense.catValue + myValue				
 					myCredInfo.acctExpense = myCredInfo.acctExpense + myValue		
+				'If this is Loan payment
+				ElseIf (myCatInfo.isLoanPay) Then
+					'Access the parent account
+					myParInfo = myCredInfo.acctParent					
+					
+					'Adjust parent expense
+					myParInfo.acctExpense = myParInfo.acctExpense + myValue
 				Else
 					'Add to value
 					myCredInfo.acctValue = myCredInfo.acctValue + myValue
@@ -176,6 +183,19 @@ Sub analyseYear(ByRef Context As FinanceState, _
 					'Adjust parent income
 					myParInfo.acctIncome = myParInfo.acctIncome + myValue + myTaxCred + myCharity
 					myParInfo.acctExpense = myParInfo.acctExpense + myCharity
+				'If this is asset earnings
+				ElseIf (myCatInfo.isAssetEarn) Then
+					'Access the parent account
+					myParInfo = myDebInfo.acctParent					
+					
+					'Adjust parent income
+					myParInfo.acctIncome = myParInfo.acctIncome + myValue
+				ElseIf (myCatInfo.isRental) Then
+					'Access the parent account (of credit!!)
+					myParInfo = myCredInfo.acctParent					
+					
+					'Adjust parent income
+					myParInfo.acctIncome = myParInfo.acctIncome + myValue
 				'If we have autoExpense
 				ElseIf (myDebInfo.isAutoExpense) Then
 					'Subtract from expense

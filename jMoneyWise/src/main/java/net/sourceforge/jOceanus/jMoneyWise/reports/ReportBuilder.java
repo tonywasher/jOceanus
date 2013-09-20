@@ -521,7 +521,8 @@ public class ReportBuilder {
             EventCategoryBucket myBucket = myIterator.next();
 
             /* Only process subTotal items */
-            if (myBucket.getEventCategoryType().getCategoryClass() != EventCategoryClass.Category) {
+            EventCategoryClass myClass = myBucket.getEventCategoryType().getCategoryClass();
+            if (!myClass.isSubTotal()) {
                 continue;
             }
 

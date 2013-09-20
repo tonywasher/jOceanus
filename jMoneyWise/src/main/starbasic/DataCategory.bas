@@ -32,9 +32,12 @@ Private Const colCatIncome As Integer = 4
 Private Const colCatTransfer As Integer = 5
 Private Const colCatInterest As Integer = 6
 Private Const colCatDividend As Integer = 7
-Private Const colCatWaived As Integer = 8
-Private Const colCatDemerger As Integer = 9
-Private Const colCatTakeover As Integer = 10
+Private Const colCatRental As Integer = 8
+Private Const colCatLoanPay As Integer = 9
+Private Const colCatAssetEarn As Integer = 10
+Private Const colCatWaived As Integer = 11
+Private Const colCatDemerger As Integer = 12
+Private Const colCatTakeover As Integer = 13
 
 'Statistics for Category
 Public Type CategoryStats
@@ -48,6 +51,9 @@ Public Type CategoryStats
 	isDividend As Boolean
 	isIncome As Boolean
 	isTransfer As Boolean
+	isRental As Boolean
+	isLoanPay As Boolean
+	isAssetEarn As Boolean
 	isStockDemerger As Boolean
 	isStockTakeover As Boolean
 	isStockWaived As Boolean
@@ -103,6 +109,9 @@ Private Sub loadCategories(ByRef Context As FinanceState)
 	    myCat.isTransfer = myRow.getCellByPosition(colCatTransfer, 0).getValue()
 	    myCat.isInterest = myRow.getCellByPosition(colCatInterest, 0).getValue()
 	    myCat.isDividend = myRow.getCellByPosition(colCatDividend, 0).getValue()
+	    myCat.isRental = myRow.getCellByPosition(colCatRental, 0).getValue()
+	    myCat.isLoanPay = myRow.getCellByPosition(colCatLoanPay, 0).getValue()
+	    myCat.isAssetEarn = myRow.getCellByPosition(colCatAssetEarn, 0).getValue()
 	    myCat.isStockWaived = myRow.getCellByPosition(colCatWaived, 0).getValue()
 	    myCat.isStockDemerger = myRow.getCellByPosition(colCatDemerger, 0).getValue()
 	    myCat.isStockTakeover = myRow.getCellByPosition(colCatTakeover, 0).getValue()

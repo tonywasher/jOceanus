@@ -52,7 +52,7 @@ public class EventClass
      * List name.
      */
     public static final String LIST_NAME = OBJECT_NAME
-                                           + "s";
+                                           + "es";
     /**
      * EventTag Name length.
      */

@@ -163,11 +163,13 @@ public enum TransactionType {
             case BenefitIncome:
             case Interest:
             case TaxFreeInterest:
+            case LoanInterestEarned:
             case Dividend:
             case UnitTrustDividend:
             case TaxFreeDividend:
             case OtherIncome:
             case RentalIncome:
+            case RoomRentalIncome:
             case Inherited:
             case OpeningBalance:
             case MarketGrowth:
@@ -181,7 +183,8 @@ public enum TransactionType {
             case StockDeMerger:
             case StockTakeOver:
                 return Transfer;
-            case Category:
+            case IncomeTotals:
+            case ExpenseTotals:
             case Totals:
                 return Illegal;
             case Expense:
@@ -193,7 +196,7 @@ public enum TransactionType {
             case NatInsurance:
             case DeemedBenefit:
             case CharityDonation:
-            case LoanInterest:
+            case LoanInterestCharged:
             default:
                 return Expense;
         }

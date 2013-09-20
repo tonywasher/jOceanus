@@ -790,12 +790,13 @@ public final class EventCategory
                         addError("Totals EventCategory cannot have parent", FIELD_PARENT);
                     }
                     break;
-                case Category:
+                case IncomeTotals:
+                case ExpenseTotals:
                     /* Check parent */
                     if (myParent == null) {
                         addError("EventCategory must have parent", FIELD_PARENT);
                     } else if (!myParent.isCategoryClass(EventCategoryClass.Totals)) {
-                        addError("Category EventCategory must have Totals parent", FIELD_PARENT);
+                        addError("SubTotals EventCategory must have Totals parent", FIELD_PARENT);
                     }
                     break;
                 default:
@@ -810,8 +811,12 @@ public final class EventCategory
                         }
                     } else if (hasParent) {
                         /* Check validity of parent */
-                        if (!myParent.getCategoryTypeClass().canParentCategory()) {
+                        EventCategoryClass myParentClass = myParent.getCategoryTypeClass();
+                        if (!myParentClass.canParentCategory()) {
                             addError("EventCategory must have valid parent", FIELD_PARENT);
+                        }
+                        if (myParentClass.isIncome() != myClass.isIncome()) {
+                            addError("EventCategory must have similar parent", FIELD_PARENT);
                         }
 
                         /* Check that name reflects parent */

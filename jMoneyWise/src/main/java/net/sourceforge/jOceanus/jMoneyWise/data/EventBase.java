@@ -865,17 +865,46 @@ public abstract class EventBase
             }
         }
 
+        /* If this is an non-recursive expense (i.e. decreases the value of assets) */
+        if (myActTran.isExpense()
+            && (!isRecursive)) {
+            /* Switch Debit and Credit classes so that this look like an expense */
+            AccountCategoryClass myClass = myDebitClass;
+            myDebitClass = myCreditClass;
+            myCreditClass = myClass;
+
+            /* Switch debit and credit types */
+            AccountType myType = myDebitType;
+            myDebitType = myCreditType;
+            myCreditType = myType;
+        }
+
         /* Switch on the CategoryClass */
         switch (myCatClass) {
             case TaxedIncome:
-                /* Taxed income must be from employer to savings/loan */
+                /* Cannot refund Taxed Income */
+                if (myActTran.isExpense()) {
+                    return false;
+                }
+
+                /* Taxed income must be from employer to savings/loan (as expense) */
                 return ((myDebitClass == AccountCategoryClass.Employer) && ((myCreditClass.isSavings()) || (myCreditClass.isLoan())));
 
             case GrantIncome:
+                /* Cannot refund Grant Income */
+                if (myActTran.isExpense()) {
+                    return false;
+                }
+
                 /* Grant income must be from grant-able to savings account */
                 return ((myDebitClass.canGrant()) && (myCreditClass.isSavings()));
 
             case BenefitIncome:
+                /* Cannot refund Benefit Income */
+                if (myActTran.isExpense()) {
+                    return false;
+                }
+
                 /* Benefit income must be from government to savings account */
                 return ((myDebitClass == AccountCategoryClass.Government) && (myCreditClass.isSavings()));
 
@@ -883,7 +912,13 @@ public abstract class EventBase
                 /* Other income is from nonAsset to savings/loan */
                 return ((myDebitClass.isNonAsset()) && ((myCreditClass.isSavings()) || (myCreditClass.isLoan())));
 
+            case GiftedIncome:
             case Inherited:
+                /* Cannot refund Gifted Income/Inheritance */
+                if (myActTran.isExpense()) {
+                    return false;
+                }
+
                 /* Inheritance must be from individual to asset */
                 return ((myDebitClass == AccountCategoryClass.Individual) && (myCreditType.isAsset()));
 
@@ -928,54 +963,32 @@ public abstract class EventBase
                         && (myDebitClass.isShares()) && (myCreditClass.isShares()));
 
             case RentalIncome:
-                /* Credit must be to loan */
-                if (!myCreditClass.isLoan()) {
-                    return false;
-                }
-
-                /* Debit must be from the owner of the loan */
-                return Difference.isEqual(pDebit, pCredit.getParent());
-
-            case LoanInterest:
-                /* If this is an income */
-                if (myActTran.isIncome()) {
-                    /* Debit must be from the owner of the loan to the loan */
-                    return (myCreditClass.isLoan() && Difference.isEqual(pDebit, pCredit.getParent()));
-                }
-
-                /* Credit must be to the owner of the loan from the loan */
-                return (myDebitClass.isLoan() && Difference.isEqual(pCredit, pDebit.getParent()));
+            case RoomRentalIncome:
+                /* Rental Income must be from property to loan */
+                return ((myDebitClass == AccountCategoryClass.Property) && (myCreditClass.isLoan()));
 
             case WriteOff:
-                /* Debit must be from loan */
-                if (!myDebitClass.isLoan()) {
-                    return false;
-                }
-
-                /* Credit must be to the owner of the loan */
-                return Difference.isEqual(pCredit, pDebit.getParent());
+            case LoanInterestEarned:
+            case LoanInterestCharged:
+                /* Must be recursive on loan */
+                return myDebitClass.isLoan()
+                       && isRecursive;
 
             case LocalTaxes:
-                /* Local taxes must be to government from valued account */
-                return ((myCreditClass == AccountCategoryClass.Government) && (myDebitType.isValued()));
+                /* Local taxes must be from government to valued account */
+                return ((myDebitClass == AccountCategoryClass.Government) && (myCreditType.isValued()));
 
             case CharityDonation:
-                /* CharityDonation is from Asset to nonAsset */
-                return ((myDebitClass.isAsset()) && (myCreditClass.isNonAsset()));
+                /* CharityDonation is from nonAsset to Asset */
+                return ((myDebitClass.isNonAsset()) && (myCreditClass.isAsset()));
 
             case TaxRelief:
                 /* Tax Relief is from TaxMan to loan */
                 return ((myDebitClass == AccountCategoryClass.TaxMan) && (myCreditClass.isLoan()));
 
             case TaxSettlement:
-                /* If this is an income */
-                if (myActTran.isIncome()) {
-                    /* Settlement income is from TaxMan to valued */
-                    return ((myDebitClass == AccountCategoryClass.TaxMan) && (myCreditType.isValued()));
-                }
-
-                /* Settlement expense is from valued account to TaxMan */
-                return ((myCreditClass == AccountCategoryClass.TaxMan) && (myDebitType.isValued()));
+                /* Settlement income is from TaxMan to valued */
+                return ((myDebitClass == AccountCategoryClass.TaxMan) && (myCreditType.isValued()));
 
             case Transfer:
                 /* transfer is nonRecursive and from Asset to Asset */
@@ -983,14 +996,8 @@ public abstract class EventBase
                         && (myDebitClass.isAsset()) && (myCreditClass.isAsset()));
 
             case Expense:
-                /* If this is an income */
-                if (myActTran.isIncome()) {
-                    /* Recovered expense is from nonAsset to Asset */
-                    return ((myDebitClass.isNonAsset()) && (myCreditClass.isAsset()));
-                }
-
-                /* Standard expense is from nonAsset to Asset */
-                return ((myCreditClass.isNonAsset()) && (myDebitClass.isAsset()));
+                /* Recovered expense is from nonAsset to Asset */
+                return ((myDebitClass.isNonAsset()) && (myCreditClass.isAsset()));
 
             default:
                 return false;

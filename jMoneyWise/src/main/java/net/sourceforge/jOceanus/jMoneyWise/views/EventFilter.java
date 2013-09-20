@@ -470,6 +470,7 @@ public class EventFilter
         EventCategory myDebitAuto = myDebit.getAutoExpense();
         EventCategory myCreditAuto = myCredit.getAutoExpense();
         EventCategory myCategory = pEvent.getCategory();
+        EventCategoryClass myCatClass = myCategory.getCategoryTypeClass();
         AccountList myAccounts = theDataSet.getAccounts();
         EventCategoryList myCategories = theDataSet.getEventCategories();
 
@@ -489,10 +490,16 @@ public class EventFilter
             theAccounts.add(myCredit);
         }
 
-        /* Register parent payee if required */
-        if (myCategory.getCategoryTypeClass().isParentPayee()) {
+        /* Register debit parent payee if required */
+        if (myCatClass.isDebitParentPayee()) {
             /* Check for filtering on Parent */
             theAccounts.add(myDebit.getParent());
+        }
+
+        /* Register credit parent payee if required */
+        if (myCatClass.isDebitParentPayee()) {
+            /* Check for filtering on Parent */
+            theAccounts.add(myCredit.getParent());
         }
 
         /* Add Third party to list if it exists */
@@ -684,11 +691,20 @@ public class EventFilter
 
         /* Access category */
         EventCategory myCategory = pEvent.getCategory();
+        EventCategoryClass myCatClass = myCategory.getCategoryTypeClass();
 
         /* If this is a payment from the parent */
-        if (myCategory.getCategoryTypeClass().isParentPayee()) {
+        if (myCatClass.isDebitParentPayee()) {
             /* Check for filtering on Parent */
             if (!filterOnPayee(myDebit.getParent())) {
+                return false;
+            }
+        }
+
+        /* If this is a expense to the parent */
+        if (myCatClass.isCreditParentPayee()) {
+            /* Check for filtering on Parent */
+            if (!filterOnPayee(myCredit.getParent())) {
                 return false;
             }
         }

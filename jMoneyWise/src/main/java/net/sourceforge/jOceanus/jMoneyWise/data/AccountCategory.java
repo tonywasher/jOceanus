@@ -764,24 +764,26 @@ public class AccountCategory
                         addError("Totals AccountCategory cannot have parent", FIELD_PARENT);
                     }
                     break;
-                case Category:
+                case SavingsTotals:
+                case CashTotals:
+                case PricedTotals:
+                case LoanTotals:
                     /* Check parent */
                     if (myParent == null) {
                         addError("AccountCategory must have parent", FIELD_PARENT);
                     } else if (!myParent.isCategoryClass(AccountCategoryClass.Totals)) {
-                        addError("Category AccountCategory must have Totals parent", FIELD_PARENT);
+                        addError("SubTotals AccountCategory must have Totals parent", FIELD_PARENT);
                     }
                     break;
                 default:
                     /* Check parent */
                     if (myParent == null) {
                         addError("AccountCategory must have parent", FIELD_PARENT);
-                    } else if (!myParent.getCategoryTypeClass().isParentCategory()) {
+                    } else if (myParent.getCategoryTypeClass() != myClass.getParentClass()) {
                         addError("AccountCategory must have valid parent", FIELD_PARENT);
                     }
                     break;
             }
-
         }
 
         /* Set validation flag */

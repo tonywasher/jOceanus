@@ -1004,13 +1004,31 @@ public class EventAnalysis
         } else {
             EventCategory myCat = pEvent.getCategory();
 
-            /* If the event is interest */
-            if (pEvent.isInterest()) {
-                /* Obtain detailed category */
-                myCat = myDebit.getDetailedCategory(myCat);
+            /* Switch on category class */
+            switch (myCat.getCategoryTypeClass()) {
+                case Interest:
+                    /* Obtain detailed category */
+                    myCat = myDebit.getDetailedCategory(myCat);
 
-                /* True debit account is the parent */
-                myDebit = myDebit.getParent();
+                    /* True debit account is the parent */
+                    myDebit = myDebit.getParent();
+                    break;
+                case LoanInterestEarned:
+                    /* True debit account is the parent of the loan */
+                    myDebit = myDebit.getParent();
+                    break;
+                case RentalIncome:
+                case RoomRentalIncome:
+                    /* True debit account is the parent of the loan */
+                    myDebit = myCredit.getParent();
+                    break;
+                case WriteOff:
+                case LoanInterestCharged:
+                    /* True credit account is the parent of the loan */
+                    myCredit = myCredit.getParent();
+                    break;
+                default:
+                    break;
             }
 
             /* Adjust the debit account bucket */

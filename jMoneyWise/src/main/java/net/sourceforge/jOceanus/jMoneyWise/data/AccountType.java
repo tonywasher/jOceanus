@@ -159,6 +159,8 @@ public enum AccountType {
             case LifeBond:
             case Endowment:
             case Asset:
+            case Property:
+            case Vehicle:
                 return Priced;
             case Employer:
             case Payee:
@@ -169,7 +171,10 @@ public enum AccountType {
             case Individual:
             case OpeningBalance:
                 return NonAsset;
-            case Category:
+            case SavingsTotals:
+            case CashTotals:
+            case PricedTotals:
+            case LoanTotals:
             case Totals:
             default:
                 return Illegal;

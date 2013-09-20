@@ -401,7 +401,7 @@ public final class AccountCategoryBucket
             }
 
             /* This is a payee */
-            return (myClass == AccountCategoryClass.Category)
+            return (myClass.isSubTotal())
                     ? CategoryType.SubTotal
                     : CategoryType.Payee;
         }
