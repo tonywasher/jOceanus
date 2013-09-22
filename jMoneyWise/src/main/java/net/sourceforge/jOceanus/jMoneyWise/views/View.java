@@ -190,7 +190,7 @@ public class View
         }
 
         /* Return whether there was success */
-        return (getErrors().size() > 0);
+        return (getErrors().size() == 0);
     }
 
     /**

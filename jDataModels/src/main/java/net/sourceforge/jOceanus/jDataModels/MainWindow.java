@@ -81,6 +81,11 @@ public abstract class MainWindow<T extends DataSet<T>>
     private static final String MENU_DATA = NLS_BUNDLE.getString("MenuData");
 
     /**
+     * Edit menu title.
+     */
+    private static final String MENU_EDIT = NLS_BUNDLE.getString("MenuEdit");
+
+    /**
      * Backup menu title.
      */
     private static final String MENU_BACKUP = NLS_BUNDLE.getString("MenuBackup");
@@ -114,6 +119,16 @@ public abstract class MainWindow<T extends DataSet<T>>
      * Purge Database menu item.
      */
     private static final String ITEM_PURGEDB = NLS_BUNDLE.getString("ItemPurgeDB");
+
+    /**
+     * Undo Edit menu item.
+     */
+    private static final String ITEM_UNDO = NLS_BUNDLE.getString("ItemUnDo");
+
+    /**
+     * Reset Edit menu item.
+     */
+    private static final String ITEM_RESET = NLS_BUNDLE.getString("ItemReset");
 
     /**
      * Create Backup menu item.
@@ -196,6 +211,11 @@ public abstract class MainWindow<T extends DataSet<T>>
     private JMenu theDataMenu = null;
 
     /**
+     * The edit menu.
+     */
+    private JMenu theEditMenu = null;
+
+    /**
      * The backup menu.
      */
     private JMenu theBackupMenu = null;
@@ -224,6 +244,16 @@ public abstract class MainWindow<T extends DataSet<T>>
      * The Save Database menu item.
      */
     private JMenuItem theSaveDBase = null;
+
+    /**
+     * The Undo Edit menu item.
+     */
+    private JMenuItem theUndoEdit = null;
+
+    /**
+     * The Reset Edit menu item.
+     */
+    private JMenuItem theResetEdit = null;
 
     /**
      * The Write Backup menu item.
@@ -408,6 +438,11 @@ public abstract class MainWindow<T extends DataSet<T>>
         addDataMenuItems(theDataMenu);
         myMainMenu.add(theDataMenu);
 
+        /* Add Edit Menu Items */
+        theEditMenu = new JMenu(MENU_EDIT);
+        addEditMenuItems(theEditMenu);
+        myMainMenu.add(theEditMenu);
+
         /* Add Backup Menu Items */
         theBackupMenu = new JMenu(MENU_BACKUP);
         addBackupMenuItems(theBackupMenu);
@@ -446,6 +481,20 @@ public abstract class MainWindow<T extends DataSet<T>>
         thePurgeDBase = new JMenuItem(ITEM_PURGEDB);
         thePurgeDBase.addActionListener(this);
         pMenu.add(thePurgeDBase);
+    }
+
+    /**
+     * Add EditMenu items.
+     * @param pMenu the menu
+     */
+    protected void addEditMenuItems(final JMenu pMenu) {
+        /* Add Standard Edit Menu items */
+        theUndoEdit = new JMenuItem(ITEM_UNDO);
+        theUndoEdit.addActionListener(this);
+        pMenu.add(theUndoEdit);
+        theResetEdit = new JMenuItem(ITEM_RESET);
+        theResetEdit.addActionListener(this);
+        pMenu.add(theResetEdit);
     }
 
     /**
@@ -608,6 +657,16 @@ public abstract class MainWindow<T extends DataSet<T>>
             /* Start a load database operation */
             createDatabase();
 
+            /* If this event relates to the Undo Edit item */
+        } else if (theUndoEdit.equals(o)) {
+            /* Undo the last edit */
+            undoLastEdit();
+
+            /* If this event relates to the Reset Edit item */
+        } else if (theResetEdit.equals(o)) {
+            /* Reset the edit */
+            resetEdit();
+
             /* If this event relates to the Purge Database item */
         } else if (thePurgeDBase.equals(o)) {
             /* Start a load database operation */
@@ -667,6 +726,15 @@ public abstract class MainWindow<T extends DataSet<T>>
         theBackupMenu.setEnabled(!hasWorker);
         theSecureMenu.setEnabled(!hasWorker
                                  && hasControl);
+
+        /* If we have changes but no updates enable the undo/reset options */
+        if ((hasWorker)
+            || (!hasControl)) {
+            theEditMenu.setEnabled(false);
+        } else {
+            theEditMenu.setEnabled(!hasUpdates
+                                   && hasChanges);
+        }
 
         /* If we have changes disable the create backup options */
         theWriteBackup.setEnabled(!hasChanges
@@ -790,6 +858,28 @@ public abstract class MainWindow<T extends DataSet<T>>
         PurgeDatabase<T> myThread = new PurgeDatabase<T>(myStatus);
         myStatus.registerThread(myThread);
         startThread(myThread);
+    }
+
+    /**
+     * UnDo last edit.
+     */
+    private void undoLastEdit() {
+        /* Undo the last edit */
+        theView.undoLastChange();
+
+        /* Adjust visibility */
+        setVisibility();
+    }
+
+    /**
+     * reset Edit changes.
+     */
+    private void resetEdit() {
+        /* Reset the edit View */
+        theView.resetChanges();
+
+        /* Adjust visibility */
+        setVisibility();
     }
 
     /**

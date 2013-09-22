@@ -771,6 +771,38 @@ public abstract class DataSet<T extends DataSet<T>>
     }
 
     /**
+     * Undo changes in a dataSet.
+     */
+    public void undoLastChange() {
+        /* Ignore if we have no changes */
+        if (theVersion == 0) {
+            return;
+        }
+
+        /* Decrement version */
+        theVersion--;
+
+        /* Rewind to the version */
+        rewindToVersion(theVersion);
+    }
+
+    /**
+     * Reset changes in a dataSet.
+     */
+    public void resetChanges() {
+        /* Ignore if we have no changes */
+        if (theVersion == 0) {
+            return;
+        }
+
+        /* Decrement version */
+        theVersion = 0;
+
+        /* Rewind to the version */
+        rewindToVersion(theVersion);
+    }
+
+    /**
      * Obtain list iterator.
      * @return the iterator
      */

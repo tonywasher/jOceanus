@@ -397,6 +397,34 @@ public abstract class DataControl<T extends DataSet<T>>
     }
 
     /**
+     * Undo changes in a viewSet.
+     */
+    public void undoLastChange() {
+        /* UndoLastChange */
+        theData.undoLastChange();
+
+        /* Analyse the data */
+        analyseData(false);
+
+        /* Refresh the views */
+        refreshViews();
+    }
+
+    /**
+     * Reset changes in a viewSet.
+     */
+    public void resetChanges() {
+        /* Rewind the data */
+        theData.resetChanges();
+
+        /* Analyse the data */
+        analyseData(false);
+
+        /* Refresh the views */
+        refreshViews();
+    }
+
+    /**
      * Preference listener class.
      */
     private final class PreferenceListener
