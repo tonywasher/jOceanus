@@ -47,6 +47,7 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
+import net.sourceforge.jOceanus.jMoneyWise.reports.ReportType;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
@@ -213,14 +214,14 @@ public class ReportSelect
         refreshData(null);
 
         /* Add the ReportTypes to the report box */
-        theReportBox.addItem(ReportType.NETWORTH);
-        theReportBox.addItem(ReportType.ASSET);
-        theReportBox.addItem(ReportType.INCOME);
-        theReportBox.addItem(ReportType.EVENTCATEGORY);
-        theReportBox.addItem(ReportType.TAXCATEGORY);
-        theReportBox.addItem(ReportType.TAX);
-        theReportBox.addItem(ReportType.MARKET);
-        theReportBox.setSelectedItem(ReportType.NETWORTH);
+        theReportBox.addItem(ReportType.NetWorth);
+        theReportBox.addItem(ReportType.BalanceSheet);
+        theReportBox.addItem(ReportType.CashFlow);
+        theReportBox.addItem(ReportType.IncomeExpense);
+        theReportBox.addItem(ReportType.TaxationBasis);
+        theReportBox.addItem(ReportType.TaxCalculation);
+        theReportBox.addItem(ReportType.Portfolio);
+        theReportBox.setSelectedItem(ReportType.NetWorth);
 
         /* Create the labels */
         JLabel myRepLabel = new JLabel(NLS_REPORT);
@@ -361,7 +362,7 @@ public class ReportSelect
     public void setEnabled(final boolean bEnable) {
         ReportType myType = theState.getType();
 
-        boolean isDate = ((myType == ReportType.NETWORTH) || (myType == ReportType.MARKET));
+        boolean isDate = myType.isPointInTime();
         boolean isNull = (myType == null);
         boolean isYear = (!isNull && !isDate);
 
@@ -480,7 +481,7 @@ public class ReportSelect
         private ReportState() {
             theDate = new JDateDay();
             theYear = null;
-            theType = ReportType.NETWORTH;
+            theType = ReportType.NetWorth;
         }
 
         /**
@@ -544,64 +545,6 @@ public class ReportSelect
             setEnabled(true);
             theDateButton.setSelectedDateDay(theDate);
             theYearsBox.setSelectedItem(theYear);
-        }
-    }
-
-    /**
-     * Report Types.
-     */
-    public enum ReportType {
-        /**
-         * Asset Report.
-         */
-        ASSET("Assets"),
-
-        /**
-         * Income/Expense Report.
-         */
-        INCOME("Income/Expense"),
-
-        /**
-         * Tax Report.
-         */
-        TAX("Taxation"),
-
-        /**
-         * Tax Category Report.
-         */
-        TAXCATEGORY("TaxCategory"),
-
-        /**
-         * Event Category Report.
-         */
-        EVENTCATEGORY("EventCategory"),
-
-        /**
-         * Net Worth Report.
-         */
-        NETWORTH("NetWorth"),
-
-        /**
-         * Market Report.
-         */
-        MARKET("Market");
-
-        /**
-         * Report Name.
-         */
-        private final String theName;
-
-        @Override
-        public String toString() {
-            return theName;
-        }
-
-        /**
-         * Constructor.
-         * @param pName the report name
-         */
-        private ReportType(final String pName) {
-            theName = pName;
         }
     }
 }

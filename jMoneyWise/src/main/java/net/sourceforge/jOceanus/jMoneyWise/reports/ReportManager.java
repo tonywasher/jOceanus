@@ -62,6 +62,11 @@ public class ReportManager {
     private final Transformer theXformer;
 
     /**
+     * Report formatter.
+     */
+    private final HTMLBuilder theBuilder;
+
+    /**
      * The Current document.
      */
     private Document theDocument = null;
@@ -82,10 +87,21 @@ public class ReportManager {
     private final Map<String, Object> theSelectionMap;
 
     /**
+     * Obtain the builder.
+     * @return the HTML builder
+     */
+    public HTMLBuilder getBuilder() {
+        return theBuilder;
+    }
+
+    /**
      * Constructor.
      * @throws JDataException on error
      */
     public ReportManager() throws JDataException {
+        /* Create the builder */
+        theBuilder = new HTMLBuilder();
+
         /* Allocate the hashMaps */
         theHiddenMap = new HashMap<String, HiddenElement>();
         theSelectionMap = new HashMap<String, Object>();
@@ -119,9 +135,6 @@ public class ReportManager {
     public void setDocument(final Document pDocument) throws JDataException {
         /* Store the document */
         theDocument = pDocument;
-
-        /* Format the document */
-        formatXML();
     }
 
     /**
@@ -449,7 +462,7 @@ public class ReportManager {
          * Restore the element.
          */
         private void restore() {
-            /* Restore the elementt */
+            /* Restore the element */
             theParent.insertBefore(theElement, thePrevious.getNextSibling());
         }
     }

@@ -52,8 +52,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder;
 import net.sourceforge.jOceanus.jMoneyWise.reports.ReportBuilder;
 import net.sourceforge.jOceanus.jMoneyWise.reports.ReportManager;
+import net.sourceforge.jOceanus.jMoneyWise.reports.ReportType;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect;
-import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect.ReportType;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
@@ -247,6 +247,11 @@ public class ReportTab
     private void printIt() {
         /* Print the current report */
         try {
+            /* Copy text from editor */
+            String myText = theEditor.getText();
+            thePrint.setText(myText);
+
+            /* Print the report */
             thePrint.print();
         } catch (PrinterException e) {
             e = null;
@@ -280,42 +285,42 @@ public class ReportTab
 
         /* Switch on report type */
         switch (myReportType) {
-            case ASSET:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myDoc = theBuilder.getAssetReport(myAnalysis.getAnalysis());
-                break;
-
-            case INCOME:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myDoc = theBuilder.getIncomeReport(myAnalysis.getAnalysis());
-                break;
-
-            case EVENTCATEGORY:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myDoc = theBuilder.getCategoryReport(myAnalysis.getAnalysis());
-                break;
-
-            case TAXCATEGORY:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myDoc = theBuilder.getTaxCategoryReport(myAnalysis.getAnalysis());
-                break;
-
-            case TAX:
-                myAnalysis = theAnalysis.getAnalysisYear(myYear);
-                myAnalysis.calculateTax();
-                myDoc = theBuilder.getTaxReport(myAnalysis.getAnalysis(), myAnalysis.getTaxYear());
-                break;
-
-            case NETWORTH:
+            case NetWorth:
                 mySnapshot = new EventAnalysis(theView.getData(), myDate);
-                myDoc = theBuilder.getNetWorthReport(mySnapshot.getAnalysis());
+                myDoc = theBuilder.createReport(mySnapshot.getAnalysis(), ReportType.NetWorth);
                 theSpotEntry.setObject(mySnapshot);
                 theSpotEntry.showEntry();
                 break;
 
-            case MARKET:
+            case BalanceSheet:
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.BalanceSheet);
+                break;
+
+            case CashFlow:
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.CashFlow);
+                break;
+
+            case IncomeExpense:
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.IncomeExpense);
+                break;
+
+            case TaxationBasis:
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.TaxationBasis);
+                break;
+
+            case TaxCalculation:
+                myAnalysis = theAnalysis.getAnalysisYear(myYear);
+                myAnalysis.calculateTax();
+                myDoc = theBuilder.createReport(myAnalysis.getAnalysis(), ReportType.TaxCalculation);
+                break;
+
+            case Portfolio:
                 mySnapshot = new EventAnalysis(theView.getData(), myDate);
-                myDoc = theBuilder.getMarketReport(mySnapshot.getAnalysis());
+                myDoc = theBuilder.createReport(mySnapshot.getAnalysis(), ReportType.Portfolio);
                 theSpotEntry.setObject(mySnapshot);
                 theSpotEntry.showEntry();
                 break;
@@ -326,12 +331,8 @@ public class ReportTab
         /* Declare the document */
         theManager.setDocument(myDoc);
 
-        /* Create printable version */
-        String myText = theManager.formatXML();
-        thePrint.setText(myText);
-
         /* Create initial display version */
-        myText = theManager.hideClassSections();
+        String myText = theManager.hideClassSections();
         theEditor.setText(myText);
 
         /* Initialise the window */
