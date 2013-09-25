@@ -147,7 +147,7 @@ public class AccountInfoSet
      */
     protected void cloneDataInfoSet(final AccountInfoSet pSource) {
         /* Clone the dataInfoSet */
-        super.cloneDataInfoSet(pSource);
+        cloneTheDataInfoSet(pSource);
     }
 
     /**

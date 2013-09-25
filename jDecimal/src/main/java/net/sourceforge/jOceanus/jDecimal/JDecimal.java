@@ -334,7 +334,7 @@ public class JDecimal
      * Multiply two decimals together to produce a third.
      * <p>
      * This function splits each part of the multiplication into integral and fractional parts (a,b) and (c,d). It then treats each factor as the sum of the two
-     * parts (a+b) etc and calculates the product as (a.c + a.d + b.c + b.d). To avoid losing significant digits at either end of the calculation each partial
+     * parts (a+b) etc. and calculates the product as (a.c + a.d + b.c + b.d). To avoid losing significant digits at either end of the calculation each partial
      * product is split into integral and fractional parts. The integers are summed together and the fractional parts are summed together at combined decimal
      * places of the two factors. Once all partial products have been calculated, the integral and fractional totals are adjusted to the correct number of
      * decimal places and combined. This allows the multiplication to be built without risk of unnecessary arithmetic overflow.
@@ -406,14 +406,87 @@ public class JDecimal
     /**
      * Divide a decimal by another decimals to produce a third.
      * <p>
-     * In order to avoid loss of digits at the least significant bit end, the dividend is shifted left to insert the required number of digits. An additional
-     * decimal is added before division and removed afterwards to handle rounding correctly. In addition if the dividend has a different number of decimals to
-     * the divisor the dividend is adjusted accordingly.
+     * The calculation can be written as <code>x.10<sup>a</sup>/y.10<sup>b</sup> = (x/y).10<sup>a-b</sup> = z.10<sup>c</sup></code>.
+     * <p>
+     * where x is the unscaled dividend, y the unscaled divisor and z the unscaled result, and a,b,c the relevant scales.
+     * <p>
+     * In order to avoid losing significant digits at either end of the calculation we calculate (x/y) in integer arithmetic.
+     * <p>
+     * <code>x/y = m, x%y = n => x=my + n</code> where m and n are integers, and
+     * <p>
+     * <code>(x/y).10<sup>a-b</sup> = (my +n).10<sup>a-b</sup>/y = (m + (n/y)).10<sup>a-b</sup></code>
+     * <p>
+     * To obtain the result in the correct scale we find
+     * <p>
+     * <code>z.10<sup>c</sup> = m.10<sup>c-(a-b)</sup> + IntegralPart(n.10<sup>c-(a-b)</sup>/y)</code>
+     * <p>
+     * taking care to round the IntegralPart calculation correctly.
      * @param pDividend the number to divide
      * @param pDivisor the number to divide
      */
     protected void calculateQuotient(final JDecimal pDividend,
                                      final JDecimal pDivisor) {
+        /* Access the two values */
+        long myDividend = pDividend.unscaledValue();
+        long myDivisor = pDivisor.unscaledValue();
+
+        /* Calculate fractions (m,n) */
+        long myInteger = myDividend
+                         / myDivisor;
+        long myRemainder = myDividend
+                           % myDivisor;
+
+        /* Calculate the required shift (c-(a-b)) */
+        int myShift = scale();
+        myShift += pDivisor.scale()
+                   - pDividend.scale();
+
+        /* If the shift is positive */
+        if (myShift > 0) {
+            /* Adjust integer and remainder taking care of rounding for remainder */
+            myInteger = adjustDecimals(myInteger, myShift);
+            myRemainder = adjustDecimals(myRemainder, myShift + 1);
+            myRemainder /= myDivisor;
+            myRemainder = adjustDecimals(myRemainder, -1);
+
+            /* Combine values */
+            theValue = myInteger
+                       + myRemainder;
+        } else if (myShift == 0) {
+            /* Only need to adjust remainder for rounding */
+            myRemainder = adjustDecimals(myRemainder, 1);
+            myRemainder /= myDivisor;
+            myRemainder = adjustDecimals(myRemainder, -1);
+
+            /* Combine values */
+            theValue = myInteger
+                       + myRemainder;
+        } else {
+            /* Integer value also rounds so add in prior to rounding */
+            myInteger = adjustDecimals(myInteger, myShift + 1);
+            myRemainder = adjustDecimals(myRemainder, myShift + 1);
+            myRemainder /= myDivisor;
+            myInteger += myRemainder;
+            myInteger = adjustDecimals(myInteger, -1);
+
+            /* Combine values */
+            theValue = adjustDecimals(myInteger, -1);
+        }
+    }
+
+    /**
+     * Divide a decimal by another decimals to produce a third.
+     * <p>
+     * This old style calculation simple adjusts the scale of the dividend by a calculated factor prior to the calculation, in order to produce a result at the
+     * correct scale. An additional decimal is added before division and removed afterwards to handle rounding correctly.
+     * <p>
+     * This is deprecated, since the initial adjustment makes no attempt to avoid losing significant digits to left or right, and will produce incorrect results
+     * if the scale is adjusted downwards or else is significantly boosted for large values.
+     * @param pDividend the number to divide
+     * @param pDivisor the number to divide
+     */
+    protected void calculateQuotientOldStyle(final JDecimal pDividend,
+                                             final JDecimal pDivisor) {
         /* Access the two values */
         long myDividend = pDividend.unscaledValue();
         long myDivisor = pDivisor.unscaledValue();

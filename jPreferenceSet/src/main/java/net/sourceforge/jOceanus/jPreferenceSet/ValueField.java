@@ -151,15 +151,15 @@ public class ValueField
      * Set Special display string.
      * @param pValue the value
      */
-    public void setDisplay(final JFieldValue pValue) {
-        setDisplay(pValue.toString());
+    public void setDisplayValue(final JFieldValue pValue) {
+        setDisplayString(pValue.toString());
     }
 
     /**
      * Set Display Value.
      * @param pValue the value to set
      */
-    protected void setDisplay(final String pValue) {
+    protected void setDisplayString(final String pValue) {
         /* Set the display value */
         theModel.setDisplay(pValue);
         setText(pValue);
@@ -456,7 +456,9 @@ public class ValueField
             super.setValue(pValue);
 
             /* Set edit and display values */
-            theString = (pValue == null) ? "" : Integer.toString(getValue());
+            theString = (pValue == null)
+                    ? ""
+                    : Integer.toString(getValue());
             establishStrings();
         }
 
@@ -517,11 +519,17 @@ public class ValueField
             JMoney myNew = (JMoney) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new JMoney(myNew));
+            super.setValue((pValue == null)
+                    ? null
+                    : new JMoney(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
-            theEditString = ((myNew == null) ? "" : myNew.toString());
+            theDisplayString = ((myNew == null)
+                    ? ""
+                    : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null)
+                    ? ""
+                    : myNew.toString());
             establishStrings();
         }
 
@@ -582,11 +590,17 @@ public class ValueField
             JRate myNew = (JRate) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new JRate(myNew));
+            super.setValue((pValue == null)
+                    ? null
+                    : new JRate(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
-            theEditString = ((myNew == null) ? "" : myNew.toString());
+            theDisplayString = ((myNew == null)
+                    ? ""
+                    : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null)
+                    ? ""
+                    : myNew.toString());
             establishStrings();
         }
 
@@ -647,11 +661,17 @@ public class ValueField
             JUnits myNew = (JUnits) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new JUnits(myNew));
+            super.setValue((pValue == null)
+                    ? null
+                    : new JUnits(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
-            theEditString = ((myNew == null) ? "" : myNew.toString());
+            theDisplayString = ((myNew == null)
+                    ? ""
+                    : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null)
+                    ? ""
+                    : myNew.toString());
             establishStrings();
         }
 
@@ -712,11 +732,17 @@ public class ValueField
             JPrice myNew = (JPrice) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new JPrice(myNew));
+            super.setValue((pValue == null)
+                    ? null
+                    : new JPrice(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
-            theEditString = ((myNew == null) ? "" : myNew.toString());
+            theDisplayString = ((myNew == null)
+                    ? ""
+                    : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null)
+                    ? ""
+                    : myNew.toString());
             establishStrings();
         }
 
@@ -777,11 +803,17 @@ public class ValueField
             JDilution myNew = (JDilution) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : new JDilution(myNew));
+            super.setValue((pValue == null)
+                    ? null
+                    : new JDilution(myNew));
 
             /* Set new edit and display values */
-            theDisplayString = ((myNew == null) ? "" : theFormatter.formatObject(myNew));
-            theEditString = ((myNew == null) ? "" : myNew.toString());
+            theDisplayString = ((myNew == null)
+                    ? ""
+                    : theFormatter.formatObject(myNew));
+            theEditString = ((myNew == null)
+                    ? ""
+                    : myNew.toString());
             establishStrings();
         }
 
@@ -842,10 +874,14 @@ public class ValueField
             char[] myNew = (char[]) pValue;
 
             /* Store the new value */
-            super.setValue((pValue == null) ? null : Arrays.copyOf(myNew, myNew.length));
+            super.setValue((pValue == null)
+                    ? null
+                    : Arrays.copyOf(myNew, myNew.length));
 
             /* Set default edit/display values */
-            theEditString = ((myNew == null) ? "" : new String(myNew));
+            theEditString = ((myNew == null)
+                    ? ""
+                    : new String(myNew));
             theDisplayString = "";
 
             /* Set new display value */

@@ -129,7 +129,7 @@ public class TaxInfoSet
      */
     protected void cloneDataInfoSet(final TaxInfoSet pSource) {
         /* Clone the dataInfoSet */
-        super.cloneDataInfoSet(pSource);
+        cloneTheDataInfoSet(pSource);
     }
 
     /**

@@ -143,7 +143,7 @@ public class EventInfoSet
      */
     protected void cloneDataInfoSet(final EventInfoSet pSource) {
         /* Clone the dataInfoSet */
-        super.cloneDataInfoSet(pSource);
+        cloneTheDataInfoSet(pSource);
     }
 
     /**

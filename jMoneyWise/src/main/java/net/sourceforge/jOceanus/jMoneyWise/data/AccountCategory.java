@@ -115,7 +115,7 @@ public class AccountCategory
      * Obtain Name.
      * @return the name
      */
-    public String getName() {
+    public final String getName() {
         return getName(getValueSet());
     }
 

@@ -451,16 +451,8 @@ public abstract class EventBase
      * Set debit value.
      * @param pValue the value
      */
-    protected void setValueDebit(final Account pValue) {
+    protected final void setValueDebit(final Account pValue) {
         getValueSet().setValue(FIELD_DEBIT, pValue);
-    }
-
-    /**
-     * Set parent id.
-     * @param pId the value
-     */
-    private void setValueParent(final Integer pId) {
-        getValueSet().setValue(FIELD_PARENT, pId);
     }
 
     /**
@@ -472,10 +464,18 @@ public abstract class EventBase
     }
 
     /**
+     * Set debit id.
+     * @param pId the value
+     */
+    private void setValueDebit(final Integer pId) {
+        getValueSet().setValue(FIELD_DEBIT, pId);
+    }
+
+    /**
      * Set credit value.
      * @param pValue the value
      */
-    protected void setValueCredit(final Account pValue) {
+    protected final void setValueCredit(final Account pValue) {
         getValueSet().setValue(FIELD_CREDIT, pValue);
     }
 
@@ -499,16 +499,16 @@ public abstract class EventBase
      * Set parent value.
      * @param pValue the value
      */
-    protected void setValueParent(final EventBase pValue) {
+    protected final void setValueParent(final EventBase pValue) {
         getValueSet().setValue(FIELD_PARENT, pValue);
     }
 
     /**
-     * Set debit id.
+     * Set parent id.
      * @param pId the value
      */
-    private void setValueDebit(final Integer pId) {
-        getValueSet().setValue(FIELD_DEBIT, pId);
+    private void setValueParent(final Integer pId) {
+        getValueSet().setValue(FIELD_PARENT, pId);
     }
 
     @Override

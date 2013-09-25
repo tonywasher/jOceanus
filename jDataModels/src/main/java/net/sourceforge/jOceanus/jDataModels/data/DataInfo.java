@@ -242,7 +242,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * Set InfoType.
      * @param pValue the info Type
      */
-    protected void setValueInfoType(final I pValue) {
+    protected final void setValueInfoType(final I pValue) {
         getValueSet().setValue(FIELD_INFOTYPE, pValue);
     }
 
@@ -258,7 +258,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      * Set Owner.
      * @param pValue the owner
      */
-    protected void setValueOwner(final O pValue) {
+    protected final void setValueOwner(final O pValue) {
         getValueSet().setValue(FIELD_OWNER, pValue);
     }
 

@@ -161,7 +161,7 @@ public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends Data
      * Clone the dataInfoSet.
      * @param pSource the InfoSet to clone
      */
-    protected void cloneDataInfoSet(final DataInfoSet<T, O, I, E> pSource) {
+    protected void cloneTheDataInfoSet(final DataInfoSet<T, O, I, E> pSource) {
         /* Clone the InfoSet for each Event in the underlying Map */
         for (Entry<E, T> myEntry : pSource.theMap.entrySet()) {
             /* Create the new value */

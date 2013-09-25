@@ -231,7 +231,7 @@ public class QIFEventCategory
     /**
      * The Category Income line.
      */
-    public class QIFCategoryIncomeLine
+    public static class QIFCategoryIncomeLine
             extends QIFLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {
@@ -253,7 +253,7 @@ public class QIFEventCategory
     /**
      * The Category Expense line.
      */
-    public class QIFCategoryExpenseLine
+    public static class QIFCategoryExpenseLine
             extends QIFLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {
@@ -275,7 +275,7 @@ public class QIFEventCategory
     /**
      * The Category Tax line.
      */
-    public class QIFCategoryTaxLine
+    public static class QIFCategoryTaxLine
             extends QIFLine<QCategoryLineType> {
         @Override
         public QCategoryLineType getLineType() {

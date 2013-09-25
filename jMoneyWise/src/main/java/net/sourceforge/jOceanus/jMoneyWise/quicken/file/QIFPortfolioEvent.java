@@ -457,11 +457,6 @@ public class QIFPortfolioEvent
             return QPortfolioLineType.Price;
         }
 
-        @Override
-        public JPrice getPrice() {
-            return super.getPrice();
-        }
-
         /**
          * Constructor.
          * @param pPrice the price
@@ -480,11 +475,6 @@ public class QIFPortfolioEvent
         @Override
         public QPortfolioLineType getLineType() {
             return QPortfolioLineType.Quantity;
-        }
-
-        @Override
-        public JUnits getUnits() {
-            return super.getUnits();
         }
 
         /**
@@ -507,11 +497,6 @@ public class QIFPortfolioEvent
             return QPortfolioLineType.Quantity;
         }
 
-        @Override
-        public JRatio getRatio() {
-            return super.getRatio();
-        }
-
         /**
          * Constructor.
          * @param pRatio the ratio
@@ -525,7 +510,7 @@ public class QIFPortfolioEvent
     /**
      * The Portfolio Action line.
      */
-    public class QIFPortfolioActionLine
+    public static class QIFPortfolioActionLine
             extends QIFLine<QPortfolioLineType> {
         /**
          * The action type.
