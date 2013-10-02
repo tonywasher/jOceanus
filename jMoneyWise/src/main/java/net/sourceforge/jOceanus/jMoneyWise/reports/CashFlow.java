@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
@@ -95,13 +96,12 @@ public class CashFlow
         myBuffer.setLength(0);
 
         /* Initialise the table */
-        Element myTable = theBuilder.startTable(myBody);
-        Element myTHdr = theBuilder.startTableHeader(myTable);
-        Element myRow = theBuilder.startTotalRow(myTHdr);
-        theBuilder.makeTitleCell(myRow, ReportBuilder.TEXT_INCOME);
-        theBuilder.makeTitleCell(myRow, ReportBuilder.TEXT_EXPENSE);
-        theBuilder.makeTitleCell(myRow, ReportBuilder.TEXT_PROFIT);
-        Element myTBody = theBuilder.startTableBody(myTable);
+        TableControl myTable = theBuilder.startTable(myBody);
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTotalCell(myTable);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_INCOME);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_EXPENSE);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
         /* Create the bucket iterator */
         boolean isOdd = true;
@@ -117,25 +117,25 @@ public class CashFlow
             }
 
             /* Format the detail */
-            myRow = (isOdd)
-                    ? theBuilder.startDetailRow(myTBody, myBucket.getName())
-                    : theBuilder.startAlternateRow(myTBody, myBucket.getName());
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Income));
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Expense));
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.IncomeDelta));
+            theBuilder.startRow(myTable);
+            theBuilder.makeFilterLinkCell(myTable, myBucket.getName());
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Income));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Expense));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.IncomeDelta));
 
-            /* Record the selection */
-            theManager.setSelectionForId(myBucket.getName(), myBucket);
+            /* Record the filter */
+            theManager.setFilterForId(myBucket.getName(), myBucket);
 
             /* Flip row type */
             isOdd = !isOdd;
         }
 
         /* Format the total */
-        myRow = theBuilder.startTotalRow(myTBody, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Income));
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Expense));
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.IncomeDelta));
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Income));
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Expense));
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.IncomeDelta));
 
         /* Return the document */
         return theBuilder.getDocument();

@@ -144,26 +144,28 @@ public class ReportManager {
      */
     public void processReference(final String pId,
                                  final JEditorPane pWindow) {
-        /* Determine true id */
-        String myId = HTMLBuilder.REF_TAB
-                      + pId;
         String myText = null;
 
         try {
-            /* If the section is hidden */
-            if (theHiddenMap.get(myId) != null) {
-                /* Restore the section and access text */
-                myText = restoreSection(myId);
+            /* If this is a table reference */
+            if (pId.startsWith(HTMLBuilder.REF_TAB)) {
 
-                /* If the id section is hidden */
-            } else if (theSelectionMap.get(pId) != null) {
-                /* Restore the section and access text TODO */
-                // Object mySelect = theSelectionMap.get(pId);
-                return;
+                /* If the section is hidden */
+                if (theHiddenMap.get(pId) != null) {
+                    /* Restore the section and access text */
+                    myText = restoreSection(pId);
 
-                /* else try to hide the section */
-            } else {
-                myText = hideSection(myId);
+                    /* else try to hide the section */
+                } else {
+                    myText = hideSection(pId);
+                }
+                /* else if this is a filter reference */
+            } else if (pId.startsWith(HTMLBuilder.REF_FILTER)) {
+                if (theSelectionMap.get(pId) != null) {
+                    /* Restore the section and access text TODO */
+                    // Object mySelect = theSelectionMap.get(pId);
+                    return;
+                }
             }
         } catch (JDataException e) {
             myText = null;
@@ -173,8 +175,9 @@ public class ReportManager {
         if (myText != null) {
             /* Set it into the window and adjust the scroll */
             pWindow.setText(myText);
-            pWindow.scrollToReference(HTMLBuilder.REF_ID
-                                      + pId);
+            String myId = HTMLBuilder.REF_ID
+                          + pId.substring(HTMLBuilder.REF_TAB.length());
+            pWindow.scrollToReference(myId);
         }
     }
 
@@ -390,14 +393,15 @@ public class ReportManager {
     }
 
     /**
-     * Record referenced selection.
+     * Record filter for id.
      * @param pId the id for the selection
      * @param pSelect the selection object
      */
-    protected void setSelectionForId(final String pId,
-                                     final Object pSelect) {
+    protected void setFilterForId(final String pId,
+                                  final Object pSelect) {
         /* Record into selection map */
-        theSelectionMap.put(pId, pSelect);
+        theSelectionMap.put(HTMLBuilder.REF_FILTER
+                            + pId, pSelect);
     }
 
     /**

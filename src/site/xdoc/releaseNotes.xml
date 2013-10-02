@@ -10,6 +10,7 @@
       <dl>
         <dt>v1.1.0-b1</dt> <dd>initial upload of code</dd>
         <dt>v1.2.0-b1</dt> <dd>migration to Quicken category types</dd>
+        <dt>v1.2.0-b2</dt> <dd>improve reports and export to QIF</dd>
       </dl>
     </section>
   </body>

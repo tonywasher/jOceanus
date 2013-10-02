@@ -122,24 +122,24 @@ public class HTMLBuilder {
     private static final String CLASS_TOTROW = "totalRow";
 
     /**
-     * Name of category table row class.
+     * Name of summary table row class.
      */
-    private static final String CLASS_CATROW = "catRow";
+    private static final String CLASS_SUMMROW = "summRow";
 
     /**
-     * Name of alternate category table row class.
+     * Name of alternate summary table row class.
      */
-    private static final String CLASS_ALTCATROW = "altCatRow";
+    private static final String CLASS_ALTSUMMROW = "altSummRow";
 
     /**
-     * Name of subcategory row class.
+     * Name of detailed summary row class.
      */
-    private static final String CLASS_SUBCATROW = "subCatRow";
+    private static final String CLASS_DTLSUMMROW = "dtlSummRow";
 
     /**
-     * Name of alternate subcategory row class.
+     * Name of alternate detailed summary row class.
      */
-    private static final String CLASS_ALTSUBCATROW = "altSubCatRow";
+    private static final String CLASS_ALTDTLSUMMROW = "altDtlSummRow";
 
     /**
      * Name of detail row class.
@@ -242,6 +242,11 @@ public class HTMLBuilder {
     protected static final String REF_ID = ATTR_ID;
 
     /**
+     * The filter reference header.
+     */
+    protected static final String REF_FILTER = "filter";
+
+    /**
      * The document builder.
      */
     private final DocumentBuilder theBuilder;
@@ -340,28 +345,28 @@ public class HTMLBuilder {
 
         /* Define background colour for category row */
         myBuilder.append(SEP_DOT);
-        myBuilder.append(CLASS_CATROW);
+        myBuilder.append(CLASS_SUMMROW);
         myBuilder.append(" { background-color: #b7ceec; }"); // BlueAngel
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define background colour for alternate category row */
         myBuilder.append(SEP_DOT);
-        myBuilder.append(CLASS_ALTCATROW);
+        myBuilder.append(CLASS_ALTSUMMROW);
         myBuilder.append(" { background-color: #e3e4fa; }"); // Lavender
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define background colour for subcategory row */
         myBuilder.append(SEP_DOT);
-        myBuilder.append(CLASS_SUBCATROW);
+        myBuilder.append(CLASS_DTLSUMMROW);
         myBuilder.append(" { background-color: #89c35c; }"); // GreenPeas
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
         /* Define background colour for alternate subcategory row */
         myBuilder.append(SEP_DOT);
-        myBuilder.append(CLASS_ALTSUBCATROW);
+        myBuilder.append(CLASS_ALTDTLSUMMROW);
         myBuilder.append(" { background-color: #c3fdb8; }"); // LightJade
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
@@ -488,63 +493,131 @@ public class HTMLBuilder {
     }
 
     /**
-     * Add a standard empty cell.
-     * @param pParent the parent element
+     * Create and append a standard empty cell.
+     * @param pControl the table control
      * @return the new cell
      */
-    protected Element makeValueCell(final Element pParent) {
-        Element myCell = theDocument.createElement(ELEMENT_CELL);
-        pParent.appendChild(myCell);
-        return myCell;
+    protected Element makeValueCell(final TableControl pControl) {
+        return pControl.createNewCell(false);
     }
 
     /**
-     * Add a standard empty total cell.
-     * @param pParent the parent element
+     * Create and append a standard empty total cell.
+     * @param pControl the table control
      * @return the new cell
      */
-    protected Element makeTotalCell(final Element pParent) {
-        Element myCell = theDocument.createElement(ELEMENT_TOTAL);
-        pParent.appendChild(myCell);
-        return myCell;
+    protected Element makeTotalCell(final TableControl pControl) {
+        return pControl.createNewCell(true);
     }
 
     /**
-     * Add a standard cell.
-     * @param pParent the parent element
+     * Create and append a standard empty title cell.
+     * @param pControl the table control
+     * @return the new cell
+     */
+    protected Element makeTitleCell(final TableControl pControl) {
+        return pControl.createNewCell(true);
+    }
+
+    /**
+     * Create and append a standard cell with value.
+     * @param pControl the table control
      * @param pValue the value
      * @return the new cell
      */
-    protected Element makeValueCell(final Element pParent,
+    protected Element makeValueCell(final TableControl pControl,
                                     final Object pValue) {
-        Element myCell = makeValueCell(pParent);
+        Element myCell = pControl.createNewCell(false);
         setCellValue(myCell, pValue);
         return myCell;
     }
 
     /**
-     * Add a standard total cell.
-     * @param pParent the parent element
+     * Create and append a total cell with value.
+     * @param pControl the table control
      * @param pValue the value
      * @return the new cell
      */
-    protected Element makeTotalCell(final Element pParent,
+    protected Element makeTotalCell(final TableControl pControl,
                                     final Object pValue) {
-        Element myCell = makeTotalCell(pParent);
+        Element myCell = pControl.createNewCell(true);
         setCellValue(myCell, pValue);
         return myCell;
     }
 
     /**
-     * Add a standard title cell.
-     * @param pParent the parent element
+     * Create and append a title cell.
+     * @param pControl the table control
      * @param pTitle the title
      * @return the new cell
      */
-    protected Element makeTitleCell(final Element pParent,
+    protected Element makeTitleCell(final TableControl pControl,
                                     final String pTitle) {
-        Element myCell = makeTotalCell(pParent);
+        Element myCell = pControl.createNewCell(true);
         setCellTitle(myCell, pTitle);
+        return myCell;
+    }
+
+    /**
+     * Make Table link cell.
+     * @param pControl the table control
+     * @param pLink the link table name
+     * @return the new cell
+     */
+    protected Element makeTableLinkCell(final TableControl pControl,
+                                        final String pLink) {
+        return makeTableLinkCell(pControl, pLink, pLink);
+    }
+
+    /**
+     * Make Table link cell.
+     * @param pControl the table control
+     * @param pLink the link table name
+     * @param pName the link table display name
+     * @return the new cell
+     */
+    protected Element makeTableLinkCell(final TableControl pControl,
+                                        final String pLink,
+                                        final String pName) {
+        Element myCell = pControl.createNewCell(false);
+        Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_NAME, REF_ID
+                                       + pLink);
+        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_HREF, REF_TAB
+                                       + pLink);
+        myLink.setTextContent(pName);
+        return myCell;
+    }
+
+    /**
+     * Make Filter link cell.
+     * @param pControl the table control
+     * @param pLink the link table name
+     * @return the new cell
+     */
+    protected Element makeFilterLinkCell(final TableControl pControl,
+                                         final String pLink) {
+        return makeFilterLinkCell(pControl, pLink, pLink);
+    }
+
+    /**
+     * Make Table link cell.
+     * @param pControl the table control
+     * @param pLink the link table name
+     * @param pName the link table display name
+     * @return the new cell
+     */
+    protected Element makeFilterLinkCell(final TableControl pControl,
+                                         final String pLink,
+                                         final String pName) {
+        Element myCell = pControl.createNewCell(false);
+        Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_HREF, REF_FILTER
+                                       + pLink);
+        myLink.setTextContent(pName);
         return myCell;
     }
 
@@ -595,213 +668,30 @@ public class HTMLBuilder {
     }
 
     /**
+     * Start a table header row.
+     * @param pControl the table control
+     */
+    protected void startHdrRow(final TableControl pControl) {
+        /* Create the row */
+        pControl.createNewRow(true);
+    }
+
+    /**
      * Start a table data row.
-     * @param pParent the parent element
-     * @param pClass the class of the row
-     * @return the new row
+     * @param pControl the table control
      */
-    private Element startRow(final Element pParent,
-                             final String pClass) {
+    protected void startRow(final TableControl pControl) {
         /* Create the row */
-        Element myRow = theDocument.createElement(ELEMENT_ROW);
-        pParent.appendChild(myRow);
-        myRow.setAttribute(ATTR_CLASS, pClass);
-        return myRow;
+        pControl.createNewRow(false);
     }
 
     /**
-     * Start a total row.
-     * @param pParent the parent element
-     * @return the new row
+     * Start a table total row.
+     * @param pControl the table control
      */
-    protected Element startTotalRow(final Element pParent) {
+    protected void startTotalRow(final TableControl pControl) {
         /* Create the row */
-        Element myRow = startRow(pParent, CLASS_TOTROW);
-        makeTotalCell(myRow);
-        return myRow;
-    }
-
-    /**
-     * Start a total row.
-     * @param pParent the parent element
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startTotalRow(final Element pParent,
-                                    final String pTitle) {
-        /* Create the row */
-        Element myRow = startRow(pParent, CLASS_TOTROW);
-        makeTitleCell(myRow, pTitle);
-        return myRow;
-    }
-
-    /**
-     * Start a category row.
-     * @param pParent the parent element
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startCategoryRow(final Element pParent,
-                                       final String pTitle) {
-        /* Create the row */
-        Element myRow = startRow(pParent, CLASS_CATROW);
-        Element myCell = makeValueCell(myRow);
-        Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_NAME, REF_ID
-                                       + pTitle);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_HREF, pTitle);
-        myLink.setTextContent(pTitle);
-        return myRow;
-    }
-
-    /**
-     * Start an alternate category row.
-     * @param pParent the parent element
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startAlternateCatRow(final Element pParent,
-                                           final String pTitle) {
-        /* Create the row */
-        Element myRow = startRow(pParent, CLASS_ALTCATROW);
-        Element myCell = makeValueCell(myRow);
-        Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_NAME, REF_ID
-                                       + pTitle);
-        myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_HREF, pTitle);
-        myLink.setTextContent(pTitle);
-        return myRow;
-    }
-
-    /**
-     * Start a subCategory row.
-     * @param pParent the parent element
-     * @param pValue the cell contents
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startSubCategoryRow(final Element pParent,
-                                          final String pValue,
-                                          final String pTitle) {
-        /* Create the row */
-        Element myRow = startRow(pParent, CLASS_SUBCATROW);
-        Element myCell = makeValueCell(myRow);
-        Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_NAME, REF_ID
-                                       + pTitle);
-        myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_HREF, pTitle);
-        myLink.setTextContent(pValue);
-        return myRow;
-    }
-
-    /**
-     * Start a subCategory row.
-     * @param pParent the parent element
-     * @param pValue the cell contents
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startAlternateSubCatRow(final Element pParent,
-                                              final String pValue,
-                                              final String pTitle) {
-        /* Create the row */
-        Element myRow = startRow(pParent, CLASS_ALTSUBCATROW);
-        Element myCell = makeValueCell(myRow);
-        Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_NAME, REF_ID
-                                       + pTitle);
-        myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_HREF, pTitle);
-        myLink.setTextContent(pValue);
-        return myRow;
-    }
-
-    /**
-     * Start a detail title row.
-     * @param pParent the parent element
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startDetailTitleRow(final Element pParent,
-                                          final String pTitle) {
-        /* Create the row */
-        Element myRow = startRow(pParent, CLASS_DTLROW);
-        makeTitleCell(myRow, pTitle);
-        return myRow;
-    }
-
-    /**
-     * Start a detail row.
-     * @param pParent the parent element
-     * @param pValue the cell contents
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startDetailRow(final Element pParent,
-                                     final String pValue,
-                                     final String pTitle) {
-        /* Create the row */
-        Element myRow = startRow(pParent, CLASS_DTLROW);
-        Element myCell = makeValueCell(myRow);
-        Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_HREF, pTitle);
-        myLink.setTextContent(pValue);
-        return myRow;
-    }
-
-    /**
-     * Start a detail row.
-     * @param pParent the parent element
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startDetailRow(final Element pParent,
-                                     final String pTitle) {
-        /* Create the row */
-        return startDetailRow(pParent, pTitle, pTitle);
-    }
-
-    /**
-     * Start an alternate detail row.
-     * @param pParent the parent element
-     * @param pValue the cell contents
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startAlternateRow(final Element pParent,
-                                        final String pValue,
-                                        final String pTitle) {
-        /* Create the row */
-        Element myRow = startRow(pParent, CLASS_ALTDTLROW);
-        Element myCell = makeValueCell(myRow);
-        Element myLink = theDocument.createElement(ELEMENT_LINK);
-        myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_HREF, pTitle);
-        myLink.setTextContent(pValue);
-        return myRow;
-    }
-
-    /**
-     * Start a detail row.
-     * @param pParent the parent element
-     * @param pTitle the title of the row
-     * @return the new row
-     */
-    protected Element startAlternateRow(final Element pParent,
-                                        final String pTitle) {
-        /* Create the row */
-        return startAlternateRow(pParent, pTitle, pTitle);
+        pControl.createTotalRow();
     }
 
     /**
@@ -849,32 +739,36 @@ public class HTMLBuilder {
     /**
      * Start Table.
      * @param pBody the document body
-     * @return the table
+     * @return the table control
      */
-    protected Element startTable(final Element pBody) {
+    protected TableControl startTable(final Element pBody) {
         /* Create the standard structure */
         Element myTable = theDocument.createElement(ELEMENT_TABLE);
         pBody.appendChild(myTable);
         myTable.setAttribute(ATTR_ALIGN, ALIGN_CENTER);
         myTable.setAttribute(ATTR_WIDTH, WIDTH_MAIN);
-        return myTable;
+
+        /* Create the table control */
+        TableControl myControl = new TableControl(myTable, TableClass.Summary);
+        return myControl;
     }
 
     /**
      * Start an embedded table.
      * @param pParent the parent element
      * @param pTitle the title of the table
-     * @param pColumns the number of columns
      * @param bShow initially display the table?
      * @return the new table
      */
-    protected Element startEmbeddedTable(final Element pParent,
-                                         final String pTitle,
-                                         final Integer pColumns,
-                                         final boolean bShow) {
+    protected TableControl startEmbeddedTable(final TableControl pParent,
+                                              final String pTitle,
+                                              final boolean bShow) {
+        /* Access body element */
+        Element myBody = pParent.getTableBody();
+
         /* Create the row */
         Element myRow = theDocument.createElement(ELEMENT_ROW);
-        pParent.appendChild(myRow);
+        myBody.appendChild(myRow);
         myRow.setAttribute(ATTR_ID, REF_TAB
                                     + pTitle);
         myRow.setAttribute(ATTR_CLASS, bShow
@@ -882,35 +776,267 @@ public class HTMLBuilder {
                 : CLASS_HIDE);
         Element myCell = theDocument.createElement(ELEMENT_CELL);
         myRow.appendChild(myCell);
-        myCell.setAttribute(ATTR_COLSPAN, pColumns.toString());
+        myCell.setAttribute(ATTR_COLSPAN, Integer.toString(pParent.getNumCols()));
         Element myTable = theDocument.createElement(ELEMENT_TABLE);
         myCell.appendChild(myTable);
         myTable.setAttribute(ATTR_ALIGN, ALIGN_RIGHT);
         myTable.setAttribute(ATTR_WIDTH, WIDTH_EMBED);
-        return myTable;
+
+        /* Create the table control */
+        TableControl myControl = new TableControl(myTable, pParent.getNextTableClass());
+        return myControl;
     }
 
     /**
-     * Start Table Header.
-     * @param pTable the table
-     * @return the table header
+     * Table control class.
      */
-    protected Element startTableHeader(final Element pTable) {
-        /* Create the standard structure */
-        Element myHeader = theDocument.createElement(ELEMENT_THDR);
-        pTable.appendChild(myHeader);
-        return myHeader;
+    public final class TableControl {
+        /**
+         * Table class type.
+         */
+        private final TableClass theClass;
+
+        /**
+         * The table element.
+         */
+        private final Element theTable;
+
+        /**
+         * The table header element.
+         */
+        private Element theHeader = null;
+
+        /**
+         * The table body element.
+         */
+        private Element theBody = null;
+
+        /**
+         * The current row.
+         */
+        private Element theRow = null;
+
+        /**
+         * Was the last row an odd row.
+         */
+        private boolean wasOdd = false;
+
+        /**
+         * Current # of columns.
+         */
+        private int numCols = -1;
+
+        /**
+         * Max columns.
+         */
+        private int maxCols = 0;
+
+        /**
+         * Obtain the table header.
+         * @return the header
+         */
+        private Element getTableHeader() {
+            /* If we have not yet created the header */
+            if (theHeader == null) {
+                /* Create the header */
+                theHeader = theDocument.createElement(ELEMENT_THDR);
+
+                /* Insert before body */
+                if (theBody == null) {
+                    theTable.appendChild(theHeader);
+                } else {
+                    theTable.insertBefore(theHeader, theBody);
+                }
+            }
+            return theTable;
+        }
+
+        /**
+         * Obtain the table body.
+         * @return the body
+         */
+        private Element getTableBody() {
+            /* If we have not yet created the body */
+            if (theBody == null) {
+                /* Create the body */
+                theBody = theDocument.createElement(ELEMENT_TBODY);
+                theTable.appendChild(theBody);
+            }
+            return theTable;
+        }
+
+        /**
+         * Obtain the number of columns.
+         * @return the number of columns
+         */
+        private int getNumCols() {
+            return maxCols;
+        }
+
+        /**
+         * Constructor.
+         * @param pClass the table class.
+         * @param pTable the table element
+         */
+        private TableControl(final Element pTable,
+                             final TableClass pClass) {
+            /* Store parameters */
+            theClass = pClass;
+            theTable = pTable;
+        }
+
+        /**
+         * Obtain the next class name.
+         * @return the next class name.
+         */
+        private String getNextRowClass() {
+            /* Switch flag */
+            wasOdd = !wasOdd;
+
+            /* Return the class name */
+            return wasOdd
+                    ? theClass.getOddClass()
+                    : theClass.getEvenClass();
+        }
+
+        /**
+         * Obtain the next table name.
+         * @return the next class.
+         */
+        private TableClass getNextTableClass() {
+            /* Return the class */
+            return theClass.getNextClass();
+        }
+
+        /**
+         * Create a new row.
+         */
+        private void createTotalRow() {
+            /* Determine the parent */
+            Element myParent = getTableBody();
+
+            /* Create the row */
+            theRow = theDocument.createElement(ELEMENT_ROW);
+            myParent.appendChild(theRow);
+            theRow.setAttribute(ATTR_CLASS, CLASS_TOTROW);
+
+            /* Adjust # of columns */
+            numCols = 0;
+        }
+
+        /**
+         * Create a new row.
+         * @param bHdr use header rather than body (true/false)
+         */
+        private void createNewRow(final boolean bHdr) {
+            /* Determine the parent */
+            Element myParent = (bHdr)
+                    ? getTableHeader()
+                    : getTableBody();
+
+            /* Create the row */
+            theRow = theDocument.createElement(ELEMENT_ROW);
+            myParent.appendChild(theRow);
+            theRow.setAttribute(ATTR_CLASS, (bHdr)
+                    ? CLASS_TOTROW
+                    : getNextRowClass());
+
+            /* Adjust # of columns */
+            numCols = 0;
+        }
+
+        /**
+         * Create a new cell in the current row.
+         * @param bTotal create total cell (true/false)
+         * @return the new cell
+         */
+        private Element createNewCell(final boolean bTotal) {
+            /* Determine the cell type */
+            String myCellType = (bTotal)
+                    ? ELEMENT_TOTAL
+                    : ELEMENT_CELL;
+
+            /* Adjust column # */
+            numCols++;
+            if (numCols >= maxCols) {
+                maxCols = numCols;
+            }
+
+            /* Create the cell in the current row */
+            Element myCell = theDocument.createElement(myCellType);
+            theRow.appendChild(myCell);
+            return myCell;
+        }
+
     }
 
     /**
-     * Start Table Body.
-     * @param pTable the table
-     * @return the table body
+     * Table class.
      */
-    protected Element startTableBody(final Element pTable) {
-        /* Create the standard structure */
-        Element myBody = theDocument.createElement(ELEMENT_TBODY);
-        pTable.appendChild(myBody);
-        return myBody;
+    public enum TableClass {
+        /**
+         * Summary.
+         */
+        Summary,
+
+        /**
+         * DetailedSummary.
+         */
+        DetailedSummary,
+
+        /**
+         * Detail.
+         */
+        Detail;
+
+        /**
+         * Obtain the odd class name.
+         * @return the class name
+         */
+        private String getOddClass() {
+            switch (this) {
+                case Summary:
+                    return CLASS_SUMMROW;
+                case DetailedSummary:
+                    return CLASS_DTLSUMMROW;
+                case Detail:
+                    return CLASS_DTLROW;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the even class name.
+         * @return the class name
+         */
+        private String getEvenClass() {
+            switch (this) {
+                case Summary:
+                    return CLASS_ALTSUMMROW;
+                case DetailedSummary:
+                    return CLASS_ALTDTLSUMMROW;
+                case Detail:
+                    return CLASS_ALTDTLROW;
+                default:
+                    return null;
+            }
+        }
+
+        /**
+         * Obtain the embedded TableClass.
+         * @return the class name
+         */
+        private TableClass getNextClass() {
+            switch (this) {
+                case Summary:
+                    return DetailedSummary;
+                case DetailedSummary:
+                case Detail:
+                    return Detail;
+                default:
+                    return null;
+            }
+        }
     }
 }

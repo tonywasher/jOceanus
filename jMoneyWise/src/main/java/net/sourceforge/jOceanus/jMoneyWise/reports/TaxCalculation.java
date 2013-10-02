@@ -30,6 +30,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategorySection;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
@@ -95,27 +96,17 @@ public class TaxCalculation
         myBuffer.append("Taxation Report for ");
         myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
-        myBuffer.setLength(0);
-
-        /* Determine number of columns */
-        int myColumns = 1;
-        myColumns++;
-        myColumns++;
 
         /* Format the header */
         theBuilder.makeSubTitle(myBody, "Taxation Summary");
-        Element myTable = theBuilder.startTable(myBody);
-        Element myTHdr = theBuilder.startTableHeader(myTable);
-        Element myRow = theBuilder.startTotalRow(myTHdr, "Class");
-        theBuilder.makeTitleCell(myRow, "Total Income");
-        theBuilder.makeTitleCell(myRow, "Taxation Due");
-        Element myTBody = theBuilder.startTableBody(myTable);
-
-        /* Access the tax bucket iterator */
-        Iterator<TaxCategoryBucket> myIterator = myList.iterator();
-        boolean isOdd = true;
+        TableControl myTable = theBuilder.startTable(myBody);
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Class");
+        theBuilder.makeTitleCell(myTable, "Total Income");
+        theBuilder.makeTitleCell(myTable, "Taxation Due");
 
         /* Loop through the Tax Summary Buckets */
+        Iterator<TaxCategoryBucket> myIterator = myList.iterator();
         while (myIterator.hasNext()) {
             TaxCategoryBucket myBucket = myIterator.next();
 
@@ -125,40 +116,39 @@ public class TaxCalculation
             }
 
             /* Format the line */
-            myRow = (isOdd)
-                    ? theBuilder.startCategoryRow(myTBody, myBucket.getName())
-                    : theBuilder.startAlternateCatRow(myTBody, myBucket.getName());
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(TaxAttribute.Amount));
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
+            theBuilder.startRow(myTable);
+            theBuilder.makeTableLinkCell(myTable, myBucket.getName());
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
 
             /* Format the detail */
-            makeTaxReport(myTBody, myColumns, myBucket);
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            makeTaxReport(myTable, myBucket);
         }
 
         /* Access the Total taxation bucket */
         myTax = myList.getBucket(TaxCategoryClass.TotalTaxationDue);
-        myRow = theBuilder.startTotalRow(myTBody, myTax.getName());
-        theBuilder.makeTotalCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Amount));
-        theBuilder.makeTotalCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Taxation));
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, myTax.getName());
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Taxation));
 
         /* Access the Tax Paid bucket */
         myTax = myList.getBucket(TaxCategoryClass.TaxPaid);
-        myRow = theBuilder.startTotalRow(myTBody, myTax.getName());
-        theBuilder.makeTotalCell(myRow);
-        theBuilder.makeTotalCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, myTax.getName());
+        theBuilder.makeTotalCell(myTable);
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
 
         /* Access the Tax Profit bucket */
         myTax = myList.getBucket(TaxCategoryClass.TaxProfitLoss);
-        myRow = theBuilder.startTotalRow(myTBody, myTax.getName());
-        theBuilder.makeTotalCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Amount));
-        theBuilder.makeTotalCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Taxation));
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, myTax.getName());
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theBuilder.makeTotalCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Taxation));
 
         /* If we need a tax slice report */
         if (myList.hasGainsSlices()) {
-            makeTaxSliceReport(myBody, myColumns);
+            makeTaxSliceReport(myBody);
         }
 
         /* Format the tax parameters */
@@ -185,157 +175,160 @@ public class TaxCalculation
 
         /* Format the allowances */
         theBuilder.makeSubTitle(pBody, "Allowances");
-        Element myTable = theBuilder.startTable(pBody);
-        Element myHdr = theBuilder.startTableHeader(myTable);
-        Element myRow = theBuilder.startDetailTitleRow(myHdr, "Name");
-        theBuilder.makeTitleCell(myRow, "Value");
-        Element myBody = theBuilder.startTableBody(myTable);
-        myRow = theBuilder.startAlternateRow(myBody, "PersonalAllowance");
-        theBuilder.makeValueCell(myRow, pYear.getAllowance());
-        myRow = theBuilder.startDetailRow(myBody, "Age 65-74 PersonalAllowance");
-        theBuilder.makeValueCell(myRow, pYear.getLoAgeAllow());
-        myRow = theBuilder.startAlternateRow(myBody, "Age 75+ PersonalAllowance");
-        theBuilder.makeValueCell(myRow, pYear.getHiAgeAllow());
-        myRow = theBuilder.startDetailRow(myBody, "RentalAllowance");
-        theBuilder.makeValueCell(myRow, pYear.getRentalAllowance());
-        myRow = theBuilder.startAlternateRow(myBody, "CapitalAllowance");
-        theBuilder.makeValueCell(myRow, pYear.getCapitalAllow());
-        myRow = theBuilder.startDetailRow(myBody, "Income Limit for AgeAllowance");
-        theBuilder.makeValueCell(myRow, pYear.getAgeAllowLimit());
+        TableControl myTable = theBuilder.startTable(pBody);
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Name");
+        theBuilder.makeTitleCell(myTable, "Value");
+        theBuilder.startRow(myTable);
+        theBuilder.makeValueCell(myTable, "PersonalAllowance");
+        theBuilder.makeValueCell(myTable, pYear.getAllowance());
+        theBuilder.startRow(myTable);
+        theBuilder.makeValueCell(myTable, "Age 65-74 PersonalAllowance");
+        theBuilder.makeValueCell(myTable, pYear.getLoAgeAllow());
+        theBuilder.startRow(myTable);
+        theBuilder.makeValueCell(myTable, "Age 75+ PersonalAllowance");
+        theBuilder.makeValueCell(myTable, pYear.getHiAgeAllow());
+        theBuilder.startRow(myTable);
+        theBuilder.makeValueCell(myTable, "RentalAllowance");
+        theBuilder.makeValueCell(myTable, pYear.getRentalAllowance());
+        theBuilder.startRow(myTable);
+        theBuilder.makeValueCell(myTable, "CapitalAllowance");
+        theBuilder.makeValueCell(myTable, pYear.getCapitalAllow());
+        theBuilder.startRow(myTable);
+        theBuilder.makeValueCell(myTable, "Income Limit for AgeAllowance");
+        theBuilder.makeValueCell(myTable, pYear.getAgeAllowLimit());
         if (hasAdditionalBand) {
-            myRow = theBuilder.startAlternateRow(myBody, "Income Limit for PersonalAllowance");
-            theBuilder.makeValueCell(myRow, pYear.getAddAllowLimit());
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, "Income Limit for PersonalAllowance");
+            theBuilder.makeValueCell(myTable, pYear.getAddAllowLimit());
         }
 
         /* Format the Rates */
         theBuilder.makeSubTitle(pBody, "TaxRates");
         myTable = theBuilder.startTable(pBody);
-        myHdr = theBuilder.startTableHeader(myTable);
-        myRow = theBuilder.startDetailTitleRow(myHdr, "IncomeType");
-        theBuilder.makeTitleCell(myRow, "LoRate");
-        theBuilder.makeTitleCell(myRow, "BasicRate");
-        theBuilder.makeTitleCell(myRow, "HiRate");
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable, "IncomeType");
+        theBuilder.makeTitleCell(myTable, "LoRate");
+        theBuilder.makeTitleCell(myTable, "BasicRate");
+        theBuilder.makeTitleCell(myTable, "HiRate");
         if (hasAdditionalBand) {
-            theBuilder.makeTitleCell(myRow, "AdditionalRate");
+            theBuilder.makeTitleCell(myTable, "AdditionalRate");
         }
-        myBody = theBuilder.startTableBody(myTable);
-        myRow = theBuilder.startAlternateRow(myBody, "Salary/Rental");
-        theBuilder.makeValueCell(myRow, pYear.hasLoSalaryBand()
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Salary/Rental");
+        theBuilder.makeValueCell(myTable, pYear.hasLoSalaryBand()
                 ? pYear.getLoTaxRate()
                 : null);
-        theBuilder.makeValueCell(myRow, pYear.getBasicTaxRate());
-        theBuilder.makeValueCell(myRow, pYear.getHiTaxRate());
+        theBuilder.makeValueCell(myTable, pYear.getBasicTaxRate());
+        theBuilder.makeValueCell(myTable, pYear.getHiTaxRate());
         if (hasAdditionalBand) {
-            theBuilder.makeValueCell(myRow, pYear.getAddTaxRate());
+            theBuilder.makeValueCell(myTable, pYear.getAddTaxRate());
         }
-        myRow = theBuilder.startDetailRow(myBody, "Interest");
-        theBuilder.makeValueCell(myRow, pYear.getLoTaxRate());
-        theBuilder.makeValueCell(myRow, pYear.getIntTaxRate());
-        theBuilder.makeValueCell(myRow, pYear.getHiTaxRate());
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Interest");
+        theBuilder.makeValueCell(myTable, pYear.getLoTaxRate());
+        theBuilder.makeValueCell(myTable, pYear.getIntTaxRate());
+        theBuilder.makeValueCell(myTable, pYear.getHiTaxRate());
         if (hasAdditionalBand) {
-            theBuilder.makeValueCell(myRow, pYear.getAddTaxRate());
+            theBuilder.makeValueCell(myTable, pYear.getAddTaxRate());
         }
-        myRow = theBuilder.startAlternateRow(myBody, "Dividends");
-        theBuilder.makeValueCell(myRow);
-        theBuilder.makeValueCell(myRow, pYear.getDivTaxRate());
-        theBuilder.makeValueCell(myRow, pYear.getHiDivTaxRate());
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Dividends");
+        theBuilder.makeValueCell(myTable);
+        theBuilder.makeValueCell(myTable, pYear.getDivTaxRate());
+        theBuilder.makeValueCell(myTable, pYear.getHiDivTaxRate());
         if (hasAdditionalBand) {
-            theBuilder.makeValueCell(myRow, pYear.getAddDivTaxRate());
+            theBuilder.makeValueCell(myTable, pYear.getAddDivTaxRate());
         }
-        myRow = theBuilder.startDetailRow(myBody, "TaxableGains");
-        theBuilder.makeValueCell(myRow);
-        theBuilder.makeValueCell(myRow, pYear.getBasicTaxRate());
-        theBuilder.makeValueCell(myRow, pYear.getHiTaxRate());
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "TaxableGains");
+        theBuilder.makeValueCell(myTable);
+        theBuilder.makeValueCell(myTable, pYear.getBasicTaxRate());
+        theBuilder.makeValueCell(myTable, pYear.getHiTaxRate());
         if (hasAdditionalBand) {
-            theBuilder.makeValueCell(myRow, pYear.getAddTaxRate());
+            theBuilder.makeValueCell(myTable, pYear.getAddTaxRate());
         }
-        myRow = theBuilder.startAlternateRow(myBody, "CapitalGains");
-        theBuilder.makeValueCell(myRow);
-        theBuilder.makeValueCell(myRow, pYear.getCapTaxRate());
-        theBuilder.makeValueCell(myRow, pYear.getHiCapTaxRate());
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "CapitalGains");
+        theBuilder.makeValueCell(myTable);
+        theBuilder.makeValueCell(myTable, pYear.getCapTaxRate());
+        theBuilder.makeValueCell(myTable, pYear.getHiCapTaxRate());
         if (hasAdditionalBand) {
-            theBuilder.makeValueCell(myRow);
+            theBuilder.makeValueCell(myTable);
         }
 
         /* Format the tax bands */
         theBuilder.makeSubTitle(pBody, "TaxBands");
         myTable = theBuilder.startTable(pBody);
-        myHdr = theBuilder.startTableHeader(myTable);
-        myRow = theBuilder.startDetailTitleRow(myHdr, "Name");
-        theBuilder.makeTitleCell(myRow, "Value");
-        myBody = theBuilder.startTableBody(myTable);
-        myRow = theBuilder.startAlternateRow(myRow, "Age for Tax Year");
-        theBuilder.makeValueCell(myRow, myList.getAge());
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Name");
+        theBuilder.makeTitleCell(myTable, "Value");
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Age for Tax Year");
+        theBuilder.makeValueCell(myTable, myList.getAge());
 
         /* Access the original allowance */
         TaxCategoryBucket myTax = myList.getBucket(TaxCategoryClass.OriginalAllowance);
-        myRow = theBuilder.startDetailRow(myBody, "Personal Allowance");
-        theBuilder.makeValueCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Amount));
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Personal Allowance");
+        theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
 
         /* if we have adjusted the allowance */
         if (myList.hasReducedAllow()) {
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.GrossIncome);
-            myRow = theBuilder.startAlternateRow(myBody, "Gross Taxable Income");
-            theBuilder.makeValueCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.startRow(myTable);
+            theBuilder.makeTitleCell(myTable, "Gross Taxable Income");
+            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
 
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.AdjustedAllowance);
-            myRow = theBuilder.startDetailRow(myBody, "Adjusted Allowance");
-            theBuilder.makeValueCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeTitleCell(myTable, "Adjusted Allowance");
+            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
         }
 
         /* Access the Low Tax Band */
-        boolean isOdd = true;
         if (pYear.getLoBand().isNonZero()) {
-            myRow = theBuilder.startAlternateRow(myBody, "Low Tax Band");
-            theBuilder.makeValueCell(myRow, pYear.getLoBand());
-            isOdd = false;
+            theBuilder.startRow(myTable);
+            theBuilder.makeTitleCell(myTable, "Low Tax Band");
+            theBuilder.makeValueCell(myTable, pYear.getLoBand());
         }
 
         /* Access the Basic Tax Band */
-        myRow = (!isOdd)
-                ? theBuilder.startDetailRow(myBody, "Basic Tax Band")
-                : theBuilder.startAlternateRow(myBody, "Basic Tax Band");
-        theBuilder.makeValueCell(myRow, pYear.getBasicBand());
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Basic Tax Band");
+        theBuilder.makeValueCell(myTable, pYear.getBasicBand());
 
         /* If we have a high tax band */
         if (pYear.hasAdditionalTaxBand()) {
             /* Access the gross income */
             myTax = myList.getBucket(TaxCategoryClass.HiTaxBand);
-            myRow = (isOdd)
-                    ? theBuilder.startDetailRow(myBody, "High Tax Band")
-                    : theBuilder.startAlternateRow(myBody, "High Tax Band");
-            theBuilder.makeValueCell(myRow, myTax.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.startRow(myTable);
+            theBuilder.makeTitleCell(myTable, "High Tax Band");
+            theBuilder.makeValueCell(myTable, myTax.getMoneyAttribute(TaxAttribute.Amount));
         }
     }
 
     /**
      * Build a standard tax report element.
-     * @param pBody the table body
-     * @param pNumColumns the number of table columns
+     * @param pParent the parent table
      * @param pSummary the tax summary
      */
-    public void makeTaxReport(final Element pBody,
-                              final Integer pNumColumns,
+    public void makeTaxReport(final TableControl pParent,
                               final TaxCategoryBucket pSummary) {
         /* Access the bucket lists */
         TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
 
         /* Format the detail */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, pSummary.getName(), pNumColumns, true);
-        Element myHdr = theBuilder.startTableHeader(myTable);
-        Element myRow = theBuilder.startDetailTitleRow(myHdr, "Class");
-        theBuilder.makeTitleCell(myRow, "Income");
-        theBuilder.makeTitleCell(myRow, "Rate");
-        theBuilder.makeTitleCell(myRow, "Taxation Due");
-        Element myBody = theBuilder.startTableBody(myTable);
-
-        /* Access the tax bucket iterator */
-        Iterator<TaxCategoryBucket> myIterator = myList.iterator();
-        boolean isOdd = true;
+        TableControl myTable = theBuilder.startEmbeddedTable(pParent, pSummary.getName(), true);
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Class");
+        theBuilder.makeTitleCell(myTable, "Income");
+        theBuilder.makeTitleCell(myTable, "Rate");
+        theBuilder.makeTitleCell(myTable, "Taxation Due");
 
         /* Loop through the Transaction Detail Buckets */
+        Iterator<TaxCategoryBucket> myIterator = myList.iterator();
         while (myIterator.hasNext()) {
             TaxCategoryBucket myBucket = myIterator.next();
 
@@ -350,87 +343,66 @@ public class TaxCalculation
             }
 
             /* Format the detail */
-            myRow = (!isOdd)
-                    ? theBuilder.startDetailRow(myBody, myBucket.getName())
-                    : theBuilder.startAlternateRow(myBody, myBucket.getName());
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(TaxAttribute.Amount));
-            theBuilder.makeValueCell(myRow, myBucket.getRateAttribute(TaxAttribute.Rate));
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            theBuilder.startRow(myTable);
+            theBuilder.makeTitleCell(myTable, myBucket.getName());
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
+            theBuilder.makeValueCell(myTable, myBucket.getRateAttribute(TaxAttribute.Rate));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
         }
     }
 
     /**
      * Build a tax slice report.
-     * @param pBody the table body
-     * @param pNumColumns the number of table columns
+     * @param pBody the document body
      */
-    public void makeTaxSliceReport(final Element pBody,
-                                   final Integer pNumColumns) {
+    public void makeTaxSliceReport(final Element pBody) {
         /* Access the bucket lists */
         TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
         ChargeableEventList myCharges = theAnalysis.getCharges();
 
-        /* Determine number of columns */
-        int myColumns = 1;
-        myColumns++;
-        myColumns++;
-        myColumns++;
-        myColumns++;
-        myColumns++;
-        myColumns++;
-
         /* Format the detail */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, "ChargeableEvents", pNumColumns, false);
-        Element myHdr = theBuilder.startTableHeader(myTable);
-        Element myRow = theBuilder.startTotalRow(myHdr, "Date");
-        theBuilder.makeTitleCell(myRow, "Description");
-        theBuilder.makeTitleCell(myRow, "Amount");
-        theBuilder.makeTitleCell(myRow, "Tax Credit");
-        theBuilder.makeTitleCell(myRow, "Years");
-        theBuilder.makeTitleCell(myRow, "Slice");
-        theBuilder.makeTitleCell(myRow, "Taxation");
-        Element myBody = theBuilder.startTableBody(myTable);
-
-        /* Create the list iterator */
-        Iterator<ChargeableEvent> myIterator = theAnalysis.getCharges().iterator();
-        boolean isOdd = true;
+        theBuilder.makeSubTitle(pBody, "Cheargeable Events");
+        TableControl myTable = theBuilder.startTable(pBody);
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Date");
+        theBuilder.makeTitleCell(myTable, "Description");
+        theBuilder.makeTitleCell(myTable, "Amount");
+        theBuilder.makeTitleCell(myTable, "Tax Credit");
+        theBuilder.makeTitleCell(myTable, "Years");
+        theBuilder.makeTitleCell(myTable, "Slice");
+        theBuilder.makeTitleCell(myTable, "Taxation");
 
         /* Loop through the Charges */
+        Iterator<ChargeableEvent> myIterator = theAnalysis.getCharges().iterator();
         while (myIterator.hasNext()) {
             ChargeableEvent myCharge = myIterator.next();
 
             /* Format the detail */
             String myDate = theFormatter.formatObject(myCharge.getDate());
-            myRow = (isOdd)
-                    ? theBuilder.startDetailRow(myBody, myDate)
-                    : theBuilder.startAlternateRow(myBody, myDate);
-            theBuilder.makeValueCell(myRow, myCharge.getComments());
-            theBuilder.makeValueCell(myRow, myCharge.getAmount());
-            theBuilder.makeValueCell(myRow, myCharge.getTaxCredit());
-            theBuilder.makeValueCell(myRow, myCharge.getYears());
-            theBuilder.makeValueCell(myRow, myCharge.getSlice());
-            theBuilder.makeValueCell(myRow, myCharge.getTaxation());
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, myDate);
+            theBuilder.makeValueCell(myTable, myCharge.getComments());
+            theBuilder.makeValueCell(myTable, myCharge.getAmount());
+            theBuilder.makeValueCell(myTable, myCharge.getTaxCredit());
+            theBuilder.makeValueCell(myTable, myCharge.getYears());
+            theBuilder.makeValueCell(myTable, myCharge.getSlice());
+            theBuilder.makeValueCell(myTable, myCharge.getTaxation());
         }
 
         /* Format the totals */
-        myRow = theBuilder.startTotalRow(myBody, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myRow);
-        theBuilder.makeTotalCell(myRow);
-        theBuilder.makeTotalCell(myRow, myCharges.getGainsTotal());
-        theBuilder.makeTotalCell(myRow);
-        theBuilder.makeTotalCell(myRow, myCharges.getSliceTotal());
-        theBuilder.makeTotalCell(myRow, myCharges.getTaxTotal());
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable);
+        theBuilder.makeTotalCell(myTable);
+        theBuilder.makeTotalCell(myTable, myCharges.getGainsTotal());
+        theBuilder.makeTotalCell(myTable);
+        theBuilder.makeTotalCell(myTable, myCharges.getSliceTotal());
+        theBuilder.makeTotalCell(myTable, myCharges.getTaxTotal());
 
         /* Access the Summary Tax Due Slice */
         TaxCategoryBucket myTax = myList.getBucket(TaxCategoryClass.TaxDueSlice);
 
         /* Add the Slice taxation details */
-        makeTaxReport(myBody, myColumns, myTax);
+        makeTaxReport(myTable, myTax);
     }
 }

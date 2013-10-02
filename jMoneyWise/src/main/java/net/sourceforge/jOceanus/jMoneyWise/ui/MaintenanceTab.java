@@ -246,7 +246,7 @@ public class MaintenanceTab
     /**
      * Refresh data.
      */
-    protected void refreshData() {
+    private void refreshData() {
         try {
             /* Refresh sub-panels */
             theAccountTab.refreshData();

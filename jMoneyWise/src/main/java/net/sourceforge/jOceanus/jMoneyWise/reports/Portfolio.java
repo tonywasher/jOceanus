@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jMoneyWise.reports;
 import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
@@ -85,30 +86,18 @@ public class Portfolio
         myBuffer.append("Market Report for ");
         myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange().getEnd()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
-        myBuffer.setLength(0);
-
-        /* Determine number of columns */
-        int myColumns = 1;
-        myColumns++;
-        myColumns++;
-        myColumns++;
-        myColumns++;
 
         /* Initialise the table */
-        Element myTable = theBuilder.startTable(myBody);
-        Element myTHdr = theBuilder.startTableHeader(myTable);
-        Element myRow = theBuilder.startTotalRow(myTHdr);
-        theBuilder.makeTitleCell(myRow, "Cost");
-        theBuilder.makeTitleCell(myRow, "Valuation");
-        theBuilder.makeTitleCell(myRow, "Gains");
-        theBuilder.makeTitleCell(myRow, "Profit");
-        Element myTBody = theBuilder.startTableBody(myTable);
-
-        /* Access the iterator */
-        boolean isOdd = true;
-        Iterator<AccountBucket> myIterator = myAccounts.iterator();
+        TableControl myTable = theBuilder.startTable(myBody);
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable);
+        theBuilder.makeTitleCell(myTable, "Cost");
+        theBuilder.makeTitleCell(myTable, "Valuation");
+        theBuilder.makeTitleCell(myTable, "Gains");
+        theBuilder.makeTitleCell(myTable, "Profit");
 
         /* Loop through the Account Buckets */
+        Iterator<AccountBucket> myIterator = myAccounts.iterator();
         while (myIterator.hasNext()) {
             AccountBucket myBucket = myIterator.next();
 
@@ -118,27 +107,24 @@ public class Portfolio
             }
 
             /* Format the Asset */
-            myRow = (isOdd)
-                    ? theBuilder.startCategoryRow(myTBody, myBucket.getName())
-                    : theBuilder.startAlternateCatRow(myTBody, myBucket.getName());
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Cost));
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.MarketValue));
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Gained));
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Profit));
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            theBuilder.startRow(myTable);
+            theBuilder.makeTableLinkCell(myTable, myBucket.getName());
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Cost));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.MarketValue));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Gained));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Profit));
 
             /* Format the detail */
-            makeCapitalEventReport(myTBody, myColumns, myBucket);
+            makeCapitalEventReport(myTable, myBucket);
         }
 
         /* Create the total row */
-        myRow = theBuilder.startTotalRow(myTBody, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Cost));
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.MarketValue));
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Gained));
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Profit));
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Cost));
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.MarketValue));
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Gained));
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Profit));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -146,33 +132,28 @@ public class Portfolio
 
     /**
      * Build a capital event report element.
-     * @param pBody the table body
-     * @param pNumColumns the number of table columns
+     * @param pParent the parent table
      * @param pAsset the asset to report on
      */
-    public void makeCapitalEventReport(final Element pBody,
-                                       final Integer pNumColumns,
+    public void makeCapitalEventReport(final TableControl pParent,
                                        final AccountBucket pAsset) {
         /* Access the investment analyses */
         InvestmentAnalysisList myList = pAsset.getInvestmentAnalyses();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, pAsset.getName(), pNumColumns, false);
+        TableControl myTable = theBuilder.startEmbeddedTable(pParent, pAsset.getName(), false);
 
         /* Format the header */
-        Element myBody = theBuilder.startTableBody(myTable);
-        Element myRow = theBuilder.startDetailTitleRow(myBody, "Date");
-        theBuilder.makeTitleCell(myRow, "Category");
-        theBuilder.makeTitleCell(myRow, "DeltaUnits");
-        theBuilder.makeTitleCell(myRow, "DeltaCost");
-        theBuilder.makeTitleCell(myRow, "DeltaGains");
-        theBuilder.makeTitleCell(myRow, "Dividend");
-
-        /* Access the iterator */
-        Iterator<InvestmentAnalysis> myIterator = myList.iterator();
-        boolean isOdd = false;
+        theBuilder.startRow(myTable);
+        theBuilder.makeTitleCell(myTable, "Date");
+        theBuilder.makeTitleCell(myTable, "Category");
+        theBuilder.makeTitleCell(myTable, "DeltaUnits");
+        theBuilder.makeTitleCell(myTable, "DeltaCost");
+        theBuilder.makeTitleCell(myTable, "DeltaGains");
+        theBuilder.makeTitleCell(myTable, "Dividend");
 
         /* Loop through the Analyses */
+        Iterator<InvestmentAnalysis> myIterator = myList.iterator();
         while (myIterator.hasNext()) {
             InvestmentAnalysis myAnalysis = myIterator.next();
 
@@ -183,17 +164,13 @@ public class Portfolio
 
             /* Format the detail */
             String myDate = theFormatter.formatObject(myAnalysis.getDate());
-            myRow = (isOdd)
-                    ? theBuilder.startDetailRow(myBody, myDate)
-                    : theBuilder.startAlternateRow(myBody, myDate);
-            theBuilder.makeValueCell(myRow, myAnalysis.getCategory());
-            theBuilder.makeValueCell(myRow, myAnalysis.getUnitsAttribute(InvestmentAttribute.DeltaUnits));
-            theBuilder.makeValueCell(myRow, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaCost));
-            theBuilder.makeValueCell(myRow, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaGains));
-            theBuilder.makeValueCell(myRow, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaDividend));
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            theBuilder.startRow(myTable);
+            theBuilder.makeValueCell(myTable, myDate);
+            theBuilder.makeValueCell(myTable, myAnalysis.getCategory());
+            theBuilder.makeValueCell(myTable, myAnalysis.getUnitsAttribute(InvestmentAttribute.DeltaUnits));
+            theBuilder.makeValueCell(myTable, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaCost));
+            theBuilder.makeValueCell(myTable, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaGains));
+            theBuilder.makeValueCell(myTable, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaDividend));
         }
     }
 }

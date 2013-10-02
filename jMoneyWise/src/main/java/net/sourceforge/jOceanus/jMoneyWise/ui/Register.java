@@ -488,7 +488,7 @@ public class Register
     /**
      * Refresh views/controls after a load/update of underlying data.
      */
-    public void refreshData() {
+    private void refreshData() {
         /* Protect against exceptions */
         try {
             /* Access range */

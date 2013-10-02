@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxAttribute;
@@ -81,20 +82,15 @@ public class TaxationBasis
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Tax Category Report for ");
+        myBuffer.append("Taxation Basis Report for ");
         myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
-        myBuffer.setLength(0);
 
         /* Initialise the table */
-        Element myTable = theBuilder.startTable(myBody);
-        Element myTBody = theBuilder.startTableBody(myTable);
-
-        /* Access the bucket iterator */
-        boolean isOdd = true;
-        Iterator<TaxCategoryBucket> myTaxIterator = myTax.iterator();
+        TableControl myTable = theBuilder.startTable(myBody);
 
         /* Loop through the Category Summary Buckets */
+        Iterator<TaxCategoryBucket> myTaxIterator = myTax.iterator();
         while (myTaxIterator.hasNext()) {
             TaxCategoryBucket myBucket = myTaxIterator.next();
 
@@ -108,16 +104,12 @@ public class TaxationBasis
                     /* If we have a non-zero value */
                     if (myAmount.isNonZero()) {
                         /* Format the detail */
-                        Element myRow = (isOdd)
-                                ? theBuilder.startDetailRow(myTBody, myBucket.getName())
-                                : theBuilder.startAlternateRow(myTBody, myBucket.getName());
-                        theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(TaxAttribute.Amount));
+                        theBuilder.startRow(myTable);
+                        theBuilder.makeFilterLinkCell(myTable, myBucket.getName());
+                        theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
 
                         /* Record the selection */
-                        theManager.setSelectionForId(myBucket.getName(), myBucket);
-
-                        /* Flip row type */
-                        isOdd = !isOdd;
+                        theManager.setFilterForId(myBucket.getName(), myBucket);
                     }
                     break;
                 default:

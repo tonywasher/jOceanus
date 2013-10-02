@@ -28,6 +28,7 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
@@ -93,27 +94,16 @@ public class BalanceSheet
         myBuffer.append("Balance Sheet for ");
         myBuffer.append(theFormatter.formatObject(myDateRange));
         theBuilder.makeTitle(myBody, myBuffer.toString());
-        myBuffer.setLength(0);
-
-        /* Determine number of columns */
-        int myColumns = 1;
 
         /* Initialise the table */
-        Element myTable = theBuilder.startTable(myBody);
-        Element myTHdr = theBuilder.startTableHeader(myTable);
-        Element myRow = theBuilder.startTotalRow(myTHdr);
-        theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDateRange.getEnd()));
-        myColumns++;
-        theBuilder.makeTitleCell(myRow, theFormatter.formatObject(myDateRange.getStart()));
-        myColumns++;
-        theBuilder.makeTitleCell(myRow, ReportBuilder.TEXT_PROFIT);
-        myColumns++;
-        Element myTotal = theBuilder.startTableBody(myTable);
-        myTable = theBuilder.startEmbeddedTable(myTotal, ReportBuilder.TEXT_TOTAL, myColumns, true);
-        Element myTBody = theBuilder.startTableBody(myTable);
+        TableControl myTable = theBuilder.startTable(myBody);
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTitleCell(myTable);
+        theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));
+        theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getStart()));
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
         /* Loop through the SubTotal Buckets */
-        boolean isOdd = true;
         Iterator<AccountCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
             AccountCategoryBucket myBucket = myIterator.next();
@@ -124,25 +114,22 @@ public class BalanceSheet
             }
 
             /* Format the Category Total */
-            Element myCategory = (isOdd)
-                    ? theBuilder.startCategoryRow(myTBody, myBucket.getName())
-                    : theBuilder.startAlternateCatRow(myTBody, myBucket.getName());
-            theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
-            theBuilder.makeTotalCell(myCategory, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
-            theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            theBuilder.startRow(myTable);
+            theBuilder.makeTableLinkCell(myTable, myBucket.getName());
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
 
             /* Add the category report */
-            makeCategoryReport(myTBody, myColumns, myBucket);
+            makeCategoryReport(myTable, myBucket);
         }
 
         /* Format the total */
-        myRow = theBuilder.startTotalRow(myTotal, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.Valuation));
-        theBuilder.makeTotalCell(myRow, myTotals.getBaseMoneyAttribute(AccountAttribute.Valuation));
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(AccountAttribute.ValueDelta));
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.Valuation));
+        theBuilder.makeTotalCell(myTable, myTotals.getBaseMoneyAttribute(AccountAttribute.Valuation));
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(AccountAttribute.ValueDelta));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -150,23 +137,19 @@ public class BalanceSheet
 
     /**
      * Build a category report.
-     * @param pBody the table body
-     * @param pNumColumns the number of table columns
+     * @param pParent the table parent
      * @param pCategory the category bucket
      */
-    private void makeCategoryReport(final Element pBody,
-                                    final Integer pNumColumns,
+    private void makeCategoryReport(final TableControl pParent,
                                     final AccountCategoryBucket pCategory) {
         /* Access the category */
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
         AccountCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), pNumColumns, true);
-        Element myBody = theBuilder.startTableBody(myTable);
+        TableControl myTable = theBuilder.startEmbeddedTable(pParent, myCategory.getName(), true);
 
         /* Loop through the Category Buckets */
-        boolean isOdd = true;
         Iterator<AccountCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
             AccountCategoryBucket myBucket = myIterator.next();
@@ -183,40 +166,32 @@ public class BalanceSheet
             }
 
             /* Create the SubCategory row */
-            Element myRow = (isOdd)
-                    ? theBuilder.startSubCategoryRow(myBody, myCurr.getSubCategory(), myBucket.getName())
-                    : theBuilder.startAlternateSubCatRow(myBody, myCurr.getSubCategory(), myBucket.getName());
-            theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
-            theBuilder.makeTotalCell(myRow, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
-            theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            theBuilder.startRow(myTable);
+            theBuilder.makeTableLinkCell(myTable, myBucket.getName(), myCurr.getSubCategory());
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
 
             /* Add the sub category report */
-            makeSubCategoryReport(myBody, pNumColumns, myBucket);
+            makeSubCategoryReport(myTable, myBucket);
         }
     }
 
     /**
      * Build a subCategory report.
-     * @param pBody the table body
-     * @param pNumColumns the number of table columns
+     * @param pParent the table parent
      * @param pSubCategory the subCategory bucket
      */
-    private void makeSubCategoryReport(final Element pBody,
-                                       final Integer pNumColumns,
+    private void makeSubCategoryReport(final TableControl pParent,
                                        final AccountCategoryBucket pSubCategory) {
         /* Access the category and class */
         AccountBucketList myAccounts = theAnalysis.getAccounts();
         AccountCategory myCategory = pSubCategory.getAccountCategory();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), pNumColumns, false);
-        Element myBody = theBuilder.startTableBody(myTable);
+        TableControl myTable = theBuilder.startEmbeddedTable(pParent, myCategory.getName(), false);
 
         /* Loop through the Account Buckets */
-        boolean isOdd = true;
         Iterator<AccountBucket> myIterator = myAccounts.iterator();
         while (myIterator.hasNext()) {
             AccountBucket myBucket = myIterator.next();
@@ -233,18 +208,14 @@ public class BalanceSheet
             }
 
             /* Create the detail row */
-            Element myRow = (isOdd)
-                    ? theBuilder.startDetailRow(myBody, myBucket.getName())
-                    : theBuilder.startAlternateRow(myBody, myBucket.getName());
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
-            theBuilder.makeValueCell(myRow, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
-            theBuilder.makeValueCell(myRow, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
+            theBuilder.startRow(myTable);
+            theBuilder.makeFilterLinkCell(myTable, myBucket.getName());
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeValueCell(myTable, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
+            theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
 
-            /* Record the selection */
-            theManager.setSelectionForId(myBucket.getName(), myBucket);
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            /* Record the filter */
+            theManager.setFilterForId(myBucket.getName(), myBucket);
         }
     }
 }

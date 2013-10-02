@@ -28,6 +28,7 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
@@ -89,27 +90,16 @@ public class IncomeExpense
         myBuffer.append("Income/Expense Report for ");
         myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
         theBuilder.makeTitle(myBody, myBuffer.toString());
-        myBuffer.setLength(0);
-
-        /* Determine number of columns */
-        int myColumns = 1;
 
         /* Initialise the table */
-        Element myTable = theBuilder.startTable(myBody);
-        Element myTHdr = theBuilder.startTableHeader(myTable);
-        Element myRow = theBuilder.startTotalRow(myTHdr);
-        theBuilder.makeTitleCell(myRow, ReportBuilder.TEXT_INCOME);
-        myColumns++;
-        theBuilder.makeTitleCell(myRow, ReportBuilder.TEXT_EXPENSE);
-        myColumns++;
-        theBuilder.makeTitleCell(myRow, ReportBuilder.TEXT_PROFIT);
-        myColumns++;
-        Element myTotal = theBuilder.startTableBody(myTable);
-        myTable = theBuilder.startEmbeddedTable(myTotal, ReportBuilder.TEXT_TOTAL, myColumns, true);
-        Element myTBody = theBuilder.startTableBody(myTable);
+        TableControl myTable = theBuilder.startTable(myBody);
+        theBuilder.startHdrRow(myTable);
+        theBuilder.makeTitleCell(myTable);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_INCOME);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_EXPENSE);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
         /* Loop through the SubTotal Buckets */
-        boolean isOdd = true;
         Iterator<EventCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
             EventCategoryBucket myBucket = myIterator.next();
@@ -121,25 +111,22 @@ public class IncomeExpense
             }
 
             /* Format the Category Total */
-            Element myCategory = (isOdd)
-                    ? theBuilder.startCategoryRow(myTBody, myBucket.getName())
-                    : theBuilder.startAlternateCatRow(myTBody, myBucket.getName());
-            theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(EventAttribute.Income));
-            theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(EventAttribute.Expense));
-            theBuilder.makeTotalCell(myCategory, myBucket.getMoneyAttribute(EventAttribute.IncomeDelta));
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            theBuilder.startRow(myTable);
+            theBuilder.makeTableLinkCell(myTable, myBucket.getName());
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.Income));
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.Expense));
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.IncomeDelta));
 
             /* Add the subSection */
-            createSubSection(myTBody, myColumns, myBucket);
+            createSubSection(myTable, myBucket);
         }
 
         /* Format the total */
-        myRow = theBuilder.startTotalRow(myTotal, ReportBuilder.TEXT_TOTAL);
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(EventAttribute.Income));
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(EventAttribute.Expense));
-        theBuilder.makeTotalCell(myRow, myTotals.getMoneyAttribute(EventAttribute.IncomeDelta));
+        theBuilder.startTotalRow(myTable);
+        theBuilder.makeTotalCell(myTable, ReportBuilder.TEXT_TOTAL);
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(EventAttribute.Income));
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(EventAttribute.Expense));
+        theBuilder.makeTotalCell(myTable, myTotals.getMoneyAttribute(EventAttribute.IncomeDelta));
 
         /* Return the document */
         return theBuilder.getDocument();
@@ -147,23 +134,19 @@ public class IncomeExpense
 
     /**
      * Build a category report.
-     * @param pBody the table body
-     * @param pNumColumns the number of table columns
+     * @param pParent the table parent
      * @param pCategory the category bucket
      */
-    private void createSubSection(final Element pBody,
-                                  final Integer pNumColumns,
+    private void createSubSection(final TableControl pParent,
                                   final EventCategoryBucket pCategory) {
         /* Access the category */
         EventCategoryBucketList myCategories = theAnalysis.getEventCategories();
         EventCategory myCategory = pCategory.getEventCategory();
 
         /* Create an embedded table */
-        Element myTable = theBuilder.startEmbeddedTable(pBody, myCategory.getName(), pNumColumns, false);
-        Element myBody = theBuilder.startTableBody(myTable);
+        TableControl myTable = theBuilder.startEmbeddedTable(pParent, myCategory.getName(), false);
 
         /* Loop through the Category Buckets */
-        boolean isOdd = true;
         Iterator<EventCategoryBucket> myIterator = myCategories.iterator();
         while (myIterator.hasNext()) {
             EventCategoryBucket myBucket = myIterator.next();
@@ -175,18 +158,14 @@ public class IncomeExpense
             }
 
             /* Create the SubCategory row */
-            Element myRow = (isOdd)
-                    ? theBuilder.startDetailRow(myBody, myCurr.getSubCategory(), myBucket.getName())
-                    : theBuilder.startAlternateRow(myBody, myCurr.getSubCategory(), myBucket.getName());
-            theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(EventAttribute.Income));
-            theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(EventAttribute.Expense));
-            theBuilder.makeTotalCell(myRow, myBucket.getMoneyAttribute(EventAttribute.IncomeDelta));
+            theBuilder.startRow(myTable);
+            theBuilder.makeFilterLinkCell(myTable, myBucket.getName(), myCurr.getSubCategory());
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.Income));
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.Expense));
+            theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.IncomeDelta));
 
             /* Record the selection */
-            theManager.setSelectionForId(myBucket.getName(), myBucket);
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            theManager.setFilterForId(myBucket.getName(), myBucket);
         }
     }
 }
