@@ -28,7 +28,7 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
@@ -36,6 +36,7 @@ import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,16 +45,11 @@ import org.w3c.dom.Element;
  * BalanceSheet report builder.
  */
 public class BalanceSheet
-        implements MoneyWiseReport {
+        extends BasicReport<AccountCategoryBucket, AccountBucket> {
     /**
      * HTML builder.
      */
     private final HTMLBuilder theBuilder;
-
-    /**
-     * The Report Manager.
-     */
-    private final ReportManager theManager;
 
     /**
      * The Formatter.
@@ -70,9 +66,6 @@ public class BalanceSheet
      * @param pManager the Report Manager
      */
     protected BalanceSheet(final ReportManager pManager) {
-        /* Store values */
-        theManager = pManager;
-
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -96,7 +89,7 @@ public class BalanceSheet
         theBuilder.makeTitle(myBody, myBuffer.toString());
 
         /* Initialise the table */
-        TableControl myTable = theBuilder.startTable(myBody);
+        HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startTotalRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, theFormatter.formatObject(myDateRange.getEnd()));
@@ -140,14 +133,14 @@ public class BalanceSheet
      * @param pParent the table parent
      * @param pCategory the category bucket
      */
-    private void makeCategoryReport(final TableControl pParent,
+    private void makeCategoryReport(final HTMLTable pParent,
                                     final AccountCategoryBucket pCategory) {
         /* Access the category */
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
         AccountCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        TableControl myTable = theBuilder.startEmbeddedTable(pParent, myCategory.getName(), true);
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
         Iterator<AccountCategoryBucket> myIterator = myCategories.iterator();
@@ -165,31 +158,33 @@ public class BalanceSheet
                 continue;
             }
 
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
-            theBuilder.makeTableLinkCell(myTable, myBucket.getName(), myCurr.getSubCategory());
+            theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theBuilder.makeTotalCell(myTable, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
 
-            /* Add the sub category report */
-            makeSubCategoryReport(myTable, myBucket);
+            /* Note the delayed subTable */
+            setDelayedTable(myName, myTable, myBucket);
         }
+
+        /* Embed the table correctly */
+        theBuilder.embedTable(myTable, pCategory.getName());
     }
 
-    /**
-     * Build a subCategory report.
-     * @param pParent the table parent
-     * @param pSubCategory the subCategory bucket
-     */
-    private void makeSubCategoryReport(final TableControl pParent,
-                                       final AccountCategoryBucket pSubCategory) {
+    @Override
+    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the category and class */
         AccountBucketList myAccounts = theAnalysis.getAccounts();
-        AccountCategory myCategory = pSubCategory.getAccountCategory();
+        AccountCategoryBucket mySource = pTable.getSource();
+        AccountCategory myCategory = mySource.getAccountCategory();
 
         /* Create an embedded table */
-        TableControl myTable = theBuilder.startEmbeddedTable(pParent, myCategory.getName(), false);
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pTable.getParent());
 
         /* Loop through the Account Buckets */
         Iterator<AccountBucket> myIterator = myAccounts.iterator();
@@ -207,15 +202,28 @@ public class BalanceSheet
                 continue;
             }
 
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
             /* Create the detail row */
             theBuilder.startRow(myTable);
-            theBuilder.makeFilterLinkCell(myTable, myBucket.getName());
+            theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
             theBuilder.makeValueCell(myTable, myBucket.getBaseMoneyAttribute(AccountAttribute.Valuation));
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.ValueDelta));
 
             /* Record the filter */
-            theManager.setFilterForId(myBucket.getName(), myBucket);
+            setFilterForId(myName, myBucket);
         }
+
+        /* Return the table */
+        return myTable;
+    }
+
+    @Override
+    protected void processFilter(AccountBucket pSource) {
+        /* Create the new filter */
+        EventFilter myFilter = new EventFilter();
+        myFilter.setFilter(pSource);
     }
 }

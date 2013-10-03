@@ -23,9 +23,10 @@
 package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
@@ -44,7 +45,57 @@ import org.w3c.dom.Element;
  * Portfolio (Market) report builder.
  */
 public class Portfolio
-        implements MoneyWiseReport {
+        extends BasicReport<AccountBucket, Object> {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Portfolio.class.getName());
+
+    /**
+     * The Cost text.
+     */
+    private static final String TEXT_COST = NLS_BUNDLE.getString("ReportCost");
+
+    /**
+     * The Value text.
+     */
+    private static final String TEXT_VALUE = NLS_BUNDLE.getString("ReportValue");
+
+    /**
+     * The Gains text.
+     */
+    private static final String TEXT_GAINS = NLS_BUNDLE.getString("ReportGains");
+
+    /**
+     * The Date text.
+     */
+    private static final String TEXT_DATE = NLS_BUNDLE.getString("ReportDate");
+
+    /**
+     * The Category text.
+     */
+    private static final String TEXT_CAT = NLS_BUNDLE.getString("ReportCat");
+
+    /**
+     * The Delta Units text.
+     */
+    private static final String TEXT_DUNIT = NLS_BUNDLE.getString("ReportDUnits");
+
+    /**
+     * The Delta Cost text.
+     */
+    private static final String TEXT_DCOST = NLS_BUNDLE.getString("ReportDCost");
+
+    /**
+     * The Delta Gains text.
+     */
+    private static final String TEXT_DGAIN = NLS_BUNDLE.getString("ReportDGains");
+
+    /**
+     * The Dividend text.
+     */
+    private static final String TEXT_DIV = NLS_BUNDLE.getString("ReportDividend");
+
     /**
      * HTML builder.
      */
@@ -88,13 +139,13 @@ public class Portfolio
         theBuilder.makeTitle(myBody, myBuffer.toString());
 
         /* Initialise the table */
-        TableControl myTable = theBuilder.startTable(myBody);
+        HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
-        theBuilder.makeTitleCell(myTable, "Cost");
-        theBuilder.makeTitleCell(myTable, "Valuation");
-        theBuilder.makeTitleCell(myTable, "Gains");
-        theBuilder.makeTitleCell(myTable, "Profit");
+        theBuilder.makeTitleCell(myTable, TEXT_COST);
+        theBuilder.makeTitleCell(myTable, TEXT_VALUE);
+        theBuilder.makeTitleCell(myTable, TEXT_GAINS);
+        theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
         /* Loop through the Account Buckets */
         Iterator<AccountBucket> myIterator = myAccounts.iterator();
@@ -106,16 +157,19 @@ public class Portfolio
                 continue;
             }
 
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
             /* Format the Asset */
             theBuilder.startRow(myTable);
-            theBuilder.makeTableLinkCell(myTable, myBucket.getName());
+            theBuilder.makeDelayLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Cost));
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.MarketValue));
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Gained));
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Profit));
 
-            /* Format the detail */
-            makeCapitalEventReport(myTable, myBucket);
+            /* Note the delayed subTable */
+            setDelayedTable(myName, myTable, myBucket);
         }
 
         /* Create the total row */
@@ -130,27 +184,23 @@ public class Portfolio
         return theBuilder.getDocument();
     }
 
-    /**
-     * Build a capital event report element.
-     * @param pParent the parent table
-     * @param pAsset the asset to report on
-     */
-    public void makeCapitalEventReport(final TableControl pParent,
-                                       final AccountBucket pAsset) {
+    @Override
+    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the investment analyses */
-        InvestmentAnalysisList myList = pAsset.getInvestmentAnalyses();
+        AccountBucket myAsset = pTable.getSource();
+        InvestmentAnalysisList myList = myAsset.getInvestmentAnalyses();
 
         /* Create an embedded table */
-        TableControl myTable = theBuilder.startEmbeddedTable(pParent, pAsset.getName(), false);
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pTable.getParent());
 
         /* Format the header */
         theBuilder.startRow(myTable);
-        theBuilder.makeTitleCell(myTable, "Date");
-        theBuilder.makeTitleCell(myTable, "Category");
-        theBuilder.makeTitleCell(myTable, "DeltaUnits");
-        theBuilder.makeTitleCell(myTable, "DeltaCost");
-        theBuilder.makeTitleCell(myTable, "DeltaGains");
-        theBuilder.makeTitleCell(myTable, "Dividend");
+        theBuilder.makeTitleCell(myTable, TEXT_DATE);
+        theBuilder.makeTitleCell(myTable, TEXT_CAT);
+        theBuilder.makeTitleCell(myTable, TEXT_DUNIT);
+        theBuilder.makeTitleCell(myTable, TEXT_DCOST);
+        theBuilder.makeTitleCell(myTable, TEXT_DGAIN);
+        theBuilder.makeTitleCell(myTable, TEXT_DIV);
 
         /* Loop through the Analyses */
         Iterator<InvestmentAnalysis> myIterator = myList.iterator();
@@ -172,5 +222,8 @@ public class Portfolio
             theBuilder.makeValueCell(myTable, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaGains));
             theBuilder.makeValueCell(myTable, myAnalysis.getMoneyAttribute(InvestmentAttribute.DeltaDividend));
         }
+
+        /* Return the table */
+        return myTable;
     }
 }

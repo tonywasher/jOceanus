@@ -26,7 +26,7 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
@@ -34,6 +34,7 @@ import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,16 +43,11 @@ import org.w3c.dom.Element;
  * CashFlow report builder.
  */
 public class CashFlow
-        implements MoneyWiseReport {
+        extends BasicReport<AccountBucket, AccountBucket> {
     /**
      * HTML builder.
      */
     private final HTMLBuilder theBuilder;
-
-    /**
-     * The Report Manager.
-     */
-    private final ReportManager theManager;
 
     /**
      * The Formatter.
@@ -68,9 +64,6 @@ public class CashFlow
      * @param pManager the Report Manager
      */
     protected CashFlow(final ReportManager pManager) {
-        /* Store values */
-        theManager = pManager;
-
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -96,7 +89,7 @@ public class CashFlow
         myBuffer.setLength(0);
 
         /* Initialise the table */
-        TableControl myTable = theBuilder.startTable(myBody);
+        HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTotalCell(myTable);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_INCOME);
@@ -104,7 +97,6 @@ public class CashFlow
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_PROFIT);
 
         /* Create the bucket iterator */
-        boolean isOdd = true;
         Iterator<AccountBucket> myIterator = myList.iterator();
 
         /* Loop through the Detail Buckets */
@@ -116,18 +108,18 @@ public class CashFlow
                 continue;
             }
 
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
             /* Format the detail */
             theBuilder.startRow(myTable);
-            theBuilder.makeFilterLinkCell(myTable, myBucket.getName());
+            theBuilder.makeFilterLinkCell(myTable, myName);
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Income));
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Expense));
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.IncomeDelta));
 
             /* Record the filter */
-            theManager.setFilterForId(myBucket.getName(), myBucket);
-
-            /* Flip row type */
-            isOdd = !isOdd;
+            setFilterForId(myName, myBucket);
         }
 
         /* Format the total */
@@ -139,5 +131,12 @@ public class CashFlow
 
         /* Return the document */
         return theBuilder.getDocument();
+    }
+
+    @Override
+    protected void processFilter(AccountBucket pSource) {
+        /* Create the new filter */
+        EventFilter myFilter = new EventFilter();
+        myFilter.setFilter(pSource);
     }
 }

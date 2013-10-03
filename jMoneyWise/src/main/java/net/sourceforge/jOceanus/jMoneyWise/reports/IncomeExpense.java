@@ -28,11 +28,12 @@ import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -41,16 +42,11 @@ import org.w3c.dom.Element;
  * Income/Expense report builder.
  */
 public class IncomeExpense
-        implements MoneyWiseReport {
+        extends BasicReport<EventCategoryBucket, EventCategoryBucket> {
     /**
      * HTML builder.
      */
     private final HTMLBuilder theBuilder;
-
-    /**
-     * The Report Manager.
-     */
-    private final ReportManager theManager;
 
     /**
      * The Formatter.
@@ -67,9 +63,6 @@ public class IncomeExpense
      * @param pManager the Report Manager
      */
     protected IncomeExpense(final ReportManager pManager) {
-        /* Store values */
-        theManager = pManager;
-
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -92,7 +85,7 @@ public class IncomeExpense
         theBuilder.makeTitle(myBody, myBuffer.toString());
 
         /* Initialise the table */
-        TableControl myTable = theBuilder.startTable(myBody);
+        HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable);
         theBuilder.makeTitleCell(myTable, ReportBuilder.TEXT_INCOME);
@@ -110,15 +103,18 @@ public class IncomeExpense
                 continue;
             }
 
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
             /* Format the Category Total */
             theBuilder.startRow(myTable);
-            theBuilder.makeTableLinkCell(myTable, myBucket.getName());
+            theBuilder.makeDelayLinkCell(myTable, myName);
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.Income));
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.Expense));
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.IncomeDelta));
 
-            /* Add the subSection */
-            createSubSection(myTable, myBucket);
+            /* Note the delayed subTable */
+            setDelayedTable(myName, myTable, myBucket);
         }
 
         /* Format the total */
@@ -132,19 +128,15 @@ public class IncomeExpense
         return theBuilder.getDocument();
     }
 
-    /**
-     * Build a category report.
-     * @param pParent the table parent
-     * @param pCategory the category bucket
-     */
-    private void createSubSection(final TableControl pParent,
-                                  final EventCategoryBucket pCategory) {
+    @Override
+    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the category */
         EventCategoryBucketList myCategories = theAnalysis.getEventCategories();
-        EventCategory myCategory = pCategory.getEventCategory();
+        EventCategoryBucket mySource = pTable.getSource();
+        EventCategory myCategory = mySource.getEventCategory();
 
         /* Create an embedded table */
-        TableControl myTable = theBuilder.startEmbeddedTable(pParent, myCategory.getName(), false);
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pTable.getParent());
 
         /* Loop through the Category Buckets */
         Iterator<EventCategoryBucket> myIterator = myCategories.iterator();
@@ -157,15 +149,28 @@ public class IncomeExpense
                 continue;
             }
 
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
-            theBuilder.makeFilterLinkCell(myTable, myBucket.getName(), myCurr.getSubCategory());
+            theBuilder.makeFilterLinkCell(myTable, myName, myCurr.getSubCategory());
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.Income));
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.Expense));
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(EventAttribute.IncomeDelta));
 
             /* Record the selection */
-            theManager.setFilterForId(myBucket.getName(), myBucket);
+            setFilterForId(myName, myBucket);
         }
+
+        /* Return the table */
+        return myTable;
+    }
+
+    @Override
+    protected void processFilter(EventCategoryBucket pSource) {
+        /* Create the new filter */
+        EventFilter myFilter = new EventFilter();
+        myFilter.setFilter(pSource);
     }
 }

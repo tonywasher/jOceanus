@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
@@ -36,24 +37,29 @@ import org.w3c.dom.Document;
  */
 public class ReportBuilder {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ReportBuilder.class.getName());
+
+    /**
      * The Total text.
      */
-    protected static final String TEXT_TOTAL = "Total";
+    protected static final String TEXT_TOTAL = NLS_BUNDLE.getString("ReportTotal");
 
     /**
      * The Profit text.
      */
-    protected static final String TEXT_PROFIT = "Profit";
+    protected static final String TEXT_PROFIT = NLS_BUNDLE.getString("ReportProfit");
 
     /**
      * The Income text.
      */
-    protected static final String TEXT_INCOME = "Income";
+    protected static final String TEXT_INCOME = NLS_BUNDLE.getString("ReportIncome");
 
     /**
      * The Expense text.
      */
-    protected static final String TEXT_EXPENSE = "Expense";
+    protected static final String TEXT_EXPENSE = NLS_BUNDLE.getString("ReportExpense");
 
     /**
      * The Report Manager.
@@ -63,7 +69,7 @@ public class ReportBuilder {
     /**
      * Map of allocated reports.
      */
-    private final Map<ReportType, MoneyWiseReport> theReportMap;
+    private final Map<ReportType, BasicReport<?, ?>> theReportMap;
 
     /**
      * Constructor.
@@ -75,7 +81,7 @@ public class ReportBuilder {
         theManager = pManager;
 
         /* Allocate map */
-        theReportMap = new EnumMap<ReportType, MoneyWiseReport>(ReportType.class);
+        theReportMap = new EnumMap<ReportType, BasicReport<?, ?>>(ReportType.class);
     }
 
     /**
@@ -87,7 +93,7 @@ public class ReportBuilder {
     public Document createReport(final Analysis pAnalysis,
                                  final ReportType pType) {
         /* Access existing report */
-        MoneyWiseReport myReport = theReportMap.get(pType);
+        BasicReport<?, ?> myReport = theReportMap.get(pType);
 
         /* If we have not previously allocated this report */
         if (myReport == null) {
@@ -121,6 +127,10 @@ public class ReportBuilder {
             /* Store allocated report */
             theReportMap.put(pType, myReport);
         }
+
+        /* Set up the report */
+        myReport.clearMaps();
+        theManager.setReport(myReport);
 
         /* Create the report */
         return myReport.createReport(pAnalysis);

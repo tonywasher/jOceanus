@@ -280,9 +280,6 @@ public class ReportTab
             return;
         }
 
-        /* Clear the maps */
-        theManager.clearMaps();
-
         /* Switch on report type */
         switch (myReportType) {
             case NetWorth:

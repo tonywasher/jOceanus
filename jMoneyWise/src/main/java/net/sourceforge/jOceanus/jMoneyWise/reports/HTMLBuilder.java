@@ -36,6 +36,7 @@ import net.sourceforge.jOceanus.jDecimal.JDecimal;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * Build a report document.
@@ -245,6 +246,11 @@ public class HTMLBuilder {
      * The filter reference header.
      */
     protected static final String REF_FILTER = "filter";
+
+    /**
+     * The delayed reference header.
+     */
+    protected static final String REF_DELAY = "delay";
 
     /**
      * The document builder.
@@ -495,78 +501,68 @@ public class HTMLBuilder {
     /**
      * Create and append a standard empty cell.
      * @param pControl the table control
-     * @return the new cell
      */
-    protected Element makeValueCell(final TableControl pControl) {
-        return pControl.createNewCell(false);
+    protected void makeValueCell(final HTMLTable pControl) {
+        pControl.createNewCell(false);
     }
 
     /**
      * Create and append a standard empty total cell.
      * @param pControl the table control
-     * @return the new cell
      */
-    protected Element makeTotalCell(final TableControl pControl) {
-        return pControl.createNewCell(true);
+    protected void makeTotalCell(final HTMLTable pControl) {
+        pControl.createNewCell(true);
     }
 
     /**
      * Create and append a standard empty title cell.
      * @param pControl the table control
-     * @return the new cell
      */
-    protected Element makeTitleCell(final TableControl pControl) {
-        return pControl.createNewCell(true);
+    protected void makeTitleCell(final HTMLTable pControl) {
+        pControl.createNewCell(true);
     }
 
     /**
      * Create and append a standard cell with value.
      * @param pControl the table control
      * @param pValue the value
-     * @return the new cell
      */
-    protected Element makeValueCell(final TableControl pControl,
-                                    final Object pValue) {
+    protected void makeValueCell(final HTMLTable pControl,
+                                 final Object pValue) {
         Element myCell = pControl.createNewCell(false);
         setCellValue(myCell, pValue);
-        return myCell;
     }
 
     /**
      * Create and append a total cell with value.
      * @param pControl the table control
      * @param pValue the value
-     * @return the new cell
      */
-    protected Element makeTotalCell(final TableControl pControl,
-                                    final Object pValue) {
+    protected void makeTotalCell(final HTMLTable pControl,
+                                 final Object pValue) {
         Element myCell = pControl.createNewCell(true);
         setCellValue(myCell, pValue);
-        return myCell;
     }
 
     /**
      * Create and append a title cell.
      * @param pControl the table control
      * @param pTitle the title
-     * @return the new cell
      */
-    protected Element makeTitleCell(final TableControl pControl,
-                                    final String pTitle) {
+    protected void makeTitleCell(final HTMLTable pControl,
+                                 final String pTitle) {
         Element myCell = pControl.createNewCell(true);
         setCellTitle(myCell, pTitle);
-        return myCell;
     }
 
     /**
      * Make Table link cell.
      * @param pControl the table control
      * @param pLink the link table name
-     * @return the new cell
      */
-    protected Element makeTableLinkCell(final TableControl pControl,
-                                        final String pLink) {
-        return makeTableLinkCell(pControl, pLink, pLink);
+    protected void makeTableLinkCell(final HTMLTable pControl,
+                                     final String pLink) {
+        makeTableLinkCell(pControl, pLink, pLink);
     }
 
     /**
@@ -574,32 +570,69 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pLink the link table name
      * @param pName the link table display name
-     * @return the new cell
      */
-    protected Element makeTableLinkCell(final TableControl pControl,
-                                        final String pLink,
-                                        final String pName) {
+    protected void makeTableLinkCell(final HTMLTable pControl,
+                                     final String pLink,
+                                     final String pName) {
+        /* Determine the id of the link */
+        String myId = REF_ID
+                      + pLink;
+
+        /* Create the cell */
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
         myCell.appendChild(myLink);
-        myLink.setAttribute(ATTR_NAME, REF_ID
-                                       + pLink);
-        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_ID, myId);
+        myLink.setIdAttribute(ATTR_ID, true);
+        myLink.setAttribute(ATTR_NAME, myId);
         myLink.setAttribute(ATTR_HREF, REF_TAB
                                        + pLink);
         myLink.setTextContent(pName);
-        return myCell;
+    }
+
+    /**
+     * Make Delayed Table link cell.
+     * @param pControl the table control
+     * @param pLink the link table name
+     */
+    protected void makeDelayLinkCell(final HTMLTable pControl,
+                                     final String pLink) {
+        makeDelayLinkCell(pControl, pLink, pLink);
+    }
+
+    /**
+     * Make Delayed Table link cell.
+     * @param pControl the table control
+     * @param pLink the link table name
+     * @param pName the link table display name
+     */
+    protected void makeDelayLinkCell(final HTMLTable pControl,
+                                     final String pLink,
+                                     final String pName) {
+        /* Determine the id of the link */
+        String myId = REF_ID
+                      + pLink;
+
+        /* Create the cell */
+        Element myCell = pControl.createNewCell(false);
+        Element myLink = theDocument.createElement(ELEMENT_LINK);
+        myCell.appendChild(myLink);
+        myLink.setAttribute(ATTR_ID, myId);
+        myLink.setIdAttribute(ATTR_ID, true);
+        myLink.setAttribute(ATTR_NAME, myId);
+        myLink.setAttribute(ATTR_HREF, REF_DELAY
+                                       + pLink);
+        myLink.setTextContent(pName);
     }
 
     /**
      * Make Filter link cell.
      * @param pControl the table control
      * @param pLink the link table name
-     * @return the new cell
      */
-    protected Element makeFilterLinkCell(final TableControl pControl,
-                                         final String pLink) {
-        return makeFilterLinkCell(pControl, pLink, pLink);
+    protected void makeFilterLinkCell(final HTMLTable pControl,
+                                      final String pLink) {
+        makeFilterLinkCell(pControl, pLink, pLink);
     }
 
     /**
@@ -607,18 +640,16 @@ public class HTMLBuilder {
      * @param pControl the table control
      * @param pLink the link table name
      * @param pName the link table display name
-     * @return the new cell
      */
-    protected Element makeFilterLinkCell(final TableControl pControl,
-                                         final String pLink,
-                                         final String pName) {
+    protected void makeFilterLinkCell(final HTMLTable pControl,
+                                      final String pLink,
+                                      final String pName) {
         Element myCell = pControl.createNewCell(false);
         Element myLink = theDocument.createElement(ELEMENT_LINK);
         myCell.appendChild(myLink);
         myLink.setAttribute(ATTR_HREF, REF_FILTER
                                        + pLink);
         myLink.setTextContent(pName);
-        return myCell;
     }
 
     /**
@@ -671,7 +702,7 @@ public class HTMLBuilder {
      * Start a table header row.
      * @param pControl the table control
      */
-    protected void startHdrRow(final TableControl pControl) {
+    protected void startHdrRow(final HTMLTable pControl) {
         /* Create the row */
         pControl.createNewRow(true);
     }
@@ -680,7 +711,7 @@ public class HTMLBuilder {
      * Start a table data row.
      * @param pControl the table control
      */
-    protected void startRow(final TableControl pControl) {
+    protected void startRow(final HTMLTable pControl) {
         /* Create the row */
         pControl.createNewRow(false);
     }
@@ -689,7 +720,7 @@ public class HTMLBuilder {
      * Start a table total row.
      * @param pControl the table control
      */
-    protected void startTotalRow(final TableControl pControl) {
+    protected void startTotalRow(final HTMLTable pControl) {
         /* Create the row */
         pControl.createTotalRow();
     }
@@ -741,7 +772,7 @@ public class HTMLBuilder {
      * @param pBody the document body
      * @return the table control
      */
-    protected TableControl startTable(final Element pBody) {
+    protected HTMLTable startTable(final Element pBody) {
         /* Create the standard structure */
         Element myTable = theDocument.createElement(ELEMENT_TABLE);
         pBody.appendChild(myTable);
@@ -749,7 +780,7 @@ public class HTMLBuilder {
         myTable.setAttribute(ATTR_WIDTH, WIDTH_MAIN);
 
         /* Create the table control */
-        TableControl myControl = new TableControl(myTable, TableClass.Summary);
+        HTMLTable myControl = new HTMLTable(myTable);
         return myControl;
     }
 
@@ -760,9 +791,9 @@ public class HTMLBuilder {
      * @param bShow initially display the table?
      * @return the new table
      */
-    protected TableControl startEmbeddedTable(final TableControl pParent,
-                                              final String pTitle,
-                                              final boolean bShow) {
+    protected HTMLTable startEmbeddedTable(final HTMLTable pParent,
+                                           final String pTitle,
+                                           final boolean bShow) {
         /* Access body element */
         Element myBody = pParent.getTableBody();
 
@@ -783,18 +814,95 @@ public class HTMLBuilder {
         myTable.setAttribute(ATTR_WIDTH, WIDTH_EMBED);
 
         /* Create the table control */
-        TableControl myControl = new TableControl(myTable, pParent.getNextTableClass());
+        HTMLTable myControl = new HTMLTable(myTable, pParent);
         return myControl;
+    }
+
+    /**
+     * Create an embedded table.
+     * @param pParent the parent element
+     * @return the new table
+     */
+    protected HTMLTable createEmbeddedTable(final HTMLTable pParent) {
+        /* Create the table */
+        Element myTable = theDocument.createElement(ELEMENT_TABLE);
+        myTable.setAttribute(ATTR_ALIGN, ALIGN_RIGHT);
+        myTable.setAttribute(ATTR_WIDTH, WIDTH_EMBED);
+
+        /* Create the table control */
+        HTMLTable myControl = new HTMLTable(myTable, pParent);
+        return myControl;
+    }
+
+    /**
+     * Embed a table into the document.
+     * @param pTable the table to embed
+     * @param pTitle the title of the table
+     */
+    protected void embedTable(final HTMLTable pTable,
+                              final String pTitle) {
+        /* Access body element */
+        HTMLTable myParent = pTable.getParent();
+        Element myLink = getLinkRow(pTitle);
+        Node myNextRow = myLink.getNextSibling();
+
+        /* Create the row */
+        Element myRow = theDocument.createElement(ELEMENT_ROW);
+        myRow.setAttribute(ATTR_ID, REF_TAB
+                                    + pTitle);
+        myRow.setIdAttribute(ATTR_ID, true);
+        Element myCell = theDocument.createElement(ELEMENT_CELL);
+        myRow.appendChild(myCell);
+        myCell.setAttribute(ATTR_COLSPAN, Integer.toString(myParent.getNumCols()));
+        myCell.appendChild(pTable.getTable());
+
+        /* Insert into the correct place in the document */
+        Node myTop = myLink.getParentNode();
+        if (myNextRow == null) {
+            myTop.appendChild(myRow);
+        } else {
+            myTop.insertBefore(myRow, myNextRow);
+        }
+    }
+
+    /**
+     * Obtain the row that a link is in.
+     * @param pTitle the title of the link
+     * @return the row that contains the link
+     */
+    protected Element getLinkRow(final String pTitle) {
+        /* Determine the id of the link */
+        String myId = REF_ID
+                      + pTitle;
+
+        /* Locate the cell element */
+        Element myLink = theDocument.getElementById(myId);
+        Node myCell = myLink.getParentNode();
+        Node myParent = myCell.getParentNode();
+
+        /* Update the link to be a table reference */
+        myLink.setAttribute(ATTR_HREF, REF_TAB
+                                       + pTitle);
+
+        /* Cast result to element */
+        return (myParent instanceof Element)
+                ? (Element) myParent
+                : null;
     }
 
     /**
      * Table control class.
      */
-    public final class TableControl {
+    public final class HTMLTable {
         /**
          * Table class type.
          */
         private final TableClass theClass;
+
+        /**
+         * The table parent.
+         */
+        private final HTMLTable theParent;
 
         /**
          * The table element.
@@ -874,15 +982,43 @@ public class HTMLBuilder {
         }
 
         /**
+         * Obtain the parent table.
+         * @return the parent
+         */
+        private HTMLTable getParent() {
+            return theParent;
+        }
+
+        /**
+         * Obtain the table.
+         * @return the table
+         */
+        private Element getTable() {
+            return theTable;
+        }
+
+        /**
          * Constructor.
-         * @param pClass the table class.
+         * @param pTable the table element
+         * @param pParent the parent table.
+         */
+        private HTMLTable(final Element pTable,
+                          final HTMLTable pParent) {
+            /* Store parameters */
+            theTable = pTable;
+            theParent = pParent;
+            theClass = pParent.getNextTableClass();
+        }
+
+        /**
+         * Constructor.
          * @param pTable the table element
          */
-        private TableControl(final Element pTable,
-                             final TableClass pClass) {
+        private HTMLTable(final Element pTable) {
             /* Store parameters */
-            theClass = pClass;
             theTable = pTable;
+            theParent = null;
+            theClass = TableClass.Summary;
         }
 
         /**

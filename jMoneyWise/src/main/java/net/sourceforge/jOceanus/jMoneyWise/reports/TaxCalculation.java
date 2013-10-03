@@ -30,7 +30,7 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategorySection;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent;
 import net.sourceforge.jOceanus.jMoneyWise.views.ChargeableEvent.ChargeableEventList;
@@ -45,7 +45,7 @@ import org.w3c.dom.Element;
  * TaxCalculation report builder.
  */
 public class TaxCalculation
-        implements MoneyWiseReport {
+        extends BasicReport<TaxCategoryBucket, Object> {
     /**
      * HTML builder.
      */
@@ -99,7 +99,7 @@ public class TaxCalculation
 
         /* Format the header */
         theBuilder.makeSubTitle(myBody, "Taxation Summary");
-        TableControl myTable = theBuilder.startTable(myBody);
+        HTMLTable myTable = theBuilder.startTable(myBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable, "Class");
         theBuilder.makeTitleCell(myTable, "Total Income");
@@ -175,7 +175,7 @@ public class TaxCalculation
 
         /* Format the allowances */
         theBuilder.makeSubTitle(pBody, "Allowances");
-        TableControl myTable = theBuilder.startTable(pBody);
+        HTMLTable myTable = theBuilder.startTable(pBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable, "Name");
         theBuilder.makeTitleCell(myTable, "Value");
@@ -314,13 +314,13 @@ public class TaxCalculation
      * @param pParent the parent table
      * @param pSummary the tax summary
      */
-    public void makeTaxReport(final TableControl pParent,
+    public void makeTaxReport(final HTMLTable pParent,
                               final TaxCategoryBucket pSummary) {
         /* Access the bucket lists */
         TaxCategoryBucketList myList = theAnalysis.getTaxCategories();
 
         /* Format the detail */
-        TableControl myTable = theBuilder.startEmbeddedTable(pParent, pSummary.getName(), true);
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
         theBuilder.startRow(myTable);
         theBuilder.makeTitleCell(myTable, "Class");
         theBuilder.makeTitleCell(myTable, "Income");
@@ -349,6 +349,9 @@ public class TaxCalculation
             theBuilder.makeValueCell(myTable, myBucket.getRateAttribute(TaxAttribute.Rate));
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Taxation));
         }
+
+        /* Embed the table correctly */
+        theBuilder.embedTable(myTable, pSummary.getName());
     }
 
     /**
@@ -361,8 +364,8 @@ public class TaxCalculation
         ChargeableEventList myCharges = theAnalysis.getCharges();
 
         /* Format the detail */
-        theBuilder.makeSubTitle(pBody, "Cheargeable Events");
-        TableControl myTable = theBuilder.startTable(pBody);
+        theBuilder.makeSubTitle(pBody, "Chargeable Events");
+        HTMLTable myTable = theBuilder.startTable(pBody);
         theBuilder.startHdrRow(myTable);
         theBuilder.makeTitleCell(myTable, "Date");
         theBuilder.makeTitleCell(myTable, "Description");

@@ -72,6 +72,11 @@ public class ReportManager {
     private Document theDocument = null;
 
     /**
+     * The Current report.
+     */
+    private BasicReport<?, ?> theReport = null;
+
+    /**
      * The Current text.
      */
     private String theText = null;
@@ -80,11 +85,6 @@ public class ReportManager {
      * The hidden element map.
      */
     private final Map<String, HiddenElement> theHiddenMap;
-
-    /**
-     * The object element map.
-     */
-    private final Map<String, Object> theSelectionMap;
 
     /**
      * Obtain the builder.
@@ -104,7 +104,6 @@ public class ReportManager {
 
         /* Allocate the hashMaps */
         theHiddenMap = new HashMap<String, HiddenElement>();
-        theSelectionMap = new HashMap<String, Object>();
 
         /* Protect against exceptions */
         try {
@@ -119,20 +118,22 @@ public class ReportManager {
     }
 
     /**
-     * Clear maps.
+     * Set Report.
+     * @param pReport the document
      */
-    public void clearMaps() {
+    public void setReport(final BasicReport<?, ?> pReport) {
+        /* Store the report */
+        theReport = pReport;
+
         /* Clear the maps */
         theHiddenMap.clear();
-        theSelectionMap.clear();
     }
 
     /**
      * Set Document.
      * @param pDocument the document
-     * @throws JDataException on error
      */
-    public void setDocument(final Document pDocument) throws JDataException {
+    public void setDocument(final Document pDocument) {
         /* Store the document */
         theDocument = pDocument;
     }
@@ -159,13 +160,21 @@ public class ReportManager {
                 } else {
                     myText = hideSection(pId);
                 }
-                /* else if this is a filter reference */
-            } else if (pId.startsWith(HTMLBuilder.REF_FILTER)) {
-                if (theSelectionMap.get(pId) != null) {
-                    /* Restore the section and access text TODO */
-                    // Object mySelect = theSelectionMap.get(pId);
+                /* else if this is a delayed table reference */
+            } else if (pId.startsWith(HTMLBuilder.REF_DELAY)) {
+                /* Process the delayed reference and return if no change */
+                if (!theReport.processDelayedReference(theBuilder, pId)) {
                     return;
                 }
+
+                /* Format the text */
+                myText = formatXML();
+
+                /* else if this is a filter reference */
+            } else if (pId.startsWith(HTMLBuilder.REF_FILTER)) {
+                /* Process the filter reference */
+                theReport.processFilterReference(pId);
+                return;
             }
         } catch (JDataException e) {
             myText = null;
@@ -393,18 +402,6 @@ public class ReportManager {
     }
 
     /**
-     * Record filter for id.
-     * @param pId the id for the selection
-     * @param pSelect the selection object
-     */
-    protected void setFilterForId(final String pId,
-                                  final Object pSelect) {
-        /* Record into selection map */
-        theSelectionMap.put(HTMLBuilder.REF_FILTER
-                            + pId, pSelect);
-    }
-
-    /**
      * Format XML.
      * @return the formatted XML
      * @throws JDataException on error
@@ -466,8 +463,15 @@ public class ReportManager {
          * Restore the element.
          */
         private void restore() {
+            /* Determine next sibling */
+            Node myNextSibling = thePrevious.getNextSibling();
+
             /* Restore the element */
-            theParent.insertBefore(theElement, thePrevious.getNextSibling());
+            if (myNextSibling == null) {
+                theParent.appendChild(theElement);
+            } else {
+                theParent.insertBefore(theElement, myNextSibling);
+            }
         }
     }
 }

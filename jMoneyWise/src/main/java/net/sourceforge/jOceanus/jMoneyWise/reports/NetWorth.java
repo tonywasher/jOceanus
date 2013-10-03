@@ -23,12 +23,13 @@
 package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountBucketList;
@@ -36,6 +37,7 @@ import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountCategoryBucket.CategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventFilter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,16 +46,51 @@ import org.w3c.dom.Element;
  * NetWorth report builder.
  */
 public class NetWorth
-        implements MoneyWiseReport {
+        extends BasicReport<AccountCategoryBucket, AccountBucket> {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(NetWorth.class.getName());
+
+    /**
+     * The Asset text.
+     */
+    private static final String TEXT_ASSET = NLS_BUNDLE.getString("ReportAsset");
+
+    /**
+     * The Units text.
+     */
+    private static final String TEXT_UNITS = NLS_BUNDLE.getString("ReportUnits");
+
+    /**
+     * The Price text.
+     */
+    private static final String TEXT_PRICE = NLS_BUNDLE.getString("ReportPrice");
+
+    /**
+     * The Value text.
+     */
+    private static final String TEXT_VALUE = NLS_BUNDLE.getString("ReportValue");
+
+    /**
+     * The Account text.
+     */
+    private static final String TEXT_ACCOUNT = NLS_BUNDLE.getString("ReportAccount");
+
+    /**
+     * The Rate text.
+     */
+    private static final String TEXT_RATE = NLS_BUNDLE.getString("ReportRate");
+
+    /**
+     * The Maturity text.
+     */
+    private static final String TEXT_MATURITY = NLS_BUNDLE.getString("ReportMaturity");
+
     /**
      * HTML builder.
      */
     private final HTMLBuilder theBuilder;
-
-    /**
-     * The Report Manager.
-     */
-    private final ReportManager theManager;
 
     /**
      * The Formatter.
@@ -70,9 +107,6 @@ public class NetWorth
      * @param pManager the Report Manager
      */
     protected NetWorth(final ReportManager pManager) {
-        /* Store values */
-        theManager = pManager;
-
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -95,7 +129,7 @@ public class NetWorth
         theBuilder.makeTitle(myBody, myBuffer.toString());
 
         /* Initialise the table */
-        TableControl myTable = theBuilder.startTable(myBody);
+        HTMLTable myTable = theBuilder.startTable(myBody);
 
         /* Loop through the SubTotal Buckets */
         Iterator<AccountCategoryBucket> myIterator = myCategories.iterator();
@@ -130,14 +164,14 @@ public class NetWorth
      * @param pParent the table parent
      * @param pCategory the category bucket
      */
-    private void makeCategoryReport(final TableControl pParent,
+    private void makeCategoryReport(final HTMLTable pParent,
                                     final AccountCategoryBucket pCategory) {
         /* Access the category */
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
         AccountCategory myCategory = pCategory.getAccountCategory();
 
         /* Create an embedded table */
-        TableControl myTable = theBuilder.startEmbeddedTable(pParent, myCategory.getName(), true);
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pParent);
 
         /* Loop through the Category Buckets */
         Iterator<AccountCategoryBucket> myIterator = myCategories.iterator();
@@ -155,44 +189,46 @@ public class NetWorth
                 continue;
             }
 
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
             /* Create the SubCategory row */
             theBuilder.startRow(myTable);
-            theBuilder.makeTableLinkCell(myTable, myBucket.getName(), myCurr.getSubCategory());
+            theBuilder.makeDelayLinkCell(myTable, myName, myCurr.getSubCategory());
             theBuilder.makeTotalCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
 
-            /* Add the sub category report */
-            makeSubCategoryReport(myTable, myBucket);
+            /* Note the delayed subTable */
+            setDelayedTable(myName, myTable, myBucket);
         }
+
+        /* Embed the table correctly */
+        theBuilder.embedTable(myTable, pCategory.getName());
     }
 
-    /**
-     * Build a subCategory report.
-     * @param pParent the table parent
-     * @param pSubCategory the subCategory bucket
-     */
-    private void makeSubCategoryReport(final TableControl pParent,
-                                       final AccountCategoryBucket pSubCategory) {
+    @Override
+    protected HTMLTable createDelayedTable(final DelayedTable pTable) {
         /* Access the category and class */
         AccountBucketList myAccounts = theAnalysis.getAccounts();
-        AccountCategory myCategory = pSubCategory.getAccountCategory();
+        AccountCategoryBucket mySource = pTable.getSource();
+        AccountCategory myCategory = mySource.getAccountCategory();
         AccountCategoryClass myClass = myCategory.getCategoryTypeClass();
 
         /* Create a new table */
-        TableControl myTable = theBuilder.startEmbeddedTable(pParent, myCategory.getName(), false);
+        HTMLTable myTable = theBuilder.createEmbeddedTable(pTable.getParent());
 
         /* Build the headers */
         if (myClass.hasUnits()) {
             theBuilder.startRow(myTable);
-            theBuilder.makeTitleCell(myTable, "Asset");
-            theBuilder.makeTitleCell(myTable, "Units");
-            theBuilder.makeTitleCell(myTable, "Price");
-            theBuilder.makeTitleCell(myTable, "Valuation");
+            theBuilder.makeTitleCell(myTable, TEXT_ASSET);
+            theBuilder.makeTitleCell(myTable, TEXT_UNITS);
+            theBuilder.makeTitleCell(myTable, TEXT_PRICE);
+            theBuilder.makeTitleCell(myTable, TEXT_VALUE);
         } else if (!myClass.isLoan()) {
             theBuilder.startRow(myTable);
-            theBuilder.makeTitleCell(myTable, "Account");
-            theBuilder.makeTitleCell(myTable, "Rate");
-            theBuilder.makeTitleCell(myTable, "Maturity");
-            theBuilder.makeTitleCell(myTable, "Valuation");
+            theBuilder.makeTitleCell(myTable, TEXT_ACCOUNT);
+            theBuilder.makeTitleCell(myTable, TEXT_RATE);
+            theBuilder.makeTitleCell(myTable, TEXT_MATURITY);
+            theBuilder.makeTitleCell(myTable, TEXT_VALUE);
         }
 
         /* Loop through the Account Buckets */
@@ -211,9 +247,12 @@ public class NetWorth
                 continue;
             }
 
+            /* Access bucket name */
+            String myName = myBucket.getName();
+
             /* Create the detail row */
             theBuilder.startRow(myTable);
-            theBuilder.makeFilterLinkCell(myTable, myBucket.getName());
+            theBuilder.makeFilterLinkCell(myTable, myName);
             if (myClass.hasUnits()) {
                 theBuilder.makeValueCell(myTable, myBucket.getUnitsAttribute(AccountAttribute.Units));
                 theBuilder.makeValueCell(myTable, myBucket.getPriceAttribute(AccountAttribute.Price));
@@ -223,8 +262,18 @@ public class NetWorth
             }
             theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(AccountAttribute.Valuation));
 
-            /* Record the selection */
-            theManager.setFilterForId(myBucket.getName(), myBucket);
+            /* Record the filter */
+            setFilterForId(myName, myBucket);
         }
+
+        /* Return the table */
+        return myTable;
+    }
+
+    @Override
+    protected void processFilter(AccountBucket pSource) {
+        /* Create the new filter */
+        EventFilter myFilter = new EventFilter();
+        myFilter.setFilter(pSource);
     }
 }

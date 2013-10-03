@@ -26,8 +26,9 @@ import java.util.Iterator;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.TableControl;
+import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.EventFilter;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.views.TaxCategoryBucket.TaxCategoryBucketList;
@@ -39,16 +40,11 @@ import org.w3c.dom.Element;
  * Taxation Basis report builder.
  */
 public class TaxationBasis
-        implements MoneyWiseReport {
+        extends BasicReport<TaxCategoryBucket, TaxCategoryBucket> {
     /**
      * HTML builder.
      */
     private final HTMLBuilder theBuilder;
-
-    /**
-     * The Report Manager.
-     */
-    private final ReportManager theManager;
 
     /**
      * The Formatter.
@@ -65,9 +61,6 @@ public class TaxationBasis
      * @param pManager the Report Manager
      */
     protected TaxationBasis(final ReportManager pManager) {
-        /* Store values */
-        theManager = pManager;
-
         /* Access underlying utilities */
         theBuilder = pManager.getBuilder();
         theFormatter = theBuilder.getDataFormatter();
@@ -87,7 +80,7 @@ public class TaxationBasis
         theBuilder.makeTitle(myBody, myBuffer.toString());
 
         /* Initialise the table */
-        TableControl myTable = theBuilder.startTable(myBody);
+        HTMLTable myTable = theBuilder.startTable(myBody);
 
         /* Loop through the Category Summary Buckets */
         Iterator<TaxCategoryBucket> myTaxIterator = myTax.iterator();
@@ -103,13 +96,16 @@ public class TaxationBasis
 
                     /* If we have a non-zero value */
                     if (myAmount.isNonZero()) {
+                        /* Access bucket name */
+                        String myName = myBucket.getName();
+
                         /* Format the detail */
                         theBuilder.startRow(myTable);
-                        theBuilder.makeFilterLinkCell(myTable, myBucket.getName());
+                        theBuilder.makeFilterLinkCell(myTable, myName);
                         theBuilder.makeValueCell(myTable, myBucket.getMoneyAttribute(TaxAttribute.Amount));
 
-                        /* Record the selection */
-                        theManager.setFilterForId(myBucket.getName(), myBucket);
+                        /* Record the filter */
+                        setFilterForId(myName, myBucket);
                     }
                     break;
                 default:
@@ -119,5 +115,12 @@ public class TaxationBasis
 
         /* Return the document */
         return theBuilder.getDocument();
+    }
+
+    @Override
+    protected void processFilter(TaxCategoryBucket pSource) {
+        /* Create the new filter */
+        EventFilter myFilter = new EventFilter();
+        myFilter.setFilter(pSource);
     }
 }
