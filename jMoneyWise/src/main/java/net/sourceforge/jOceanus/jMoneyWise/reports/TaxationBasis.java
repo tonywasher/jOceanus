@@ -118,7 +118,7 @@ public class TaxationBasis
     }
 
     @Override
-    protected void processFilter(TaxCategoryBucket pSource) {
+    protected void processFilter(final TaxCategoryBucket pSource) {
         /* Create the new filter */
         EventFilter myFilter = new EventFilter();
         myFilter.setFilter(pSource);

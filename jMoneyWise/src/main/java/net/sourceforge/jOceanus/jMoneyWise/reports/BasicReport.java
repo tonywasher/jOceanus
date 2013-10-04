@@ -86,6 +86,7 @@ public abstract class BasicReport<T, F> {
      * Process a delayed table reference.
      * @param pBuilder the HTML builder
      * @param pReference the reference
+     * @return has the document changed true/false
      */
     protected boolean processDelayedReference(final HTMLBuilder pBuilder,
                                               final String pReference) {
@@ -175,7 +176,7 @@ public abstract class BasicReport<T, F> {
         private final T theSource;
 
         /**
-         * Obtain the id
+         * Obtain the id.
          * @return the id
          */
         public String getId() {
@@ -183,7 +184,7 @@ public abstract class BasicReport<T, F> {
         }
 
         /**
-         * Obtain the parent
+         * Obtain the parent.
          * @return the parent
          */
         public HTMLTable getParent() {
@@ -191,7 +192,7 @@ public abstract class BasicReport<T, F> {
         }
 
         /**
-         * Obtain the source
+         * Obtain the source.
          * @return the source
          */
         public T getSource() {

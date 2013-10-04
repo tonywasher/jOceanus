@@ -168,7 +168,7 @@ public class IncomeExpense
     }
 
     @Override
-    protected void processFilter(EventCategoryBucket pSource) {
+    protected void processFilter(final EventCategoryBucket pSource) {
         /* Create the new filter */
         EventFilter myFilter = new EventFilter();
         myFilter.setFilter(pSource);

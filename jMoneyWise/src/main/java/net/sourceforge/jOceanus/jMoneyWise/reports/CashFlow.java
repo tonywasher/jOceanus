@@ -134,7 +134,7 @@ public class CashFlow
     }
 
     @Override
-    protected void processFilter(AccountBucket pSource) {
+    protected void processFilter(final AccountBucket pSource) {
         /* Create the new filter */
         EventFilter myFilter = new EventFilter();
         myFilter.setFilter(pSource);
