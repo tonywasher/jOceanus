@@ -66,15 +66,15 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
 
 /**
- * Class to analyse events.
+ * Class to analyse data.
  * @author Tony Washer
  */
-public class EventAnalysis
+public class DataAnalysis
         implements JDataContents {
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(EventAnalysis.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(DataAnalysis.class.getSimpleName());
 
     /**
      * Analysis field Id.
@@ -257,8 +257,8 @@ public class EventAnalysis
      * @param pDate the Date for the analysis
      * @throws JDataException on error
      */
-    public EventAnalysis(final FinanceData pData,
-                         final JDateDay pDate) throws JDataException {
+    public DataAnalysis(final FinanceData pData,
+                        final JDateDay pDate) throws JDataException {
         /* Store the parameters */
         theData = pData;
 
@@ -314,8 +314,8 @@ public class EventAnalysis
      * @param pDateRange the Range for the analysis
      * @throws JDataException on error
      */
-    public EventAnalysis(final FinanceData pData,
-                         final JDateDayRange pDateRange) throws JDataException {
+    public DataAnalysis(final FinanceData pData,
+                        final JDateDayRange pDateRange) throws JDataException {
         /* Store the parameters */
         theData = pData;
         theDateRange = pDateRange;
@@ -368,8 +368,8 @@ public class EventAnalysis
      * @param pStatement the statement to prepare
      * @throws JDataException on error
      */
-    public EventAnalysis(final FinanceData pData,
-                         final Statement pStatement) throws JDataException {
+    public DataAnalysis(final FinanceData pData,
+                        final Statement pStatement) throws JDataException {
         /* Access key points of the statement */
         JDateDayRange myRange = pStatement.getDateRange();
         Account myAccount = pStatement.getAccount();
@@ -542,8 +542,8 @@ public class EventAnalysis
      * @param pData the Data to analyse
      * @throws JDataException on error
      */
-    public EventAnalysis(final View pView,
-                         final FinanceData pData) throws JDataException {
+    public DataAnalysis(final View pView,
+                        final FinanceData pData) throws JDataException {
         /* Store the parameters */
         theData = pData;
 
@@ -927,7 +927,7 @@ public class EventAnalysis
         /**
          * The events.
          */
-        private final EventAnalysis theEvents;
+        private final DataAnalysis theEvents;
 
         /**
          * The preference manager.
@@ -939,7 +939,7 @@ public class EventAnalysis
          * @param pEvents the events
          * @param pManager the preference manager
          */
-        public AnalysisYearList(final EventAnalysis pEvents,
+        public AnalysisYearList(final DataAnalysis pEvents,
                                 final PreferenceManager pManager) {
             /* Call super constructor */
             super(AnalysisYear.class);

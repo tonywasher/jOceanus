@@ -189,7 +189,7 @@ public class Statement
     /**
      * The analysis.
      */
-    private EventAnalysis theAnalysis = null;
+    private DataAnalysis theAnalysis = null;
 
     /**
      * The lines.
@@ -295,7 +295,7 @@ public class Statement
         theLines = new StatementLines(this);
 
         /* Create an analysis for this statement */
-        theAnalysis = new EventAnalysis(theView.getData(), this);
+        theAnalysis = new DataAnalysis(theView.getData(), this);
     }
 
     /**

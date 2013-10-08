@@ -100,6 +100,11 @@ public class SecurityGenerator {
     private final String theProviderName;
 
     /**
+     * The Secure Random builder.
+     */
+    private final SP800SecureRandomBuilder theRandomBuilder;
+
+    /**
      * The Secure Random generator.
      */
     private final SecureRandom theRandom;
@@ -171,12 +176,13 @@ public class SecurityGenerator {
      * @param pNumCipherSteps the number of cipher steps
      * @param pHashIterations the number of hash iterations
      * @param pSecurityPhrase the security phrase
+     * @throws JDataException on error
      */
     public SecurityGenerator(final SecurityProvider pProvider,
                              final boolean pRestricted,
                              final int pNumCipherSteps,
                              final int pHashIterations,
-                             final String pSecurityPhrase) {
+                             final String pSecurityPhrase) throws JDataException {
         /* Store the provider */
         theProvider = pProvider;
         theProviderName = theProvider.getProvider();
@@ -190,8 +196,13 @@ public class SecurityGenerator {
         theIterations = pHashIterations;
         theSecurityPhrase = pSecurityPhrase;
 
+        /* Create the random builder */
+        theRandomBuilder = new SP800SecureRandomBuilder();
+        theRandomBuilder.setSecurityBytes(getSecurityBytes());
+
         /* Create a new secure random generator */
-        theRandom = new SecureRandom();
+        // theRandom = new SecureRandom();
+        theRandom = generateHashSecureRandom(DigestType.SHA3, false);
     }
 
     /**
@@ -201,6 +212,38 @@ public class SecurityGenerator {
         /* Generate and apply the new seed */
         byte[] mySeed = SecureRandom.getSeed(SEED_SIZE);
         theRandom.setSeed(mySeed);
+    }
+
+    /**
+     * Generate an SP800HashDRBG SecureRandom.
+     * @param pType the digest type
+     * @param isPredictionResistant true/false
+     * @return the SecureRandom
+     * @throws JDataException on error
+     */
+    public SecureRandom generateHashSecureRandom(final DigestType pType,
+                                                 final boolean isPredictionResistant) throws JDataException {
+        /* Create the digest */
+        MessageDigest myDigest = accessDigest(pType);
+
+        /* Create the new SecureRandom */
+        return theRandomBuilder.buildHash(myDigest, null, isPredictionResistant);
+    }
+
+    /**
+     * Generate an SP800HMacDRBG SecureRandom.
+     * @param pType the digest type
+     * @param isPredictionResistant true/false
+     * @return the SecureRandom
+     * @throws JDataException on error
+     */
+    public SecureRandom generateHMacSecureRandom(final DigestType pType,
+                                                 final boolean isPredictionResistant) throws JDataException {
+        /* Create the digest */
+        Mac myMac = accessMac(pType);
+
+        /* Create the new SecureRandom */
+        return theRandomBuilder.buildHMAC(myMac, null, isPredictionResistant);
     }
 
     /**
@@ -223,8 +266,7 @@ public class SecurityGenerator {
      * @throws WrongPasswordException if password does not match
      */
     public PasswordHash derivePasswordHash(final byte[] pHashBytes,
-                                           final char[] pPassword) throws JDataException,
-            WrongPasswordException {
+                                           final char[] pPassword) throws JDataException, WrongPasswordException {
         /* Create the new Password Hash */
         return new PasswordHash(this, pHashBytes, pPassword);
     }
@@ -401,12 +443,35 @@ public class SecurityGenerator {
      * @return the MAC
      * @throws JDataException on error
      */
+    protected Mac accessMac(final DigestType pDigestType) throws JDataException {
+        /* Protect against exceptions */
+        try {
+            /* Access the MAC */
+            return Mac.getInstance(pDigestType.getHMacAlgorithm(), theProviderName);
+
+            /* Catch exceptions */
+        } catch (NoSuchAlgorithmException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+        } catch (NoSuchProviderException e) {
+            /* Throw the exception */
+            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Obtain a MAC for a password.
+     * @param pDigestType the digest type required
+     * @param pPassword the password in byte format
+     * @return the MAC
+     * @throws JDataException on error
+     */
     protected Mac accessMac(final DigestType pDigestType,
                             final byte[] pPassword) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the MAC */
-            Mac myMac = Mac.getInstance(pDigestType.getHMacAlgorithm(), theProviderName);
+            Mac myMac = accessMac(pDigestType);
 
             /* Initialise the MAC */
             SecretKey myKey = new SecretKeySpec(pPassword, pDigestType.getHMacAlgorithm());
@@ -416,12 +481,6 @@ public class SecurityGenerator {
             return myMac;
 
             /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-        } catch (NoSuchProviderException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         } catch (InvalidKeyException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
@@ -440,7 +499,7 @@ public class SecurityGenerator {
         /* Protect against exceptions */
         try {
             /* Access the MAC */
-            Mac myMac = Mac.getInstance(pDigestType.getHMacAlgorithm(), theProviderName);
+            Mac myMac = accessMac(pDigestType);
 
             /* Initialise the MAC */
             myMac.init(pKey.getSecretKey());
@@ -449,12 +508,6 @@ public class SecurityGenerator {
             return myMac;
 
             /* Catch exceptions */
-        } catch (NoSuchAlgorithmException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
-        } catch (NoSuchProviderException e) {
-            /* Throw the exception */
-            throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
         } catch (InvalidKeyException e) {
             /* Throw the exception */
             throw new JDataException(ExceptionClass.CRYPTO, e.getMessage(), e);
@@ -520,7 +573,8 @@ public class SecurityGenerator {
             SymRegistration myReg = myIterator.next();
 
             /* If this is the right one, return it */
-            if ((myReg.getKeyType() == pKeyType) && (myReg.getKeyLen() == pKeyLen)) {
+            if ((myReg.getKeyType() == pKeyType)
+                && (myReg.getKeyLen() == pKeyLen)) {
                 return myReg;
             }
         }

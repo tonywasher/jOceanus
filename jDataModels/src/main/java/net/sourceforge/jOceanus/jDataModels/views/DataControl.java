@@ -142,8 +142,9 @@ public abstract class DataControl<T extends DataSet<T>>
 
     /**
      * Constructor for default preferences.
+     * @throws JDataException on error
      */
-    protected DataControl() {
+    protected DataControl() throws JDataException {
         /* Create the Debug Map */
         theMap = new HashMap<String, JDataEntry>();
 

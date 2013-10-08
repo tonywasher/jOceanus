@@ -120,8 +120,9 @@ public class SecurityPreferences
     /**
      * Get SecureManager.
      * @return Security Manager for these preferences
+     * @throws JDataException on error
      */
-    public SecureManager getSecurity() {
+    public SecureManager getSecurity() throws JDataException {
         return new SecureManager(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getIntegerValue(NAME_CIPHER_STEPS),
                 getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
     }
@@ -129,8 +130,9 @@ public class SecurityPreferences
     /**
      * Get SecurityGenerator.
      * @return Security Generator for these preferences
+     * @throws JDataException on error
      */
-    public SecurityGenerator getGenerator() {
+    public SecurityGenerator getGenerator() throws JDataException {
         return new SecurityGenerator(getEnumValue(NAME_PROVIDER, SecurityProvider.class), getBooleanValue(NAME_RESTRICTED), getIntegerValue(NAME_CIPHER_STEPS),
                 getIntegerValue(NAME_HASH_ITERATIONS), getStringValue(NAME_SECURITY_PHRASE));
     }

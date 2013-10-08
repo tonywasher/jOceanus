@@ -27,6 +27,7 @@ import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
@@ -51,6 +52,11 @@ public class NetWorth
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(NetWorth.class.getName());
+
+    /**
+     * The Title text.
+     */
+    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
 
     /**
      * The Asset text.
@@ -117,16 +123,14 @@ public class NetWorth
         /* Access the bucket list */
         theAnalysis = pAnalysis;
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
-        StringBuilder myBuffer = new StringBuilder();
 
         /* Obtain the totals bucket */
         AccountCategoryBucket myTotals = myCategories.getTotalsBucket();
+        JDateDay myDate = theAnalysis.getDateRange().getEnd();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Net Worth Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange().getEnd()));
-        theBuilder.makeTitle(myBody, myBuffer.toString());
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
 
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);

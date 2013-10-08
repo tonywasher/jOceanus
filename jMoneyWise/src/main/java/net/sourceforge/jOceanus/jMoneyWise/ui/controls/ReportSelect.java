@@ -48,8 +48,8 @@ import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.reports.ReportType;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
+import net.sourceforge.jOceanus.jMoneyWise.views.DataAnalysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.DataAnalysis.AnalysisYear;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 import net.sourceforge.jOceanus.jSortedList.OrderedListIterator;
 
@@ -265,7 +265,7 @@ public class ReportSelect
      * Refresh data.
      * @param pAnalysis the analysis.
      */
-    public final void refreshData(final EventAnalysis pAnalysis) {
+    public final void refreshData(final DataAnalysis pAnalysis) {
         /* Access the data */
         FinanceData myData = theView.getData();
         JDateDayRange myRange = theView.getRange();

@@ -54,8 +54,8 @@ import net.sourceforge.jOceanus.jMoneyWise.reports.ReportBuilder;
 import net.sourceforge.jOceanus.jMoneyWise.reports.ReportManager;
 import net.sourceforge.jOceanus.jMoneyWise.reports.ReportType;
 import net.sourceforge.jOceanus.jMoneyWise.ui.controls.ReportSelect;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis;
-import net.sourceforge.jOceanus.jMoneyWise.views.EventAnalysis.AnalysisYear;
+import net.sourceforge.jOceanus.jMoneyWise.views.DataAnalysis;
+import net.sourceforge.jOceanus.jMoneyWise.views.DataAnalysis.AnalysisYear;
 import net.sourceforge.jOceanus.jMoneyWise.views.View;
 
 import org.w3c.dom.Document;
@@ -98,7 +98,7 @@ public class ReportTab
     /**
      * The Analysis.
      */
-    private transient EventAnalysis theAnalysis = null;
+    private transient DataAnalysis theAnalysis = null;
 
     /**
      * The Report entry.
@@ -264,7 +264,7 @@ public class ReportTab
      */
     private void buildReport() throws JDataException {
         AnalysisYear myAnalysis;
-        EventAnalysis mySnapshot;
+        DataAnalysis mySnapshot;
         Document myDoc;
 
         /* Access the values from the selection */
@@ -283,7 +283,7 @@ public class ReportTab
         /* Switch on report type */
         switch (myReportType) {
             case NetWorth:
-                mySnapshot = new EventAnalysis(theView.getData(), myDate);
+                mySnapshot = new DataAnalysis(theView.getData(), myDate);
                 myDoc = theBuilder.createReport(mySnapshot.getAnalysis(), ReportType.NetWorth);
                 theSpotEntry.setObject(mySnapshot);
                 theSpotEntry.showEntry();
@@ -316,7 +316,7 @@ public class ReportTab
                 break;
 
             case Portfolio:
-                mySnapshot = new EventAnalysis(theView.getData(), myDate);
+                mySnapshot = new DataAnalysis(theView.getData(), myDate);
                 myDoc = theBuilder.createReport(mySnapshot.getAnalysis(), ReportType.Portfolio);
                 theSpotEntry.setObject(mySnapshot);
                 theSpotEntry.showEntry();
@@ -329,7 +329,7 @@ public class ReportTab
         theManager.setDocument(myDoc);
 
         /* Create initial display version */
-        String myText = theManager.hideClassSections();
+        String myText = theManager.formatXML();
         theEditor.setText(myText);
 
         /* Initialise the window */

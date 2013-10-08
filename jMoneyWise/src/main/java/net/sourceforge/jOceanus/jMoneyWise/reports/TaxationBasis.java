@@ -23,8 +23,10 @@
 package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.Analysis;
@@ -41,6 +43,16 @@ import org.w3c.dom.Element;
  */
 public class TaxationBasis
         extends BasicReport<TaxCategoryBucket, TaxCategoryBucket> {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxationBasis.class.getName());
+
+    /**
+     * The Title text.
+     */
+    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+
     /**
      * HTML builder.
      */
@@ -71,13 +83,11 @@ public class TaxationBasis
         /* Access the bucket lists */
         theAnalysis = pAnalysis;
         TaxCategoryBucketList myTax = theAnalysis.getTaxCategories();
-        StringBuilder myBuffer = new StringBuilder();
+        JDateDayRange myRange = theAnalysis.getDateRange();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Taxation Basis Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
-        theBuilder.makeTitle(myBody, myBuffer.toString());
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);

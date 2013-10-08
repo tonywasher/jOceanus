@@ -33,9 +33,8 @@ import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 
 /**
- * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that
- * were not previously resolved, previously used passwords will be attempted. If no match is found, then the
- * user will be prompted for the password.
+ * PasswordHash Manager class which holds a cache of all resolved password hashes. For password hashes that were not previously resolved, previously used
+ * passwords will be attempted. If no match is found, then the user will be prompted for the password.
  * @author Tony Washer
  */
 public class SecureManager {
@@ -81,11 +80,11 @@ public class SecureManager {
 
     /**
      * Constructor for default values.
+     * @throws JDataException on error
      */
-    public SecureManager() {
+    public SecureManager() throws JDataException {
         /* Access with defaults */
-        this(DEFAULT_PROVIDER, DEFAULT_RESTRICTED, DEFAULT_CIPHER_STEPS, DEFAULT_HASH_ITERATIONS,
-                DEFAULT_SECURITY_PHRASE);
+        this(DEFAULT_PROVIDER, DEFAULT_RESTRICTED, DEFAULT_CIPHER_STEPS, DEFAULT_HASH_ITERATIONS, DEFAULT_SECURITY_PHRASE);
     }
 
     /**
@@ -95,15 +94,15 @@ public class SecureManager {
      * @param pNumCipherSteps the number of cipher steps
      * @param pHashIterations the number of hash iterations
      * @param pSecurityPhrase the security phrase
+     * @throws JDataException on error
      */
     public SecureManager(final SecurityProvider pProvider,
                          final boolean pRestricted,
                          final int pNumCipherSteps,
                          final int pHashIterations,
-                         final String pSecurityPhrase) {
+                         final String pSecurityPhrase) throws JDataException {
         /* Allocate the security generator */
-        theGenerator = new SecurityGenerator(pProvider, pRestricted, pNumCipherSteps, pHashIterations,
-                pSecurityPhrase);
+        theGenerator = new SecurityGenerator(pProvider, pRestricted, pNumCipherSteps, pHashIterations, pSecurityPhrase);
 
         /* Allocate a new Hash list */
         theHashList = new ArrayList<PasswordHash>();
@@ -158,9 +157,11 @@ public class SecureManager {
 
         /* Create the title for the window */
         if (needConfirm) {
-            myTitle = "Enter New Password for " + pSource;
+            myTitle = "Enter New Password for "
+                      + pSource;
         } else {
-            myTitle = "Enter Password for " + pSource;
+            myTitle = "Enter Password for "
+                      + pSource;
         }
 
         /* Create a new password dialog */

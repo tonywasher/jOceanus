@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
@@ -44,6 +45,16 @@ import org.w3c.dom.Element;
  */
 public class CashFlow
         extends BasicReport<AccountBucket, AccountBucket> {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(CashFlow.class.getName());
+
+    /**
+     * The Title text.
+     */
+    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+
     /**
      * HTML builder.
      */
@@ -76,17 +87,13 @@ public class CashFlow
         AccountBucketList myList = theAnalysis.getAccounts();
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
         JDateDayRange myRange = theAnalysis.getDateRange();
-        StringBuilder myBuffer = new StringBuilder();
 
         /* Obtain the totals bucket */
         AccountCategoryBucket myTotals = myCategories.getTotalsBucket();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Cash Flow Report for ");
-        myBuffer.append(theFormatter.formatObject(myRange));
-        theBuilder.makeTitle(myBody, myBuffer.toString());
-        myBuffer.setLength(0);
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);

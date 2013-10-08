@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket;
 import net.sourceforge.jOceanus.jMoneyWise.views.AccountBucket.AccountAttribute;
@@ -50,6 +51,11 @@ public class Portfolio
      * Resource Bundle.
      */
     private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Portfolio.class.getName());
+
+    /**
+     * The Title text.
+     */
+    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
 
     /**
      * The Cost text.
@@ -127,16 +133,14 @@ public class Portfolio
         theAnalysis = pAnalysis;
         AccountBucketList myAccounts = theAnalysis.getAccounts();
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
-        StringBuilder myBuffer = new StringBuilder();
 
         /* Access the totals */
         AccountCategoryBucket myTotals = myCategories.getTotalsBucket();
+        JDateDay myDate = theAnalysis.getDateRange().getEnd();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Market Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange().getEnd()));
-        theBuilder.makeTitle(myBody, myBuffer.toString());
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
 
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);

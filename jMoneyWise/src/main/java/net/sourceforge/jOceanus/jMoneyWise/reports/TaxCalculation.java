@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
@@ -46,6 +47,16 @@ import org.w3c.dom.Element;
  */
 public class TaxCalculation
         extends BasicReport<TaxCategoryBucket, Object> {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxCalculation.class.getName());
+
+    /**
+     * The Title text.
+     */
+    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+
     /**
      * HTML builder.
      */
@@ -80,7 +91,6 @@ public class TaxCalculation
     public Document createReport(final Analysis pAnalysis) {
         /* Store the analysis */
         theAnalysis = pAnalysis;
-        StringBuffer myBuffer = new StringBuffer();
 
         /* Obtain the TaxYear parameters */
         FinanceData myData = pAnalysis.getData();
@@ -93,9 +103,7 @@ public class TaxCalculation
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Taxation Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
-        theBuilder.makeTitle(myBody, myBuffer.toString());
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDate));
 
         /* Format the header */
         theBuilder.makeSubTitle(myBody, "Taxation Summary");

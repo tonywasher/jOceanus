@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
@@ -46,6 +47,16 @@ import org.w3c.dom.Element;
  */
 public class BalanceSheet
         extends BasicReport<AccountCategoryBucket, AccountBucket> {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(BalanceSheet.class.getName());
+
+    /**
+     * The Title text.
+     */
+    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+
     /**
      * HTML builder.
      */
@@ -76,7 +87,6 @@ public class BalanceSheet
         /* Access the bucket list */
         theAnalysis = pAnalysis;
         AccountCategoryBucketList myCategories = theAnalysis.getAccountCategories();
-        StringBuilder myBuffer = new StringBuilder();
         JDateDayRange myDateRange = theAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
@@ -84,9 +94,7 @@ public class BalanceSheet
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Balance Sheet for ");
-        myBuffer.append(theFormatter.formatObject(myDateRange));
-        theBuilder.makeTitle(myBody, myBuffer.toString());
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myDateRange));
 
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);

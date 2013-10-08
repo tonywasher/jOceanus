@@ -54,7 +54,7 @@ public class View
     /**
      * The event analysis.
      */
-    private EventAnalysis theAnalysis = null;
+    private DataAnalysis theAnalysis = null;
 
     /**
      * The dilution event list.
@@ -73,7 +73,7 @@ public class View
      * Obtain the analysis.
      * @return the analysis.
      */
-    public EventAnalysis getAnalysis() {
+    public DataAnalysis getAnalysis() {
         return theAnalysis;
     }
 
@@ -135,12 +135,12 @@ public class View
      * @return the analysis
      * @throws JDataException on error
      */
-    public final EventAnalysis analyseData(final FinanceData pData) throws JDataException {
+    public final DataAnalysis analyseData(final FinanceData pData) throws JDataException {
         /* Initialise the analysis */
         pData.initialiseAnalysis();
 
         /* Create the analysis */
-        EventAnalysis myAnalysis = new EventAnalysis(this, pData);
+        DataAnalysis myAnalysis = new DataAnalysis(this, pData);
 
         /* Access the most recent metaAnalysis */
         MetaAnalysis myMetaAnalysis = myAnalysis.getMetaAnalysis();

@@ -23,9 +23,11 @@
 package net.sourceforge.jOceanus.jMoneyWise.reports;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFormatter;
+import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 import net.sourceforge.jOceanus.jMoneyWise.reports.HTMLBuilder.HTMLTable;
@@ -43,6 +45,16 @@ import org.w3c.dom.Element;
  */
 public class IncomeExpense
         extends BasicReport<EventCategoryBucket, EventCategoryBucket> {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(IncomeExpense.class.getName());
+
+    /**
+     * The Title text.
+     */
+    private static final String TEXT_TITLE = NLS_BUNDLE.getString("ReportTitle");
+
     /**
      * HTML builder.
      */
@@ -73,16 +85,14 @@ public class IncomeExpense
         /* Access the bucket list */
         theAnalysis = pAnalysis;
         EventCategoryBucketList myCategories = theAnalysis.getEventCategories();
-        StringBuilder myBuffer = new StringBuilder();
+        JDateDayRange myRange = theAnalysis.getDateRange();
 
         /* Obtain the totals bucket */
         EventCategoryBucket myTotals = myCategories.getTotalsBucket();
 
         /* Start the report */
         Element myBody = theBuilder.startReport();
-        myBuffer.append("Income/Expense Report for ");
-        myBuffer.append(theFormatter.formatObject(theAnalysis.getDateRange()));
-        theBuilder.makeTitle(myBody, myBuffer.toString());
+        theBuilder.makeTitle(myBody, TEXT_TITLE, theFormatter.formatObject(myRange));
 
         /* Initialise the table */
         HTMLTable myTable = theBuilder.startTable(myBody);

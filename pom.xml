@@ -75,7 +75,7 @@
     <JDateButtonVersion>v1.1.0-b1</JDateButtonVersion>
     <BouncyCastleVersion>1.49</BouncyCastleVersion>
     <SvnKitVersion>1.7.10</SvnKitVersion>
-    <ApacheMavenVersion>3.1.0</ApacheMavenVersion>
+    <ApacheMavenVersion>3.1.1</ApacheMavenVersion>
     <PostGreSQLVersion>9.1-901.jdbc4</PostGreSQLVersion>
     <ApachePOIVersion>3.9</ApachePOIVersion>
     <ApacheODFDOMVersion>0.7-incubating</ApacheODFDOMVersion>

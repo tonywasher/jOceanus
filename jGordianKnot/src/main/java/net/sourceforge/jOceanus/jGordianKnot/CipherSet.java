@@ -234,7 +234,7 @@ public class CipherSet {
         int myBuilt = 0;
 
         /* Create the Mac and standard data */
-        IterationCounter myCount = new IterationCounter();
+        ByteArrayInteger myCount = new ByteArrayInteger();
         Mac myMac = theGenerator.accessMac(theDigest, pSecret);
 
         /* while we need to generate more bytes */

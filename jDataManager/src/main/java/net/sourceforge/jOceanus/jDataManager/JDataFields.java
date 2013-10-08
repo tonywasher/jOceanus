@@ -401,6 +401,11 @@ public class JDataFields {
         public int hashCode() {
             return theName.hashCode();
         }
+
+        @Override
+        public String toString() {
+            return theName;
+        }
     }
 
     /**

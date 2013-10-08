@@ -52,11 +52,6 @@ public class ReportManager {
     private static final String ATTR_ID = HTMLBuilder.ATTR_ID;
 
     /**
-     * The class attribute.
-     */
-    private static final String ATTR_CLASS = HTMLBuilder.ATTR_CLASS;
-
-    /**
      * The Transformer.
      */
     private final Transformer theXformer;
@@ -187,87 +182,6 @@ public class ReportManager {
             String myId = HTMLBuilder.REF_ID
                           + pId.substring(HTMLBuilder.REF_TAB.length());
             pWindow.scrollToReference(myId);
-        }
-    }
-
-    /**
-     * Hide all section of specified class.
-     * @return the modified text
-     * @throws JDataException on error
-     */
-    public String hideClassSections() throws JDataException {
-        /* Ignore if we have no document or transformer */
-        if ((theDocument == null)
-            || (theXformer == null)) {
-            /* Return current text */
-            return theText;
-        }
-
-        /* Determine class sections */
-        String myClass = HTMLBuilder.CLASS_HIDE;
-
-        /* Access root element */
-        Element myElement = theDocument.getDocumentElement();
-
-        /* Loop through the nodes */
-        Node myNode = myElement.getFirstChild();
-        while (myNode != null) {
-            /* Skip nonElement nodes */
-            if (myNode.getNodeType() != Node.ELEMENT_NODE) {
-                myNode = myNode.getNextSibling();
-                continue;
-            }
-
-            /* Access node as element and reposition to next sibling */
-            Element myChild = (Element) myNode;
-            myNode = myNode.getNextSibling();
-
-            /* hide any class sections */
-            hideClassSections(myChild, myClass);
-        }
-
-        /* Return the new text */
-        return formatXML();
-    }
-
-    /**
-     * Hide any sections of this class for the element and children.
-     * @param pElement the element to search
-     * @param pClass the class
-     */
-    private void hideClassSections(final Element pElement,
-                                   final String pClass) {
-        /* Loop through the child nodes */
-        Node myNode = pElement.getFirstChild();
-        while (myNode != null) {
-            /* Skip nonElement nodes */
-            if (myNode.getNodeType() != Node.ELEMENT_NODE) {
-                myNode = myNode.getNextSibling();
-                continue;
-            }
-
-            /* Access node as element and reposition to next sibling */
-            Element myChild = (Element) myNode;
-            myNode = myNode.getNextSibling();
-
-            /* hide any children first */
-            hideClassSections(myChild, pClass);
-        }
-
-        /* Check the element for the id */
-        if (pElement.getAttribute(ATTR_CLASS).equals(pClass)) {
-            /* Access the id and skip if there is no id */
-            String myId = pElement.getAttribute(ATTR_ID);
-            if (myId.length() == 0) {
-                return;
-            }
-
-            /* Hide the element */
-            HiddenElement myElement = new HiddenElement(pElement);
-            myElement.hide();
-
-            /* Put the old element into the map */
-            theHiddenMap.put(myId, myElement);
         }
     }
 

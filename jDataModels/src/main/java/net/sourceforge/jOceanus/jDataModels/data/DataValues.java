@@ -401,6 +401,38 @@ public class DataValues {
     }
 
     /**
+     * Create XML for a list.
+     * @param pElement the document to hold the list.
+     * @param pFields the data fields
+     * @return the element holding the list
+     */
+    public static List<DataValues> parseXML(final Element pElement,
+                                            final JDataFields pFields) {
+        /* Create the list */
+        List<DataValues> myResult = new ArrayList<DataValues>();
+
+        /* Loop through the children */
+        for (Node myChild = pElement.getFirstChild(); myChild != null; myChild = myChild.getNextSibling()) {
+            /* Ignore non-elements */
+            if (!(myChild instanceof Element)) {
+                continue;
+            }
+
+            /* Access as Element */
+            Element myItem = (Element) myChild;
+
+            /* Create DataArguments for item */
+            DataValues myArgs = new DataValues(myItem, pFields);
+
+            /* Add the child to the list */
+            myResult.add(myArgs);
+        }
+
+        /* Return the list */
+        return myResult;
+    }
+
+    /**
      * Create XML for a DataSet.
      * @param pDocument the document to hold the list.
      * @param pData the data set

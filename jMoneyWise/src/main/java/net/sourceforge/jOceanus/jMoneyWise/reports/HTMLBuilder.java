@@ -53,11 +53,6 @@ public class HTMLBuilder {
     private static final String SEP_DOT = ".";
 
     /**
-     * The blank separator.
-     */
-    private static final String SEP_BLANK = " ";
-
-    /**
      * The end rule separator.
      */
     private static final String SEP_ENDRULE = "; }";
@@ -153,16 +148,6 @@ public class HTMLBuilder {
     private static final String CLASS_ALTDTLROW = "altDetailRow";
 
     /**
-     * The show table class.
-     */
-    protected static final String CLASS_SHOW = "showTable";
-
-    /**
-     * The hide table class.
-     */
-    protected static final String CLASS_HIDE = "hideTable";
-
-    /**
      * Name of titleValue class.
      */
     private static final String CLASS_TITLEVALUE = "titleValue";
@@ -196,6 +181,11 @@ public class HTMLBuilder {
      * The subtitle element.
      */
     private static final String ELEMENT_SUBTITLE = "h2";
+
+    /**
+     * The break element.
+     */
+    private static final String ELEMENT_BREAK = "br";
 
     /**
      * The table element.
@@ -415,24 +405,6 @@ public class HTMLBuilder {
         myBuilder.append(" { text-align: center; color: ");
         myBuilder.append(DataConverter.colorToHexString(Color.black));
         myBuilder.append(SEP_ENDRULE);
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Define standard display section */
-        myBuilder.append(SEP_DOT);
-        myBuilder.append(CLASS_SHOW);
-        myBuilder.append(SEP_BLANK);
-        myBuilder.append(ELEMENT_TABLE);
-        myBuilder.append(" { display: block; width: 98%; align: right; }");
-        pSheet.addRule(myBuilder.toString());
-        myBuilder.setLength(0);
-
-        /* Define standard hide section */
-        myBuilder.append(SEP_DOT);
-        myBuilder.append(CLASS_HIDE);
-        myBuilder.append(SEP_BLANK);
-        myBuilder.append(ELEMENT_TABLE);
-        myBuilder.append(" { display: none; }");
         pSheet.addRule(myBuilder.toString());
         myBuilder.setLength(0);
 
@@ -755,6 +727,26 @@ public class HTMLBuilder {
     }
 
     /**
+     * Make two line title.
+     * @param pBody the document body
+     * @param pTitle1 the first title
+     * @param pTitle2 the second title
+     */
+    protected void makeTitle(final Element pBody,
+                             final String pTitle1,
+                             final String pTitle2) {
+        /* Create the title */
+        Element myTitle = theDocument.createElement(ELEMENT_TITLE);
+        pBody.appendChild(myTitle);
+        Node myText = theDocument.createTextNode(pTitle1);
+        myTitle.appendChild(myText);
+        Element myBreak = theDocument.createElement(ELEMENT_BREAK);
+        myTitle.appendChild(myBreak);
+        myText = theDocument.createTextNode(pTitle2);
+        myTitle.appendChild(myText);
+    }
+
+    /**
      * Make subtitle.
      * @param pBody the document body
      * @param pTitle the title
@@ -781,40 +773,6 @@ public class HTMLBuilder {
 
         /* Create the table control */
         HTMLTable myControl = new HTMLTable(myTable);
-        return myControl;
-    }
-
-    /**
-     * Start an embedded table.
-     * @param pParent the parent element
-     * @param pTitle the title of the table
-     * @param bShow initially display the table?
-     * @return the new table
-     */
-    protected HTMLTable startEmbeddedTable(final HTMLTable pParent,
-                                           final String pTitle,
-                                           final boolean bShow) {
-        /* Access body element */
-        Element myBody = pParent.getTableBody();
-
-        /* Create the row */
-        Element myRow = theDocument.createElement(ELEMENT_ROW);
-        myBody.appendChild(myRow);
-        myRow.setAttribute(ATTR_ID, REF_TAB
-                                    + pTitle);
-        myRow.setAttribute(ATTR_CLASS, bShow
-                ? CLASS_SHOW
-                : CLASS_HIDE);
-        Element myCell = theDocument.createElement(ELEMENT_CELL);
-        myRow.appendChild(myCell);
-        myCell.setAttribute(ATTR_COLSPAN, Integer.toString(pParent.getNumCols()));
-        Element myTable = theDocument.createElement(ELEMENT_TABLE);
-        myCell.appendChild(myTable);
-        myTable.setAttribute(ATTR_ALIGN, ALIGN_RIGHT);
-        myTable.setAttribute(ATTR_WIDTH, WIDTH_EMBED);
-
-        /* Create the table control */
-        HTMLTable myControl = new HTMLTable(myTable, pParent);
         return myControl;
     }
 

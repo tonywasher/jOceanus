@@ -285,6 +285,7 @@ public class SecurityTest {
         Set<String> messageDigests = new HashSet<String>();
         Set<String> macs = new HashSet<String>();
         Set<String> signatures = new HashSet<String>();
+        Set<String> randoms = new HashSet<String>();
         Set<String> remaining = new HashSet<String>();
 
         pProvider.ensureInstalled();
@@ -309,6 +310,8 @@ public class SecurityTest {
                     macs.add(entry.substring("Mac.".length()));
                 } else if (entry.startsWith("Signature.")) {
                     signatures.add(entry.substring("Signature.".length()));
+                } else if (entry.startsWith("SecureRandom.")) {
+                    randoms.add(entry.substring("SecureRandom.".length()));
                 } else
                     remaining.add(entry);
             }
@@ -319,6 +322,7 @@ public class SecurityTest {
         printSet("MessageDigests", messageDigests);
         printSet("Macs", macs);
         printSet("Signatures", signatures);
+        printSet("Randoms", randoms);
         printSet("Remaining", remaining);
     }
 
