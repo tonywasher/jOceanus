@@ -201,7 +201,6 @@ public class SecurityGenerator {
         theRandomBuilder.setSecurityBytes(getSecurityBytes());
 
         /* Create a new secure random generator */
-        // theRandom = new SecureRandom();
         theRandom = generateHashSecureRandom(DigestType.SHA3, false);
     }
 
@@ -210,7 +209,7 @@ public class SecurityGenerator {
      */
     public void reSeedRandom() {
         /* Generate and apply the new seed */
-        byte[] mySeed = SecureRandom.getSeed(SEED_SIZE);
+        byte[] mySeed = theRandom.generateSeed(SEED_SIZE);
         theRandom.setSeed(mySeed);
     }
 
@@ -437,9 +436,8 @@ public class SecurityGenerator {
     }
 
     /**
-     * Obtain a MAC for a password.
+     * Obtain a MAC.
      * @param pDigestType the digest type required
-     * @param pPassword the password in byte format
      * @return the MAC
      * @throws JDataException on error
      */

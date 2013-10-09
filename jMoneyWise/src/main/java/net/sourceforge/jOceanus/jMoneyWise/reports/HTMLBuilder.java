@@ -772,8 +772,7 @@ public class HTMLBuilder {
         myTable.setAttribute(ATTR_WIDTH, WIDTH_MAIN);
 
         /* Create the table control */
-        HTMLTable myControl = new HTMLTable(myTable);
-        return myControl;
+        return new HTMLTable(myTable);
     }
 
     /**
@@ -788,8 +787,7 @@ public class HTMLBuilder {
         myTable.setAttribute(ATTR_WIDTH, WIDTH_EMBED);
 
         /* Create the table control */
-        HTMLTable myControl = new HTMLTable(myTable, pParent);
-        return myControl;
+        return new HTMLTable(myTable, pParent);
     }
 
     /**

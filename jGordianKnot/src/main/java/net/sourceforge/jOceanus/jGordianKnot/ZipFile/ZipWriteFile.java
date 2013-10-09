@@ -151,9 +151,14 @@ public class ZipWriteFile {
 
         /* Protect against exceptions */
         try {
-            /* Record hash and generator and create an asymmetric key */
+            /* Record hash and generator */
             theHash = pHash;
             theGenerator = theHash.getSecurityGenerator();
+
+            /* reSeed the random number generator */
+            theGenerator.reSeedRandom();
+
+            /* Create an asymmetric key */
             theAsymKey = theGenerator.generateAsymmetricKey();
             theNumEncrypts = theGenerator.getNumCipherSteps();
 
@@ -163,9 +168,8 @@ public class ZipWriteFile {
             theStream = new ZipOutputStream(myOutBuffer);
 
             /*
-             * Set compression level to zero to speed things up. It would be nice to use the STORED method,
-             * but this requires calculating the CRC and file size prior to writing data to the Zip file which
-             * will badly affect performance.
+             * Set compression level to zero to speed things up. It would be nice to use the STORED method, but this requires calculating the CRC and file size
+             * prior to writing data to the Zip file which will badly affect performance.
              */
             theStream.setLevel(ZipOutputStream.STORED);
 
@@ -263,7 +267,10 @@ public class ZipWriteFile {
         try {
             /* Start the new entry */
             theFileName = pFile.getPath();
-            theEntry = new ZipEntry(isEncrypted() ? FILE_PREFIX + theFileNo : theFileName);
+            theEntry = new ZipEntry(isEncrypted()
+                    ? FILE_PREFIX
+                      + theFileNo
+                    : theFileName);
             theStream.putNextEntry(theEntry);
 
             /* Create a new zipFileEntry */
@@ -280,7 +287,9 @@ public class ZipWriteFile {
             /* If we are encrypting */
             if (isEncrypted()) {
                 /* Determine number of digests */
-                int iNumDigest = 2 + (pDebug ? theNumEncrypts : 0);
+                int iNumDigest = 2 + (pDebug
+                        ? theNumEncrypts
+                        : 0);
 
                 /* Create the arrays */
                 theDigests = new DigestOutputStream[iNumDigest];
@@ -391,7 +400,8 @@ public class ZipWriteFile {
             /* Protect against exceptions */
             try {
                 /* If we have stored files and are encrypted */
-                if ((theFileNo > 0) && (isEncrypted())) {
+                if ((theFileNo > 0)
+                    && (isEncrypted())) {
                     /* Create a new zipFileEntry */
                     ZipFileEntry myEntry = theContents.addZipFileHeader();
 
@@ -403,7 +413,8 @@ public class ZipWriteFile {
 
                     /* Create the header entry */
                     ++theFileNo;
-                    theEntry = new ZipEntry(FILE_PREFIX + theFileNo);
+                    theEntry = new ZipEntry(FILE_PREFIX
+                                            + theFileNo);
 
                     /* Declare the password hash and encrypt the header */
                     theEntry.setExtra(theHash.getHashBytes());
@@ -420,9 +431,6 @@ public class ZipWriteFile {
                     /* Write the bytes to the zip file and close the entry */
                     theStream.write(theHash.encryptString(myHeader));
                     theStream.closeEntry();
-
-                    /* reSeed the random number generator */
-                    theGenerator.reSeedRandom();
                 }
 
                 /* close the stream */
@@ -440,7 +448,8 @@ public class ZipWriteFile {
     /**
      * Wrapper class to catch close of output stream and prevent it from closing the ZipFile.
      */
-    private final class WrapOutputStream extends OutputStream {
+    private final class WrapOutputStream
+            extends OutputStream {
         @Override
         public void flush() throws IOException {
             theStream.flush();

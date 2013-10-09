@@ -27,7 +27,7 @@ import net.sourceforge.jOceanus.jDataManager.DataConverter;
 import org.bouncycastle.util.Arrays;
 
 /**
- * Simple class that handles a byte array as a counter housing an integer of max value 2<sup>8n</sup> where n is the length of the byte array.
+ * Simple class that handles a byte array as an integer housing an integer of max value 2<sup>8n</sup> where n is the length of the byte array.
  */
 public class ByteArrayInteger {
     /**
@@ -89,7 +89,7 @@ public class ByteArrayInteger {
     }
 
     /**
-     * Reset counter to zero
+     * Reset counter to zero.
      */
     public void reset() {
         Arrays.fill(theBuffer, (byte) 0);

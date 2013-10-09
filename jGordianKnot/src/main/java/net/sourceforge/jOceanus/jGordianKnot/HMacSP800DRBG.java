@@ -57,16 +57,6 @@ public class HMacSP800DRBG
     private static final byte[] SEED_ID = { 1 };
 
     /**
-     * The length of time before a reSeed is required.
-     */
-    private final static long RESEED_MAX = 1L << (48 - 1);
-
-    /**
-     * The maximum # of bits that can be requested.
-     */
-    private final static int MAX_BITS_REQUEST = 1 << (19 - 1);
-
-    /**
      * The HMac.
      */
     private final Mac theHMac;
@@ -103,10 +93,10 @@ public class HMacSP800DRBG
      * @param pSecurityBytes personalisation string to distinguish this DRBG (may be null).
      * @param pInitVector nonce to further distinguish this DRBG (may be null).
      */
-    protected HMacSP800DRBG(Mac pHMac,
-                            EntropySource pEntropy,
-                            byte[] pSecurityBytes,
-                            byte[] pInitVector) {
+    protected HMacSP800DRBG(final Mac pHMac,
+                            final EntropySource pEntropy,
+                            final byte[] pSecurityBytes,
+                            final byte[] pInitVector) {
         /* Store hMac and entropy source */
         theHMac = pHMac;
         theEntropy = pEntropy;
@@ -123,7 +113,7 @@ public class HMacSP800DRBG
         Arrays.fill(theHash, (byte) 1);
 
         /* Update the state */
-        HMAC_DRBG_Update(mySeed);
+        updateState(mySeed);
 
         /* Initialise reSeed counter */
         theReseedCounter = new ByteArrayInteger(DataConverter.BYTES_LONG);
@@ -131,10 +121,10 @@ public class HMacSP800DRBG
     }
 
     /**
-     * Update the state
+     * Update the state (HMAC_DRBG_Update).
      * @param pSeed the extra seed material
      */
-    private void HMAC_DRBG_Update(byte[] pSeed) {
+    private void updateState(final byte[] pSeed) {
         try {
             updateState(pSeed, UPDATE_ID);
             if (pSeed != null) {
@@ -148,14 +138,14 @@ public class HMacSP800DRBG
     }
 
     /**
-     * Update the state
+     * Update the state.
      * @param pSeed optional seed material
      * @param pCycle the cycle id
      * @throws InvalidKeyException on invalid key
      * @throws ShortBufferException on invalid buffer
      */
-    private void updateState(byte[] pSeed,
-                             byte[] pCycle) throws InvalidKeyException, ShortBufferException {
+    private void updateState(final byte[] pSeed,
+                             final byte[] pCycle) throws InvalidKeyException, ShortBufferException {
 
         /* Initialise the hMac */
         theHMac.init(new SecretKeySpec(theKey, theAlgo));
@@ -179,13 +169,13 @@ public class HMacSP800DRBG
     }
 
     @Override
-    public void reseed(byte[] pXtraBytes) {
+    public void reseed(final byte[] pXtraBytes) {
         /* Create seed material */
         byte[] myEntropy = theEntropy.getEntropy();
         byte[] mySeed = Arrays.concatenate(myEntropy, pXtraBytes);
 
         /* Update the state */
-        HMAC_DRBG_Update(mySeed);
+        updateState(mySeed);
 
         /* re-initialise reSeed counter */
         theReseedCounter.reset();
@@ -199,16 +189,16 @@ public class HMacSP800DRBG
         /* Check valid # of bits */
         int myLen = pOutput.length;
         int myNumBits = myLen << BIT_SHIFT;
-        if (myNumBits > MAX_BITS_REQUEST) {
+        if (myNumBits > SP800SecureRandomBuilder.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
-                                               + MAX_BITS_REQUEST);
+                                               + SP800SecureRandomBuilder.MAX_BITS_REQUEST);
         }
 
         /* Access XtraBytes */
         byte[] myXtraBytes = pXtraBytes;
 
         /* Check for reSeed required */
-        if (theReseedCounter.compareLimit(RESEED_MAX)) {
+        if (theReseedCounter.compareLimit(SP800SecureRandomBuilder.RESEED_MAX)) {
             return -1;
         }
 
@@ -221,7 +211,7 @@ public class HMacSP800DRBG
             /* else if we have extra bytes */
         } else if (myXtraBytes != null) {
             /* Update the state */
-            HMAC_DRBG_Update(myXtraBytes);
+            updateState(myXtraBytes);
         }
 
         /* Allocate output buffer */
@@ -258,7 +248,7 @@ public class HMacSP800DRBG
         }
 
         /* Update the state */
-        HMAC_DRBG_Update(myXtraBytes);
+        updateState(myXtraBytes);
 
         /* Iterate the reSeed counter */
         theReseedCounter.iterate();

@@ -42,7 +42,7 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 /**
  * The Payee Bucket class.
  */
-public class PayeeBucket
+public final class PayeeBucket
         implements JDataContents, Comparable<PayeeBucket>, OrderedIdItem<Integer> {
     /**
      * Local Report fields.

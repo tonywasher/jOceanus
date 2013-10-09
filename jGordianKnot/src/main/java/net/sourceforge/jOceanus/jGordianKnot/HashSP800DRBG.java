@@ -63,16 +63,6 @@ public class HashSP800DRBG
     private static final byte[] REHASH_ID = { 3 };
 
     /**
-     * The length of time before a reSeed is required.
-     */
-    private final static long RESEED_MAX = 1L << (48 - 1);
-
-    /**
-     * The maximum # of bits that can be requested.
-     */
-    private final static int MAX_BITS_REQUEST = 1 << (19 - 1);
-
-    /**
      * The Seed length.
      */
     private static final int SEED_LENGTH = 880;
@@ -120,11 +110,11 @@ public class HashSP800DRBG
         /* Create variable Hash */
         byte[] myEntropy = theEntropy.getEntropy();
         byte[] mySeed = Arrays.concatenate(myEntropy, pInitVector, pSecurityBytes);
-        theV = hash_df(mySeed, SEED_LENGTH);
+        theV = hashDerive(mySeed, SEED_LENGTH);
 
         /* Create constant hash */
         byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
-        theC = hash_df(myTempH, SEED_LENGTH);
+        theC = hashDerive(myTempH, SEED_LENGTH);
 
         /* Initialise reSeed counter */
         theReseedCounter = new ByteArrayInteger(DataConverter.BYTES_LONG);
@@ -136,11 +126,11 @@ public class HashSP800DRBG
         /* Create variable Hash */
         byte[] myEntropy = theEntropy.getEntropy();
         byte[] mySeed = Arrays.concatenate(RESEED_ID, theV.getBuffer(), myEntropy, pXtraBytes);
-        theV = hash_df(mySeed, SEED_LENGTH);
+        theV = hashDerive(mySeed, SEED_LENGTH);
 
         /* Create constant hash */
         byte[] myTempH = Arrays.concatenate(INIT_ID, theV.getBuffer());
-        theC = hash_df(myTempH, SEED_LENGTH);
+        theC = hashDerive(myTempH, SEED_LENGTH);
 
         /* re-initialise reSeed counter */
         theReseedCounter.reset();
@@ -153,13 +143,13 @@ public class HashSP800DRBG
                         final boolean isPredictionResistant) {
         /* Check valid # of bits */
         int myNumBits = pOutput.length << BIT_SHIFT;
-        if (myNumBits > MAX_BITS_REQUEST) {
+        if (myNumBits > SP800SecureRandomBuilder.MAX_BITS_REQUEST) {
             throw new IllegalArgumentException("Number of bits per request limited to "
-                                               + MAX_BITS_REQUEST);
+                                               + SP800SecureRandomBuilder.MAX_BITS_REQUEST);
         }
 
         /* Check for reSeed required */
-        if (theReseedCounter.compareLimit(RESEED_MAX)) {
+        if (theReseedCounter.compareLimit(SP800SecureRandomBuilder.RESEED_MAX)) {
             return -1;
         }
 
@@ -240,11 +230,13 @@ public class HashSP800DRBG
     }
 
     /**
-     * Hash derivation function.
+     * Hash derivation function (hash_df).
+     * @param pSeedMaterial the seed material
+     * @param pSeedLength the length of seed required
      * @return the new hash as a counter
      */
-    private ByteArrayInteger hash_df(final byte[] pSeedMaterial,
-                                     final int pSeedLength) {
+    private ByteArrayInteger hashDerive(final byte[] pSeedMaterial,
+                                        final int pSeedLength) {
         /* Determine sizes */
         int mySize = theDigest.getDigestLength();
         int myLen = pSeedLength >> BIT_SHIFT;

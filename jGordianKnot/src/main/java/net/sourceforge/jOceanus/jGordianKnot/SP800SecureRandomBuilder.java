@@ -2,6 +2,7 @@ package net.sourceforge.jOceanus.jGordianKnot;
 
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 import javax.crypto.Mac;
 
@@ -18,6 +19,26 @@ public class SP800SecureRandomBuilder {
      * The number of entropy bits required.
      */
     private static final int NUM_ENTROPY_BITS_REQUIRED = 256;
+
+    /**
+     * The power of 2 for RESEED calculation.
+     */
+    private static final int RESEED_POWER = 48;
+
+    /**
+     * The length of time before a reSeed is required.
+     */
+    protected static final long RESEED_MAX = 1L << (RESEED_POWER - 1);
+
+    /**
+     * The power of 2 for BITS calculation.
+     */
+    private static final int BITS_POWER = 19;
+
+    /**
+     * The maximum # of bits that can be requested.
+     */
+    protected static final int MAX_BITS_REQUEST = 1 << (BITS_POWER - 1);
 
     /**
      * The Basic Secure Random instance.
@@ -75,16 +96,17 @@ public class SP800SecureRandomBuilder {
     }
 
     /**
-     * Set the personalisation string for DRBG SecureRandoms created by this builder
+     * Set the personalisation string for DRBG SecureRandoms created by this builder.
      * @param pSecurityBytes the personalisation string for the underlying DRBG.
      */
-    public void setSecurityBytes(byte[] pSecurityBytes) {
-        theSecurityBytes = pSecurityBytes;
+    public void setSecurityBytes(final byte[] pSecurityBytes) {
+        theSecurityBytes = (pSecurityBytes == null)
+                ? null
+                : Arrays.copyOf(pSecurityBytes, pSecurityBytes.length);
     }
 
     /**
      * Build a SecureRandom based on a SP 800-90A Hash DRBG.
-     * 
      * @param pDigest digest algorithm to use in the DRBG underneath the SecureRandom.
      * @param pInitVector nonce value to use in DRBG construction.
      * @param isPredictionResistant specify whether the underlying DRBG in the resulting SecureRandom should reseed on each request for bytes.
@@ -100,14 +122,13 @@ public class SP800SecureRandomBuilder {
 
     /**
      * Build a SecureRandom based on a SP 800-90A HMAC DRBG.
-     * 
      * @param hMac HMAC algorithm to use in the DRBG underneath the SecureRandom.
      * @param pInitVector nonce value to use in DRBG construction.
      * @param isPredictionResistant specify whether the underlying DRBG in the resulting SecureRandom should reseed on each request for bytes.
      * @return a SecureRandom supported by a HMAC DRBG.
      */
-    protected SP800SecureRandom buildHMAC(Mac hMac,
-                                          byte[] pInitVector,
+    protected SP800SecureRandom buildHMAC(final Mac hMac,
+                                          final byte[] pInitVector,
                                           final boolean isPredictionResistant) {
         EntropySource myEntropy = theEntropyProvider.get(NUM_ENTROPY_BITS_REQUIRED);
         HMacSP800DRBG myProvider = new HMacSP800DRBG(hMac, myEntropy, theSecurityBytes, pInitVector);
@@ -117,7 +138,7 @@ public class SP800SecureRandomBuilder {
     /**
      * SecureRandom wrapper class.
      */
-    protected class SP800SecureRandom
+    protected final class SP800SecureRandom
             extends SecureRandom {
         /**
          * Serial Id.
@@ -125,12 +146,12 @@ public class SP800SecureRandomBuilder {
         private static final long serialVersionUID = 781744191004794480L;
 
         /**
-         * The DRBG generator
+         * The DRBG generator.
          */
         private final SP80090DRBG theGenerator;
 
         /**
-         * The DRBG provider
+         * The DRBG provider.
          */
         private final EntropySource theEntropy;
 
@@ -141,7 +162,9 @@ public class SP800SecureRandomBuilder {
 
         /**
          * Constructor.
-         * @param isPredictionResistant
+         * @param pGenerator the random generator
+         * @param pEntropy the entropy source
+         * @param isPredictionResistant true/false
          */
         private SP800SecureRandom(final SP80090DRBG pGenerator,
                                   final EntropySource pEntropy,
@@ -153,7 +176,7 @@ public class SP800SecureRandomBuilder {
         }
 
         @Override
-        public void setSeed(byte[] seed) {
+        public void setSeed(final byte[] seed) {
             synchronized (this) {
                 /* Ensure that the random generator is seeded if it exists */
                 if (theRandom != null) {
@@ -163,7 +186,7 @@ public class SP800SecureRandomBuilder {
         }
 
         @Override
-        public void setSeed(long seed) {
+        public void setSeed(final long seed) {
             synchronized (this) {
                 /* this will happen when SecureRandom() is created */
                 if (theRandom != null) {
@@ -173,7 +196,7 @@ public class SP800SecureRandomBuilder {
         }
 
         @Override
-        public void nextBytes(byte[] bytes) {
+        public void nextBytes(final byte[] bytes) {
             synchronized (this) {
                 /* Generate, checking for reSeed request */
                 if (theGenerator.generate(bytes, null, predictionResistant) < 0) {
@@ -184,7 +207,8 @@ public class SP800SecureRandomBuilder {
             }
         }
 
-        public byte[] generateSeed(int numBytes) {
+        @Override
+        public byte[] generateSeed(final int numBytes) {
             /* Generate a new seed */
             byte[] bytes = new byte[numBytes];
             nextBytes(bytes);

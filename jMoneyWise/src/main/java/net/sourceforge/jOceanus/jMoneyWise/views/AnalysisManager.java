@@ -55,6 +55,7 @@ public class AnalysisManager {
      * Obtain an analysis for a range.
      * @param pRange the date range for the analysis.
      * @return the analysis
+     * @throws JDataException on error
      */
     protected Analysis getAnalysis(final JDateDayRange pRange) throws JDataException {
         /* Look for the existing analysis */
@@ -73,7 +74,7 @@ public class AnalysisManager {
     }
 
     /**
-     * Record new data
+     * Record new data.
      * @param pData the new dataSet
      */
     protected void setNewData(final FinanceData pData) {

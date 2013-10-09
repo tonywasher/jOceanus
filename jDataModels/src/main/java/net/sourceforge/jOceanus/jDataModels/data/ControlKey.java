@@ -360,6 +360,9 @@ public class ControlKey
             /* Record the security generator */
             theSecurityGenerator = mySecure.getSecurityGenerator();
 
+            /* ReSeed the security generator */
+            theSecurityGenerator.reSeedRandom();
+
             /* Create a clone of the password hash */
             PasswordHash myHash = mySecure.clonePasswordHash(myData.getPasswordHash());
 
