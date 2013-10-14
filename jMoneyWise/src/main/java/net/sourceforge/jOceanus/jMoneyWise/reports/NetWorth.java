@@ -277,7 +277,7 @@ public class NetWorth
     @Override
     protected void processFilter(final AccountBucket pSource) {
         /* Create the new filter */
-        EventFilter myFilter = new EventFilter();
+        EventFilter myFilter = new EventFilter(theAnalysis.getData());
         myFilter.setFilter(pSource);
     }
 }

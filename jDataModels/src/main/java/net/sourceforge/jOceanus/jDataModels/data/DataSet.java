@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -51,6 +52,11 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 public abstract class DataSet<T extends DataSet<T>>
         implements JDataContents {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataSet.class.getName());
+
+    /**
      * The Hash prime.
      */
     protected static final int HASH_PRIME = 19;
@@ -58,42 +64,42 @@ public abstract class DataSet<T extends DataSet<T>>
     /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataSet.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField("Generation");
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGeneration"));
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField("Granularity");
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGranularity"));
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField("Version");
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
 
     /**
      * Security Field Id.
      */
-    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField("Security");
+    public static final JDataField FIELD_SECURITY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSecurity"));
 
     /**
      * ControlKeys Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField("ControlKeys");
+    public static final JDataField FIELD_CONTROLKEYS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataControlKeys"));
 
     /**
      * DataKeys Field Id.
      */
-    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField("DataKeys");
+    public static final JDataField FIELD_DATAKEYS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDataKeys"));
 
     /**
      * ControlData Field Id.
      */
-    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField("ControlData");
+    public static final JDataField FIELD_CONTROLDATA = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataControlData"));
 
     @Override
     public JDataFields getDataFields() {

@@ -564,14 +564,14 @@ public abstract class AccountBase
             AccountCategory myCat = myCategories.findItemById((Integer) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         } else if (myCategory instanceof String) {
             AccountCategory myCat = myCategories.findItemByName((String) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
             if (myCat.getCategoryTypeClass().isNonAsset()) {
@@ -588,14 +588,14 @@ public abstract class AccountBase
             AccountCurrency myCurr = myCurrencies.findItemById((Integer) myCurrency);
             if (myCurr == null) {
                 addError(ERROR_UNKNOWN, FIELD_CURRENCY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueCurrency(myCurr);
         } else if (myCurrency instanceof String) {
             AccountCurrency myCurr = myCurrencies.findItemByName((String) myCurrency);
             if (myCurr == null) {
                 addError(ERROR_UNKNOWN, FIELD_CURRENCY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueCurrency(myCurr);
         }

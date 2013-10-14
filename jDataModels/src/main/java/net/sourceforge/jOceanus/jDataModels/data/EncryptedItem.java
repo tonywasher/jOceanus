@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jDataModels.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -42,9 +43,14 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptionGenerator;
 public abstract class EncryptedItem
         extends DataItem {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EncryptedItem.class.getName());
+
+    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EncryptedItem.class.getSimpleName(), DataItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataItem.FIELD_DEFS);
 
     @Override
     public EncryptedValueSet getValueSet() {
@@ -59,7 +65,12 @@ public abstract class EncryptedItem
     /**
      * Control Key Field Id.
      */
-    public static final JDataField FIELD_CONTROL = FIELD_DEFS.declareEqualityValueField("ControlKey");
+    public static final JDataField FIELD_CONTROL = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataKey"));
+
+    /**
+     * Error message for bad usage.
+     */
+    public static final String ERROR_USAGE = NLS_BUNDLE.getString("ErrorUsage");
 
     /**
      * Generator field.
@@ -159,7 +170,8 @@ public abstract class EncryptedItem
         /* Look up the ControlKey */
         ControlKey myControl = myKeys.findItemById(pControlId);
         if (myControl == null) {
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+            addError(ERROR_UNKNOWN, FIELD_CONTROL);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
         }
 
         /* Store the ControlKey */
@@ -181,7 +193,8 @@ public abstract class EncryptedItem
         /* Handle bad usage */
         if ((myCurrent != null)
             && (!EncryptedField.class.isInstance(myCurrent))) {
-            throw new IllegalArgumentException("Encrypted access for non-encrypted field "
+            throw new IllegalArgumentException(ERROR_USAGE
+                                               + " "
                                                + pField.getName());
         }
 

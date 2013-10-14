@@ -748,14 +748,14 @@ public abstract class EventBase
             Account myAccount = myAccounts.findItemById((Integer) myDebit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_DEBIT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueDebit(myAccount);
         } else if (myDebit instanceof String) {
             Account myAccount = myAccounts.findItemByName((String) myDebit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_DEBIT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueDebit(myAccount);
         }
@@ -769,14 +769,14 @@ public abstract class EventBase
             Account myAccount = myAccounts.findItemById((Integer) myCredit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_CREDIT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueCredit(myAccount);
         } else if (myCredit instanceof String) {
             Account myAccount = myAccounts.findItemByName((String) myCredit);
             if (myAccount == null) {
                 addError(ERROR_UNKNOWN, FIELD_CREDIT);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueCredit(myAccount);
         }
@@ -790,14 +790,14 @@ public abstract class EventBase
             EventCategory myCat = myCategories.findItemById((Integer) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         } else if (myCategory instanceof String) {
             EventCategory myCat = myCategories.findItemByName((String) myCategory);
             if (myCat == null) {
                 addError(ERROR_UNKNOWN, FIELD_CATEGORY);
-                throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueCategory(myCat);
         }

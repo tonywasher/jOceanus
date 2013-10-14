@@ -284,7 +284,7 @@ public abstract class SheetWriter<T extends DataSet<T>> {
         }
 
         /* Add the items */
-        theSheets.add(new SheetControl(this));
+        theSheets.add(new SheetControlData(this));
 
         /* register additional sheets */
         registerSheets();

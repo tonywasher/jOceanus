@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jDataModels.data;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -50,6 +51,11 @@ public class ControlKey
         extends DataItem
         implements Comparable<ControlKey> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ControlKey.class.getName());
+
+    /**
      * Object name.
      */
     public static final String OBJECT_NAME = ControlKey.class.getSimpleName();
@@ -63,7 +69,7 @@ public class ControlKey
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -73,27 +79,32 @@ public class ControlKey
     /**
      * Field ID for passwordHash.
      */
-    public static final JDataField FIELD_PASSHASH = FIELD_DEFS.declareEqualityValueField("PasswordHash");
+    public static final JDataField FIELD_PASSHASH = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataHash"));
 
     /**
      * Field ID for HashMode.
      */
-    public static final JDataField FIELD_HASHMODE = FIELD_DEFS.declareDerivedValueField("HashMode");
+    public static final JDataField FIELD_HASHMODE = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataMode"));
 
     /**
      * Field ID for HashBytes.
      */
-    public static final JDataField FIELD_HASHBYTES = FIELD_DEFS.declareDerivedValueField("HashBytes");
+    public static final JDataField FIELD_HASHBYTES = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataBytes"));
 
     /**
      * Field ID for DataKeyMap.
      */
-    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField("DataKeyMap");
+    public static final JDataField FIELD_MAP = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataKeyMap"));
 
     /**
      * Field ID for CipherSet.
      */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField("CipherSet");
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCipher"));
+
+    /**
+     * Name of Database.
+     */
+    public static final String NAME_DATABASE = NLS_BUNDLE.getString("NameDataBase");
 
     /**
      * PasswordHash Length.
@@ -280,7 +291,7 @@ public class ControlKey
             theSecurityGenerator = mySecure.getSecurityGenerator();
 
             /* Resolve the password hash */
-            PasswordHash myHash = mySecure.resolvePasswordHash(pHashBytes, "Database");
+            PasswordHash myHash = mySecure.resolvePasswordHash(pHashBytes, NAME_DATABASE);
 
             /* Store the password hash */
             setValuePasswordHash(myHash);
@@ -295,7 +306,7 @@ public class ControlKey
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -319,7 +330,7 @@ public class ControlKey
             theSecurityGenerator = mySecure.getSecurityGenerator();
 
             /* Create a new password hash */
-            PasswordHash myHash = mySecure.resolvePasswordHash(null, "Database");
+            PasswordHash myHash = mySecure.resolvePasswordHash(null, NAME_DATABASE);
 
             /* Store the password hash */
             setValuePasswordHash(myHash);
@@ -337,7 +348,7 @@ public class ControlKey
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -382,7 +393,7 @@ public class ControlKey
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -490,7 +501,7 @@ public class ControlKey
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ControlKeyList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -587,9 +598,8 @@ public class ControlKey
 
             /* Check that this KeyId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate ControlKeyId ("
-                                                                     + pId
-                                                                     + ")");
+                myKey.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myKey, ERROR_DUPLICATE);
             }
 
             /* Add to the list */

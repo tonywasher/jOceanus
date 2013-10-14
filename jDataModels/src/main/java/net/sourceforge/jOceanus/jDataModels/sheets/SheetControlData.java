@@ -31,7 +31,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
  * SheetDataItem extension for ControlData.
  * @author Tony Washer
  */
-public class SheetControl
+public class SheetControlData
         extends SheetDataItem<ControlData> {
     /**
      * SheetName for ControlData.
@@ -57,7 +57,7 @@ public class SheetControl
      * Constructor for loading a spreadsheet.
      * @param pReader the spreadsheet reader
      */
-    protected SheetControl(final SheetReader<?> pReader) {
+    protected SheetControlData(final SheetReader<?> pReader) {
         /* Call super constructor */
         super(pReader, SHEET_NAME);
 
@@ -71,7 +71,7 @@ public class SheetControl
      * Constructor for creating a spreadsheet.
      * @param pWriter the spreadsheet writer
      */
-    protected SheetControl(final SheetWriter<?> pWriter) {
+    protected SheetControlData(final SheetWriter<?> pWriter) {
         /* Call super constructor */
         super(pWriter, SHEET_NAME);
 
@@ -128,6 +128,8 @@ public class SheetControl
     @Override
     protected int getLastColumn() {
         /* Return the last column */
-        return isBackup() ? COL_CONTROLID : COL_VERSION;
+        return isBackup()
+                ? COL_CONTROLID
+                : COL_VERSION;
     }
 }

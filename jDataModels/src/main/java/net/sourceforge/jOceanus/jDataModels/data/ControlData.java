@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDataModels.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -42,6 +44,11 @@ public class ControlData
         extends DataItem
         implements Comparable<ControlData> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ControlData.class.getName());
+
+    /**
      * Object name.
      */
     public static final String OBJECT_NAME = ControlData.class.getSimpleName();
@@ -54,7 +61,7 @@ public class ControlData
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -64,12 +71,17 @@ public class ControlData
     /**
      * Field ID for Data Version.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityValueField("Version");
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataVersion"));
 
     /**
      * Field ID for Control Key.
      */
-    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField("ControlKey");
+    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataKey"));
+
+    /**
+     * Error message for already exists.
+     */
+    public static final String ERROR_CTLEXISTS = NLS_BUNDLE.getString("ErrorExists");
 
     /**
      * Get the data version.
@@ -187,14 +199,15 @@ public class ControlData
             ControlKeyList myKeys = myData.getControlKeys();
             ControlKey myControl = myKeys.findItemById(pControlId);
             if (myControl == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueControlKey(myControl);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -277,7 +290,7 @@ public class ControlData
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ControlDataList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -389,14 +402,13 @@ public class ControlData
 
             /* Check that this ControlId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myControl, "Duplicate ControlId ("
-                                                                         + pId
-                                                                         + ")");
+                myControl.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myControl, ERROR_DUPLICATE);
             }
 
             /* Only one control data is allowed */
             if (theControl != null) {
-                throw new JDataException(ExceptionClass.DATA, myControl, "Control record already exists");
+                throw new JDataException(ExceptionClass.DATA, myControl, ERROR_CTLEXISTS);
             }
 
             /* Add to the list by appending */
@@ -417,7 +429,7 @@ public class ControlData
 
             /* Only one static is allowed */
             if (theControl != null) {
-                throw new JDataException(ExceptionClass.DATA, myControl, "Control record already exists");
+                throw new JDataException(ExceptionClass.DATA, myControl, ERROR_CTLEXISTS);
             }
 
             /* Add to the list by appending */

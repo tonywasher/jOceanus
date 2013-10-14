@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.EditState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -36,7 +37,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
 import net.sourceforge.jOceanus.jDataModels.data.DataItem;
 import net.sourceforge.jOceanus.jDataModels.data.DataList;
-import net.sourceforge.jOceanus.jDataModels.ui.ErrorPanel;
 import net.sourceforge.jOceanus.jDataModels.ui.SaveButtons;
 import net.sourceforge.jOceanus.jEventManager.JEventObject;
 
@@ -52,9 +52,19 @@ public class UpdateSet
     public static final String ACTION_REWIND = "ReWind";
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(UpdateSet.class.getName());
+
+    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(UpdateSet.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
+
+    /**
+     * Version field id.
+     */
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataVersion"));
 
     /**
      * Report fields.
@@ -73,11 +83,6 @@ public class UpdateSet
                + theList.size()
                + ")";
     }
-
-    /**
-     * Date field id.
-     */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareEqualityField("Version");
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -469,7 +474,7 @@ public class UpdateSet
      * @param pError the error panel
      */
     public void processCommand(final String pCmd,
-                               final ErrorPanel pError) {
+                               final ErrorDisplay pError) {
         /* Switch on command */
         if (SaveButtons.CMD_OK.equals(pCmd)) {
             applyChanges();
@@ -486,5 +491,16 @@ public class UpdateSet
         if (myErrors.size() > 0) {
             pError.setErrors(myErrors);
         }
+    }
+
+    /**
+     * Error display interface.
+     */
+    public interface ErrorDisplay {
+        /**
+         * Set error list for window.
+         * @param pExceptions the exceptions
+         */
+        void setErrors(final DataErrorList<JDataException> pExceptions);
     }
 }

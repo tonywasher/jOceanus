@@ -26,6 +26,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -35,7 +36,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
-import net.sourceforge.jOceanus.jDataManager.ValueSet;
 import net.sourceforge.jOceanus.jDataModels.data.DataInfo.DataInfoList;
 import net.sourceforge.jOceanus.jDataModels.data.StaticData.StaticList;
 import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
@@ -51,24 +51,29 @@ import net.sourceforge.jOceanus.jGordianKnot.EncryptedData.EncryptedField;
 public abstract class DataInfoSet<T extends DataInfo<T, O, I, E>, O extends DataItem, I extends StaticData<I, E>, E extends Enum<E> & DataInfoClass>
         implements JDataContents, Iterable<T> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataInfoSet.class.getName());
+
+    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataInfoSet.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ValueSet.FIELD_VERSION);
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField("Owner");
+    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataOwner"));
 
     /**
      * Values Field Id.
      */
-    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField("Values");
+    public static final JDataField FIELD_VALUES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataValues"));
 
     @Override
     public Object getFieldValue(final JDataField pField) {

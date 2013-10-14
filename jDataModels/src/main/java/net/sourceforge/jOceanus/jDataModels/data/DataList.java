@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jDataModels.data;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.EditState;
@@ -45,9 +46,14 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
         extends OrderedIdList<Integer, T>
         implements JDataContents {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataList.class.getName());
+
+    /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataList.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Instance ReportFields.
@@ -68,47 +74,47 @@ public abstract class DataList<T extends DataItem & Comparable<? super T>>
     /**
      * Size Field Id.
      */
-    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
     /**
      * Granularity Field Id.
      */
-    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField("Granularity");
+    public static final JDataField FIELD_GRANULARITY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGranularity"));
 
     /**
      * ListStyle Field Id.
      */
-    public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField("ListStyle");
+    public static final JDataField FIELD_STYLE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataStyle"));
 
     /**
      * DataSet Field Id.
      */
-    public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField("DataSet");
+    public static final JDataField FIELD_DATASET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSet"));
 
     /**
      * Generation Field Id.
      */
-    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField("Generation");
+    public static final JDataField FIELD_GENERATION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGeneration"));
 
     /**
      * NextVersion Field Id.
      */
-    public static final JDataField FIELD_VERS = FIELD_DEFS.declareLocalField("Version");
+    public static final JDataField FIELD_VERS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
 
     /**
      * EditState Field Id.
      */
-    public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField("EditState");
+    public static final JDataField FIELD_EDIT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEditState"));
 
     /**
      * Class Field Id.
      */
-    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareLocalField("Class");
+    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataClass"));
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBase"));
 
     /**
      * Errors Field Id.

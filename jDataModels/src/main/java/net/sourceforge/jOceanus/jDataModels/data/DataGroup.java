@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDataModels.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
@@ -36,14 +38,19 @@ public abstract class DataGroup<T extends DataItem & Comparable<? super T>>
         extends OrderedIdList<Integer, T>
         implements JDataContents {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataGroup.class.getName());
+
+    /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataGroup.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Parent field id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField("Parent");
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataParent"));
 
     @Override
     public Object getFieldValue(final JDataField pField) {

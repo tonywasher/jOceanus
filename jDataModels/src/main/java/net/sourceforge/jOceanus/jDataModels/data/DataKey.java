@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDataModels.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -44,6 +46,11 @@ public class DataKey
         extends DataItem
         implements Comparable<DataKey> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataKey.class.getName());
+
+    /**
      * Object name.
      */
     public static final String OBJECT_NAME = DataKey.class.getSimpleName();
@@ -57,7 +64,7 @@ public class DataKey
     /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -67,32 +74,32 @@ public class DataKey
     /**
      * ControlKey Field Id.
      */
-    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField("ControlKey");
+    public static final JDataField FIELD_CONTROLKEY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataControl"));
 
     /**
      * KeyType Field Id.
      */
-    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField("KeyType");
+    public static final JDataField FIELD_KEYTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataType"));
 
     /**
      * KeyDefinition Field Id.
      */
-    public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField("KeyDefinition");
+    public static final JDataField FIELD_KEYDEF = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDefinition"));
 
     /**
      * Password Hash Field Id.
      */
-    public static final JDataField FIELD_HASH = FIELD_DEFS.declareDerivedValueField("PasswordHash");
+    public static final JDataField FIELD_HASH = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataHash"));
 
     /**
      * DataKey Field Id.
      */
-    public static final JDataField FIELD_KEY = FIELD_DEFS.declareDerivedValueField("DataKey");
+    public static final JDataField FIELD_KEY = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataKey"));
 
     /**
      * Cipher Field Id.
      */
-    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareDerivedValueField("Cipher");
+    public static final JDataField FIELD_CIPHER = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataCipher"));
 
     /**
      * Encrypted Symmetric Key Length.
@@ -340,7 +347,8 @@ public class DataKey
             ControlKeyList myKeys = myData.getControlKeys();
             ControlKey myControlKey = myKeys.findItemById(pControlId);
             if (myControlKey == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid ControlKey Id");
+                addError(ERROR_UNKNOWN, FIELD_CONTROLKEY);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
 
             /* Store the keys */
@@ -362,7 +370,7 @@ public class DataKey
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -405,7 +413,7 @@ public class DataKey
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -487,7 +495,7 @@ public class DataKey
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(DataKeyList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -588,9 +596,8 @@ public class DataKey
 
             /* Check that this KeyId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myKey, "Duplicate DataKeyId ("
-                                                                     + pId
-                                                                     + ")");
+                myKey.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myKey, ERROR_DUPLICATE);
             }
 
             /* Add to the list */

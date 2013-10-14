@@ -135,7 +135,7 @@ public abstract class Database<T extends DataSet<T>> {
         theTables = new ArrayList<DatabaseTable<?>>();
         theTables.add(new TableControlKeys(this));
         theTables.add(new TableDataKeys(this));
-        theTables.add(new TableControl(this));
+        theTables.add(new TableControlData(this));
     }
 
     /**
@@ -221,7 +221,8 @@ public abstract class Database<T extends DataSet<T>> {
         myIterator = theTables.iterator();
 
         /* Loop through the tables */
-        while ((bContinue) && (myIterator.hasNext())) {
+        while ((bContinue)
+               && (myIterator.hasNext())) {
             myTable = myIterator.next();
 
             /* Load the items */
@@ -254,7 +255,8 @@ public abstract class Database<T extends DataSet<T>> {
         BatchControl myBatch = new BatchControl(theBatchSize);
 
         /* Set the number of stages */
-        if (!pTask.setNumStages(NUM_STEPS_PER_TABLE * theTables.size())) {
+        if (!pTask.setNumStages(NUM_STEPS_PER_TABLE
+                                * theTables.size())) {
             return;
         }
 
@@ -264,7 +266,8 @@ public abstract class Database<T extends DataSet<T>> {
         myIterator = theTables.iterator();
 
         /* Loop through the tables */
-        while ((bContinue) && (myIterator.hasNext())) {
+        while ((bContinue)
+               && (myIterator.hasNext())) {
             myTable = myIterator.next();
 
             /* Load the items */
@@ -276,7 +279,8 @@ public abstract class Database<T extends DataSet<T>> {
         myListIterator = theTables.listIterator();
 
         /* Loop through the tables */
-        while ((bContinue) && (myListIterator.hasNext())) {
+        while ((bContinue)
+               && (myListIterator.hasNext())) {
             myTable = myListIterator.next();
 
             /* Load the items */
@@ -284,7 +288,8 @@ public abstract class Database<T extends DataSet<T>> {
         }
 
         /* Loop through the tables in reverse order */
-        while ((bContinue) && (myListIterator.hasPrevious())) {
+        while ((bContinue)
+               && (myListIterator.hasPrevious())) {
             myTable = myListIterator.previous();
 
             /* Delete items from the table */
@@ -292,7 +297,8 @@ public abstract class Database<T extends DataSet<T>> {
         }
 
         /* If we have active work in the batch */
-        if ((bContinue) && (myBatch.isActive())) {
+        if ((bContinue)
+            && (myBatch.isActive())) {
             /* Commit the database */
             try {
                 theConn.commit();

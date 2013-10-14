@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jDataModels.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -50,64 +51,74 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdItem;
 public abstract class DataItem
         implements OrderedIdItem<Integer>, JDataValues, JFieldSetItem {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataItem.class.getName());
+
+    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataItem.class.getSimpleName());
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Validation error.
      */
-    public static final String ERROR_VALIDATION = "Failed Validation";
+    public static final String ERROR_VALIDATION = NLS_BUNDLE.getString("ErrorValidation");
 
     /**
      * Resolution error.
      */
-    public static final String ERROR_RESOLUTION = "Failed Resolution";
+    public static final String ERROR_RESOLUTION = NLS_BUNDLE.getString("ErrorResolution");
 
     /**
      * Duplicate Id error.
      */
-    public static final String ERROR_DUPLICATE = "Duplicate Value";
+    public static final String ERROR_DUPLICATE = NLS_BUNDLE.getString("ErrorDuplicate");
 
     /**
      * Unknown Id error.
      */
-    public static final String ERROR_UNKNOWN = "Unknown Value";
+    public static final String ERROR_UNKNOWN = NLS_BUNDLE.getString("ErrorUnknown");
 
     /**
      * Existing value error.
      */
-    public static final String ERROR_EXIST = "Value must be null";
+    public static final String ERROR_EXIST = NLS_BUNDLE.getString("ErrorExist");
 
     /**
      * Missing value error.
      */
-    public static final String ERROR_MISSING = "Missing Value";
+    public static final String ERROR_MISSING = NLS_BUNDLE.getString("ErrorMissing");
 
     /**
      * Value too long error.
      */
-    public static final String ERROR_LENGTH = "Value too long";
+    public static final String ERROR_LENGTH = NLS_BUNDLE.getString("ErrorLength");
 
     /**
      * Value negative error.
      */
-    public static final String ERROR_NEGATIVE = "Value is negative";
+    public static final String ERROR_NEGATIVE = NLS_BUNDLE.getString("ErrorNegative");
 
     /**
      * Value zero error.
      */
-    public static final String ERROR_ZERO = "Value is zero";
+    public static final String ERROR_ZERO = NLS_BUNDLE.getString("ErrorZero");
 
     /**
      * Value outside valid range.
      */
-    public static final String ERROR_RANGE = "Value outside valid range";
+    public static final String ERROR_RANGE = NLS_BUNDLE.getString("ErrorRange");
 
     /**
      * Value disabled error.
      */
-    public static final String ERROR_DISABLED = "Value is disabled";
+    public static final String ERROR_DISABLED = NLS_BUNDLE.getString("ErrorDisabled");
+
+    /**
+     * Creation failure.
+     */
+    public static final String ERROR_CREATEITEM = NLS_BUNDLE.getString("ErrorCreate");
 
     /**
      * Instance ReportFields.
@@ -151,57 +162,57 @@ public abstract class DataItem
     /**
      * Id Field Id.
      */
-    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField("Id");
+    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
 
     /**
      * List Field Id.
      */
-    public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField("List");
+    public static final JDataField FIELD_LIST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataList"));
 
     /**
      * Base Field Id.
      */
-    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    public static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBase"));
 
     /**
      * Active Field Id.
      */
-    public static final JDataField FIELD_ACTIVE = FIELD_DEFS.declareLocalField("isActive");
+    public static final JDataField FIELD_ACTIVE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataActive"));
 
     /**
      * Deleted Field Id.
      */
-    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(ValueSet.FIELD_DELETION);
+    public static final JDataField FIELD_DELETED = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDeleted"));
 
     /**
      * DataState Field Id.
      */
-    public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField("State");
+    public static final JDataField FIELD_STATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataState"));
 
     /**
      * Edit State Field Id.
      */
-    public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField("EditState");
+    public static final JDataField FIELD_EDITSTATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEditState"));
 
     /**
      * Version Field Id.
      */
-    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(ValueSet.FIELD_VERSION);
+    public static final JDataField FIELD_VERSION = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataVersion"));
 
     /**
      * Header Field Id.
      */
-    public static final JDataField FIELD_HEADER = FIELD_DEFS.declareLocalField("Header");
+    public static final JDataField FIELD_HEADER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHeader"));
 
     /**
      * History Field Id.
      */
-    public static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField("History");
+    public static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHistory"));
 
     /**
      * Errors Field Id.
      */
-    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField("Errors");
+    public static final JDataField FIELD_ERRORS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataErrors"));
 
     @Override
     public String formatObject() {

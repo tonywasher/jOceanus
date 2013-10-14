@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jDataModels.data;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -43,14 +44,19 @@ public class DataErrorList<T extends JDataContents>
     private static final long serialVersionUID = 6574043212647066938L;
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataErrorList.class.getName());
+
+    /**
      * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(DataErrorList.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Size Field Id.
      */
-    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+    public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
     @Override
     public JDataFields getDataFields() {

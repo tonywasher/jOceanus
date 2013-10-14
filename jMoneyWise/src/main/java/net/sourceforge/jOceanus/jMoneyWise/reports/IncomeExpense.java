@@ -180,7 +180,7 @@ public class IncomeExpense
     @Override
     protected void processFilter(final EventCategoryBucket pSource) {
         /* Create the new filter */
-        EventFilter myFilter = new EventFilter();
+        EventFilter myFilter = new EventFilter(theAnalysis.getData());
         myFilter.setFilter(pSource);
     }
 }

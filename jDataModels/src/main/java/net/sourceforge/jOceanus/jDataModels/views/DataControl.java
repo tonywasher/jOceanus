@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jDataModels.views;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import javax.swing.JFrame;
 import javax.swing.event.ChangeEvent;
@@ -56,39 +57,49 @@ public abstract class DataControl<T extends DataSet<T>>
     public static final String ACTION_UPDATE = "DataUpdate";
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataControl.class.getName());
+
+    /**
      * Debug View Name.
      */
-    public static final String DATA_VIEWS = "DataViews";
+    public static final String DATA_VIEWS = NLS_BUNDLE.getString("DataDataViews");
 
     /**
      * Underlying Data Name.
      */
-    public static final String DATA_DATASET = "UnderlyingData";
+    public static final String DATA_DATASET = NLS_BUNDLE.getString("DataSet");
 
     /**
      * Data Updates Name.
      */
-    public static final String DATA_UPDATES = "DataUpdates";
+    public static final String DATA_UPDATES = NLS_BUNDLE.getString("DataUpdates");
 
     /**
      * Analysis Name.
      */
-    public static final String DATA_ANALYSIS = "Analysis";
+    public static final String DATA_ANALYSIS = NLS_BUNDLE.getString("DataAnalysis");
+
+    /**
+     * Analysis Name.
+     */
+    public static final String DATA_ANALYSIS2 = NLS_BUNDLE.getString("DataAnalysis2");
 
     /**
      * Debug View Name.
      */
-    public static final String DATA_EDIT = "EditViews";
+    public static final String DATA_EDIT = NLS_BUNDLE.getString("DataEditViews");
 
     /**
      * Debug View Name.
      */
-    public static final String DATA_MAINT = "Maintenance";
+    public static final String DATA_MAINT = NLS_BUNDLE.getString("DataMaint");
 
     /**
      * Error Name.
      */
-    public static final String DATA_ERROR = "Error";
+    public static final String DATA_ERROR = NLS_BUNDLE.getString("DataError");
 
     /**
      * The DataSet.
@@ -318,6 +329,7 @@ public abstract class DataControl<T extends DataSet<T>>
         JDataEntry myData = getDataEntry(DATA_DATASET);
         JDataEntry myUpdates = getDataEntry(DATA_UPDATES);
         JDataEntry myAnalysis = getDataEntry(DATA_ANALYSIS);
+        JDataEntry myAnalysis2 = getDataEntry(DATA_ANALYSIS2);
         JDataEntry myEdit = getDataEntry(DATA_EDIT);
         JDataEntry myMaint = getDataEntry(DATA_MAINT);
         JDataEntry myError = getDataEntry(DATA_ERROR);
@@ -330,6 +342,7 @@ public abstract class DataControl<T extends DataSet<T>>
         myData.addAsChildOf(myViews);
         myUpdates.addAsChildOf(myViews);
         myAnalysis.addAsChildOf(myViews);
+        myAnalysis2.addAsChildOf(myViews);
 
         /* Hide the Error Entry */
         myError.hideEntry();

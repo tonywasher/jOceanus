@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDataModels.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -46,9 +48,14 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     public static final int DATALEN = 512;
 
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataInfo.class.getName());
+
+    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(DataInfo.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -58,22 +65,22 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
     /**
      * InfoType Field Id.
      */
-    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField("InfoType");
+    public static final JDataField FIELD_INFOTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataType"));
 
     /**
      * Owner Field Id.
      */
-    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField("Owner");
+    public static final JDataField FIELD_OWNER = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataOwner"));
 
     /**
      * Value Field Id.
      */
-    public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField("Value");
+    public static final JDataField FIELD_VALUE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataValue"));
 
     /**
      * Link Field Id.
      */
-    public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField("Link");
+    public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataLink"));
 
     @Override
     public boolean skipField(final JDataField pField) {
@@ -412,7 +419,7 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(DataInfoList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

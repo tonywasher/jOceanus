@@ -31,7 +31,7 @@ import net.sourceforge.jOceanus.jDataModels.data.DataSet;
 /**
  * Database table class for ControlData.
  */
-public class TableControl
+public class TableControlData
         extends DatabaseTable<ControlData> {
     /**
      * The name of the Static table.
@@ -47,7 +47,7 @@ public class TableControl
      * Constructor.
      * @param pDatabase the database control
      */
-    protected TableControl(final Database<?> pDatabase) {
+    protected TableControlData(final Database<?> pDatabase) {
         super(pDatabase, TABLE_NAME);
         TableDefinition myTableDef = getTableDef();
 

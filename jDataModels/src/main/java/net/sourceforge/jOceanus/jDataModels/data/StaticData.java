@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jDataModels.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -43,9 +44,14 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
         extends EncryptedItem
         implements Comparable<T> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(StaticData.class.getName());
+
+    /**
      * Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(StaticData.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataDataName"), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -55,27 +61,37 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField("Name");
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
 
     /**
      * Enabled Field Id.
      */
-    public static final JDataField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField("isEnabled");
+    public static final JDataField FIELD_ENABLED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataEnabled"));
 
     /**
      * Order Field Id.
      */
-    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareDerivedValueField("SortOrder");
+    public static final JDataField FIELD_ORDER = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataOrder"));
 
     /**
      * Class Field Id.
      */
-    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField("Class");
+    public static final JDataField FIELD_CLASS = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClass"));
+
+    /**
+     * BadId error.
+     */
+    public static final String ERROR_BADID = NLS_BUNDLE.getString("ErrorBadId");
+
+    /**
+     * BadName error.
+     */
+    public static final String ERROR_BADNAME = NLS_BUNDLE.getString("ErrorBadName");
 
     /**
      * The Enum Class for this Static Data.
@@ -511,7 +527,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -554,7 +570,7 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -583,7 +599,8 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid value for "
+            throw new JDataException(ExceptionClass.DATA, ERROR_BADNAME
+                                                          + " "
                                                           + myClass.getSimpleName()
                                                           + ": "
                                                           + pValue);
@@ -611,7 +628,8 @@ public abstract class StaticData<T extends StaticData<T, E>, E extends Enum<E> &
 
         /* Reject if we didn't find the class */
         if (getStaticClass() == null) {
-            throw new JDataException(ExceptionClass.DATA, "Invalid id for "
+            throw new JDataException(ExceptionClass.DATA, ERROR_BADID
+                                                          + " "
                                                           + myClass.getSimpleName()
                                                           + ": "
                                                           + pId);

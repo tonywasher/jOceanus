@@ -23,11 +23,13 @@
 package net.sourceforge.jOceanus.jMoneyWise.views;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.database.Database;
 import net.sourceforge.jOceanus.jDataModels.preferences.DatabasePreferences;
 import net.sourceforge.jOceanus.jDataModels.sheets.SpreadSheet;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
+import net.sourceforge.jOceanus.jMoneyWise.analysis.DataAnalyser;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCurrency;
 import net.sourceforge.jOceanus.jMoneyWise.database.FinanceDatabase;
@@ -52,9 +54,14 @@ public class View
     private JDateDayRange theRange = null;
 
     /**
-     * The event analysis.
+     * The data analysis.
      */
     private DataAnalysis theAnalysis = null;
+
+    /**
+     * The alternate analysis.
+     */
+    private DataAnalyser theAnalyser = null;
 
     /**
      * The dilution event list.
@@ -141,6 +148,13 @@ public class View
 
         /* Create the analysis */
         DataAnalysis myAnalysis = new DataAnalysis(this, pData);
+
+        /* Create the alternative analysis */
+        theAnalyser = new DataAnalyser(pData);
+
+        /* Access the top level debug entry for this analysis */
+        JDataEntry mySection = getDataEntry(DataControl.DATA_ANALYSIS2);
+        mySection.setObject(theAnalyser);
 
         /* Access the most recent metaAnalysis */
         MetaAnalysis myMetaAnalysis = myAnalysis.getMetaAnalysis();

@@ -226,13 +226,17 @@ public class EventFilter
 
     /**
      * Constructor.
+     * @param pData the new dataSet
      */
-    public EventFilter() {
+    public EventFilter(final FinanceData pData) {
+        /* Record the dataSet */
+        theDataSet = pData;
+
         /* Allocate lists */
-        theAccounts = new AccountList(null);
-        thePayees = new AccountList(null);
-        theEventCategories = new EventCategoryList(null);
-        theTaxCategories = new TaxCategoryList(null);
+        theAccounts = new AccountList(theDataSet);
+        thePayees = new AccountList(theDataSet);
+        theEventCategories = new EventCategoryList(theDataSet);
+        theTaxCategories = new TaxCategoryList(theDataSet);
     }
 
     /**
@@ -248,7 +252,7 @@ public class EventFilter
             /* Record existing list and create new one */
             AccountList myAccounts = pData.getAccounts();
             AccountList myList = theFilteredAccounts;
-            theFilteredAccounts = new AccountList(null);
+            theFilteredAccounts = new AccountList(theDataSet);
 
             /* Loop through the existing accounts */
             for (Account myAccount : myList) {
@@ -265,7 +269,7 @@ public class EventFilter
             /* Record existing list and create new one */
             AccountList myAccounts = pData.getAccounts();
             AccountList myList = theFilteredPayees;
-            theFilteredPayees = new AccountList(null);
+            theFilteredPayees = new AccountList(theDataSet);
 
             /* Loop through the existing accounts */
             for (Account myAccount : myList) {
@@ -282,11 +286,11 @@ public class EventFilter
             /* Record existing list and create new one */
             EventCategoryList myCategories = pData.getEventCategories();
             EventCategoryList myList = theFilteredEventCategories;
-            theFilteredEventCategories = new EventCategoryList(null);
+            theFilteredEventCategories = new EventCategoryList(theDataSet);
 
             /* Loop through the existing accounts */
             for (EventCategory myCategory : myList) {
-                /* Access account in new dataSet and add to filter if it still exists */
+                /* Access category in new dataSet and add to filter if it still exists */
                 EventCategory myNew = myCategories.findItemById(myCategory.getId());
                 if (myNew != null) {
                     theFilteredEventCategories.add(myNew);
@@ -309,7 +313,7 @@ public class EventFilter
         if ((myAccount.isNonAsset())
             || (myAccount.getAutoExpense() != null)) {
             /* Set Filtered Payee list */
-            theFilteredPayees = new AccountList(null);
+            theFilteredPayees = new AccountList(theDataSet);
             theFilteredPayees.add(myAccount);
             theFilteredAccounts = null;
 
@@ -318,7 +322,7 @@ public class EventFilter
             /* else the account is a payee */
         } else {
             /* Set filtered account list */
-            theFilteredAccounts = new AccountList(null);
+            theFilteredAccounts = new AccountList(theDataSet);
             theFilteredAccounts.add(myAccount);
             theFilteredPayees = null;
         }
@@ -338,7 +342,7 @@ public class EventFilter
         EventCategory myCategory = pBucket.getEventCategory();
 
         /* Set filtered event category list list */
-        theFilteredEventCategories = new EventCategoryList(null);
+        theFilteredEventCategories = new EventCategoryList(theDataSet);
         theFilteredEventCategories.add(myCategory);
 
         /* Determine whether we are filtering on various categories */
@@ -362,7 +366,7 @@ public class EventFilter
         TaxCategory myCategory = pBucket.getTaxCategory();
 
         /* Set filtered tax category list list */
-        theFilteredTaxCategories = new TaxCategoryList(null);
+        theFilteredTaxCategories = new TaxCategoryList(theDataSet);
         theFilteredTaxCategories.add(myCategory);
     }
 

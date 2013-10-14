@@ -39,6 +39,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataManager;
 import net.sourceforge.jOceanus.jDataManager.JDataManager.JDataEntry;
 import net.sourceforge.jOceanus.jDataModels.data.DataErrorList;
 import net.sourceforge.jOceanus.jDataModels.views.DataControl;
+import net.sourceforge.jOceanus.jDataModels.views.UpdateSet.ErrorDisplay;
 import net.sourceforge.jOceanus.jEventManager.JEventPanel;
 
 /**
@@ -46,7 +47,8 @@ import net.sourceforge.jOceanus.jEventManager.JEventPanel;
  * @author Tony Washer
  */
 public class ErrorPanel
-        extends JEventPanel {
+        extends JEventPanel
+        implements ErrorDisplay {
     /**
      * Serial Id.
      */
@@ -164,10 +166,7 @@ public class ErrorPanel
         fireStateChanged();
     }
 
-    /**
-     * Set error list for window.
-     * @param pExceptions the exceptions
-     */
+    @Override
     public void setErrors(final DataErrorList<JDataException> pExceptions) {
         /* If we currently have an error */
         if (hasError()) {
