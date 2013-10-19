@@ -22,19 +22,18 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
-import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountCategoryBucket.CategoryType;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountRate;
@@ -51,34 +50,44 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 public final class AccountBucket
         implements JDataContents, Comparable<AccountBucket>, OrderedIdItem<Integer> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountBucket.class.getName());
+
+    /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucket.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(Analysis.class.getSimpleName());
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAnalysis"));
 
     /**
      * Account Field Id.
      */
-    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(Account.class.getSimpleName());
+    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAccount"));
 
     /**
      * Account Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(AccountCategory.class.getSimpleName());
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCategory"));
 
     /**
-     * Account Type Field Id.
+     * IsCreditCard Field Id.
      */
-    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(CategoryType.class.getSimpleName());
+    private static final JDataField FIELD_ISCREDIT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCredit"));
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBaseValues"));
+
+    /**
+     * History Field Id.
+     */
+    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHistory"));
 
     /**
      * FieldSet map.
@@ -101,9 +110,9 @@ public final class AccountBucket
     private final AccountCategory theCategory;
 
     /**
-     * The category type.
+     * Is this a creditCard.
      */
-    private final CategoryType theType;
+    private final Boolean isCreditCard;
 
     /**
      * The dataSet.
@@ -111,14 +120,24 @@ public final class AccountBucket
     private final FinanceData theData;
 
     /**
-     * The base.
+     * Values.
      */
-    private final AccountBucket theBase;
+    private final AccountValues theValues;
 
     /**
-     * Attribute Map.
+     * The base values.
      */
-    private final Map<AccountAttribute, Object> theAttributes;
+    private final AccountValues theBaseValues;
+
+    /**
+     * Is the bucket idle.
+     */
+    private final Boolean isIdle;
+
+    /**
+     * History Map.
+     */
+    private final BucketHistory<AccountValues> theHistory;
 
     @Override
     public JDataFields getDataFields() {
@@ -136,13 +155,14 @@ public final class AccountBucket
         if (FIELD_CATEGORY.equals(pField)) {
             return theCategory;
         }
-        if (FIELD_TYPE.equals(pField)) {
-            return theType;
+        if (FIELD_ISCREDIT.equals(pField)) {
+            return isCreditCard;
+        }
+        if (FIELD_HISTORY.equals(pField)) {
+            return theHistory;
         }
         if (FIELD_BASE.equals(pField)) {
-            return (theBase != null)
-                    ? theBase
-                    : JDataFieldValue.SkipField;
+            return theBaseValues;
         }
 
         /* Handle Attribute fields */
@@ -195,19 +215,19 @@ public final class AccountBucket
     }
 
     /**
-     * Obtain the category type.
-     * @return the category type
+     * Is this a creditCard.
+     * @return true/false
      */
-    public CategoryType getCategoryType() {
-        return theType;
+    public Boolean isCreditCard() {
+        return isCreditCard;
     }
 
     /**
-     * Obtain the base.
-     * @return the base
+     * Is this bucket idle.
+     * @return true/false
      */
-    public AccountBucket getBase() {
-        return theBase;
+    public Boolean isIdle() {
+        return isIdle;
     }
 
     /**
@@ -227,22 +247,38 @@ public final class AccountBucket
     }
 
     /**
-     * Obtain the attribute map.
-     * @return the attribute map
+     * Obtain the value map.
+     * @return the value map
      */
-    protected Map<AccountAttribute, Object> getAttributes() {
-        return theAttributes;
+    protected AccountValues getValues() {
+        return theValues;
     }
 
     /**
-     * Set Attribute.
+     * Obtain the base value map.
+     * @return the base value map
+     */
+    protected AccountValues getBaseValues() {
+        return theBaseValues;
+    }
+
+    /**
+     * Obtain the history map.
+     * @return the history map
+     */
+    private BucketHistory<AccountValues> getHistoryMap() {
+        return theHistory;
+    }
+
+    /**
+     * Set Value.
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setAttribute(final AccountAttribute pAttr,
-                                final Object pValue) {
-        /* Set the value into the list */
-        theAttributes.put(pAttr, pValue);
+    protected void setValue(final AccountAttribute pAttr,
+                            final Object pValue) {
+        /* Set the value */
+        theValues.setValue(pAttr, pValue);
     }
 
     /**
@@ -252,7 +288,7 @@ public final class AccountBucket
      */
     private Object getAttributeValue(final AccountAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getAttribute(pAttr);
+        Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -272,80 +308,12 @@ public final class AccountBucket
 
     /**
      * Obtain an attribute value.
-     * @param <X> the data type
-     * @param pAttr the attribute
-     * @param pClass the class of the attribute
-     * @return the value of the attribute or null
-     */
-    private <X> X getAttribute(final AccountAttribute pAttr,
-                               final Class<X> pClass) {
-        /* Obtain the attribute */
-        return pClass.cast(getAttribute(pAttr));
-    }
-
-    /**
-     * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return theAttributes.get(pAttr);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JMoney getMoneyAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return getAttribute(pAttr, JMoney.class);
-    }
-
-    /**
-     * Obtain a rate attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JRate getRateAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return getAttribute(pAttr, JRate.class);
-    }
-
-    /**
-     * Obtain a rate attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JDateDay getDateAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return getAttribute(pAttr, JDateDay.class);
-    }
-
-    /**
-     * Obtain an attribute value from the base.
-     * @param <X> the data type
-     * @param pAttr the attribute
-     * @param pClass the class of the attribute
-     * @return the value of the attribute or null
-     */
-    private <X extends JDecimal> X getBaseAttribute(final AccountAttribute pAttr,
-                                                    final Class<X> pClass) {
-        /* Obtain the attribute */
-        return (theBase == null)
-                ? null
-                : theBase.getAttribute(pAttr, pClass);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JMoney getBaseMoneyAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return getBaseAttribute(pAttr, JMoney.class);
+    private Object getValue(final AccountAttribute pAttr) {
+        /* Obtain the attribute value */
+        return theValues.get(pAttr);
     }
 
     /**
@@ -359,48 +327,104 @@ public final class AccountBucket
         theAccount = pAccount;
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
-        theBase = null;
 
-        /* Obtain category, allowing for autoExpense */
-        if (theAccount.getAutoExpense() != null) {
-            theCategory = theData.getAccountCategories().getSingularClass(AccountCategoryClass.Payee);
-        } else {
-            theCategory = theAccount.getAccountCategory();
-        }
+        /* Obtain category */
+        theCategory = theAccount.getAccountCategory();
 
-        /* Determine type based on category */
-        theType = AccountCategoryBucket.determineCategoryType(theCategory);
+        /* Determine whether this is a credit card */
+        isCreditCard = (theCategory.getCategoryTypeClass() == AccountCategoryClass.CreditCard);
 
-        /* Create the attribute map and savePoint */
-        theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
+        /* Create the value maps */
+        theValues = new AccountValues();
+        theBaseValues = new AccountValues();
+        isIdle = false;
 
-        /* Initialise valuation to zero */
-        setAttribute(AccountAttribute.Valuation, new JMoney());
-
-        /* Initialise spend to zero */
-        setAttribute(AccountAttribute.Spend, new JMoney());
+        /* Create the history map */
+        theHistory = new BucketHistory<AccountValues>();
     }
 
     /**
      * Constructor.
      * @param pAnalysis the analysis
      * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
      */
     private AccountBucket(final Analysis pAnalysis,
-                          final AccountBucket pBase) {
+                          final AccountBucket pBase,
+                          final JDateDay pDate) {
         /* Copy details from base */
         theAccount = pBase.getAccount();
         theCategory = pBase.getAccountCategory();
-        theType = pBase.getCategoryType();
+        isCreditCard = pBase.isCreditCard();
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
-        theBase = pBase;
 
-        /* Create a new attribute map and save point */
-        theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
+        /* Reference the underlying history */
+        theHistory = pBase.getHistoryMap();
 
-        /* Clone the underlying map */
-        cloneMap(theBase.getAttributes(), theAttributes);
+        /* Copy base values from source */
+        theBaseValues = pBase.getBaseValues().getSnapShot();
+
+        /* Obtain values for date */
+        AccountValues myValues = theHistory.getValuesForDate(pDate);
+
+        /* Determine values */
+        isIdle = (myValues == null);
+        theValues = (isIdle)
+                ? theBaseValues.getSnapShot()
+                : myValues;
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    private AccountBucket(final Analysis pAnalysis,
+                          final AccountBucket pBase,
+                          final JDateDayRange pRange) {
+        /* Copy details from base */
+        theAccount = pBase.getAccount();
+        theCategory = pBase.getAccountCategory();
+        isCreditCard = pBase.isCreditCard();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Reference the underlying history */
+        theHistory = pBase.getHistoryMap();
+
+        /* Obtain values for range */
+        AccountValues[] myArray = theHistory.getValuesForRange(pRange);
+
+        /* If no activity took place up to this date */
+        if (myArray == null) {
+            /* Use base values and note idleness */
+            theValues = pBase.getBaseValues().getSnapShot();
+            theBaseValues = theValues.getSnapShot();
+            isIdle = true;
+
+            /* else we have values */
+        } else {
+            /* Determine base values */
+            AccountValues myFirst = myArray[0];
+            theBaseValues = (myFirst == null)
+                    ? pBase.getBaseValues().getSnapShot()
+                    : myFirst;
+
+            /* Determine values */
+            AccountValues myValues = myArray[1];
+            isIdle = (myValues == null);
+            theValues = (isIdle)
+                    ? theBaseValues.getSnapShot()
+                    : myValues;
+        }
+
+        /* If this is a creditCard */
+        if (isCreditCard) {
+            /* Adjust to base values */
+            adjustToBaseValues();
+        }
     }
 
     @Override
@@ -444,9 +468,29 @@ public final class AccountBucket
      * Set opening balance.
      * @param pBalance the opening balance
      */
-    protected void setOpenBalance(final JMoney pBalance) {
-        JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
-        myValuation.addAmount(pBalance);
+    protected void setOpeningBalance(final JMoney pBalance) {
+        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        JMoney myBaseValue = theBaseValues.getMoneyValue(AccountAttribute.Valuation);
+        myValue.addAmount(pBalance);
+        myBaseValue.addAmount(pBalance);
+    }
+
+    /**
+     * Obtain new Valuation value.
+     * @return the new valuation value
+     */
+    private JMoney getNewValuation() {
+        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        return new JMoney(myValue);
+    }
+
+    /**
+     * Obtain new Spend value.
+     * @return the new spend value
+     */
+    private JMoney getNewSpend() {
+        JMoney mySpend = theValues.getMoneyValue(AccountAttribute.Spend);
+        return new JMoney(mySpend);
     }
 
     /**
@@ -454,12 +498,27 @@ public final class AccountBucket
      * @param pEvent the event causing the debit
      */
     protected void adjustForDebit(final Event pEvent) {
-        JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
-        myValuation.subtractAmount(pEvent.getAmount());
-        if (theType == CategoryType.CreditCard) {
-            JMoney mySpend = getMoneyAttribute(AccountAttribute.Spend);
-            mySpend.addAmount(pEvent.getAmount());
+        /* Access event amount */
+        JMoney myAmount = pEvent.getAmount();
+
+        /* If we have a non-zero amount */
+        if (myAmount.isNonZero()) {
+            /* Adjust valuation */
+            JMoney myValuation = getNewValuation();
+            myValuation.subtractAmount(myAmount);
+            setValue(AccountAttribute.Valuation, myValuation);
+
+            /* If this is a credit card */
+            if (isCreditCard) {
+                /* Adjust spend */
+                JMoney mySpend = getNewSpend();
+                mySpend.addAmount(myAmount);
+                setValue(AccountAttribute.Spend, mySpend);
+            }
         }
+
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**
@@ -467,73 +526,37 @@ public final class AccountBucket
      * @param pEvent the event causing the credit
      */
     protected void adjustForCredit(final Event pEvent) {
-        JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
-        myValuation.addAmount(pEvent.getAmount());
+        /* Access event amount */
+        JMoney myAmount = pEvent.getAmount();
+
+        /* If we have a non-zero amount */
+        if (myAmount.isNonZero()) {
+            /* Adjust valuation */
+            JMoney myValuation = getNewValuation();
+            myValuation.addAmount(pEvent.getAmount());
+            setValue(AccountAttribute.Valuation, myValuation);
+        }
+
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**
-     * Copy a map.
-     * @param pSource the source map
-     * @param pTarget the target map
+     * Adjust to Base values.
      */
-    protected void copyMap(final Map<AccountAttribute, Object> pSource,
-                           final Map<AccountAttribute, Object> pTarget) {
-        /* Clear the target map */
-        pTarget.clear();
-
-        /* For each entry in the source map */
-        for (Map.Entry<AccountAttribute, Object> myEntry : pSource.entrySet()) {
-            /* Access key and object */
-            AccountAttribute myAttr = myEntry.getKey();
-            Object myObject = myEntry.getValue();
-
-            /* Create copy of object in map */
-            if (myObject instanceof JMoney) {
-                pTarget.put(myAttr, new JMoney((JMoney) myObject));
-            } else if (myObject instanceof JRate) {
-                pTarget.put(myAttr, new JRate((JRate) myObject));
-            } else if (myObject instanceof JDateDay) {
-                pTarget.put(myAttr, new JDateDay((JDateDay) myObject));
-            }
-        }
-    }
-
-    /**
-     * Clone a map.
-     * @param pSource the source map
-     * @param pTarget the target map
-     */
-    private void cloneMap(final Map<AccountAttribute, Object> pSource,
-                          final Map<AccountAttribute, Object> pTarget) {
-        /* For each entry in the source map */
-        for (Map.Entry<AccountAttribute, Object> myEntry : pSource.entrySet()) {
-            /* Access key and object */
-            AccountAttribute myAttr = myEntry.getKey();
-            Object myObject = myEntry.getValue();
-
-            /* Switch on the Attribute */
-            switch (myAttr) {
-                case Valuation:
-                    pTarget.put(myAttr, new JMoney((JMoney) myObject));
-                    break;
-                case Spend:
-                    pTarget.put(myAttr, new JMoney());
-                    break;
-                case Rate:
-                case Maturity:
-                    pTarget.put(myAttr, myObject);
-                    break;
-                default:
-                    break;
-            }
-        }
+    private void adjustToBaseValues() {
+        /* Adjust spend values */
+        JMoney myValue = getNewSpend();
+        JMoney myBaseValue = theBaseValues.getMoneyValue(AccountAttribute.Spend);
+        myValue.subtractAmount(myBaseValue);
+        theBaseValues.put(AccountAttribute.Spend, null);
     }
 
     /**
      * record the rate of the account at a given date.
      * @param pDate the date of valuation
      */
-    protected void recordRate(final JDateDay pDate) {
+    private void recordRate(final JDateDay pDate) {
         /* Obtain the appropriate rate record */
         AccountRateList myRates = theData.getRates();
         AccountRate myRate = myRates.getLatestRate(theAccount, pDate);
@@ -547,11 +570,11 @@ public final class AccountBucket
             }
 
             /* Store the rate */
-            setAttribute(AccountAttribute.Rate, myRate.getRate());
+            setValue(AccountAttribute.Rate, myRate.getRate());
         }
 
         /* Store the maturity */
-        setAttribute(AccountAttribute.Maturity, myDate);
+        setValue(AccountAttribute.Maturity, myDate);
     }
 
     /**
@@ -559,24 +582,15 @@ public final class AccountBucket
      */
     private void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myValue = new JMoney(getMoneyAttribute(AccountAttribute.Valuation));
+        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        myValue = new JMoney(myValue);
 
         /* Subtract any base value */
-        if (theBase != null) {
-            myValue.subtractAmount(getBaseMoneyAttribute(AccountAttribute.Valuation));
-        }
+        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.Valuation);
+        myValue.subtractAmount(myBase);
 
         /* Set the delta */
-        setAttribute(AccountAttribute.Delta, myValue);
-    }
-
-    /**
-     * analyse bucket.
-     * @param pDate the date for analysis
-     */
-    protected void analyseBucket(final JDateDay pDate) {
-        recordRate(pDate);
-        calculateDelta();
+        setValue(AccountAttribute.Delta, myValue);
     }
 
     /**
@@ -584,22 +598,60 @@ public final class AccountBucket
      * @return true/false
      */
     public boolean isActive() {
-        JMoney myValuation = getMoneyAttribute(AccountAttribute.Valuation);
-        return (myValuation != null)
-               && (myValuation.isNonZero());
+        return theValues.isActive();
     }
 
     /**
-     * Is the bucket relevant? That is to say is either this bucket or it's base active?
-     * @return true/false
+     * AccountValues class.
      */
-    public boolean isRelevant() {
-        /* Relevant if this value or the previous value is non-zero */
-        if (isActive()) {
-            return true;
+    public static class AccountValues
+            extends BucketValues<AccountValues, AccountAttribute> {
+        /**
+         * SerialId.
+         */
+        private static final long serialVersionUID = -6075471778802035084L;
+
+        /**
+         * Constructor.
+         */
+        protected AccountValues() {
+            /* Initialise class */
+            super(AccountAttribute.class);
+
+            /* Initialise valuation and spend to zero */
+            put(AccountAttribute.Valuation, new JMoney());
+            put(AccountAttribute.Spend, new JMoney());
         }
-        return (theBase != null)
-               && (theBase.isActive());
+
+        /**
+         * Constructor.
+         * @param pSource the source map.
+         */
+        private AccountValues(final AccountValues pSource) {
+            /* Initialise class */
+            super(pSource);
+        }
+
+        @Override
+        protected AccountValues getSnapShot() {
+            return new AccountValues(this);
+        }
+
+        @Override
+        protected AccountValues[] getSnapShotArray() {
+            /* Allocate the array and return it */
+            return new AccountValues[2];
+        }
+
+        /**
+         * Are the values active?
+         * @return true/false
+         */
+        public boolean isActive() {
+            JMoney myValuation = getMoneyValue(AccountAttribute.Valuation);
+            return (myValuation != null)
+                   && (myValuation.isNonZero());
+        }
     }
 
     /**
@@ -608,11 +660,10 @@ public final class AccountBucket
     public static class AccountBucketList
             extends OrderedIdList<Integer, AccountBucket>
             implements JDataContents {
-
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucketList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
 
         @Override
         public JDataFields getDataFields() {
@@ -630,12 +681,12 @@ public final class AccountBucket
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
         /**
          * Analysis field Id.
          */
-        public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -658,35 +709,69 @@ public final class AccountBucket
          * @param pAnalysis the analysis
          */
         public AccountBucketList(final Analysis pAnalysis) {
+            /* Initialise class */
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
         }
 
         /**
-         * Construct a secondary List.
+         * Construct a dated List.
          * @param pAnalysis the analysis
          * @param pBase the base list
+         * @param pDate the Date
          */
         public AccountBucketList(final Analysis pAnalysis,
-                                 final AccountBucketList pBase) {
+                                 final AccountBucketList pBase,
+                                 final JDateDay pDate) {
+            /* Initialise class */
             super(AccountBucket.class);
             theAnalysis = pAnalysis;
 
-            /* Access the iterator */
-            Iterator<AccountBucket> myIterator = pBase.listIterator();
-
             /* Loop through the buckets */
+            Iterator<AccountBucket> myIterator = pBase.listIterator();
             while (myIterator.hasNext()) {
                 AccountBucket myCurr = myIterator.next();
 
-                /* Ignore payees */
-                if (myCurr.getCategoryType() == CategoryType.Payee) {
-                    continue;
-                }
+                /* Access the bucket for this date */
+                AccountBucket myBucket = new AccountBucket(pAnalysis, myCurr, pDate);
 
-                /* Add a derived bucket to the list */
-                AccountBucket myBucket = new AccountBucket(pAnalysis, myCurr);
-                add(myBucket);
+                /* If the bucket is active */
+                if (myBucket.isActive()) {
+                    /* Record the rate and add to list */
+                    myBucket.recordRate(pDate);
+                    append(myBucket);
+                }
+            }
+        }
+
+        /**
+         * Construct a ranged List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         * @param pRange the Date Range
+         */
+        public AccountBucketList(final Analysis pAnalysis,
+                                 final AccountBucketList pBase,
+                                 final JDateDayRange pRange) {
+            /* Initialise class */
+            super(AccountBucket.class);
+            theAnalysis = pAnalysis;
+
+            /* Loop through the buckets */
+            Iterator<AccountBucket> myIterator = pBase.listIterator();
+            while (myIterator.hasNext()) {
+                AccountBucket myCurr = myIterator.next();
+
+                /* Access the bucket for this range */
+                AccountBucket myBucket = new AccountBucket(pAnalysis, myCurr, pRange);
+
+                /* If the bucket is non-idle or active */
+                if (myBucket.isActive()
+                    || !myBucket.isIdle()) {
+                    /* Calculate the delta and add to the list */
+                    myBucket.calculateDelta();
+                    append(myBucket);
+                }
             }
         }
 
@@ -740,11 +825,6 @@ public final class AccountBucket
         /**
          * Spend.
          */
-        Spend,
-
-        /**
-         * Children.
-         */
-        Children;
+        Spend;
     }
 }

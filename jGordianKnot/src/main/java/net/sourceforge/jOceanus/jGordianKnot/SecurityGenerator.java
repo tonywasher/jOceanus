@@ -92,7 +92,7 @@ public class SecurityGenerator {
     /**
      * The Security phrase.
      */
-    private final String theSecurityPhrase;
+    private final byte[] theSecurityPhrase;
 
     /**
      * The Security provider name.
@@ -146,11 +146,9 @@ public class SecurityGenerator {
     /**
      * Access the security phrase in bytes format.
      * @return the security phrase
-     * @throws JDataException on error
      */
-    protected byte[] getSecurityBytes() throws JDataException {
-        String myPhrase = theSecurityPhrase;
-        return DataConverter.stringToByteArray(myPhrase);
+    protected byte[] getSecurityBytes() {
+        return theSecurityPhrase;
     }
 
     /**
@@ -194,11 +192,11 @@ public class SecurityGenerator {
         useRestricted = pRestricted;
         theCipherSteps = pNumCipherSteps;
         theIterations = pHashIterations;
-        theSecurityPhrase = pSecurityPhrase;
+        theSecurityPhrase = DataConverter.stringToByteArray(pSecurityPhrase);
 
         /* Create the random builder */
         theRandomBuilder = new SP800SecureRandomBuilder();
-        theRandomBuilder.setSecurityBytes(getSecurityBytes());
+        theRandomBuilder.setSecurityBytes(theSecurityPhrase);
 
         /* Create a new secure random generator */
         theRandom = generateHashSecureRandom(DigestType.SHA3, false);
@@ -220,8 +218,8 @@ public class SecurityGenerator {
      * @return the SecureRandom
      * @throws JDataException on error
      */
-    public SecureRandom generateHashSecureRandom(final DigestType pType,
-                                                 final boolean isPredictionResistant) throws JDataException {
+    public final SecureRandom generateHashSecureRandom(final DigestType pType,
+                                                       final boolean isPredictionResistant) throws JDataException {
         /* Create the digest */
         MessageDigest myDigest = accessDigest(pType);
 
@@ -236,9 +234,9 @@ public class SecurityGenerator {
      * @return the SecureRandom
      * @throws JDataException on error
      */
-    public SecureRandom generateHMacSecureRandom(final DigestType pType,
-                                                 final boolean isPredictionResistant) throws JDataException {
-        /* Create the digest */
+    public final SecureRandom generateHMacSecureRandom(final DigestType pType,
+                                                       final boolean isPredictionResistant) throws JDataException {
+        /* Create the mac */
         Mac myMac = accessMac(pType);
 
         /* Create the new SecureRandom */
@@ -419,7 +417,7 @@ public class SecurityGenerator {
      * @return the MessageDigest
      * @throws JDataException on error
      */
-    public MessageDigest accessDigest(final DigestType pDigestType) throws JDataException {
+    public final MessageDigest accessDigest(final DigestType pDigestType) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Return a digest for the algorithm */
@@ -441,7 +439,7 @@ public class SecurityGenerator {
      * @return the MAC
      * @throws JDataException on error
      */
-    protected Mac accessMac(final DigestType pDigestType) throws JDataException {
+    protected final Mac accessMac(final DigestType pDigestType) throws JDataException {
         /* Protect against exceptions */
         try {
             /* Access the MAC */

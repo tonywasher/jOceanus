@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -73,34 +74,59 @@ public final class EventCategory
     public static final int DESCLEN = 50;
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(EventCategory.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventCategory.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField("Name");
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCatName"));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
 
     /**
      * Category Type Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(EventCategoryType.class.getSimpleName());
+    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCatType"));
 
     /**
      * Parent Category Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField("Parent");
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataParent"));
 
     /**
      * SubCategory Field Id.
      */
-    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField("SubCategory");
+    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataSubCat"));
+
+    /**
+     * Multiple instances Error.
+     */
+    private static final String ERROR_MULT = NLS_BUNDLE.getString("ErrorMultiple");
+
+    /**
+     * Invalid Parent Error.
+     */
+    private static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
+
+    /**
+     * Different Parent Error.
+     */
+    private static final String ERROR_DIFFPARENT = NLS_BUNDLE.getString("ErrorDiffParent");
+
+    /**
+     * NonMatching Parent Error.
+     */
+    private static final String ERROR_MATCHPARENT = NLS_BUNDLE.getString("ErrorMatchParent");
 
     @Override
     public JDataFields declareFields() {
@@ -521,7 +547,7 @@ public final class EventCategory
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -560,7 +586,7 @@ public final class EventCategory
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -778,7 +804,7 @@ public final class EventCategory
                 /* Count the elements of this class */
                 int myCount = myList.countInstances(myClass);
                 if (myCount > 1) {
-                    addError("Multiple instances of singular class", FIELD_CATTYPE);
+                    addError(ERROR_MULT, FIELD_CATTYPE);
                 }
             }
 
@@ -787,16 +813,16 @@ public final class EventCategory
                 case Totals:
                     /* If parent exists */
                     if (myParent != null) {
-                        addError("Totals EventCategory cannot have parent", FIELD_PARENT);
+                        addError(ERROR_EXIST, FIELD_PARENT);
                     }
                     break;
                 case IncomeTotals:
                 case ExpenseTotals:
                     /* Check parent */
                     if (myParent == null) {
-                        addError("EventCategory must have parent", FIELD_PARENT);
+                        addError(ERROR_MISSING, FIELD_PARENT);
                     } else if (!myParent.isCategoryClass(EventCategoryClass.Totals)) {
-                        addError("SubTotals EventCategory must have Totals parent", FIELD_PARENT);
+                        addError(ERROR_BADPARENT, FIELD_PARENT);
                     }
                     break;
                 default:
@@ -805,25 +831,25 @@ public final class EventCategory
                     boolean hasParent = (myParent != null);
                     if (hasParent == isTransfer) {
                         if (isTransfer) {
-                            addError("Transfer EventCategory cannot have parent", FIELD_PARENT);
+                            addError(ERROR_EXIST, FIELD_PARENT);
                         } else {
-                            addError("Non-Transfer EventCategory must have parent", FIELD_PARENT);
+                            addError(ERROR_MISSING, FIELD_PARENT);
                         }
                     } else if (hasParent) {
                         /* Check validity of parent */
                         EventCategoryClass myParentClass = myParent.getCategoryTypeClass();
                         if (!myParentClass.canParentCategory()) {
-                            addError("EventCategory must have valid parent", FIELD_PARENT);
+                            addError(ERROR_BADPARENT, FIELD_PARENT);
                         }
                         if (myParentClass.isIncome() != myClass.isIncome()) {
-                            addError("EventCategory must have similar parent", FIELD_PARENT);
+                            addError(ERROR_DIFFPARENT, FIELD_PARENT);
                         }
 
                         /* Check that name reflects parent */
                         if ((myName != null)
                             && !myName.startsWith(myParent.getName()
                                                   + STR_SEP)) {
-                            addError("EventCategory name must reflect parent", FIELD_PARENT);
+                            addError(ERROR_MATCHPARENT, FIELD_PARENT);
                         }
                     }
                     break;
@@ -897,7 +923,7 @@ public final class EventCategory
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventCategoryList.class.getSimpleName(), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

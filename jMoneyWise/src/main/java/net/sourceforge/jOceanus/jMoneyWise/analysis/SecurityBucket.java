@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -50,39 +51,44 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 public final class SecurityBucket
         implements JDataContents, Comparable<SecurityBucket>, OrderedIdItem<Integer> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(SecurityBucket.class.getName());
+
+    /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(SecurityBucket.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(Analysis.class.getSimpleName());
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAnalysis"));
 
     /**
      * Account (Security) Field Id.
      */
-    private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(Account.class.getSimpleName());
+    private static final JDataField FIELD_SECURITY = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataSecurity"));
 
     /**
      * Portfolio Field Id.
      */
-    private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField("Portfolio");
+    private static final JDataField FIELD_PORTFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPortfolio"));
 
     /**
      * Security Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(AccountCategory.class.getSimpleName());
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCategory"));
 
     /**
      * Investment Analysis Field Id.
      */
-    private static final JDataField FIELD_INVEST = FIELD_DEFS.declareLocalField(InvestmentAnalysisList.class.getSimpleName());
+    private static final JDataField FIELD_INVEST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDetail"));
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBaseValues"));
 
     /**
      * FieldSet map.
@@ -629,7 +635,7 @@ public final class SecurityBucket
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(SecurityBucketList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
 
         @Override
         public JDataFields getDataFields() {
@@ -647,12 +653,12 @@ public final class SecurityBucket
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
         /**
          * Analysis field Id.
          */
-        public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

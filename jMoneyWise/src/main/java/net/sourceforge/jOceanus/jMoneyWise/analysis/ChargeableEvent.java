@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -37,14 +38,18 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 
 /**
  * Chargeable event for LifeBonds.
- * @author Tony
  */
 public final class ChargeableEvent
         implements OrderedIdItem<Integer>, JDataContents, Comparable<ChargeableEvent> {
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ChargeableEvent.class.getSimpleName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ChargeableEvent.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     @Override
     public JDataFields getDataFields() {
@@ -59,22 +64,22 @@ public final class ChargeableEvent
     /**
      * The Gains field id.
      */
-    public static final JDataField FIELD_GAINS = FIELD_DEFS.declareEqualityField("Gains");
+    private static final JDataField FIELD_GAINS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataGains"));
 
     /**
      * The Slice field id.
      */
-    public static final JDataField FIELD_SLICE = FIELD_DEFS.declareEqualityField("Slice");
+    private static final JDataField FIELD_SLICE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataSlice"));
 
     /**
      * The Taxation field id.
      */
-    public static final JDataField FIELD_TAXATION = FIELD_DEFS.declareEqualityField("Taxation");
+    private static final JDataField FIELD_TAXATION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataTax"));
 
     /**
      * The Event field id.
      */
-    public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField("Event");
+    private static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataEvent"));
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -272,7 +277,7 @@ public final class ChargeableEvent
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(ChargeableEventList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
 
         @Override
         public JDataFields getDataFields() {
@@ -290,7 +295,7 @@ public final class ChargeableEvent
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -327,13 +332,11 @@ public final class ChargeableEvent
          * @return the slice total of the chargeable event list
          */
         public JMoney getSliceTotal() {
-            /* Access the iterator */
-            Iterator<ChargeableEvent> myIterator = iterator();
-
             /* Initialise the total */
             JMoney myTotal = new JMoney();
 
             /* Loop through the list */
+            Iterator<ChargeableEvent> myIterator = iterator();
             while (myIterator.hasNext()) {
                 ChargeableEvent myEvent = myIterator.next();
 
@@ -350,13 +353,11 @@ public final class ChargeableEvent
          * @return the tax total of the chargeable event list
          */
         public JMoney getTaxTotal() {
-            /* Access the iterator */
-            Iterator<ChargeableEvent> myIterator = iterator();
-
             /* Initialise the total */
             JMoney myTotal = new JMoney();
 
             /* Loop through the list */
+            Iterator<ChargeableEvent> myIterator = iterator();
             while (myIterator.hasNext()) {
                 ChargeableEvent myEvent = myIterator.next();
 
@@ -374,13 +375,11 @@ public final class ChargeableEvent
          * @return the slice total of the chargeable event list
          */
         public JMoney getGainsTotal() {
-            /* Access the iterator */
-            Iterator<ChargeableEvent> myIterator = iterator();
-
             /* Initialise the total */
             JMoney myTotal = new JMoney();
 
             /* Loop through the list */
+            Iterator<ChargeableEvent> myIterator = iterator();
             while (myIterator.hasNext()) {
                 ChargeableEvent myEvent = myIterator.next();
 
@@ -400,10 +399,8 @@ public final class ChargeableEvent
          */
         public void applyTax(final JMoney pTax,
                              final JMoney pTotal) {
-            /* Access the iterator */
-            Iterator<ChargeableEvent> myIterator = iterator();
-
             /* Loop through the list */
+            Iterator<ChargeableEvent> myIterator = iterator();
             while (myIterator.hasNext()) {
                 ChargeableEvent myEvent = myIterator.next();
 

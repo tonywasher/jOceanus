@@ -91,7 +91,7 @@ public class ByteArrayInteger {
     /**
      * Reset counter to zero.
      */
-    public void reset() {
+    public final void reset() {
         Arrays.fill(theBuffer, (byte) 0);
     }
 

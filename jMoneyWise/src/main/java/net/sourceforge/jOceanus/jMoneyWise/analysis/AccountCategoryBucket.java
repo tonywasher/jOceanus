@@ -22,9 +22,9 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
-import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -33,6 +33,8 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountBucket.AccountAttribute;
+import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountBucket.AccountBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountBucket.AccountValues;
 import net.sourceforge.jOceanus.jMoneyWise.data.AccountCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
@@ -44,26 +46,30 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
  */
 public final class AccountCategoryBucket
         implements JDataContents, Comparable<AccountCategoryBucket>, OrderedIdItem<Integer> {
+    /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountCategoryBucket.class.getName());
 
     /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCategoryBucket.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Account Category Field Id.
      */
-    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(AccountCategory.class.getSimpleName());
+    private static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCategory"));
 
     /**
      * Category Type Field Id.
      */
-    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(CategoryType.class.getSimpleName());
+    private static final JDataField FIELD_TYPE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataType"));
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBaseValues"));
 
     /**
      * FieldSet map.
@@ -81,19 +87,14 @@ public final class AccountCategoryBucket
     private final CategoryType theType;
 
     /**
-     * The dataSet.
+     * Values.
      */
-    private final FinanceData theData;
+    private final AccountValues theValues;
 
     /**
-     * The base.
+     * The base values.
      */
-    private final AccountCategoryBucket theBase;
-
-    /**
-     * Attribute Map.
-     */
-    private final Map<AccountAttribute, Object> theAttributes;
+    private final AccountValues theBaseValues;
 
     @Override
     public JDataFields getDataFields() {
@@ -109,9 +110,7 @@ public final class AccountCategoryBucket
             return theType;
         }
         if (FIELD_BASE.equals(pField)) {
-            return (theBase != null)
-                    ? theBase
-                    : JDataFieldValue.SkipField;
+            return theBaseValues;
         }
 
         /* Handle Attribute fields */
@@ -164,27 +163,19 @@ public final class AccountCategoryBucket
     }
 
     /**
-     * Obtain the base.
-     * @return the base
+     * Obtain the values.
+     * @return the values
      */
-    public AccountCategoryBucket getBase() {
-        return theBase;
+    public AccountValues getValues() {
+        return theValues;
     }
 
     /**
-     * Obtain the dataSet.
-     * @return the dataSet
+     * Obtain the base values.
+     * @return the base values
      */
-    private FinanceData getDataSet() {
-        return theData;
-    }
-
-    /**
-     * Obtain the attribute map.
-     * @return the attribute map
-     */
-    protected Map<AccountAttribute, Object> getAttributes() {
-        return theAttributes;
+    public AccountValues getBaseValues() {
+        return theBaseValues;
     }
 
     /**
@@ -192,21 +183,10 @@ public final class AccountCategoryBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setAttribute(final AccountAttribute pAttr,
-                                final JMoney pValue) {
+    protected void setValue(final AccountAttribute pAttr,
+                            final JMoney pValue) {
         /* Set the value into the list */
-        theAttributes.put(pAttr, pValue);
-    }
-
-    /**
-     * Set Attribute.
-     * @param pAttr the attribute
-     * @param pValue the value of the attribute
-     */
-    private void setAttribute(final AccountAttribute pAttr,
-                              final Integer pValue) {
-        /* Set the value into the list */
-        theAttributes.put(pAttr, pValue);
+        theValues.put(pAttr, pValue);
     }
 
     /**
@@ -216,7 +196,7 @@ public final class AccountCategoryBucket
      */
     private Object getAttributeValue(final AccountAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getAttribute(pAttr);
+        Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -236,115 +216,26 @@ public final class AccountCategoryBucket
 
     /**
      * Obtain an attribute value.
-     * @param <X> the data type
-     * @param pAttr the attribute
-     * @param pClass the class of the attribute
-     * @return the value of the attribute or null
-     */
-    private <X extends JDecimal> X getAttribute(final AccountAttribute pAttr,
-                                                final Class<X> pClass) {
-        /* Obtain the attribute */
-        return pClass.cast(getAttribute(pAttr));
-    }
-
-    /**
-     * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getAttribute(final AccountAttribute pAttr) {
+    private Object getValue(final AccountAttribute pAttr) {
         /* Obtain the attribute */
-        return theAttributes.get(pAttr);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JMoney getMoneyAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return getAttribute(pAttr, JMoney.class);
-    }
-
-    /**
-     * Obtain an attribute value from the base.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    private Object getBaseAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return (theBase == null)
-                ? null
-                : theBase.getAttribute(pAttr);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JMoney getBaseMoneyAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return JMoney.class.cast(getBaseAttribute(pAttr));
-    }
-
-    /**
-     * Obtain an integer attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public Integer getIntegerAttribute(final AccountAttribute pAttr) {
-        /* Obtain the attribute */
-        return Integer.class.cast(getAttribute(pAttr));
+        return theValues.get(pAttr);
     }
 
     /**
      * Constructor.
-     * @param pData the dataSet
      * @param pCategory the account category
      */
-    private AccountCategoryBucket(final FinanceData pData,
-                                  final AccountCategory pCategory) {
+    private AccountCategoryBucket(final AccountCategory pCategory) {
         /* Store the category */
         theCategory = pCategory;
         theType = determineCategoryType(theCategory);
-        theData = pData;
-        theBase = null;
 
-        /* Create the attribute map */
-        theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
-
-        /* Create all possible values */
-        // setAttribute(AccountAttribute.Income, new JMoney());
-        // setAttribute(AccountAttribute.Expense, new JMoney());
-        setAttribute(AccountAttribute.Valuation, new JMoney());
-        // setAttribute(AccountAttribute.MarketValue, new JMoney());
-        setAttribute(AccountAttribute.Spend, new JMoney());
-        // setAttribute(AccountAttribute.Cost, new JMoney());
-        // setAttribute(AccountAttribute.Gained, new JMoney());
-        // setAttribute(AccountAttribute.Profit, new JMoney());
-        setAttribute(AccountAttribute.Delta, new JMoney());
-        // setAttribute(AccountAttribute.IncomeDelta, new JMoney());
-        setAttribute(AccountAttribute.Children, Integer.valueOf(0));
-    }
-
-    /**
-     * Constructor.
-     * @param pBase the underlying bucket
-     */
-    private AccountCategoryBucket(final AccountCategoryBucket pBase) {
-        /* Copy details from base */
-        theCategory = pBase.getAccountCategory();
-        theType = pBase.getCategoryType();
-        theData = pBase.getDataSet();
-        theBase = pBase;
-
-        /* Create a new attribute map */
-        theAttributes = new EnumMap<AccountAttribute, Object>(AccountAttribute.class);
-
-        /* Clone the underlying map */
-        cloneMap(theBase.getAttributes(), theAttributes);
+        /* Create the value maps */
+        theValues = new AccountValues();
+        theBaseValues = new AccountValues();
     }
 
     @Override
@@ -412,58 +303,37 @@ public final class AccountCategoryBucket
         }
 
         /* Return asset or money */
-        if (myClass.hasUnits()) {
-            return CategoryType.Priced;
-        }
-
-        return CategoryType.Money;
+        return (myClass.hasUnits())
+                ? CategoryType.Priced
+                : CategoryType.Money;
     }
 
     /**
-     * Clone a map.
-     * @param pSource the source map
-     * @param pTarget the target map
+     * Calculate delta.
      */
-    private void cloneMap(final Map<AccountAttribute, Object> pSource,
-                          final Map<AccountAttribute, Object> pTarget) {
-        /* For each entry in the source map */
-        for (Map.Entry<AccountAttribute, Object> myEntry : pSource.entrySet()) {
-            /* Access key and object */
-            AccountAttribute myAttr = myEntry.getKey();
-            // Object myObject = myEntry.getValue();
+    private void calculateDelta() {
+        /* Obtain a copy of the value */
+        JMoney myValue = theValues.getMoneyValue(AccountAttribute.Valuation);
+        myValue = new JMoney(myValue);
 
-            /* Switch on the Attribute */
-            switch (myAttr) {
-            // case Cost:
-            // case Gained:
-            // case Profit:
-            // pTarget.put(myAttr, new JMoney(JMoney.class.cast(myObject)));
-            // break;
-                case Valuation:
-                    // case MarketValue:
-                    // case Income:
-                    // case Expense:
-                case Spend:
-                    // case IncomeDelta:
-                case Delta:
-                    pTarget.put(myAttr, new JMoney());
-                    break;
-                case Children:
-                    pTarget.put(myAttr, Integer.valueOf(0));
-                    break;
-                default:
-                    break;
-            }
-        }
+        /* Subtract any base value */
+        JMoney myBase = theBaseValues.getMoneyValue(AccountAttribute.Valuation);
+        myValue.subtractAmount(myBase);
+
+        /* Set the delta */
+        setValue(AccountAttribute.Delta, myValue);
     }
 
     /**
      * Add bucket to totals.
      * @param pBucket the underlying bucket
      */
-    protected void addValues(final AccountCategoryBucket pBucket) {
-        /* Add underlying attributes */
-        addValues(pBucket.getAttributes());
+    private void addValues(final AccountCategoryBucket pBucket) {
+        /* Add values */
+        addValues(theValues, pBucket.getValues());
+
+        /* Add base values */
+        addValues(theBaseValues, pBucket.getBaseValues());
     }
 
     /**
@@ -471,106 +341,37 @@ public final class AccountCategoryBucket
      * @param pBucket the underlying bucket
      */
     protected void addValues(final AccountBucket pBucket) {
-        /* Add underlying attributes */
-        addValues(pBucket.getAttributes());
+        /* Add values */
+        addValues(theValues, pBucket.getValues());
 
-        /* Increment child count */
-        Integer myCount = getIntegerAttribute(AccountAttribute.Children);
-        if ((pBucket.getCategoryType() != CategoryType.Priced)
-            || (pBucket.isRelevant())) {
-            setAttribute(AccountAttribute.Children, myCount + 1);
-        }
+        /* Add base values */
+        addValues(theBaseValues, pBucket.getBaseValues());
     }
 
     /**
      * Add bucket to totals.
-     * @param pAttributes the underlying attributes
+     * @param pTotals the totals
+     * @param pSource the values to add
      */
-    private void addValues(final Map<AccountAttribute, Object> pAttributes) {
-        /* For each entry in the source map */
-        for (Map.Entry<AccountAttribute, Object> myEntry : pAttributes.entrySet()) {
-            /* Access key and object */
-            AccountAttribute myAttr = myEntry.getKey();
-            Object myObject = myEntry.getValue();
-
-            /* Switch on the Attribute */
-            switch (myAttr) {
-                case Valuation:
-                    // case MarketValue:
-                    // case Cost:
-                    // case Gained:
-                    // case Income:
-                    // case Expense:
-                case Spend:
-                    // case Profit:
-                case Delta:
-                    // case IncomeDelta:
-                    JMoney myMoney = getMoneyAttribute(myAttr);
-                    myMoney.addAmount(JMoney.class.cast(myObject));
-                    break;
-                // case Gains:
-                // case Invested:
-                // case Dividend:
-                // case Units:
-                case Rate:
-                case Maturity:
-                    // case Price:
-                default:
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Is the bucket active?
-     * @return true/false
-     */
-    public boolean isActive() {
-        /* For each entry in the source map */
-        for (Map.Entry<AccountAttribute, Object> myEntry : theAttributes.entrySet()) {
-            /* Access the value */
-            Object myValue = myEntry.getValue();
-
-            /* Active if we have a non-zero decimal */
-            if (myValue instanceof JDecimal) {
-                JDecimal myDecimal = (JDecimal) myValue;
-                if (myDecimal.isNonZero()) {
-                    return true;
-                }
-            }
-        }
-
-        /* Inactive */
-        return false;
-    }
-
-    /**
-     * Is the bucket relevant? That is to say is either this bucket or it's base active?
-     * @return true/false
-     */
-    protected boolean isRelevant() {
-        /* Relevant if this value is non-zero or if this is the totals */
-        if (isActive()
-            || (theType == CategoryType.Total)) {
-            return true;
-        }
-
-        /* Relevant if the previous value is non-zero */
-        return (theBase != null)
-               && (theBase.isActive());
+    private static void addValues(final AccountValues pTotals,
+                                  final AccountValues pSource) {
+        /* Add base values */
+        JMoney myValue = pTotals.getMoneyValue(AccountAttribute.Valuation);
+        JMoney mySrcValue = pSource.getMoneyValue(AccountAttribute.Valuation);
+        myValue.addAmount(mySrcValue);
     }
 
     /**
      * AccountCategoryBucket list class.
      */
-    public static class AccountCategoryBucketList
+    public static final class AccountCategoryBucketList
             extends OrderedIdList<Integer, AccountCategoryBucket>
             implements JDataContents {
 
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCategoryBucketList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
 
         @Override
         public JDataFields getDataFields() {
@@ -588,12 +389,17 @@ public final class AccountCategoryBucket
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
         /**
          * Analysis field Id.
          */
-        public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
+
+        /**
+         * Totals field Id.
+         */
+        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTotals"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -602,6 +408,9 @@ public final class AccountCategoryBucket
             }
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
+            }
+            if (FIELD_TOTALS.equals(pField)) {
+                return theTotals;
             }
             return JDataFieldValue.UnknownField;
         }
@@ -622,10 +431,10 @@ public final class AccountCategoryBucket
         private final AccountCategoryBucket theTotals;
 
         /**
-         * Obtain the Totals AccountCategoryBucket.
-         * @return the bucket
+         * Obtain the Totals.
+         * @return the totals
          */
-        public AccountCategoryBucket getTotalsBucket() {
+        public AccountCategoryBucket getTotals() {
             return theTotals;
         }
 
@@ -634,40 +443,23 @@ public final class AccountCategoryBucket
          * @param pAnalysis the analysis
          */
         public AccountCategoryBucketList(final Analysis pAnalysis) {
+            /* Initialise class */
             super(AccountCategoryBucket.class);
             theAnalysis = pAnalysis;
             theData = theAnalysis.getData();
-            theTotals = null; // allocateTotalsBucket();
+            theTotals = allocateTotalsBucket();
         }
 
         /**
-         * Construct a secondary List.
-         * @param pAnalysis the analysis
-         * @param pBase the base list
+         * Allocate the Totals AccountCategoryBucket.
+         * @return the bucket
          */
-        public AccountCategoryBucketList(final Analysis pAnalysis,
-                                         final AccountCategoryBucketList pBase) {
-            super(AccountCategoryBucket.class);
-            theAnalysis = pAnalysis;
-            theData = theAnalysis.getData();
-
-            /* Access the iterator */
-            Iterator<AccountCategoryBucket> myIterator = pBase.listIterator();
-
-            /* Loop through the buckets */
-            while (myIterator.hasNext()) {
-                AccountCategoryBucket myCurr = myIterator.next();
-
-                /* If the bucket is active */
-                if (myCurr.isActive()) {
-                    /* Add a derived bucket to the list */
-                    AccountCategoryBucket myBucket = new AccountCategoryBucket(myCurr);
-                    add(myBucket);
-                }
-            }
-
-            /* Access the totals bucket */
-            theTotals = allocateTotalsBucket();
+        private AccountCategoryBucket allocateTotalsBucket() {
+            /* Obtain the totals category */
+            AccountCategory myTotals = theData.getAccountCategories().getSingularClass(AccountCategoryClass.Totals);
+            return (myTotals == null)
+                    ? null
+                    : new AccountCategoryBucket(myTotals);
         }
 
         /**
@@ -682,7 +474,7 @@ public final class AccountCategoryBucket
             /* If the item does not yet exist */
             if (myItem == null) {
                 /* Create the new bucket */
-                myItem = new AccountCategoryBucket(theData, pCategory);
+                myItem = new AccountCategoryBucket(pCategory);
 
                 /* Add to the list */
                 add(myItem);
@@ -693,26 +485,35 @@ public final class AccountCategoryBucket
         }
 
         /**
-         * Allocate the Totals AccountCategoryBucket.
-         * @return the bucket
+         * Analyse accounts.
+         * @param pAccounts the account buckets
          */
-        private AccountCategoryBucket allocateTotalsBucket() {
-            /* Obtain the totals category */
-            AccountCategory myTotals = theData.getAccountCategories().getSingularClass(AccountCategoryClass.Totals);
-            return getBucket(myTotals);
+        protected void analyseAccounts(final AccountBucketList pAccounts) {
+            /* Loop through the buckets */
+            Iterator<AccountBucket> myIterator = pAccounts.listIterator();
+            while (myIterator.hasNext()) {
+                /* Access bucket and category */
+                AccountBucket myCurr = myIterator.next();
+                AccountCategory myCategory = myCurr.getAccountCategory();
+
+                /* Access category bucket and add values */
+                AccountCategoryBucket myBucket = getBucket(myCategory);
+                myBucket.addValues(myCurr);
+            }
         }
 
         /**
          * Produce totals for the categories.
          */
         protected void produceTotals() {
-            /* Create a list of new buckets */
+            /* Create a list of new buckets (to avoid breaking iterator on add) */
             OrderedIdList<Integer, AccountCategoryBucket> myTotals = new OrderedIdList<Integer, AccountCategoryBucket>(AccountCategoryBucket.class);
 
-            /* Access the iterator */
-            Iterator<AccountCategoryBucket> myIterator = listIterator();
+            /* Determine if this is a ranged analysis */
+            boolean isRanged = theAnalysis.isRangedAnalysis();
 
             /* Loop through the buckets */
+            Iterator<AccountCategoryBucket> myIterator = listIterator();
             while (myIterator.hasNext()) {
                 AccountCategoryBucket myCurr = myIterator.next();
 
@@ -720,32 +521,32 @@ public final class AccountCategoryBucket
                 AccountCategory myCategory = myCurr.getAccountCategory();
                 AccountCategory myParent = myCategory.getParentCategory();
 
-                /* If we have a parent category */
-                if (myParent != null) {
-                    /* Access parent bucket */
-                    AccountCategoryBucket myTotal = findItemById(myParent.getId());
+                /* Calculate delta for the category */
+                if (isRanged) {
+                    myCurr.calculateDelta();
+                }
 
-                    /* If the bucket does not exist */
+                /* Access parent bucket */
+                AccountCategoryBucket myTotal = findItemById(myParent.getId());
+
+                /* If the bucket does not exist */
+                if (myTotal == null) {
+                    /* Look for bucket in the new list */
+                    myTotal = myTotals.findItemById(myParent.getId());
+
+                    /* If the bucket is completely new */
                     if (myTotal == null) {
-                        /* Look for bucket in the new list */
-                        myTotal = myTotals.findItemById(myParent.getId());
-
-                        /* If the bucket is completely new */
-                        if (myTotal == null) {
-                            /* Create the new bucket and add to new list */
-                            myTotal = new AccountCategoryBucket(theData, myParent);
-                            myTotals.add(myTotal);
-                        }
+                        /* Create the new bucket and add to new list */
+                        myTotal = new AccountCategoryBucket(myParent);
+                        myTotals.add(myTotal);
                     }
-
-                    /* Add the bucket to the totals */
-                    myTotal.addValues(myCurr);
                 }
 
-                /* Remove the bucket if it is irrelevant */
-                if (!myCurr.isRelevant()) {
-                    myIterator.remove();
-                }
+                /* Add the bucket to the totals */
+                myTotal.addValues(myCurr);
+
+                /* Add to totals bucket */
+                theTotals.addValues(myCurr);
             }
 
             /* Loop through the new totals */
@@ -753,23 +554,19 @@ public final class AccountCategoryBucket
             while (myIterator.hasNext()) {
                 AccountCategoryBucket myCurr = myIterator.next();
 
-                /* Ignore the bucket if it is irrelevant */
-                if (!myCurr.isRelevant()) {
-                    continue;
-                }
-
-                /* Obtain category and parent category */
-                AccountCategory myCategory = myCurr.getAccountCategory();
-                AccountCategory myParent = myCategory.getParentCategory();
-
-                /* If we have a parent category */
-                if (myParent != null) {
-                    /* Add the bucket to the totals */
-                    findItemById(myParent.getId()).addValues(myCurr);
+                /* Calculate delta for the category total */
+                if (isRanged) {
+                    myCurr.calculateDelta();
                 }
 
                 /* Add it to the list */
                 add(myCurr);
+            }
+
+            /* Calculate delta for the totals */
+            if ((isRanged)
+                && (theTotals != null)) {
+                theTotals.calculateDelta();
             }
         }
     }

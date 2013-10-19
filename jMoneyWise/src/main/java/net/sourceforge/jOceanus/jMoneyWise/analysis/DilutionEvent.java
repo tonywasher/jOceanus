@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -50,9 +51,14 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 public final class DilutionEvent
         implements OrderedIdItem<Integer>, JDataContents, Comparable<DilutionEvent> {
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(DilutionEvent.class.getSimpleName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DilutionEvent.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     @Override
     public JDataFields getDataFields() {
@@ -67,27 +73,37 @@ public final class DilutionEvent
     /**
      * Id Field Id.
      */
-    public static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField("ID");
+    private static final JDataField FIELD_ID = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataId"));
 
     /**
      * Account Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField("Account");
+    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAccount"));
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField("Date");
+    private static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDate"));
 
     /**
      * Dilution Field Id.
      */
-    public static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField("Dilution");
+    private static final JDataField FIELD_DILUTION = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataDilution"));
 
     /**
      * Event Field Id.
      */
-    public static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField("Event");
+    private static final JDataField FIELD_EVENT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataEvent"));
+
+    /**
+     * Bad Security error string.
+     */
+    private static final String ERROR_SECURITY = NLS_BUNDLE.getString("ErrorSecurity");
+
+    /**
+     * Bad Dilution error string.
+     */
+    private static final String ERROR_DILUTION = NLS_BUNDLE.getString("ErrorDilution");
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -288,7 +304,7 @@ public final class DilutionEvent
         /**
          * Report fields.
          */
-        private static final JDataFields FIELD_DEFS = new JDataFields(DilutionEventList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
 
         @Override
         public JDataFields getDataFields() {
@@ -306,7 +322,7 @@ public final class DilutionEvent
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -346,10 +362,8 @@ public final class DilutionEvent
          * @param pEvent the base event
          */
         public void addDilution(final Event pEvent) {
-            DilutionEvent myDilution;
-
             /* Create the dilution event */
-            myDilution = new DilutionEvent(theNextId++, pEvent);
+            DilutionEvent myDilution = new DilutionEvent(theNextId++, pEvent);
 
             /* Add it to the list */
             add(myDilution);
@@ -371,7 +385,8 @@ public final class DilutionEvent
             /* Search for the account */
             Account myAccount = myAccounts.findItemByName(pAccount);
             if (myAccount == null) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid Dilution account ["
+                throw new JDataException(ExceptionClass.DATA, ERROR_SECURITY
+                                                              + " ["
                                                               + pAccount
                                                               + "]");
             }
@@ -382,7 +397,8 @@ public final class DilutionEvent
             /* Record the dilution */
             JDilution myDilution = theParser.parseDilutionValue(pDilution);
             if (myDilution == null) {
-                throw new JDataException(ExceptionClass.DATA, "Invalid Dilution: "
+                throw new JDataException(ExceptionClass.DATA, ERROR_DILUTION
+                                                              + " "
                                                               + pDilution);
             }
 
@@ -399,10 +415,8 @@ public final class DilutionEvent
          * @return <code>true</code> if the account has diluted prices, <code>false</code> otherwise
          */
         public boolean hasDilution(final Account pAccount) {
-            /* Create the iterator */
-            Iterator<DilutionEvent> myIterator = listIterator();
-
             /* Loop through the items */
+            Iterator<DilutionEvent> myIterator = listIterator();
             while (myIterator.hasNext()) {
                 DilutionEvent myEvent = myIterator.next();
 
@@ -430,11 +444,9 @@ public final class DilutionEvent
                 return null;
             }
 
-            /* Create the iterator */
+            /* Loop through the items */
             Iterator<DilutionEvent> myIterator = listIterator();
             JDilution myDilution = new JDilution(JDilution.MAX_DILUTION);
-
-            /* Loop through the items */
             while (myIterator.hasNext()) {
                 DilutionEvent myEvent = myIterator.next();
                 /* If the event is for this account, and if the dilution date is later */

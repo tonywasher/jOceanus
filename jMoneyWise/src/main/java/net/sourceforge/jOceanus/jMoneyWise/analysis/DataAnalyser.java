@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -30,6 +31,7 @@ import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDecimal.JDilution;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JPrice;
@@ -49,10 +51,10 @@ import net.sourceforge.jOceanus.jMoneyWise.data.AccountPrice.AccountPriceList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event.EventList;
 import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory.EventCategoryList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
+import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear.TaxYearList;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 
 /**
  * Class to analyse data.
@@ -61,14 +63,24 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 public class DataAnalyser
         implements JDataContents {
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(DataAnalyser.class.getSimpleName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(DataAnalyser.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Analysis field Id.
      */
-    public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
+
+    /**
+     * Analysis Manager field Id.
+     */
+    private static final JDataField FIELD_MANAGER = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataManager"));
 
     @Override
     public JDataFields getDataFields() {
@@ -78,9 +90,10 @@ public class DataAnalyser
     @Override
     public Object getFieldValue(final JDataField pField) {
         if (FIELD_ANALYSIS.equals(pField)) {
-            return (theAnalysis == null)
-                    ? JDataFieldValue.SkipField
-                    : theAnalysis;
+            return theAnalysis;
+        }
+        if (FIELD_MANAGER.equals(pField)) {
+            return theManager;
         }
 
         /* Unknown */
@@ -113,9 +126,9 @@ public class DataAnalyser
     private final Analysis theAnalysis;
 
     /**
-     * The event categories.
+     * The analysis manager.
      */
-    private final EventCategoryList theCategories;
+    private final AnalysisManager theManager;
 
     /**
      * The account bucket list.
@@ -148,19 +161,11 @@ public class DataAnalyser
     private final DilutionEventList theDilutions;
 
     /**
-     * Obtain the analysis.
-     * @return the analysis
+     * Obtain the analysis manager.
+     * @return the analysis manager
      */
-    public Analysis getAnalysis() {
-        return theAnalysis;
-    }
-
-    /**
-     * Obtain the dilutions.
-     * @return the dilutions
-     */
-    public DilutionEventList getDilutions() {
-        return theDilutions;
+    public AnalysisManager getAnalysisManager() {
+        return theManager;
     }
 
     /**
@@ -172,40 +177,35 @@ public class DataAnalyser
         /* Store the parameters */
         theData = pData;
 
-        /* Access the Categories and TaxMan account */
-        theCategories = theData.getEventCategories();
+        /* Access the TaxMan account */
         Account myTaxMan = theData.getAccounts().getSingularClass(AccountCategoryClass.TaxMan);
 
-        /* Create the Dilution Event List */
-        theDilutions = new DilutionEventList(theData);
-
         /* Access the lists */
-        // TaxYearList myTaxYears = theData.getTaxYears();
+        TaxYearList myTaxYears = theData.getTaxYears();
         EventList myEvents = theData.getEvents();
 
         /* Create a new analysis */
         theAnalysis = new Analysis(theData);
+        theManager = new AnalysisManager(theAnalysis);
 
         /* Access details from the analysis */
         theAccountBuckets = theAnalysis.getAccounts();
         theSecurityBuckets = theAnalysis.getSecurities();
         thePayeeBuckets = theAnalysis.getPayees();
         theCategoryBuckets = theAnalysis.getEventCategories();
+        theDilutions = theAnalysis.getDilutions();
         theTaxMan = thePayeeBuckets.getBucket(myTaxMan);
 
         /* Access the Event iterator */
         Iterator<Event> myIterator = myEvents.listIterator();
-        // TaxYear myTax = null;
-        // JDateDay myDate = null;
-        // int myResult = -1;
-
-        /* Reset the groups */
-        // myEvents.resetGroups();
+        TaxYear myTax = null;
+        JDateDay myDate = null;
+        int myResult = -1;
 
         /* Loop through the Events extracting relevant elements */
         while (myIterator.hasNext()) {
             Event myCurr = myIterator.next();
-            // JDateDay myCurrDay = myCurr.getDate();
+            JDateDay myCurrDay = myCurr.getDate();
 
             /* Ignore deleted events */
             if (myCurr.isDeleted()) {
@@ -213,50 +213,17 @@ public class DataAnalyser
             }
 
             /* If we have a current tax year */
-            // if (myDate != null) {
-            /* Check that this event is still in the tax year */
-            // myResult = myDate.compareTo(myCurrDay);
-            // }
+            if (myDate != null) {
+                /* Check that this event is still in the tax year */
+                myResult = myDate.compareTo(myCurrDay);
+            }
 
             /* If we have exhausted the tax year or else this is the first tax year */
-            // if (myResult < 0) {
-            /* Access the relevant tax year */
-            // myTax = myTaxYears.findTaxYearForDate(myCurrDay);
-            // myDate = myTax.getTaxYear();
-
-            /* If we have an existing meta analysis year */
-            // if (theMetaAnalysis != null) {
-            /* analyse accounts */
-            // theMetaAnalysis.analyseAccounts();
-            // }
-
-            /* Create the new Analysis */
-            // AnalysisYear myYear = theYears.getNewAnalysis(myTax, theAnalysis);
-            // theAnalysis = myYear.getAnalysis();
-            // theMetaAnalysis = myYear.getMetaAnalysis();
-            // }
-
-            /* Touch credit account */
-            // Account myCredit = myCurr.getCredit();
-            // myCredit.touchItem(myCurr);
-
-            /* Touch debit accounts */
-            // Account myDebit = myCurr.getDebit();
-            // myDebit.touchItem(myCurr);
-
-            /* Touch Category */
-            // EventCategory myCategory = myCurr.getCategory();
-            // myCategory.touchItem(myCurr);
-
-            /* If the event has a parent */
-            // Event myParent = myCurr.getParent();
-            // if (myParent != null) {
-            /* Touch the parent */
-            // myParent.touchItem(myCurr);
-
-            /* Register child against parent */
-            // myEvents.registerChild(myCurr);
-            // }
+            if (myResult < 0) {
+                /* Access the relevant tax year */
+                myTax = myTaxYears.findTaxYearForDate(myCurrDay);
+                myDate = myTax.getTaxYear();
+            }
 
             /* If the event has a dilution factor */
             if (myCurr.getDilution() != null) {
@@ -264,21 +231,15 @@ public class DataAnalyser
                 theDilutions.addDilution(myCurr);
             }
 
-            /* Process the event in the breakdown */
-            // myBreakdown.processEvent(myCurr);
-
             /* Process the event in the report set */
             processEvent(myCurr);
+
+            /* Note that this event touched the TaxYear */
             // myTax.touchItem(myCurr);
         }
 
-        /* analyse accounts */
-        // if (theMetaAnalysis != null) {
-        // theMetaAnalysis.analyseAccounts();
-        // }
-
-        /* Update analysis object */
-        // mySection.setObject(this);
+        /* Analyse the basic ranged analysis */
+        theManager.analyseBase();
     }
 
     /**
@@ -287,15 +248,16 @@ public class DataAnalyser
      * @throws JDataException on error
      */
     private void processEvent(final Event pEvent) throws JDataException {
+        /* Access key details */
         Account myDebit = pEvent.getDebit();
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
 
-        /* If the event relates to a priced item split out the workings */
+        /* If the event relates to a security item, split out the workings */
         if ((myDebit.hasUnits())
             || (myCredit.hasUnits())) {
-            /* Process as a Capital event */
-            processCapitalEvent(pEvent);
+            /* Process as a Security event */
+            processSecurityEvent(pEvent);
 
             /* Else handle the event normally */
         } else {
@@ -333,11 +295,11 @@ public class DataAnalyser
             if (myAuto != null) {
                 /* Subtract expense from Payee bucket */
                 PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
-                myPayee.subtractExpense(myAmount);
+                myPayee.subtractExpense(pEvent, myAmount);
 
                 /* Subtract expense from Category bucket */
                 EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
-                myCatBucket.subtractExpense(myAmount);
+                myCatBucket.subtractExpense(pEvent, myAmount);
 
                 /* else handle normally */
             } else {
@@ -362,11 +324,11 @@ public class DataAnalyser
             if (myAuto != null) {
                 /* Add expense to Payee bucket */
                 PayeeBucket myPayee = thePayeeBuckets.getBucket(myCredit);
-                myPayee.addExpense(myAmount);
+                myPayee.addExpense(pEvent, myAmount);
 
                 /* Adjust the relevant category bucket */
                 EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myAuto);
-                myCatBucket.addExpense(myAmount);
+                myCatBucket.addExpense(pEvent, myAmount);
                 /* else handle normally */
             } else {
                 /* Determine the type of the credit account */
@@ -390,22 +352,20 @@ public class DataAnalyser
 
             /* If the event category is not a transfer */
             if (!myCat.isTransfer()) {
-                /* Adjust the relevant category bucket */
-                EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
-                myCatBucket.adjustValues(pEvent);
+                /* Adjust the relevant category buckets */
+                theCategoryBuckets.adjustCategories(pEvent, myCat);
             }
         }
     }
 
     /**
-     * Process a capital event.
+     * Process a security event.
      * @param pEvent the event to process
      * @throws JDataException on error
      */
-    private void processCapitalEvent(final Event pEvent) throws JDataException {
-        EventCategory myCat = pEvent.getCategory();
-
+    private void processSecurityEvent(final Event pEvent) throws JDataException {
         /* Switch on the category */
+        EventCategory myCat = pEvent.getCategory();
         switch (myCat.getCategoryTypeClass()) {
         /* Process a stock split */
             case StockSplit:
@@ -514,9 +474,8 @@ public class DataAnalyser
 
         /* If the event category is not a transfer */
         if (!myCat.isTransfer()) {
-            /* Adjust the relevant event category bucket */
-            EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
-            myCatBucket.adjustValues(pEvent);
+            /* Adjust the relevant category buckets */
+            theCategoryBuckets.adjustCategories(pEvent, myCat);
         }
     }
 
@@ -627,9 +586,8 @@ public class DataAnalyser
         /* Adjust the tax payments */
         theTaxMan.adjustForTaxPayments(pEvent);
 
-        /* Adjust the relevant transaction bucket */
-        EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
-        myCatBucket.adjustValues(pEvent);
+        /* Adjust the relevant category buckets */
+        theCategoryBuckets.adjustCategories(pEvent, myCat);
     }
 
     /**
@@ -652,9 +610,8 @@ public class DataAnalyser
 
         /* If the event category is not a transfer */
         if (!myCat.isTransfer()) {
-            /* Adjust the relevant transaction bucket */
-            EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
-            myCatBucket.adjustValues(pEvent);
+            /* Adjust the relevant category buckets */
+            theCategoryBuckets.adjustCategories(pEvent, myCat);
         }
     }
 
@@ -752,7 +709,6 @@ public class DataAnalyser
         Account myCredit = pEvent.getCredit();
         JMoney myAmount = pEvent.getAmount();
         JUnits myDeltaUnits = pEvent.getDebitUnits();
-        EventCategory myCat = theCategories.getSingularClass(EventCategoryClass.TaxableGain);
 
         /* Access the Asset Security Bucket */
         SecurityBucket myAsset = theSecurityBuckets.getBucket(myAccount);
@@ -816,16 +772,14 @@ public class DataAnalyser
 
         /* Adjust the debit account bucket */
         PayeeBucket myPayee = thePayeeBuckets.getBucket(myDebit);
-        myPayee.addIncome(pEvent.getTaxCredit());
+        myPayee.adjustForTaxCredit(pEvent);
 
         /* Adjust the credit account bucket */
         AccountBucket myBucket = theAccountBuckets.getBucket(myCredit);
         myBucket.adjustForCredit(pEvent);
 
         /* Adjust the taxableGains category bucket */
-        EventCategoryBucket myCatBucket = theCategoryBuckets.getBucket(myCat);
-        myCatBucket.adjustValues(pEvent);
-        myCatBucket.subtractIncome(myReduction);
+        theCategoryBuckets.adjustTaxableGain(pEvent, myReduction);
 
         /* Adjust the TaxMan account for the tax credit */
         theTaxMan.adjustForTaxPayments(pEvent);

@@ -22,51 +22,73 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
-import java.util.Map;
-
-import net.sourceforge.jOceanus.jDataManager.JDataException;
+import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFormat;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
+import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.analysis.EventCategoryBucket.EventCategoryBucketList;
+import net.sourceforge.jOceanus.jMoneyWise.analysis.PayeeBucket.PayeeBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jSortedList.NestedHashMap;
 
 /**
  * Analysis manager.
  */
-public class AnalysisManager {
+public class AnalysisManager
+        extends NestedHashMap<JDateDayRange, Analysis>
+        implements JDataFormat {
     /**
-     * The analysis map.
+     * Serial Id.
      */
-    private final Map<JDateDayRange, Analysis> theMap;
+    private static final long serialVersionUID = -8360259174517408222L;
 
-    /**
-     * The data.
-     */
-    private FinanceData theData = null;
-
-    /**
-     * Constructor.
-     */
-    protected AnalysisManager() {
-        /* Create the map */
-        theMap = new NestedHashMap<JDateDayRange, Analysis>();
+    @Override
+    public String formatObject() {
+        return getClass().getSimpleName();
     }
 
     /**
-     * Obtain an analysis for a range.
-     * @param pRange the date range for the analysis.
-     * @return the analysis
-     * @throws JDataException on error
+     * The base analysis.
      */
-    protected Analysis getAnalysis(final JDateDayRange pRange) throws JDataException {
+    private final transient Analysis theAnalysis;
+
+    /**
+     * The first date.
+     */
+    private final transient JDateDay theFirstDate;
+
+    /**
+     * Constructor.
+     * @param pAnalysis the new analysis
+     */
+    protected AnalysisManager(final Analysis pAnalysis) {
+        /* Store the analysis */
+        theAnalysis = pAnalysis;
+
+        /* Store the first date */
+        FinanceData myData = theAnalysis.getData();
+        JDateDayRange myRange = myData.getDateRange();
+        theFirstDate = myRange.getStart();
+    }
+
+    /**
+     * Obtain an analysis for a date.
+     * @param pDate the date for the analysis.
+     * @return the analysis
+     */
+    protected Analysis getAnalysis(final JDateDay pDate) {
+        /* Create the new Range */
+        JDateDayRange myRange = new JDateDayRange(theFirstDate, pDate);
+
         /* Look for the existing analysis */
-        Analysis myAnalysis = theMap.get(pRange);
+        Analysis myAnalysis = get(myRange);
         if (myAnalysis == null) {
             /* Create the new event analysis */
-            // DataAnalyser myAnalyser = new DataAnalysis(theData, pRange);
-            // myAnalysis = myAnalyser.getAnalysis();
+            myAnalysis = new Analysis(theAnalysis, pDate);
+            produceTotals(myAnalysis);
 
-            /* Save the analysis */
-            // theMap.put(pRange, myAnalysis);
+            /* Put it into the map */
+            put(myRange, myAnalysis);
         }
 
         /* return the analysis */
@@ -74,14 +96,53 @@ public class AnalysisManager {
     }
 
     /**
-     * Record new data.
-     * @param pData the new dataSet
+     * Obtain an analysis for a range.
+     * @param pRange the date range for the analysis.
+     * @return the analysis
      */
-    protected void setNewData(final FinanceData pData) {
-        /* Reset the map */
-        theMap.clear();
+    protected Analysis getAnalysis(final JDateDayRange pRange) {
+        /* Look for the existing analysis */
+        Analysis myAnalysis = get(pRange);
+        if (myAnalysis == null) {
+            /* Create the new event analysis */
+            myAnalysis = new Analysis(theAnalysis, pRange);
+            produceTotals(myAnalysis);
 
-        /* Store the data */
-        theData = pData;
+            /* Put it into the map */
+            put(pRange, myAnalysis);
+        }
+
+        /* return the analysis */
+        return myAnalysis;
+    }
+
+    /**
+     * Analyse the base analysis.
+     */
+    protected void analyseBase() {
+        /* Produce totals for the base analysis */
+        produceTotals(theAnalysis);
+    }
+
+    /**
+     * Produce Totals for an analysis.
+     * @param pAnalysis the analysis.
+     */
+    private void produceTotals(final Analysis pAnalysis) {
+        /* Access the lists */
+        AccountCategoryBucketList myAccountCategories = pAnalysis.getAccountCategories();
+        PayeeBucketList myPayees = pAnalysis.getPayees();
+        EventCategoryBucketList myEventCategories = pAnalysis.getEventCategories();
+
+        /* Calculate AccountCategory totals */
+        myAccountCategories.analyseAccounts(pAnalysis.getAccounts());
+        // myAccountCategories.analyseSecurities(pAnalysis.getSecurities());
+        myAccountCategories.produceTotals();
+
+        /* Calculate Payee totals */
+        myPayees.produceTotals();
+
+        /* Calculate EventCategory totals */
+        myEventCategories.produceTotals();
     }
 }

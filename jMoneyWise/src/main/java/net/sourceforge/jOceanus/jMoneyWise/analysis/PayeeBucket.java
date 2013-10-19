@@ -22,14 +22,16 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
-import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
@@ -45,24 +47,34 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 public final class PayeeBucket
         implements JDataContents, Comparable<PayeeBucket>, OrderedIdItem<Integer> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(PayeeBucket.class.getName());
+
+    /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBucket.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(Analysis.class.getSimpleName());
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAnalysis"));
 
     /**
-     * Account Field Id.
+     * Payee Field Id.
      */
-    private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityField(Account.class.getSimpleName());
+    private static final JDataField FIELD_PAYEE = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataPayee"));
 
     /**
      * Base Field Id.
      */
-    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField("Base");
+    private static final JDataField FIELD_BASE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataBaseValues"));
+
+    /**
+     * History Field Id.
+     */
+    private static final JDataField FIELD_HISTORY = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHistory"));
 
     /**
      * FieldSet map.
@@ -75,9 +87,9 @@ public final class PayeeBucket
     private final Analysis theAnalysis;
 
     /**
-     * The account.
+     * The payee.
      */
-    private final Account theAccount;
+    private final Account thePayee;
 
     /**
      * The dataSet.
@@ -85,19 +97,24 @@ public final class PayeeBucket
     private final FinanceData theData;
 
     /**
-     * The base.
+     * Values.
      */
-    private final PayeeBucket theBase;
+    private final PayeeValues theValues;
 
     /**
-     * Attribute Map.
+     * The base values.
      */
-    private final Map<PayeeAttribute, Object> theAttributes;
+    private final PayeeValues theBaseValues;
 
     /**
-     * SavePoint.
+     * Is the bucket idle.
      */
-    private final Map<PayeeAttribute, Object> theSavePoint;
+    private final Boolean isIdle;
+
+    /**
+     * History Map.
+     */
+    private final BucketHistory<PayeeValues> theHistory;
 
     @Override
     public JDataFields getDataFields() {
@@ -109,13 +126,14 @@ public final class PayeeBucket
         if (FIELD_ANALYSIS.equals(pField)) {
             return theAnalysis;
         }
-        if (FIELD_ACCOUNT.equals(pField)) {
-            return theAccount;
+        if (FIELD_PAYEE.equals(pField)) {
+            return thePayee;
+        }
+        if (FIELD_HISTORY.equals(pField)) {
+            return theHistory;
         }
         if (FIELD_BASE.equals(pField)) {
-            return (theBase != null)
-                    ? theBase
-                    : JDataFieldValue.SkipField;
+            return theBaseValues;
         }
 
         /* Handle Attribute fields */
@@ -143,28 +161,28 @@ public final class PayeeBucket
      * @return the name
      */
     public String getName() {
-        return theAccount.getName();
+        return thePayee.getName();
     }
 
     /**
-     * Obtain the account.
-     * @return the account
+     * Obtain the payee.
+     * @return the payee account
      */
-    public Account getAccount() {
-        return theAccount;
+    public Account getPayee() {
+        return thePayee;
     }
 
     @Override
     public Integer getOrderedId() {
-        return theAccount.getId();
+        return thePayee.getId();
     }
 
     /**
-     * Obtain the base.
-     * @return the base
+     * Is this bucket idle.
+     * @return true/false
      */
-    public PayeeBucket getBase() {
-        return theBase;
+    public Boolean isIdle() {
+        return isIdle;
     }
 
     /**
@@ -184,11 +202,27 @@ public final class PayeeBucket
     }
 
     /**
-     * Obtain the attribute map.
-     * @return the attribute map
+     * Obtain the value map.
+     * @return the value map
      */
-    protected Map<PayeeAttribute, Object> getAttributes() {
-        return theAttributes;
+    protected PayeeValues getValues() {
+        return theValues;
+    }
+
+    /**
+     * Obtain the base value map.
+     * @return the base value map
+     */
+    protected PayeeValues getBaseValues() {
+        return theBaseValues;
+    }
+
+    /**
+     * Obtain the history map.
+     * @return the history map
+     */
+    private BucketHistory<PayeeValues> getHistoryMap() {
+        return theHistory;
     }
 
     /**
@@ -196,10 +230,10 @@ public final class PayeeBucket
      * @param pAttr the attribute
      * @param pValue the value of the attribute
      */
-    protected void setAttribute(final PayeeAttribute pAttr,
-                                final Object pValue) {
-        /* Set the value into the list */
-        theAttributes.put(pAttr, pValue);
+    protected void setValue(final PayeeAttribute pAttr,
+                            final Object pValue) {
+        /* Set the value */
+        theValues.setValue(pAttr, pValue);
     }
 
     /**
@@ -209,7 +243,7 @@ public final class PayeeBucket
      */
     private Object getAttributeValue(final PayeeAttribute pAttr) {
         /* Access value of object */
-        Object myValue = getAttribute(pAttr);
+        Object myValue = getValue(pAttr);
 
         /* Return the value */
         return (myValue != null)
@@ -229,82 +263,110 @@ public final class PayeeBucket
 
     /**
      * Obtain an attribute value.
-     * @param <X> the data type
-     * @param pAttr the attribute
-     * @param pClass the class of the attribute
-     * @return the value of the attribute or null
-     */
-    private <X> X getAttribute(final PayeeAttribute pAttr,
-                               final Class<X> pClass) {
-        /* Obtain the attribute */
-        return pClass.cast(getAttribute(pAttr));
-    }
-
-    /**
-     * Obtain an attribute value.
      * @param pAttr the attribute
      * @return the value of the attribute or null
      */
-    private Object getAttribute(final PayeeAttribute pAttr) {
-        /* Obtain the attribute */
-        return theAttributes.get(pAttr);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JMoney getMoneyAttribute(final PayeeAttribute pAttr) {
-        /* Obtain the attribute */
-        return getAttribute(pAttr, JMoney.class);
-    }
-
-    /**
-     * Obtain an attribute value from the base.
-     * @param <X> the data type
-     * @param pAttr the attribute
-     * @param pClass the class of the attribute
-     * @return the value of the attribute or null
-     */
-    private <X extends JDecimal> X getBaseAttribute(final PayeeAttribute pAttr,
-                                                    final Class<X> pClass) {
-        /* Obtain the attribute */
-        return (theBase == null)
-                ? null
-                : theBase.getAttribute(pAttr, pClass);
-    }
-
-    /**
-     * Obtain a money attribute value.
-     * @param pAttr the attribute
-     * @return the value of the attribute or null
-     */
-    public JMoney getBaseMoneyAttribute(final PayeeAttribute pAttr) {
-        /* Obtain the attribute */
-        return getBaseAttribute(pAttr, JMoney.class);
+    private Object getValue(final PayeeAttribute pAttr) {
+        /* Obtain the value */
+        return theValues.get(pAttr);
     }
 
     /**
      * Constructor.
      * @param pAnalysis the analysis
-     * @param pAccount the account
+     * @param pPayee the payee
      */
     private PayeeBucket(final Analysis pAnalysis,
-                        final Account pAccount) {
+                        final Account pPayee) {
         /* Store the details */
-        theAccount = pAccount;
+        thePayee = pPayee;
         theAnalysis = pAnalysis;
         theData = theAnalysis.getData();
-        theBase = null;
 
-        /* Create the attribute map and savePoint */
-        theAttributes = new EnumMap<PayeeAttribute, Object>(PayeeAttribute.class);
-        theSavePoint = new EnumMap<PayeeAttribute, Object>(PayeeAttribute.class);
+        /* Create the values map */
+        theValues = new PayeeValues();
+        theBaseValues = new PayeeValues();
+        isIdle = false;
 
-        /* Initialise income/expense to zero */
-        setAttribute(PayeeAttribute.Income, new JMoney());
-        setAttribute(PayeeAttribute.Expense, new JMoney());
+        /* Create the history map */
+        theHistory = new BucketHistory<PayeeValues>();
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pDate the date for the bucket
+     */
+    private PayeeBucket(final Analysis pAnalysis,
+                        final PayeeBucket pBase,
+                        final JDateDay pDate) {
+        /* Copy details from base */
+        thePayee = pBase.getPayee();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Reference the underlying history */
+        theHistory = pBase.getHistoryMap();
+
+        /* Copy base values from source */
+        theBaseValues = pBase.getBaseValues().getSnapShot();
+
+        /* Obtain values for date */
+        PayeeValues myValues = theHistory.getValuesForDate(pDate);
+
+        /* Determine values */
+        isIdle = (myValues == null);
+        theValues = (isIdle)
+                ? theBaseValues.getSnapShot()
+                : myValues;
+    }
+
+    /**
+     * Constructor.
+     * @param pAnalysis the analysis
+     * @param pBase the underlying bucket
+     * @param pRange the range for the bucket
+     */
+    private PayeeBucket(final Analysis pAnalysis,
+                        final PayeeBucket pBase,
+                        final JDateDayRange pRange) {
+        /* Copy details from base */
+        thePayee = pBase.getPayee();
+        theAnalysis = pAnalysis;
+        theData = theAnalysis.getData();
+
+        /* Reference the underlying history */
+        theHistory = pBase.getHistoryMap();
+
+        /* Obtain values for range */
+        PayeeValues[] myArray = theHistory.getValuesForRange(pRange);
+
+        /* If no activity took place up to this date */
+        if (myArray == null) {
+            /* Use base values and note idleness */
+            theValues = pBase.getBaseValues().getSnapShot();
+            theBaseValues = theValues.getSnapShot();
+            isIdle = true;
+
+            /* else we have values */
+        } else {
+            /* Determine base values */
+            PayeeValues myFirst = myArray[0];
+            theBaseValues = (myFirst == null)
+                    ? pBase.getBaseValues().getSnapShot()
+                    : myFirst;
+
+            /* Determine values */
+            PayeeValues myValues = myArray[1];
+            isIdle = (myValues == null);
+            theValues = (isIdle)
+                    ? theBaseValues.getSnapShot()
+                    : myValues;
+        }
+
+        /* Adjust to base values */
+        adjustToBaseValues();
     }
 
     @Override
@@ -317,8 +379,8 @@ public final class PayeeBucket
             return -1;
         }
 
-        /* Compare the Accounts */
-        return getAccount().compareTo(pThat.getAccount());
+        /* Compare the Payees */
+        return getPayee().compareTo(pThat.getPayee());
     }
 
     @Override
@@ -336,12 +398,30 @@ public final class PayeeBucket
 
         /* Compare the Accounts */
         PayeeBucket myThat = (PayeeBucket) pThat;
-        return getAccount().equals(myThat.getAccount());
+        return getPayee().equals(myThat.getPayee());
     }
 
     @Override
     public int hashCode() {
-        return getAccount().hashCode();
+        return getPayee().hashCode();
+    }
+
+    /**
+     * Obtain new Income value.
+     * @return the new income value
+     */
+    private JMoney getNewIncome() {
+        JMoney myIncome = theValues.getMoneyValue(PayeeAttribute.Income);
+        return new JMoney(myIncome);
+    }
+
+    /**
+     * Obtain new Expense value.
+     * @return the new expense value
+     */
+    private JMoney getNewExpense() {
+        JMoney myExpense = theValues.getMoneyValue(PayeeAttribute.Expense);
+        return new JMoney(myExpense);
     }
 
     /**
@@ -351,27 +431,45 @@ public final class PayeeBucket
     protected void adjustForDebit(final Event pEvent) {
         /* Analyse the event */
         TransactionType myCatTran = TransactionType.deriveType(pEvent.getCategory());
+        JMoney myIncome = null;
+        JMoney myExpense = null;
 
-        /* Access values */
-        JMoney myIncome = getMoneyAttribute(PayeeAttribute.Income);
-        JMoney myExpense = getMoneyAttribute(PayeeAttribute.Expense);
-        if (myCatTran.isExpense()) {
-            myExpense.subtractAmount(pEvent.getAmount());
-        } else {
-            myIncome.addAmount(pEvent.getAmount());
+        /* Access amount */
+        JMoney myAmount = pEvent.getAmount();
+        if (myAmount.isNonZero()) {
+            /* If this is a refunded expense */
+            if (myCatTran.isExpense()) {
+                /* Update the expense */
+                myExpense = getNewExpense();
+                myExpense.subtractAmount(pEvent.getAmount());
+
+                /* else this is an income */
+            } else {
+                /* Update the income */
+                myIncome = getNewIncome();
+                myIncome.addAmount(pEvent.getAmount());
+            }
         }
 
-        /* If there is a TaxCredit */
+        /* If there is a non-zero TaxCredit */
         JMoney myTaxCred = pEvent.getTaxCredit();
-        if (myTaxCred != null) {
+        if ((myTaxCred != null)
+            && (myTaxCred.isNonZero())) {
             /* Adjust for Tax Credit */
+            if (myIncome == null) {
+                myIncome = getNewIncome();
+            }
             myIncome.addAmount(myTaxCred);
         }
 
         /* If there is National Insurance */
         JMoney myNatIns = pEvent.getNatInsurance();
-        if (myNatIns != null) {
+        if ((myNatIns != null)
+            && (myNatIns.isNonZero())) {
             /* Adjust for National Insurance */
+            if (myIncome == null) {
+                myIncome = getNewIncome();
+            }
             myIncome.addAmount(myNatIns);
         }
 
@@ -379,9 +477,26 @@ public final class PayeeBucket
         JMoney myDonation = pEvent.getCharityDonation();
         if (myDonation != null) {
             /* Adjust for Charity Donation */
+            if (myIncome == null) {
+                myIncome = getNewIncome();
+            }
+            if (myExpense == null) {
+                myExpense = getNewExpense();
+            }
             myIncome.addAmount(myDonation);
             myExpense.addAmount(myDonation);
         }
+
+        /* Set new values */
+        if (myIncome != null) {
+            setValue(PayeeAttribute.Income, myIncome);
+        }
+        if (myExpense != null) {
+            setValue(PayeeAttribute.Expense, myExpense);
+        }
+
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**
@@ -389,8 +504,35 @@ public final class PayeeBucket
      * @param pEvent the event causing the credit
      */
     protected void adjustForCredit(final Event pEvent) {
-        JMoney myExpense = getMoneyAttribute(PayeeAttribute.Expense);
-        myExpense.addAmount(pEvent.getAmount());
+        /* Access amount */
+        JMoney myAmount = pEvent.getAmount();
+        if (myAmount.isNonZero()) {
+            /* Update the expense */
+            JMoney myExpense = getNewExpense();
+            myExpense.addAmount(myAmount);
+            setValue(PayeeAttribute.Expense, myExpense);
+        }
+
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
+    }
+
+    /**
+     * Adjust account for credit.
+     * @param pEvent the event causing the credit
+     */
+    protected void adjustForTaxCredit(final Event pEvent) {
+        /* Access amount */
+        JMoney myAmount = pEvent.getTaxCredit();
+        if (myAmount.isNonZero()) {
+            /* Update the expense */
+            JMoney myIncome = getNewIncome();
+            myIncome.addAmount(myAmount);
+            setValue(PayeeAttribute.Income, myIncome);
+        }
+
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**
@@ -398,15 +540,32 @@ public final class PayeeBucket
      * @param pEvent the event causing the payments
      */
     protected void adjustForTaxPayments(final Event pEvent) {
-        JMoney myExpense = getMoneyAttribute(PayeeAttribute.Expense);
-        JMoney myTaxCredit = pEvent.getTaxCredit();
-        JMoney myNatInsurance = pEvent.getNatInsurance();
-        if (myTaxCredit != null) {
-            myExpense.addAmount(myTaxCredit);
+        JMoney myExpense = null;
+
+        /* Adjust for Tax credit */
+        JMoney myTaxCred = pEvent.getTaxCredit();
+        if ((myTaxCred != null)
+            && (myTaxCred.isNonZero())) {
+            myExpense = getNewExpense();
+            myExpense.addAmount(myTaxCred);
         }
-        if (myNatInsurance != null) {
-            myExpense.addAmount(myNatInsurance);
+
+        /* Adjust for national insurance */
+        JMoney myNatIns = pEvent.getNatInsurance();
+        if (myNatIns != null) {
+            if (myExpense == null) {
+                myExpense = getNewExpense();
+            }
+            myExpense.addAmount(myNatIns);
         }
+
+        /* Set new values */
+        if (myExpense != null) {
+            setValue(PayeeAttribute.Expense, myExpense);
+        }
+
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**
@@ -414,8 +573,12 @@ public final class PayeeBucket
      * @param pValue the value to add
      */
     protected void addIncome(final JMoney pValue) {
-        JMoney myIncome = getMoneyAttribute(PayeeAttribute.Income);
-        myIncome.addAmount(pValue);
+        /* Only adjust on non-zero */
+        if (pValue.isNonZero()) {
+            JMoney myIncome = getNewIncome();
+            myIncome.addAmount(pValue);
+            setValue(PayeeAttribute.Income, myIncome);
+        }
     }
 
     /**
@@ -423,8 +586,26 @@ public final class PayeeBucket
      * @param pValue the value to subtract
      */
     protected void subtractIncome(final JMoney pValue) {
-        JMoney myIncome = getMoneyAttribute(PayeeAttribute.Income);
-        myIncome.subtractAmount(pValue);
+        /* Only adjust on non-zero */
+        if (pValue.isNonZero()) {
+            JMoney myIncome = getNewIncome();
+            myIncome.subtractAmount(pValue);
+            setValue(PayeeAttribute.Income, myIncome);
+        }
+    }
+
+    /**
+     * Add expense value.
+     * @param pEvent the event causing the expense
+     * @param pValue the value to add
+     */
+    protected void addExpense(final Event pEvent,
+                              final JMoney pValue) {
+        /* Add the expense */
+        addExpense(pValue);
+
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**
@@ -432,8 +613,26 @@ public final class PayeeBucket
      * @param pValue the value to add
      */
     protected void addExpense(final JMoney pValue) {
-        JMoney myExpense = getMoneyAttribute(PayeeAttribute.Expense);
-        myExpense.addAmount(pValue);
+        /* Only adjust on non-zero */
+        if (pValue.isNonZero()) {
+            JMoney myExpense = getNewExpense();
+            myExpense.addAmount(pValue);
+            setValue(PayeeAttribute.Expense, myExpense);
+        }
+    }
+
+    /**
+     * Subtract expense value.
+     * @param pEvent the event causing the expense
+     * @param pValue the value to subtract
+     */
+    protected void subtractExpense(final Event pEvent,
+                                   final JMoney pValue) {
+        /* Subtract the expense */
+        subtractExpense(pValue);
+
+        /* Register the event in the history */
+        theHistory.registerEvent(pEvent, theValues);
     }
 
     /**
@@ -441,48 +640,48 @@ public final class PayeeBucket
      * @param pValue the value to subtract
      */
     protected void subtractExpense(final JMoney pValue) {
-        JMoney myExpense = getMoneyAttribute(PayeeAttribute.Expense);
-        myExpense.subtractAmount(pValue);
-    }
-
-    /**
-     * Create a save point.
-     */
-    protected void createSavePoint() {
-        /* Copy attribute map to SavePoint */
-        copyMap(theAttributes, theSavePoint);
-    }
-
-    /**
-     * Restore a Save Point.
-     * @param pDate the date to restore.
-     */
-    protected void restoreSavePoint(final JDateDay pDate) {
-        /* Copy attribute map to SavePoint */
-        copyMap(theSavePoint, theAttributes);
-    }
-
-    /**
-     * Copy a map.
-     * @param pSource the source map
-     * @param pTarget the target map
-     */
-    protected void copyMap(final Map<PayeeAttribute, Object> pSource,
-                           final Map<PayeeAttribute, Object> pTarget) {
-        /* Clear the target map */
-        pTarget.clear();
-
-        /* For each entry in the source map */
-        for (Map.Entry<PayeeAttribute, Object> myEntry : pSource.entrySet()) {
-            /* Access key and object */
-            PayeeAttribute myAttr = myEntry.getKey();
-            Object myObject = myEntry.getValue();
-
-            /* Create copy of object in map */
-            if (myObject instanceof JMoney) {
-                pTarget.put(myAttr, new JMoney((JMoney) myObject));
-            }
+        /* Only adjust on non-zero */
+        if (pValue.isNonZero()) {
+            JMoney myExpense = getNewExpense();
+            myExpense.subtractAmount(pValue);
+            setValue(PayeeAttribute.Expense, myExpense);
         }
+    }
+
+    /**
+     * Adjust to Base values.
+     */
+    private void adjustToBaseValues() {
+        /* Adjust income values */
+        JMoney myValue = getNewIncome();
+        JMoney myBaseValue = theBaseValues.getMoneyValue(PayeeAttribute.Income);
+        myValue.subtractAmount(myBaseValue);
+        theBaseValues.put(PayeeAttribute.Income, null);
+
+        /* Adjust expense values */
+        myValue = getNewExpense();
+        myBaseValue = theBaseValues.getMoneyValue(PayeeAttribute.Expense);
+        myValue.subtractAmount(myBaseValue);
+        theBaseValues.put(PayeeAttribute.Expense, null);
+    }
+
+    /**
+     * Add bucket to totals.
+     * @param pSource the bucket to add
+     */
+    private void addValues(final PayeeBucket pSource) {
+        /* Access source values */
+        PayeeValues mySource = pSource.getValues();
+
+        /* Add income values */
+        JMoney myValue = theValues.getMoneyValue(PayeeAttribute.Income);
+        JMoney mySrcValue = mySource.getMoneyValue(PayeeAttribute.Income);
+        myValue.addAmount(mySrcValue);
+
+        /* Add expense values */
+        myValue = theValues.getMoneyValue(PayeeAttribute.Expense);
+        mySrcValue = mySource.getMoneyValue(PayeeAttribute.Expense);
+        myValue.addAmount(mySrcValue);
     }
 
     /**
@@ -490,48 +689,67 @@ public final class PayeeBucket
      */
     private void calculateDelta() {
         /* Obtain a copy of the value */
-        JMoney myDelta = new JMoney(getMoneyAttribute(PayeeAttribute.Income));
+        JMoney myDelta = getNewIncome();
 
         /* Subtract the expense value */
-        myDelta.subtractAmount(getMoneyAttribute(PayeeAttribute.Expense));
+        JMoney myExpense = theValues.getMoneyValue(PayeeAttribute.Expense);
+        myDelta.subtractAmount(myExpense);
 
         /* Set the delta */
-        setAttribute(PayeeAttribute.IncomeDelta, myDelta);
+        setValue(PayeeAttribute.Delta, myDelta);
     }
 
     /**
-     * analyse bucket.
-     * @param pDate the date for analysis
+     * PayeeValues class.
      */
-    protected void analyseBucket(final JDateDay pDate) {
-        calculateDelta();
-    }
+    public final class PayeeValues
+            extends BucketValues<PayeeValues, PayeeAttribute> {
+        /**
+         * SerialId.
+         */
+        private static final long serialVersionUID = -8908601440676932099L;
 
-    /**
-     * Is the bucket active?
-     * @return true/false
-     */
-    public boolean isActive() {
-        JMoney myIncome = getMoneyAttribute(PayeeAttribute.Income);
-        JMoney myExpense = getMoneyAttribute(PayeeAttribute.Expense);
-        if ((myIncome != null)
-            && (myIncome.isNonZero())) {
-            return true;
+        /**
+         * Constructor.
+         */
+        private PayeeValues() {
+            /* Initialise class */
+            super(PayeeAttribute.class);
+
+            /* Initialise income/expense to zero */
+            put(PayeeAttribute.Income, new JMoney());
+            put(PayeeAttribute.Expense, new JMoney());
         }
-        return ((myExpense != null) && (myExpense.isNonZero()));
-    }
 
-    /**
-     * Is the bucket relevant? That is to say is either this bucket or it's base active?
-     * @return true/false
-     */
-    public boolean isRelevant() {
-        /* Relevant if this value or the previous value is non-zero */
-        if (isActive()) {
-            return true;
+        /**
+         * Constructor.
+         * @param pSource the source map.
+         */
+        private PayeeValues(final PayeeValues pSource) {
+            /* Initialise class */
+            super(pSource);
         }
-        return (theBase != null)
-               && (theBase.isActive());
+
+        @Override
+        protected PayeeValues getSnapShot() {
+            return new PayeeValues(this);
+        }
+
+        @Override
+        protected PayeeValues[] getSnapShotArray() {
+            /* Allocate the array and return it */
+            return new PayeeValues[2];
+        }
+
+        /**
+         * Are the values?
+         * @return true/false
+         */
+        public boolean isActive() {
+            JMoney myIncome = getMoneyValue(PayeeAttribute.Income);
+            JMoney myExpense = getMoneyValue(PayeeAttribute.Expense);
+            return ((myIncome.isNonZero()) || (myExpense.isNonZero()));
+        }
     }
 
     /**
@@ -544,7 +762,7 @@ public final class PayeeBucket
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(PayeeBucketList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
 
         @Override
         public JDataFields getDataFields() {
@@ -562,12 +780,17 @@ public final class PayeeBucket
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
         /**
          * Analysis field Id.
          */
-        public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
+
+        /**
+         * Totals field Id.
+         */
+        private static final JDataField FIELD_TOTALS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTotals"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {
@@ -576,6 +799,9 @@ public final class PayeeBucket
             }
             if (FIELD_ANALYSIS.equals(pField)) {
                 return theAnalysis;
+            }
+            if (FIELD_TOTALS.equals(pField)) {
+                return theTotals;
             }
             return JDataFieldValue.UnknownField;
         }
@@ -586,12 +812,98 @@ public final class PayeeBucket
         private final Analysis theAnalysis;
 
         /**
+         * The totals.
+         */
+        private final PayeeBucket theTotals;
+
+        /**
+         * Obtain the Totals.
+         * @return the totals
+         */
+        public PayeeBucket getTotals() {
+            return theTotals;
+        }
+
+        /**
          * Construct a top-level List.
          * @param pAnalysis the analysis
          */
         public PayeeBucketList(final Analysis pAnalysis) {
+            /* Initialise class */
             super(PayeeBucket.class);
             theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+        }
+
+        /**
+         * Construct a dated List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         * @param pDate the Date
+         */
+        public PayeeBucketList(final Analysis pAnalysis,
+                               final PayeeBucketList pBase,
+                               final JDateDay pDate) {
+            /* Initialise class */
+            super(PayeeBucket.class);
+            theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+
+            /* Loop through the buckets */
+            Iterator<PayeeBucket> myIterator = pBase.listIterator();
+            while (myIterator.hasNext()) {
+                PayeeBucket myCurr = myIterator.next();
+
+                /* Access the bucket for this date */
+                PayeeBucket myBucket = new PayeeBucket(pAnalysis, myCurr, pDate);
+
+                /* If the bucket is non-idle */
+                if (!myBucket.isIdle()) {
+                    /* Calculate the delta and add to the list */
+                    myBucket.calculateDelta();
+                    append(myBucket);
+                }
+            }
+        }
+
+        /**
+         * Construct a ranged List.
+         * @param pAnalysis the analysis
+         * @param pBase the base list
+         * @param pRange the Date Range
+         */
+        public PayeeBucketList(final Analysis pAnalysis,
+                               final PayeeBucketList pBase,
+                               final JDateDayRange pRange) {
+            /* Initialise class */
+            super(PayeeBucket.class);
+            theAnalysis = pAnalysis;
+            theTotals = allocateTotalsBucket();
+
+            /* Loop through the buckets */
+            Iterator<PayeeBucket> myIterator = pBase.listIterator();
+            while (myIterator.hasNext()) {
+                PayeeBucket myCurr = myIterator.next();
+
+                /* Access the bucket for this range */
+                PayeeBucket myBucket = new PayeeBucket(pAnalysis, myCurr, pRange);
+
+                /* If the bucket is non-idle */
+                if (!myBucket.isIdle()) {
+                    /* Calculate the delta and add to the list */
+                    myBucket.calculateDelta();
+                    append(myBucket);
+                }
+            }
+        }
+
+        /**
+         * Allocate the Totals PayeeBucket.
+         * @return the bucket
+         */
+        private PayeeBucket allocateTotalsBucket() {
+            /* Obtain the totals payee */
+            return new PayeeBucket(theAnalysis, null);
         }
 
         /**
@@ -620,6 +932,25 @@ public final class PayeeBucket
             /* Return the bucket */
             return myItem;
         }
+
+        /**
+         * Produce totals for the Payees.
+         */
+        protected void produceTotals() {
+            /* Loop through the buckets */
+            Iterator<PayeeBucket> myIterator = listIterator();
+            while (myIterator.hasNext()) {
+                PayeeBucket myCurr = myIterator.next();
+
+                /* Add to totals bucket */
+                theTotals.addValues(myCurr);
+            }
+
+            /* Calculate delta for the totals */
+            if (theTotals != null) {
+                theTotals.calculateDelta();
+            }
+        }
     }
 
     /**
@@ -637,8 +968,8 @@ public final class PayeeBucket
         Expense,
 
         /**
-         * Income Delta.
+         * Delta.
          */
-        IncomeDelta;
+        Delta;
     }
 }

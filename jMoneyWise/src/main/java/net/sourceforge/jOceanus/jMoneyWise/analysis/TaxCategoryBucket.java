@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jMoneyWise.analysis;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -33,7 +34,6 @@ import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
 import net.sourceforge.jOceanus.jDecimal.JDecimal;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jDecimal.JRate;
-import net.sourceforge.jOceanus.jMoneyWise.analysis.EventCategoryBucket.EventAttribute;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
 import net.sourceforge.jOceanus.jMoneyWise.data.TaxYear;
 import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxCategory;
@@ -48,29 +48,34 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 public final class TaxCategoryBucket
         implements JDataContents, Comparable<TaxCategoryBucket>, OrderedIdItem<Integer> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxCategoryBucket.class.getName());
+
+    /**
      * Local Report fields.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(TaxCategoryBucket.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Analysis Field Id.
      */
-    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(Analysis.class.getSimpleName());
+    private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataAnalysis"));
 
     /**
      * Tax Category Field Id.
      */
-    private static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(TaxCategory.class.getSimpleName());
+    private static final JDataField FIELD_TAXCAT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataCategory"));
 
     /**
      * Tax Section Field Id.
      */
-    private static final JDataField FIELD_TAXSECT = FIELD_DEFS.declareEqualityField(TaxCategorySection.class.getSimpleName());
+    private static final JDataField FIELD_TAXSECT = FIELD_DEFS.declareEqualityField(NLS_BUNDLE.getString("DataSection"));
 
     /**
      * Parent Field Id.
      */
-    private static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField("Parent");
+    private static final JDataField FIELD_PARENT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataParent"));
 
     /**
      * FieldSet map.
@@ -402,8 +407,8 @@ public final class TaxCategoryBucket
      */
     protected void addIncome(final EventCategoryBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Income));
+        // JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
+        // myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Income));
     }
 
     /**
@@ -412,8 +417,8 @@ public final class TaxCategoryBucket
      */
     protected void subtractIncome(final EventCategoryBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        myAmount.subtractAmount(pBucket.getMoneyAttribute(EventAttribute.Income));
+        // JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
+        // myAmount.subtractAmount(pBucket.getMoneyAttribute(EventAttribute.Income));
     }
 
     /**
@@ -422,8 +427,8 @@ public final class TaxCategoryBucket
      */
     protected void addExpense(final EventCategoryBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Expense));
+        // JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
+        // myAmount.addAmount(pBucket.getMoneyAttribute(EventAttribute.Expense));
     }
 
     /**
@@ -432,8 +437,8 @@ public final class TaxCategoryBucket
      */
     protected void subtractExpense(final EventCategoryBucket pBucket) {
         /* Adjust the value */
-        JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
-        myAmount.subtractAmount(pBucket.getMoneyAttribute(EventAttribute.Expense));
+        // JMoney myAmount = getMoneyAttribute(TaxAttribute.Amount);
+        // myAmount.subtractAmount(pBucket.getMoneyAttribute(EventAttribute.Expense));
     }
 
     /**
@@ -466,7 +471,7 @@ public final class TaxCategoryBucket
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxCategoryBucketList.class.getSimpleName());
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"));
 
         @Override
         public JDataFields getDataFields() {
@@ -484,32 +489,32 @@ public final class TaxCategoryBucket
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSize"));
 
         /**
          * Analysis field Id.
          */
-        public static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField("Analysis");
+        private static final JDataField FIELD_ANALYSIS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAnalysis"));
 
         /**
          * TaxYear Field Id.
          */
-        public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField("TaxYear");
+        private static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataYear"));
 
         /**
          * Age Field Id.
          */
-        public static final JDataField FIELD_AGE = FIELD_DEFS.declareLocalField("Age");
+        private static final JDataField FIELD_AGE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAge"));
 
         /**
          * GainsSlices Field Id.
          */
-        public static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField("GainsSlices");
+        private static final JDataField FIELD_GAINS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSlices"));
 
         /**
          * ReducedAllowance Field Id.
          */
-        public static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField("ReducedAllowances");
+        private static final JDataField FIELD_ALLOW = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAllow"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

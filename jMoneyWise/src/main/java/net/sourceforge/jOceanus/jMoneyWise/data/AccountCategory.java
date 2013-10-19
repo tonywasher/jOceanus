@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -67,34 +68,49 @@ public class AccountCategory
     public static final int DESCLEN = 50;
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AccountCategory.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountCategory.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField("Name");
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCatName"));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
 
     /**
      * Category Type Field Id.
      */
-    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(AccountCategoryType.class.getSimpleName());
+    public static final JDataField FIELD_CATTYPE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCatType"));
 
     /**
      * Parent Category Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField("Parent");
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataParent"));
 
     /**
      * SubCategory Field Id.
      */
-    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField("SubCategory");
+    public static final JDataField FIELD_SUBCAT = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataSubCat"));
+
+    /**
+     * Multiple instances Error.
+     */
+    private static final String ERROR_MULT = NLS_BUNDLE.getString("ErrorMultiple");
+
+    /**
+     * Invalid Parent Error.
+     */
+    private static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
 
     @Override
     public JDataFields declareFields() {
@@ -503,7 +519,7 @@ public class AccountCategory
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -542,7 +558,7 @@ public class AccountCategory
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -752,7 +768,7 @@ public class AccountCategory
                 /* Count the elements of this class */
                 int myCount = myList.countInstances(myClass);
                 if (myCount > 1) {
-                    addError("Multiple instances of singular class", FIELD_CATTYPE);
+                    addError(ERROR_MULT, FIELD_CATTYPE);
                 }
             }
 
@@ -761,7 +777,7 @@ public class AccountCategory
                 case Totals:
                     /* If parent exists */
                     if (myParent != null) {
-                        addError("Totals AccountCategory cannot have parent", FIELD_PARENT);
+                        addError(ERROR_EXIST, FIELD_PARENT);
                     }
                     break;
                 case SavingsTotals:
@@ -770,17 +786,17 @@ public class AccountCategory
                 case LoanTotals:
                     /* Check parent */
                     if (myParent == null) {
-                        addError("AccountCategory must have parent", FIELD_PARENT);
+                        addError(ERROR_MISSING, FIELD_PARENT);
                     } else if (!myParent.isCategoryClass(AccountCategoryClass.Totals)) {
-                        addError("SubTotals AccountCategory must have Totals parent", FIELD_PARENT);
+                        addError(ERROR_BADPARENT, FIELD_PARENT);
                     }
                     break;
                 default:
                     /* Check parent */
                     if (myParent == null) {
-                        addError("AccountCategory must have parent", FIELD_PARENT);
+                        addError(ERROR_MISSING, FIELD_PARENT);
                     } else if (myParent.getCategoryTypeClass() != myClass.getParentClass()) {
-                        addError("AccountCategory must have valid parent", FIELD_PARENT);
+                        addError(ERROR_BADPARENT, FIELD_PARENT);
                     }
                     break;
             }
@@ -840,7 +856,7 @@ public class AccountCategory
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountCategoryList.class.getSimpleName(), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

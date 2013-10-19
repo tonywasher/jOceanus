@@ -42,9 +42,9 @@ import net.sourceforge.jOceanus.jSortedList.OrderedIdList;
 public final class ChargeableEvent
         implements OrderedIdItem<Integer>, JDataContents, Comparable<ChargeableEvent> {
     /**
-     * Report fields.
+     * Local Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ChargeableEvent.class.getSimpleName());
+    private static final JDataFields FIELD_DEFS = new JDataFields(ChargeableEvent.class.getName());
 
     @Override
     public JDataFields getDataFields() {
@@ -248,8 +248,9 @@ public final class ChargeableEvent
     }
 
     /**
-     * Apply taxation of total slice to the individual events. This tax is first split proportionally among the slices and then multiplied by the years of each
-     * individual event
+     * Apply taxation of total slice to the individual events.
+     * <p>
+     * This tax is first split proportionally among the slices and then multiplied by the years of each individual event
      * @param pTax the calculated taxation for the slice
      * @param pTotal the slice total of the event list
      */
@@ -290,7 +291,7 @@ public final class ChargeableEvent
         /**
          * Size Field Id.
          */
-        public static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
+        private static final JDataField FIELD_SIZE = FIELD_DEFS.declareLocalField("Size");
 
         @Override
         public Object getFieldValue(final JDataField pField) {

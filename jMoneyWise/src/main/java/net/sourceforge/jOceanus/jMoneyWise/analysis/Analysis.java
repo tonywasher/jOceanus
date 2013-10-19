@@ -23,15 +23,19 @@
 package net.sourceforge.jOceanus.jMoneyWise.analysis;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataContents;
 import net.sourceforge.jOceanus.jDataManager.JDataObject.JDataFieldValue;
+import net.sourceforge.jOceanus.jDateDay.JDateDay;
+import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDecimal.JMoney;
 import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountBucket.AccountBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.analysis.AccountCategoryBucket.AccountCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.analysis.ChargeableEvent.ChargeableEventList;
+import net.sourceforge.jOceanus.jMoneyWise.analysis.DilutionEvent.DilutionEventList;
 import net.sourceforge.jOceanus.jMoneyWise.analysis.EventCategoryBucket.EventCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.analysis.InvestmentAnalysis.InvestmentAnalysisList;
 import net.sourceforge.jOceanus.jMoneyWise.analysis.PayeeBucket.PayeeBucketList;
@@ -39,10 +43,7 @@ import net.sourceforge.jOceanus.jMoneyWise.analysis.SecurityBucket.SecurityBucke
 import net.sourceforge.jOceanus.jMoneyWise.analysis.TaxCategoryBucket.TaxCategoryBucketList;
 import net.sourceforge.jOceanus.jMoneyWise.data.Account;
 import net.sourceforge.jOceanus.jMoneyWise.data.Event;
-import net.sourceforge.jOceanus.jMoneyWise.data.EventCategory;
 import net.sourceforge.jOceanus.jMoneyWise.data.FinanceData;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountCategoryClass;
-import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 
 /**
  * Data Analysis.
@@ -51,9 +52,14 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventCategoryClass;
 public class Analysis
         implements JDataContents {
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(Analysis.class.getSimpleName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Analysis.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     @Override
     public JDataFields getDataFields() {
@@ -61,42 +67,55 @@ public class Analysis
     }
 
     /**
+     * Range Field Id.
+     */
+    private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataRange"));
+
+    /**
      * AccountBuckets Field Id.
      */
-    public static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField("Accounts");
+    private static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAccounts"));
 
     /**
      * SecurityBuckets Field Id.
      */
-    public static final JDataField FIELD_SECURITIES = FIELD_DEFS.declareLocalField("Securities");
+    private static final JDataField FIELD_SECURITIES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataSecurities"));
 
     /**
      * PayeeBuckets Field Id.
      */
-    public static final JDataField FIELD_PAYEES = FIELD_DEFS.declareLocalField("Payees");
+    private static final JDataField FIELD_PAYEES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPayees"));
 
     /**
      * AccountCategoryBuckets Field Id.
      */
-    public static final JDataField FIELD_ACTCATS = FIELD_DEFS.declareLocalField("AccountCategories");
+    private static final JDataField FIELD_ACTCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAccountCat"));
 
     /**
      * EventCategoryBuckets Field Id.
      */
-    public static final JDataField FIELD_EVTCATS = FIELD_DEFS.declareLocalField("EventCategories");
+    private static final JDataField FIELD_EVTCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEventCat"));
 
     /**
      * TaxCategoryBuckets Field Id.
      */
-    public static final JDataField FIELD_TAXCATS = FIELD_DEFS.declareLocalField("TaxCategories");
+    private static final JDataField FIELD_TAXCATS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxCat"));
 
     /**
      * Charges Field Id.
      */
-    public static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField("Charges");
+    private static final JDataField FIELD_CHARGES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCharges"));
+
+    /**
+     * Dilutions Field Id.
+     */
+    private static final JDataField FIELD_DILUTIONS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDilutions"));
 
     @Override
     public Object getFieldValue(final JDataField pField) {
+        if (FIELD_RANGE.equals(pField)) {
+            return theDateRange;
+        }
         if (FIELD_ACCOUNTS.equals(pField)) {
             return (theAccounts.size() > 0)
                     ? theAccounts
@@ -113,7 +132,7 @@ public class Analysis
                     : JDataFieldValue.SkipField;
         }
         if (FIELD_ACTCATS.equals(pField)) {
-            return (theAccountCategories.size() > 0)
+            return ((theAccountCategories != null) && (theAccountCategories.size() > 0))
                     ? theAccountCategories
                     : JDataFieldValue.SkipField;
         }
@@ -132,6 +151,11 @@ public class Analysis
                     ? theCharges
                     : JDataFieldValue.SkipField;
         }
+        if (FIELD_DILUTIONS.equals(pField)) {
+            return (theDilutions.size() > 0)
+                    ? theDilutions
+                    : JDataFieldValue.SkipField;
+        }
 
         /* Unknown */
         return JDataFieldValue.UnknownField;
@@ -146,6 +170,11 @@ public class Analysis
      * The DataSet.
      */
     private final FinanceData theData;
+
+    /**
+     * The DataRange.
+     */
+    private final JDateDayRange theDateRange;
 
     /**
      * The account buckets.
@@ -183,11 +212,32 @@ public class Analysis
     private final ChargeableEventList theCharges;
 
     /**
+     * The dilutions.
+     */
+    private final DilutionEventList theDilutions;
+
+    /**
      * Obtain the data.
      * @return the data
      */
     public FinanceData getData() {
         return theData;
+    }
+
+    /**
+     * Obtain the date range.
+     * @return the date range
+     */
+    public JDateDayRange getDateRange() {
+        return theDateRange;
+    }
+
+    /**
+     * Is this a ranged analysis?
+     * @return true/false
+     */
+    public boolean isRangedAnalysis() {
+        return (theDateRange.getStart() == null);
     }
 
     /**
@@ -247,24 +297,84 @@ public class Analysis
     }
 
     /**
-     * Constructor for a dated analysis.
+     * Obtain the dilutions.
+     * @return the dilutions
+     */
+    public DilutionEventList getDilutions() {
+        return theDilutions;
+    }
+
+    /**
+     * Constructor for a full analysis.
      * @param pData the data to analyse events for
      */
-    public Analysis(final FinanceData pData) {
+    protected Analysis(final FinanceData pData) {
         /* Store the data */
         theData = pData;
+        theDateRange = theData.getDateRange();
 
         /* Create a new set of buckets */
         theAccounts = new AccountBucketList(this);
         theSecurities = new SecurityBucketList(this);
         thePayees = new PayeeBucketList(this);
-        theAccountCategories = new AccountCategoryBucketList(this);
         theEventCategories = new EventCategoryBucketList(this);
-        theCharges = new ChargeableEventList();
+        theAccountCategories = new AccountCategoryBucketList(this);
         theTaxCategories = null;
+
+        /* Create the Dilution/Chargeable Event List */
+        theCharges = new ChargeableEventList();
+        theDilutions = new DilutionEventList(theData);
 
         /* Add opening balances */
         addOpeningBalances();
+    }
+
+    /**
+     * Constructor for a dated analysis.
+     * @param pSource the base analysis
+     * @param pDate the date for the analysis
+     */
+    protected Analysis(final Analysis pSource,
+                       final JDateDay pDate) {
+        /* Store the data */
+        theData = pSource.getData();
+        theDateRange = new JDateDayRange(null, pDate);
+
+        /* Create a new set of buckets */
+        theAccounts = new AccountBucketList(this, pSource.getAccounts(), pDate);
+        theSecurities = new SecurityBucketList(this);
+        thePayees = new PayeeBucketList(this, pSource.getPayees(), pDate);
+        theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pDate);
+        theAccountCategories = new AccountCategoryBucketList(this);
+        theTaxCategories = null;
+
+        /* Create the Dilution/Chargeable Event List */
+        theCharges = pSource.getCharges();
+        theDilutions = pSource.getDilutions();
+    }
+
+    /**
+     * Constructor for a ranged analysis.
+     * @param pSource the base analysis
+     * @param pRange the range for the analysis
+     */
+    protected Analysis(final Analysis pSource,
+                       final JDateDayRange pRange) {
+        /* Store the data */
+        theData = pSource.getData();
+        theDateRange = pRange;
+
+        /* Create a new set of buckets */
+        theAccounts = new AccountBucketList(this, pSource.getAccounts(), pRange);
+        theSecurities = new SecurityBucketList(this);
+        thePayees = new PayeeBucketList(this, pSource.getPayees(), pRange);
+        theEventCategories = new EventCategoryBucketList(this, pSource.getEventCategories(), pRange);
+        theAccountCategories = new AccountCategoryBucketList(this);
+        theTaxCategories = null;
+
+        /* Create the Dilution/Chargeable Event List */
+        theCharges = pSource.getCharges();
+        theDilutions = pSource.getDilutions();
     }
 
     /**
@@ -277,38 +387,13 @@ public class Analysis
             Account myAccount = myIterator.next();
 
             /* If the account has an opening balance */
-            if (myAccount.getOpeningBalance() != null) {
-                /* Add the opening balance */
-                addOpeningBalance(myAccount);
+            JMoney myBalance = myAccount.getOpeningBalance();
+            if (myBalance != null) {
+                /* Obtain the actual account bucket */
+                AccountBucket myBucket = theAccounts.getBucket(myAccount);
+                myBucket.setOpeningBalance(myBalance);
             }
         }
-    }
-
-    /**
-     * Add opening balance for an account.
-     * @param pAccount the account to add the opening balance for
-     */
-    private void addOpeningBalance(final Account pAccount) {
-        /* Access the money */
-        JMoney myBalance = pAccount.getOpeningBalance();
-
-        /* Obtain the actual account bucket */
-        AccountBucket myBucket = theAccounts.getBucket(pAccount);
-        myBucket.setOpenBalance(myBalance);
-
-        /* Obtain the opening income account bucket */
-        Account myAccount = theData.getAccounts().getSingularClass(AccountCategoryClass.OpeningBalance);
-        PayeeBucket myOpeningPayee = thePayees.getBucket(myAccount);
-
-        /* Add income value */
-        myOpeningPayee.addIncome(myBalance);
-
-        /* Obtain the opening income category bucket */
-        EventCategory myCategory = theData.getEventCategories().getSingularClass(EventCategoryClass.OpeningBalance);
-        EventCategoryBucket myOpeningCategory = theEventCategories.getBucket(myCategory);
-
-        /* Add income value */
-        myOpeningCategory.addIncome(myBalance);
     }
 
     /**
