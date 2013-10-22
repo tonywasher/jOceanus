@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Currency;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -59,29 +60,44 @@ public final class ExchangeRate
                                            + "s";
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(ExchangeRate.class.getSimpleName(), DataItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(ExchangeRate.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField("Date");
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDate"));
 
     /**
      * From Currency Field Id.
      */
-    public static final JDataField FIELD_FROM = FIELD_DEFS.declareEqualityValueField("From");
+    public static final JDataField FIELD_FROM = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataFrom"));
 
     /**
      * To Currency Field Id.
      */
-    public static final JDataField FIELD_TO = FIELD_DEFS.declareEqualityValueField("To");
+    public static final JDataField FIELD_TO = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTo"));
 
     /**
      * Rate Type Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField("ExchangeRate");
+    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataRate"));
+
+    /**
+     * Circular Rate Error.
+     */
+    private static final String ERROR_CIRCLE = NLS_BUNDLE.getString("ErrorCircle");
+
+    /**
+     * Default Rate Error.
+     */
+    private static final String ERROR_DEF = NLS_BUNDLE.getString("ErrorDefault");
 
     @Override
     public JDataFields declareFields() {
@@ -540,13 +556,13 @@ public final class ExchangeRate
             && (myTo != null)) {
             /* Must be different */
             if (myFrom.equals(myTo)) {
-                addError("Cannot have exchange rate between same currency", FIELD_TO);
+                addError(ERROR_CIRCLE, FIELD_TO);
             }
 
             /* From currency must be the default currency */
             AccountCurrency myDefault = getDataSet().getDefaultCurrency();
             if (!myFrom.equals(myDefault)) {
-                addError("Exchange Rate must be from the default currency", FIELD_FROM);
+                addError(ERROR_DEF, FIELD_FROM);
             }
 
             /* Cannot have duplicate rate */
@@ -619,16 +635,27 @@ public final class ExchangeRate
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(ExchangeRateList.class.getSimpleName(), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         /**
          * Default Field Id.
          */
-        public static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField("Default");
+        private static final JDataField FIELD_DEFAULT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataDef"));
 
         @Override
         public JDataFields declareFields() {
             return FIELD_DEFS;
+        }
+
+        @Override
+        public Object getFieldValue(final JDataField pField) {
+            /* Handle standard fields */
+            if (FIELD_DEFAULT.equals(pField)) {
+                return theDefault;
+            }
+
+            /* Pass onwards */
+            return super.getFieldValue(pField);
         }
 
         /**

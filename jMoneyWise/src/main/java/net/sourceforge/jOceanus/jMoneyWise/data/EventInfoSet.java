@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -48,9 +49,14 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.EventInfoType.EventInfoT
 public class EventInfoSet
         extends DataInfoSet<EventInfo, Event, EventInfoType, EventInfoClass> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventInfoSet.class.getName());
+
+    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(EventInfoSet.class.getSimpleName(), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -61,6 +67,16 @@ public class EventInfoSet
      * Reverse FieldSet map.
      */
     private static final Map<EventInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, EventInfoClass.class);
+
+    /**
+     * Bad Credit Date Error Text.
+     */
+    private static final String ERROR_BADDATE = NLS_BUNDLE.getString("ErrorBadDate");
+
+    /**
+     * Invalid Account Error Text.
+     */
+    private static final String ERROR_BADACCOUNT = NLS_BUNDLE.getString("ErrorBadAccount");
 
     @Override
     public JDataFields getDataFields() {
@@ -351,7 +367,7 @@ public class EventInfoSet
                     /* Check value */
                     JDateDay myDate = myInfo.getValue(JDateDay.class);
                     if (myDate.compareTo(myEvent.getDate()) <= 0) {
-                        myEvent.addError("Must be later than Event Date", getFieldForClass(myClass));
+                        myEvent.addError(ERROR_BADDATE, getFieldForClass(myClass));
                     }
                     break;
                 case QualifyYears:
@@ -402,7 +418,7 @@ public class EventInfoSet
                     /* Check account type */
                     Account myThirdParty = myInfo.getAccount();
                     if (!myThirdParty.isSavings()) {
-                        myEvent.addError("Invalid Account", getFieldForClass(myClass));
+                        myEvent.addError(ERROR_BADACCOUNT, getFieldForClass(myClass));
                     }
                     break;
                 case Reference:

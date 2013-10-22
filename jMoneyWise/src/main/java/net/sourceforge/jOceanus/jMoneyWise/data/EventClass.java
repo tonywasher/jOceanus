@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -64,19 +65,24 @@ public class EventClass
     public static final int DESCLEN = 50;
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AccountCategory.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventClass.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField("Name");
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClassName"));
 
     /**
      * Description Field Id.
      */
-    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField("Description");
+    public static final JDataField FIELD_DESC = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDesc"));
 
     @Override
     public JDataFields declareFields() {
@@ -302,7 +308,7 @@ public class EventClass
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -330,7 +336,7 @@ public class EventClass
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -454,7 +460,7 @@ public class EventClass
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventClassList.class.getSimpleName(), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

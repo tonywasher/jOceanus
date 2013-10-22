@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -64,124 +66,129 @@ import net.sourceforge.jOceanus.jPreferenceSet.PreferenceManager;
 public class FinanceData
         extends DataSet<FinanceData> {
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(FinanceData.class.getSimpleName(), DataSet.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(FinanceData.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataSet.FIELD_DEFS);
 
     /**
      * AccountTypes Field Id.
      */
-    public static final JDataField FIELD_ACTCATTYPES = FIELD_DEFS.declareLocalField("AccountCategoryTypes");
+    private static final JDataField FIELD_ACTCATTYPES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAccountTypes"));
 
     /**
      * TransactionTypes Field Id.
      */
-    public static final JDataField FIELD_EVTCATTYPES = FIELD_DEFS.declareLocalField("EventCategoryTypes");
+    private static final JDataField FIELD_EVTCATTYPES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEventTypes"));
 
     /**
      * TaxTypes Field Id.
      */
-    public static final JDataField FIELD_TAXCATEGORIES = FIELD_DEFS.declareLocalField("TaxCategories");
+    private static final JDataField FIELD_TAXCATEGORIES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxTypes"));
 
     /**
      * Account Currencies Field Id.
      */
-    public static final JDataField FIELD_CURRENCIES = FIELD_DEFS.declareLocalField("Currencies");
+    private static final JDataField FIELD_CURRENCIES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCurrencies"));
 
     /**
      * Frequencies Field Id.
      */
-    public static final JDataField FIELD_FREQS = FIELD_DEFS.declareLocalField("Frequencies");
+    private static final JDataField FIELD_FREQS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataFrequencies"));
 
     /**
      * TaxRegimes Field Id.
      */
-    public static final JDataField FIELD_TAXREGS = FIELD_DEFS.declareLocalField("TaxRegimes");
+    private static final JDataField FIELD_TAXREGS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxRegimes"));
 
     /**
      * TaxYearInfoTypes Field Id.
      */
-    public static final JDataField FIELD_TAXINFOTYPES = FIELD_DEFS.declareLocalField("TaxYearInfoTypes");
+    private static final JDataField FIELD_TAXINFOTYPES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxInfoTypes"));
 
     /**
      * AccountInfoTypes Field Id.
      */
-    public static final JDataField FIELD_ACTINFOTYPES = FIELD_DEFS.declareLocalField("AccountInfoTypes");
+    private static final JDataField FIELD_ACTINFOTYPES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataActInfoTypes"));
 
     /**
      * EventInfoTypes Field Id.
      */
-    public static final JDataField FIELD_EVTINFOTYPES = FIELD_DEFS.declareLocalField("EventInfoTypes");
+    private static final JDataField FIELD_EVTINFOTYPES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEvtInfoTypes"));
 
     /**
      * EventClasses Field Id.
      */
-    public static final JDataField FIELD_EVENTCLASSES = FIELD_DEFS.declareLocalField("EventClasses");
+    private static final JDataField FIELD_EVENTCLASSES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEvtClasses"));
 
     /**
      * AccountCategories Field Id.
      */
-    public static final JDataField FIELD_ACTCATEGORIES = FIELD_DEFS.declareLocalField("AccountCategories");
+    private static final JDataField FIELD_ACTCATEGORIES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataActCategories"));
 
     /**
      * EventCategories Field Id.
      */
-    public static final JDataField FIELD_EVTCATEGORIES = FIELD_DEFS.declareLocalField("EventCategories");
+    private static final JDataField FIELD_EVTCATEGORIES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEvtCategories"));
 
     /**
      * TaxYears Field Id.
      */
-    public static final JDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField("TaxYears");
+    private static final JDataField FIELD_TAXYEARS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxYears"));
 
     /**
      * TaxInfo Field Id.
      */
-    public static final JDataField FIELD_TAXINFO = FIELD_DEFS.declareLocalField("TaxInfo");
+    private static final JDataField FIELD_TAXINFO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataTaxInfo"));
 
     /**
      * ExchangeRates Field Id.
      */
-    public static final JDataField FIELD_XCHGRATES = FIELD_DEFS.declareLocalField("ExchangeRates");
+    private static final JDataField FIELD_XCHGRATES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataExchangeRates"));
 
     /**
      * Accounts Field Id.
      */
-    public static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField("Accounts");
+    private static final JDataField FIELD_ACCOUNTS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataAccounts"));
 
     /**
      * AccountInfo Field Id.
      */
-    public static final JDataField FIELD_ACCOUNTINFO = FIELD_DEFS.declareLocalField("AccountInfo");
+    private static final JDataField FIELD_ACCOUNTINFO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataActInfo"));
 
     /**
      * Rates Field Id.
      */
-    public static final JDataField FIELD_RATES = FIELD_DEFS.declareLocalField("AccountRates");
+    private static final JDataField FIELD_RATES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataActRates"));
 
     /**
      * Prices Field Id.
      */
-    public static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField("AccountPrices");
+    private static final JDataField FIELD_PRICES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataActPrices"));
 
     /**
      * Patterns Field Id.
      */
-    public static final JDataField FIELD_PATTERNS = FIELD_DEFS.declareLocalField("AccountPatterns");
+    private static final JDataField FIELD_PATTERNS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataPatterns"));
 
     /**
      * Events Field Id.
      */
-    public static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField("Events");
+    private static final JDataField FIELD_EVENTS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEvents"));
 
     /**
      * EventInfo Field Id.
      */
-    public static final JDataField FIELD_EVENTINFO = FIELD_DEFS.declareLocalField("EventInfo");
+    private static final JDataField FIELD_EVENTINFO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEvtInfo"));
 
     /**
      * EventClassLinks Field Id.
      */
-    public static final JDataField FIELD_EVTCLSLINKS = FIELD_DEFS.declareLocalField("EventClassLinks");
+    private static final JDataField FIELD_EVTCLSLINKS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataEvtClassLinks"));
 
     @Override
     public JDataFields getDataFields() {

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -37,9 +39,14 @@ import net.sourceforge.jOceanus.jDateDay.JDateDay;
 public class AccountStatus
         implements JDataContents {
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountStatus.class.getSimpleName());
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountStatus.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     @Override
     public JDataFields getDataFields() {
@@ -54,67 +61,67 @@ public class AccountStatus
     /**
      * CloseDate Field Id.
      */
-    public static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField("CloseDate");
+    private static final JDataField FIELD_CLOSEDATE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataCloseDate"));
 
     /**
      * firstEvent Field Id.
      */
-    public static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField("FirstEvent");
+    private static final JDataField FIELD_EVTFIRST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataFirstEvent"));
 
     /**
      * lastEvent Field Id.
      */
-    public static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField("LastEvent");
+    private static final JDataField FIELD_EVTLAST = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataLastEvent"));
 
     /**
      * initialPrice Field Id.
      */
-    public static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField("InitialPrice");
+    private static final JDataField FIELD_INITPRC = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInitialPrice"));
 
     /**
      * hasLoans Field Id.
      */
-    public static final JDataField FIELD_HASLOANS = FIELD_DEFS.declareLocalField("hasLoans");
+    private static final JDataField FIELD_HASLOANS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHasLoans"));
 
     /**
      * hasRates Field Id.
      */
-    public static final JDataField FIELD_HASRATES = FIELD_DEFS.declareLocalField("hasRates");
+    private static final JDataField FIELD_HASRATES = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHasRates"));
 
     /**
      * hasPrice Field Id.
      */
-    public static final JDataField FIELD_HASPRICE = FIELD_DEFS.declareLocalField("hasPrices");
+    private static final JDataField FIELD_HASPRICE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHasPrices"));
 
     /**
      * hasPatterns Field Id.
      */
-    public static final JDataField FIELD_HASPATT = FIELD_DEFS.declareLocalField("hasPatterns");
+    private static final JDataField FIELD_HASPATT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataHasPatterns"));
 
     /**
      * isParent Field Id.
      */
-    public static final JDataField FIELD_ISPARENT = FIELD_DEFS.declareLocalField("isParent");
+    private static final JDataField FIELD_ISPARENT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataIsParent"));
 
     /**
      * isAliased Field Id.
      */
-    public static final JDataField FIELD_ISALIASD = FIELD_DEFS.declareLocalField("isAliasedTo");
+    private static final JDataField FIELD_ISALIASD = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataIsAliasedTo"));
 
     /**
      * isPortfolio Field Id.
      */
-    public static final JDataField FIELD_ISPORTFOLIO = FIELD_DEFS.declareLocalField("isPortfolio");
+    private static final JDataField FIELD_ISPORTFOLIO = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataIsPortfolio"));
 
     /**
      * isHolding Field Id.
      */
-    public static final JDataField FIELD_ISHOLDING = FIELD_DEFS.declareLocalField("isHolding");
+    private static final JDataField FIELD_ISHOLDING = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataIsHolding"));
 
     /**
      * isCloseable Field Id.
      */
-    public static final JDataField FIELD_ISCLSABL = FIELD_DEFS.declareLocalField("isCloseable");
+    private static final JDataField FIELD_ISCLSABL = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataIsCloseable"));
 
     @Override
     public Object getFieldValue(final JDataField pField) {

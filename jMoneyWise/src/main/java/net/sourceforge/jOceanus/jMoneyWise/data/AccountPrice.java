@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -65,9 +66,14 @@ public class AccountPrice
                                            + "s";
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountPrice.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -77,17 +83,17 @@ public class AccountPrice
     /**
      * Account Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(Account.class.getSimpleName());
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataSecurity"));
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField("Date");
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDate"));
 
     /**
      * Price Field Id.
      */
-    public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField("Price");
+    public static final JDataField FIELD_PRICE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataPrice"));
 
     /**
      * Obtain Price.
@@ -327,12 +333,12 @@ public class AccountPrice
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -370,7 +376,7 @@ public class AccountPrice
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -572,7 +578,7 @@ public class AccountPrice
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountPriceList.class.getSimpleName(), DataList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

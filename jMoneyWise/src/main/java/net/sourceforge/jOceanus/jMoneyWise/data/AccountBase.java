@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -54,39 +55,44 @@ public abstract class AccountBase
     public static final int NAMELEN = 30;
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountBase.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
 
     /**
      * Name Field Id.
      */
-    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField("Name");
+    public static final JDataField FIELD_NAME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataAccountName"));
 
     /**
      * AccountCategory Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField("AccountCategory");
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCategory"));
 
     /**
      * isClosed Field Id.
      */
-    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField("isClosed");
+    public static final JDataField FIELD_CLOSED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataClosed"));
 
     /**
      * isTaxFree Field Id.
      */
-    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField("isTaxFree");
+    public static final JDataField FIELD_TAXFREE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTaxFree"));
 
     /**
      * isGrossInterest Field Id.
      */
-    public static final JDataField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField("isGrossInterest");
+    public static final JDataField FIELD_GROSS = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataGross"));
 
     /**
      * Currency Field Id.
      */
-    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField("Currency");
+    public static final JDataField FIELD_CURRENCY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCurrency"));
 
     @Override
     public String formatObject() {
@@ -459,7 +465,7 @@ public abstract class AccountBase
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -505,7 +511,7 @@ public abstract class AccountBase
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -841,7 +847,7 @@ public abstract class AccountBase
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public FinanceData getDataSet() {

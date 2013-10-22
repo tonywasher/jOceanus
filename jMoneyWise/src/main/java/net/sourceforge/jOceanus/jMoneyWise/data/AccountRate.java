@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -62,9 +63,14 @@ public class AccountRate
                                            + "s";
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EncryptedItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountRate.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -74,22 +80,27 @@ public class AccountRate
     /**
      * Account Field Id.
      */
-    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(Account.class.getSimpleName());
+    public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataAccount"));
 
     /**
      * Rate Field Id.
      */
-    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField("Rate");
+    public static final JDataField FIELD_RATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataRate"));
 
     /**
      * Bonus Field Id.
      */
-    public static final JDataField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField("Bonus");
+    public static final JDataField FIELD_BONUS = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataBonus"));
 
     /**
      * EndDate Field Id.
      */
-    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField("EndDate");
+    public static final JDataField FIELD_ENDDATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataEndDate"));
+
+    /**
+     * Null Date Error.
+     */
+    private static final String ERROR_NULLDATE = NLS_BUNDLE.getString("ErrorNullDate");
 
     /**
      * Obtain Rate.
@@ -423,12 +434,12 @@ public class AccountRate
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -471,7 +482,7 @@ public class AccountRate
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -560,7 +571,7 @@ public class AccountRate
         if (myDate == null) {
             /* Can only have null date on last entry for account */
             if (!isLast) {
-                addError("Null date is only allowed on last date", FIELD_ENDDATE);
+                addError(ERROR_NULLDATE, FIELD_ENDDATE);
             }
 
             /* If we have a date */
@@ -573,7 +584,7 @@ public class AccountRate
             /* The date must be in-range (unless it is the last one) */
             if ((!isLast)
                 && (mySet.getDateRange().compareTo(myDate) != 0)) {
-                addError("Date must be within range", FIELD_ENDDATE);
+                addError(ERROR_RANGE, FIELD_ENDDATE);
             }
         }
 

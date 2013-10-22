@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.EditState;
@@ -62,14 +64,29 @@ public class TaxYear
                                            + "s";
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(TaxYear.class.getSimpleName(), TaxYearBase.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxYear.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), TaxYearBase.FIELD_DEFS);
 
     /**
      * TaxInfoSet field Id.
      */
-    public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
+
+    /**
+     * Bad InfoSet Error Text.
+     */
+    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+
+    /**
+     * Bad ListGap Error Text.
+     */
+    private static final String ERROR_LISTGAP = NLS_BUNDLE.getString("ErrorListGap");
 
     @Override
     public JDataFields declareFields() {
@@ -532,7 +549,7 @@ public class TaxYear
                                  final Object pValue) throws JDataException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid call to set InfoSet value");
+            throw new JDataException(ExceptionClass.LOGIC, ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -754,7 +771,7 @@ public class TaxYear
             TaxYear myPrev = myList.peekPrevious(this);
             if ((myPrev != null)
                 && (myDate.getYear() != myPrev.getTaxYear().getYear() + 1)) {
-                addError("There can be no gaps in the list", FIELD_TAXYEAR);
+                addError(ERROR_LISTGAP, FIELD_TAXYEAR);
             }
         }
 
@@ -788,7 +805,7 @@ public class TaxYear
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearList.class.getSimpleName(), TaxYearBaseList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), TaxYearBaseList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {

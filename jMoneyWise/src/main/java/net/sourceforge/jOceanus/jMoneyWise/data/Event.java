@@ -25,6 +25,7 @@ package net.sourceforge.jOceanus.jMoneyWise.data;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
@@ -70,19 +71,39 @@ public class Event
                                            + "s";
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, EventBase.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Event.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EventBase.FIELD_DEFS);
+
+    /**
+     * EventInfoSet field Id.
+     */
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
+
+    /**
+     * Bad InfoSet Error Text.
+     */
+    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+
+    /**
+     * Early Date Error Text.
+     */
+    private static final String ERROR_BADDATE = NLS_BUNDLE.getString("ErrorBadDate");
+
+    /**
+     * Circular update Error Text.
+     */
+    private static final String ERROR_CIRCULAR = NLS_BUNDLE.getString("ErrorCircular");
 
     @Override
     public JDataFields declareFields() {
         return FIELD_DEFS;
     }
-
-    /**
-     * EventInfoSet field Id.
-     */
-    public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
 
     @Override
     public Object getFieldValue(final JDataField pField) {
@@ -570,7 +591,7 @@ public class Event
             AccountPrice myPrice = myCredit.getInitPrice();
             if ((myPrice != null)
                 && (getDate().compareTo(myPrice.getDate()) < 0)) {
-                addError("Event Date is prior to first priced date for Credit Account", FIELD_DATE);
+                addError(ERROR_BADDATE, FIELD_CREDIT);
             }
         }
 
@@ -582,7 +603,7 @@ public class Event
             AccountPrice myPrice = myDebit.getInitPrice();
             if ((myPrice != null)
                 && (getDate().compareTo(myPrice.getDate()) < 0)) {
-                addError("Event Date is prior to first priced date for Debit Account", FIELD_DATE);
+                addError(ERROR_BADDATE, FIELD_DEBIT);
             }
         }
 
@@ -590,7 +611,7 @@ public class Event
         if ((myCreditUnits != null)
             && (myDebitUnits != null)
             && (Difference.isEqual(myCredit, myDebit))) {
-            addError("Cannot credit and debit same account", EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
+            addError(ERROR_CIRCULAR, EventInfoSet.getFieldForClass(EventInfoClass.CreditUnits));
         }
 
         /* If we have a category and an infoSet */
@@ -774,7 +795,7 @@ public class Event
                                  final Object pValue) throws JDataException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid call to set InfoSet value");
+            throw new JDataException(ExceptionClass.LOGIC, ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -908,7 +929,7 @@ public class Event
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -923,7 +944,7 @@ public class Event
         /**
          * EventGroupList field Id.
          */
-        public static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField("EventGroups");
+        private static final JDataField FIELD_EVENTGROUPS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataGroups"));
 
         /**
          * EventGroupMap.

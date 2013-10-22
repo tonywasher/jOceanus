@@ -707,6 +707,8 @@ public class Statement
             super(pList);
             theStatement = pList.getStatement();
             setValueIsCredit(false);
+            setValueReconciled(false);
+            setValueSplit(false);
             setDebit(pList.getAccount());
         }
 
@@ -745,6 +747,8 @@ public class Statement
             setId(0);
             setDate(theStatement.getDateRange().getStart());
             setValueIsCredit(false);
+            setValueReconciled(false);
+            setValueSplit(false);
             setDebit(theStatement.getAccount());
             theBalance = theStatement.getStartBalance();
             theBalUnits = theStatement.getStartUnits();

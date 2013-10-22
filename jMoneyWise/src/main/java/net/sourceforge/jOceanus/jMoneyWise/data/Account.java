@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.DataState;
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.EditState;
@@ -60,19 +62,69 @@ public class Account
     public static final String LIST_NAME = OBJECT_NAME
                                            + "s";
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, AccountBase.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(Account.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), AccountBase.FIELD_DEFS);
 
     /**
      * AccountInfoSet field Id.
      */
-    public static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField("InfoSet");
+    private static final JDataField FIELD_INFOSET = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataInfoSet"));
 
     /**
      * AccountStatus field Id.
      */
-    public static final JDataField FIELD_STATUS = FIELD_DEFS.declareLocalField("AccountStatus");
+    private static final JDataField FIELD_STATUS = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataStatus"));
+
+    /**
+     * Bad InfoSet Error Text.
+     */
+    private static final String ERROR_BADINFOSET = NLS_BUNDLE.getString("ErrorBadInfoSet");
+
+    /**
+     * Bad Rates Error Text.
+     */
+    private static final String ERROR_BADRATES = NLS_BUNDLE.getString("ErrorBadRates");
+
+    /**
+     * Bad Close Error Text.
+     */
+    private static final String ERROR_BADCLOSE = NLS_BUNDLE.getString("ErrorBadClose");
+
+    /**
+     * Bad Prices Error Text.
+     */
+    private static final String ERROR_BADPRICES = NLS_BUNDLE.getString("ErrorBadPrices");
+
+    /**
+     * No Prices Error Text.
+     */
+    private static final String ERROR_NOPRICES = NLS_BUNDLE.getString("ErrorNoPrices");
+
+    /**
+     * TaxFree Error Text.
+     */
+    private static final String ERROR_TAXFREE = NLS_BUNDLE.getString("ErrorTaxFree");
+
+    /**
+     * GrossInterest Error Text.
+     */
+    private static final String ERROR_GROSS = NLS_BUNDLE.getString("ErrorGross");
+
+    /**
+     * taxFree And GrossInterest Error Text.
+     */
+    private static final String ERROR_TAXFREEGROSS = NLS_BUNDLE.getString("ErrorTaxFreeGross");
+
+    /**
+     * autoExpense and OpeningBalance Error Text.
+     */
+    private static final String ERROR_AUTOBALANCE = NLS_BUNDLE.getString("ErrorAutoBalance");
 
     @Override
     public JDataFields declareFields() {
@@ -861,7 +913,7 @@ public class Account
                                  final Object pValue) throws JDataException {
         /* Reject if there is no infoSet */
         if (!hasInfoSet) {
-            throw new JDataException(ExceptionClass.LOGIC, "Invalid call to set InfoSet value");
+            throw new JDataException(ExceptionClass.LOGIC, ERROR_BADINFOSET);
         }
 
         /* Set the value */
@@ -893,13 +945,13 @@ public class Account
             /* If the account has rates then it must be money-based */
             if ((theStatus.hasRates())
                 && (!myClass.hasValue())) {
-                addError("non-Money account has rates", FIELD_CATEGORY);
+                addError(ERROR_BADRATES, FIELD_CATEGORY);
             }
 
             /* If the account is closed it must be closeable */
             if ((isClosed())
                 && (!isCloseable())) {
-                addError("Non-closeable account is closed", FIELD_CLOSED);
+                addError(ERROR_BADCLOSE, FIELD_CLOSED);
             }
 
             /* If the account has units */
@@ -908,31 +960,31 @@ public class Account
                 if ((!theStatus.hasPrices())
                     && (theStatus.hasEvents())
                     && (myAlias == null)) {
-                    addError("Priced account has no prices", FIELD_CATEGORY);
+                    addError(ERROR_NOPRICES, FIELD_CATEGORY);
                 }
 
                 /* else the account is not priced */
             } else if (theStatus.hasPrices()) {
-                addError("non-Priced account has prices", FIELD_CATEGORY);
+                addError(ERROR_BADPRICES, FIELD_CATEGORY);
             }
 
             /* If the account is tax free, check that it is allowed */
             if ((isTaxFree())
                 && (!myClass.canTaxFree())) {
-                addError("cannot be taxFree account", FIELD_TAXFREE);
+                addError(ERROR_TAXFREE, FIELD_TAXFREE);
             }
 
             /* If the account is gross interest, check that it is allowed */
             if ((isGrossInterest())
                 && (!myClass.canTaxFree())) {
-                addError("cannot be grossInterest account", FIELD_GROSS);
+                addError(ERROR_GROSS, FIELD_GROSS);
             }
 
             /* Cannot be both gross interest and taxFree */
             if ((isGrossInterest())
                 && (isTaxFree())) {
-                addError("cannot be both taxFree and grossInterest", FIELD_TAXFREE);
-                addError("cannot be both taxFree and grossInterest", FIELD_GROSS);
+                addError(ERROR_TAXFREEGROSS, FIELD_TAXFREE);
+                addError(ERROR_TAXFREEGROSS, FIELD_GROSS);
             }
 
             /* If we have a category and an infoSet */
@@ -943,7 +995,7 @@ public class Account
                 /* If the account is autoExpense, check that there is no opening balance */
                 if ((getAutoExpense() != null)
                     && (getOpeningBalance() != null)) {
-                    addError("cannot be autoExpense with an opening balance", AccountInfoSet.getFieldForClass(AccountInfoClass.AutoExpense));
+                    addError(ERROR_AUTOBALANCE, AccountInfoSet.getFieldForClass(AccountInfoClass.AutoExpense));
                 }
             }
         }
@@ -987,7 +1039,7 @@ public class Account
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountList.class.getSimpleName(), AccountBaseList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), AccountBaseList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -997,7 +1049,7 @@ public class Account
         /**
          * Account field id.
          */
-        public static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField("Account");
+        private static final JDataField FIELD_ACCOUNT = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataName"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

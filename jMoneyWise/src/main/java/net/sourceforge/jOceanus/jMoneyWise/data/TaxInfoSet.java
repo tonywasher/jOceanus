@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
 import net.sourceforge.jOceanus.jDataManager.JDataFields.JDataField;
@@ -44,9 +45,14 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.TaxYearInfoType.TaxYearI
 public class TaxInfoSet
         extends DataInfoSet<TaxYearInfo, TaxYear, TaxYearInfoType, TaxYearInfoClass> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxInfoSet.class.getName());
+
+    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(TaxInfoSet.class.getSimpleName(), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -57,6 +63,16 @@ public class TaxInfoSet
      * Reverse FieldSet map.
      */
     private static final Map<TaxYearInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, TaxYearInfoClass.class);
+
+    /**
+     * Allowance Limit Error Text.
+     */
+    private static final String ERROR_ALLOW = NLS_BUNDLE.getString("ErrorAllowance");
+
+    /**
+     * LoAgeAllowance Limit Error Text.
+     */
+    private static final String ERROR_LOALLOW = NLS_BUNDLE.getString("ErrorLoAllowance");
 
     @Override
     public JDataFields getDataFields() {
@@ -238,7 +254,7 @@ public class TaxInfoSet
                         : null;
                 if ((myAllowance != null)
                     && (myValue.compareTo(myAllowance) < 0)) {
-                    myTaxYear.addError("Value must be greater than allowance", getFieldForClass(TaxYearInfoClass.LoAgeAllowance));
+                    myTaxYear.addError(ERROR_ALLOW, getFieldForClass(myClass));
                 }
             }
 
@@ -251,7 +267,7 @@ public class TaxInfoSet
                         : null;
                 if ((myAllowance != null)
                     && (myValue.compareTo(myAllowance) < 0)) {
-                    myTaxYear.addError("Value must be greater than LoAgeAllowance", getFieldForClass(TaxYearInfoClass.HiAgeAllowance));
+                    myTaxYear.addError(ERROR_LOALLOW, getFieldForClass(myClass));
                 }
             }
         }

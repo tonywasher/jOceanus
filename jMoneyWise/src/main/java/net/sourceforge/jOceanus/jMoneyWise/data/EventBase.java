@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -50,49 +52,79 @@ public abstract class EventBase
         extends EncryptedItem
         implements Comparable<EventBase> {
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EventBase.class.getSimpleName(), EncryptedItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventBase.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), EncryptedItem.FIELD_DEFS);
 
     /**
      * Date Field Id.
      */
-    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField("Date");
+    public static final JDataField FIELD_DATE = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDate"));
 
     /**
      * Debit Field Id.
      */
-    public static final JDataField FIELD_DEBIT = FIELD_DEFS.declareEqualityValueField("Debit");
+    public static final JDataField FIELD_DEBIT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataDebit"));
 
     /**
      * Credit Field Id.
      */
-    public static final JDataField FIELD_CREDIT = FIELD_DEFS.declareEqualityValueField("Credit");
+    public static final JDataField FIELD_CREDIT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCredit"));
 
     /**
      * Amount Field Id.
      */
-    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField("Amount");
+    public static final JDataField FIELD_AMOUNT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataAmount"));
 
     /**
      * Category Field Id.
      */
-    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField("Category");
+    public static final JDataField FIELD_CATEGORY = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataCategory"));
 
     /**
      * Reconciled Field Id.
      */
-    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField("Reconciled");
+    public static final JDataField FIELD_RECONCILED = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataReconciled"));
 
     /**
      * Split Event Field Id.
      */
-    public static final JDataField FIELD_SPLIT = FIELD_DEFS.declareEqualityValueField("Split");
+    public static final JDataField FIELD_SPLIT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataSplit"));
 
     /**
      * Parent Field Id.
      */
-    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField("Parent");
+    public static final JDataField FIELD_PARENT = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataParent"));
+
+    /**
+     * Hidden Category Error Text.
+     */
+    private static final String ERROR_HIDDEN = NLS_BUNDLE.getString("ErrorHidden");
+
+    /**
+     * Invalid Debit/Credit/Category Combination Error Text.
+     */
+    private static final String ERROR_COMBO = NLS_BUNDLE.getString("ErrorCombo");
+
+    /**
+     * Invalid Parent Error Text.
+     */
+    private static final String ERROR_BADPARENT = NLS_BUNDLE.getString("ErrorBadParent");
+
+    /**
+     * Parent Date Error Text.
+     */
+    private static final String ERROR_PARENTDATE = NLS_BUNDLE.getString("ErrorParentDate");
+
+    /**
+     * Zero Amount Error Text.
+     */
+    private static final String ERROR_ZEROAMOUNT = NLS_BUNDLE.getString("ErrorZeroAmount");
 
     @Override
     public boolean skipField(final JDataField pField) {
@@ -385,7 +417,7 @@ public abstract class EventBase
      * Set reconciled state.
      * @param pValue the value
      */
-    private void setValueReconciled(final Boolean pValue) {
+    protected void setValueReconciled(final Boolean pValue) {
         getValueSet().setValue(FIELD_RECONCILED, pValue);
     }
 
@@ -393,7 +425,7 @@ public abstract class EventBase
      * Set split state.
      * @param pValue the value
      */
-    private void setValueSplit(final Boolean pValue) {
+    protected void setValueSplit(final Boolean pValue) {
         getValueSet().setValue(FIELD_SPLIT, pValue);
     }
 
@@ -590,7 +622,7 @@ public abstract class EventBase
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -641,12 +673,12 @@ public abstract class EventBase
             /* Catch Exceptions */
         } catch (IllegalArgumentException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
 
             /* Catch Exceptions */
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -1243,7 +1275,7 @@ public abstract class EventBase
             doCheckCombo = false;
             /* Must not be hidden */
         } else if (myCategory.getCategoryTypeClass().isHiddenType()) {
-            addError("Hidden category types are not allowed", FIELD_CATEGORY);
+            addError(ERROR_HIDDEN, FIELD_CATEGORY);
         }
 
         /* Credit account must be non-null */
@@ -1261,20 +1293,20 @@ public abstract class EventBase
         /* Check combinations */
         if ((doCheckCombo)
             && (!isValidEvent(myCategory, myDebit, myCredit))) {
-            addError("Invalid Debit/Credit combination account for transaction", FIELD_DEBIT);
-            addError("Invalid Debit/Credit combination account for transaction", FIELD_CREDIT);
+            addError(ERROR_COMBO, FIELD_DEBIT);
+            addError(ERROR_COMBO, FIELD_CREDIT);
         }
 
         /* If we have a parent */
         if (myParent != null) {
             /* Parent must not be child */
             if (myParent.isChild()) {
-                addError("Invalid Parent", FIELD_PARENT);
+                addError(ERROR_BADPARENT, FIELD_PARENT);
             }
 
             /* Parent must not be child */
             if (!Difference.isEqual(myDate, myParent.getDate())) {
-                addError("Parent must be same date", FIELD_PARENT);
+                addError(ERROR_PARENTDATE, FIELD_PARENT);
             }
         }
 
@@ -1290,7 +1322,7 @@ public abstract class EventBase
             && (myAmount.isNonZero())
             && (myCategory != null)
             && (myCategory.getCategoryTypeClass().needsZeroAmount())) {
-            addError("Amount must be zero for Stock Split/Adjust/Demerger", FIELD_AMOUNT);
+            addError(ERROR_ZEROAMOUNT, FIELD_AMOUNT);
         }
     }
 
@@ -1349,12 +1381,12 @@ public abstract class EventBase
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         /**
          * Range field id.
          */
-        public static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField("Range");
+        private static final JDataField FIELD_RANGE = FIELD_DEFS.declareLocalField(NLS_BUNDLE.getString("DataRange"));
 
         @Override
         public Object getFieldValue(final JDataField pField) {

@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataFields;
@@ -45,9 +46,14 @@ import net.sourceforge.jOceanus.jMoneyWise.data.statics.AccountInfoType.AccountI
 public class AccountInfoSet
         extends DataInfoSet<AccountInfo, Account, AccountInfoType, AccountInfoClass> {
     /**
+     * Resource Bundle.
+     */
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountInfoSet.class.getName());
+
+    /**
      * Report fields.
      */
-    private static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoSet.class.getSimpleName(), DataInfoSet.FIELD_DEFS);
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoSet.FIELD_DEFS);
 
     /**
      * FieldSet map.
@@ -58,6 +64,86 @@ public class AccountInfoSet
      * Reverse FieldSet map.
      */
     private static final Map<AccountInfoClass, JDataField> REVERSE_FIELDMAP = JDataFields.reverseFieldMap(FIELDSET_MAP, AccountInfoClass.class);
+
+    /**
+     * Opening Balance Currency Error Text.
+     */
+    private static final String ERROR_BALANCE = NLS_BUNDLE.getString("ErrorBalance");
+
+    /**
+     * Parent Not Market Error Text.
+     */
+    private static final String ERROR_PARMARKET = NLS_BUNDLE.getString("ErrorParentMarket");
+
+    /**
+     * Parent Invalid Error Text.
+     */
+    private static final String ERROR_PARBAD = NLS_BUNDLE.getString("ErrorBadParent");
+
+    /**
+     * Parent Closed Error Text.
+     */
+    private static final String ERROR_PARCLOSED = NLS_BUNDLE.getString("ErrorParentClosed");
+
+    /**
+     * Alias Self Error Text.
+     */
+    private static final String ERROR_ALSSELF = NLS_BUNDLE.getString("ErrorAliasSelf");
+
+    /**
+     * Alias Category Error Text.
+     */
+    private static final String ERROR_ALSCATEGORY = NLS_BUNDLE.getString("ErrorAliasCategory");
+
+    /**
+     * Alias Tax Error Text.
+     */
+    private static final String ERROR_ALSTAX = NLS_BUNDLE.getString("ErrorAliasTax");
+
+    /**
+     * Aliased To Error Text.
+     */
+    private static final String ERROR_ALSTO = NLS_BUNDLE.getString("ErrorAliasedTo");
+
+    /**
+     * IsAliased Error Text.
+     */
+    private static final String ERROR_ISALIAS = NLS_BUNDLE.getString("ErrorIsAlias");
+
+    /**
+     * Aliased Prices Error Text.
+     */
+    private static final String ERROR_ALSEDPRICES = NLS_BUNDLE.getString("ErrorAliasedPrices");
+
+    /**
+     * Alias No Prices Error Text.
+     */
+    private static final String ERROR_ALSNOPRICES = NLS_BUNDLE.getString("ErrorAliasNoPrices");
+
+    /**
+     * Portfolio Invalid Error Text.
+     */
+    private static final String ERROR_BADPORT = NLS_BUNDLE.getString("ErrorBadPortfolio");
+
+    /**
+     * Portfolio Closed Error Text.
+     */
+    private static final String ERROR_PORTCLOSED = NLS_BUNDLE.getString("ErrorPortClosed");
+
+    /**
+     * Holding Child Error Text.
+     */
+    private static final String ERROR_HOLDCHILD = NLS_BUNDLE.getString("ErrorHoldChild");
+
+    /**
+     * Holding Invalid Error Text.
+     */
+    private static final String ERROR_BADHOLD = NLS_BUNDLE.getString("ErrorBadHolding");
+
+    /**
+     * Holding Closed Error Text.
+     */
+    private static final String ERROR_HOLDCLOSED = NLS_BUNDLE.getString("ErrorHoldClosed");
 
     @Override
     public JDataFields getDataFields() {
@@ -325,7 +411,7 @@ public class AccountInfoSet
                     /* Access data */
                     JMoney myBalance = myInfo.getValue(JMoney.class);
                     if (!myBalance.getCurrency().equals(myAccount.getAccountCurrency().getCurrency())) {
-                        myAccount.addError("Opening balance is incorrect currency", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_BALANCE, getFieldForClass(myClass));
                     }
                     break;
                 case WebSite:
@@ -356,18 +442,18 @@ public class AccountInfoSet
                     /* If the account needs a market parent */
                     if (myAccount.getAccountCategoryClass().needsMarketParent()) {
                         if (!myParent.isCategoryClass(AccountCategoryClass.Market)) {
-                            myAccount.addError("Parent account must be market", getFieldForClass(myClass));
+                            myAccount.addError(ERROR_PARMARKET, getFieldForClass(myClass));
                         }
 
                         /* else check that any parent is owner */
                     } else if (!myParent.getAccountCategoryClass().canParentAccount()) {
-                        myAccount.addError("Parent account cannot have children", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_PARBAD, getFieldForClass(myClass));
                     }
 
                     /* If we are open then parent must be open */
                     if (!myAccount.isClosed()
                         && myParent.isClosed()) {
-                        myAccount.addError("Parent account must not be closed", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_PARCLOSED, getFieldForClass(myClass));
                     }
                     break;
                 case Alias:
@@ -377,53 +463,53 @@ public class AccountInfoSet
 
                     /* Cannot alias to self */
                     if (Difference.isEqual(myAccount, myAlias)) {
-                        myAccount.addError("Cannot alias to self", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_ALSSELF, getFieldForClass(myClass));
 
                         /* Must alias to same type */
                     } else if (!Difference.isEqual(myAccount.getAccountCategoryClass(), myAliasClass)) {
-                        myAccount.addError("Must alias to same account category", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_ALSCATEGORY, getFieldForClass(myClass));
 
                         /* Must alias to different TaxFree type */
                     } else if (myAccount.isTaxFree().equals(myAlias.isTaxFree())) {
-                        myAccount.addError("Must alias to different TaxFree account type", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_ALSTAX, getFieldForClass(myClass));
                     }
 
                     /* Must not be aliased to */
                     if (myAccount.isAliasedTo()) {
-                        myAccount.addError("This account is already aliased to", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_ALSTO, getFieldForClass(myClass));
                     }
 
                     /* Alias cannot be aliased */
                     if (myAlias.isAlias()) {
-                        myAccount.addError("The alias account is already aliased", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_ISALIAS, getFieldForClass(myClass));
                     }
 
                     /* Must not have prices */
                     AccountStatus myStatus = myAccount.getStatus();
                     if (myStatus.hasPrices()) {
-                        myAccount.addError("Aliased account has prices", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_ALSEDPRICES, getFieldForClass(myClass));
                     }
 
                     /* Alias account must have prices */
                     AccountStatus myAliasStatus = myAlias.getStatus();
                     if ((!myAliasStatus.hasPrices())
                         && (myAliasStatus.hasEvents())) {
-                        myAccount.addError("Alias account has no prices", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_ALSNOPRICES, getFieldForClass(myClass));
                     }
                     break;
                 case Portfolio:
                     /* Access portfolio */
                     Account myPortfolio = myInfo.getAccount();
 
-                    /* check that portfolio account is poprtfolio */
+                    /* check that portfolio account is portfolio */
                     if (!myPortfolio.isCategoryClass(AccountCategoryClass.Portfolio)) {
-                        myAccount.addError("Portfolio must be a portfolio account", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_BADPORT, getFieldForClass(myClass));
                     }
 
                     /* If we are open then portfolio must be open */
                     if (!myAccount.isClosed()
                         && myPortfolio.isClosed()) {
-                        myAccount.addError("Portfolio account must not be closed", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_PORTCLOSED, getFieldForClass(myClass));
                     }
                     break;
                 case Holding:
@@ -432,18 +518,18 @@ public class AccountInfoSet
 
                     /* check that holding account is savings */
                     if (!myHolding.isSavings()) {
-                        myAccount.addError("Holding account must be a savings account", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_BADHOLD, getFieldForClass(myClass));
                     }
 
                     /* If we are open then holding account must be open */
                     if (!myAccount.isClosed()
                         && myHolding.isClosed()) {
-                        myAccount.addError("Portfolio account must not be closed", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_HOLDCLOSED, getFieldForClass(myClass));
                     }
 
                     /* We must be parent of holding account */
                     if (!myAccount.equals(myHolding.getParent())) {
-                        myAccount.addError("Holding account must be child of this account", getFieldForClass(myClass));
+                        myAccount.addError(ERROR_HOLDCHILD, getFieldForClass(myClass));
                     }
                     break;
                 default:

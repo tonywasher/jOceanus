@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -61,9 +62,14 @@ public class EventInfo
     public static final String LIST_NAME = OBJECT_NAME;
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfo.class.getSimpleName(), DataInfo.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(EventInfo.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfo.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -193,7 +199,8 @@ public class EventInfo
             EventInfoTypeList myTypes = myData.getEventInfoTypes();
             EventInfoType myType = myTypes.findItemById(pInfoTypeId);
             if (myType == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid EventInfoType Id");
+                addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueInfoType(myType);
 
@@ -201,7 +208,8 @@ public class EventInfo
             EventList myEvents = myData.getEvents();
             Event myOwner = myEvents.findItemById(pEventId);
             if (myOwner == null) {
-                throw new JDataException(ExceptionClass.DATA, this, "Invalid Event Id");
+                addError(ERROR_UNKNOWN, FIELD_OWNER);
+                throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
             }
             setValueOwner(myOwner);
 
@@ -220,7 +228,7 @@ public class EventInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
                         }
                         setValueLink(myLink);
                     }
@@ -241,7 +249,7 @@ public class EventInfo
                     setValueBytes(pValue, String.class);
                     break;
                 default:
-                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
+                    throw new JDataException(ExceptionClass.DATA, this, ERROR_BADDATATYPE);
             }
 
             /* Access the EventInfoSet and register this data */
@@ -249,7 +257,7 @@ public class EventInfo
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -280,7 +288,7 @@ public class EventInfo
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -392,7 +400,7 @@ public class EventInfo
             case STRING:
                 return myFormatter.formatObject(getValue(String.class));
             default:
-                return "null";
+                return null;
         }
     }
 
@@ -496,7 +504,7 @@ public class EventInfo
 
         /* Reject invalid value */
         if (!bValueOK) {
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_BADDATATYPE);
         }
     }
 
@@ -553,7 +561,7 @@ public class EventInfo
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(EventInfoList.class.getSimpleName(), DataInfoList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataInfoList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -665,7 +673,8 @@ public class EventInfo
 
             /* Check that this DataId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate DataId");
+                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfo, ERROR_VALIDATION);
             }
 
             /* Validate the information */
@@ -673,7 +682,7 @@ public class EventInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -696,7 +705,8 @@ public class EventInfo
             /* Look up the Info Type */
             EventInfoType myInfoType = myData.getEventInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pEvent, "Event has invalid Event Info Class ["
+                throw new JDataException(ExceptionClass.DATA, pEvent, ERROR_BADINFOCLASS
+                                                                      + " ["
                                                                       + pInfoClass
                                                                       + "]");
             }
@@ -706,7 +716,8 @@ public class EventInfo
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(myInfo.getId())) {
-                throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate EventInfoId");
+                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfo, ERROR_VALIDATION);
             }
 
             /* Add the Event Info to the list */
@@ -717,7 +728,7 @@ public class EventInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfo, ERROR_VALIDATION);
             }
         }
     }

@@ -22,6 +22,8 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
+import java.util.ResourceBundle;
+
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
 import net.sourceforge.jOceanus.jDataManager.JDataException.ExceptionClass;
@@ -57,9 +59,14 @@ public class TaxYearInfo
     public static final String LIST_NAME = OBJECT_NAME;
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearInfo.class.getSimpleName(), DataInfo.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxYearInfo.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfo.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -169,7 +176,7 @@ public class TaxYearInfo
         TaxYearInfoType myType = myTypes.findItemById(pInfoTypeId);
         if (myType == null) {
             addError(ERROR_UNKNOWN, FIELD_INFOTYPE);
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
         }
         setValueInfoType(myType);
 
@@ -178,7 +185,7 @@ public class TaxYearInfo
         TaxYear myOwner = myTaxYears.findItemById(pTaxYearId);
         if (myOwner == null) {
             addError(ERROR_UNKNOWN, FIELD_OWNER);
-            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
         }
         setValueOwner(myOwner);
 
@@ -193,7 +200,7 @@ public class TaxYearInfo
                     setValueBytes(pValue, JRate.class);
                     break;
                 default:
-                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
+                    throw new JDataException(ExceptionClass.DATA, this, ERROR_BADDATATYPE);
             }
 
             /* Access the TaxInfoSet and register this data */
@@ -201,7 +208,7 @@ public class TaxYearInfo
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -232,7 +239,7 @@ public class TaxYearInfo
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -319,7 +326,7 @@ public class TaxYearInfo
             case RATE:
                 return myFormatter.formatObject(getValue(JRate.class));
             default:
-                return "null";
+                return null;
         }
     }
 
@@ -365,7 +372,7 @@ public class TaxYearInfo
 
         /* Reject invalid value */
         if (!bValueOK) {
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_BADDATATYPE);
         }
     }
 
@@ -404,7 +411,7 @@ public class TaxYearInfo
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxInfoList.class.getSimpleName(), DataInfoList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -548,7 +555,8 @@ public class TaxYearInfo
             /* Look up the Info Type */
             TaxYearInfoType myInfoType = myData.getTaxInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pTaxYear, "TaxYear has invalid Tax Info Class ["
+                throw new JDataException(ExceptionClass.DATA, pTaxYear, ERROR_BADINFOCLASS
+                                                                        + " ["
                                                                         + pInfoClass
                                                                         + "]");
             }

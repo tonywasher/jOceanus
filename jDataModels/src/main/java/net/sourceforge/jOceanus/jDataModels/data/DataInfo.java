@@ -82,6 +82,16 @@ public abstract class DataInfo<T extends DataInfo<T, O, I, E>, O extends DataIte
      */
     public static final JDataField FIELD_LINK = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataLink"));
 
+    /**
+     * Invalid Data Type Error.
+     */
+    protected static final String ERROR_BADDATATYPE = NLS_BUNDLE.getString("ErrorDataType");
+
+    /**
+     * Invalid Info Class Error.
+     */
+    protected static final String ERROR_BADINFOCLASS = NLS_BUNDLE.getString("ErrorInfoClass");
+
     @Override
     public boolean skipField(final JDataField pField) {
         if ((FIELD_LINK.equals(pField))

@@ -24,6 +24,7 @@ package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -57,24 +58,34 @@ public abstract class TaxYearBase
     public static final int END_OF_MONTH_DAY = 5;
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(OBJECT_NAME, DataItem.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(TaxYearBase.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"));
 
     /**
      * TaxYear field Id.
      */
-    public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityValueField("TaxYear");
+    public static final JDataField FIELD_TAXYEAR = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataTaxYear"));
 
     /**
      * DateRange field Id.
      */
-    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField("DateRange");
+    public static final JDataField FIELD_DATERANGE = FIELD_DEFS.declareDerivedValueField(NLS_BUNDLE.getString("DataRange"));
 
     /**
      * TaxRegime field Id.
      */
-    public static final JDataField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField(TaxRegime.class.getSimpleName());
+    public static final JDataField FIELD_REGIME = FIELD_DEFS.declareEqualityValueField(NLS_BUNDLE.getString("DataRegime"));
+
+    /**
+     * Bad Date Error Text.
+     */
+    private static final String ERROR_BADDATE = NLS_BUNDLE.getString("ErrorBadDate");
 
     @Override
     public String formatObject() {
@@ -377,7 +388,7 @@ public abstract class TaxYearBase
             /* The day and month must be 5th April */
             if ((myDate.getDay() != END_OF_MONTH_DAY)
                 || (myDate.getMonth() != Calendar.APRIL)) {
-                addError("Date must be 5th April", FIELD_TAXYEAR);
+                addError(ERROR_BADDATE, FIELD_TAXYEAR);
             }
         }
 
@@ -447,7 +458,7 @@ public abstract class TaxYearBase
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(TaxYearBaseList.class.getSimpleName(), DataList.FIELD_DEFS);
+        protected static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataListName"), DataList.FIELD_DEFS);
 
         @Override
         public FinanceData getDataSet() {

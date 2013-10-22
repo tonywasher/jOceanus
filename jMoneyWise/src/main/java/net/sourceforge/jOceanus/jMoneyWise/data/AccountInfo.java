@@ -23,6 +23,7 @@
 package net.sourceforge.jOceanus.jMoneyWise.data;
 
 import java.util.Date;
+import java.util.ResourceBundle;
 
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDataManager.JDataException;
@@ -58,9 +59,14 @@ public class AccountInfo
     public static final String LIST_NAME = OBJECT_NAME;
 
     /**
-     * Report fields.
+     * Resource Bundle.
      */
-    protected static final JDataFields FIELD_DEFS = new JDataFields(AccountInfo.class.getSimpleName(), DataInfo.FIELD_DEFS);
+    private static final ResourceBundle NLS_BUNDLE = ResourceBundle.getBundle(AccountInfo.class.getName());
+
+    /**
+     * Local Report fields.
+     */
+    private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfo.FIELD_DEFS);
 
     @Override
     public JDataFields declareFields() {
@@ -247,7 +253,7 @@ public class AccountInfo
                         }
                         if (myLink == null) {
                             addError(ERROR_UNKNOWN, FIELD_LINK);
-                            throw new JDataException(ExceptionClass.DATA, this, ERROR_VALIDATION);
+                            throw new JDataException(ExceptionClass.DATA, this, ERROR_RESOLUTION);
                         }
                         setValueLink(myLink);
                     }
@@ -265,7 +271,7 @@ public class AccountInfo
                     setValueBytes(pValue, JMoney.class);
                     break;
                 default:
-                    throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
+                    throw new JDataException(ExceptionClass.DATA, this, ERROR_BADDATATYPE);
             }
 
             /* Access the AccountInfoSet and register this data */
@@ -273,7 +279,7 @@ public class AccountInfo
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -303,7 +309,7 @@ public class AccountInfo
             mySet.registerInfo(this);
         } catch (JDataException e) {
             /* Pass on exception */
-            throw new JDataException(ExceptionClass.DATA, this, "Failed to create item", e);
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_CREATEITEM, e);
         }
     }
 
@@ -424,7 +430,7 @@ public class AccountInfo
             case CHARARRAY:
                 return myFormatter.formatObject(getValue(char[].class));
             default:
-                return "null";
+                return null;
         }
     }
 
@@ -519,7 +525,7 @@ public class AccountInfo
 
         /* Reject invalid value */
         if (!bValueOK) {
-            throw new JDataException(ExceptionClass.DATA, this, "Invalid Data Type");
+            throw new JDataException(ExceptionClass.DATA, this, ERROR_BADDATATYPE);
         }
     }
 
@@ -582,7 +588,7 @@ public class AccountInfo
         /**
          * Local Report fields.
          */
-        protected static final JDataFields FIELD_DEFS = new JDataFields(AccountInfoList.class.getSimpleName(), DataInfoList.FIELD_DEFS);
+        private static final JDataFields FIELD_DEFS = new JDataFields(NLS_BUNDLE.getString("DataName"), DataInfoList.FIELD_DEFS);
 
         @Override
         public JDataFields declareFields() {
@@ -694,7 +700,8 @@ public class AccountInfo
 
             /* Check that this DataId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate DataId");
+                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfo, ERROR_VALIDATION);
             }
 
             /* Validate the information */
@@ -702,7 +709,7 @@ public class AccountInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfo, ERROR_VALIDATION);
             }
 
             /* Add to the list */
@@ -725,7 +732,8 @@ public class AccountInfo
             /* Look up the Info Type */
             AccountInfoType myInfoType = myData.getActInfoTypes().findItemByClass(pInfoClass);
             if (myInfoType == null) {
-                throw new JDataException(ExceptionClass.DATA, pAccount, "Account has invalid Account Info Class ["
+                throw new JDataException(ExceptionClass.DATA, pAccount, ERROR_BADINFOCLASS
+                                                                        + " ["
                                                                         + pInfoClass
                                                                         + "]");
             }
@@ -735,7 +743,8 @@ public class AccountInfo
 
             /* Check that this InfoTypeId has not been previously added */
             if (!isIdUnique(pId)) {
-                throw new JDataException(ExceptionClass.DATA, myInfo, "Duplicate AccountInfoId");
+                myInfo.addError(ERROR_DUPLICATE, FIELD_ID);
+                throw new JDataException(ExceptionClass.DATA, myInfo, ERROR_VALIDATION);
             }
 
             /* Add the Info to the list */
@@ -746,7 +755,7 @@ public class AccountInfo
 
             /* Handle validation failure */
             if (myInfo.hasErrors()) {
-                throw new JDataException(ExceptionClass.VALIDATE, myInfo, "Failed validation");
+                throw new JDataException(ExceptionClass.VALIDATE, myInfo, ERROR_VALIDATION);
             }
         }
     }
