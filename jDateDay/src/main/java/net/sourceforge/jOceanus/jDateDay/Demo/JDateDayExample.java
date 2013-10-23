@@ -52,7 +52,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.JDateButton.JDateConfig;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
 import net.sourceforge.jOceanus.jDateDay.JDateDayCellEditor;
@@ -61,6 +60,7 @@ import net.sourceforge.jOceanus.jDateDay.JDateDayConfig;
 import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
 import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
+import net.sourceforge.jdatebutton.JDateConfig;
 
 /**
  * <p>

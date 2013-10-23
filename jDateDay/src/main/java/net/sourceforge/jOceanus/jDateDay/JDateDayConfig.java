@@ -27,13 +27,14 @@ import java.util.Calendar;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.JDateButton.JDateConfig;
+import net.sourceforge.jdatebutton.JDateConfig;
 
 /**
  * Class that extends {@link JDateConfig} to handle {@link JDateDay} objects.
  * @author Tony Washer
  */
-public class JDateDayConfig extends JDateConfig {
+public class JDateDayConfig
+        extends JDateConfig {
     /**
      * Currently selected date (Calendar).
      */
@@ -91,7 +92,9 @@ public class JDateDayConfig extends JDateConfig {
         if (isDateChanged(theSelectedDate, myDate)) {
             /* Store the selected date and create the DateDay version */
             theSelectedDate = myDate;
-            theSelectedDateDay = (myDate == null) ? null : new JDateDay(myDate, getLocale());
+            theSelectedDateDay = (myDate == null)
+                    ? null
+                    : new JDateDay(myDate, getLocale());
         }
 
         /* Return the Selected DateDay */
@@ -123,7 +126,9 @@ public class JDateDayConfig extends JDateConfig {
         if (isDateChanged(theEarliestDate, myDate)) {
             /* Store the earliest date and create the DateDay version */
             theEarliestDate = myDate;
-            theEarliestDateDay = (myDate == null) ? null : new JDateDay(myDate, getLocale());
+            theEarliestDateDay = (myDate == null)
+                    ? null
+                    : new JDateDay(myDate, getLocale());
         }
 
         /* Return the Earliest DateDay */
@@ -155,7 +160,9 @@ public class JDateDayConfig extends JDateConfig {
         if (isDateChanged(theLatestDate, myDate)) {
             /* Store the latest date and create the DateDay version */
             theLatestDate = myDate;
-            theLatestDateDay = (myDate == null) ? null : new JDateDay(myDate, getLocale());
+            theLatestDateDay = (myDate == null)
+                    ? null
+                    : new JDateDay(myDate, getLocale());
         }
 
         /* Return the Latest DateDay */
@@ -178,7 +185,8 @@ public class JDateDayConfig extends JDateConfig {
     /**
      * Locale Listener class.
      */
-    private final class LocaleListener implements ChangeListener {
+    private final class LocaleListener
+            implements ChangeListener {
         /**
          * The formatter.
          */

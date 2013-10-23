@@ -28,8 +28,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sourceforge.JDateButton.JDateFormatter;
 import net.sourceforge.jOceanus.jEventManager.JEventObject;
+import net.sourceforge.jdatebutton.JDateFormatter;
 
 /**
  * Formatter for Date objects.

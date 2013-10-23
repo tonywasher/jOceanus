@@ -22,13 +22,14 @@
  ******************************************************************************/
 package net.sourceforge.jOceanus.jDateDay;
 
-import net.sourceforge.JDateButton.JDateCellRenderer;
+import net.sourceforge.jdatebutton.JDateCellRenderer;
 
 /**
  * Cell renderer for a {@link JDateDay} object extending {@link JDateCellRenderer}.
  * @author Tony Washer
  */
-public class JDateDayCellRenderer extends JDateCellRenderer {
+public class JDateDayCellRenderer
+        extends JDateCellRenderer {
     /**
      * Serial Id.
      */
@@ -63,8 +64,8 @@ public class JDateDayCellRenderer extends JDateCellRenderer {
     }
 
     /**
-     * Set value for the renderer. This will convert a Date into the required string format before passing it
-     * on. If the object is already a string or is null it is passed directly on.
+     * Set value for the renderer. This will convert a Date into the required string format before passing it on. If the object is already a string or is null
+     * it is passed directly on.
      * @param value the value to display (String, Calendar or null)
      */
     @Override

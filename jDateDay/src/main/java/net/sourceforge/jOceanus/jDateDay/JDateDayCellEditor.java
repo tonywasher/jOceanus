@@ -25,13 +25,14 @@ package net.sourceforge.jOceanus.jDateDay;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 
-import net.sourceforge.JDateButton.JDateCellEditor;
+import net.sourceforge.jdatebutton.JDateCellEditor;
 
 /**
  * Cell editor for a {@link JDateDay} object extending {@link JDateCellEditor}.
  * @author Tony Washer
  */
-public class JDateDayCellEditor extends JDateCellEditor {
+public class JDateDayCellEditor
+        extends JDateCellEditor {
     /**
      * Serial Id.
      */

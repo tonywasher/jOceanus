@@ -40,7 +40,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-import net.sourceforge.JDateButton.JDateButton;
 import net.sourceforge.jOceanus.jDataManager.Difference;
 import net.sourceforge.jOceanus.jDateDay.JDateDay;
 import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
@@ -554,7 +553,7 @@ public class SpotSelect
          * @param pButton the Button with the new date
          * @return true/false did a change occur
          */
-        private boolean setDate(final JDateButton pButton) {
+        private boolean setDate(final JDateDayButton pButton) {
             /* Adjust the date and build the new range */
             JDateDay myDate = new JDateDay(pButton.getSelectedDate());
             if (!Difference.isEqual(myDate, theDate)) {

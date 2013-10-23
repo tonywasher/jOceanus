@@ -24,13 +24,14 @@ package net.sourceforge.jOceanus.jDateDay;
 
 import java.util.Calendar;
 
-import net.sourceforge.JDateButton.JDateButton;
+import net.sourceforge.jdatebutton.JDateButton;
 
 /**
  * Extension class for a {@link JDateButton} to handle {@link JDateDay} objects.
  * @author Tony Washer
  */
-public class JDateDayButton extends JDateButton {
+public class JDateDayButton
+        extends JDateButton {
     /**
      * Serial Id.
      */

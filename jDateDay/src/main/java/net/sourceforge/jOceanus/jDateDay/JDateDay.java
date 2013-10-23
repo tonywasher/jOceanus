@@ -28,7 +28,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sourceforge.JDateButton.JDateConfig;
+import net.sourceforge.jdatebutton.JDateConfig;
 
 /**
  * Represents a Date object that is fixed to a particular day. There is no concept of time within the day Calendar objects that are built to represent the Date
