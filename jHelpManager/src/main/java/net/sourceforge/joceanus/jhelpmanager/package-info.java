@@ -23,5 +23,5 @@
 /**
  * Simple help manager class.
  */
-package net.sourceforge.jOceanus.jHelpManager;
+package net.sourceforge.joceanus.jhelpmanager;
 

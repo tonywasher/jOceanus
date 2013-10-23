@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jLayoutManager;
+package net.sourceforge.joceanus.jlayoutmanager;
 
 /**
  * Class providing utilities to simplify laying out panels.

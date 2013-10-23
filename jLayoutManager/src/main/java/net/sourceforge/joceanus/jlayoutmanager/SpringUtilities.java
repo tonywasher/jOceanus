@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jLayoutManager;
+package net.sourceforge.joceanus.jlayoutmanager;
 
 import java.awt.Component;
 

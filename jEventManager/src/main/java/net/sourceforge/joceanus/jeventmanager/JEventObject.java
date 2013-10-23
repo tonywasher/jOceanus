@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jEventManager;
+package net.sourceforge.joceanus.jeventmanager;
 
 import java.awt.event.ActionListener;
 

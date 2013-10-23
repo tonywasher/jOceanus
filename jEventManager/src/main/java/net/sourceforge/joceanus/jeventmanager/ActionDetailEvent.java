@@ -20,17 +20,17 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jEventManager;
+package net.sourceforge.joceanus.jeventmanager;
 
 import java.awt.event.ActionEvent;
 
 /**
- * The extended action event. This allows the definition of multiple ActionIds by providing an additional
- * subId field. The original Action Event is restricted to a single Id <b>ACTION_PERFORMED</b>. In addition,
- * rather than using the command string, this is set to NULL and a user defined object is available to provide
- * details about the event that do not have to be parsed from a string.
+ * The extended action event. This allows the definition of multiple ActionIds by providing an additional subId field. The original Action Event is restricted
+ * to a single Id <b>ACTION_PERFORMED</b>. In addition, rather than using the command string, this is set to NULL and a user defined object is available to
+ * provide details about the event that do not have to be parsed from a string.
  */
-public class ActionDetailEvent extends ActionEvent {
+public class ActionDetailEvent
+        extends ActionEvent {
     /**
      * Serial Id.
      */
@@ -49,7 +49,9 @@ public class ActionDetailEvent extends ActionEvent {
     /**
      * The last available Event SubId.
      */
-    public static final int ACTION_LAST = ACTION_PERFORMED + ACTION_RANGE - 1;
+    public static final int ACTION_LAST = ACTION_PERFORMED
+                                          + ACTION_RANGE
+                                          - 1;
 
     /**
      * The subId of the event.
@@ -89,7 +91,9 @@ public class ActionDetailEvent extends ActionEvent {
                              final int pSubId,
                              final Object pDetails) {
         /* Call super-constructor */
-        super(pSource, pId, (pDetails instanceof String) ? ((String) pDetails) : null);
+        super(pSource, pId, (pDetails instanceof String)
+                ? ((String) pDetails)
+                : null);
 
         /* Set the details */
         theSubId = pSubId;

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jHelpManager;
+package net.sourceforge.joceanus.jhelpmanager;
 
 import java.awt.Dimension;
 import java.io.IOException;
@@ -48,7 +48,9 @@ import javax.swing.tree.TreeSelectionModel;
 /**
  * Help Window class, responsible for displaying the help.
  */
-public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelectionListener {
+public class HelpWindow
+        extends JFrame
+        implements HyperlinkListener, TreeSelectionListener {
     /**
      * Serial Id.
      */
@@ -253,7 +255,8 @@ public class HelpWindow extends JFrame implements HyperlinkListener, TreeSelecti
         DefaultMutableTreeNode myNode = (DefaultMutableTreeNode) theTree.getLastSelectedPathComponent();
 
         /* Ignore if there is no selection or if this is the root */
-        if ((myNode == null) || (theRoot.equals(myNode))) {
+        if ((myNode == null)
+            || (theRoot.equals(myNode))) {
             return;
         }
 

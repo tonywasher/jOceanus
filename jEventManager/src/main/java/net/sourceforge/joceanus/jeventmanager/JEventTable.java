@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jEventManager;
+package net.sourceforge.joceanus.jeventmanager;
 
 import java.awt.event.ActionListener;
 
@@ -31,7 +31,8 @@ import javax.swing.event.ChangeListener;
  * Extension of JTable with Event Manager to provide support for Action and Change Events.
  * @author Tony Washer
  */
-public class JEventTable extends JTable {
+public class JEventTable
+        extends JTable {
     /**
      * Serial Id.
      */

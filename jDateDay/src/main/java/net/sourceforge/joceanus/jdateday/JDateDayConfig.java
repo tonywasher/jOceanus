@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDateDay;
+package net.sourceforge.joceanus.jdateday;
 
 import java.util.Calendar;
 

@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDateDay.Demo;
+package net.sourceforge.joceanus.jdateday.demo;
 
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -52,15 +52,15 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.jOceanus.jDateDay.JDateDay;
-import net.sourceforge.jOceanus.jDateDay.JDateDayButton;
-import net.sourceforge.jOceanus.jDateDay.JDateDayCellEditor;
-import net.sourceforge.jOceanus.jDateDay.JDateDayCellRenderer;
-import net.sourceforge.jOceanus.jDateDay.JDateDayConfig;
-import net.sourceforge.jOceanus.jDateDay.JDateDayFormatter;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRange;
-import net.sourceforge.jOceanus.jDateDay.JDateDayRangeSelect;
 import net.sourceforge.jdatebutton.JDateConfig;
+import net.sourceforge.joceanus.jdateday.JDateDay;
+import net.sourceforge.joceanus.jdateday.JDateDayButton;
+import net.sourceforge.joceanus.jdateday.JDateDayCellEditor;
+import net.sourceforge.joceanus.jdateday.JDateDayCellRenderer;
+import net.sourceforge.joceanus.jdateday.JDateDayConfig;
+import net.sourceforge.joceanus.jdateday.JDateDayFormatter;
+import net.sourceforge.joceanus.jdateday.JDateDayRange;
+import net.sourceforge.joceanus.jdateday.JDateDayRangeSelect;
 
 /**
  * <p>

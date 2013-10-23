@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDateDay;
+package net.sourceforge.joceanus.jdateday;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,8 +28,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import net.sourceforge.jOceanus.jEventManager.JEventObject;
 import net.sourceforge.jdatebutton.JDateFormatter;
+import net.sourceforge.joceanus.jeventmanager.JEventObject;
 
 /**
  * Formatter for Date objects.

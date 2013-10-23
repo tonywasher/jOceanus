@@ -20,12 +20,13 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jDateDay;
+package net.sourceforge.joceanus.jdateday;
 
 /**
  * Represents a contiguous Range of dates.
  */
-public class JDateDayRange implements Comparable<JDateDayRange> {
+public class JDateDayRange
+        implements Comparable<JDateDayRange> {
     /**
      * Unbounded range description.
      */
@@ -91,10 +92,12 @@ public class JDateDayRange implements Comparable<JDateDayRange> {
      * @return -1, 0, 1 if early, in range or late
      */
     public short compareTo(final JDateDay pDate) {
-        if ((theStart != null) && (theStart.compareTo(pDate) > 0)) {
+        if ((theStart != null)
+            && (theStart.compareTo(pDate) > 0)) {
             return 1;
         }
-        if ((theEnd != null) && (theEnd.compareTo(pDate) < 0)) {
+        if ((theEnd != null)
+            && (theEnd.compareTo(pDate) < 0)) {
             return -1;
         }
         return 0;
@@ -151,9 +154,13 @@ public class JDateDayRange implements Comparable<JDateDayRange> {
     @Override
     public String toString() {
         /* Build range description */
-        String myFormat = (theStart == null) ? DESC_UNBOUNDED : theStart.toString();
+        String myFormat = (theStart == null)
+                ? DESC_UNBOUNDED
+                : theStart.toString();
         myFormat += DESC_LINK;
-        myFormat += (theEnd == null) ? DESC_UNBOUNDED : theEnd.toString();
+        myFormat += (theEnd == null)
+                ? DESC_UNBOUNDED
+                : theEnd.toString();
 
         /* return the format */
         return myFormat;

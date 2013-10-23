@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jHelpManager;
+package net.sourceforge.joceanus.jhelpmanager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +30,8 @@ import java.io.InputStreamReader;
 /**
  * Help Page class. This class maps between the name of a help page and the HTML that the name represents.
  */
-public class HelpPage implements Comparable<Object> {
+public class HelpPage
+        implements Comparable<Object> {
     /**
      * Byte encoding.
      */
@@ -112,7 +113,8 @@ public class HelpPage implements Comparable<Object> {
             /* Catch exceptions */
         } catch (IOException e) {
             /* Throw an exception */
-            throw new HelpException("Failed to load help file " + pEntry.getName(), e);
+            throw new HelpException("Failed to load help file "
+                                    + pEntry.getName(), e);
         }
 
         /* Build the values */
@@ -143,9 +145,13 @@ public class HelpPage implements Comparable<Object> {
         HelpPage myPage = (HelpPage) pThat;
 
         /* Check for equality */
-        boolean isEqual = (theName == null) ? (myPage.getName() != null) : theName.equals(myPage.getName());
+        boolean isEqual = (theName == null)
+                ? (myPage.getName() != null)
+                : theName.equals(myPage.getName());
         if (isEqual) {
-            isEqual = (theHtml == null) ? (myPage.getHtml() != null) : theHtml.equals(myPage.getHtml());
+            isEqual = (theHtml == null)
+                    ? (myPage.getHtml() != null)
+                    : theHtml.equals(myPage.getHtml());
         }
         return isEqual;
     }

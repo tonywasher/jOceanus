@@ -23,5 +23,5 @@
 /**
  * Table filter package.
  */
-package net.sourceforge.jOceanus.jTableFilter;
+package net.sourceforge.joceanus.jtablefilter;
 

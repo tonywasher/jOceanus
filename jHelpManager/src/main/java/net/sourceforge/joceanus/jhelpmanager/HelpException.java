@@ -20,13 +20,14 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jHelpManager;
+package net.sourceforge.joceanus.jhelpmanager;
 
 /**
  * Exception indicating that there was a failure in the help system.
  * @author Tony Washer
  */
-public class HelpException extends Exception {
+public class HelpException
+        extends Exception {
     /**
      * Serial id.
      */

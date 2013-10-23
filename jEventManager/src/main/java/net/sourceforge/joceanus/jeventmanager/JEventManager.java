@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jEventManager;
+package net.sourceforge.joceanus.jeventmanager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,13 +31,12 @@ import java.util.ListIterator;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.sourceforge.jOceanus.jEventManager.JEventRegistration.ActionRegistration;
-import net.sourceforge.jOceanus.jEventManager.JEventRegistration.ChangeRegistration;
+import net.sourceforge.joceanus.jeventmanager.JEventRegistration.ActionRegistration;
+import net.sourceforge.joceanus.jeventmanager.JEventRegistration.ChangeRegistration;
 
 /**
- * EventManager implementation. This maintains a list of ChangeListeners/ActionListeners and allows the caller
- * to fire ChangeEvents and ActionEvents to these lists This is implemented to provide functionality to
- * non-Swing components and also to enable improved control over the contents of the ChangeEvents and
+ * EventManager implementation. This maintains a list of ChangeListeners/ActionListeners and allows the caller to fire ChangeEvents and ActionEvents to these
+ * lists This is implemented to provide functionality to non-Swing components and also to enable improved control over the contents of the ChangeEvents and
  * ActionEvents that are fired
  */
 public class JEventManager {

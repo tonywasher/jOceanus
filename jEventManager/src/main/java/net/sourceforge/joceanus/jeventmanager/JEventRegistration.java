@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jEventManager;
+package net.sourceforge.joceanus.jeventmanager;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,7 +35,8 @@ public abstract class JEventRegistration {
     /**
      * ActionRegistration class.
      */
-    protected static class ActionRegistration extends JEventRegistration {
+    protected static class ActionRegistration
+            extends JEventRegistration {
         /**
          * Action listener.
          */
@@ -83,7 +84,8 @@ public abstract class JEventRegistration {
     /**
      * ChangeRegistration class.
      */
-    protected static class ChangeRegistration extends JEventRegistration {
+    protected static class ChangeRegistration
+            extends JEventRegistration {
         /**
          * Change listener.
          */

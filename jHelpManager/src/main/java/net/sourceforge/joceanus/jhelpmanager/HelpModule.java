@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jHelpManager;
+package net.sourceforge.joceanus.jhelpmanager;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -176,7 +176,8 @@ public abstract class HelpModule {
 
             /* Reject if this is not a Help Definitions file */
             if (!myElement.getNodeName().equals(DOC_NAME)) {
-                throw new HelpException("Invalid document name: " + myElement.getNodeName());
+                throw new HelpException("Invalid document name: "
+                                        + myElement.getNodeName());
             }
 
             /* Set title of document */
@@ -243,7 +244,8 @@ public abstract class HelpModule {
         for (HelpEntry myEntry : pEntries) {
             /* Check that the entry is not already in the list */
             if (searchFor(myEntry.getName()) != null) {
-                throw new HelpException("Duplicate Help object Name: " + myEntry.getName());
+                throw new HelpException("Duplicate Help object Name: "
+                                        + myEntry.getName());
             }
 
             /* If we have a file name */

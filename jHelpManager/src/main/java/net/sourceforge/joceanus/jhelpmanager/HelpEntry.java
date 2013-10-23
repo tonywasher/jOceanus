@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jHelpManager;
+package net.sourceforge.joceanus.jhelpmanager;
 
 import java.util.Arrays;
 
@@ -31,9 +31,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
- * Help Entry class. This class provides structure to the help system, providing parent child relationships to
- * implement chapters and also providing maps between the name of a help page and the file that holds the HTML
- * for the page
+ * Help Entry class. This class provides structure to the help system, providing parent child relationships to implement chapters and also providing maps
+ * between the name of a help page and the file that holds the HTML for the page
  */
 public class HelpEntry {
     /**
@@ -194,7 +193,8 @@ public class HelpEntry {
     public HelpEntry(final Element pElement) throws HelpException {
         /* Reject entry if it is not a HelpElement */
         if (!pElement.getNodeName().equals(ELEMENT_HELP)) {
-            throw new HelpException("Invalid element name: " + pElement.getNodeName());
+            throw new HelpException("Invalid element name: "
+                                    + pElement.getNodeName());
         }
 
         /* Access the name of the element */

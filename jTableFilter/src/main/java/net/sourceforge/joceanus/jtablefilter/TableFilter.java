@@ -20,7 +20,7 @@
  * $Author$
  * $Date$
  ******************************************************************************/
-package net.sourceforge.jOceanus.jTableFilter;
+package net.sourceforge.joceanus.jtablefilter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import java.util.List;
 import javax.swing.RowSorter;
 import javax.swing.table.TableModel;
 
-import net.sourceforge.jOceanus.jTableFilter.TableFilter.TableFilterModel;
+import net.sourceforge.joceanus.jtablefilter.TableFilter.TableFilterModel;
 
 /**
  * RowSorter to provide filtering capabilities with natural sorting.
@@ -638,7 +638,9 @@ public class TableFilter<T extends Comparable<? super T>>
      */
     private boolean isCorrectOrder(final RowEntry<T> pFirst,
                                    final RowEntry<T> pSecond) {
-        int iResult = (doSort) ? pFirst.compareRow(pSecond) : pFirst.compareReference(pSecond);
+        int iResult = (doSort)
+                ? pFirst.compareRow(pSecond)
+                : pFirst.compareReference(pSecond);
         return iResult <= 0;
     }
 

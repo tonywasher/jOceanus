@@ -24,5 +24,5 @@
 /**
  * Event Manager.
  */
-package net.sourceforge.jOceanus.jEventManager;
+package net.sourceforge.joceanus.jeventmanager;
 
